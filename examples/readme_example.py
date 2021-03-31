@@ -1,18 +1,6 @@
-pytermgui
-=========
-
-A simple module to display UI in the terminal, as well as to read input.
-
-For now, a good example of use would be [teahaz-client](https://github.com/bczsalba/teahaz-client), but documentation will be coming soon.
-
-
-getting started
-----------------
-```py
-# version with comments & explanation: examples/readme_example.py
-
 from pytermgui import Container,container_from_dict,getch
 
+# set up dummy data dictionary
 data = {
     "ui__title": "Test data",
     "key": "value",
@@ -23,36 +11,40 @@ data = {
     }
 }
 
+# get list of containers from data, split by height
 containers = container_from_dict(data,width=40)
 c = containers[0]
 
+# select 0th element
 c.select()
+
+# center container
 c.center()
+
+# clear screen (`os.system('clear')` would also suffice)
 print('\033[2J')
+
+# print container
 print(c)
 
+
+# input loop
 while True:
+    # get key
     key = getch()
 
+    # go up/down in selection
     if key == "ARROW_UP":
         c.selected_index -= 1
-
     elif key == "ARROW_DOWN":
         c.selected_index += 1
 
+    # pytermgui captures SIGTERM currently, so you need to handle it yourself
     elif key == "SIGTERM":
         raise KeyboardInterrupt
 
+    # do new selection
     c.select()
+
+    # print
     print(c)
-```
-<img src="./img/readme-example.png">
-
-images
---------
-### examples/basic_menu.py:
-<img src="./img/basic-menu.png">
-
-### teahaz menu picker:
-<img src="./img/teahaz-menupicker.png">
-

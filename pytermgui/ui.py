@@ -362,6 +362,9 @@ class Color:
         return '\033[9m'+str(s)+'\033[0m'
 
     def highlight(s,fg="1"):
+        if s.startswith('\033['):
+            return '\033[7m'+s
+
         if not isinstance(fg,int) and not fg.isdigit():
             return '\033[7m'+fg
 
