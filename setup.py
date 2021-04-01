@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pytermgui',
-    version='0.0.0',
+    version='0.0.1',
     packages=find_packages(exclude=['img*','tests*','examples*']),
     license='MIT',
     description='simple and robust terminal user interface library for the command line.',

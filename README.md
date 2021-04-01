@@ -46,13 +46,18 @@ while True:
     c.select()
     print(c)
 ```
-<img src="./img/readme-example.png">
+![readme-example](https://raw.githubusercontent.com/bczsalba/pytermgui/master/img/readme-example.png)
 
 images
 --------
 ### examples/basic_menu.py:
-<img src="./img/basic-menu.png">
+![basic_menu](https://raw.githubusercontent.com/bczsalba/pytermgui/master/img/basic-menu.png)
+
+### examples/project_picker.py:
+![project_picker](https://raw.githubusercontent.com/bczsalba/pytermgui/master/img/project_picker.png)
 
 ### teahaz menu picker:
-<img src="./img/teahaz-menupicker.png">
+![menu_picker](https://raw.githubusercontent.com/bczsalba/pytermgui/master/img/teahaz-menupicker.png)
 
+### teahaz file picker:
+![filepicker](https://raw.githubusercontent.com/bczsalba/pytermgui/master/img/teahaz-filemanager.png)
