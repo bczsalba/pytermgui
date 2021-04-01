@@ -54,7 +54,7 @@ images
 ![basic_menu](https://raw.githubusercontent.com/bczsalba/pytermgui/master/img/basic-menu.png)
 
 ### examples/project_picker.py:
-![project_picker](https://raw.githubusercontent.com/bczsalba/pytermgui/master/img/project_picker.png)
+![project_picker](https://raw.githubusercontent.com/bczsalba/pytermgui/master/img/project-picker.png)
 
 ### teahaz menu picker:
 ![menu_picker](https://raw.githubusercontent.com/bczsalba/pytermgui/master/img/teahaz-menupicker.png)
