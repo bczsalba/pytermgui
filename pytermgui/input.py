@@ -58,8 +58,6 @@ class InputField:
         self.selected_start = 0
         self.selected_end = 0
         self.prompt = prompt
-        self.field_color = '\033[0m'
-        self.visual_color = ''
         self.empty_cursor_char = ' '
 
         # TODO
@@ -88,7 +86,8 @@ class InputField:
         self.value_style = lambda item: item
         self.highlight_style = lambda item: Color.highlight(item,7)
 
-    def send(self,key,_do_print=True):
+
+    def send(self,key,_do_print=False):
         # delete char before cursor
         if key == "BACKSPACE":
             if self.cursor > 0:#real_length(self.prompt):
@@ -168,7 +167,7 @@ class InputField:
     def wipe(self):
         x,y = self.pos
         lines = []
-        buff = ''
+        buff = self.prompt
         for i,c in enumerate(self.value):
             if c == "\n":
                 lines.append(buff)
@@ -203,14 +202,13 @@ class InputField:
             charUnderCursor = self.value[self.cursor]
 
         # set highlighter according to highlight param
-        highlighter = ('\033[7m' if highlight else '')
-        if callable(self.visual_color):
-            selected_text = self.visual_color(charUnderCursor)
+        if highlight:
+            selected_text = self.highlight_style(charUnderCursor)
         else:
-            selected_text = self.visual_color + charUnderCursor
+            selected_text = charUnderCursor
 
         # construct line
-        line = self.field_color + self.prompt + left + highlighter + selected_text + '\033[0m' + self.field_color + right + '\033[0m'
+        line = self.value_style(self.prompt + left) + selected_text + self.value_style(right)
 
         if return_line:
             return line
