@@ -7,6 +7,7 @@ import os
 import sys
 import codecs
 import select
+import pyperclip as clip
 from .ui import clean_ansi, real_length, Color
 from contextlib import contextmanager
 
@@ -95,6 +96,13 @@ class InputField:
                 right = self.value[self.cursor:]
                 self.value = left+right
                 self.cursor -= 1
+
+        elif key == "CTRL_V":
+            left  = self.value[:self.cursor]
+            right = self.value[self.cursor:]
+            paste = clip.paste()
+            self.value   = left+paste+right
+            self.cursor += real_length(paste)
 
         # move left
         elif key == "ARROW_LEFT":
