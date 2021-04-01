@@ -7,24 +7,10 @@ import os
 import sys
 import codecs
 import select
+from .ui import clean_ansi, real_length, Color
 from contextlib import contextmanager
 
 
-
-def clean_ansi(s,t="ansi"):
-    if not type(s) in [str,bytes]:
-        raise Exception('Value <'+str(s)+'>\'s type ('+str(type(s))+' is not str or bytes')
-
-    ansi = re.compile(r'(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]')
-    unic = re.compile(r'[^\u0000-\u007F]+')
-    no_ansi = ansi.sub('',s)
-    # no_unic = unic.sub('',no_ansi)
-
-    
-    return no_ansi
-
-def real_length(s):
-    return len(clean_ansi(s))
 
 
 # this needs to be here in order to have arrow keys registered
@@ -95,6 +81,12 @@ class InputField:
             # print
             self.print()
 
+        self.width = len(self.value)
+        self.height = 1
+        self._is_selectable = False
+
+        self.value_style = lambda item: item
+        self.highlight_style = lambda item: Color.highlight(item,7)
 
     def send(self,key,_do_print=True):
         # delete char before cursor
@@ -252,24 +244,31 @@ class InputField:
         selected = self.value[start:end]
         right = self.value[end:]
 
-        highlight = '\033[7m'
         self.selected = selected
         self.selected_start = start
         self.selected_end = end
 
-        if callable(self.visual_color):
-            selected_text = self.visual_color(selected)
-        else:
-            selected_text = self.visual_color + selected
+        selected_text = self.highlight_style(selected)
 
         
         self.wipe()
-        line = self.prompt+left+highlight+selected_text+self.field_color+right
+        line = self.value_style(self.prompt+left) + selected_text + self.value_style(right)
 
         # write to stdout
         x,y = self.pos
         sys.stdout.write(f'\033[{y};{x}H'+line)
         sys.stdout.flush()
+
+    
+    # .ui integration
+    def set_style(self,key,value):
+        setattr(self,key+'_style',value)
+
+    def submit(self):
+        return self.value
+
+    def __repr__(self):
+        return self.print(return_line=1)
 
 
 class _Getch:
@@ -377,24 +376,4 @@ class _GetchWindows:
         return msvcrt.wgetch()
 
 
-
-# clean namespace
 getch = _Getch()
-
-# example code
-if __name__ == "__main__":
-    infield = InputField(default="Welcome!",prompt='> ')
-    #infield.print()
-    infield.visual(3,3)
-    sys.exit()
-
-    while True:
-        key = getch()
-        # catch ^C signal to exit
-        if key == "SIGTERM":
-            # re-show cursor (IMPORTANT!)
-            infield.set_cursor(True)
-            break
-        else:
-            infield.send(key)
-        infield.print()
