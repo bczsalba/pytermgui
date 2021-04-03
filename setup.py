@@ -8,7 +8,7 @@ setup(
     description='simple and robust terminal user interface library for the command line.',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    install_requires=['pyperclip'],
+    install_requires=[],
     url='https://github.com/bczsalba/pytermgui',
     author='BcZsalba',
     author_email='bczsalba@gmail.com'

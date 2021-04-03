@@ -7,7 +7,13 @@ import os
 import sys
 import codecs
 import select
-import pyperclip as clip
+
+try:
+    import pyperclip as clip
+    USE_CLIPBOARD = True
+except ImportError:
+    USE_CLIPBOARD = False
+
 from .ui import clean_ansi, real_length, Color
 from contextlib import contextmanager
 
@@ -97,7 +103,7 @@ class InputField:
                 self.value = left+right
                 self.cursor -= 1
 
-        elif key == "CTRL_V":
+        elif key == "CTRL_V" and USE_CLIPBOARD:
             left  = self.value[:self.cursor]
             right = self.value[self.cursor:]
             paste = clip.paste()
