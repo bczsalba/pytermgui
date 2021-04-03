@@ -144,6 +144,13 @@ def set_attribute_for_id(element_id,key,value):
 def get_object_by_id(key):
     return ELEMENT_IDS.get(key)
 
+def get_style(name):
+    name = name.upper()+'_STYLE'
+    if name in globals():
+        return globals()[name]
+    else:
+        return lambda *args: None
+
 def set_listener(event,func):
     globals()['event__'+event] = func
 
@@ -1120,7 +1127,6 @@ class Label:
         self.justify = justify
         self.padding = padding
         self.value_style = LABEL_VALUE_STYLE
-
 
         # flags
         self._is_selectable = False
