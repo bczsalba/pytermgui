@@ -7,6 +7,7 @@ import os
 import sys
 import codecs
 import select
+from typing import Callable
 
 try:
     import pyperclip as clip
@@ -57,7 +58,7 @@ class OSReadWrapper(object):
 class InputField:
     """ Example of use at the bottom of the file """
 
-    def __init__(self,pos=None,linecap=0,default="",prompt='',xlimit=None,ylimit=None,print_at_start=False):
+    def __init__(self, pos: list=None, linecap: int=0, default: str="", prompt: str='', xlimit: int=None, ylimit: int=None, print_at_start: bool=None):
         # set up instance variables
         self.value = default
         self.cursor = len(self.value)
@@ -89,12 +90,13 @@ class InputField:
         self.width = len(self.value)
         self.height = 1
         self._is_selectable = False
+        self._strip_pasted_newlines = True
 
         self.value_style = lambda item: item
         self.highlight_style = lambda item: Color.highlight(item,7)
 
 
-    def send(self,key,_do_print=False):
+    def send(self, key:str, _do_print: bool=False):
         # delete char before cursor
         if key == "BACKSPACE":
             if self.cursor > 0:#real_length(self.prompt):
@@ -107,6 +109,8 @@ class InputField:
             left  = self.value[:self.cursor]
             right = self.value[self.cursor:]
             paste = clip.paste()
+            if self._strip_pasted_newlines:
+                paste = paste.replace('\n','')
             self.value   = left+paste+right
             self.cursor += real_length(paste)
 
@@ -139,7 +143,7 @@ class InputField:
 
 
     # enable/disable (terminal) cursor
-    def set_cursor_visible(self,value):
+    def set_cursor_visible(self, value:bool):
         if value:
             print('\033[?25h')
         else:
@@ -155,7 +159,7 @@ class InputField:
 
 
     # set value, cursor location, pass highlight
-    def set_value(self,target,cursor=None,highlight=True,force_cursor=False,do_print=True):
+    def set_value(self, target:str,cursor: int=None, highlight: bool=True, force_cursor: bool=False, do_print: bool=True):
         # clear space
         self.wipe()
 
@@ -199,7 +203,7 @@ class InputField:
 
 
     # print self, flush and show highlight if set
-    def print(self,return_line=False,flush=True,highlight=True):
+    def print(self, return_line: bool=False, flush: bool=True, highlight: bool=True):
         # set up two sides 
         left = self.value[:self.cursor]
         right = self.value[self.cursor+1:]
@@ -239,7 +243,7 @@ class InputField:
             sys.stdout.flush()
 
 
-    def visual(self,start=None,end=None):
+    def visual(self, start: int=None, end: int=None):
         if start > end:
             temp = end
             end = start
@@ -273,7 +277,7 @@ class InputField:
 
     
     # .ui integration
-    def set_style(self,key,value):
+    def set_style(self, key:str, value:Callable):
         setattr(self,key+'_style',value)
 
     def submit(self):
