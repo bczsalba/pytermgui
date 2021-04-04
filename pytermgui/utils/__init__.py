@@ -4,8 +4,8 @@ import os
 class keys:
     prev = ["ARROW_UP","CTRL_K","k"]
     next = ["ARROW_DOWN","CTRL_N","j"]
-    backwards = ["ARROW_LEFT","CTRL_B","h"]
-    forewards = ["ARROW_RIGHT","CTRL_F","l"]
+    back = ["ARROW_LEFT","CTRL_B","h"]
+    fore = ["ARROW_RIGHT","CTRL_F","l"]
 
 def wipe():
     print('\033[2J\033[H')

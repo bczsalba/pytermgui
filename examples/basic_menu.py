@@ -1,5 +1,6 @@
 from pytermgui import Container,container_from_dict,getch,set_style
 from pytermgui import color,bold,highlight,gradient
+from pytermgui.utils import basic_selection as selection
 
 # set up dummy data
 data = {
@@ -37,18 +38,5 @@ c.center()
 c.select()
 print(c)
 
-while True:
-    key = getch()
-
-    if key == "ARROW_UP":
-        c.selected_index -= 1
-    elif key == "ARROW_DOWN":
-        c.selected_index += 1
-
-    # SIGTERM is current captured, so you need to handle it.
-    elif key == "SIGTERM":
-        import sys
-        sys.exit(0)
-
-    c.select()
-    print(c)
+# run selection loop
+selection(c)

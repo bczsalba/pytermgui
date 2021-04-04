@@ -56,8 +56,10 @@ def create_interactive_from(function:Callable, ignored: dict=None):
     """
 
     wipe()    
-    main  = Container(width=60)
     sig   = signature(function)
+    main  = Container(width=60)
+    for i in range(4):
+        main.set_corner(i,'x')
 
     title = Label(f'calling function {function.__name__}')
     main.add_elements([title,padding])
@@ -90,8 +92,9 @@ def create_interactive_from(function:Callable, ignored: dict=None):
     main.arguments = arguments
 
     button = Prompt(options=['run!'])
-    main.add_elements([padding,button])
+    button.set_style('delimiter',lambda: ['<','>'])
     button.submit = lambda self: _run_function(function,main)
+    main.add_elements([padding,button])
 
     main.center()
     main.select()
@@ -108,7 +111,9 @@ def create_dialog_from(label:str, parameter:Parameter, parent:object):
     """
 
     wipe()
-    dialog = Container(width=width())
+    dialog = Container()
+    for i in range(4):
+        dialog.set_corner(i,'x')
     dialog.set_borders(' -')
 
     title = Label(f'value for {parameter.name}')
@@ -120,7 +125,16 @@ def create_dialog_from(label:str, parameter:Parameter, parent:object):
         default = parent.value
     else:
         default = '' if parameter.default == _empty or not parameter.default else parameter.default
-    field = InputField(default=str(default))
+
+    if parameter.annotation == bool:
+        field = Prompt(options=['true','false'])
+        field.set_style('delimiter',lambda: '<>')
+        field.select()
+        dialog.width = 60
+    else:
+        field = InputField(default=str(default))
+        dialog.width = min(100,width())
+
     dialog.add_elements(field)
 
     dialog.center()
@@ -136,8 +150,16 @@ def create_dialog_from(label:str, parameter:Parameter, parent:object):
             parent.value = field.value
             wipe()
             break
+        
+        if isinstance(field,Prompt):
+            if key in keys.back:
+                field.selected_index -= 1
+            elif key in keys.fore:
+                field.selected_index += 1
+            field.select()
+        else:
+            field.send(key)
 
-        field.send(key)
         print(dialog)
 
 def _run_function(function:Callable, obj:object ,callback: Callable=None):

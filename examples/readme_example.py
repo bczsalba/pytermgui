@@ -1,4 +1,5 @@
 from pytermgui import Container,container_from_dict,getch
+from pytermgui.utils import basic_selection as selection
 
 # set up dummy data dictionary
 data = {
@@ -27,24 +28,4 @@ print('\033[2J')
 # print container
 print(c)
 
-
-# input loop
-while True:
-    # get key
-    key = getch()
-
-    # go up/down in selection
-    if key == "ARROW_UP":
-        c.selected_index -= 1
-    elif key == "ARROW_DOWN":
-        c.selected_index += 1
-
-    # pytermgui captures SIGTERM currently, so you need to handle it yourself
-    elif key == "SIGTERM":
-        raise KeyboardInterrupt
-
-    # do new selection
-    c.select()
-
-    # print
-    print(c)
+selection(c)

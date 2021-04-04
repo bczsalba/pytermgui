@@ -808,10 +808,7 @@ class Container:
             return
 
         if index > len(self.selectables)-1:
-            if VERBOSE:
-                raise Exception("Index is not in elements.")
-            else:
-                index = len(self.selectables)-1
+            index = len(self.selectables)-1
 
         # avoid < 0 indexes
         index = max(0,index)
@@ -981,7 +978,7 @@ class Prompt:
         self.height = 1
 
         # set up instance variables
-        self.selected_index = None
+        self.selected_index = 0
         self.options = options
         self.padding = padding
         self.value = value
@@ -1088,9 +1085,17 @@ class Prompt:
 
 
     # select index in options
-    def select(self,index=0):
+    def select(self,index=None):
         self._is_selected = True
-        self.selected_index = index
+
+        if index == None:
+            index = self.selected_index
+
+        
+        if self.options and index > len(self.options)-1:
+            index = len(self.options)-1
+
+        self.selected_index = max(0,index)
 
         if isinstance(self.options,list):
             self.value = self.options[index]
