@@ -2,6 +2,7 @@ from .ui import *
 from .input import getch, InputField
 from . import utils
 
+
 color         = Color.color
 bold          = Color.bold
 italic        = Color.italic
@@ -13,3 +14,5 @@ strikethrough = Color.strikethrough
 
 # this is added in order to avoid padders hogging memory
 padding_label = Label()
+
+from .utils import interactive
