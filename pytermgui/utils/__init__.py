@@ -1,4 +1,5 @@
 from ..input import getch
+import os
 
 class keys:
     prev = ["ARROW_UP","CTRL_K","k"]
@@ -6,7 +7,7 @@ class keys:
     backwards = ["ARROW_LEFT","CTRL_B","h"]
     forewards = ["ARROW_RIGHT","CTRL_F","l"]
 
-def clr():
+def wipe():
     print('\033[2J\033[H')
 
 def basic_selection(obj,break_on_submit=False):
@@ -22,11 +23,21 @@ def basic_selection(obj,break_on_submit=False):
         elif key == "ENTER":
             obj.submit()
             if break_on_submit:
+                wipe()
                 break
         
         elif key in ["ESC","SIGTERM"]:
-            clr()
+            wipe()
             break
 
         obj.select()
         print(obj)
+
+def width():
+    return os.get_terminal_size()[0]
+
+def height():
+    return os.get_terminal_size()[1]
+
+def size():
+    return os.get_terminal_size()

@@ -896,6 +896,10 @@ class Container:
         with open(filename,'w') as f:
             f.write(repr(self))
 
+    
+    def submit(self):
+        selected = self.selected[0]
+        return selected.submit(selected)
 
     # EVENT: window size changed
     # - checked for during __repr__
@@ -981,7 +985,7 @@ class Prompt:
         self.options = options
         self.padding = padding
         self.value = value
-        self.real_value = self.value
+        self.real_value = value
 
         # styles
         self.long_highlight_style = PROMPT_LONG_HIGHLIGHT_STYLE
