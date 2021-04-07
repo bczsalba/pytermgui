@@ -460,7 +460,18 @@ def event__window_size_changed(caller,new,old):
 
 
 # CLASSES #
-class Container:
+class BaseElement:
+    def __init__(self):
+        self.width = 0
+        self.height = 1
+        self.real_height = self.height
+        self.pos = [0,0]
+
+        self._is_selectable = True
+        self._is_selected = False
+
+
+class Container(BaseElement):
     """
     Object that contains other classes defined here.
     It needs a position, and its width & height can
@@ -480,6 +491,8 @@ class Container:
     """
 
     def __init__(self,pos=None,border=None,width=None,height=None,dynamic_size=True,center_elements=True,padding=0):
+        super().__init__()
+
         # sanitize width
         if not width == None:
             self.width = min(width,WIDTH)
@@ -523,6 +536,7 @@ class Container:
         self._do_dynamic_size = dynamic_size
         self._do_center_elements = center_elements
         self._is_centered = False
+        self._is_selected = True
 
         # optional flag to avoid wiping
         self._has_printed = True
@@ -550,6 +564,12 @@ class Container:
         global WIDTH,HEIGHT
 
         self._repr_pre()
+        if not self._is_selected:
+            if self.selected:
+                self.selected[0]._is_selected = False
+        else:
+            if self.selected:
+                self.selected[0]._is_selected = True
 
         nWIDTH,nHEIGHT = os.get_terminal_size()
         if not [WIDTH,HEIGHT] == [nWIDTH,nHEIGHT]:
@@ -896,7 +916,7 @@ class Container:
     
     def submit(self):
         selected = self.selected[0]
-        return selected.submit(selected)
+        return selected.submit()
 
     # EVENT: window size changed
     # - checked for during __repr__
@@ -942,7 +962,7 @@ class Container:
     def _selection_changed(self,index):
         return
 
-class Prompt:
+class Prompt(BaseElement):
     """ 
     A class to display an optional label, along with choices.
     There are two layouts: "<label> [option]" and a centered
@@ -959,7 +979,9 @@ class Prompt:
                                   non-inclusive.)
     """
     
-    def __init__(self,width=None,options=None,label=None,real_label=None,justify_options='center',value="",padding=0): 
+    def __init__(self,label=None,width=None,options=None,real_label=None,justify_options='center',value="",padding=0): 
+        super().__init__()
+
         # the existence of label decides the layout (<> []/[] [] [])
         if label:
             self.label = str(label)
@@ -1115,7 +1137,7 @@ class Prompt:
         else:
             return self.value
 
-class Label:
+class Label(BaseElement):
     """ 
     A simple, non-selectable object for printing text
 
@@ -1123,6 +1145,8 @@ class Label:
         - value_style : style for string value of label
     """
     def __init__(self,value="",justify="center",width=None,padding=1):
+        super().__init__()
+
         # values
         self.value = value
         self.height = 1

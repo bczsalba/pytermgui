@@ -1,5 +1,6 @@
-from ..input import getch
+from ..input import getch, InputField
 import os
+
 
 class keys:
     prev = ["ARROW_UP","CTRL_K","k"]
@@ -9,6 +10,9 @@ class keys:
 
 def wipe():
     print('\033[2J\033[H')
+
+def hide_cursor(value: bool=True):
+    InputField.set_cursor_visible('',not value)
 
 def basic_selection(obj,break_on_submit=False):
     while True:

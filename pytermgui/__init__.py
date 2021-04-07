@@ -2,7 +2,6 @@ from .ui import *
 from .input import getch, InputField
 from . import utils
 
-
 color         = Color.color
 bold          = Color.bold
 italic        = Color.italic
