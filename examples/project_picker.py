@@ -6,7 +6,7 @@ EDITOR = "vim"
 
 # --------------------------------------------
 
-from pytermgui import color,bold,italic,underline,set_style,highlight
+from pytermgui import color,bold,italic,underline,set_style,highlight,get_gradient
 from pytermgui import Container,Prompt,Label,InputField
 from pytermgui import container_from_dict,getch
 import os,sys
@@ -32,7 +32,7 @@ projects.sort()
 
 
 # set basic styles
-set_style('container_border',lambda item: bold(color(item,styles.get('border'))))
+set_style('container_border',lambda depth,item: bold(color(item,get_gradient(styles.get('border'))[depth])))
 set_style('prompt_long_highlight',lambda item: highlight(item,styles.get('highlight')))
 
 
@@ -50,7 +50,10 @@ if styles.get('corners'):
 # create and add title
 title = Label(value=styles.get('title_text'),justify='left')
 title.set_style('value',lambda item: bold(color(item,styles.get('title'))))
-c.add_elements([title,Label()])
+line = Label('--------',justify='left')
+line.set_style('value', title.value_style)
+
+c.add_elements([title,line])
 
 # go through projects
 for p in projects:
@@ -69,7 +72,6 @@ for p in projects:
 print('\033[2J')
 InputField.set_cursor_visible('',False)
 
-# print object
 c.center()
 c.select()
 print(c)

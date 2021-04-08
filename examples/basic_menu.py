@@ -21,7 +21,7 @@ data = {
 set_style('container_title',lambda item: bold(color(item,210)))
 set_style('container_label',lambda item: color(item,248))
 set_style('container_value',lambda item: color(item,72))
-set_style('container_border',lambda item: bold(color(item,60)))
+set_style('container_border',lambda depth,item: bold(color(item,60)))
 set_style('prompt_short_highlight',lambda item: highlight(item,72))
 set_style('prompt_long_highlight',lambda item: highlight(item,72))
 set_style('prompt_delimiter_style',lambda: ['< ',' >'])
