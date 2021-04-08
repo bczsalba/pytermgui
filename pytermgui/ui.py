@@ -105,8 +105,19 @@ class Container(BaseElement):
         - Label      
         - Prompt     
         - Container  
-
     Check individual classes for more details.
+
+    Styles for Container & its children:
+        (ones marked with * are only checked on __init__, otherwise need to be set with their respective setters)
+        - *border_chars              = characters to use for border, [left,top,right,bottom]
+        - border_style(depth,item)   = style for border characters
+        - *corner_chars(item)        = characters to use for corners, [l_top,r_top,r_bottom,l_bottom]
+        - corner_style(depth,item)   = style for corner characters
+        - label_style(item)          = style for Prompt.label
+        - value_style(item)          = style for Prompt.value
+        - title_style(item)          = style for ui__title elements from container_from_dict
+        - error_style(item)          = style for ui__error_title elements from container_from_dict
+        - success_style(item)        = style for ui__success_title elements from container_from_dict
     """
 
     def __init__(self, pos: list[int,int]=None, border: Iterable[str]=None, 
@@ -145,16 +156,20 @@ class Container(BaseElement):
 
         self.styles = {}
         self.centering_axis = "both"
-        self.corners = [[],[],[],[]]
-        self.corner_style = CONTAINER_CORNER_STYLE
+        self.depth = 0
 
         # set up border
+        self.corners = [[],[],[],[]]
         if border == None:
             border = CONTAINER_BORDER_CHARS
         self.border_style = CONTAINER_BORDER_STYLE
         self.set_borders(border())
 
-        self.depth = 0
+        self.corner_style = CONTAINER_CORNER_STYLE
+        corners = CONTAINER_CORNER_CHARS
+        for i,c in enumerate(corners()):
+            self.set_corner(i,c)
+
 
         # set up flags
         self._do_dynamic_size = dynamic_size
@@ -1330,7 +1345,8 @@ TABBAR_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
 # container
 CONTAINER_BORDER_CHARS  = lambda: "|-"
 CONTAINER_BORDER_STYLE  = lambda depth,item: item
-CONTAINER_CORNER_STYLE  = lambda depth,item: item
+CONTAINER_CORNER_STYLE  = lambda depth,item: CONTAINER_BORDER_STYLE(depth,item)
+CONTAINER_CORNER_CHARS  = lambda: "xxxx"
 CONTAINER_LABEL_STYLE   = lambda item: item
 CONTAINER_VALUE_STYLE   = lambda item: item
 CONTAINER_TITLE_STYLE   = lambda item: italic(bold(item))
