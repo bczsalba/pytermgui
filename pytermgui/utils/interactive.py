@@ -8,7 +8,7 @@ IMPORTANT: the object provided should have type annotations, otherwise
 all arguments will be passed as plain strings.
 """
 
-from .. import Label, Prompt, Container, InputField, bold, italic, color, highlight
+from .. import Label, Prompt, Container, InputField, bold, italic, color, highlight, get_gradient
 from .  import basic_selection as selection
 from .. import padding_label as padding
 from .. import getch, set_style
@@ -223,6 +223,6 @@ def setup():
     set_style('prompt_long_highlight', lambda item: highlight(item,accent1))
     set_style('prompt_short_highlight', lambda item: highlight(item,accent1))
     set_style('prompt_delimiter',      lambda: None)
-    set_style('container_border',      lambda item: bold(color(item,accent2)))
+    set_style('container_border',      lambda depth,item: bold(color(item,get_gradient(accent2)[depth]))
     set_style('label_value',           lambda item: bold(color(item,accent1)))
     wipe()

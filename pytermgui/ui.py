@@ -696,6 +696,13 @@ class Container(BaseElement):
             for i in range(options):
                 self.selectables.append([element,i,len(self.selectables)+i])
 
+        if isinstance(element,Container):
+            element.depth = self.depth + 1
+            for e in element.elements:
+                if isinstance(e,Container):
+                    e.depth = element.depth + 1
+
+
         # update border
         self.get_border()
 
@@ -762,7 +769,7 @@ class Container(BaseElement):
         # insert new
         new = []
         for x,char in zip(range(startx,startx+real_length(value)),value):
-            new.append([x,y,self.corner_style(char)])
+            new.append([x,y,self.corner_style(self.depth,char)])
 
         # filter duplicates
         coords = [[x,y] for x,y,_ in self.border]
@@ -788,7 +795,7 @@ class Container(BaseElement):
         x2 = px+self.width+1
         y2 = py+self.real_height+self.padding-1
 
-        left,top,right,bottom = [self.border_style(a) for a in self.borders]
+        left,top,right,bottom = [self.border_style(self.depth,a) for a in self.borders]
         self.border = []
         for y in range(y1,y2):
             if real_length(left):
@@ -1221,11 +1228,10 @@ TABBAR_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
 
 # container
 CONTAINER_BORDER_CHARS  = lambda: "|-"
-CONTAINER_BORDER_STYLE  = lambda item: item
-CONTAINER_CORNER_STYLE  = lambda item: item
+CONTAINER_BORDER_STYLE  = lambda depth,item: item
+CONTAINER_CORNER_STYLE  = lambda depth,item: item
 CONTAINER_LABEL_STYLE   = lambda item: item
 CONTAINER_VALUE_STYLE   = lambda item: item
-CONTAINER_CORNER_STYLE  = lambda char: char
 CONTAINER_TITLE_STYLE   = lambda item: Color.italic(Color.bold(item))
 CONTAINER_ERROR_STYLE   = lambda item: Color.color(Color.bold(item),'38;5;196')
 CONTAINER_SUCCESS_STYLE = lambda item: Color.color(Color.bold(item),'2')
