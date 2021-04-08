@@ -225,6 +225,7 @@ class Container(BaseElement):
 
         # print elements
         x,starty = self.pos
+        starty += 1
         x += 2
 
         # vertically center elements
@@ -273,12 +274,9 @@ class Container(BaseElement):
         self.height = new_real_height
         self.get_border()
 
-        # print border
-        py = None
-        for x,y,char in self.border[:]:
-            # set previous y
-            py = y
 
+        # print border
+        for x,y,char in self.border[:]:
             # write to stdout
             line += f'\033[{y};{x}H'+char
 
@@ -364,6 +362,9 @@ class Container(BaseElement):
         if not hasattr(self,'border'):
             self.get_border()
 
+        if not len(self.border):
+            return
+
         # get values
         if corner in ["TOP_LEFT",0]:
             char = self.border[1]
@@ -399,9 +400,9 @@ class Container(BaseElement):
 
         ## get y
         if char == self.border[1]:
-            y = py
+            y = py+1
         elif char == self.border[3]:
-            y = py+self.real_height+self.padding-1
+            y = py+self.real_height+self.padding
 
         # insert new
         new = []
@@ -428,9 +429,9 @@ class Container(BaseElement):
         px,py = self.pos
         x1,y1 = px,py
         x1 += 1
-        # y1 += 1
+        y1 += 1
         x2 = px+self.width+1
-        y2 = py+self.real_height+self.padding-1
+        y2 = py+self.real_height+self.padding
 
         left,top,right,bottom = [self.border_style(self.depth,a) for a in self.borders]
         self.border = []
@@ -510,7 +511,7 @@ class Container(BaseElement):
             return
 
         px,py = pos
-        for y in range(py+1,py+self.height+2):
+        for y in range(py,py+self.real_height+1):
             for x in range(px+1,px+self.width+2):
                 sys.stdout.write(f'\033[{y};{x}H ')
 
@@ -867,6 +868,8 @@ class InputField(BaseElement):
 
     def __init__(self, pos: list=None, linecap: int=0, default: str="", prompt: str='', 
             xlimit: int=None, ylimit: int=None, print_at_start: bool=None):
+        super().__init__()
+
         # set up instance variables
         self.value = default
         self.cursor = len(self.value)
@@ -899,7 +902,7 @@ class InputField(BaseElement):
         self._strip_pasted_newlines = True
 
         self.value_style = lambda item: item
-        self.highlight_style = lambda item: Color.highlight(item,7)
+        self.highlight_style = lambda item: highlight(item,7)
 
 
     def send(self, key: str, _do_print: bool=False):
@@ -1362,3 +1365,5 @@ PROMPT_LONG_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
 
 ## label
 LABEL_VALUE_STYLE = lambda item: item
+
+VERBOSE = 0
