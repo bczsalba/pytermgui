@@ -503,7 +503,7 @@ class Container(BaseElement):
         if not height == None:
             self.height = min(height,HEIGHT-2)
         else:
-            self.height = 0
+            self.height = 2
         self.real_height = self.height
 
         # set default position
@@ -532,9 +532,12 @@ class Container(BaseElement):
         self.border_style = CONTAINER_BORDER_STYLE
         self.set_borders(border())
 
+        self.depth = 0
+
         # set up flags
         self._do_dynamic_size = dynamic_size
-        self._do_center_elements = center_elements
+        # this is broken in many ways, and need for it is not certain.
+        self._do_center_elements = True #center_elements
         self._is_centered = False
         self._is_selected = True
 
@@ -581,11 +584,10 @@ class Container(BaseElement):
 
 
         line = ''
-        new_real_height = 0
+        new_real_height = 2
 
         # print elements
         x,starty = self.pos
-        starty += 2
         x += 2
 
         # vertically center elements
@@ -604,7 +606,7 @@ class Container(BaseElement):
             # call event
             self._handle_long_element(e)
 
-            e.pos = [x+1,starty+i]
+            e.pos = [x,starty+i]
 
             # get lines from element
             lines = repr(e).split('\n')
@@ -618,7 +620,7 @@ class Container(BaseElement):
                 dbg('ERROR:',type(e),f'width ({e.width}) was too long or otherwise invalid, ignoring!')
                 continue
 
-            diff = len(lines)
+            diff = e.height
             new_real_height += diff
 
 
@@ -630,9 +632,8 @@ class Container(BaseElement):
             starty += diff-1
 
         
-        if not self.real_height == new_real_height:
-            self.real_height = new_real_height
-            self.height = new_real_height
+        self.real_height = new_real_height
+        self.height = new_real_height
         self.get_border()
 
         # print border
@@ -684,8 +685,10 @@ class Container(BaseElement):
         # add selectables
         if element._is_selectable:
             # set options for range
-            if element.options == None:
-                options = 1
+            if isinstance(element,Container):
+                options = len(element.selectables)
+            elif element.options == None:
+                    options = 1
             else:
                 options = len(element.options)
 
@@ -752,9 +755,9 @@ class Container(BaseElement):
 
         ## get y
         if char == self.border[1]:
-            y = py+1
+            y = py
         elif char == self.border[3]:
-            y = py+self.real_height+2+self.padding
+            y = py+self.real_height+self.padding-1
 
         # insert new
         new = []
@@ -781,19 +784,19 @@ class Container(BaseElement):
         px,py = self.pos
         x1,y1 = px,py
         x1 += 1
-        y1 += 1
+        # y1 += 1
         x2 = px+self.width+1
-        y2 = py+self.real_height+2+self.padding
+        y2 = py+self.real_height+self.padding-1
 
         left,top,right,bottom = [self.border_style(a) for a in self.borders]
         self.border = []
-        for y in range(py+1,y2):
+        for y in range(y1,y2):
             if real_length(left):
                 self.border.append([x1,y,left])
             if real_length(right):
                 self.border.append([x2,y,right])
 
-        for x in range(px+1,x2+1):
+        for x in range(x1,x2+1):
             if real_length(bottom):
                 self.border.append([x,y2,bottom])
             if real_length(top):
