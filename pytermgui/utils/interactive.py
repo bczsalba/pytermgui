@@ -1,11 +1,14 @@
 """ 
 pytermgui.interactive 
 ---------------------
+author: bczsalba
+
 
 A submodule providing functions to call object methods interactively.
 
 IMPORTANT: the object provided should have type annotations, otherwise
 all arguments will be passed as plain strings.
+
 """
 
 from .. import Label, Prompt, Container, InputField, bold, italic, color, highlight, get_gradient
@@ -24,7 +27,7 @@ import re,sys
 dunder = re.compile(r'__[a-z_]+__')
 
 
-def create_picker_from(obj:object, ignored: dict=None):
+def create_picker_from(obj: object, ignored: dict=None):
     """ Create method picker from `obj` """
 
     picker    = Container(width=60)
@@ -47,7 +50,7 @@ def create_picker_from(obj:object, ignored: dict=None):
     print(picker)
     selection(picker)
 
-def create_interactive_from(function:Callable, ignored: dict=None):
+def create_interactive_from(function: Callable, ignored: dict=None):
     """ 
     Create menu to take input from `function`.
 
@@ -102,7 +105,7 @@ def create_interactive_from(function:Callable, ignored: dict=None):
 
     selection(main)
 
-def create_dialog_from(label:str, parameter:Parameter, parent:object):
+def create_dialog_from(label: str, parameter: Parameter, parent:object):
     """
     Create input dialog menu, with title `label`, using data from `parameter`
     to figure out default values and such.
@@ -162,7 +165,7 @@ def create_dialog_from(label:str, parameter:Parameter, parent:object):
 
         print(dialog)
 
-def _run_function(function:Callable, obj:object ,callback: Callable=None):
+def _run_function(function: Callable, obj: object ,callback: Callable=None):
     """
     Execute `function`, using arguments supplied by `obj`.
 
@@ -223,6 +226,6 @@ def setup():
     set_style('prompt_long_highlight', lambda item: highlight(item,accent1))
     set_style('prompt_short_highlight', lambda item: highlight(item,accent1))
     set_style('prompt_delimiter',      lambda: None)
-    set_style('container_border',      lambda depth,item: bold(color(item,get_gradient(accent2)[depth]))
+    set_style('container_border',      lambda depth,item: bold(color(item,get_gradient(accent2)[depth])))
     set_style('label_value',           lambda item: bold(color(item,accent1)))
     wipe()

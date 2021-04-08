@@ -1,4 +1,14 @@
-from ..input import getch, InputField
+"""
+pytermgui.utils
+---------------
+author: bczsalba
+
+
+A subpackage providing simple utilities to pytermgui.
+"""
+
+from ..input import getch
+from ..ui import InputField, Container, Prompt, Label
 import os
 
 
