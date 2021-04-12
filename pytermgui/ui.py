@@ -18,12 +18,12 @@ from typing import Callable, Any, Iterable, Union
 from .helpers import clean_ansi, real_length, break_line
 from . import color, bold, italic, gradient, highlight, underline, get_gradient, strikethrough
 
+
 try:
     import pyperclip as clip
     USE_CLIPBOARD = True
 except ImportError:
     USE_CLIPBOARD = False
-
 
 
 # HELPERS #
@@ -33,10 +33,23 @@ def dbg(*args,**kwargs):
 def set_debugger(fun):
     globals()['dbg'] = fun
 
+def wipe():
+    print('\033[2J\033[H')
+
+def _assert_style(value):
+    assert isinstance(value,Callable), f"\nStyle value \"{value}\" is not callable."
+    try:
+        tester = value(0,'test')
+    except TypeError as e:
+        raise AssertionError(f'Style value \"{value}\" could not take the arguments: [depth: int, item: str]:\nError: {e}')
+    assert isinstance(tester,str), f"\nReturn of \"{value}\" is type \"{type(tester)}\", not str."
+
 
 
 # DATA SETTERS
-def set_style(key: str, value: str):
+def set_style(key: str, value: Callable[[int,str], str]):
+    if not key.endswith('_chars'):
+        _assert_style(value)
     key = key.upper()
 
     if key in globals():
@@ -185,7 +198,10 @@ class Container(BaseElement):
         
 
     # set style for element type `group`
-    def set_style(self, group: BaseElement, key: str, value: Callable):
+    def set_style(self, group: BaseElement, key: str, value: Callable[[int,str], str]):
+        if not key.endswith('_chars'):
+            _assert_style(value)
+
         # non group items
         if group == type(self):
             setattr(self,key+'_style',value)
@@ -471,6 +487,14 @@ class Container(BaseElement):
         # check if everything is valid
         repr(self)
 
+    
+    # insert element to index, naive
+    def insert(self, index: int, element: BaseElement):
+        elements = self.elements.copy()
+        elements.insert(index,element)
+        self.elements = elements
+        repr(self)
+
 
     # select index in selectables list
     def select(self, index: int=None):
@@ -640,7 +664,7 @@ class Prompt(BaseElement):
         - short_highlight_style(item) : used for highlight of short type
         - long_highlight_style(item)  : used for highlight of long type
 
-        - delimiter_style()           : used for to set characters between
+        - delimiter_chars()           : used for to set characters between
                                         which options are printed
                                   
         - label_style(item)           : used for labels
@@ -681,7 +705,7 @@ class Prompt(BaseElement):
         self.short_highlight_style = PROMPT_SHORT_HIGHLIGHT_STYLE
         self.label_style = PROMPT_LABEL_STYLE
         self.value_style = PROMPT_VALUE_STYLE
-        self.delimiter_style = PROMPT_DELIMITER_STYLE
+        self.delimiter_chars = PROMPT_DELIMITER_CHARS
         self.justify = justify_options
         
         # flags
@@ -695,10 +719,10 @@ class Prompt(BaseElement):
             return self.custom_repr(self)
 
         delimiters = []
-        style = self.delimiter_style()
+        style = self.delimiter_chars()
 
         if not style == None:
-            for i,v in enumerate(self.delimiter_style()):
+            for i,v in enumerate(style):
                 if i % 2 == 0:
                     delimiters.append(v+' ')
                 else:
@@ -733,7 +757,7 @@ class Prompt(BaseElement):
             if isinstance(self.options, list):
                 for i,option in enumerate(self.options):
                     option = self.value_style(self.depth,str(option))
-                    line += self._get_option_highlight(i,'short')(start+option+end)+'  '
+                    line += self._get_option_highlight(i,'short')(self.depth,start+option+end)+'  '
             else:
                 line = self.value_style(self.depth,self.value)
 
@@ -773,7 +797,7 @@ class Prompt(BaseElement):
         if self._is_selected and self.selected_index == index:
             return getattr(self,which+'_highlight_style')
         else:
-            return lambda item: item
+            return lambda depth,item: item
 
 
     # select index in options
@@ -796,8 +820,12 @@ class Prompt(BaseElement):
 
 
     # set style
-    def set_style(self, key: str, value: Callable):
-        setattr(self,key+'_style',value)
+    def set_style(self, key: str, value: Callable[[int,str], str]):
+        if not key.endswith('_chars'):
+            key += '_style'
+            _assert_style(value)
+
+        setattr(self,key,value)
 
 
     # method to overwrite
@@ -862,7 +890,10 @@ class Label(BaseElement):
         return "\n".join(lines)
         
     # set style of key to value
-    def set_style(self, key: str, value: str):
+    def set_style(self, key: str, value: Callable[[int,str], str]):
+        if not key.endswith('_chars'):
+            _assert_style(value)
+
         setattr(self,key+'_style',value)
 
 class InputField(BaseElement):
@@ -911,8 +942,8 @@ class InputField(BaseElement):
         self._is_selectable = False
         self._strip_pasted_newlines = True
 
-        self.value_style = lambda item: item
-        self.highlight_style = lambda item: highlight(item,7)
+        self.value_style = INPUTFIELD_VALUE_STYLE
+        self.highlight_style = INPUTFIELD_HIGHLIGHT_STYLE 
 
 
     def send(self, key: str, _do_print: bool=False):
@@ -1040,12 +1071,12 @@ class InputField(BaseElement):
 
         # set highlighter according to highlight param
         if highlight:
-            selected_text = self.highlight_style(charUnderCursor)
+            selected_text = self.highlight_style(self.depth,charUnderCursor)
         else:
             selected_text = charUnderCursor
 
         # construct line
-        line = self.value_style(self.depth,self.prompt + left) + selected_text + self.value_style(right)
+        line = self.value_style(self.depth,self.prompt + left) + selected_text + self.value_style(self.depth,right)
 
         if return_line:
             return line
@@ -1083,11 +1114,11 @@ class InputField(BaseElement):
         self.selected_start = start
         self.selected_end = end
 
-        selected_text = self.highlight_style(selected)
+        selected_text = self.highlight_style(self.depth,selected)
 
         
         self.wipe()
-        line = self.value_style(self.prompt+left) + selected_text + self.value_style(right)
+        line = self.value_style(self.depth,self.prompt+left) + selected_text + self.value_style(self.depth,right)
 
         # write to stdout
         x,y = self.pos
@@ -1096,7 +1127,10 @@ class InputField(BaseElement):
 
     
     # .ui integration
-    def set_style(self, key: str, value: Callable):
+    def set_style(self, key: str, value: Callable[[int,str], str]):
+        if not key.endswith('_chars'):
+            _assert_style(value)
+
         setattr(self,key+'_style',value)
 
     def submit(self):
@@ -1113,7 +1147,7 @@ def event__window_size_changed(caller: object, new: list[int,int], old: list[int
 
 
 # UTILITY FUNCTIONS #
-def container_from_dict(dic: dict, padding: int=4, _prompts_selectable: bool=True, **kwargs) -> Container:
+def container_from_dict(dic: dict, padding: int=4, submit: Callable[[object],Any]=None, **kwargs) -> list[Container]:
     """
     Create a container from elements of `dic`.
 
@@ -1223,6 +1257,10 @@ def container_from_dict(dic: dict, padding: int=4, _prompts_selectable: bool=Tru
             elif key.startswith("ui__prompt"):
                 options = item
                 p = Prompt(options=options)
+
+                if submit:
+                    p.submit = submit
+
                 p.set_style('value',CONTAINER_VALUE_STYLE)
                 
                 if element_id:
@@ -1246,9 +1284,6 @@ def container_from_dict(dic: dict, padding: int=4, _prompts_selectable: bool=Tru
                 button.set_style('value',CONTAINER_VALUE_STYLE)
 
                 set_element_id(button,item.get('id'))
-
-                if not hasattr(button,'handler'):
-                    button.handler = lambda *args: None
 
                 dicts[-1].add_elements(button)
             
@@ -1289,24 +1324,23 @@ def container_from_dict(dic: dict, padding: int=4, _prompts_selectable: bool=Tru
 
             # create, add prompt
             p = Prompt(real_label=str(key),label=str(key),value=str(item),padding=current_padding)
-            p.__ui_options = prompt_options
+            p._internal_options = prompt_options
+            if submit:
+                p.submit = submit 
+
             prompt_options = None
             p.set_style('label',CONTAINER_LABEL_STYLE)
             p.set_style('value',CONTAINER_VALUE_STYLE)
             p.real_value = real_value
-            p._is_selectable = _prompts_selectable
 
             if element_id:
                 set_element_id(p,element_id)
                 element_id = None
 
             if not delim == None:
-                p.delimiter_style = lambda: ['   ','{}']
+                p.delimiter_chars = lambda: ['   ','{}']
                 p.set_style('value',CONTAINER_LABEL_STYLE)
 
-
-            # this array keeps track of path within a dictionary
-            p.__ui_keys = []
 
             # add prompt to dict
             if dicts[-1].height + p.height > HEIGHT-5:
@@ -1318,7 +1352,6 @@ def container_from_dict(dic: dict, padding: int=4, _prompts_selectable: bool=Tru
 
     do_tabline = len(dicts) > 1
     for i,d in enumerate(dicts):
-        d.__ui_keys = []
         if not datafile == None:
             for e in d.elements:
                 e.file = datafile
@@ -1369,11 +1402,16 @@ CONTAINER_SUCCESS_STYLE = lambda depth,item: color(bold(item),'2')
 ## prompt
 PROMPT_LABEL_STYLE = lambda depth,item: item
 PROMPT_VALUE_STYLE = lambda depth,item: item
-PROMPT_DELIMITER_STYLE = lambda: '[]'
+PROMPT_DELIMITER_CHARS = lambda: '[]'
 PROMPT_SHORT_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
 PROMPT_LONG_HIGHLIGHT_STYLE  = GLOBAL_HIGHLIGHT_STYLE
 
 ## label
 LABEL_VALUE_STYLE = lambda depth,item: item
+
+## inputfield
+INPUTFIELD_VALUE_STYLE = lambda depth, item: item
+INPUTFIELD_HIGHLIGHT_STYLE = lambda depth, item: highlight(item,7)
+
 
 VERBOSE = 0

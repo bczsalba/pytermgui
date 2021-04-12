@@ -8,7 +8,7 @@ A subpackage providing simple utilities to pytermgui.
 """
 
 from ..input import getch
-from ..ui import InputField, Container, Prompt, Label
+from ..ui import InputField, Container, Prompt, Label, wipe
 import os
 
 
@@ -17,9 +17,6 @@ class keys:
     next = ["ARROW_DOWN","CTRL_N","j"]
     back = ["ARROW_LEFT","CTRL_B","h"]
     fore = ["ARROW_RIGHT","CTRL_F","l"]
-
-def wipe():
-    print('\033[2J\033[H')
 
 def hide_cursor(value: bool=True):
     InputField.set_cursor_visible('',not value)
