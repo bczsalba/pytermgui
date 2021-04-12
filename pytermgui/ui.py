@@ -93,6 +93,7 @@ class BaseElement:
         self.height = 1
         self.real_height = self.height
         self.pos = [0,0]
+        self.depth = 0
 
         self._is_selectable = True
         self._is_selected = False
@@ -108,16 +109,17 @@ class Container(BaseElement):
     Check individual classes for more details.
 
     Styles for Container & its children:
+        all styles are called with arguments (depth,style)
         (ones marked with * are only checked on __init__, otherwise need to be set with their respective setters)
         - *border_chars              = characters to use for border, [left,top,right,bottom]
-        - border_style(depth,item)   = style for border characters
-        - *corner_chars(item)        = characters to use for corners, [l_top,r_top,r_bottom,l_bottom]
-        - corner_style(depth,item)   = style for corner characters
-        - label_style(item)          = style for Prompt.label
-        - value_style(item)          = style for Prompt.value
-        - title_style(item)          = style for ui__title elements from container_from_dict
-        - error_style(item)          = style for ui__error_title elements from container_from_dict
-        - success_style(item)        = style for ui__success_title elements from container_from_dict
+        - border_style               = style for border characters
+        - *corner_chars              = characters to use for corners, [l_top,r_top,r_bottom,l_bottom]
+        - corner_style               = style for corner characters
+        - label_style                = style for Prompt.label
+        - value_style                = style for Prompt.value
+        - title_style                = style for ui__title elements from container_from_dict
+        - error_style                = style for ui__error_title elements from container_from_dict
+        - success_style              = style for ui__success_title elements from container_from_dict
     """
 
     def __init__(self, pos: list[int,int]=None, border: Iterable[str]=None, 
@@ -286,6 +288,13 @@ class Container(BaseElement):
 
     # internal function to add elements
     def _add_element(self, element: BaseElement):
+        def _update_children_depth(element):
+            current = element.depth + 1
+            if isinstance(element,Container):
+                for e in element.elements:
+                    e.depth = current
+                    _update_children_depth(e)
+
         # set width for element if none is available
         if element.width == None:
             element.width = self.width
@@ -331,11 +340,8 @@ class Container(BaseElement):
             for i in range(options):
                 self.selectables.append([element,i,len(self.selectables)+i])
 
-        if isinstance(element,Container):
-            element.depth = self.depth + 1
-            for e in element.elements:
-                if isinstance(e,Container):
-                    e.depth = element.depth + 1
+        element.depth = self.depth + 1
+        _update_children_depth(element)
 
 
         # update border
@@ -564,7 +570,11 @@ class Container(BaseElement):
     
     def submit(self):
         selected = self.selected[0]
-        return selected.submit()
+        try:
+            return selected.submit()
+        except TypeError:
+            return selected.submit(selected)
+
 
     # EVENT: window size changed
     # - checked for during __repr__
@@ -702,18 +712,18 @@ class Prompt(BaseElement):
         
         # if there is a label do <label> [ ]
         if not self.label == None:
-            label = self.label_style(self.label)
-            value = self.value_style(self.value)
+            label = self.label_style(self.depth,self.label)
+            value = self.value_style(self.depth,self.value)
 
-            highlight_len = real_length(self.long_highlight_style(''))
-            highlight = (self.long_highlight_style if self._is_selected else lambda item: highlight_len*' '+item)
+            highlight_len = real_length(self.long_highlight_style(0,''))
+            highlight = (self.long_highlight_style if self._is_selected else lambda depth,item: highlight_len*' '+item)
             middle_pad = (self.width-real_length(label)) - real_length(start+end) - real_length(value) - max(self.padding,2)
             middle_pad = max(2,middle_pad)
 
             left = ' ' + label + middle_pad*" "
             right = start + value + end
 
-            line = (self.padding-1-highlight_len)*' '+highlight(left + right)+'  '
+            line = (self.padding-1-highlight_len)*' '+highlight(self.depth, left + right)+'  '
             self.width = max(self.width,real_length(line))
 
         # else print all options
@@ -722,10 +732,10 @@ class Prompt(BaseElement):
             line = ''
             if isinstance(self.options, list):
                 for i,option in enumerate(self.options):
-                    option = self.value_style(str(option))
+                    option = self.value_style(self.depth,str(option))
                     line += self._get_option_highlight(i,'short')(start+option+end)+'  '
             else:
-                line = self.value_style(self.value)
+                line = self.value_style(self.depth,self.value)
 
             # center all lines 
             lines = break_line(line,_len=self.width-3,_separator="  ")
@@ -831,7 +841,7 @@ class Label(BaseElement):
         self.width = real_length(self.value)+3
         
     def __repr__(self):
-        lines = break_line(self.value_style(self.value),_len=self.width-self.padding)
+        lines = break_line(self.value_style(self.depth,self.value),_len=self.width-self.padding)
 
         if self.justify == "left":
             # nothing needs to be done
@@ -1035,7 +1045,7 @@ class InputField(BaseElement):
             selected_text = charUnderCursor
 
         # construct line
-        line = self.value_style(self.prompt + left) + selected_text + self.value_style(right)
+        line = self.value_style(self.depth,self.prompt + left) + selected_text + self.value_style(right)
 
         if return_line:
             return line
@@ -1341,7 +1351,7 @@ ELEMENT_ATTRIBUTES = {}
 # styles
 ## other
 DEFAULT_COLOR_PREFIX = "38;5"
-GLOBAL_HIGHLIGHT_STYLE = highlight
+GLOBAL_HIGHLIGHT_STYLE = lambda depth,item: highlight(item)
 CURSOR_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
 TABBAR_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
 
@@ -1350,20 +1360,20 @@ CONTAINER_BORDER_CHARS  = lambda: "|-"
 CONTAINER_BORDER_STYLE  = lambda depth,item: item
 CONTAINER_CORNER_STYLE  = lambda depth,item: CONTAINER_BORDER_STYLE(depth,item)
 CONTAINER_CORNER_CHARS  = lambda: "xxxx"
-CONTAINER_LABEL_STYLE   = lambda item: item
-CONTAINER_VALUE_STYLE   = lambda item: item
-CONTAINER_TITLE_STYLE   = lambda item: italic(bold(item))
-CONTAINER_ERROR_STYLE   = lambda item: color(bold(item),'38;5;196')
-CONTAINER_SUCCESS_STYLE = lambda item: color(bold(item),'2')
+CONTAINER_LABEL_STYLE   = lambda depth,item: item
+CONTAINER_VALUE_STYLE   = lambda depth,item: item
+CONTAINER_TITLE_STYLE   = lambda depth,item: italic(bold(item))
+CONTAINER_ERROR_STYLE   = lambda depth,item: color(bold(item),'38;5;196')
+CONTAINER_SUCCESS_STYLE = lambda depth,item: color(bold(item),'2')
 
 ## prompt
-PROMPT_LABEL_STYLE = lambda item: item
-PROMPT_VALUE_STYLE = lambda item: item
+PROMPT_LABEL_STYLE = lambda depth,item: item
+PROMPT_VALUE_STYLE = lambda depth,item: item
 PROMPT_DELIMITER_STYLE = lambda: '[]'
 PROMPT_SHORT_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
-PROMPT_LONG_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
+PROMPT_LONG_HIGHLIGHT_STYLE  = GLOBAL_HIGHLIGHT_STYLE
 
 ## label
-LABEL_VALUE_STYLE = lambda item: item
+LABEL_VALUE_STYLE = lambda depth,item: item
 
 VERBOSE = 0

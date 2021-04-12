@@ -1,4 +1,21 @@
 #!/usr/bin/env python3
+"""
+pytermgui/examples/project_picker.py
+------------------------------------
+
+Program that reads a list of `projects` from 
+`CONFIG_LOCATION`, and presents you with a picker
+to select from them. 
+
+The config file is generated if not found, and allows for
+simple styling.
+
+KEYS:
+    - SPACE: open directory in new bash shell
+    - ENTER: open directory/file in `EDITOR`
+    - gg   : go to top
+    - G    : go to bottom
+"""
 
 # constants
 CONFIG_LOCATION = "/Users/plum/.config/vim/"
