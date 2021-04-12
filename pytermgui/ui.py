@@ -244,7 +244,7 @@ class Container(BaseElement):
             # call event
             self._handle_long_element(e)
 
-            e.pos = [x,starty+i]
+            e.pos = [x,starty+i-1]
 
             # get lines from element
             lines = repr(e).split('\n')
