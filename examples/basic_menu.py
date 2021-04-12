@@ -1,6 +1,17 @@
+"""
+pytermgui/examples/readme.py
+----------------------------
+author: bczsalba
+
+
+Slightly more involved file for creating a basic menu.
+Uses minimal styling
+Contains code from README.md, but has comments too!
+"""
+
 from pytermgui import Container,container_from_dict,getch,set_style
 from pytermgui import color,bold,highlight,gradient
-from pytermgui.utils import basic_selection as selection
+from pytermgui.utils import basic_selection as basic_selection
 
 # set up dummy data
 data = {
@@ -18,13 +29,13 @@ data = {
 }
 
 # set styles
-set_style('container_title',lambda item: bold(color(item,210)))
-set_style('container_label',lambda item: color(item,248))
-set_style('container_value',lambda item: color(item,72))
+set_style('container_title',lambda depth,item: bold(color(item,210)))
+set_style('container_label',lambda depth,item: color(item,248))
+set_style('container_value',lambda depth,item: color(item,72))
 set_style('container_border',lambda depth,item: bold(color(item,60)))
-set_style('prompt_short_highlight',lambda item: highlight(item,72))
-set_style('prompt_long_highlight',lambda item: highlight(item,72))
-set_style('prompt_delimiter_style',lambda: ['< ',' >'])
+set_style('prompt_short_highlight',lambda depth,item: highlight(item,72))
+set_style('prompt_long_highlight',lambda depth,item: highlight(item,72))
+set_style('prompt_delimiter_chars',lambda: ['< ',' >'])
 
 # clear screen
 print('\033[2J')
@@ -38,5 +49,6 @@ c.center()
 c.select()
 print(c)
 
-# run selection loop
-selection(c)
+# this function can be called for a very basic selection loop, 
+# but it is recommended to write your own for most applications.
+basic_selection(c)

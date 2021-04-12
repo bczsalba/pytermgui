@@ -31,6 +31,11 @@ c.center()
 print('\033[2J')
 print(c)
 
+# - this can be substituted for:
+# from pytermgui.utils import basic_selection
+# basic_selection(c)
+# - but for anything more advanced than basic use
+#   you should define your own method.
 while True:
     key = getch()
 

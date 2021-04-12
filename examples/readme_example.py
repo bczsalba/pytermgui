@@ -1,5 +1,14 @@
+""" pytermgui/examples/readme_example.py
+----------------------------
+author: bczsalba
+
+
+Very simple "getting started" file.
+Contains code from README.md, but has comments too!
+"""
+
 from pytermgui import Container,container_from_dict,getch
-from pytermgui.utils import basic_selection as selection
+from pytermgui.utils import basic_selection
 
 # set up dummy data dictionary
 data = {
@@ -28,4 +37,6 @@ print('\033[2J')
 # print container
 print(c)
 
-selection(c)
+# this function can be called for a very basic selection loop, 
+# but it is recommended to write your own for most applications.
+basic_selection(c)

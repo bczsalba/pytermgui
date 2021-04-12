@@ -2,6 +2,8 @@
 """
 pytermgui/examples/project_picker.py
 ------------------------------------
+author: bczsalba
+
 
 Program that reads a list of `projects` from 
 `CONFIG_LOCATION`, and presents you with a picker
@@ -50,7 +52,7 @@ projects.sort()
 
 # set basic styles
 set_style('container_border',lambda depth,item: bold(color(item,get_gradient(styles.get('border'))[depth])))
-set_style('prompt_long_highlight',lambda item: highlight(item,styles.get('highlight')))
+set_style('prompt_long_highlight',lambda depth,item: highlight(item,styles.get('highlight')))
 
 
 # create container
@@ -66,7 +68,7 @@ if styles.get('corners'):
 
 # create and add title
 title = Label(value=styles.get('title_text'),justify='left')
-title.set_style('value',lambda item: bold(color(item,styles.get('title'))))
+title.set_style('value',lambda depth,item: bold(color(item,styles.get('title'))))
 line = Label('--------',justify='left')
 line.set_style('value', title.value_style)
 
@@ -80,8 +82,8 @@ for p in projects:
     # set value to be referenced on enter
     prompt.path = p
     # set delimiters to be None
-    prompt.set_style('delimiter',lambda: None)
-    prompt.set_style('label',lambda item: color(item,styles.get('prompt')))
+    prompt.set_style('delimiter_chars', lambda: None)
+    prompt.set_style('label',lambda depth,item: color(item,styles.get('prompt')))
     # add to container
     c.add_elements(prompt)
 
@@ -136,6 +138,7 @@ while True:
             else:
                 os.chdir(obj.path)
                 InputField.set_cursor_visible('',True)
+                os.system('clear')
                 os.system('bash')
 
         os.system('clear')
