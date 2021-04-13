@@ -22,6 +22,8 @@ def hide_cursor(value: bool=True):
     InputField.set_cursor_visible('',not value)
 
 def basic_selection(obj,break_on_submit=False):
+    obj.select()
+    print(obj)
     while True:
         key = getch()
 

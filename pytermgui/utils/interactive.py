@@ -225,7 +225,7 @@ def setup():
     accent2 = randint(17,230)
     set_style('prompt_long_highlight',  lambda depth,item: highlight(item,accent1))
     set_style('prompt_short_highlight', lambda depth,item: highlight(item,accent1))
-    set_style('prompt_delimiter',       lambda: None)
+    set_style('prompt_delimiter_chars',       lambda: None)
     set_style('container_border',       lambda depth,item: bold(color(item,get_gradient(accent2)[depth])))
     set_style('label_value',            lambda depth,item: bold(color(item,accent1)))
     wipe()

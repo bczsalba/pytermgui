@@ -106,10 +106,31 @@ class BaseElement:
         self.height = 1
         self.real_height = self.height
         self.pos = [0,0]
+        self.parent = None
         self.depth = 0
 
         self._is_selectable = True
         self._is_selected = False
+
+    def __add__(self,other):
+        """
+        Allows for the syntax:
+            c = Label('title') + Prompt('input')
+        """
+        if isinstance(other,Container) and not isinstance(self,Container):
+            other.add_elements(self)
+            return other
+
+        if self.parent:
+            c = self.parent
+        else:
+            c = Container()
+            c.add_elements(self)
+
+        c.add_elements(other)
+
+        return c
+ 
 
 class Container(BaseElement):
     """
@@ -136,8 +157,8 @@ class Container(BaseElement):
     """
 
     def __init__(self, pos: list[int,int]=None, border: Iterable[str]=None, 
-            width: int=None,height: int=None, dynamic_size: bool=True, 
-            center_elements: bool=True, padding: int=0):
+            width: int=40,height: int=None, dynamic_size: bool=True, 
+            center_elements: bool=True, shorten_elements: bool=True, padding: int=0):
 
         super().__init__()
 
@@ -185,9 +206,10 @@ class Container(BaseElement):
         for i,c in enumerate(corners()):
             self.set_corner(i,c)
 
+        if shorten_elements:
+            self._handle_long_element = self.shorten_element
 
         # set up flags
-        self._do_dynamic_size = dynamic_size
         # this is broken in many ways, and need for it is not certain.
         self._do_center_elements = True #center_elements
         self._is_centered = False
@@ -196,26 +218,6 @@ class Container(BaseElement):
         # optional flag to avoid wiping
         self._has_printed = True
         
-
-    # set style for element type `group`
-    def set_style(self, group: BaseElement, key: str, value: Callable[[int,str], str]):
-        if not key.endswith('_chars'):
-            _assert_style(value)
-
-        # non group items
-        if group == type(self):
-            setattr(self,key+'_style',value)
-            return
-
-        if not group in self.styles.keys():
-            self.styles[group] = {}
-
-        self.styles[group][key] = value
-
-        for e in self.elements:
-            if type(e) == group:
-                e.set_style(key,value)
-
 
     # text representation of self
     def __repr__(self):
@@ -255,8 +257,6 @@ class Container(BaseElement):
         extra_lines = 0
         self.lines = []
         for i,e in enumerate(self.elements):
-            if False and self._do_dynamic_size:
-                self.width = min(max(self.width,e.width+4),WIDTH-4)
             e.width = self.width - 4
 
             # call event
@@ -301,9 +301,22 @@ class Container(BaseElement):
         self.previous_repr = line
         return line
 
+    
+    # overwrite add to not create new objects
+    def __add__(self,other):
+        self._add_element(other)
+        return self
+
+
+    # overwrite iadd to not create new objects
+    def __iadd__(self,other):
+        self._add_element(other)
+        return self
 
     # internal function to add elements
     def _add_element(self, element: BaseElement):
+        assert issubclass(type(element),BaseElement),f"Object of type {type(element)} is not a subclass of BaseElement."
+
         def _update_children_depth(element):
             current = element.depth + 1
             if isinstance(element,Container):
@@ -311,19 +324,30 @@ class Container(BaseElement):
                     e.depth = current
                     _update_children_depth(e)
 
+        def _get_deep_selectables(element):
+            if isinstance(element,Container):
+                options = []
+                for e in element.elements:
+                    new = _get_deep_selectables(e)
+                    options += new
+                return options
+            
+            elif element._is_selectable:
+                if element.options:
+                    return element.options
+                else:
+                    return [element]
+            else:
+                return []
+                
+
         # set width for element if none is available
         if element.width == None:
             element.width = self.width
+        
+        elif element.width >= self.width:
+            self.width = element.width + 4
 
-        # update self sizing
-        if self.width == None or self._do_dynamic_size:
-            # if element is too wide selt self width to it+pad
-            if WIDTH-5 > element.width >= self.width:
-                self.width = element.width+3
-
-            # if element is too tall set self height
-            if self.real_height+element.height >= self.height:
-                self.height = self.real_height+element.height
 
         # run element to update its values
         repr(element)
@@ -346,7 +370,7 @@ class Container(BaseElement):
         if element._is_selectable:
             # set options for range
             if isinstance(element,Container):
-                options = len(element.selectables)
+                options = len(_get_deep_selectables(element))
             elif element.options == None:
                     options = 1
             else:
@@ -362,6 +386,27 @@ class Container(BaseElement):
 
         # update border
         self.get_border()
+        repr(self)
+
+
+    # set style for element type `group`
+    def set_style(self, group: BaseElement, key: str, value: Callable[[int,str], str]):
+        if not key.endswith('_chars'):
+            _assert_style(value)
+
+        # non group items
+        if group == type(self):
+            setattr(self,key+'_style',value)
+            return
+
+        if not group in self.styles.keys():
+            self.styles[group] = {}
+
+        self.styles[group][key] = value
+
+        for e in self.elements:
+            if type(e) == group:
+                e.set_style(key,value)
 
 
     # set border values
@@ -600,23 +645,7 @@ class Container(BaseElement):
             return selected.submit(selected)
 
 
-    # EVENT: window size changed
-    # - checked for during __repr__
-    def _window_size_changed(self):
-        wipe()
-
-        self.width = min(self.width,WIDTH-5)
-        self.height = min(self.height,HEIGHT)
-
-        if self._is_centered:
-            self.center()
-
-        self.get_border()
-
-
-    # EVENT: check for long elements, handle them
-    # - called during __repr__ element loop
-    def _handle_long_element(self, e: BaseElement):
+    def shorten_element(self, e: BaseElement):
         if hasattr(e,'label') and hasattr(e,'value') and not isinstance(e.value,dict):
             # check value length
             if real_length(str(e.value))+4 > self.width*(1/3):
@@ -631,6 +660,24 @@ class Container(BaseElement):
             # second check
             if real_length(str(e.label))+4 > self.width*(1/2):
                 e.label = str(e.label)[:int(self.width*(1/3))-3]+'...'
+
+
+    # EVENT: window size changed
+    # - checked for during __repr__
+    def _window_size_changed(self):
+        wipe()
+
+        self.width = min(self.width,WIDTH-5)
+        self.height = min(self.height,HEIGHT)
+
+        if self._is_centered:
+            self.center()
+
+        self.get_border()
+
+
+    def _handle_long_element(self, e: BaseElement):
+        return e
 
 
     # EVENT: start of repr
@@ -673,7 +720,7 @@ class Prompt(BaseElement):
     """
    
     def __init__(self, label: str=None, width: int=None, options: list[str]=None, real_label: str=None,
-            justify_options: str='center', value: str="", padding: int=0): 
+            justify_options: str='center', value: str="", padding: int=None): 
         super().__init__()
 
         # the existence of label decides the layout (<> []/[] [] [])
@@ -708,6 +755,22 @@ class Prompt(BaseElement):
         self.delimiter_chars = PROMPT_DELIMITER_CHARS
         self.justify = justify_options
         
+        if self.options:
+            delims = self.delimiter_chars()
+            if not delims:
+                delim_length = 0
+            else:
+                delim_length = len(delims)
+            self.width = sum(len(o) for o in self.options) + delim_length + 3
+        else:
+            self.width = len(self.label+self.value)
+            if padding == None:
+                padding = 2
+                self.padding = 2
+
+        if padding == None:
+            self.padding = 0
+
         # flags
         self._is_selectable = True
         self._is_selected = False
