@@ -183,8 +183,8 @@ class Container(BaseElement):
         # set up values
         self.previous_pos = None
         self.previous_repr = None
-        self.padding = padding
 
+        self.padding = padding
         self.elements = []
         self.selected = None
         self.selectables = []
@@ -312,6 +312,12 @@ class Container(BaseElement):
     def __iadd__(self,other):
         self._add_element(other)
         return self
+
+    
+    # index into elements
+    def __getitem__(self,item):
+        return self.elements[item]
+
 
     # internal function to add elements
     def _add_element(self, element: BaseElement):
@@ -723,6 +729,8 @@ class Prompt(BaseElement):
             justify_options: str='center', value: str="", padding: int=None): 
         super().__init__()
 
+        assert options or label, f'Neither options, nor label was given.'
+
         # the existence of label decides the layout (<> []/[] [] [])
         if label:
             self.label = str(label)
@@ -762,6 +770,7 @@ class Prompt(BaseElement):
             else:
                 delim_length = len(delims)
             self.width = sum(len(o) for o in self.options) + delim_length + 3
+
         else:
             self.width = len(self.label+self.value)
             if padding == None:
