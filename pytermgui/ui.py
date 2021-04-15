@@ -244,6 +244,7 @@ class Container(BaseElement):
         new_real_height = 2
 
         # print elements
+        self.width = min(WIDTH-1,self.width)
         x,starty = self.pos
         starty += 1
         x += 2
@@ -257,35 +258,18 @@ class Container(BaseElement):
         extra_lines = 0
         self.lines = []
         for i,e in enumerate(self.elements):
-            e.width = self.width - 4
+            is_container = 1 if isinstance(e,Container) else 0
+            e.width = self.width - 3 - ( 1 if is_container else 0)
 
             # call event
             self._handle_long_element(e)
 
-            e.pos = [x,starty+i-1]
+            e.pos = [x,starty+i-is_container]
+            line += repr(e)
 
-            # get lines from element
-            lines = repr(e).split('\n')
-
-            # remove lines whos line_break returned empty
-            if lines == [""] and not e.value == '':
-                self.elements.remove(e)
-                for o in self.selectables:
-                    if o[0] == e:
-                        self.selectables.remove(o)
-                dbg('ERROR:',type(e),f'width ({e.width}) was too long or otherwise invalid, ignoring!')
-                continue
-
-            diff = e.height
-            new_real_height += diff
-
-
-            self.lines += lines
-            for li,l in enumerate(lines):
-                line += f"\033[{starty+i+li};{x}H"+(real_length(l)+2)*' '
-                line += f"\033[{starty+i+li};{x}H "+l
-
-            starty += diff-1
+            new_real_height += e.height
+            starty += e.height - 1 
+            continue
 
         
         self.real_height = new_real_height
@@ -349,10 +333,10 @@ class Container(BaseElement):
 
         # set width for element if none is available
         if element.width == None:
-            element.width = self.width
+            element.width = self.width - 1
         
         elif element.width >= self.width:
-            self.width = element.width + 4
+            self.width = element.width + 1
 
 
         # run element to update its values
@@ -417,7 +401,10 @@ class Container(BaseElement):
 
     # set border values
     def set_borders(self, border: Iterable[str]):
-        if len(border) == 1:
+        if border == None:
+            self.borders = ['','','','']
+
+        elif len(border) == 1:
             border = border[0]
             self.borders = [border,border,border,border]
         elif len(border) == 2:
@@ -634,6 +621,8 @@ class Container(BaseElement):
             y = (HEIGHT-self.height-yoffset)//2
         self.move([x,y])
 
+        return self
+
 
     def export(self, filename: str):
         if not filename.endswith('.ptg'):
@@ -769,10 +758,17 @@ class Prompt(BaseElement):
                 delim_length = 0
             else:
                 delim_length = len(delims)
-            self.width = sum(len(o) for o in self.options) + delim_length + 3
+            self.width = sum(len(str(o)) for o in self.options) + delim_length + 3
 
         else:
-            self.width = len(self.label+self.value)
+            _label = ''
+            _value = ''
+            if label:
+                _label = self.label
+            if value:
+                _value = self.value
+
+            self.width = len(_label+_value)
             if padding == None:
                 padding = 2
                 self.padding = 2
@@ -787,9 +783,6 @@ class Prompt(BaseElement):
 
     # return string representation of self
     def __repr__(self):
-        if hasattr(self,'custom_repr'):
-            return self.custom_repr(self)
-
         delimiters = []
         style = self.delimiter_chars()
 
@@ -861,7 +854,9 @@ class Prompt(BaseElement):
             self.height = len(lines)
             line = "\n".join(lines) 
         
-        return line
+        x,y = self.pos
+
+        return f'\033[{y};{x}H'+line
 
 
     # get highlight value for index in options
@@ -959,7 +954,8 @@ class Label(BaseElement):
                 lines[i] = pad + l
 
         self.height = len(lines)
-        return "\n".join(lines)
+        x,y = self.pos
+        return f'\033[{y};{x}H'+"\n".join(lines)
         
     # set style of key to value
     def set_style(self, key: str, value: Callable[[int,str], str]):

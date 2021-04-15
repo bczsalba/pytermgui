@@ -13,7 +13,7 @@ import os
 
 
 class keys:
-    prev = ["ARROW_UP","CTRL_K","k"]
+    prev = ["ARROW_UP","CTRL_P","k"]
     next = ["ARROW_DOWN","CTRL_N","j"]
     back = ["ARROW_LEFT","CTRL_B","h"]
     fore = ["ARROW_RIGHT","CTRL_F","l"]
