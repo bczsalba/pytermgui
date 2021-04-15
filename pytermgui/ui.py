@@ -288,14 +288,26 @@ class Container(BaseElement):
     
     # overwrite add to not create new objects
     def __add__(self,other):
+        assert self is not other
+
+        if isinstance(other,Container):
+            if id(self.elements) == id(other.elements):
+                raise TypeError("The id-s of the list of elements for (self,other) cannot be identical.")
+
+            assert self not in other.elements,f"You cannot add an element that this object is already a part of."
+        
+        elif isinstance(other,list):
+            c = Container()
+            c.add_elements(other)
+            other = c
+
         self._add_element(other)
         return self
 
 
     # overwrite iadd to not create new objects
     def __iadd__(self,other):
-        self._add_element(other)
-        return self
+        return self + other
 
     
     # index into elements
@@ -717,8 +729,6 @@ class Prompt(BaseElement):
     def __init__(self, label: str=None, width: int=None, options: list[str]=None, real_label: str=None,
             justify_options: str='center', value: str="", padding: int=None): 
         super().__init__()
-
-        assert options or label, f'Neither options, nor label was given.'
 
         # the existence of label decides the layout (<> []/[] [] [])
         if label:
