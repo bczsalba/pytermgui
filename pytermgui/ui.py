@@ -833,13 +833,14 @@ class Prompt(BaseElement):
                 lines = []
                 buff = ''
                 for i,option in enumerate(self.options):
+                    option = self.value_style(self.depth,str(option))
+                    buff += self._get_option_highlight(i,'short')(self.depth,start+option+end)+'  '
+
                     if real_length(buff) > self.width-3:
                         lines.append(buff)
                         buff = ''
                         continue
 
-                    option = self.value_style(self.depth,str(option))
-                    buff += self._get_option_highlight(i,'short')(self.depth,start+option+end)+'  '
                 lines.append(buff)
                 
             else:
