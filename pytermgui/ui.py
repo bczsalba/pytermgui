@@ -795,6 +795,7 @@ class Prompt(BaseElement):
     def __repr__(self):
         delimiters = []
         style = self.delimiter_chars()
+        x,y = self.pos
 
         if not style == None:
             for i,v in enumerate(style):
@@ -822,22 +823,29 @@ class Prompt(BaseElement):
             left = ' ' + label + middle_pad*" "
             right = start + value + end
 
-            line = (self.padding-1-highlight_len)*' '+highlight(self.depth, left + right)+'  '
+            line = f'\033[{y};{x}H'+(self.padding-1-highlight_len)*' '+highlight(self.depth, left + right)+'  '
             self.width = max(self.width,real_length(line))
 
         # else print all options
         else:
             # set up line
-            line = ''
             if isinstance(self.options, list):
+                lines = []
+                buff = ''
                 for i,option in enumerate(self.options):
+                    if real_length(buff) > self.width-3:
+                        lines.append(buff)
+                        buff = ''
+                        continue
+
                     option = self.value_style(self.depth,str(option))
-                    line += self._get_option_highlight(i,'short')(self.depth,start+option+end)+'  '
+                    buff += self._get_option_highlight(i,'short')(self.depth,start+option+end)+'  '
+                lines.append(buff)
+                
             else:
                 line = self.value_style(self.depth,self.value)
+                lines = break_line(line,_len=self.width-3,_separator="  ")
 
-            # center all lines 
-            lines = break_line(line,_len=self.width-3,_separator="  ")
 
             if lines == []:
                 if VERBOSE:
@@ -863,10 +871,12 @@ class Prompt(BaseElement):
             # set new hight, return line
             self.height = len(lines)
             line = "\n".join(lines) 
+            line = ''
+            for i,l in enumerate(lines):
+                line += f'\033[{y+i};{x}H'
+                line += l
         
-        x,y = self.pos
-
-        return f'\033[{y};{x}H'+line
+        return line
 
 
     # get highlight value for index in options
