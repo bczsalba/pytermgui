@@ -19,6 +19,7 @@ from .helpers import clean_ansi, real_length, break_line
 from . import color, bold, italic, gradient, highlight, underline, get_gradient, strikethrough
 
 
+
 try:
     import pyperclip as clip
     USE_CLIPBOARD = True
