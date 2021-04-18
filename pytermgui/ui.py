@@ -131,7 +131,17 @@ class BaseElement:
         c.add_elements(other)
 
         return c
- 
+
+    def wipe(self):
+        line = ''
+        x,y = self.pos
+
+        container_offset = (1 if isinstance(self,Container) else 0)
+        for i in range(container_offset,self.height+container_offset):
+            line += f'\033[{y+i};{x+container_offset}H'+(self.width+container_offset)*' '
+
+        print(line,end='')
+
 
 class Container(BaseElement):
     """
@@ -323,6 +333,12 @@ class Container(BaseElement):
         return len(self.elements)
 
 
+    # iterate through elements
+    def __iter__(self):
+        for e in self.elements:
+            yield e
+
+
     # internal function to add elements
     def _add_element(self, element: BaseElement):
         assert issubclass(type(element),BaseElement),f"Object of type {type(element)} is not a subclass of BaseElement."
@@ -330,14 +346,14 @@ class Container(BaseElement):
         def _update_children_depth(element):
             current = element.depth + 1
             if isinstance(element,Container):
-                for e in element.elements:
+                for e in element:
                     e.depth = current
                     _update_children_depth(e)
 
         def _get_deep_selectables(element):
             if isinstance(element,Container):
                 options = []
-                for e in element.elements:
+                for e in element:
                     new = _get_deep_selectables(e)
                     options += new
                 return options
@@ -357,7 +373,6 @@ class Container(BaseElement):
         
         elif element.width >= self.width:
             self.width = element.width + 1
-
 
         # run element to update its values
         repr(element)
@@ -589,7 +604,7 @@ class Container(BaseElement):
   
     
     # go through object, wipe ever character contained
-    def wipe(self, pos: list[int,int]=None, force: bool=False):
+    def _wipe(self, pos: list[int,int]=None, force: bool=False):
         if not self._has_printed or force:
             return
 
@@ -833,7 +848,6 @@ class Prompt(BaseElement):
             right = start + value + end
 
             line = f'\033[{y};{x}H'+(self.padding-1-highlight_len)*' '+highlight(self.depth, left + right)+'  '
-            self.width = max(self.width,real_length(line))
 
         # else print all options
         else:
