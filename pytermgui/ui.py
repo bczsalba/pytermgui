@@ -317,6 +317,11 @@ class Container(BaseElement):
     def __getitem__(self,item):
         return self.elements[item]
 
+    
+    # get len of elements
+    def __len__(self):
+        return len(self.elements)
+
 
     # internal function to add elements
     def _add_element(self, element: BaseElement):
@@ -391,7 +396,6 @@ class Container(BaseElement):
 
         # update border
         self.get_border()
-        repr(self)
 
 
     # set style for element type `group`
@@ -537,16 +541,15 @@ class Container(BaseElement):
         for e in elements:
             self._add_element(e)
 
-        # check if everything is valid
-        repr(self)
-
     
     # insert element to index, naive
     def insert(self, index: int, element: BaseElement):
         elements = self.elements.copy()
-        elements.insert(index,element)
+        self._add_element(element)
+        added = self.elements.pop(-1)
+
+        elements.insert(index,added)
         self.elements = elements
-        repr(self)
 
 
     # select index in selectables list
@@ -570,16 +573,19 @@ class Container(BaseElement):
 
         # go through selectables
         target_element = self.selectables[index][0]
+        _could_select = False
         for i,(e,sub_i,_) in enumerate(self.selectables):
             # check if current is the target
             if i == index:
                 e.select(sub_i)
+                _could_select = True
                 
             # unselect element if 
             elif not target_element == self.selectables[i][0]:
                 e._is_selected = False
 
-        self._selection_changed(self,index)
+        if _could_select:
+            self._selection_changed(self,index)
   
     
     # go through object, wipe ever character contained
