@@ -259,12 +259,14 @@ class Container(BaseElement):
         self.lines = []
         for i,e in enumerate(self.elements):
             is_container = 1 if isinstance(e,Container) else 0
-            e.width = self.width - 3 - ( 1 if is_container else 0)
+
+            if not (hasattr(e,'static_width') and e.static_width):
+                e.width = self.width - 3 - ( 1 if is_container else 0)
 
             # call event
             self._handle_long_element(e)
 
-            e.pos = [x,starty+i-is_container]
+            e.pos = [x+(self.width-e.width-3)//2,starty+i-is_container]
             line += repr(e)
 
             new_real_height += e.height
@@ -866,7 +868,7 @@ class Prompt(BaseElement):
 
             elif self.justify == "right":
                 for i,l in enumerate(lines):
-                    pad = self.width-real_length(lines[i])-self.padding+2
+                    pad = self.width-real_length(lines[i])+4-self.padding
                     lines[i] = pad*' '+l
                 
             # set new hight, return line
@@ -976,7 +978,12 @@ class Label(BaseElement):
 
         self.height = len(lines)
         x,y = self.pos
-        return f'\033[{y};{x}H'+"\n".join(lines)
+
+        final = ''
+        for i,l in enumerate(lines):
+            final += f'\033[{y+i};{x}H'+l
+
+        return final
         
     # set style of key to value
     def set_style(self, key: str, value: Callable[[int,str], str]):
@@ -996,12 +1003,13 @@ class InputField(BaseElement):
         - highlight_style : style for field.select()
     """
 
-    def __init__(self, pos: list=None, linecap: int=0, default: str="", prompt: str='', 
-            xlimit: int=None, ylimit: int=None, print_at_start: bool=None):
+    def __init__(self, pos: list[int,int]=None, linecap: int=0, default: str="", prompt: str='', 
+            xlimit: int=None, ylimit: int=None, print_at_start: bool=None, padding: int=0):
         super().__init__()
 
         # set up instance variables
         self.value = default
+        self.padding = padding
         self.cursor = len(self.value)
         self.selected = ''
         self.selected_start = 0
@@ -1024,15 +1032,15 @@ class InputField(BaseElement):
         # disable cursor
         self.set_cursor_visible(False)
 
-        if print_at_start:
-            # print
-            self.print()
-
         self._is_selectable = False
         self._strip_pasted_newlines = True
 
         self.value_style = INPUTFIELD_VALUE_STYLE
         self.highlight_style = INPUTFIELD_HIGHLIGHT_STYLE 
+
+        if print_at_start:
+            # print
+            self.print()
 
 
     def send(self, key: str, _do_print: bool=False):
@@ -1165,17 +1173,17 @@ class InputField(BaseElement):
             selected_text = charUnderCursor
 
         # construct line
-        line = self.value_style(self.depth,self.prompt + left) + selected_text + self.value_style(self.depth,right)
+        x,y = self.pos
+        line = f'\033[{y};{x}H'+self.padding*' '+self.value_style(self.depth,self.prompt + left) + selected_text + self.value_style(self.depth,right)
 
         if return_line:
             return line
 
-        x,y = self.pos
 
         # clear current
         self.wipe()
         # write to stdout
-        sys.stdout.write(f'\033[{y};{x}H'+line)
+        sys.stdout.write(line)
 
         # flush if needed
         if flush:
