@@ -14,7 +14,7 @@ import re
 import os
 import sys
 import time
-from typing import Callable, Any, Iterable, Union
+from typing import Callable, Any, Iterable, Union, IO
 from .helpers import clean_ansi, real_length, break_line
 from . import color, bold, italic, gradient, highlight, underline, get_gradient, strikethrough
 
@@ -41,9 +41,20 @@ def _assert_style(value):
     assert isinstance(value,Callable), f"\nStyle value \"{value}\" is not callable."
     try:
         tester = value(0,'test')
+    except ValueError as e:
+        dbg(f'Could not check return type of {value}: {e}')
+        return
+
     except TypeError as e:
-        raise AssertionError(f'Style value \"{value}\" could not take the arguments: [depth: int, item: str]:\nError: {e}')
-    assert isinstance(tester,str), f"\nReturn of \"{value}\" is type \"{type(tester)}\", not str."
+        raise AssertionError(f'Style value {value} could not take the arguments: [depth: int, item: str]:\nError: {e}')
+
+    assert isinstance(tester,str), f"\nReturn of {value} is type {type(tester)}, not str."
+
+def _get_obj_from_str(name: str):
+    obj_type = globals()[name]
+    assert issubclass(obj_type,BaseElement)
+
+    return obj_type()
 
 
 
@@ -98,6 +109,18 @@ def get_style(name: str):
 
 
 
+# EXCEPTIONS #
+class SerializeError(Exception):
+    pass
+
+class LoadError(SerializeError):
+    pass
+
+class DumpError(SerializeError):
+    pass
+
+
+
 # CLASSES #
 class BaseElement:
     """ Element that all classes here derive from """
@@ -112,6 +135,8 @@ class BaseElement:
 
         self._is_selectable = True
         self._is_selected = False
+
+        self._serializable = []
 
     def __add__(self,other):
         """
@@ -131,10 +156,37 @@ class BaseElement:
         c.add_elements(other)
 
         return c
+    
+    def _dump(self):
+        d = {}
+        for key in self._serializable:
+            d[key] = getattr(self,key)
+
+        return d
+
+    def _load(self,data):
+        for key,value in data.items():
+            if not key in self._serializable and not key == "type":
+                raise LoadError(f"Field \"{key}\" is not serializable for type {self.name()}.")
+
+            else:
+                setattr(self,key,value)
+
+        return self
+#        _type = 
+#        for key, value in data.items():
+#            if not key in self._serializable:
+#                raise LoadError(f"Field \"{key}\" is not serializable.")
+#
+#            setattr(self,key,value)
+#
+#        return self
 
     def wipe(self):
         line = ''
         x,y = self.pos
+        if isinstance(self,Prompt) and self.justify == 'right':
+            x += 2
 
         container_offset = (1 if isinstance(self,Container) else 0)
         for i in range(container_offset,self.height+container_offset):
@@ -142,6 +194,8 @@ class BaseElement:
 
         print(line,end='')
 
+    def name(self):
+        return type(self).__name__
 
 class Container(BaseElement):
     """
@@ -228,6 +282,15 @@ class Container(BaseElement):
 
         # optional flag to avoid wiping
         self._has_printed = True
+
+        # list of serializable attributes
+        self._serializable = [
+            "width",
+            "height",
+            "pos",
+            "padding",
+            "borders",
+        ]
         
 
     # text representation of self
@@ -413,6 +476,30 @@ class Container(BaseElement):
         self.get_border()
 
 
+    # pop method
+    def pop(self,index=-1):
+        removed = self.elements.pop(index)
+        repr(self)
+        return removed
+
+
+    # insert element to index, naive
+    def insert(self, index: int, element: BaseElement):
+        elements = self.elements.copy()
+        self._add_element(element)
+        added = self.elements.pop(-1)
+
+        elements.insert(index,added)
+        self.elements = elements
+
+
+    # remove method
+    def remove(self,element):
+        ret = self.elements.remove(element)
+        repr(self)
+        return ret
+
+
     # set style for element type `group`
     def set_style(self, group: BaseElement, key: str, value: Callable[[int,str], str]):
         if not key.endswith('_chars'):
@@ -556,17 +643,7 @@ class Container(BaseElement):
         for e in elements:
             self._add_element(e)
 
-    
-    # insert element to index, naive
-    def insert(self, index: int, element: BaseElement):
-        elements = self.elements.copy()
-        self._add_element(element)
-        added = self.elements.pop(-1)
-
-        elements.insert(index,added)
-        self.elements = elements
-
-
+ 
     # select index in selectables list
     def select(self, index: int=None):
         if index == None:
@@ -636,6 +713,8 @@ class Container(BaseElement):
             self.wipe()
         self.get_border()
 
+        return self
+
 
     # center container
     def center(self, axes: str=None, xoffset: int=0, yoffset: int=5):
@@ -659,13 +738,62 @@ class Container(BaseElement):
 
         return self
 
-
+    
+    # save raw characters as a file
     def export(self, filename: str):
         if not filename.endswith('.ptg'):
             filename += '.ptg'
 
         with open(filename,'w') as f:
             f.write(repr(self))
+
+    
+    # save json representation of self
+    def _dump(self):
+        d = {
+            'type': self.name(),
+        }
+
+        for key,value in BaseElement._dump(self).items():
+            d[key] = value
+
+        d['elements'] = []
+
+        for e in self.elements:
+            data = {}
+            if not 'type' in data.keys():
+                data['type'] = e.name()
+
+            for key,value in e._dump().items():
+                data[key] = value
+
+            d['elements'].append(data)
+
+        return d
+
+    
+    def _load(self, data: dict):
+        # if data.get('type'):
+            # del data['type']
+
+        for key,value in data.items():
+            if key == "elements":
+                for e in value:
+                    _type = e.get('type')
+                    assert _type, e
+
+                    obj = _get_obj_from_str(_type)
+                    # del e['type']
+
+                    self._add_element(obj._load(e))
+
+            elif not key in self._serializable and not key == "type":
+                raise LoadError(f"Field \"{key}\" is not serializable for type {self.name()}.")
+
+            else:
+                setattr(self,key,value)
+
+        return self
 
     
     def submit(self):
@@ -813,6 +941,15 @@ class Prompt(BaseElement):
         # flags
         self._is_selectable = True
         self._is_selected = False
+
+        self._serializable = [
+            "options",
+            "label",
+            "value",
+            "padding",
+            "justify",
+            "pos"
+        ]
 
 
     # return string representation of self
@@ -975,6 +1112,13 @@ class Label(BaseElement):
         self._is_selectable = False
         self._is_selected = False
 
+        self._serializable = [
+            "value",
+            "justify",
+            "padding",
+            "pos",
+        ]
+
     def set_value(self, value: str):
         self.value = value
         self.width = real_length(self.value)+3
@@ -1062,6 +1206,15 @@ class InputField(BaseElement):
         if print_at_start:
             # print
             self.print()
+
+        self._serializable = [
+            "value",
+            "padding",
+            "prompt",
+            "xlimit",
+            "ylimit",
+            "pos"
+        ]
 
 
     def send(self, key: str, _do_print: bool=False):
@@ -1163,7 +1316,7 @@ class InputField(BaseElement):
         lines.append(buff)
 
         for i,l in enumerate(lines):
-            sys.stdout.write(f'\033[{y-i};{x}H'+(real_length(l)+2)*' ')
+            sys.stdout.write(f'\033[{y-i};{x}H'+(real_length(l)+self.padding+2)*' ')
 
         # length = real_length(self.prompt+self.value)+2
         # sys.stdout.write(f'\033[{y};{x}H'+(length)*'a')
@@ -1483,6 +1636,44 @@ def container_from_dict(dic: dict, padding: int=4, submit: Callable[[object],Any
             d.add_elements([Label(),tabline])
 
     return dicts
+
+
+def loadd(data: dict) -> BaseElement:
+    """ Load object from dictionary """
+
+    import json
+    _type = data.get('type')
+
+    obj = _get_obj_from_str(_type)
+    # del data['type']
+
+    return obj._load(data)
+
+def loads(data: str) -> BaseElement:
+    """ Load object from str """
+
+    import json
+    return loadd(json.loads(data))
+
+def load(fp: IO) -> BaseElement:
+    """ Load object from file pointer """
+
+    import json
+    # print('val',fp.read())
+    return loadd(json.load(fp))
+
+def dumps(obj: BaseElement, **kwargs) -> str:
+    """ Dump BaseElement object to str """
+
+    import json
+    return json.dumps(obj._dump(),**kwargs)
+
+def dump(obj: BaseElement, fp: IO, **kwargs) -> int:
+    """ Dump BaseElement object to fp (.write() supported object)."""
+
+    import json
+    return fp.write(dumps(obj,**kwargs))
+
 
 
 # GLOBALS #

@@ -12,5 +12,11 @@ setup(
     python_requires=">=3.9.0",
     url='https://github.com/bczsalba/pytermgui',
     author='BcZsalba',
-    author_email='bczsalba@gmail.com'
+    author_email='bczsalba@gmail.com',
+    entry_points={
+        "console_scripts": [
+            'ptg = pytermgui.cmd:main'
+        ]
+    }
 )
+

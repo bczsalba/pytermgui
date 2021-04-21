@@ -6,6 +6,7 @@ author: bczsalba
 
 Python framework for terminal-based GUI applications.
 """
+__version__ = "0.0.7"
 
 
 import re
@@ -114,7 +115,7 @@ class Regex:
 
 color         = Color.color
 bold          = Color.bold
-italic        = Color.italic
+italic        = Color.italic 
 gradient      = Color.gradient
 highlight     = Color.highlight
 underline     = Color.underline
@@ -129,3 +130,4 @@ from .helpers import *
 from .input import getch
 from .utils import interactive
 from . import utils
+import cmd
