@@ -383,7 +383,9 @@ class Container(BaseElement):
 
     # overwrite iadd to not create new objects
     def __iadd__(self,other):
-        return self + other
+        self = self + other
+        repr(self)
+        return self
 
     
     # index into elements
