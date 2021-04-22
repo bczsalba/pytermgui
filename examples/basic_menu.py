@@ -29,6 +29,7 @@ data = {
 }
 
 # set styles
+# from pytermgui import styles; styles.draculite()
 set_style('container_title',lambda depth,item: bold(color(item,210)))
 set_style('container_label',lambda depth,item: color(item,248))
 set_style('container_value',lambda depth,item: color(item,72))

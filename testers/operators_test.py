@@ -18,10 +18,10 @@ Rules:
     BaseElement + <list> =>  BaseElement + Prompt(options=<list>)
 """
 
-from pytermgui import Label, Prompt, Container, wipe, padding_label
+from pytermgui import Label, Prompt, Container, wipe, padding_label, styles
 from pytermgui.utils import basic_selection
-from pytermgui.utils.interactive import setup
-setup()
+styles.draculite()
+wipe()
 
 # create root container
 a = Container()

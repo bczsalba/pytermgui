@@ -20,17 +20,17 @@ import os
 import sys
 import codecs
 import select
-from typing import Callable
 
 from contextlib import contextmanager
 
 
 
 
-# this needs to be here in order to have arrow keys registered
-# from https://github.com/kcsaff/getkey
-class OSReadWrapper(object):
-    """Wrap os.read binary input with encoding in standard stream interface.
+class OSReadWrapper:
+    """
+    source: https://github.com/kcsaff/getkey
+
+    Wrap os.read binary input with encoding in standard stream interface.
     We need this since os.read works more consistently on unix, but only
     returns byte strings.  Since the user might be typing on an international
     keyboard or pasting unicode, we need to decode that.  Fortunately

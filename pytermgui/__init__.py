@@ -12,19 +12,31 @@ __version__ = "0.0.8"
 import re
 
 class Color:
+    """ Class containing methods for coloring """
+
     def bold(s):
+        """ Return bold version of `s` """
+
         return '\033[1m'+str(s)+'\033[0m'
 
     def italic(s):
+        """ Return italic version of `s` """
+ 
         return '\033[3m'+str(s)+'\033[0m'
 
     def underline(s):
+        """ Return underlined version of `s` """
+
         return '\033[4m'+str(s)+'\033[0m'
-    
+
     def strikethrough(s):
+        """ Return strikethrough version of `s` """
+
         return '\033[9m'+str(s)+'\033[0m'
 
     def highlight(s,fg="1"):
+        """ Return version of `s` highlighted with color(`fg`) """
+
         if s.startswith('\033['):
             return '\033[7m'+s
 
@@ -34,13 +46,16 @@ class Color:
         return '\033[7m'+ (Color.color(clean_ansi(s),fg) if fg else s)
 
     def color(s,col,reset=True):
+        """ Return `s` colored with `col`, add reset character if reset """
+
         if isinstance(col,list):
             raise Exception('color argument `col` has to be of type int or string')
 
         return f'\033[{DEFAULT_COLOR_PREFIX};{col}m'+str(s)+('\033[0m' if reset else '')
 
-    # get 5 length gradient including `include`
     def get_gradient(include,direction='vertical'):
+        """ Return 5 length gradient including color `include`, traversing colors in `direction` """
+
         # do rainbow gradient
         if include == 'rainbow':
             return ['124','208','226','82','21','57','93']
@@ -79,6 +94,10 @@ class Color:
         return colors
 
     def gradient(text,color,layer='fg'):
+        """
+        Apply colors in color is isinstance(color,list) else apply get_gradient(`color`) on text, coloring layer fg/bg
+        """
+
         colors = []
 
         if isinstance(color,list):
@@ -115,7 +134,7 @@ class Regex:
 
 color         = Color.color
 bold          = Color.bold
-italic        = Color.italic 
+italic        = Color.italic
 gradient      = Color.gradient
 highlight     = Color.highlight
 underline     = Color.underline
@@ -129,5 +148,5 @@ padding_label = Label()
 from .helpers import *
 from .input import getch
 from .utils import interactive
-from . import utils
+from . import utils, styles
 import cmd

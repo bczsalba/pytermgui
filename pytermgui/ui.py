@@ -14,10 +14,10 @@ import re
 import os
 import sys
 import time
-from typing import Callable, Any, Iterable, Union, IO
+from typing import Callable, Any, Iterable, Union, IO, Optional
 from .helpers import clean_ansi, real_length, break_line
 from . import color, bold, italic, gradient, highlight, underline, get_gradient, strikethrough
-
+from .globals import *
 
 
 try:
@@ -55,6 +55,12 @@ def _get_obj_from_str(name: str):
     assert issubclass(obj_type,BaseElement)
 
     return obj_type()
+
+def _get_style_source(fun: Callable):
+    assert callable(fun)
+    import inspect
+
+    return inspect.getsource(fun)
 
 
 
@@ -111,12 +117,15 @@ def get_style(name: str):
 
 # EXCEPTIONS #
 class SerializeError(Exception):
+    """ Exception raised by miscellaneous serialization operations """
     pass
 
 class LoadError(SerializeError):
+    """ Exception raised during _load methods """
     pass
 
 class DumpError(SerializeError):
+    """ Exception raised during _dump methods """
     pass
 
 
@@ -138,7 +147,7 @@ class BaseElement:
 
         self._serializable = []
 
-    def __add__(self,other):
+    def __add__(self, other):
         """
         Allows for the syntax:
             c = Label('title') + Prompt('input')
@@ -157,16 +166,49 @@ class BaseElement:
 
         return c
     
-    def _dump(self):
+    def _dump(self, bake=False):
         d = {}
-        for key in self._serializable:
-            d[key] = getattr(self,key)
+        for value in self._serializable:
+            # check for (value, style) tuples
+            if isinstance(value,tuple):
+                if not len(value) == 2:
+                    raise DumpError('Tuples in _serialiable have to be of length two')
+
+                # get values from tuple
+                _val, _style = value
+                val = getattr(self,_val)
+                style = getattr(self,_style)
+
+                # add raw value if not baking
+                if not bake:
+                    d[_val] = val
+                    continue
+
+                if not callable(style):
+                    raise DumpError(f'Value for style ({style}) is not callable.')
+                
+                # add styled val
+                d[_val] = style(self.depth, val)
+                continue
+
+            else:
+                # addd raw data
+                d[value] = getattr(self,value)
 
         return d
+    
+    def _get_serializable(self):
+        serializable = []
+        for value in self._serializable:
+            if isinstance(value,tuple):
+                serializable.append(value[0])
+            else:
+                serializable.append(value)
+        return serializable
 
     def _load(self,data):
         for key,value in data.items():
-            if not key in self._serializable and not key == "type":
+            if not key in self._get_serializable() and not key == "type":
                 raise LoadError(f"Field \"{key}\" is not serializable for type {self.name()}.")
 
             else:
@@ -222,7 +264,7 @@ class Container(BaseElement):
     """
 
     def __init__(self, pos: list[int,int]=None, border: Iterable[str]=None, 
-            width: int=40,height: int=None, dynamic_size: bool=True, 
+            width: int=40, height: int=None, dynamic_size: bool=True, 
             center_elements: bool=True, shorten_elements: bool=True, padding: int=0):
 
         super().__init__()
@@ -476,6 +518,57 @@ class Container(BaseElement):
 
         # update border
         self.get_border()
+
+
+    # save json representation of self
+    def _dump(self, bake=False):
+        # set up base dictionary
+        d = {
+            'type': self.name(),
+        }
+
+        # run base _dump method
+        for key,value in BaseElement._dump(self, bake).items():
+            d[key] = value
+
+        # set custom border
+        d['borders'] = [self.border_style(self.depth,b) for b in self.borders]
+
+        # do routine to add elements
+        d['elements'] = []
+        for e in self.elements:
+            data = {}
+            if not 'type' in data.keys():
+                data['type'] = e.name()
+
+            for key,value in e._dump(bake).items():
+                data[key] = value
+
+            d['elements'].append(data)
+
+        return d
+
+    
+    # load data from json
+    def _load(self, data: dict):
+        for key,value in data.items():
+            if key == "elements":
+                for e in value:
+                    _type = e.get('type')
+                    assert _type, e
+
+                    obj = _get_obj_from_str(_type)
+                    # del e['type']
+
+                    self._add_element(obj._load(e))
+
+            elif not key in self._get_serializable() and not key == "type":
+                raise LoadError(f"Field \"{key}\" is not serializable for type {self.name()}.")
+
+            else:
+                setattr(self,key,value)
+
+        return self
 
 
     # pop method
@@ -750,54 +843,6 @@ class Container(BaseElement):
             f.write(repr(self))
 
     
-    # save json representation of self
-    def _dump(self):
-        d = {
-            'type': self.name(),
-        }
-
-        for key,value in BaseElement._dump(self).items():
-            d[key] = value
-
-        d['elements'] = []
-
-        for e in self.elements:
-            data = {}
-            if not 'type' in data.keys():
-                data['type'] = e.name()
-
-            for key,value in e._dump().items():
-                data[key] = value
-
-            d['elements'].append(data)
-
-        return d
-
-    
-    def _load(self, data: dict):
-        # if data.get('type'):
-            # del data['type']
-
-        for key,value in data.items():
-            if key == "elements":
-                for e in value:
-                    _type = e.get('type')
-                    assert _type, e
-
-                    obj = _get_obj_from_str(_type)
-                    # del e['type']
-
-                    self._add_element(obj._load(e))
-
-            elif not key in self._serializable and not key == "type":
-                raise LoadError(f"Field \"{key}\" is not serializable for type {self.name()}.")
-
-            else:
-                setattr(self,key,value)
-
-        return self
-
-    
     def submit(self):
         selected = self.selected[0]
         try:
@@ -945,9 +990,9 @@ class Prompt(BaseElement):
         self._is_selected = False
 
         self._serializable = [
+            ("label", "label_style"),
+            ("value", "value_style"),
             "options",
-            "label",
-            "value",
             "padding",
             "justify",
             "pos"
@@ -980,7 +1025,7 @@ class Prompt(BaseElement):
 
             highlight_len = real_length(self.long_highlight_style(0,''))
             highlight = (self.long_highlight_style if self._is_selected else lambda depth,item: highlight_len*' '+item)
-            middle_pad = (self.width-real_length(label)) - real_length(start+end) - real_length(value) - max(self.padding,2)
+            middle_pad = (self.width-real_length(label)) - real_length(start+end) - real_length(value) - max(self.padding,2)+1
             middle_pad = max(2,middle_pad)
 
             left = ' ' + label + middle_pad*" "
@@ -998,7 +1043,7 @@ class Prompt(BaseElement):
                     option = self.value_style(self.depth,str(option))
                     buff += self._get_option_highlight(i,'short')(self.depth,start+option+end)+'  '
 
-                    if real_length(buff) > self.width-3:
+                    if real_length(buff) > self.width-3-len(self.delimiter_chars()):
                         lines.append(buff)
                         buff = ''
                         continue
@@ -1007,7 +1052,7 @@ class Prompt(BaseElement):
                 
             else:
                 line = self.value_style(self.depth,self.value)
-                lines = break_line(line,_len=self.width-3,_separator="  ")
+                lines = break_line(line,_len=self.width-3-len(self.delimiter_chars()),_separator="  ")
 
 
             if lines == []:
@@ -1115,7 +1160,7 @@ class Label(BaseElement):
         self._is_selected = False
 
         self._serializable = [
-            "value",
+            ("value","value_style"),
             "justify",
             "padding",
             "pos",
@@ -1210,7 +1255,7 @@ class InputField(BaseElement):
             self.print()
 
         self._serializable = [
-            "value",
+            ("value", "value_style"),
             "padding",
             "prompt",
             "xlimit",
@@ -1664,65 +1709,82 @@ def load(fp: IO) -> BaseElement:
     # print('val',fp.read())
     return loadd(json.load(fp))
 
-def dumps(obj: BaseElement, **kwargs) -> str:
-    """ Dump BaseElement object to str """
+def dumpd(obj: BaseElement, bake: bool=True) -> dict:
+    """ 
+    Dump BaseElement object to dict, baking in styles values if `bake`.
+    This exists because obj._dump is a private method.
+
+    Note: by baking, the styles becomes static.
+    """
+
+    return obj._dump()
+
+def dumps(obj: BaseElement, bake: bool=True, **kwargs) -> str:
+    """ 
+    Dump BaseElement object to str, baking in styled values if `bake`.
+
+    Note: by baking, the styles become static.
+    """
 
     import json
-    return json.dumps(obj._dump(),**kwargs)
+    return json.dumps(obj._dump(bake),**kwargs)
 
-def dump(obj: BaseElement, fp: IO, **kwargs) -> int:
-    """ Dump BaseElement object to fp (.write() supported object)."""
+def dump(obj: BaseElement, fp: IO, bake: bool=True, **kwargs) -> int:
+    """ 
+    Dump BaseElement object to fp (.write() supported object), baking in styled values if `bake`.
+
+    Note: by baking, the styles become static.
+    """
 
     import json
-    return fp.write(dumps(obj,**kwargs))
+    return fp.write(dumps(obj, bake, **kwargs))
 
 
+def _export_styles() -> str:
+    """ unfinished: export source for style settings """
 
-# GLOBALS #
-# these are settable using `set_style`
+    import inspect
+    lines = []
 
-# global width & height -- refreshed at every new object creation
-WIDTH,HEIGHT = os.get_terminal_size()
+    for style in SERIALIZED_STYLES:
+        if isinstance(style,tuple):
+            var, value = style
+            lines.append(f"{var} = {value}")
+            continue
 
-# element_id - object
-ELEMENT_IDS = {}
+        elif isinstance(style,str):
+            value = globals()[style]
+        else:
+            value = style
 
-# element_id - [attribute,value]
-## this is applied in set_element_id, to every element
-## matching the given element_id
-ELEMENT_ATTRIBUTES = {}
+        if callable(value):
+            source = inspect.getsource(value)
+            if source.count('\n') > 1:
+                lines.append(' '.join(source.split(' ')).replace('@serialize','',1))
+            else:
+                if source.startswith('set_style'):
+                    lines.append(' '.join(source.split()))
 
-# styles
-## other
-DEFAULT_COLOR_PREFIX = "38;5"
-GLOBAL_HIGHLIGHT_STYLE = lambda depth,item: highlight(item)
-CURSOR_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
-TABBAR_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
+    lines.sort()
+    lines.insert(0,STYLE_FILE_TEMPLATE)
 
-# container
-CONTAINER_BORDER_CHARS  = lambda: "|-"
-CONTAINER_BORDER_STYLE  = lambda depth,item: item
-CONTAINER_CORNER_STYLE  = lambda depth,item: CONTAINER_BORDER_STYLE(depth,item)
-CONTAINER_CORNER_CHARS  = lambda: "xxxx"
-CONTAINER_LABEL_STYLE   = lambda depth,item: item
-CONTAINER_VALUE_STYLE   = lambda depth,item: item
-CONTAINER_TITLE_STYLE   = lambda depth,item: italic(bold(item))
-CONTAINER_ERROR_STYLE   = lambda depth,item: color(bold(item),'38;5;196')
-CONTAINER_SUCCESS_STYLE = lambda depth,item: color(bold(item),'2')
+    return '\n'.join(lines)
 
-## prompt
-PROMPT_LABEL_STYLE = lambda depth,item: item
-PROMPT_VALUE_STYLE = lambda depth,item: item
-PROMPT_DELIMITER_CHARS = lambda: '[]'
-PROMPT_SHORT_HIGHLIGHT_STYLE = GLOBAL_HIGHLIGHT_STYLE
-PROMPT_LONG_HIGHLIGHT_STYLE  = GLOBAL_HIGHLIGHT_STYLE
+def _serialize(data: Union[Callable[..., Optional[Any]], tuple[str, Any]]):
+    """ unused: add data to exported styles
+        can be used as a wrapper or call """
 
-## label
-LABEL_VALUE_STYLE = lambda depth,item: item
+    # wrapper usage for functions
+    if isinstance(data, Callable):
+        SERIALIZED_STYLES.append(data)
+        return data
 
-## inputfield
-INPUTFIELD_VALUE_STYLE = lambda depth, item: item
-INPUTFIELD_HIGHLIGHT_STYLE = lambda depth, item: highlight(item,7)
+    # call usage for variables
+    elif isinstance(data, tuple): 
+        if not len(data) == 2:
+            raise SerializeError('Expected tuple of length 2, got: '+str(data))
+        SERIALIZED_STYLES.append(data)
 
-
-VERBOSE = 0
+    else:
+        raise SerializeError(f'Expected Callable or tuple object, got {type(data)} with value {data}.')
+    

@@ -11,20 +11,17 @@ all arguments will be passed as plain strings.
 
 """
 
-from .. import Label, Prompt, Container, InputField, bold, italic, color, highlight, get_gradient
-from .  import basic_selection as selection
-from .. import padding_label as padding
-from .. import getch, set_style
-
-# import utilities
-from . import keys, wipe, width
-
 # other imports
 from inspect   import signature, _empty, Parameter
 from typing    import Callable
-from random    import randint
 import re,sys
-dunder = re.compile(r'__[a-z_]+__')
+
+from .. import Label, Prompt, Container, InputField, bold, italic, color, highlight, get_gradient
+from .  import basic_selection as selection
+from .. import padding_label as padding
+from .. import getch, set_style, Regex
+from . import keys, wipe, width
+dunder = Regex.dunder
 
 
 def create_picker_from(obj: object, ignored: dict=None):
@@ -213,21 +210,3 @@ def _run_function(function: Callable, obj: object ,callback: Callable=None):
         callback(ret)
 
     return ret
-
-def setup():
-    """
-    Setup visual styles for objects. This is likely only needed if you
-    are running this without other setup, so you don't have styles set
-    up.
-    """
-
-    accent1 = randint(17,230)
-    accent2 = randint(17,230)
-    set_style('prompt_long_highlight',  lambda depth,item: highlight(item,accent1))
-    set_style('prompt_short_highlight', lambda depth,item: highlight(item,accent1))
-    set_style('prompt_delimiter_chars',       lambda: None)
-    set_style('container_border',       lambda depth,item: bold(color(item,get_gradient(accent2)[depth])))
-    set_style('label_value',            lambda depth,item: bold(color(item,accent1)))
-    wipe()
-
-    return accent1,accent2
