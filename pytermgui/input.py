@@ -24,8 +24,6 @@ import select
 from contextlib import contextmanager
 
 
-
-
 class OSReadWrapper:
     """
     source: https://github.com/kcsaff/getkey
@@ -37,6 +35,7 @@ class OSReadWrapper:
     python's stdin has the fileno & encoding attached to it, so we can
     just use that.
     """
+
     def __init__(self, stream, encoding=None):
         """Construct os.read wrapper.
         Arguments:
@@ -56,10 +55,11 @@ class OSReadWrapper:
         return self.__stream.buffer
 
     def read(self, chars):
-        buffer = ''
+        buffer = ""
         while len(buffer) < chars:
             buffer += self.__decoder.decode(os.read(self.__fd, 1))
         return buffer
+
 
 class _Getch:
     def __init__(self):
@@ -67,41 +67,38 @@ class _Getch:
             self.impl = _GetchWindows()
         except ImportError:
             self.impl = _GetchUnix()
-        
+
         self.keycodes = {
             # SIGNALS: not captured currently
             "\x03": "SIGTERM",
             "\x1a": "SIGHUP",
             "\x1c": "SIGQUIT",
-
             # CONTROL KEYS
-            "\x17" : "CTRL_W",
-            "\x05" : "CTRL_E",
-            "\x12" : "CTRL_R",
-            "\x14" : "CTRL_T",
-            "\x15" : "CTRL_U",
-            "\x10" : "CTRL_P",
-            "\x1d" : "CTRL_]",
-            "\x01" : "CTRL_A",
-            "\x04" : "CTRL_D",
-            "\x06" : "CTRL_F",
-            "\x07" : "CTRL_G",
-            "\x08" : "CTRL_H",
-            "\x0b" : "CTRL_K",
-            "\x0c" : "CTRL_L",
-            "\x18" : "CTRL_X",
-            "\x16" : "CTRL_V",
-            "\x02" : "CTRL_B",
-            "\x0e" : "CTRL_N",
-            "\x1f" : "CTRL_/",
-
+            "\x17": "CTRL_W",
+            "\x05": "CTRL_E",
+            "\x12": "CTRL_R",
+            "\x14": "CTRL_T",
+            "\x15": "CTRL_U",
+            "\x10": "CTRL_P",
+            "\x1d": "CTRL_]",
+            "\x01": "CTRL_A",
+            "\x04": "CTRL_D",
+            "\x06": "CTRL_F",
+            "\x07": "CTRL_G",
+            "\x08": "CTRL_H",
+            "\x0b": "CTRL_K",
+            "\x0c": "CTRL_L",
+            "\x18": "CTRL_X",
+            "\x16": "CTRL_V",
+            "\x02": "CTRL_B",
+            "\x0e": "CTRL_N",
+            "\x1f": "CTRL_/",
             # TEXT EDITING
             "\x7f": "BACKSPACE",
             "\x1b": "ESC",
             "\n": "ENTER",
             "\r": "ENTER",
             "\t": "TAB",
-
             # MOVEMENT
             "\x1b[A": "ARROW_UP",
             "\x1bOA": "ARROW_UP",
@@ -112,7 +109,7 @@ class _Getch:
             "\x1b[D": "ARROW_LEFT",
             "\x1bOD": "ARROW_LEFT",
         }
-        
+
     def __call__(self):
         key = self.impl()
 
@@ -122,10 +119,11 @@ class _Getch:
         else:
             return key
 
+
 class _GetchUnix:
     def __init__(self):
-        global tty,termios
-        import tty,termios
+        global tty, termios
+        import tty, termios
 
         self.stream = OSReadWrapper(sys.stdin)
 
@@ -143,18 +141,26 @@ class _GetchUnix:
         with self.context():
             yield self.stream.read(1)
 
-            while select.select([sys.stdin,], [], [], 0.0)[0]:
+            while select.select(
+                [
+                    sys.stdin,
+                ],
+                [],
+                [],
+                0.0,
+            )[0]:
                 yield self.stream.read(1)
 
     def __call__(self):
-        buff = ''
+        buff = ""
         try:
             for c in self.get_chars():
                 buff += c
         except KeyboardInterrupt:
-            return '\x03'
+            return "\x03"
 
         return buff
+
 
 class _GetchWindows:
     def __init__(self):

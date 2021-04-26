@@ -12,34 +12,49 @@ all arguments will be passed as plain strings.
 """
 
 # other imports
-from inspect   import signature, _empty, Parameter
-from typing    import Callable
-import re,sys
+from inspect import signature, _empty, Parameter
+from typing import Callable
+import re, sys
 
-from .. import Label, Prompt, Container, InputField, bold, italic, color, highlight, get_gradient
-from .  import basic_selection as selection
+from .. import (
+    Label,
+    Prompt,
+    Container,
+    InputField,
+    bold,
+    italic,
+    color,
+    highlight,
+    get_gradient,
+)
+from . import basic_selection as selection
 from .. import padding_label as padding
 from .. import getch, set_style, Regex
 from . import keys, wipe, width
+
 dunder = Regex.dunder
 
 
-def create_picker_from(obj: object, ignored: dict=None):
+def create_picker_from(obj: object, ignored: dict = None):
     """ Create method picker from `obj` """
 
-    picker    = Container(width=60)
+    picker = Container(width=60)
     for i in range(4):
-        picker.set_corner(i,'x')
+        picker.set_corner(i, "x")
 
-    functions = [v for v in dir(obj) if callable(getattr(obj,v)) and not len(dunder.findall(v))]
+    functions = [
+        v for v in dir(obj) if callable(getattr(obj, v)) and not len(dunder.findall(v))
+    ]
     functions.sort()
 
-    title     = Label(value=f'methods of {type(obj).__name__}')
-    picker.add_elements([title,padding])
+    title = Label(value=f"methods of {type(obj).__name__}")
+    picker.add_elements([title, padding])
 
-    for i,v in enumerate(functions):
-        p = Prompt(label=v,padding=2)
-        p.submit = lambda self: create_interactive_from(getattr(obj,self.label),ignored)
+    for i, v in enumerate(functions):
+        p = Prompt(label=v, padding=2)
+        p.submit = lambda self: create_interactive_from(
+            getattr(obj, self.label), ignored
+        )
         picker.add_elements(p)
 
     picker.center()
@@ -47,28 +62,29 @@ def create_picker_from(obj: object, ignored: dict=None):
     print(picker)
     selection(picker)
 
-def create_interactive_from(function: Callable, ignored: dict=None):
-    """ 
+
+def create_interactive_from(function: Callable, ignored: dict = None):
+    """
     Create menu to take input from `function`.
 
     If any parameters if `function` are keys in `ignored`, use `ignored[key]`
     as a default value, and don't create a Prompt.
     """
 
-    wipe()    
-    sig   = signature(function)
-    main  = Container(width=60)
+    wipe()
+    sig = signature(function)
+    main = Container(width=60)
     for i in range(4):
-        main.set_corner(i,'x')
+        main.set_corner(i, "x")
 
-    title = Label(f'calling function {function.__name__}')
-    main.add_elements([title,padding])
+    title = Label(f"calling function {function.__name__}")
+    main.add_elements([title, padding])
 
     arguments = {}
     if not ignored:
         ignored = {}
 
-    for i,(name,param) in enumerate(sig.parameters.items()):
+    for i, (name, param) in enumerate(sig.parameters.items()):
         if name in ignored.keys():
             arguments[name] = ignored[name]
             continue
@@ -78,23 +94,23 @@ def create_interactive_from(function: Callable, ignored: dict=None):
         if param.annotation == Callable:
             continue
 
-        p = Prompt(label=name,value='',padding=2)
+        p = Prompt(label=name, value="", padding=2)
         p.param = param
         p.default = param.default
         p.annotation = param.annotation
 
-        p.set_style('delimiter',lambda: ["<",">"])
-        p.submit = lambda self: create_dialog_from(self.label,self.param,self)
+        p.set_style("delimiter", lambda: ["<", ">"])
+        p.submit = lambda self: create_dialog_from(self.label, self.param, self)
         p.argument = True
 
         arguments[name] = p
         main.add_elements(p)
     main.arguments = arguments
 
-    button = Prompt(options=['run!'])
-    button.set_style('delimiter',lambda: ['<','>'])
-    button.submit = lambda self: _run_function(function,main)
-    main.add_elements([padding,button])
+    button = Prompt(options=["run!"])
+    button.set_style("delimiter", lambda: ["<", ">"])
+    button.submit = lambda self: _run_function(function, main)
+    main.add_elements([padding, button])
 
     main.center()
     main.select()
@@ -102,7 +118,8 @@ def create_interactive_from(function: Callable, ignored: dict=None):
 
     selection(main)
 
-def create_dialog_from(label: str, parameter: Parameter, parent:object):
+
+def create_dialog_from(label: str, parameter: Parameter, parent: object):
     """
     Create input dialog menu, with title `label`, using data from `parameter`
     to figure out default values and such.
@@ -113,27 +130,31 @@ def create_dialog_from(label: str, parameter: Parameter, parent:object):
     wipe()
     dialog = Container()
     for i in range(4):
-        dialog.set_corner(i,'x')
-    dialog.set_borders(' -')
+        dialog.set_corner(i, "x")
+    dialog.set_borders(" -")
 
-    title = Label(f'value for {parameter.name}')
-    dialog.add_elements([title,padding])
+    title = Label(f"value for {parameter.name}")
+    dialog.add_elements([title, padding])
 
     if parent.real_value:
         default = parent.real_value
     elif parent.value:
         default = parent.value
     else:
-        default = '' if parameter.default == _empty or not parameter.default else parameter.default
+        default = (
+            ""
+            if parameter.default == _empty or not parameter.default
+            else parameter.default
+        )
 
     if parameter.annotation == bool:
-        field = Prompt(options=['true','false'])
-        field.set_style('delimiter',lambda: '<>')
+        field = Prompt(options=["true", "false"])
+        field.set_style("delimiter", lambda: "<>")
         field.select()
         dialog.width = 60
     else:
         field = InputField(default=str(default))
-        dialog.width = min(100,width())
+        dialog.width = min(100, width())
 
     dialog.add_elements(field)
 
@@ -142,7 +163,7 @@ def create_dialog_from(label: str, parameter: Parameter, parent:object):
 
     while True:
         key = getch()
-        if key in ["ESC","SIGTERM"]:
+        if key in ["ESC", "SIGTERM"]:
             wipe()
             break
 
@@ -150,8 +171,8 @@ def create_dialog_from(label: str, parameter: Parameter, parent:object):
             parent.value = field.value
             wipe()
             break
-        
-        if isinstance(field,Prompt):
+
+        if isinstance(field, Prompt):
             if key in keys.back:
                 field.selected_index -= 1
             elif key in keys.fore:
@@ -162,7 +183,8 @@ def create_dialog_from(label: str, parameter: Parameter, parent:object):
 
         print(dialog)
 
-def _run_function(function: Callable, obj: object ,callback: Callable=None):
+
+def _run_function(function: Callable, obj: object, callback: Callable = None):
     """
     Execute `function`, using arguments supplied by `obj`.
 
@@ -174,8 +196,8 @@ def _run_function(function: Callable, obj: object ,callback: Callable=None):
 
     args_list = []
 
-    for name,e in obj.arguments.items():
-        if hasattr(e,'argument'):
+    for name, e in obj.arguments.items():
+        if hasattr(e, "argument"):
             if e.real_value:
                 value = e.real_value
             elif e.value:
@@ -191,8 +213,8 @@ def _run_function(function: Callable, obj: object ,callback: Callable=None):
                     return
 
             elif e.annotation == bool:
-                if isinstance(value,str):
-                    if value.lower() in ["true","1"]:
+                if isinstance(value, str):
+                    if value.lower() in ["true", "1"]:
                         value = True
                     else:
                         value = False
