@@ -220,9 +220,11 @@ class BaseElement:
             else:
                 if value.endswith("()"):
                     value = value.strip("()")
-                    if callable(value):
+                    try:
                         d[value] = getattr(self, value)()
-                        continue
+                    except TypeError:
+                        d[value] = getattr(self, value)
+                    continue
 
                 # add raw data
                 d[value] = getattr(self, value)
