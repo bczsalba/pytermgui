@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# configuration file for my vim session
+export VIM_PROJNAME="pytermgui"
+export VIM_PROJCONF="$BASH_SOURCE"
+export VIM_PROJPATH="$(realpath `dirname $VIM_PROJCONF`)"
+export VIM_COMMAND="ptg --test"
+export VIM_NOTES="$VIM_PROJPATH/notes.md"
+
+echo "Set up project \"$VIM_PROJNAME\" at path \"$VIM_PROJPATH\"."
