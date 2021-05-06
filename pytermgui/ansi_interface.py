@@ -35,7 +35,7 @@ from .input import getch
 
 # helpers
 def tput(command: list[str]) -> None:
-    """ Shorthand for tput calls """
+    """Shorthand for tput calls"""
 
     waited_commands = [
         "clear",
@@ -67,7 +67,7 @@ def get_screen_size() -> Optional[tuple[int, int]]:
 
 
 def width() -> int:
-    """ Get screen width """
+    """Get screen width"""
 
     size = get_screen_size()
 
@@ -77,7 +77,7 @@ def width() -> int:
 
 
 def height() -> int:
-    """ Get screen height """
+    """Get screen height"""
 
     size = get_screen_size()
 
@@ -103,13 +103,13 @@ def restore_screen() -> None:
 
 
 def start_alt_buffer() -> None:
-    """ Start alternate buffer that is non-scrollable """
+    """Start alternate buffer that is non-scrollable"""
 
     print("\033[?1049h")
 
 
 def end_alt_buffer() -> None:
-    """ Return to main buffer from alt, restoring state """
+    """Return to main buffer from alt, restoring state"""
 
     print("\033[?1049l")
 
@@ -141,14 +141,14 @@ def clear(what: str = "screen") -> None:
 
 # cursor commands
 def hide_cursor() -> None:
-    """ Don't print cursor """
+    """Don't print cursor"""
 
     # tput(['civis'])
     print("\033[?25l")
 
 
 def show_cursor() -> None:
-    """ Set cursor printing back on """
+    """Set cursor printing back on"""
 
     # tput(['cvvis'])
     print("\033[?25h")
@@ -163,14 +163,14 @@ def save_cursor() -> None:
 
 
 def restore_cursor() -> None:
-    """ Restore cursor position saved by `save_cursor()` """
+    """Restore cursor position saved by `save_cursor()`"""
 
     # tput(['rc'])
     stdout.write("\033[u")
 
 
 def report_cursor() -> Optional[tuple[int, int]]:
-    """ Get position of cursor """
+    """Get position of cursor"""
 
     print("\033[6n")
     chars = getch()
@@ -183,63 +183,63 @@ def report_cursor() -> Optional[tuple[int, int]]:
 
 
 def move_cursor(pos: tuple[int, int]) -> None:
-    """ Move cursor to pos """
+    """Move cursor to pos"""
 
     posx, posy = pos
     stdout.write(f"\033[{posy};{posx}H")
 
 
 def cursor_up(num: int = 1) -> None:
-    """ Move cursor up by `num` lines """
+    """Move cursor up by `num` lines"""
 
     stdout.write(f"\033[{num}A")
 
 
 def cursor_down(num: int = 1) -> None:
-    """ Move cursor down by `num` lines """
+    """Move cursor down by `num` lines"""
 
     stdout.write(f"\033[{num}B")
 
 
 def cursor_right(num: int = 1) -> None:
-    """ Move cursor left by `num` cols """
+    """Move cursor left by `num` cols"""
 
     stdout.write(f"\033[{num}C")
 
 
 def cursor_left(num: int = 1) -> None:
-    """ Move cursor left by `num` cols """
+    """Move cursor left by `num` cols"""
 
     stdout.write(f"\033[{num}D")
 
 
 def cursor_next_line(num: int = 1) -> None:
-    """ Move cursor to beginning of num-th line down """
+    """Move cursor to beginning of num-th line down"""
 
     stdout.write(f"\033[{num}E")
 
 
 def cursor_prev_line(num: int = 1) -> None:
-    """ Move cursor to beginning of num-th line down """
+    """Move cursor to beginning of num-th line down"""
 
     stdout.write(f"\033[{num}F")
 
 
 def cursor_column(num: int = 0) -> None:
-    """ Move cursor to num-th column in the current line """
+    """Move cursor to num-th column in the current line"""
 
     stdout.write(f"\033[{num}G")
 
 
 def cursor_home() -> None:
-    """ Move cursor to HOME """
+    """Move cursor to HOME"""
 
     stdout.write("\033[H")
 
 
 # shorthand functions
 def print_to(pos: tuple[int, int], *args: tuple[Any, ...]) -> None:
-    """ Print text to given position """
+    """Print text to given position"""
 
     text = ""
     for arg in args:
