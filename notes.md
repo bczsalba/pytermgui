@@ -12,6 +12,7 @@ IN PROGRESS
         + [ ] 48;5 - bg
 
     - [ ] `\033[{0-9}m`
+    - [ ] look into if key codes (like UP) work universally or need to be platform-specific
 
 
 * classes

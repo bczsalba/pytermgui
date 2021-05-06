@@ -30,6 +30,7 @@ Credits:
 from subprocess import run, Popen
 from typing import Optional, Any
 from sys import stdout
+
 from .input import getch
 
 

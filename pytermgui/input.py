@@ -17,33 +17,29 @@ credits:
 import os
 import tty
 import sys
+import termios
 from typing import IO, AnyStr, Generator
 from select import select
 from codecs import getincrementaldecoder
 
-if os.name == "posix":
-    import termios
-else:
-    import msvcrt  # pylint: disable=import-error
-
 
 def _is_ready(file: IO[AnyStr]) -> bool:
-    """ Return if file is reading for reading """
+    """Return if file is reading for reading"""
 
     result = select([file], [], [], 0.0)
     return len(result[0]) > 0
 
 
 class _GetchUnix:
-    """ Getch implementation for UNIX """
+    """Getch implementation for UNIX"""
 
     def __init__(self) -> None:
-        """ Set up instance attributes """
+        """Set up instance attributes"""
 
         self.decode = getincrementaldecoder(sys.stdin.encoding)().decode
 
     def _read(self, num: int) -> str:
-        """ Read num characters from sys.stdin """
+        """Read num characters from sys.stdin"""
 
         buff = ""
         while len(buff) < num:
@@ -53,7 +49,7 @@ class _GetchUnix:
         return buff
 
     def get_chars(self) -> Generator[str, None, None]:
-        """ Get characters while possible, yield them """
+        """Get characters while possible, yield them"""
 
         descriptor = sys.stdin.fileno()
         old_settings = termios.tcgetattr(descriptor)
@@ -70,7 +66,7 @@ class _GetchUnix:
             termios.tcsetattr(descriptor, termios.TCSADRAIN, old_settings)
 
     def __call__(self) -> str:
-        """ Return all characters that can be read """
+        """Return all characters that can be read"""
 
         buff = "".join(self.get_chars())
         # try:
@@ -80,10 +76,34 @@ class _GetchUnix:
         return buff
 
 
-if os.name == "posix":
-    # Use class if on a POSIX system
-    getch = _GetchUnix()
+# running on Windows
+try:
+    import msvcrt
 
-else:
-    # Use already-existing builtin library otherwise
+    _platform_keys = {
+        "name": "nt",
+        "ESC": "\x1b",
+        "LEFT": "\xe0K",
+        "RIGHT": "\xe0M",
+        "UP": "\xe0H",
+        "DOWN": "\xe0P",
+        "ENTER": "\r",
+        "BACKSPACE": "\x08",
+    }
+
     getch = msvcrt.wgetch  # type: ignore
+
+# running on POSIX
+except ImportError:
+    _platform_keys = {
+        "name": "posix",
+        "UP": "\033[A",
+        "DOWN": "\033[B",
+        "LEFT": "\033[C",
+        "RIGHT": "\033[D",
+        "BACKSPACE": "\x7f",
+        "INSERT": "\x1b[2~",
+        "DELETE": "\x1b[3~",
+    }
+
+    getch = _GetchUnix()
