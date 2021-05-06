@@ -54,6 +54,38 @@ def tput(command: list[str]) -> None:
 
 
 # screen commands
+def get_screen_size() -> Optional[tuple[int, int]]:
+    """Get screen size by moving to an impossible location
+    and getting new cursor position"""
+
+    save_cursor()
+    move_cursor((9999, 9999))
+    size = report_cursor()
+    restore_cursor()
+
+    return size
+
+
+def width() -> int:
+    """ Get screen width """
+
+    size = get_screen_size()
+
+    if size is None:
+        return 0
+    return size[0]
+
+
+def height() -> int:
+    """ Get screen height """
+
+    size = get_screen_size()
+
+    if size is None:
+        return 0
+    return size[1]
+
+
 def save_screen() -> None:
     """Save the contents of the screen, wipe.
     Use `restore_screen()` to get them back."""
@@ -142,7 +174,7 @@ def report_cursor() -> Optional[tuple[int, int]]:
 
     print("\033[6n")
     chars = getch()
-    posx, posy = chars[2:-1].split(";")
+    posy, posx = chars[2:-1].split(";")
 
     if not posx.isdigit() or not posy.isdigit():
         return None
