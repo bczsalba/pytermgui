@@ -2,6 +2,7 @@ IN PROGRESS
 -----------
 
 * ANSI implementation
+    - [ ] replace all stty calls with termios
     - [ ] look into if key codes (like UP) work universally or need to be platform-specific
 
 

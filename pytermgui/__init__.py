@@ -43,7 +43,10 @@ from .ansi_interface import (
     cursor_prev_line,
     cursor_column,
     cursor_home,
+    do_echo,
+    dont_echo,
     set_mode,
+    report_mouse,
     print_to,
 )
 
@@ -81,7 +84,7 @@ def underline(text: str) -> str:
 def blinking(text: str) -> str:
     """ Return text blinking """
 
-    return set_mode("blinking") + text + reset()
+    return set_mode("blink") + text + reset()
 
 
 def inverse(text: str) -> str:

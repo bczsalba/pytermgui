@@ -22,6 +22,7 @@ Credits:
 from typing import Optional, Any, Union
 from subprocess import run, Popen
 from sys import stdout
+from os import name
 
 from .input import getch
 
@@ -391,6 +392,80 @@ def set_mode(mode: Union[str, int]) -> str:
     stdout.write(code)
 
     return code
+
+
+def do_echo() -> None:
+    """Echo user input"""
+
+    if not name == "posix":
+        raise NotImplementedError("This method is only implemented on POSIX systems.")
+
+    Popen(["stty", "echo"])
+
+
+def dont_echo() -> None:
+    """Don't echo user input"""
+
+    if not name == "posix":
+        raise NotImplementedError("This method is only implemented on POSIX systems.")
+
+    Popen(["stty", "-echo"])
+
+
+def report_mouse(
+    event: str, method: Optional[str] = "decimal_xterm", action: Optional[str] = "start"
+) -> None:
+    """Start reporting mouse events
+
+    options:
+        - press_release
+        - highlight
+        - press
+        - movement
+
+    methods:
+        None:          limited in coordinates, not recommended.
+        decimal_xterm: default, most universal
+        decimal_urxvt: older, less compatible
+        decimal_utf8:  apparently not too stable
+
+    more information: https://stackoverflow.com/a/5970472
+    """
+
+    if event == "press_release":
+        stdout.write("\033[?1000")
+
+    elif event == "highlight":
+        stdout.write("\033[?1001")
+
+    elif event == "press":
+        stdout.write("\033[?1002")
+
+    elif event == "movement":
+        stdout.write("\033[?1003")
+
+    else:
+        raise NotImplementedError(f"Mouse report event {event} is not supported!")
+
+    stdout.write("h" if action == "start" else "l")
+
+    if method == "decimal_utf8":
+        stdout.write("\033[?1005")
+
+    elif method == "decimal_xterm":
+        stdout.write("\033[?1006")
+
+    elif method == "decimal_urxvt":
+        stdout.write("\033[?1015")
+
+    elif method is None:
+        return
+
+    else:
+        raise NotImplementedError(f"Mouse report method {method} is not supported!")
+
+    stdout.write("h" if action == "start" else "l")
+    stdout.flush()
 
 
 # shorthand functions
