@@ -18,7 +18,7 @@ import os
 import tty
 import sys
 import termios
-from typing import IO, AnyStr, Generator
+from typing import IO, AnyStr, Generator, Any
 from select import select
 from codecs import getincrementaldecoder
 
@@ -44,7 +44,10 @@ class _GetchUnix:
         buff = ""
         while len(buff) < num:
             char = os.read(sys.stdin.fileno(), 1)
-            buff += self.decode(char)
+            try:
+                buff += self.decode(char)
+            except UnicodeDecodeError:
+                buff += str(char)
 
         return buff
 
@@ -69,10 +72,6 @@ class _GetchUnix:
         """Return all characters that can be read"""
 
         buff = "".join(self.get_chars())
-        # try:
-        # except KeyboardInterrupt:
-        # return '\x03'
-
         return buff
 
 
@@ -91,7 +90,7 @@ try:
         "BACKSPACE": "\x08",
     }
 
-    getch = msvcrt.wgetch  # type: ignore
+    _getch = msvcrt.wgetch  # type: ignore
 
 # running on POSIX
 except ImportError:
@@ -106,4 +105,15 @@ except ImportError:
         "DELETE": "\x1b[3~",
     }
 
-    getch = _GetchUnix()
+    _getch = _GetchUnix()
+
+
+def getch(printable: bool = False) -> Any:
+    """Wrapper for the getch functions"""
+
+    key = _getch()
+
+    if printable:
+        key = key.encode("unicode_escape").decode("utf-8")
+
+    return key
