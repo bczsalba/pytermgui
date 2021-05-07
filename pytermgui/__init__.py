@@ -18,6 +18,9 @@ from .classes import BaseElement, Container
 from .context_managers import alt_buffer, cursor_at
 
 from .ansi_interface import (
+    Color16,
+    Color256,
+    ColorRGB,
     get_screen_size,
     width,
     height,
@@ -40,8 +43,63 @@ from .ansi_interface import (
     cursor_prev_line,
     cursor_column,
     cursor_home,
+    set_mode,
     print_to,
 )
+
+
+def reset() -> str:
+    """Reset printing mode"""
+
+    return set_mode("reset")
+
+
+def bold(text: str) -> str:
+    """ Return text in bold """
+
+    return set_mode("bold") + text + reset()
+
+
+def dim(text: str) -> str:
+    """ Return text in dim """
+
+    return set_mode("dim") + text + reset()
+
+
+def italic(text: str) -> str:
+    """ Return text in italic """
+
+    return set_mode("italic") + text + reset()
+
+
+def underline(text: str) -> str:
+    """ Return text underlined """
+
+    return set_mode("underline") + text + reset()
+
+
+def blinking(text: str) -> str:
+    """ Return text blinking """
+
+    return set_mode("blinking") + text + reset()
+
+
+def inverse(text: str) -> str:
+    """ Return text inverse-colored """
+
+    return set_mode("inverse") + text + reset()
+
+
+def invisible(text: str) -> str:
+    """ Return text in invisible """
+
+    return set_mode("invisible") + text + reset()
+
+
+def strikethrough(text: str) -> str:
+    """ Return text as strikethrough """
+
+    return set_mode("strikethrough") + text + reset()
 
 
 class Keys:
@@ -117,3 +175,12 @@ class Keys:
 
 
 keys = Keys(_platform_keys)
+
+foreground16 = Color16()
+background16 = Color16(layer=1)
+
+foreground256 = Color256()
+background256 = Color256(layer=1)
+
+foregroundRGB = ColorRGB()
+backgroundRGB = ColorRGB(layer=1)

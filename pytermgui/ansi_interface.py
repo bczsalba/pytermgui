@@ -12,26 +12,144 @@ Note:
     Also, using the escape sequence for save/restore of terminal doesn't work,
     only tput does. We should look into that.
 
-Todo:
-    - 16-color palette
-    - 256-color palette
-        + 38;5 - fg
-        + 48;5 - bg
-    - rgb palette
-        + 38;5 - fg
-        + 48;5 - bg
-    - \033[{0-9}m
-
 Credits:
     - https://wiki.bash-hackers.org/scripting/terminalcodes
     - https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 """
+# pylint: disable=too-few-public-methods, arguments-differ
 
+
+from typing import Optional, Any, Union
 from subprocess import run, Popen
-from typing import Optional, Any
 from sys import stdout
 
 from .input import getch
+
+
+class _Color:
+    """Parent class for Color objects"""
+
+    def __init__(self, layer: int = 0) -> None:
+        """Set layer"""
+
+        if layer not in [0, 1]:
+            raise NotImplementedError(
+                f"Layer {layer} is not supported for Color256 objects! Please choose from 0, 1"
+            )
+
+        self.layer_offset = layer * 10
+
+    def __call__(
+        self,
+        text: str,
+        color: Union[
+            int, str, tuple[Union[int, str], Union[int, str], Union[int, str]]
+        ],
+    ) -> str:
+        """Return colored text with reset code at the end"""
+
+        if not isinstance(color, tuple):
+            color = str(color)
+
+        color_value = self.get_color(color)
+        if color_value is None:
+            return text
+
+        return color_value + text + set_mode("reset")
+
+    def get_color(self, attr: Any) -> Optional[str]:
+        """This method needs to be overwritten."""
+
+        _ = self
+        return str(attr)
+
+
+class Color16(_Color):
+    """Class for using 16-bit colors"""
+
+    def __init__(self, layer: int = 0) -> None:
+        """Set up _colors dict"""
+
+        super().__init__(layer)
+
+        self._colors = {
+            "black": 30,
+            "red": 31,
+            "green": 32,
+            "yellow": 33,
+            "blue": 34,
+            "magenta": 35,
+            "cyan": 36,
+            "white": 37,
+        }
+
+    def __getattr__(self, attr: str) -> Optional[str]:
+        return self.get_color(attr)
+
+    def get_color(self, attr: str) -> Optional[str]:
+        """Overwrite __getattr__ to look in self._colors"""
+
+        if str(attr).isdigit():
+            if not 30 <= int(attr) <= 37:
+                return None
+
+            color = int(attr)
+
+        else:
+            color = self._colors[attr]
+
+        return f"\033[{color+(self.layer_offset)}m"
+
+
+class Color256(_Color):
+    """Class for using 256-bit colors"""
+
+    def get_color(self, attr: str) -> Optional[str]:
+        """Return color values"""
+
+        if not attr.isdigit():
+            return None
+
+        if not 1 <= int(attr) <= 255:
+            return None
+
+        return f"\033[{38+self.layer_offset};5;{attr}m"
+
+
+class ColorRGB(_Color):
+    """Class for using RGB or HEX colors
+
+    Note:
+        This requires a true-color terminal, like Kitty or Alacritty."""
+
+    @staticmethod
+    def _translate_hex(color: str) -> tuple[int, int, int]:
+        """Translate hex string to rgb values"""
+
+        if color.startswith("#"):
+            color = color[1:]
+
+        rgb = []
+        for i in (0, 2, 4):
+            rgb.append(int(color[i : i + 2], 16))
+
+        return rgb[0], rgb[1], rgb[2]
+
+    def get_color(self, colors: Union[str, tuple[int, int, int]]) -> Optional[str]:
+        """Get RGB color code"""
+
+        if isinstance(colors, str):
+            colors = self._translate_hex(colors)
+
+        if not len(colors) == 3:
+            return None
+
+        for col in colors:
+            if not str(col).isdigit():
+                return None
+
+        strings = [str(col) for col in colors]
+        return f"\033[{38+self.layer_offset};2;" + ";".join(strings) + "m"
 
 
 # helpers
@@ -236,6 +354,43 @@ def cursor_home() -> None:
     """Move cursor to HOME"""
 
     stdout.write("\033[H")
+
+
+def set_mode(mode: Union[str, int]) -> str:
+    """Set terminal display mode
+
+    Available options:
+        - reset         (0)
+        - bold          (1)
+        - dim           (2)
+        - italic        (3)
+        - underline     (4)
+        - blink         (5)
+        - inverse       (7)
+        - invisible     (8)
+        - strikethrough (9)
+
+    You can use both the digit and text forms."""
+
+    options = {
+        "reset": 0,
+        "bold": 1,
+        "dim": 2,
+        "italic": 3,
+        "underline": 4,
+        "blink": 5,
+        "inverse": 7,
+        "invisible": 8,
+        "strikethrough": 9,
+    }
+
+    if not str(mode).isdigit():
+        mode = options[str(mode)]
+
+    code = f"\033[{mode}m"
+    stdout.write(code)
+
+    return code
 
 
 # shorthand functions
