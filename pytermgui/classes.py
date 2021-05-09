@@ -143,7 +143,11 @@ class Container(BaseElement):
         """Add other to self._elements"""
 
         self._elements.append(other)
-        other.depth = self.depth + 1
+        if isinstance(other, Container):
+            other.set_recursive_depth(self.depth + 2)
+        else:
+            other.depth = self.depth + 1
+
         other.get_lines()
 
         if other.forced_width is None and self.forced_width is None:
@@ -166,6 +170,16 @@ class Container(BaseElement):
 
         self.height += other.height
 
+    def set_recursive_depth(self, value: int) -> None:
+        """Set depth for all children, recursively"""
+
+        self.depth = value
+        for element in self._elements:
+            if isinstance(element, Container):
+                element.set_recursive_depth(value + 1)
+            else:
+                element.depth = value
+
     def get_lines(self) -> list[str]:
         """Get lines to represent the object"""
 
@@ -179,6 +193,12 @@ class Container(BaseElement):
                 return True
 
             return False
+
+        def _create_border_line(left: str, middle: str, right: str) -> str:
+            """Create border line by combining left + middle + right"""
+
+            corner_len = real_length(left + right)
+            return left + (self.width - corner_len) * middle + right
 
         lines = []
         left_border, top_border, right_border, bottom_border = self.chars["border"]
@@ -197,8 +217,9 @@ class Container(BaseElement):
 
             lines += [left_border + line + right_border for line in element.get_lines()]
 
-        lines.insert(0, self.width * top_border)
-        lines.append(self.width * bottom_border)
+        top_left, top_right, bottom_right, bottom_left = self.chars["corner"]
+        lines.insert(0, _create_border_line(top_left, top_border, top_right))
+        lines.append(_create_border_line(bottom_left, bottom_border, bottom_right))
         return lines
 
     def print(self) -> None:
