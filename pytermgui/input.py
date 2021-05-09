@@ -15,12 +15,17 @@ credits:
 # pylint: disable=c-extension-no-member, no-name-in-module
 
 import os
-import tty
 import sys
-import termios
 from typing import IO, AnyStr, Generator, Any
 from select import select
 from codecs import getincrementaldecoder
+
+try:
+    import tty
+    import termios
+except ImportError:
+    # we're running windows
+    pass
 
 
 def _is_ready(file: IO[AnyStr]) -> bool:
