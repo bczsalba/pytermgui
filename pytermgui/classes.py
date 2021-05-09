@@ -102,6 +102,7 @@ class Container(BaseElement):
 
         self.chars = {
             "border": ["| ", "-", " |", "-"],
+            "corner": [""] * 4,
         }
 
     @property
@@ -220,11 +221,36 @@ class Label(BaseElement):
 
         super().__init__()
 
-        self.width = len(value) + 4
         self.value = value
         self.align = align
+        self.padding = 0
+        self.width = len(value) + self.padding
+
+        self.styles = {
+            "value": not_implemented_style,
+        }
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""
 
-        return [" " + self.value + (self.width - len(self.value)) * " "]
+        value_style = self.styles["value"]
+
+        if self.align is Label.ALIGN_CENTER:
+            padding = (self.width - real_length(self.value) - self.padding) // 2
+            outline = (padding + self.padding + 1) * " " + self.value
+            outline += (self.width - real_length(outline) + 1) * " "
+
+            lines = [outline]
+
+        elif self.align is Label.ALIGN_LEFT:
+            padding = self.width - real_length(self.value) - self.padding + 1
+            lines = [self.padding * " " + self.value + padding * " "]
+
+        elif self.align is Label.ALIGN_RIGHT:
+            lines = [
+                (self.width - real_length(self.value) - self.padding + 1) * " "
+                + self.value
+                + self.padding * " "
+            ]
+
+        return [value_style(self.depth, line) for line in lines]
