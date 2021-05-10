@@ -46,7 +46,9 @@ class BaseElement:
         self.depth = 0
         self.styles: dict[str, StyleType] = {}
         self.chars: dict[str, list[str]] = {}
-        self.is_selectable = True
+
+        self.is_selectable = False
+        self.selectables_length = 0
 
     def set_style(self, key: str, value: StyleType) -> None:
         """Set self.{key}_style to value"""
@@ -91,6 +93,15 @@ class BaseElement:
 
         return self.pos[1]
 
+    def select(self, index: int) -> None:
+        """Select part of self"""
+
+        if not self.is_selectable:
+            raise TypeError(f"Object of type {type(self)} is marked non-selectable.")
+
+        index = min(max(0, index), len(self.options) - 1)
+        self.selected_index = index
+
     def __repr__(self) -> str:
         """Stub for __repr__ method"""
 
@@ -103,6 +114,8 @@ class Container(BaseElement):
 
         super().__init__(width)
         self._elements: list[BaseElement] = []
+        self._selectables: dict[BaseElement, int] = {}
+        self.selected_index: int = 0
 
         self.styles = {
             "border": not_implemented_style,
@@ -120,6 +133,11 @@ class Container(BaseElement):
 
         left_border, _, right_border, _ = self.chars["border"]
         return real_length(left_border + right_border)
+
+    def selected(self) -> Optional[BaseElement]:
+        """Return selected object"""
+
+        return self._selectables.get(self.selected_index)
 
     def __repr__(self) -> str:
         """Return self.get_lines()"""
@@ -176,6 +194,14 @@ class Container(BaseElement):
                     )
 
                 self.width = other.width
+
+        if not len(keys := list(self._selectables)) > 0:
+            sel_len = 0
+        else:
+            sel_len = max(keys)
+
+        for i in range(other.selectables_length):
+            self._selectables[sel_len + i] = other, i
 
         self.height += other.height
 
@@ -255,6 +281,21 @@ class Container(BaseElement):
             for line in self.get_lines():
                 print_here(line)
 
+    def select(self, index: Optional[int] = None) -> None:
+        """Select inner object"""
+
+        if index is None:
+            index = self.selected_index
+
+        index = min(max(0, index), len(self._selectables) - 1)
+
+        if (data := self._selectables.get(index)) is None:
+            raise IndexError("Container selection index out of range")
+        
+        element, inner_index = data
+        element.select(inner_index)
+        self.selected_index = index
+
 
 class Label(BaseElement):
     """Unselectable text object"""
@@ -301,3 +342,77 @@ class Label(BaseElement):
             ]
 
         return [value_style(self.depth, line) for line in lines]
+
+
+class ListView(BaseElement):
+    """Allow selection from a list of options"""
+
+    HORIZONTAL = 0
+    VERTICAL = 1
+
+    def __init__(
+        self,
+        options: list[str],
+        layout: int = VERTICAL,
+        align: int = Label.ALIGN_CENTER,
+        padding: int = 0,
+    ) -> list[str]:
+        """Initialize object"""
+
+        super().__init__()
+
+        self.padding = padding
+        self.options = options
+        self.layout = layout
+        self.align = align
+
+        self.is_selectable = True
+        self.selectables_length = len(options)
+        self.selected_index: Optional[int] = None
+
+        self.styles = {
+            "delimiter": not_implemented_style,
+            "value": not_implemented_style,
+            "highlight": not_implemented_style,
+        }
+
+        self.chars = {"delimiter": ["< ", " >"]}
+
+    def get_lines(self) -> list[str]:
+        """Get lines to represent object"""
+
+        lines = []
+
+        value_style = self.get_style("value")
+        highlight_style = self.get_style("highlight")
+        delimiter_style = self.get_style("delimiter")
+
+        start, end = [
+            delimiter_style(self.depth, char) for char in self.get_char("delimiter")
+        ]
+
+        if self.layout is ListView.HORIZONTAL:
+            raise NotImplementedError("This is not implemented yet")
+
+        elif self.layout is ListView.VERTICAL:
+            label = Label(align=self.align)
+            label.padding = self.padding
+            label.width = self.width
+
+            for i, opt in enumerate(self.options):
+                # highlight_style needs to be applied to all elements in value
+                value = [start, value_style(self.depth, opt), end]
+
+                if i == self.selected_index:
+                    label.value = "".join(
+                        highlight_style(self.depth, element) for element in value
+                    )
+                else:
+                    label.value = "".join(value)
+
+                lines += label.get_lines()
+
+        return lines
+
+class Prompt(BaseElement):
+    """Selectable object"""
