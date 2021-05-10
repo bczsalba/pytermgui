@@ -8,14 +8,17 @@ This module provides the classes used by the module.
 """
 
 from __future__ import annotations
-from typing import Optional, Callable, Union
+from typing import Optional, Callable
 
 from .helpers import real_length
 from .exceptions import ElementError
 from .context_managers import cursor_at
 
 
-StyleType = Union[Callable[[int, str], str], str]
+StyleType = Callable[[int, str], str]
+
+# these classes will have to have more than 7 attributes mostly.
+# pylint: disable=too-many-instance-attributes
 
 
 def not_implemented_style(depth: int, item: str) -> str:
@@ -28,8 +31,6 @@ def not_implemented_style(depth: int, item: str) -> str:
 class BaseElement:
     """The element from which all UI classes derive from"""
 
-    # it makes sense to have this many.
-    # pylint: disable=too-many-instance-attributes
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
         """Initialize universal data for objects"""
 
@@ -49,6 +50,7 @@ class BaseElement:
 
         self.is_selectable = False
         self.selectables_length = 0
+        self.selected_index: Optional[int] = None
 
     def set_style(self, key: str, value: StyleType) -> None:
         """Set self.{key}_style to value"""
@@ -99,11 +101,13 @@ class BaseElement:
         if not self.is_selectable:
             raise TypeError(f"Object of type {type(self)} is marked non-selectable.")
 
-        index = min(max(0, index), len(self.options) - 1)
+        index = min(max(0, index), self.selectables_length - 1)
         self.selected_index = index
 
     def __repr__(self) -> str:
         """Stub for __repr__ method"""
+
+        return type(self).__name__ + "()"
 
 
 class Container(BaseElement):
@@ -114,7 +118,7 @@ class Container(BaseElement):
 
         super().__init__(width)
         self._elements: list[BaseElement] = []
-        self._selectables: dict[BaseElement, int] = {}
+        self._selectables: dict[int, tuple[BaseElement, int]] = {}
         self.selected_index: int = 0
 
         self.styles = {
@@ -137,7 +141,11 @@ class Container(BaseElement):
     def selected(self) -> Optional[BaseElement]:
         """Return selected object"""
 
-        return self._selectables.get(self.selected_index)
+        data = self._selectables.get(self.selected_index)
+        if data is None:
+            return data
+
+        return data[0]
 
     def __repr__(self) -> str:
         """Return self.get_lines()"""
@@ -215,7 +223,8 @@ class Container(BaseElement):
             else:
                 element.depth = value
 
-    def get_lines(self) -> list[str]:
+    # all the locals are used, reducing their number would make the code less readable.
+    def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
         """Get lines to represent the object"""
 
         def _apply_forced_width(source: BaseElement, target: BaseElement) -> bool:
@@ -238,17 +247,31 @@ class Container(BaseElement):
             if real_length(middle) == 0:
                 middle = " "
 
+            assert corner_style is not None
+            assert border_style is not None
+
             return (
-                corner_style(left)
-                + border_style((self.width - corner_len) * middle)
-                + corner_style(right)
+                corner_style(self.depth, left)
+                + border_style(self.depth, (self.width - corner_len) * middle)
+                + corner_style(self.depth, right)
             )
 
         lines = []
-        left_border, top_border, right_border, bottom_border = self.get_char("border")
 
-        corner_style = lambda item: self.get_style("corner")(self.depth, item)
-        border_style = lambda item: self.get_style("border")(self.depth, item)
+        borders = self.get_char("border")
+        if borders is None:
+            raise ValueError("Value set for border chars cannot be None.")
+        left_border, top_border, right_border, bottom_border = borders
+
+        corners = self.get_char("corner")
+        if corners is None:
+            raise ValueError("Value set for corner chars cannot be None.")
+        top_left, top_right, bottom_right, bottom_left = corners
+
+        corner_style = self.get_style("corner")
+        border_style = self.get_style("border")
+        assert corner_style is not None
+        assert border_style is not None
 
         for element in self._elements:
             if not _apply_forced_width(element, self):
@@ -262,12 +285,12 @@ class Container(BaseElement):
             else:
                 element.width = self.width - self.sidelength - container_offset
 
-            lines += [
-                border_style(left_border) + line + border_style(right_border)
-                for line in element.get_lines()
-            ]
-
-        top_left, top_right, bottom_right, bottom_left = self.get_char("corner")
+            for line in element.get_lines():
+                lines.append(
+                    border_style(self.depth, left_border)
+                    + line
+                    + border_style(self.depth, right_border)
+                )
 
         lines.insert(0, _create_border_line(top_left, top_border, top_right))
         lines.append(_create_border_line(bottom_left, bottom_border, bottom_right))
@@ -291,7 +314,7 @@ class Container(BaseElement):
 
         if (data := self._selectables.get(index)) is None:
             raise IndexError("Container selection index out of range")
-        
+
         element, inner_index = data
         element.select(inner_index)
         self.selected_index = index
@@ -322,6 +345,7 @@ class Label(BaseElement):
         """Get lines of object"""
 
         value_style = self.get_style("value")
+        assert value_style is not None
 
         if self.align is Label.ALIGN_CENTER:
             padding = (self.width - real_length(self.value) - self.padding) // 2
@@ -343,6 +367,25 @@ class Label(BaseElement):
 
         return [value_style(self.depth, line) for line in lines]
 
+    def get_align_string(self) -> str:
+        """Get string of align value"""
+
+        if self.align is Label.ALIGN_LEFT:
+            align = "ALIGN_LEFT"
+
+        elif self.align is Label.ALIGN_RIGHT:
+            align = "ALIGN_RIGHT"
+
+        elif self.align is Label.ALIGN_CENTER:
+            align = "ALIGN_CENTER"
+
+        return "Label." + align
+
+    def __repr__(self) -> str:
+        """Return str of object"""
+
+        return f'Label(value="{self.value}", align=Label.{self.get_align_string})'
+
 
 class ListView(BaseElement):
     """Allow selection from a list of options"""
@@ -356,7 +399,7 @@ class ListView(BaseElement):
         layout: int = VERTICAL,
         align: int = Label.ALIGN_CENTER,
         padding: int = 0,
-    ) -> list[str]:
+    ) -> None:
         """Initialize object"""
 
         super().__init__()
@@ -365,10 +408,10 @@ class ListView(BaseElement):
         self.options = options
         self.layout = layout
         self.align = align
+        self.donor_label = Label(align=self.align)
 
         self.is_selectable = True
         self.selectables_length = len(options)
-        self.selected_index: Optional[int] = None
 
         self.styles = {
             "delimiter": not_implemented_style,
@@ -387,15 +430,21 @@ class ListView(BaseElement):
         highlight_style = self.get_style("highlight")
         delimiter_style = self.get_style("delimiter")
 
-        start, end = [
-            delimiter_style(self.depth, char) for char in self.get_char("delimiter")
-        ]
+        assert value_style is not None
+        assert highlight_style is not None
+        assert delimiter_style is not None
+
+        chars = self.get_char("delimiter")
+        if chars is None:
+            raise ValueError("ListView delimiter chars cannot be None!")
+
+        start, end = [delimiter_style(self.depth, char) for char in chars]
 
         if self.layout is ListView.HORIZONTAL:
-            raise NotImplementedError("This is not implemented yet")
+            pass
 
         elif self.layout is ListView.VERTICAL:
-            label = Label(align=self.align)
+            label = self.donor_label
             label.padding = self.padding
             label.width = self.width
 
@@ -413,6 +462,23 @@ class ListView(BaseElement):
                 lines += label.get_lines()
 
         return lines
+
+    def __repr__(self) -> str:
+        """String representation of self"""
+
+        if self.layout is ListView.HORIZONTAL:
+            layout = "HORIZONTAL"
+        elif self.layout is ListView.VERTICAL:
+            layout = "VERTICAL"
+
+        return (
+            f"ListView(options={self.options}, "
+            + "layout=ListView."
+            + layout
+            + ", "
+            + "align={self.donor_label.get_align_string()})"
+        )
+
 
 class Prompt(BaseElement):
     """Selectable object"""
