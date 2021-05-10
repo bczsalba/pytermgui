@@ -2,19 +2,10 @@ IN PROGRESS
 -----------
 
 * ANSI implementation
-    - [ ] replace all stty calls with termios
     - [ ] look into if key codes (like UP) work universally or need to be platform-specific
 
 
 * classes
-    - [ ] BaseElement
-    - [ ] Container
-        + [ ] repr
-            * all line based, use `print_at()`
-        + [ ] add
-        + [ ] iadd
-        + [ ] \_add_element
-
     -  Prompt
     -  Label
 
@@ -37,3 +28,13 @@ FINISHED
         + [x] 48;5 - bg
 
     - [x] hex palette
+
+* classes
+    - [ ] BaseElement
+
+    - [x] Container
+        + [x] repr
+            * all line based, use `print_at()`
+        + [x] add
+        + [x] iadd
+        + [x] \_add_element

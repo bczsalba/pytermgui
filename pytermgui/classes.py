@@ -51,7 +51,6 @@ class BaseElement:
     def set_style(self, key: str, value: StyleType) -> None:
         """Set self.{key}_style to value"""
 
-        key += "_style"
         if not key in self.styles.keys():
             raise KeyError(f"Style {key} is not valid for {type(self)}!")
 
@@ -60,11 +59,20 @@ class BaseElement:
     def set_char(self, key: str, value: list[str]) -> None:
         """Set self.{key}_char to value"""
 
-        key += "_char"
         if not key in self.chars.keys():
             raise KeyError(f"Char {key} is not valid for {type(self)}!")
 
         self.chars[key] = value
+
+    def get_style(self, key: str) -> Optional[StyleType]:
+        """Try to get style"""
+
+        return self.styles.get(key)
+
+    def get_char(self, key: str) -> Optional[list[str]]:
+        """Try to get char"""
+
+        return self.chars.get(key)
 
     def get_lines(self) -> list[str]:
         """Stub for element.get_lines"""
@@ -98,6 +106,7 @@ class Container(BaseElement):
 
         self.styles = {
             "border": not_implemented_style,
+            "corner": not_implemented_style,
         }
 
         self.chars = {
@@ -198,10 +207,22 @@ class Container(BaseElement):
             """Create border line by combining left + middle + right"""
 
             corner_len = real_length(left + right)
-            return left + (self.width - corner_len) * middle + right
+
+            # pad middle if theres no length
+            if real_length(middle) == 0:
+                middle = " "
+
+            return (
+                corner_style(left)
+                + border_style((self.width - corner_len) * middle)
+                + corner_style(right)
+            )
 
         lines = []
-        left_border, top_border, right_border, bottom_border = self.chars["border"]
+        left_border, top_border, right_border, bottom_border = self.get_char("border")
+
+        corner_style = lambda item: self.get_style("corner")(self.depth, item)
+        border_style = lambda item: self.get_style("border")(self.depth, item)
 
         for element in self._elements:
             if not _apply_forced_width(element, self):
@@ -215,11 +236,16 @@ class Container(BaseElement):
             else:
                 element.width = self.width - self.sidelength - container_offset
 
-            lines += [left_border + line + right_border for line in element.get_lines()]
+            lines += [
+                border_style(left_border) + line + border_style(right_border)
+                for line in element.get_lines()
+            ]
 
-        top_left, top_right, bottom_right, bottom_left = self.chars["corner"]
+        top_left, top_right, bottom_right, bottom_left = self.get_char("corner")
+
         lines.insert(0, _create_border_line(top_left, top_border, top_right))
         lines.append(_create_border_line(bottom_left, bottom_border, bottom_right))
+
         return lines
 
     def print(self) -> None:
@@ -254,7 +280,7 @@ class Label(BaseElement):
     def get_lines(self) -> list[str]:
         """Get lines of object"""
 
-        value_style = self.styles["value"]
+        value_style = self.get_style("value")
 
         if self.align is Label.ALIGN_CENTER:
             padding = (self.width - real_length(self.value) - self.padding) // 2
