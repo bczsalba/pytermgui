@@ -4,10 +4,8 @@ IN PROGRESS
 * ANSI implementation
     - [ ] look into if key codes (like UP) work universally or need to be platform-specific
 
-
-* classes
-    -  Prompt
-    -  Label
+* `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
+* forced_width isn't forced at all
 
 FINISHED
 --------
@@ -38,3 +36,7 @@ FINISHED
         + [x] add
         + [x] iadd
         + [x] \_add_element
+
+    - [x] Prompt
+    - [x] ListView
+    - [x] Label
