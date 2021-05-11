@@ -8,7 +8,7 @@ This is a really simple file to test basic Container and other element
 actions, will probably be removed once those are reliable.
 """
 
-from pytermgui import Container, Label, ListView, alt_buffer, getch, report_mouse
+from pytermgui import Container, Label, ListView, Prompt, alt_buffer, getch, report_mouse
 from pytermgui import foreground256 as color
 from pytermgui import background256 as bg
 
@@ -20,12 +20,6 @@ def style(depth: int, item: str) -> str:
 with alt_buffer(cursor=False):
     c = Container()
     c.set_char("border", ["|x| ", "=", " |x|", "="])
-
-    lv = ListView(options=["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_CENTER, padding=0)
-    lv.set_style("delimiter", lambda depth, item: color(item, 210))
-    lv.set_style("value", lambda depth, item: color(item, 72))
-    lv.set_style("highlight", lambda depth, item: bg(item, 22))
-    c += lv
 
     l = Label("hello world!")
     l.set_style("value", style)
@@ -51,8 +45,20 @@ with alt_buffer(cursor=False):
     d += e
     c += d
 
+    p = Prompt("hello", "there", 2)
+    p.set_style("highlight", lambda depth, item: bg(item, 72))
+    p.set_style("value", style)
+    c += p
+
+    lv = ListView(options=["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_CENTER, padding=0)
+    lv.set_style("delimiter", lambda depth, item: color(item, 210))
+    lv.set_style("value", lambda depth, item: color(item, 72))
+    lv.set_style("highlight", lambda depth, item: bg(item, 22))
+    c += lv
+
+
     c.pos = (35, 10)
-    c.select(10)
+    c.select(0)
     print(c)
 
     while True:
