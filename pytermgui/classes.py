@@ -14,7 +14,6 @@ from __future__ import annotations
 from typing import Optional, Callable
 
 from .helpers import real_length
-from .exceptions import ElementError
 from .context_managers import cursor_at
 
 
@@ -141,6 +140,9 @@ class Container(BaseElement):
     @property
     def selected(self) -> Optional[BaseElement]:
         """Return selected object"""
+
+        if self.selected_index is None:
+            return None
 
         data = self._selectables.get(self.selected_index)
         if data is None:
@@ -284,6 +286,11 @@ class Container(BaseElement):
         """Select inner object"""
 
         if index is None:
+            if self.selected_index is None:
+                raise ValueError(
+                    "Cannot select nothing!"
+                    + "Either give an argument to select() or set object.selected_index."
+                )
             index = self.selected_index
 
         index = min(max(0, index), len(self._selectables) - 1)
@@ -299,7 +306,7 @@ class Container(BaseElement):
             self._prev_selected.selected_index = None
 
         # update self._prev_selected
-        self.selected
+        _ = self.selected
 
 
 class Label(BaseElement):
@@ -365,7 +372,7 @@ class Label(BaseElement):
     def __repr__(self) -> str:
         """Return str of object"""
 
-        return f"Label(value=\"{self.value}\", align=Label.{self.get_align_string})"
+        return f'Label(value="{self.value}", align=Label.{self.get_align_string})'
 
 
 class ListView(BaseElement):
@@ -455,7 +462,7 @@ class ListView(BaseElement):
         """String representation of self"""
 
         return (
-            f"ListView("
+            "ListView("
             + f"options={self.options}, "
             + f"layout={self.get_layout_string()}, "
             + f"align={self.donor_label.get_align_string()}"
@@ -506,7 +513,7 @@ class Prompt(BaseElement):
         start, end = delimiters
         label = label_style(self.depth, self.label)
 
-        value = [
+        value_list = [
             delimiter_style(self.depth, start),
             value_style(self.depth, self.value),
             delimiter_style(self.depth, end),
@@ -517,13 +524,15 @@ class Prompt(BaseElement):
                 label = highlight_style(self.depth, label)
 
                 if self.highlight_target is Prompt.HIGHLIGHT_LEFT:
-                    value = "".join(value)
+                    value = "".join(value_list)
 
             if self.highlight_target in [Prompt.HIGHLIGHT_RIGHT, Prompt.HIGHLIGHT_ALL]:
-                value = "".join(highlight_style(self.depth, item) for item in value)
+                value = "".join(
+                    highlight_style(self.depth, item) for item in value_list
+                )
 
         else:
-            value = "".join(value)
+            value = "".join(value_list)
 
         middle = " " * (self.width - real_length(label + value) + 1)
 
@@ -538,24 +547,24 @@ class Prompt(BaseElement):
     def get_highlight_target_string(self) -> str:
         """Get highlight target strign"""
 
-        if self.highlight_target == HIGHLIGHT_LEFT:
+        if self.highlight_target == Prompt.HIGHLIGHT_LEFT:
             target = "HIGHLIGHT_LEFT"
 
-        elif self.highlight_target == HIGHLIGHT_RIGHT:
+        elif self.highlight_target == Prompt.HIGHLIGHT_RIGHT:
             target = "HIGHLIGHT_RIGHT"
 
-        elif self.highlight_target == HIGHLIGHT_ALL:
+        elif self.highlight_target == Prompt.HIGHLIGHT_ALL:
             target = "HIGHLIGHT_ALL"
+
+        return "Prompt." + target
 
     def __repr__(self) -> str:
         """Get string that constructs this object"""
 
         return (
-                f"Prompt("
-                + "label={self.value}, "
-                + f"value={self.value}, "
-                + f"highlight_target={self.get_highlight_target_string()}"
-                + ")"
+            "Prompt("
+            + "label={self.value}, "
+            + f"value={self.value}, "
+            + f"highlight_target={self.get_highlight_target_string()}"
+            + ")"
         )
-
-
