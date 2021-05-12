@@ -9,104 +9,16 @@ A simple and robust terminal UI library, written in Python.
 
 __version__ = "0.1.0"
 
-import os
 from typing import Optional
 
 from .input import getch, _platform_keys
-
 from .helpers import Regex, strip_ansi, break_line
 from .classes import BaseElement, Container, Label, ListView, Prompt
 from .context_managers import alt_buffer, cursor_at
 
-from .ansi_interface import (
-    Color16,
-    Color256,
-    ColorRGB,
-    get_screen_size,
-    width,
-    height,
-    save_screen,
-    restore_screen,
-    start_alt_buffer,
-    end_alt_buffer,
-    clear,
-    hide_cursor,
-    show_cursor,
-    save_cursor,
-    restore_cursor,
-    report_cursor,
-    move_cursor,
-    cursor_up,
-    cursor_down,
-    cursor_right,
-    cursor_left,
-    cursor_next_line,
-    cursor_prev_line,
-    cursor_column,
-    cursor_home,
-    do_echo,
-    dont_echo,
-    set_mode,
-    report_mouse,
-    print_to,
-)
+from .ansi_interface import *
 
-
-def reset() -> str:
-    """Reset printing mode"""
-
-    return set_mode("reset")
-
-
-def bold(text: str) -> str:
-    """ Return text in bold """
-
-    return set_mode("bold") + text + reset()
-
-
-def dim(text: str) -> str:
-    """ Return text in dim """
-
-    return set_mode("dim") + text + reset()
-
-
-def italic(text: str) -> str:
-    """ Return text in italic """
-
-    return set_mode("italic") + text + reset()
-
-
-def underline(text: str) -> str:
-    """ Return text underlined """
-
-    return set_mode("underline") + text + reset()
-
-
-def blinking(text: str) -> str:
-    """ Return text blinking """
-
-    return set_mode("blink") + text + reset()
-
-
-def inverse(text: str) -> str:
-    """ Return text inverse-colored """
-
-    return set_mode("inverse") + text + reset()
-
-
-def invisible(text: str) -> str:
-    """ Return text in invisible """
-
-    return set_mode("invisible") + text + reset()
-
-
-def strikethrough(text: str) -> str:
-    """ Return text as strikethrough """
-
-    return set_mode("strikethrough") + text + reset()
-
-
-class Keys:
+class _Keys:
     """Class for easy access to key-codes
 
     The keys for CTRL_{ascii_letter}-s can be generated with
@@ -177,14 +89,4 @@ class Keys:
 
         return f"Keys(platform={self.name})"
 
-
-keys = Keys(_platform_keys)
-
-foreground16 = Color16()
-background16 = Color16(layer=1)
-
-foreground256 = Color256()
-background256 = Color256(layer=1)
-
-foregroundRGB = ColorRGB()
-backgroundRGB = ColorRGB(layer=1)
+keys = _Keys(_platform_keys)

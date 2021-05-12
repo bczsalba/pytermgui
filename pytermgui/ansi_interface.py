@@ -20,11 +20,61 @@ Credits:
 
 
 from typing import Optional, Any, Union
-from subprocess import run, Popen
-from sys import stdout
-from os import name
+from subprocess import run as _run
+from subprocess import Popen as _Popen
+from sys import stdout as _stdout
+from os import name as _name
 
 from .input import getch
+
+
+__all__ = [
+    "Color16",
+    "Color256",
+    "ColorRGB",
+    "get_screen_size",
+    "width",
+    "height",
+    "save_screen",
+    "restore_screen",
+    "start_alt_buffer",
+    "end_alt_buffer",
+    "clear",
+    "hide_cursor",
+    "show_cursor",
+    "save_cursor",
+    "restore_cursor",
+    "report_cursor",
+    "move_cursor",
+    "cursor_up",
+    "cursor_down",
+    "cursor_right",
+    "cursor_left",
+    "cursor_next_line",
+    "cursor_prev_line",
+    "cursor_column",
+    "cursor_home",
+    "do_echo",
+    "dont_echo",
+    "set_mode",
+    "report_mouse",
+    "print_to",
+    "reset",
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "blinking",
+    "inverse",
+    "invisible",
+    "strikethrough",
+    "foreground16",
+    "background16",
+    "foreground256",
+    "background256",
+    "foregroundRGB",
+    "backgroundRGB",
+]
 
 
 class _Color:
@@ -154,7 +204,7 @@ class ColorRGB(_Color):
 
 
 # helpers
-def tput(command: list[str]) -> None:
+def _tput(command: list[str]) -> None:
     """Shorthand for tput calls"""
 
     waited_commands = [
@@ -167,10 +217,10 @@ def tput(command: list[str]) -> None:
     str_command = [str(c) for c in command]
 
     if command[1] in waited_commands:
-        run(str_command, check=True)
+        _run(str_command, check=True)
         return
 
-    Popen(str_command)
+    _Popen(str_command)
 
 
 # screen commands
@@ -211,7 +261,7 @@ def save_screen() -> None:
     Use `restore_screen()` to get them back."""
 
     # print("\033[?47h")
-    tput(["smcup"])
+    _tput(["smcup"])
 
 
 def restore_screen() -> None:
@@ -219,7 +269,7 @@ def restore_screen() -> None:
     previously saved by a call to `save_screen()`."""
 
     # print("\033[?47l")
-    tput(["rmcup"])
+    _tput(["rmcup"])
 
 
 def start_alt_buffer() -> None:
@@ -256,21 +306,21 @@ def clear(what: str = "screen") -> None:
         "line": "\033[2K",
     }
 
-    stdout.write(commands[what])
+    _stdout.write(commands[what])
 
 
 # cursor commands
 def hide_cursor() -> None:
     """Don't print cursor"""
 
-    # tput(['civis'])
+    # _tput(['civis'])
     print("\033[?25l")
 
 
 def show_cursor() -> None:
     """Set cursor printing back on"""
 
-    # tput(['cvvis'])
+    # _tput(['cvvis'])
     print("\033[?25h")
 
 
@@ -278,15 +328,15 @@ def save_cursor() -> None:
     """Save cursor position, use `restore_cursor()`
     to restore it."""
 
-    # tput(['sc'])
-    stdout.write("\033[s")
+    # _tput(['sc'])
+    _stdout.write("\033[s")
 
 
 def restore_cursor() -> None:
     """Restore cursor position saved by `save_cursor()`"""
 
-    # tput(['rc'])
-    stdout.write("\033[u")
+    # _tput(['rc'])
+    _stdout.write("\033[u")
 
 
 def report_cursor() -> Optional[tuple[int, int]]:
@@ -306,55 +356,55 @@ def move_cursor(pos: tuple[int, int]) -> None:
     """Move cursor to pos"""
 
     posx, posy = pos
-    stdout.write(f"\033[{posy};{posx}H")
+    _stdout.write(f"\033[{posy};{posx}H")
 
 
 def cursor_up(num: int = 1) -> None:
     """Move cursor up by `num` lines"""
 
-    stdout.write(f"\033[{num}A")
+    _stdout.write(f"\033[{num}A")
 
 
 def cursor_down(num: int = 1) -> None:
     """Move cursor down by `num` lines"""
 
-    stdout.write(f"\033[{num}B")
+    _stdout.write(f"\033[{num}B")
 
 
 def cursor_right(num: int = 1) -> None:
     """Move cursor left by `num` cols"""
 
-    stdout.write(f"\033[{num}C")
+    _stdout.write(f"\033[{num}C")
 
 
 def cursor_left(num: int = 1) -> None:
     """Move cursor left by `num` cols"""
 
-    stdout.write(f"\033[{num}D")
+    _stdout.write(f"\033[{num}D")
 
 
 def cursor_next_line(num: int = 1) -> None:
     """Move cursor to beginning of num-th line down"""
 
-    stdout.write(f"\033[{num}E")
+    _stdout.write(f"\033[{num}E")
 
 
 def cursor_prev_line(num: int = 1) -> None:
     """Move cursor to beginning of num-th line down"""
 
-    stdout.write(f"\033[{num}F")
+    _stdout.write(f"\033[{num}F")
 
 
 def cursor_column(num: int = 0) -> None:
     """Move cursor to num-th column in the current line"""
 
-    stdout.write(f"\033[{num}G")
+    _stdout.write(f"\033[{num}G")
 
 
 def cursor_home() -> None:
     """Move cursor to HOME"""
 
-    stdout.write("\033[H")
+    _stdout.write("\033[H")
 
 
 def set_mode(mode: Union[str, int]) -> str:
@@ -389,7 +439,7 @@ def set_mode(mode: Union[str, int]) -> str:
         mode = options[str(mode)]
 
     code = f"\033[{mode}m"
-    stdout.write(code)
+    _stdout.write(code)
 
     return code
 
@@ -397,19 +447,19 @@ def set_mode(mode: Union[str, int]) -> str:
 def do_echo() -> None:
     """Echo user input"""
 
-    if not name == "posix":
+    if not _name == "posix":
         raise NotImplementedError("This method is only implemented on POSIX systems.")
 
-    Popen(["stty", "echo"])
+    _Popen(["stty", "echo"])
 
 
 def dont_echo() -> None:
     """Don't echo user input"""
 
-    if not name == "posix":
+    if not _name == "posix":
         raise NotImplementedError("This method is only implemented on POSIX systems.")
 
-    Popen(["stty", "-echo"])
+    _Popen(["stty", "-echo"])
 
 
 def report_mouse(
@@ -433,30 +483,30 @@ def report_mouse(
     """
 
     if event == "press_release":
-        stdout.write("\033[?1000")
+        _stdout.write("\033[?1000")
 
     elif event == "highlight":
-        stdout.write("\033[?1001")
+        _stdout.write("\033[?1001")
 
     elif event == "press":
-        stdout.write("\033[?1002")
+        _stdout.write("\033[?1002")
 
     elif event == "movement":
-        stdout.write("\033[?1003")
+        _stdout.write("\033[?1003")
 
     else:
         raise NotImplementedError(f"Mouse report event {event} is not supported!")
 
-    stdout.write("h" if action == "start" else "l")
+    _stdout.write("h" if action == "start" else "l")
 
     if method == "decimal_utf8":
-        stdout.write("\033[?1005")
+        _stdout.write("\033[?1005")
 
     elif method == "decimal_xterm":
-        stdout.write("\033[?1006")
+        _stdout.write("\033[?1006")
 
     elif method == "decimal_urxvt":
-        stdout.write("\033[?1015")
+        _stdout.write("\033[?1015")
 
     elif method is None:
         return
@@ -464,8 +514,8 @@ def report_mouse(
     else:
         raise NotImplementedError(f"Mouse report method {method} is not supported!")
 
-    stdout.write("h" if action == "start" else "l")
-    stdout.flush()
+    _stdout.write("h" if action == "start" else "l")
+    _stdout.flush()
 
 
 # shorthand functions
@@ -478,3 +528,67 @@ def print_to(pos: tuple[int, int], *args: tuple[Any, ...]) -> None:
 
     move_cursor(pos)
     print(text)
+
+
+def reset() -> str:
+    """Reset printing mode"""
+
+    return set_mode("reset")
+
+
+def bold(text: str) -> str:
+    """Return text in bold"""
+
+    return set_mode("bold") + text + reset()
+
+
+def dim(text: str) -> str:
+    """Return text in dim"""
+
+    return set_mode("dim") + text + reset()
+
+
+def italic(text: str) -> str:
+    """Return text in italic"""
+
+    return set_mode("italic") + text + reset()
+
+
+def underline(text: str) -> str:
+    """Return text underlined"""
+
+    return set_mode("underline") + text + reset()
+
+
+def blinking(text: str) -> str:
+    """Return text blinking"""
+
+    return set_mode("blink") + text + reset()
+
+
+def inverse(text: str) -> str:
+    """Return text inverse-colored"""
+
+    return set_mode("inverse") + text + reset()
+
+
+def invisible(text: str) -> str:
+    """Return text in invisible"""
+
+    return set_mode("invisible") + text + reset()
+
+
+def strikethrough(text: str) -> str:
+    """Return text as strikethrough"""
+
+    return set_mode("strikethrough") + text + reset()
+
+
+foreground16 = Color16()
+background16 = Color16(layer=1)
+
+foreground256 = Color256()
+background256 = Color256(layer=1)
+
+foregroundRGB = ColorRGB()
+backgroundRGB = ColorRGB(layer=1)

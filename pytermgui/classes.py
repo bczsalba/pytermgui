@@ -20,7 +20,13 @@ from .context_managers import cursor_at
 StyleType = Callable[[int, str], str]
 
 
-def not_implemented_style(depth: int, item: str) -> str:
+def default_foreground(depth: int, item: str) -> str:
+    """A style callable that hasn't been implemented"""
+
+    _ = depth
+    return item
+
+def default_background(depth: int, item: str) -> str:
     """A style callable that hasn't been implemented"""
 
     _ = depth
@@ -545,7 +551,7 @@ class Prompt(BaseElement):
         return [label + middle + value]
 
     def get_highlight_target_string(self) -> str:
-        """Get highlight target strign"""
+        """Get highlight target string"""
 
         if self.highlight_target == Prompt.HIGHLIGHT_LEFT:
             target = "HIGHLIGHT_LEFT"

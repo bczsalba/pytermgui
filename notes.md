@@ -4,6 +4,7 @@ IN PROGRESS
 * ANSI implementation
     - [ ] look into if key codes (like UP) work universally or need to be platform-specific
 
+* there should be a global `set_style` method
 * `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
 * forced_width isn't forced at all
 
