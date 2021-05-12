@@ -57,11 +57,42 @@ class BaseElement:
         self.selectables_length = 0
         self.selected_index: Optional[int] = None
 
+    def __repr__(self) -> str:
+        """Print self.dbg() by default"""
+
+        return self.dbg()
+
+    @property
+    def width(self) -> int:
+        """Getter for width property"""
+
+        return self._width
+
+    @width.setter
+    def width(self, value: int) -> None:
+        """Setter for width property"""
+
+        if self.has_forced_width() and value is not self.forced_width:
+            raise TypeError(
+                "It is impossible to manually set the width of an object with a `forced_width` attribute."
+            )
+
+        self._width = value
+
+    def has_forced_width(self) -> bool:
+        """Returns if the element has forced width,
+        shorthand to `element.has_forced_width()`"""
+
+        return self.forced_width is not None
+
     def set_style(self, key: str, value: StyleType) -> None:
         """Set self.{key}_style to value"""
 
         if not key in self.styles.keys():
             raise KeyError(f"Style {key} is not valid for {type(self)}!")
+
+        if not callable(value):
+            raise ValueError(f"Style {key} for {type(self)} has to be a callable.")
 
         self.styles[key] = value
 
@@ -109,8 +140,8 @@ class BaseElement:
         index = min(max(0, index), self.selectables_length - 1)
         self.selected_index = index
 
-    def __repr__(self) -> str:
-        """Stub for __repr__ method"""
+    def dbg(self) -> str:
+        """Debug identifiable information about object"""
 
         return type(self).__name__ + "()"
 
@@ -187,6 +218,13 @@ class Container(BaseElement):
     def _add_element(self, other: BaseElement) -> None:
         """Add other to self._elements"""
 
+        if self.has_forced_width() and other.has_forced_width():
+            if self.forced_width < other.forced_width:
+                raise ValueError(
+                    "Object being added has a forced width that is larger than self."
+                    + f" ({other.forced_width} > {self.forced_width})"
+                )
+
         self._elements.append(other)
         if isinstance(other, Container):
             other.set_recursive_depth(self.depth + 2)
@@ -226,10 +264,11 @@ class Container(BaseElement):
         def _apply_forced_width(source: BaseElement, target: BaseElement) -> bool:
             """Apply source's forced_width attribute to target, return False if not possible."""
 
-            if source.forced_width is not None and target.forced_width is None:
+            if source.has_forced_width() and not target.has_forced_width():
                 source.width = source.forced_width
                 if source.width > target.width - self.sidelength:
                     target.width = source.width + self.sidelength
+
                 return True
 
             return False
@@ -267,12 +306,20 @@ class Container(BaseElement):
             # Container()-s need an extra padding
             container_offset = 1 if not isinstance(element, Container) else 0
 
-            if element.width >= self.width:
+            if element.width >= self.width and not self.has_forced_width():
                 self.width = element.width + self.sidelength + container_offset
             else:
                 element.width = self.width - self.sidelength - container_offset
 
             for line in element.get_lines():
+                if self.has_forced_width():
+                    if (other_len := real_length(line)) > self.forced_width:
+                        raise ValueError(
+                            f"Object `{element.dbg()}` "
+                            + "could not be resized to self.forced_width. "
+                            + f"({self.forced_width} vs {other_len})"
+                        )
+
                 lines.append(
                     border_style(self.depth, left_border)
                     + line
@@ -378,10 +425,10 @@ class Label(BaseElement):
 
         return "Label." + align
 
-    def __repr__(self) -> str:
-        """Return str of object"""
+    def dbg(self) -> str:
+        """Return identifiable information about object"""
 
-        return f'Label(value="{self.value}", align=Label.{self.get_align_string})'
+        return f'Label(value="{self.value}", align={self.get_align_string()})'
 
 
 class ListView(BaseElement):
@@ -467,8 +514,8 @@ class ListView(BaseElement):
 
         return "ListView." + layout
 
-    def __repr__(self) -> str:
-        """String representation of self"""
+    def dbg(self) -> str:
+        """Return identifiable information about object"""
 
         return (
             "ListView("
@@ -567,8 +614,8 @@ class Prompt(BaseElement):
 
         return "Prompt." + target
 
-    def __repr__(self) -> str:
-        """Get string that constructs this object"""
+    def dbg(self) -> str:
+        """String representation of self"""
 
         return (
             "Prompt("

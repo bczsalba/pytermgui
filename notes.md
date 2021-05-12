@@ -6,7 +6,6 @@ IN PROGRESS
 
 * there should be a global `set_style` method
 * `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
-* forced_width isn't forced at all
 
 FINISHED
 --------

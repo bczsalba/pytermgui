@@ -19,6 +19,7 @@ def style(depth: int, item: str) -> str:
 
 with alt_buffer(cursor=False):
     c = Container()
+    c.forced_width = 70
     c.set_char("border", ["|x| ", "=", " |x|", "="])
 
     l = Label("hello world!")
