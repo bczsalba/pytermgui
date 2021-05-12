@@ -18,6 +18,7 @@ from .context_managers import alt_buffer, cursor_at
 
 from .ansi_interface import *
 
+
 class _Keys:
     """Class for easy access to key-codes
 
@@ -88,5 +89,6 @@ class _Keys:
         """Stringify object"""
 
         return f"Keys(platform={self.name})"
+
 
 keys = _Keys(_platform_keys)

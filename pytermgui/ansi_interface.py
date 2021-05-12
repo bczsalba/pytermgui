@@ -142,7 +142,7 @@ class Color16(_Color):
 
         if str(attr).isdigit():
             if not 30 <= int(attr) <= 37:
-                return None
+                raise ValueError("16-bit color values have to be in the range 30-37.")
 
             color = int(attr)
 

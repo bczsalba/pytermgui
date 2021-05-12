@@ -15,22 +15,22 @@ from typing import Optional, Callable
 
 from .helpers import real_length
 from .context_managers import cursor_at
-
+from .ansi_interface import background16
 
 StyleType = Callable[[int, str], str]
 
 
 def default_foreground(depth: int, item: str) -> str:
-    """A style callable that hasn't been implemented"""
+    """Default foreground style"""
 
     _ = depth
     return item
+
 
 def default_background(depth: int, item: str) -> str:
-    """A style callable that hasn't been implemented"""
+    """Default background style"""
 
-    _ = depth
-    return item
+    return background16(item, 30 + depth)
 
 
 class BaseElement:
@@ -127,8 +127,8 @@ class Container(BaseElement):
         self._prev_selected: Optional[BaseElement] = None
 
         self.styles = {
-            "border": not_implemented_style,
-            "corner": not_implemented_style,
+            "border": default_foreground,
+            "corner": default_foreground,
         }
 
         self.chars = {
@@ -216,9 +216,12 @@ class Container(BaseElement):
             else:
                 element.depth = value
 
-    # all the locals are used, reducing their number would make the code less readable.
-    def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
+    def get_lines(self) -> list[str]:
         """Get lines to represent the object"""
+
+        # pylint: disable=too-many-locals
+        #  All the locals here are used,
+        # reducing their number would make the code less readable
 
         def _apply_forced_width(source: BaseElement, target: BaseElement) -> bool:
             """Apply source's forced_width attribute to target, return False if not possible."""
@@ -261,7 +264,7 @@ class Container(BaseElement):
             if not _apply_forced_width(element, self):
                 _apply_forced_width(self, element)
 
-            # this is needed because of unknown reasons :(
+            # Container()-s need an extra padding
             container_offset = 1 if not isinstance(element, Container) else 0
 
             if element.width >= self.width:
@@ -333,7 +336,7 @@ class Label(BaseElement):
         self.width = len(value) + self.padding
 
         self.styles = {
-            "value": not_implemented_style,
+            "value": default_foreground,
         }
 
     def get_lines(self) -> list[str]:
@@ -409,9 +412,9 @@ class ListView(BaseElement):
         self.selectables_length = len(options)
 
         self.styles = {
-            "delimiter": not_implemented_style,
-            "value": not_implemented_style,
-            "highlight": not_implemented_style,
+            "delimiter": default_foreground,
+            "value": default_foreground,
+            "highlight": default_background,
         }
 
         self.chars = {"delimiter": ["< ", " >"]}
@@ -496,10 +499,10 @@ class Prompt(BaseElement):
         self.is_selectable = True
         self.selectables_length = 1
         self.styles = {
-            "label": not_implemented_style,
-            "value": not_implemented_style,
-            "delimiter": not_implemented_style,
-            "highlight": not_implemented_style,
+            "label": default_foreground,
+            "value": default_foreground,
+            "delimiter": default_foreground,
+            "highlight": default_background,
         }
 
         self.chars = {
