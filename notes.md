@@ -4,8 +4,11 @@ IN PROGRESS
 * ANSI implementation
     - [ ] look into if key codes (like UP) work universally or need to be platform-specific
 
+* there should be a `Container().center()` method
 * there should be a global `set_style` method
 * `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
+* `Prompt` and `ListView` objects don't properly apply background colors to the full object
+    + maybe background should be its own style? probably. it could even be a `BaseElement` default!
 
 FINISHED
 --------

@@ -18,17 +18,22 @@ def style(depth: int, item: str) -> str:
     return color(item, 213 - depth * 36)
 
 with alt_buffer(cursor=False):
-    c = Container()
+    c = Container(vert_align=Container.VERT_ALIGN_CENTER, horiz_align=Container.HORIZ_ALIGN_RIGHT)
     c.forced_width = 70
+    c.forced_height = 10
     c.set_char("border", ["|x| ", "=", " |x|", "="])
 
+    c += Label("Please excuse how terrible this looks")
+    c += Label()
     l = Label("hello world!")
     l.set_style("value", style)
     c += l
 
-    d = Container()
+    d = Container(vert_align=Container.VERT_ALIGN_BOTTOM)
     l = Label("hello inner scope!")
     d.set_char("border", ["|| ", "-", " ||", "-"])
+    d.forced_height = 15
+    d.forced_width = 40
     l.set_style("value", style)
     d += l 
 
@@ -47,7 +52,7 @@ with alt_buffer(cursor=False):
     c += d
 
     p = Prompt("hello", "there", 2)
-    p.set_style("highlight", lambda depth, item: bg(item, 72))
+    p.set_style("highlight", lambda depth, item: bg(item, 22))
     p.set_style("value", style)
     c += p
 

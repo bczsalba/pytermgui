@@ -42,8 +42,8 @@ class BaseElement:
         self.forced_width: Optional[int] = None
         self.forced_height: Optional[int] = None
 
-        self.width = width
-        self.height = 1
+        self._width = width
+        self._height = 1
 
         if pos is None:
             pos = 1, 1
@@ -72,18 +72,28 @@ class BaseElement:
     def width(self, value: int) -> None:
         """Setter for width property"""
 
-        if self.has_forced_width() and value is not self.forced_width:
+        if self.forced_width is not None and value is not self.forced_width:
             raise TypeError(
-                "It is impossible to manually set the width of an object with a `forced_width` attribute."
+                "It is impossible to manually set the width "
+                + "of an object with a `forced_width` attribute."
             )
 
         self._width = value
 
-    def has_forced_width(self) -> bool:
-        """Returns if the element has forced width,
-        shorthand to `element.has_forced_width()`"""
+    @property
+    def height(self) -> int:
+        """Getter for height property"""
 
-        return self.forced_width is not None
+        return self._height
+
+    @height.setter
+    def height(self, value: int) -> None:
+        """Non-setter for height property"""
+
+        raise TypeError(
+            "`element.height` is not settable, it is currently "
+            + f"{self.height}. Use element.forced_height instead."
+        )
 
     def set_style(self, key: str, value: StyleType) -> None:
         """Set self.{key}_style to value"""
@@ -149,7 +159,24 @@ class BaseElement:
 class Container(BaseElement):
     """The element that serves as the outer parent to all other elements"""
 
-    def __init__(self, width: int = 0) -> None:
+    VERT_ALIGN_TOP = 0
+    VERT_ALIGN_CENTER = 1
+    VERT_ALIGN_BOTTOM = 2
+
+    HORIZ_ALIGN_LEFT = 3
+    HORIZ_ALIGN_CENTER = 4
+    HORIZ_ALIGN_RIGHT = 5
+
+    CENTER_X = 6
+    CENTER_Y = 7
+    CENTER_BOTH = 8
+
+    def __init__(
+        self,
+        width: int = 0,
+        horiz_align: int = HORIZ_ALIGN_CENTER,
+        vert_align: int = VERT_ALIGN_CENTER,
+    ) -> None:
         """Initialize Container data"""
 
         super().__init__(width)
@@ -157,6 +184,8 @@ class Container(BaseElement):
         self._selectables: dict[int, tuple[BaseElement, int]] = {}
         self._prev_selected: Optional[BaseElement] = None
 
+        self.vert_align = vert_align
+        self.horiz_align = horiz_align
         self.styles = {
             "border": default_foreground,
             "corner": default_foreground,
@@ -218,7 +247,7 @@ class Container(BaseElement):
     def _add_element(self, other: BaseElement) -> None:
         """Add other to self._elements"""
 
-        if self.has_forced_width() and other.has_forced_width():
+        if self.forced_width is not None and other.forced_width is not None:
             if self.forced_width < other.forced_width:
                 raise ValueError(
                     "Object being added has a forced width that is larger than self."
@@ -241,8 +270,20 @@ class Container(BaseElement):
         for i in range(other.selectables_length):
             self._selectables[sel_len + i] = other, i
 
-        self.height += other.height
+        self._height += other.height
         self.get_lines()
+
+    def dbg(self) -> str:
+        """Return dbg information about this object's elements"""
+
+        out = "Container(), elements=["
+        for element in self._elements:
+            out += type(element).__name__ + ", "
+
+        out = out.strip(", ")
+        out += "]"
+
+        return out
 
     def set_recursive_depth(self, value: int) -> None:
         """Set depth for all children, recursively"""
@@ -257,14 +298,16 @@ class Container(BaseElement):
     def get_lines(self) -> list[str]:
         """Get lines to represent the object"""
 
-        # pylint: disable=too-many-locals
+        # pylint: disable=too-many-locals, too-many-branches
         #  All the locals here are used,
         # reducing their number would make the code less readable
+        # This method might need a refactor because of the branches
+        # issue, but I don't see what could really be improved.
 
         def _apply_forced_width(source: BaseElement, target: BaseElement) -> bool:
             """Apply source's forced_width attribute to target, return False if not possible."""
 
-            if source.has_forced_width() and not target.has_forced_width():
+            if source.forced_width is not None and not target.forced_width is not None:
                 source.width = source.forced_width
                 if source.width > target.width - self.sidelength:
                     target.width = source.width + self.sidelength
@@ -288,7 +331,7 @@ class Container(BaseElement):
                 + corner_style(self.depth, right)
             )
 
-        lines = []
+        lines: list[str] = []
 
         borders = self.get_char("border")
         left_border, top_border, right_border, bottom_border = borders
@@ -299,32 +342,82 @@ class Container(BaseElement):
         corner_style = self.get_style("corner")
         border_style = self.get_style("border")
 
+        has_height_remaining = True
         for element in self._elements:
+            if not has_height_remaining:
+                break
+
             if not _apply_forced_width(element, self):
                 _apply_forced_width(self, element)
 
             # Container()-s need an extra padding
             container_offset = 1 if not isinstance(element, Container) else 0
 
-            if element.width >= self.width and not self.has_forced_width():
+            if element.width >= self.width and not self.forced_width is not None:
                 self.width = element.width + self.sidelength + container_offset
-            else:
+
+            elif not element.forced_width is not None:
                 element.width = self.width - self.sidelength - container_offset
 
             for line in element.get_lines():
-                if self.has_forced_width():
-                    if (other_len := real_length(line)) > self.forced_width:
-                        raise ValueError(
-                            f"Object `{element.dbg()}` "
-                            + "could not be resized to self.forced_width. "
-                            + f"({self.forced_width} vs {other_len})"
-                        )
+                if (
+                    self.forced_height is not None
+                    and len(lines) + 2 >= self.forced_height
+                ):
+                    has_height_remaining = False
+                    break
+
+                if (
+                    self.forced_width is not None
+                    and (other_len := real_length(line)) + self.sidelength
+                    > self.forced_width
+                ):
+                    raise ValueError(
+                        f"Object `{element.dbg()}` "
+                        + "could not be resized to self.forced_width. "
+                        + f"({other_len} > {self.forced_width}) "
+                    )
+
+                if self.horiz_align is Container.HORIZ_ALIGN_CENTER:
+                    side_padding = (
+                        (self.width - real_length(line) - self.sidelength) // 2 * " "
+                    )
+
+                elif self.horiz_align is Container.HORIZ_ALIGN_LEFT:
+                    side_padding = ""
+
+                elif self.horiz_align is Container.HORIZ_ALIGN_RIGHT:
+                    side_padding = (
+                        self.width - real_length(line) - self.sidelength
+                    ) * " "
 
                 lines.append(
                     border_style(self.depth, left_border)
+                    + side_padding
                     + line
+                    + (self.width - self.sidelength - real_length(line + side_padding))
+                    * " "
                     + border_style(self.depth, right_border)
                 )
+
+        if self.forced_height is not None:
+            padding_range = self.forced_height - len(lines) - 2
+            empty_line = (
+                left_border + (self.width - self.sidelength) * " " + right_border
+            )
+
+            if self.vert_align is Container.VERT_ALIGN_TOP:
+                for _ in range(padding_range):
+                    lines.append(empty_line)
+
+            elif self.vert_align is Container.VERT_ALIGN_CENTER:
+                for _ in range(padding_range // 2):
+                    lines.insert(0, empty_line)
+                    lines.append(empty_line)
+
+            elif self.vert_align is Container.VERT_ALIGN_BOTTOM:
+                for _ in range(padding_range):
+                    lines.insert(0, empty_line)
 
         lines.insert(0, _create_border_line(top_left, top_border, top_right))
         lines.append(_create_border_line(bottom_left, bottom_border, bottom_right))
@@ -453,7 +546,7 @@ class ListView(BaseElement):
         self.layout = layout
         self.align = align
         self.donor_label = Label(align=self.align)
-        self.height = len(self.options)
+        self._height = len(self.options)
 
         self.is_selectable = True
         self.selectables_length = len(options)
