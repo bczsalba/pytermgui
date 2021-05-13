@@ -11,7 +11,7 @@ This module provides the classes used by the module.
 # pylint: disable=too-many-instance-attributes
 
 from __future__ import annotations
-from typing import Optional, Callable
+from typing import Optional, Callable, Type, Union
 
 from .helpers import real_length
 from .context_managers import cursor_at
@@ -42,6 +42,9 @@ def default_background(depth: int, item: str) -> str:
 class BaseElement:
     """The element from which all UI classes derive from"""
 
+    styles: dict[str, StyleType] = {}
+    chars: dict[str, list[str]] = {}
+
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
         """Initialize universal data for objects"""
 
@@ -56,12 +59,12 @@ class BaseElement:
         self.pos = pos
 
         self.depth = 0
-        self.styles: dict[str, StyleType] = {}
-        self.chars: dict[str, list[str]] = {}
 
         self.is_selectable = False
         self.selectables_length = 0
         self.selected_index: Optional[int] = None
+        self.styles = type(self).styles.copy()
+        self.chars = type(self).chars.copy()
 
     def __repr__(self) -> str:
         """Print self.dbg() by default"""
@@ -101,40 +104,6 @@ class BaseElement:
             + f"{self.height}. Use element.forced_height instead."
         )
 
-    def set_style(self, key: str, value: StyleType) -> None:
-        """Set self.{key}_style to value"""
-
-        if not key in self.styles.keys():
-            raise KeyError(f"Style {key} is not valid for {type(self)}!")
-
-        if not callable(value):
-            raise ValueError(f"Style {key} for {type(self)} has to be a callable.")
-
-        self.styles[key] = value
-
-    def set_char(self, key: str, value: list[str]) -> None:
-        """Set self.{key}_char to value"""
-
-        if not key in self.chars.keys():
-            raise KeyError(f"Char {key} is not valid for {type(self)}!")
-
-        self.chars[key] = value
-
-    def get_style(self, key: str) -> StyleType:
-        """Try to get style"""
-
-        return self.styles[key]
-
-    def get_char(self, key: str) -> list[str]:
-        """Try to get char"""
-
-        return self.chars[key]
-
-    def get_lines(self) -> list[str]:
-        """Stub for element.get_lines"""
-
-        return [type(self).__name__]
-
     @property
     def posx(self) -> int:
         """Return x position of object"""
@@ -164,6 +133,70 @@ class BaseElement:
             raise NotImplementedError("You can only set integers as object positions.")
 
         self.pos = (self.posx, value)
+
+    @staticmethod
+    def _set_style(
+        cls_or_obj: Union[Type[BaseElement], BaseElement], key: str, value: StyleType
+    ) -> None:
+        """Protected method for setting styles"""
+
+        if not key in cls_or_obj.styles.keys():
+            raise KeyError(f"Style {key} is not valid for {cls_or_obj}!")
+
+        if not callable(value):
+            raise ValueError(
+                f"Style {key} for {type(cls_or_obj)} has to be a callable."
+            )
+
+        cls_or_obj.styles[key] = value
+
+    @staticmethod
+    def _set_char(
+        cls_or_obj: Union[Type[BaseElement], BaseElement], key: str, value: list[str]
+    ) -> None:
+        """Protected method for setting chars"""
+
+        if not key in cls_or_obj.styles.keys():
+            raise KeyError(f"Char {key} is not valid for {cls_or_obj}!")
+
+        cls_or_obj.chars[key] = value
+
+    @classmethod
+    def set_class_style(cls, key: str, value: StyleType) -> None:
+        """Set class_style key to value"""
+
+        cls._set_style(cls, key, value)
+
+    @classmethod
+    def set_class_char(cls, key: str, value: list[str]) -> None:
+        """Set class_char key to value"""
+
+        cls._set_char(cls, key, value)
+
+    def set_style(self, key: str, value: StyleType) -> None:
+        """Set instance_style key to value"""
+
+        self._set_style(self, key, value)
+
+    def set_char(self, key: str, value: list[str]) -> None:
+        """Set instance_char key to value"""
+
+        self._set_char(self, key, value)
+
+    def get_style(self, key: str) -> StyleType:
+        """Try to get style"""
+
+        return self.styles[key]
+
+    def get_char(self, key: str) -> list[str]:
+        """Try to get char"""
+
+        return self.chars[key]
+
+    def get_lines(self) -> list[str]:
+        """Stub for element.get_lines"""
+
+        return [type(self).__name__]
 
     def select(self, index: int) -> None:
         """Select part of self"""
@@ -195,6 +228,13 @@ class Container(BaseElement):
     CENTER_Y = 7
     CENTER_BOTH = 8
 
+    chars: dict[str, list[str]] = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
+
+    styles: dict[str, StyleType] = {
+        "border": default_foreground,
+        "corner": default_foreground,
+    }
+
     def __init__(
         self,
         width: int = 0,
@@ -213,15 +253,9 @@ class Container(BaseElement):
 
         self.vert_align = vert_align
         self.horiz_align = horiz_align
-        self.styles = {
-            "border": default_foreground,
-            "corner": default_foreground,
-        }
 
-        self.chars = {
-            "border": ["| ", "-", " |", "-"],
-            "corner": [""] * 4,
-        }
+        self.styles = Container.styles.copy()
+        self.chars = Container.chars.copy()
 
     @property
     def sidelength(self) -> int:
@@ -514,6 +548,10 @@ class Label(BaseElement):
     ALIGN_CENTER = 1
     ALIGN_RIGHT = 2
 
+    styles: dict[str, StyleType] = {
+        "value": default_foreground,
+    }
+
     def __init__(self, value: str = "", align: int = ALIGN_CENTER) -> None:
         """Set up object"""
 
@@ -523,10 +561,6 @@ class Label(BaseElement):
         self.align = align
         self.padding = 0
         self.width = len(value) + self.padding
-
-        self.styles = {
-            "value": default_foreground,
-        }
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""
@@ -579,6 +613,14 @@ class ListView(BaseElement):
     LAYOUT_HORIZONTAL = 0
     LAYOUT_VERTICAL = 1
 
+    styles: dict[str, StyleType] = {
+        "delimiter": default_foreground,
+        "value": default_foreground,
+        "highlight": default_background,
+    }
+
+    chars: dict[str, list[str]] = {"delimiter": ["< ", " >"]}
+
     def __init__(
         self,
         options: list[str],
@@ -599,14 +641,6 @@ class ListView(BaseElement):
 
         self.is_selectable = True
         self.selectables_length = len(options)
-
-        self.styles = {
-            "delimiter": default_foreground,
-            "value": default_foreground,
-            "highlight": default_background,
-        }
-
-        self.chars = {"delimiter": ["< ", " >"]}
 
     def get_lines(self) -> list[str]:
         """Get lines to represent object"""
@@ -675,6 +709,17 @@ class Prompt(BaseElement):
     HIGHLIGHT_RIGHT = 1
     HIGHLIGHT_ALL = 2
 
+    styles: dict[str, StyleType] = {
+        "label": default_foreground,
+        "value": default_foreground,
+        "delimiter": default_foreground,
+        "highlight": default_background,
+    }
+
+    chars: dict[str, list[str]] = {
+        "delimiter": ["< ", " >"],
+    }
+
     def __init__(
         self, label: str = "", value: str = "", highlight_target: int = HIGHLIGHT_LEFT
     ) -> None:
@@ -687,16 +732,6 @@ class Prompt(BaseElement):
 
         self.is_selectable = True
         self.selectables_length = 1
-        self.styles = {
-            "label": default_foreground,
-            "value": default_foreground,
-            "delimiter": default_foreground,
-            "highlight": default_background,
-        }
-
-        self.chars = {
-            "delimiter": ["< ", " >"],
-        }
 
     def get_lines(self) -> list[str]:
         """Get lines for object"""
