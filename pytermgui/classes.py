@@ -156,7 +156,7 @@ class BaseElement:
     ) -> None:
         """Protected method for setting chars"""
 
-        if not key in cls_or_obj.styles.keys():
+        if not key in cls_or_obj.chars.keys():
             raise KeyError(f"Char {key} is not valid for {cls_or_obj}!")
 
         cls_or_obj.chars[key] = value
@@ -801,3 +801,44 @@ class Prompt(BaseElement):
             + f"highlight_target={self.get_highlight_target_string()}"
             + ")"
         )
+
+
+class ProgressBar(BaseElement):
+    """An element showing Progress"""
+
+    chars: dict[str, list[str]] = {
+        "fill": ["#"],
+        "delimiter": ["[ ", " ]"],
+    }
+
+    styles: dict[str, StyleType] = {
+        "fill": default_foreground,
+        "delimiter": default_foreground,
+    }
+
+    def __init__(self, progress_function: Callable[[], float]) -> None:
+        """Initialize object"""
+
+        super().__init__()
+        self.progress_function = progress_function
+
+    def get_lines(self) -> list[str]:
+        """Get lines of object"""
+
+        delimiter_style = self.get_style("delimiter")
+        fill_style = self.get_style("fill")
+
+        delimiter_chars = self.get_char("delimiter")
+        fill_char = self.get_char("fill")[0]
+
+        start, end = [
+            delimiter_style(self.depth, char) for char in delimiter_chars
+        ]
+        progress_float = min(self.progress_function(), 1.0)
+
+        total = self.width - real_length(start + end)
+        progress = int(total * progress_float)
+        middle = fill_style(self.depth, progress * fill_char)
+
+        line = start + middle
+        return [line + (self.width - real_length(line + end)) * " " + end]
