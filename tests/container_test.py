@@ -8,6 +8,7 @@ This is a really messy file to test basic Container and other widget
 actions, will probably be removed once those are reliable.
 """
 
+from typing import Callable
 from pytermgui import (
     Container,
     Label,
@@ -16,87 +17,87 @@ from pytermgui import (
     ProgressBar,
     alt_buffer,
     getch,
-    report_mouse
 )
 
 from pytermgui import foreground256 as color
-from pytermgui import background256 as bg
-from typing import Callable
+from pytermgui import background256 as highlight
 
-def style(depth: int, item: str) -> str:
-    """Test style"""
 
-    return color(item, 213 - depth * 36)
+def create_style(pre_color: int) -> Callable[[str], str]:
+    """Factory function that creates a callable for color"""
 
-def background(depth: int, item: str) -> str:
-    return bg(item, 60)
+    return lambda depth, item: color(item, pre_color)  # type: ignore
 
-def colored(pre_color: int) -> Callable[[int, str], str]:
-    """Return a lambda with color stuff"""
 
-    return lambda depth, item: color(item, pre_color)
+def value_style(depth: int, item: str) -> str:
+    """Style function for values"""
 
-with alt_buffer(cursor=False):
-    Container.set_class_char("border", ["|x| ", "=", " |x|", "="])
-    
-    Label.set_class_style("value", style)
-    Prompt.set_class_style("value", style)
-    Prompt.set_class_style("delimiter", colored(210))
-    Prompt.set_class_style("value", colored(72))
-    Prompt.set_class_style("highlight", lambda depth, item: bg(item, 22))
-    ListView.set_class_style("delimiter", colored(210))
-    ListView.set_class_style("value", colored(72))
-    ListView.set_class_style("highlight", lambda depth, item: bg(item, 22))
-    ProgressBar.set_class_char("fill", ["#"])
-    ProgressBar.set_class_style("delimiter", colored(210))
-    ProgressBar.set_class_style("fill", colored(72))
+    return color(item, 33 + 36 * depth)  # type: ignore
 
-    c = Container(vert_align=Container.VERT_ALIGN_CENTER, horiz_align=Container.HORIZ_ALIGN_CENTER)
-    progress = 0.0
 
-    p = ProgressBar(lambda: progress)
-    p.forced_width = 104
-    c += Label()
-    c[-1].set_style("value", lambda _, __: f"Progress: {round(progress * 100)}%")
+def highlight_style(depth: int, item: str) -> str:
+    """Style function for highlighted elements"""
 
-    c += p
-    c += Label("Please excuse how terrible this looks")
-    c += Label()
-    l = Label("hello world!")
-    c += l
+    return highlight(item, 99)
 
-    inner = Container(vert_align=Container.VERT_ALIGN_CENTER) + Label("hello inner scope!")
-    inner.forced_width = 50
-    inner.forced_height = 15
 
+delimiter_style = create_style(225)
+padding_label = Label()
+
+with alt_buffer():
+    Container.set_class_char("border", ["|| ", "~", " ||", "~"])
+
+    Label.set_class_style("value", value_style)
+
+    Prompt.set_class_style("value", value_style)
+    Prompt.set_class_style("label", delimiter_style)
+    Prompt.set_class_style("delimiter", delimiter_style)
+    Prompt.set_class_style("highlight", highlight_style)
+
+    ListView.set_class_style("highlight", highlight_style)
+    ListView.set_class_style("value", value_style)
+    ListView.set_class_style("delimiter", delimiter_style)
+    ListView.set_class_char("delimiter", ["- ", ""])
+
+    ProgressBar.set_class_style("fill", delimiter_style)
+    ProgressBar.set_class_style("delimiter", value_style)
+
+    main = Container()
+    main.forced_height = 30
+    main.set_char("border", ["|x| ", "=", " |x|", "="])
+
+    main += Label("Please excuse how terrible this looks")
+    main += padding_label
+    main += Label("hello world!")
+
+    inner = Container() + Label("hello inner scope!")
     inner += Container() + Label("hello inner-er scope!")
-    inner[-1] +=  Container() + Label("this is getting ridiculous")
-    c += inner
+    inner[-1] += Container() + Label("this is getting ridonculous.")
+    main += inner
+    main += padding_label
 
-    p = Prompt("hello", "there", 2)
-    c += p
+    main += Prompt("hello", "there")
+    main += padding_label
+    main += Label("here are some items", Label.ALIGN_LEFT)
 
-    lv = ListView(options=["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_CENTER, padding=0)
-    c += lv
+    main += ListView(
+        ["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_LEFT, padding=2
+    )
+    main += padding_label
+    main += ProgressBar(progress_function=lambda: 0.6)
+    main[-1].forced_width = 100
 
-    c.get_lines()
-    c.select(0)
-    c.center()
-    c.print()
+    main.select(0)
+    main.center()
+    main.print()
 
     while True:
         key = getch()
 
         if key == "k":
-            c.selected_index -= 1
+            main.selected_index -= 1
         elif key == "j":
-            c.selected_index += 1
+            main.selected_index += 1
 
-        elif key == "+":
-            progress += 0.01
-
-        elif key == "-":
-            progress -= 0.01
-
-        c.select()
-        c.print()
+        main.select()
+        main.print()

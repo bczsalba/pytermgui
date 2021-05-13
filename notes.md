@@ -4,9 +4,11 @@ IN PROGRESS
 * ANSI implementation
     - [ ] look into if key codes (like UP) work universally or need to be platform-specific
 
+* `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
+* look into why `ProgressBar` ends one short when it doesn't have a `forced_width`
+* add background styles
 * `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
-* `Prompt` and `ListView` objects don't properly apply background colors to the full object
-    + maybe background should be its own style? probably. it could even be a `BaseElement` default!
+* templating: dumping and loading from files, strings
 
 FINISHED
 --------
@@ -29,7 +31,7 @@ FINISHED
     - [x] hex palette
 
 * classes
-    - [ ] BaseElement
+    - [x] Widget
 
     - [x] Container
         + [x] repr

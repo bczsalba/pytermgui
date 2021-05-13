@@ -496,7 +496,7 @@ class Container(Widget):
         if index is None:
             if self.selected_index is None:
                 raise ValueError(
-                    "Cannot select nothing!"
+                    "Cannot select nothing! "
                     + "Either give an argument to select() or set object.selected_index."
                 )
             index = self.selected_index
@@ -520,6 +520,9 @@ class Container(Widget):
         self, where: Optional[int] = CENTER_BOTH, store: bool = True
     ) -> Container:
         """Center object on given axis, store & reapply if `store`"""
+
+        # refresh in case changes happened
+        self.get_lines()
 
         centerx = where in [Container.CENTER_X, Container.CENTER_BOTH]
         centery = where in [Container.CENTER_Y, Container.CENTER_BOTH]
@@ -575,7 +578,7 @@ class Label(Widget):
         self.value = value
         self.align = align
         self.padding = 0
-        self.width = len(value) + self.padding
+        self.width = len(value) + self.padding + 2
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""
