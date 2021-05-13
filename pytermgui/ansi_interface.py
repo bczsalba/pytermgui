@@ -24,6 +24,7 @@ from subprocess import run as _run
 from subprocess import Popen as _Popen
 from sys import stdout as _stdout
 from os import name as _name
+from os import get_terminal_size
 
 from .input import getch
 
@@ -32,9 +33,9 @@ __all__ = [
     "Color16",
     "Color256",
     "ColorRGB",
-    "get_screen_size",
-    "width",
-    "height",
+    "screen_size",
+    "screen_width",
+    "screen_height",
     "save_screen",
     "restore_screen",
     "start_alt_buffer",
@@ -224,32 +225,39 @@ def _tput(command: list[str]) -> None:
 
 
 # screen commands
-def get_screen_size() -> Optional[tuple[int, int]]:
-    """Get screen size by moving to an impossible location
-    and getting new cursor position"""
+def screen_size() -> tuple[int, int]:
+    """Get screen size using os module
 
-    save_cursor()
-    move_cursor((9999, 9999))
-    size = report_cursor()
-    restore_cursor()
+    This is technically possible using a method of
+    moving the cursor to an impossible location, and
+    using `report_cursor()` to get where the position
+    was clamped, but it messes with the cursor position
+    and makes for glitchy printing.
+    """
 
-    return size
+    # save_cursor()
+    # move_cursor((9999, 9999))
+    # size = report_cursor()
+    # restore_cursor()
+    # return size
+
+    return get_terminal_size()
 
 
-def width() -> int:
+def screen_width() -> int:
     """Get screen width"""
 
-    size = get_screen_size()
+    size = screen_size()
 
     if size is None:
         return 0
     return size[0]
 
 
-def height() -> int:
+def screen_height() -> int:
     """Get screen height"""
 
-    size = get_screen_size()
+    size = screen_size()
 
     if size is None:
         return 0
