@@ -11,7 +11,7 @@ This module provides the classes used by the module.
 # pylint: disable=too-many-instance-attributes
 
 from __future__ import annotations
-from typing import Optional, Callable, Type, Union
+from typing import Optional, Callable, Type, Union, Iterator, Any
 
 from .helpers import real_length
 from .context_managers import cursor_at
@@ -278,21 +278,36 @@ class Container(Widget):
         self._prev_selected = data[0]
         return data[0]
 
-    def __iadd__(self, other: object) -> Optional[Container]:
+    def __iadd__(self, other: object) -> Container:
         """Call self._add_widget(other) and return self"""
 
         if not isinstance(other, Widget):
-            raise NotImplementedError(
-                "You can only add Widgets to other Widgets."
-            )
+            raise NotImplementedError("You can only add widgets to a Container.")
 
         self._add_widget(other)
         return self
 
-    def __add__(self, other: object) -> None:
+    def __add__(self, other: object) -> Container:
         """Call self._add_widget(other)"""
 
         self.__iadd__(other)
+        return self
+
+    def __iter__(self) -> Iterator[Widget]:
+        """Iterate through self._widget"""
+
+        for widget in self._widgets:
+            yield widget
+
+    def __getitem__(self, index: int) -> Widget:
+        """Index in self._widget"""
+
+        return self._widgets[index]
+
+    def __setitem__(self, index: int, value: Any) -> None:
+        """Set item in self._widgets"""
+
+        self._widgets[index] = value
 
     def _add_widget(self, other: Widget) -> None:
         """Add other to self._widgets"""
@@ -831,9 +846,7 @@ class ProgressBar(Widget):
         delimiter_chars = self.get_char("delimiter")
         fill_char = self.get_char("fill")[0]
 
-        start, end = [
-            delimiter_style(self.depth, char) for char in delimiter_chars
-        ]
+        start, end = [delimiter_style(self.depth, char) for char in delimiter_chars]
         progress_float = min(self.progress_function(), 1.0)
 
         total = self.width - real_length(start + end)

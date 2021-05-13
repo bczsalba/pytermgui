@@ -48,7 +48,6 @@ with alt_buffer(cursor=False):
     ListView.set_class_style("value", colored(72))
     ListView.set_class_style("highlight", lambda depth, item: bg(item, 22))
     ProgressBar.set_class_char("fill", ["#"])
-    # ProgressBar.set_class_char("delimiter", ["[", "]"])
     ProgressBar.set_class_style("delimiter", colored(210))
     ProgressBar.set_class_style("fill", colored(72))
 
@@ -58,7 +57,7 @@ with alt_buffer(cursor=False):
     p = ProgressBar(lambda: progress)
     p.forced_width = 104
     c += Label()
-    c._widgets[-1].set_style("value", lambda _, __: f"Progress: {round(progress * 100)}%")
+    c[-1].set_style("value", lambda _, __: f"Progress: {round(progress * 100)}%")
 
     c += p
     c += Label("Please excuse how terrible this looks")
@@ -66,23 +65,13 @@ with alt_buffer(cursor=False):
     l = Label("hello world!")
     c += l
 
-    d = Container(vert_align=Container.VERT_ALIGN_CENTER)
-    l = Label("hello inner scope!")
-    d.forced_width = 50
-    d.forced_height = 15
-    d += l 
+    inner = Container(vert_align=Container.VERT_ALIGN_CENTER) + Label("hello inner scope!")
+    inner.forced_width = 50
+    inner.forced_height = 15
 
-    e = Container()
-    l = Label("hello inner-er scope!")
-    e += l 
-
-    f = Container()
-    l = Label("this is getting ridiculous")
-    f += l 
-
-    e += f
-    d += e
-    c += d
+    inner += Container() + Label("hello inner-er scope!")
+    inner[-1] +=  Container() + Label("this is getting ridiculous")
+    c += inner
 
     p = Prompt("hello", "there", 2)
     c += p

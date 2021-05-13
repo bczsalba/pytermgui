@@ -33,7 +33,7 @@ def cursor_at(pos: tuple[int, int]) -> Generator[Callable[..., None], None, None
     posx, posy = pos
 
     def printer(*args: tuple[Any, ...]) -> None:
-        """ Print to posx, current y """
+        """Print to posx, current y"""
 
         nonlocal offset
 
