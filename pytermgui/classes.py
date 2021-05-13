@@ -15,7 +15,13 @@ from typing import Optional, Callable
 
 from .helpers import real_length
 from .context_managers import cursor_at
-from .ansi_interface import background16
+from .ansi_interface import (
+    background16,
+    screen_width,
+    screen_height,
+    screen_size,
+    clear,
+)
 
 StyleType = Callable[[int, str], str]
 
@@ -135,11 +141,29 @@ class BaseElement:
 
         return self.pos[0]
 
+    @posx.setter
+    def posx(self, value: int) -> None:
+        """Set x position of object"""
+
+        if not isinstance(value, int):
+            raise NotImplementedError("You can only set integers as object positions.")
+
+        self.pos = (value, self.posy)
+
     @property
     def posy(self) -> int:
         """Return y position of object"""
 
         return self.pos[1]
+
+    @posy.setter
+    def posy(self, value: int) -> None:
+        """Set y position of object"""
+
+        if not isinstance(value, int):
+            raise NotImplementedError("You can only set integers as object positions.")
+
+        self.pos = (self.posx, value)
 
     def select(self, index: int) -> None:
         """Select part of self"""
@@ -182,7 +206,10 @@ class Container(BaseElement):
         super().__init__(width)
         self._elements: list[BaseElement] = []
         self._selectables: dict[int, tuple[BaseElement, int]] = {}
+        self._centered_axis: Optional[int] = None
         self._prev_selected: Optional[BaseElement] = None
+
+        self._prev_screen: tuple[int, int] = (0, 0)
 
         self.vert_align = vert_align
         self.horiz_align = horiz_align
@@ -216,17 +243,6 @@ class Container(BaseElement):
 
         self._prev_selected = data[0]
         return data[0]
-
-    def __repr__(self) -> str:
-        """Return self.get_lines()"""
-
-        posx, posy = self.pos
-
-        out = ""
-        for i, line in enumerate(self.get_lines()):
-            out += f"\033[{posy+i};{posx}H" + line
-
-        return out
 
     def __iadd__(self, other: object) -> Optional[Container]:
         """Call self._add_element(other) and return self"""
@@ -422,14 +438,8 @@ class Container(BaseElement):
         lines.insert(0, _create_border_line(top_left, top_border, top_right))
         lines.append(_create_border_line(bottom_left, bottom_border, bottom_right))
 
+        self._height = len(lines)
         return lines
-
-    def print(self) -> None:
-        """Print object"""
-
-        with cursor_at(self.pos) as print_here:
-            for line in self.get_lines():
-                print_here(line)
 
     def select(self, index: Optional[int] = None) -> None:
         """Select inner object"""
@@ -456,6 +466,45 @@ class Container(BaseElement):
 
         # update self._prev_selected
         _ = self.selected
+
+    def center(
+        self, where: Optional[int] = CENTER_BOTH, store: bool = True
+    ) -> Container:
+        """Center object on given axis, store & reapply if `store`"""
+
+        centerx = where in [Container.CENTER_X, Container.CENTER_BOTH]
+        centery = where in [Container.CENTER_Y, Container.CENTER_BOTH]
+
+        if centerx:
+            self.posx = (screen_width() - self.width + 2) // 2
+
+        if centery:
+            self.posy = (screen_height() - self.height + 2) // 2
+
+        if store:
+            self._centered_axis = where
+
+        self._prev_screen = screen_size()
+
+        return self
+
+    def wipe(self) -> None:
+        """Wipe characters occupied by the object"""
+
+        with cursor_at(self.pos) as print_here:
+            for line in self.get_lines():
+                print_here(real_length(line) * " ")
+
+    def print(self) -> None:
+        """Print object"""
+
+        if not screen_size() == self._prev_screen:
+            clear()
+            self.center(self._centered_axis)
+
+        with cursor_at(self.pos) as print_here:
+            for line in self.get_lines():
+                print_here(line)
 
 
 class Label(BaseElement):

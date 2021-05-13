@@ -20,7 +20,6 @@ def style(depth: int, item: str) -> str:
 with alt_buffer(cursor=False):
     c = Container(vert_align=Container.VERT_ALIGN_CENTER, horiz_align=Container.HORIZ_ALIGN_RIGHT)
     c.forced_width = 70
-    c.forced_height = 10
     c.set_char("border", ["|x| ", "=", " |x|", "="])
 
     c += Label("Please excuse how terrible this looks")
@@ -32,8 +31,8 @@ with alt_buffer(cursor=False):
     d = Container(vert_align=Container.VERT_ALIGN_BOTTOM)
     l = Label("hello inner scope!")
     d.set_char("border", ["|| ", "-", " ||", "-"])
-    d.forced_height = 15
     d.forced_width = 40
+    d.forced_height = 15
     l.set_style("value", style)
     d += l 
 
@@ -63,10 +62,9 @@ with alt_buffer(cursor=False):
     c += lv
 
 
-    c.pos = (35, 10)
+    c.get_lines()
     c.select(0)
-    print(c)
-
+    c.center()
     while True:
         key = getch()
 
@@ -76,4 +74,4 @@ with alt_buffer(cursor=False):
             c.selected_index += 1
 
         c.select()
-        print(c)
+        c.print()
