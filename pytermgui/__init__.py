@@ -13,7 +13,7 @@ from typing import Optional
 
 from .input import getch, _platform_keys
 from .helpers import Regex, strip_ansi, break_line
-from .classes import BaseElement, Container, Label, ListView, Prompt, ProgressBar
+from .classes import Widget, Container, Label, ListView, Prompt, ProgressBar
 from .context_managers import alt_buffer, cursor_at
 
 from .ansi_interface import *

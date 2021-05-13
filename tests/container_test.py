@@ -4,7 +4,7 @@ pytermgui/tests/container_test.py
 author: bczsalba
 
 
-This is a really messy file to test basic Container and other element
+This is a really messy file to test basic Container and other widget
 actions, will probably be removed once those are reliable.
 """
 
@@ -58,7 +58,7 @@ with alt_buffer(cursor=False):
     p = ProgressBar(lambda: progress)
     p.forced_width = 104
     c += Label()
-    c._elements[-1].set_style("value", lambda _, __: f"Progress: {round(progress * 100)}%")
+    c._widgets[-1].set_style("value", lambda _, __: f"Progress: {round(progress * 100)}%")
 
     c += p
     c += Label("Please excuse how terrible this looks")

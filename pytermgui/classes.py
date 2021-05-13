@@ -39,8 +39,8 @@ def default_background(depth: int, item: str) -> str:
     return background16(item, 30 + depth)
 
 
-class BaseElement:
-    """The element from which all UI classes derive from"""
+class Widget:
+    """The widget from which all UI classes derive from"""
 
     styles: dict[str, StyleType] = {}
     chars: dict[str, list[str]] = {}
@@ -100,8 +100,8 @@ class BaseElement:
         """Non-setter for height property"""
 
         raise TypeError(
-            "`element.height` is not settable, it is currently "
-            + f"{self.height}. Use element.forced_height instead."
+            "`widget.height` is not settable, it is currently "
+            + f"{self.height}. Use widget.forced_height instead."
         )
 
     @property
@@ -136,7 +136,7 @@ class BaseElement:
 
     @staticmethod
     def _set_style(
-        cls_or_obj: Union[Type[BaseElement], BaseElement], key: str, value: StyleType
+        cls_or_obj: Union[Type[Widget], Widget], key: str, value: StyleType
     ) -> None:
         """Protected method for setting styles"""
 
@@ -152,7 +152,7 @@ class BaseElement:
 
     @staticmethod
     def _set_char(
-        cls_or_obj: Union[Type[BaseElement], BaseElement], key: str, value: list[str]
+        cls_or_obj: Union[Type[Widget], Widget], key: str, value: list[str]
     ) -> None:
         """Protected method for setting chars"""
 
@@ -194,7 +194,7 @@ class BaseElement:
         return self.chars[key]
 
     def get_lines(self) -> list[str]:
-        """Stub for element.get_lines"""
+        """Stub for widget.get_lines"""
 
         return [type(self).__name__]
 
@@ -213,8 +213,8 @@ class BaseElement:
         return type(self).__name__ + "()"
 
 
-class Container(BaseElement):
-    """The element that serves as the outer parent to all other elements"""
+class Container(Widget):
+    """The widget that serves as the outer parent to all other widgets"""
 
     VERT_ALIGN_TOP = 0
     VERT_ALIGN_CENTER = 1
@@ -244,10 +244,10 @@ class Container(BaseElement):
         """Initialize Container data"""
 
         super().__init__(width)
-        self._elements: list[BaseElement] = []
-        self._selectables: dict[int, tuple[BaseElement, int]] = {}
+        self._widgets: list[Widget] = []
+        self._selectables: dict[int, tuple[Widget, int]] = {}
         self._centered_axis: Optional[int] = None
-        self._prev_selected: Optional[BaseElement] = None
+        self._prev_selected: Optional[Widget] = None
 
         self._prev_screen: tuple[int, int] = (0, 0)
 
@@ -265,7 +265,7 @@ class Container(BaseElement):
         return real_length(left_border + right_border)
 
     @property
-    def selected(self) -> Optional[BaseElement]:
+    def selected(self) -> Optional[Widget]:
         """Return selected object"""
 
         if self.selected_index is None:
@@ -279,23 +279,23 @@ class Container(BaseElement):
         return data[0]
 
     def __iadd__(self, other: object) -> Optional[Container]:
-        """Call self._add_element(other) and return self"""
+        """Call self._add_widget(other) and return self"""
 
-        if not isinstance(other, BaseElement):
+        if not isinstance(other, Widget):
             raise NotImplementedError(
-                "You can only add BaseElements to other BaseElements."
+                "You can only add Widgets to other Widgets."
             )
 
-        self._add_element(other)
+        self._add_widget(other)
         return self
 
     def __add__(self, other: object) -> None:
-        """Call self._add_element(other)"""
+        """Call self._add_widget(other)"""
 
         self.__iadd__(other)
 
-    def _add_element(self, other: BaseElement) -> None:
-        """Add other to self._elements"""
+    def _add_widget(self, other: Widget) -> None:
+        """Add other to self._widgets"""
 
         if self.forced_width is not None and other.forced_width is not None:
             if self.forced_width < other.forced_width:
@@ -304,7 +304,7 @@ class Container(BaseElement):
                     + f" ({other.forced_width} > {self.forced_width})"
                 )
 
-        self._elements.append(other)
+        self._widgets.append(other)
         if isinstance(other, Container):
             other.set_recursive_depth(self.depth + 2)
         else:
@@ -324,11 +324,11 @@ class Container(BaseElement):
         self.get_lines()
 
     def dbg(self) -> str:
-        """Return dbg information about this object's elements"""
+        """Return dbg information about this object's widgets"""
 
-        out = "Container(), elements=["
-        for element in self._elements:
-            out += type(element).__name__ + ", "
+        out = "Container(), widgets=["
+        for widget in self._widgets:
+            out += type(widget).__name__ + ", "
 
         out = out.strip(", ")
         out += "]"
@@ -339,11 +339,11 @@ class Container(BaseElement):
         """Set depth for all children, recursively"""
 
         self.depth = value
-        for element in self._elements:
-            if isinstance(element, Container):
-                element.set_recursive_depth(value + 1)
+        for widget in self._widgets:
+            if isinstance(widget, Container):
+                widget.set_recursive_depth(value + 1)
             else:
-                element.depth = value
+                widget.depth = value
 
     def get_lines(self) -> list[str]:
         """Get lines to represent the object"""
@@ -354,7 +354,7 @@ class Container(BaseElement):
         # This method might need a refactor because of the branches
         # issue, but I don't see what could really be improved.
 
-        def _apply_forced_width(source: BaseElement, target: BaseElement) -> bool:
+        def _apply_forced_width(source: Widget, target: Widget) -> bool:
             """Apply source's forced_width attribute to target, return False if not possible."""
 
             if source.forced_width is not None and not target.forced_width is not None:
@@ -393,23 +393,23 @@ class Container(BaseElement):
         border_style = self.get_style("border")
 
         has_height_remaining = True
-        for element in self._elements:
+        for widget in self._widgets:
             if not has_height_remaining:
                 break
 
-            if not _apply_forced_width(element, self):
-                _apply_forced_width(self, element)
+            if not _apply_forced_width(widget, self):
+                _apply_forced_width(self, widget)
 
             # Container()-s need an extra padding
-            container_offset = 1 if not isinstance(element, Container) else 0
+            container_offset = 1 if not isinstance(widget, Container) else 0
 
-            if element.width >= self.width and not self.forced_width is not None:
-                self.width = element.width + self.sidelength + container_offset
+            if widget.width >= self.width and not self.forced_width is not None:
+                self.width = widget.width + self.sidelength + container_offset
 
-            elif not element.forced_width is not None:
-                element.width = self.width - self.sidelength - container_offset
+            elif not widget.forced_width is not None:
+                widget.width = self.width - self.sidelength - container_offset
 
-            for line in element.get_lines():
+            for line in widget.get_lines():
                 if (
                     self.forced_height is not None
                     and len(lines) + 2 >= self.forced_height
@@ -423,7 +423,7 @@ class Container(BaseElement):
                     > self.forced_width
                 ):
                     raise ValueError(
-                        f"Object `{element.dbg()}` "
+                        f"Object `{widget.dbg()}` "
                         + "could not be resized to self.forced_width. "
                         + f"({other_len} > {self.forced_width}) "
                     )
@@ -491,11 +491,11 @@ class Container(BaseElement):
         if (data := self._selectables.get(index)) is None:
             raise IndexError("Container selection index out of range")
 
-        element, inner_index = data
-        element.select(inner_index)
+        widget, inner_index = data
+        widget.select(inner_index)
         self.selected_index = index
 
-        if self._prev_selected is not None and self._prev_selected is not element:
+        if self._prev_selected is not None and self._prev_selected is not widget:
             self._prev_selected.selected_index = None
 
         # update self._prev_selected
@@ -541,7 +541,7 @@ class Container(BaseElement):
                 print_here(line)
 
 
-class Label(BaseElement):
+class Label(Widget):
     """Unselectable text object"""
 
     ALIGN_LEFT = 0
@@ -607,7 +607,7 @@ class Label(BaseElement):
         return f'Label(value="{self.value}", align={self.get_align_string()})'
 
 
-class ListView(BaseElement):
+class ListView(Widget):
     """Allow selection from a list of options"""
 
     LAYOUT_HORIZONTAL = 0
@@ -665,10 +665,10 @@ class ListView(BaseElement):
             for i, opt in enumerate(self.options):
                 value = [start, value_style(self.depth, opt), end]
 
-                # highlight_style needs to be applied to all elements in value
+                # highlight_style needs to be applied to all widgets in value
                 if i == self.selected_index:
                     label.value = "".join(
-                        highlight_style(self.depth, element) for element in value
+                        highlight_style(self.depth, widget) for widget in value
                     )
 
                 else:
@@ -702,7 +702,7 @@ class ListView(BaseElement):
         )
 
 
-class Prompt(BaseElement):
+class Prompt(Widget):
     """Selectable object showing a single value with a label"""
 
     HIGHLIGHT_LEFT = 0
@@ -803,8 +803,8 @@ class Prompt(BaseElement):
         )
 
 
-class ProgressBar(BaseElement):
-    """An element showing Progress"""
+class ProgressBar(Widget):
+    """An widget showing Progress"""
 
     chars: dict[str, list[str]] = {
         "fill": ["#"],
