@@ -858,3 +858,12 @@ class ProgressBar(Widget):
 
         line = start + middle
         return [line + (self.width - real_length(line + end)) * " " + end]
+
+    def dbg(self) -> str:
+        """Return identifiable information about object"""
+
+        return (
+            "ProgressBar("
+            + f"progress_function={self.progress_function}"
+            + ")"
+        )
