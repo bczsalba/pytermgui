@@ -1,10 +1,10 @@
 """
-pytermgui.widget
------------------
+pytermgui.widget.base
+---------------------
 author: bczsalba
 
 
-This module provides the main widgets this module provides.
+This submodule the basic elements this library provides.
 """
 
 # these classes will have to have more than 7 attributes mostly.
@@ -13,10 +13,9 @@ This module provides the main widgets this module provides.
 from __future__ import annotations
 from typing import Optional, Callable, Type, Union, Iterator, Any
 
-from .helpers import real_length
-from .context_managers import cursor_at
-from .ansi_interface import (
-    foreground256,
+from ..helpers import real_length
+from ..context_managers import cursor_at
+from ..ansi_interface import (
     background16,
     screen_width,
     screen_height,
@@ -364,7 +363,7 @@ class Container(Widget):
     def get_lines(self) -> list[str]:
         """Get lines to represent the object"""
 
-        # pylint: disable=too-many-locals, too-many-branches
+        # pylint: disable=too-many-locals, too-many-branches, too-many-statements
         #  All the locals here are used,
         # reducing their number would make the code less readable
         # This method might need a refactor because of the branches
@@ -481,6 +480,9 @@ class Container(Widget):
                     lines.insert(0, empty_line)
                     lines.append(empty_line)
 
+                if padding_range % 2 == 1:
+                    lines.append(empty_line)
+
             elif self.vert_align is Container.VERT_ALIGN_BOTTOM:
                 for _ in range(padding_range):
                     lines.insert(0, empty_line)
@@ -488,7 +490,9 @@ class Container(Widget):
         lines.insert(0, _create_border_line(top_left, top_border, top_right))
         lines.append(_create_border_line(bottom_left, bottom_border, bottom_right))
 
-        self._height = len(lines)
+        if not len(lines) == self._height:
+            self._height = len(lines)
+
         return lines
 
     def select(self, index: Optional[int] = None) -> None:
@@ -558,167 +562,6 @@ class Container(Widget):
         with cursor_at(self.pos) as print_here:
             for line in self.get_lines():
                 print_here(line)
-
-
-class Label(Widget):
-    """Unselectable text object"""
-
-    ALIGN_LEFT = 0
-    ALIGN_CENTER = 1
-    ALIGN_RIGHT = 2
-
-    styles: dict[str, StyleType] = {
-        "value": default_foreground,
-    }
-
-    def __init__(self, value: str = "", align: int = ALIGN_CENTER) -> None:
-        """Set up object"""
-
-        super().__init__()
-
-        self.value = value
-        self.align = align
-        self.padding = 0
-        self.width = real_length(value) + self.padding + 2
-
-    def get_lines(self) -> list[str]:
-        """Get lines of object"""
-
-        value_style = self.get_style("value")
-
-        if self.align is Label.ALIGN_CENTER:
-            padding = (self.width - real_length(self.value) - self.padding) // 2
-            outline = (padding + self.padding + 1) * " " + self.value
-            outline += (self.width - real_length(outline) + 1) * " "
-
-            lines = [outline]
-
-        elif self.align is Label.ALIGN_LEFT:
-            padding = self.width - real_length(self.value) - self.padding + 1
-            lines = [self.padding * " " + self.value + padding * " "]
-
-        elif self.align is Label.ALIGN_RIGHT:
-            lines = [
-                (self.width - real_length(self.value) - self.padding + 1) * " "
-                + self.value
-                + self.padding * " "
-            ]
-
-        return [value_style(self.depth, line) for line in lines]
-
-    def get_align_string(self) -> str:
-        """Get string of align value"""
-
-        if self.align is Label.ALIGN_LEFT:
-            align = "ALIGN_LEFT"
-
-        elif self.align is Label.ALIGN_RIGHT:
-            align = "ALIGN_RIGHT"
-
-        elif self.align is Label.ALIGN_CENTER:
-            align = "ALIGN_CENTER"
-
-        return "Label." + align
-
-    def dbg(self) -> str:
-        """Return identifiable information about object"""
-
-        return f'Label(value="{self.value}", align={self.get_align_string()})'
-
-
-class ListView(Widget):
-    """Allow selection from a list of options"""
-
-    LAYOUT_HORIZONTAL = 0
-    LAYOUT_VERTICAL = 1
-
-    styles: dict[str, StyleType] = {
-        "delimiter": default_foreground,
-        "value": default_foreground,
-        "highlight": default_background,
-    }
-
-    chars: dict[str, list[str]] = {"delimiter": ["< ", " >"]}
-
-    def __init__(
-        self,
-        options: list[str],
-        layout: int = LAYOUT_VERTICAL,
-        align: int = Label.ALIGN_CENTER,
-        padding: int = 0,
-    ) -> None:
-        """Initialize object"""
-
-        super().__init__()
-
-        self.padding = padding
-        self.options = options
-        self.layout = layout
-        self.align = align
-        self.donor_label = Label(align=self.align)
-        self._height = len(self.options)
-
-        self.is_selectable = True
-        self.selectables_length = len(options)
-
-    def get_lines(self) -> list[str]:
-        """Get lines to represent object"""
-
-        lines = []
-
-        value_style = self.get_style("value")
-        highlight_style = self.get_style("highlight")
-        delimiter_style = self.get_style("delimiter")
-
-        chars = self.get_char("delimiter")
-        start, end = [delimiter_style(self.depth, char) for char in chars]
-
-        if self.layout is ListView.LAYOUT_HORIZONTAL:
-            pass
-
-        elif self.layout is ListView.LAYOUT_VERTICAL:
-            label = self.donor_label
-            label.padding = self.padding
-            label.width = self.width
-
-            for i, opt in enumerate(self.options):
-                value = [start, value_style(self.depth, opt), end]
-
-                # highlight_style needs to be applied to all widgets in value
-                if i == self.selected_index:
-                    label.value = "".join(
-                        highlight_style(self.depth, widget) for widget in value
-                    )
-
-                else:
-                    label.value = "".join(value)
-
-                lines += label.get_lines()
-
-        self.width = max(real_length(l) for l in lines)
-
-        return lines
-
-    def get_layout_string(self) -> str:
-        """Get layout string"""
-
-        if self.layout is ListView.LAYOUT_HORIZONTAL:
-            layout = "LAYOUT_HORIZONTAL"
-        elif self.layout is ListView.LAYOUT_VERTICAL:
-            layout = "LAYOUT_VERTICAL"
-
-        return "ListView." + layout
-
-    def dbg(self) -> str:
-        """Return identifiable information about object"""
-
-        return (
-            "ListView("
-            + f"options={self.options}, "
-            + f"layout={self.get_layout_string()}, "
-            + f"align={self.donor_label.get_align_string()}"
-            + ")"
-        )
 
 
 class Prompt(Widget):
@@ -822,87 +665,67 @@ class Prompt(Widget):
         )
 
 
-class ProgressBar(Widget):
-    """An widget showing Progress"""
+class Label(Widget):
+    """Unselectable text object"""
 
-    chars: dict[str, list[str]] = {
-        "fill": ["#"],
-        "delimiter": ["[ ", " ]"],
-    }
+    ALIGN_LEFT = 0
+    ALIGN_CENTER = 1
+    ALIGN_RIGHT = 2
 
     styles: dict[str, StyleType] = {
-        "fill": default_foreground,
-        "delimiter": default_foreground,
+        "value": default_foreground,
     }
 
-    def __init__(self, progress_function: Callable[[], float]) -> None:
-        """Initialize object"""
+    def __init__(self, value: str = "", align: int = ALIGN_CENTER) -> None:
+        """Set up object"""
 
         super().__init__()
-        self.progress_function = progress_function
+
+        self.value = value
+        self.align = align
+        self.padding = 0
+        self.width = real_length(value) + self.padding + 2
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""
 
-        delimiter_style = self.get_style("delimiter")
-        fill_style = self.get_style("fill")
+        value_style = self.get_style("value")
 
-        delimiter_chars = self.get_char("delimiter")
-        fill_char = self.get_char("fill")[0]
+        if self.align is Label.ALIGN_CENTER:
+            padding = (self.width - real_length(self.value) - self.padding) // 2
+            outline = (padding + self.padding + 1) * " " + self.value
+            outline += (self.width - real_length(outline) + 1) * " "
 
-        start, end = [delimiter_style(self.depth, char) for char in delimiter_chars]
-        progress_float = min(self.progress_function(), 1.0)
+            lines = [outline]
 
-        total = self.width - real_length(start + end)
-        progress = int(total * progress_float) + 1
-        middle = fill_style(self.depth, progress * fill_char)
+        elif self.align is Label.ALIGN_LEFT:
+            padding = self.width - real_length(self.value) - self.padding + 1
+            lines = [self.padding * " " + self.value + padding * " "]
 
-        line = start + middle
-        return [line + (self.width + 1 - real_length(line + end)) * " " + end]
+        elif self.align is Label.ALIGN_RIGHT:
+            lines = [
+                (self.width - real_length(self.value) - self.padding + 1) * " "
+                + self.value
+                + self.padding * " "
+            ]
 
-    def dbg(self) -> str:
-        """Return identifiable information about object"""
+        return [value_style(self.depth, line) for line in lines]
 
-        return f"ProgressBar(progress_function={self.progress_function})"
+    def get_align_string(self) -> str:
+        """Get string of align value"""
 
+        if self.align is Label.ALIGN_LEFT:
+            align = "ALIGN_LEFT"
 
-class ColorPicker(Container):
-    """A Container that shows the 256 color table"""
+        elif self.align is Label.ALIGN_RIGHT:
+            align = "ALIGN_RIGHT"
 
-    def __init__(self, grid_cols: int = 8) -> None:
-        """Initialize object, set width"""
+        elif self.align is Label.ALIGN_CENTER:
+            align = "ALIGN_CENTER"
 
-        super().__init__()
-
-        self.grid_cols = grid_cols
-        self.forced_width = self.grid_cols * 4 - 1 + self.sidelength
-        self.width = self.forced_width
-
-    def get_lines(self) -> list[str]:
-        """Get color table lines"""
-
-        left_border, top_border, right_border, bottom_border = self.get_char("border")
-
-        lines = [top_border * self.width]
-        for line in range(256 // self.grid_cols):
-            buff = left_border
-
-            for num in range(self.grid_cols):
-                col = str(line * self.grid_cols + num)
-                if col == "0":
-                    buff += "    "
-                    continue
-
-                padding = 3 - len(col)
-                buff += foreground256(padding * " " + col, col) + " "
-
-            buff = buff[:-1]
-            lines.append(buff + "" + right_border)
-
-        lines.append(bottom_border * self.width)
-        return lines
+        return "Label." + align
 
     def dbg(self) -> str:
         """Return identifiable information about object"""
 
-        return f"ColorPicker(grid_cols={self.grid_cols})"
+        return f'Label(value="{self.value}", align={self.get_align_string()})'
