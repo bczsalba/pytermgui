@@ -578,7 +578,7 @@ class Label(Widget):
         self.value = value
         self.align = align
         self.padding = 0
-        self.width = len(value) + self.padding + 2
+        self.width = real_length(value) + self.padding + 2
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""
@@ -862,8 +862,4 @@ class ProgressBar(Widget):
     def dbg(self) -> str:
         """Return identifiable information about object"""
 
-        return (
-            "ProgressBar("
-            + f"progress_function={self.progress_function}"
-            + ")"
-        )
+        return f"ProgressBar(progress_function={self.progress_function})"
