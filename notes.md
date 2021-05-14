@@ -9,6 +9,7 @@ IN PROGRESS
 * add background styles
 * `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
 * templating: dumping and loading from files, strings
+* rewrite the mess that `Container.get_lines` has become. It should be separated into more smaller protected methods.
 
 FINISHED
 --------
