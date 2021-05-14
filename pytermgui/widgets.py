@@ -1,10 +1,10 @@
 """
-pytermgui.classes
+pytermgui.widget
 -----------------
 author: bczsalba
 
 
-This module provides the classes used by the module.
+This module provides the main widgets this module provides.
 """
 
 # these classes will have to have more than 7 attributes mostly.
@@ -16,6 +16,7 @@ from typing import Optional, Callable, Type, Union, Iterator, Any
 from .helpers import real_length
 from .context_managers import cursor_at
 from .ansi_interface import (
+    foreground256,
     background16,
     screen_width,
     screen_height,
@@ -853,13 +854,55 @@ class ProgressBar(Widget):
         progress_float = min(self.progress_function(), 1.0)
 
         total = self.width - real_length(start + end)
-        progress = int(total * progress_float)
+        progress = int(total * progress_float) + 1
         middle = fill_style(self.depth, progress * fill_char)
 
         line = start + middle
-        return [line + (self.width - real_length(line + end)) * " " + end]
+        return [line + (self.width + 1 - real_length(line + end)) * " " + end]
 
     def dbg(self) -> str:
         """Return identifiable information about object"""
 
         return f"ProgressBar(progress_function={self.progress_function})"
+
+
+class ColorPicker(Container):
+    """A Container that shows the 256 color table"""
+
+    def __init__(self, grid_cols: int = 8) -> None:
+        """Initialize object, set width"""
+
+        super().__init__()
+
+        self.grid_cols = grid_cols
+        self.forced_width = self.grid_cols * 4 - 1 + self.sidelength
+        self.width = self.forced_width
+
+    def get_lines(self) -> list[str]:
+        """Get color table lines"""
+
+        left_border, top_border, right_border, bottom_border = self.get_char("border")
+
+        lines = [top_border * self.width]
+        for line in range(256 // self.grid_cols):
+            buff = left_border
+
+            for num in range(self.grid_cols):
+                col = str(line * self.grid_cols + num)
+                if col == "0":
+                    buff += "    "
+                    continue
+
+                padding = 3 - len(col)
+                buff += foreground256(padding * " " + col, col) + " "
+
+            buff = buff[:-1]
+            lines.append(buff + "" + right_border)
+
+        lines.append(bottom_border * self.width)
+        return lines
+
+    def dbg(self) -> str:
+        """Return identifiable information about object"""
+
+        return f"ColorPicker(grid_cols={self.grid_cols})"

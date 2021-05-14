@@ -15,6 +15,7 @@ from pytermgui import (
     ListView,
     Prompt,
     ProgressBar,
+    ColorPicker,
     alt_buffer,
     getch,
 )
@@ -63,7 +64,7 @@ with alt_buffer():
     ProgressBar.set_class_style("delimiter", value_style)
 
     main = Container()
-    main.forced_height = 30
+    main.forced_height = 35
     main.set_char("border", ["|x| ", "=", " |x|", "="])
 
     main += Label("Please excuse how terrible this looks")
@@ -76,6 +77,9 @@ with alt_buffer():
     main += inner
     main += padding_label
 
+    main += ColorPicker(36)
+    main += padding_label
+
     main += Prompt("hello", "there")
     main += padding_label
     main += Label("here are some items", Label.ALIGN_LEFT)
@@ -83,8 +87,9 @@ with alt_buffer():
     main += ListView(
         ["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_LEFT, padding=2
     )
+    progress = 0.0
     main += padding_label
-    main += ProgressBar(progress_function=lambda: 0.6)
+    main += ProgressBar(progress_function=lambda: progress)
     main[-1].forced_width = 100
 
     main.select(0)
@@ -98,6 +103,10 @@ with alt_buffer():
             main.selected_index -= 1
         elif key == "j":
             main.selected_index += 1
+        elif key == "l":
+            progress += 0.01
+        elif key == "h":
+            progress -= 0.01
 
         main.select()
         main.print()
