@@ -12,7 +12,7 @@ or at least partially use the classes provided in .base.
 # these classes will have to have more than 7 attributes mostly.
 # pylint: disable=too-many-instance-attributes
 
-from typing import Optional, Callable, Any
+from typing import Optional, Callable
 
 from .base import (
     Container,
@@ -68,139 +68,6 @@ class ColorPicker(Container):
         """Return identifiable information about object"""
 
         return f"ColorPicker(grid_cols={self.grid_cols})"
-
-
-class InputField(Widget):
-    """A Label that lets you display input"""
-
-    styles: dict[str, StyleType] = {
-        "value": default_foreground,
-        "highlight": default_background,
-        "cursor": default_background,
-    }
-
-    def __init__(
-        self, prompt: str = "", value: str = "", **label_kwargs: dict[str, Any]
-    ) -> None:
-        """Initialize object"""
-
-        super().__init__()
-        self.selected: list[Optional[int]] = [None, None]
-        self.prompt = prompt
-        self.value = value + " "
-        self.cursor = real_length(value)
-
-        # mypy doesn't like this line
-        self._donor_label = Label(**label_kwargs)  # type: ignore
-        self._donor_label.set_style("value", self.get_style("value"))
-
-    @property
-    def selected_value(self) -> Optional[str]:
-        """Get text that is selected"""
-
-        start, end = self.selected
-        if any(value is None for value in [start, end]):
-            return None
-
-        return self.value[start:end]
-
-    @property
-    def cursor(self) -> int:
-        """Return cursor of self"""
-
-        return self._cursor
-
-    @cursor.setter
-    def cursor(self, value: int) -> None:
-        """Set cursor"""
-
-        self._cursor = min(max(0, value), real_length(self.value) - 1)
-
-    def get_lines(self) -> list[str]:
-        """Return broken-up lines from object"""
-
-        def _get_label_lines(buff: str) -> list[str]:
-            """Get lines from donor label"""
-
-            label = self._donor_label
-            label.value = buff
-            return label.get_lines()
-
-        lines = []
-        buff = self.prompt
-        value_style = self.get_style("value")
-        cursor_style = self.get_style("cursor")
-        highlight_style = self.get_style("highlight")
-
-        start, end = self.selected
-        if self.selected_value is None or start is None or end is None:
-            start = end = self.cursor
-
-        else:
-            self.cursor = end
-
-            if start > end:
-                start, end = end, start
-
-        for i, char in enumerate(self.value):
-            if char == "\n" or real_length(buff) > self.width:
-                lines += _get_label_lines(buff)
-                buff = ""
-
-                if char == "\n":
-                    continue
-
-            if i == self.cursor:
-                buff += cursor_style(self.depth, char)
-
-            elif start <= i <= end:
-                buff += highlight_style(self.depth, char)
-
-            else:
-                buff += value_style(self.depth, char)
-
-        if len(buff) > 0:
-            lines += _get_label_lines(buff)
-
-        self._height = len(lines)
-        return lines
-
-    def send(self, key: Optional[str]) -> None:
-        """Send key to InputField"""
-
-        if key is None:
-            return
-
-        if key == keys.BACKSPACE:
-            if self.cursor <= 0:
-                return
-
-            left = self.value[: self.cursor - 1]
-            right = self.value[self.cursor :]
-
-            self.value = left + right
-            self.send(keys.LEFT)
-
-        elif key in [keys.LEFT, keys.CTRL_B]:
-            self.cursor -= 1
-
-        elif key in [keys.RIGHT, keys.CTRL_F]:
-            self.cursor += 1
-
-        elif key in [keys.DOWN, keys.CTRL_N]:
-            self.cursor += self.width + 1
-
-        elif key in [keys.UP, keys.CTRL_P]:
-            self.cursor -= self.width + 1
-
-        # `keys.values()` might need to be renamed to something more like
-        # `keys.escapes.values()`
-        elif real_length(key) == 1 and not key in keys.values():
-            left = self.value[: self.cursor]
-            right = self.value[self.cursor :]
-
-            self.value = left + key + right
-            self.cursor += 1
 
 
 class ProgressBar(Widget):
@@ -340,3 +207,165 @@ class ListView(Widget):
             + f"align={self._donor_label.get_align_string()}"
             + ")"
         )
+
+
+class InputField(Widget):
+    """A Label that lets you display input"""
+
+    styles: dict[str, StyleType] = {
+        "value": default_foreground,
+        "highlight": default_background,
+        "cursor": default_background,
+    }
+
+    def __init__(self, prompt: str = "", value: str = "", tab_length: int = 4) -> None:
+        """Initialize object"""
+
+        super().__init__()
+        self.selected: list[Optional[int]] = [None, None]
+        self.prompt = prompt
+        self.value = value + " "
+        self.tab_length = tab_length
+        self.cursor = real_length(value)
+
+        self._donor_label = Label(align=Label.ALIGN_LEFT)
+        self._donor_label.width = self.width
+        self._donor_label.set_style("value", self.get_style("value"))
+
+        self._last_line: str = ""
+
+    @property
+    def selected_value(self) -> Optional[str]:
+        """Get text that is selected"""
+
+        start, end = self.selected
+        if any(value is None for value in [start, end]):
+            return None
+
+        return self.value[start:end]
+
+    @property
+    def cursor(self) -> int:
+        """Return cursor of self"""
+
+        return self._cursor
+
+    @cursor.setter
+    def cursor(self, value: int) -> None:
+        """Set cursor"""
+
+        self._cursor = min(max(0, value), real_length(self.value) - 1)
+
+    def get_lines(self) -> list[str]:
+        """Return broken-up lines from object"""
+
+        def _get_label_lines(buff: str) -> list[str]:
+            """Get lines from donor label"""
+
+            label = self._donor_label
+            label.value = buff
+            return label.get_lines()
+
+        self._donor_label.width = self.width
+
+        lines = []
+        buff = self.prompt
+        value_style = self.get_style("value")
+        cursor_style = self.get_style("cursor")
+        highlight_style = self.get_style("highlight")
+
+        start, end = self.selected
+        if self.selected_value is None or start is None or end is None:
+            start = end = self.cursor
+
+        else:
+            self.cursor = end
+
+            if start > end:
+                start, end = end, start
+
+        for i, char in enumerate(self.value):
+            if real_length(buff) >= self.width:
+                lines += _get_label_lines(buff[:-1])
+                buff = ""
+
+            elif char == "\n":
+                # This currently creates a duplicate cursor position
+                # with only one visible state. That ain't too good,
+                # pls fix
+
+                buff_list = list(buff)
+                buff_end = ""
+
+                if i == self.cursor:
+                    buff_end = cursor_style(self.depth, buff_list.pop())
+
+                lines += _get_label_lines("".join(buff_list) + buff_end)
+                buff = ""
+                continue
+
+            if i == self.cursor:
+                buff += cursor_style(self.depth, char)
+
+            elif start <= i <= end:
+                buff += highlight_style(self.depth, char)
+
+            else:
+                buff += value_style(self.depth, char)
+
+        if len(buff) > 0:
+            lines += _get_label_lines(buff)
+
+        self._height = len(lines)
+        self._last_line = buff
+
+        return lines
+
+    def send(self, key: Optional[str]) -> None:
+        """Send key to InputField"""
+
+        valid_platform_keys = [
+            keys.SPACE,
+            keys.CTRL_J,
+            keys.CTRL_I,
+        ]
+
+        if key is None:
+            return
+
+        if key == keys.BACKSPACE:
+            if self.cursor <= 0:
+                return
+
+            left = self.value[: self.cursor - 1]
+            right = self.value[self.cursor :]
+
+            self.value = left + right
+            self.send(keys.LEFT)
+
+        elif key is keys.CTRL_I:
+            for _ in range(self.tab_length):
+                self.send(keys.SPACE)
+
+        elif key in [keys.LEFT, keys.CTRL_B]:
+            self.cursor -= 1
+
+        elif key in [keys.RIGHT, keys.CTRL_F]:
+            self.cursor += 1
+
+        elif key in [keys.DOWN, keys.CTRL_N]:
+            self.cursor += self.width + 1
+
+        elif key in [keys.UP, keys.CTRL_P]:
+            self.cursor -= self.width + 1
+
+        # `keys.values()` might need to be renamed to something more like
+        # `keys.escapes.values()`
+        elif key in valid_platform_keys or (
+            real_length(key) == 1 and not key in keys.values()
+        ):
+            left = self.value[: self.cursor]
+            right = self.value[self.cursor :]
+
+            self.value = left + key + right
+            self.cursor += 1

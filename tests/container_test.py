@@ -16,6 +16,7 @@ from pytermgui import (
     Prompt,
     ProgressBar,
     ColorPicker,
+    InputField,
     alt_buffer,
     getch,
 )
@@ -64,7 +65,7 @@ with alt_buffer():
     ProgressBar.set_class_style("delimiter", value_style)
 
     main = Container()
-    main.forced_height = 35
+    main.forced_height = 37
     main.set_char("border", ["|x| ", "=", " |x|", "="])
 
     main += Label("Please excuse how terrible this looks")
@@ -87,10 +88,12 @@ with alt_buffer():
     main += ListView(
         ["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_LEFT, padding=2
     )
-    progress = 0.0
+    progress = 0.6
     main += padding_label
     main += ProgressBar(progress_function=lambda: progress)
     main[-1].forced_width = 100
+
+    main += InputField()
 
     main.select(0)
     main.center()
@@ -98,6 +101,10 @@ with alt_buffer():
 
     while True:
         key = getch()
+
+        main[-1].send(key)
+        main.print()
+        continue
 
         if key == "k":
             main.selected_index -= 1

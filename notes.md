@@ -4,6 +4,7 @@ IN PROGRESS
 * ANSI implementation
     - [ ] look into if key codes (like UP) work universally or need to be platform-specific
 
+* fix `InputField` up & down, duplicate cursor pos at newlines
 * `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
 * look into why `ProgressBar` ends one short when it doesn't have a `forced_width`
 * add background styles
