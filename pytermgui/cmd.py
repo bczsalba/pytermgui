@@ -10,7 +10,14 @@ This module provides the command-line capabilities of the module.
 from sys import argv
 from typing import Any
 
-from . import __version__, getch, keys, Prompt, cursor_up, real_length
+from . import (
+    __version__,
+    getch,
+    keys,
+    Prompt,
+    cursor_up,
+    real_length,
+)
 
 HELP = f"""\
 pytermgui v{__version__}:

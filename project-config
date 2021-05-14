@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
 # configuration file for my vim session
+lint() {
+    cd $VIM_PROJPATH && 
+    black $VIM_PROJNAME && 
+    pylint $VIM_PROJNAME && 
+    mypy --show-error-codes --disable-error-code attr-defined $VIM_PROJNAME
+}
+
 export VIM_PROJNAME="pytermgui"
 export VIM_PROJCONF="$BASH_SOURCE"
 export VIM_PROJPATH="$(realpath `dirname $VIM_PROJCONF`)"
