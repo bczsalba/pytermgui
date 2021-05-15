@@ -22,7 +22,7 @@ from typing import (
     AnyStr,
     Generator,
     Any,
-    Optional,
+    Union,
     ValuesView,
     KeysView,
     ItemsView,
@@ -87,17 +87,13 @@ class _GetchUnix:
 class _GetchWindows:
     """Getch implementation for UNIX"""
 
-    def decode(self, string: str) -> str:
-        """Decode string"""
- 
-        return string.decode("utf-8")
-        
-    def _ensure_str(self, string: AnyStr) -> str:
+    @staticmethod
+    def _ensure_str(string: AnyStr) -> str:
         """Return str from bytes"""
-        
+
         if isinstance(string, bytes):
             return string.decode("utf-8")
-        
+
         return string
 
     def get_chars(self) -> str:
@@ -106,9 +102,9 @@ class _GetchWindows:
         char = msvcrt.getch()
         if char == b"\xe0":
             char = "\x1b"
-        
+
         buff = self._ensure_str(char)
-            
+
         while msvcrt.kbhit():
             char = msvcrt.getch()
             buff += self._ensure_str(char)
@@ -120,6 +116,7 @@ class _GetchWindows:
 
         buff = self.get_chars()
         return buff
+
 
 class _Keys:
     """Class for easy access to key-codes
@@ -208,6 +205,8 @@ class _Keys:
         return f"Keys(), platform: {self.platform}"
 
 
+_getch: Union[_GetchWindows, _GetchUnix]
+
 try:
     import msvcrt
 
@@ -226,8 +225,8 @@ try:
 
 except ImportError:
     if not os.name == "posix":
-        raise NotImplementedError(f"Platform {os.name} is not supported.")
-        
+        raise NotImplementedError(f"Platform {os.name} is not supported.") from None
+
     import termios
     import tty
 
