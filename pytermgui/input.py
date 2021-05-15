@@ -15,9 +15,7 @@ credits:
 # pylint: disable=c-extension-no-member, no-name-in-module
 
 import os
-import tty
 import sys
-import termios
 
 from typing import (
     IO,
@@ -86,6 +84,43 @@ class _GetchUnix:
         return buff
 
 
+class _GetchWindows:
+    """Getch implementation for UNIX"""
+
+    def decode(self, string: str) -> str:
+        """Decode string"""
+ 
+        return string.decode("utf-8")
+        
+    def _ensure_str(self, string: AnyStr) -> str:
+        """Return str from bytes"""
+        
+        if isinstance(string, bytes):
+            return string.decode("utf-8")
+        
+        return string
+
+    def get_chars(self) -> str:
+        """Read num characters from sys.stdin"""
+
+        char = msvcrt.getch()
+        if char == b"\xe0":
+            char = "\x1b"
+        
+        buff = self._ensure_str(char)
+            
+        while msvcrt.kbhit():
+            char = msvcrt.getch()
+            buff += self._ensure_str(char)
+
+        return buff
+
+    def __call__(self) -> str:
+        """Return all characters that can be read"""
+
+        buff = self.get_chars()
+        return buff
+
 class _Keys:
     """Class for easy access to key-codes
 
@@ -101,7 +136,7 @@ class _Keys:
     ```
     """
 
-    def __init__(self, platform_keys: Optional[dict[str, str]] = None) -> None:
+    def __init__(self, platform_keys: dict[str, str], platform: str) -> None:
         """Set up key values"""
 
         self._keys = {
@@ -137,7 +172,12 @@ class _Keys:
             "RETURN": "\n",
         }
 
-        self.name = "Unknown"
+        self.platform = platform
+        
+        # convert keys to bytes on windows
+        if platform == "nt":
+            for key, value in self._keys.items():
+                self._keys[key] = bytes(value, "utf-8")
 
         if platform_keys is not None:
             for key, code in platform_keys.items():
@@ -170,40 +210,45 @@ class _Keys:
     def __repr__(self) -> str:
         """Stringify object"""
 
-        return f"Keys(platform={self.name})"
+        return f"Keys(), platform: {self.platform}"
 
 
-# running on Windows
 try:
     import msvcrt
 
     _platform_keys = {
-        "name": "nt",
         "ESC": "\x1b",
-        "LEFT": "\xe0K",
-        "RIGHT": "\xe0M",
-        "UP": "\xe0H",
-        "DOWN": "\xe0P",
+        "LEFT": "\x1bK",
+        "RIGHT": "\x1bM",
+        "UP": "\x1bH",
+        "DOWN": "\x1bP",
         "ENTER": "\r",
         "BACKSPACE": "\x08",
     }
 
-    _getch = msvcrt.wgetch  # type: ignore
+    _getch = _GetchWindows()
+    keys = _Keys(_platform_keys, "nt")
 
-# running on POSIX
 except ImportError:
+    if not os.name == "posix":
+        raise NotImplementedError(f"Platform {os.name} is not supported.")
+        
+    import termios
+    import tty
+
     _platform_keys = {
         "name": "posix",
-        "UP": "\033[A",
-        "DOWN": "\033[B",
-        "RIGHT": "\033[C",
-        "LEFT": "\033[D",
+        "UP": "\x1b[A",
+        "DOWN": "\x1b[B",
+        "RIGHT": "\x1b[C",
+        "LEFT": "\x1b[D",
         "BACKSPACE": "\x7f",
         "INSERT": "\x1b[2~",
         "DELETE": "\x1b[3~",
     }
 
     _getch = _GetchUnix()
+    keys = _Keys(_platform_keys, "posix")
 
 
 def getch(printable: bool = False) -> Any:
@@ -215,6 +260,3 @@ def getch(printable: bool = False) -> Any:
         key = key.encode("unicode_escape").decode("utf-8")
 
     return key
-
-
-keys = _Keys(_platform_keys)

@@ -150,7 +150,7 @@ class Color16(_Color):
         else:
             color = self._colors[attr]
 
-        return f"\033[{color+(self.layer_offset)}m"
+        return f"\x1b[{color+(self.layer_offset)}m"
 
 
 class Color256(_Color):
@@ -165,7 +165,7 @@ class Color256(_Color):
         if not 1 <= int(attr) <= 255:
             return None
 
-        return f"\033[{38+self.layer_offset};5;{attr}m"
+        return f"\x1b[{38+self.layer_offset};5;{attr}m"
 
 
 class ColorRGB(_Color):
@@ -201,7 +201,7 @@ class ColorRGB(_Color):
                 return None
 
         strings = [str(col) for col in colors]
-        return f"\033[{38+self.layer_offset};2;" + ";".join(strings) + "m"
+        return f"\x1b[{38+self.layer_offset};2;" + ";".join(strings) + "m"
 
 
 # helpers
@@ -268,7 +268,7 @@ def save_screen() -> None:
     """Save the contents of the screen, wipe.
     Use `restore_screen()` to get them back."""
 
-    # print("\033[?47h")
+    # print("\x1b[?47h")
     _tput(["smcup"])
 
 
@@ -276,20 +276,20 @@ def restore_screen() -> None:
     """Restore the contents of the screen,
     previously saved by a call to `save_screen()`."""
 
-    # print("\033[?47l")
+    # print("\x1b[?47l")
     _tput(["rmcup"])
 
 
 def start_alt_buffer() -> None:
     """Start alternate buffer that is non-scrollable"""
 
-    print("\033[?1049h")
+    print("\x1b[?1049h")
 
 
 def end_alt_buffer() -> None:
     """Return to main buffer from alt, restoring state"""
 
-    print("\033[?1049l")
+    print("\x1b[?1049l")
 
 
 def clear(what: str = "screen") -> None:
@@ -306,12 +306,12 @@ def clear(what: str = "screen") -> None:
     """
 
     commands = {
-        "eos": "\033[0J",
-        "bos": "\033[1J",
-        "screen": "\033[2J",
-        "eol": "\033[0K",
-        "bol": "\033[1K",
-        "line": "\033[2K",
+        "eos": "\x1b[0J",
+        "bos": "\x1b[1J",
+        "screen": "\x1b[2J",
+        "eol": "\x1b[0K",
+        "bol": "\x1b[1K",
+        "line": "\x1b[2K",
     }
 
     _stdout.write(commands[what])
@@ -322,14 +322,14 @@ def hide_cursor() -> None:
     """Don't print cursor"""
 
     # _tput(['civis'])
-    print("\033[?25l")
+    print("\x1b[?25l")
 
 
 def show_cursor() -> None:
     """Set cursor printing back on"""
 
     # _tput(['cvvis'])
-    print("\033[?25h")
+    print("\x1b[?25h")
 
 
 def save_cursor() -> None:
@@ -337,20 +337,20 @@ def save_cursor() -> None:
     to restore it."""
 
     # _tput(['sc'])
-    _stdout.write("\033[s")
+    _stdout.write("\x1b[s")
 
 
 def restore_cursor() -> None:
     """Restore cursor position saved by `save_cursor()`"""
 
     # _tput(['rc'])
-    _stdout.write("\033[u")
+    _stdout.write("\x1b[u")
 
 
 def report_cursor() -> Optional[tuple[int, int]]:
     """Get position of cursor"""
 
-    print("\033[6n")
+    print("\x1b[6n")
     chars = getch()
     posy, posx = chars[2:-1].split(";")
 
@@ -364,55 +364,55 @@ def move_cursor(pos: tuple[int, int]) -> None:
     """Move cursor to pos"""
 
     posx, posy = pos
-    _stdout.write(f"\033[{posy};{posx}H")
+    _stdout.write(f"\x1b[{posy};{posx}H")
 
 
 def cursor_up(num: int = 1) -> None:
     """Move cursor up by `num` lines"""
 
-    _stdout.write(f"\033[{num}A")
+    _stdout.write(f"\x1b[{num}A")
 
 
 def cursor_down(num: int = 1) -> None:
     """Move cursor down by `num` lines"""
 
-    _stdout.write(f"\033[{num}B")
+    _stdout.write(f"\x1b[{num}B")
 
 
 def cursor_right(num: int = 1) -> None:
     """Move cursor left by `num` cols"""
 
-    _stdout.write(f"\033[{num}C")
+    _stdout.write(f"\x1b[{num}C")
 
 
 def cursor_left(num: int = 1) -> None:
     """Move cursor left by `num` cols"""
 
-    _stdout.write(f"\033[{num}D")
+    _stdout.write(f"\x1b[{num}D")
 
 
 def cursor_next_line(num: int = 1) -> None:
     """Move cursor to beginning of num-th line down"""
 
-    _stdout.write(f"\033[{num}E")
+    _stdout.write(f"\x1b[{num}E")
 
 
 def cursor_prev_line(num: int = 1) -> None:
     """Move cursor to beginning of num-th line down"""
 
-    _stdout.write(f"\033[{num}F")
+    _stdout.write(f"\x1b[{num}F")
 
 
 def cursor_column(num: int = 0) -> None:
     """Move cursor to num-th column in the current line"""
 
-    _stdout.write(f"\033[{num}G")
+    _stdout.write(f"\x1b[{num}G")
 
 
 def cursor_home() -> None:
     """Move cursor to HOME"""
 
-    _stdout.write("\033[H")
+    _stdout.write("\x1b[H")
 
 
 def set_mode(mode: Union[str, int]) -> str:
@@ -446,7 +446,7 @@ def set_mode(mode: Union[str, int]) -> str:
     if not str(mode).isdigit():
         mode = options[str(mode)]
 
-    code = f"\033[{mode}m"
+    code = f"\x1b[{mode}m"
     _stdout.write(code)
 
     return code
@@ -491,16 +491,16 @@ def report_mouse(
     """
 
     if event == "press_release":
-        _stdout.write("\033[?1000")
+        _stdout.write("\x1b[?1000")
 
     elif event == "highlight":
-        _stdout.write("\033[?1001")
+        _stdout.write("\x1b[?1001")
 
     elif event == "press":
-        _stdout.write("\033[?1002")
+        _stdout.write("\x1b[?1002")
 
     elif event == "movement":
-        _stdout.write("\033[?1003")
+        _stdout.write("\x1b[?1003")
 
     else:
         raise NotImplementedError(f"Mouse report event {event} is not supported!")
@@ -508,13 +508,13 @@ def report_mouse(
     _stdout.write("h" if action == "start" else "l")
 
     if method == "decimal_utf8":
-        _stdout.write("\033[?1005")
+        _stdout.write("\x1b[?1005")
 
     elif method == "decimal_xterm":
-        _stdout.write("\033[?1006")
+        _stdout.write("\x1b[?1006")
 
     elif method == "decimal_urxvt":
-        _stdout.write("\033[?1015")
+        _stdout.write("\x1b[?1015")
 
     elif method is None:
         return
