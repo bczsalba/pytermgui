@@ -173,11 +173,6 @@ class _Keys:
         }
 
         self.platform = platform
-        
-        # convert keys to bytes on windows
-        if platform == "nt":
-            for key, value in self._keys.items():
-                self._keys[key] = bytes(value, "utf-8")
 
         if platform_keys is not None:
             for key, code in platform_keys.items():
