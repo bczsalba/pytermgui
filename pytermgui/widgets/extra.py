@@ -221,7 +221,7 @@ class InputField(Widget):
         "cursor": default_background,
     }
 
-    def __init__(self, prompt: str = "", value: str = "", tab_length: int = 4) -> None:
+    def __init__(self, value: str = "", prompt: str = "", tab_length: int = 4) -> None:
         """Initialize object"""
 
         super().__init__()
@@ -288,20 +288,21 @@ class InputField(Widget):
                 start, end = end, start
 
         for i, char in enumerate(self.value):
-            if real_length(buff) >= self.width:
+            # currently all lines visually have an extra " " at the end
+            if real_length(buff) > self.width:
                 lines += _get_label_lines(buff[:-1])
+
+                if char == keys.RETURN:
+                    char = " "
+
                 buff = ""
 
             elif char == keys.RETURN:
-                # This currently creates a duplicate cursor position
-                # with only one visible state. That ain't too good,
-                # pls fix
-
                 buff_list = list(buff)
                 buff_end = ""
 
                 if i == self.cursor:
-                    buff_end = cursor_style(self.depth, buff_list.pop())
+                    buff_end = cursor_style(self.depth, " ")
 
                 lines += _get_label_lines("".join(buff_list) + buff_end)
                 buff = ""
@@ -380,8 +381,8 @@ class InputField(Widget):
 
         return (
             "InputField("
-            + f"prompt=\"{self.prompt}\", "
-            + f"value=\"{value}\", "
+            + f'prompt="{self.prompt}", '
+            + f'value="{value}", '
             + f"tab_length={self.tab_length}"
             + ")"
         )

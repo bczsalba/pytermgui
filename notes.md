@@ -6,7 +6,7 @@ IN PROGRESS
     - `ListView` doesn't align properly to the right when in a `Splitter`
 
 * add a `focus()` method to `Widget`, that sets some private attribute (like `is_selected` = True)
-* fix `InputField` up & down, duplicate cursor pos at newlines
+* fix `InputField` up & down
 
 * `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
 

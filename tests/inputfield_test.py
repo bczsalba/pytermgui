@@ -15,6 +15,7 @@ from pytermgui import (
     alt_buffer,
     getch,
     keys,
+    clear,
 )
 
 def create_container(height: int = 0):
@@ -23,7 +24,7 @@ def create_container(height: int = 0):
     container = Container(vert_align=Container.VERT_ALIGN_TOP)
     container.set_char("border", ["│ ", "─", " │", "─"])
     container.set_char("corner", ["╭", "╮", "╯", "╰"])
-    container += InputField()
+    container += InputField("this is some\nexample value\nsecond line\nthird line\nhave a nice day!")
     container.forced_height = height
 
     return container
@@ -54,6 +55,10 @@ with alt_buffer(cursor=True):
 
         if key == keys.TAB:
             selected = fields[len(fields) - 1 - fields.index(selected)]
+        if key == "*":
+            clear()
+            print(selected.value.split('\n'))
+            getch()
         else:
             selected.send(key)
 
