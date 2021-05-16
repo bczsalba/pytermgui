@@ -165,6 +165,7 @@ class _Keys:
             "CTRL_Z": "\x1a",
             "SPACE": " ",
             "ESC": "\x1b",
+            "TAB": "\t",
             "ENTER": "\n",
             "RETURN": "\n",
         }
@@ -217,6 +218,7 @@ try:
         "UP": "\x1bH",
         "DOWN": "\x1bP",
         "ENTER": "\r",
+        "RETURN": "\r",
         "BACKSPACE": "\x08",
     }
 

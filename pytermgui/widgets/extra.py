@@ -18,6 +18,7 @@ from .base import (
     Container,
     Label,
     Widget,
+    CharType,
     StyleType,
     default_foreground,
     default_background,
@@ -43,9 +44,13 @@ class ColorPicker(Container):
     def get_lines(self) -> list[str]:
         """Get color table lines"""
 
-        left_border, top_border, right_border, bottom_border = self.get_char("border")
+        chars = self.get_char("border")
+        assert isinstance(chars, list)
+        left_border, _, right_border, _ = chars
 
-        lines = [top_border * self.width]
+        lines = super().get_lines()
+        last_line = lines.pop()
+
         for line in range(256 // self.grid_cols):
             buff = left_border
 
@@ -61,10 +66,10 @@ class ColorPicker(Container):
             buff = buff[:-1]
             lines.append(buff + "" + right_border)
 
-        lines.append(bottom_border * self.width)
+        lines.append(last_line)
         return lines
 
-    def dbg(self) -> str:
+    def debug(self) -> str:
         """Return identifiable information about object"""
 
         return f"ColorPicker(grid_cols={self.grid_cols})"
@@ -73,7 +78,7 @@ class ColorPicker(Container):
 class ProgressBar(Widget):
     """A widget showing Progress"""
 
-    chars: dict[str, list[str]] = {
+    chars: dict[str, CharType] = {
         "fill": ["#"],
         "delimiter": ["[ ", " ]"],
     }
@@ -108,7 +113,7 @@ class ProgressBar(Widget):
         line = start + middle
         return [line + (self.width + 1 - real_length(line + end)) * " " + end]
 
-    def dbg(self) -> str:
+    def debug(self) -> str:
         """Return identifiable information about object"""
 
         return f"ProgressBar(progress_function={self.progress_function})"
@@ -126,7 +131,7 @@ class ListView(Widget):
         "highlight": default_background,
     }
 
-    chars: dict[str, list[str]] = {"delimiter": ["< ", " >"]}
+    chars: dict[str, CharType] = {"delimiter": ["< ", " >"]}
 
     def __init__(
         self,
@@ -183,8 +188,6 @@ class ListView(Widget):
 
                 lines += label.get_lines()
 
-        self.width = max(real_length(l) for l in lines)
-
         return lines
 
     def get_layout_string(self) -> str:
@@ -197,7 +200,7 @@ class ListView(Widget):
 
         return "ListView." + layout
 
-    def dbg(self) -> str:
+    def debug(self) -> str:
         """Return identifiable information about object"""
 
         return (
@@ -289,7 +292,7 @@ class InputField(Widget):
                 lines += _get_label_lines(buff[:-1])
                 buff = ""
 
-            elif char == "\n":
+            elif char == keys.RETURN:
                 # This currently creates a duplicate cursor position
                 # with only one visible state. That ain't too good,
                 # pls fix
@@ -369,3 +372,16 @@ class InputField(Widget):
 
             self.value = left + key + right
             self.cursor += 1
+
+    def debug(self) -> str:
+        """Return identifiable information about object"""
+
+        value = self.value if real_length(self.value) < 7 else "..."
+
+        return (
+            "InputField("
+            + f"prompt=\"{self.prompt}\", "
+            + f"value=\"{value}\", "
+            + f"tab_length={self.tab_length}"
+            + ")"
+        )

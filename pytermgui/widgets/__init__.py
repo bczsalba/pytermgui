@@ -9,11 +9,12 @@ The basic usage is to create a main Container(), and use
 the `+=` operator to append elements to it.
 """
 
-from .base import Widget, Container, Prompt, Label
+from .base import Widget, Container, Splitter, Prompt, Label
 from .extra import ListView, ColorPicker, InputField, ProgressBar
 
 __all__ = [
     "Widget",
+    "Splitter",
     "Container",
     "Prompt",
     "Label",

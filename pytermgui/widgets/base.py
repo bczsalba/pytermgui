@@ -24,6 +24,7 @@ from ..ansi_interface import (
 )
 
 StyleType = Callable[[int, str], str]
+CharType = Union[str, list[str]]
 
 
 def default_foreground(depth: int, item: str) -> str:
@@ -43,7 +44,7 @@ class Widget:
     """The widget from which all UI classes derive from"""
 
     styles: dict[str, StyleType] = {}
-    chars: dict[str, list[str]] = {}
+    chars: dict[str, CharType] = {}
 
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
         """Initialize universal data for objects"""
@@ -67,9 +68,9 @@ class Widget:
         self.chars = type(self).chars.copy()
 
     def __repr__(self) -> str:
-        """Print self.dbg() by default"""
+        """Print self.debug() by default"""
 
-        return self.dbg()
+        return self.debug()
 
     @property
     def width(self) -> int:
@@ -188,7 +189,7 @@ class Widget:
 
         return self.styles[key]
 
-    def get_char(self, key: str) -> list[str]:
+    def get_char(self, key: str) -> CharType:
         """Try to get char"""
 
         return self.chars[key]
@@ -207,7 +208,7 @@ class Widget:
         index = min(max(0, index), self.selectables_length - 1)
         self.selected_index = index
 
-    def dbg(self) -> str:
+    def debug(self) -> str:
         """Debug identifiable information about object"""
 
         return type(self).__name__ + "()"
@@ -228,7 +229,7 @@ class Container(Widget):
     CENTER_Y = 7
     CENTER_BOTH = 8
 
-    chars: dict[str, list[str]] = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
+    chars: dict[str, CharType] = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
 
     styles: dict[str, StyleType] = {
         "border": default_foreground,
@@ -261,7 +262,11 @@ class Container(Widget):
     def sidelength(self) -> int:
         """Returns length of left+right borders"""
 
-        left_border, _, right_border, _ = self.chars["border"]
+        chars = self.get_char("border")
+        if not isinstance(chars, list):
+            return 0
+
+        left_border, _, right_border, _ = chars
         return real_length(left_border + right_border)
 
     @property
@@ -338,18 +343,6 @@ class Container(Widget):
         self._height += other.height
         self.get_lines()
 
-    def dbg(self) -> str:
-        """Return dbg information about this object's widgets"""
-
-        out = "Container(), widgets=["
-        for widget in self._widgets:
-            out += type(widget).__name__ + ", "
-
-        out = out.strip(", ")
-        out += "]"
-
-        return out
-
     def set_recursive_depth(self, value: int) -> None:
         """Set depth for all children, recursively"""
 
@@ -399,9 +392,11 @@ class Container(Widget):
         lines: list[str] = []
 
         borders = self.get_char("border")
+        assert isinstance(borders, list)
         left_border, top_border, right_border, bottom_border = borders
 
         corners = self.get_char("corner")
+        assert isinstance(corners, list)
         top_left, top_right, bottom_right, bottom_left = corners
 
         corner_style = self.get_style("corner")
@@ -438,7 +433,7 @@ class Container(Widget):
                     > self.forced_width
                 ):
                     raise ValueError(
-                        f"Object `{widget.dbg()}` "
+                        f"Object `{widget.debug()}` "
                         + "could not be resized to self.forced_width. "
                         + f"({other_len} > {self.forced_width}) "
                     )
@@ -563,6 +558,93 @@ class Container(Widget):
             for line in self.get_lines():
                 print_here(line)
 
+    def debug(self) -> str:
+        """Return debug information about this object's widgets"""
+
+        out = "Container(), widgets=["
+        for widget in self._widgets:
+            out += type(widget).__name__ + ", "
+
+        out = out.strip(", ")
+        out += "]"
+
+        return out
+
+
+class Splitter(Widget):
+    """A widget that holds sub-widgets, and aligns them next to eachother"""
+
+    chars: dict[str, CharType] = {
+        "separator": " | ",
+    }
+
+    def __init__(self) -> None:
+        """Initiate object"""
+
+        super().__init__()
+        self._widgets: list[Widget] = []
+
+    def __add__(self, other: object) -> Splitter:
+        """Overload + operator"""
+
+        return self.__iadd__(other)
+
+    def __iadd__(self, other: object) -> Splitter:
+        """Overload += operator"""
+
+        if not isinstance(other, Widget):
+            raise NotImplementedError("You can only add widgets to a Splitter.")
+
+        self._add_widget(other)
+        return self
+
+    def _add_widget(self, other: Widget) -> None:
+        """Add an widget"""
+
+        self._widgets.append(other)
+
+    def get_lines(self) -> list[str]:
+        """Get lines by joining all widgets
+
+        This is not ideal. ListView-s don't work properly, and this object's
+        width is not set correctly."""
+
+        widgets = self._widgets
+
+        if len(widgets) == 0:
+            return []
+
+        separator = self.get_char("separator")
+        assert isinstance(separator, str)
+
+        widget_width = self.width // len(widgets)
+        widget_width -= real_length((len(widgets) - 1) * separator)
+
+        for widget in widgets:
+            if widget.forced_width is None:
+                widget.width = widget_width
+
+        lines = []
+        widget_lines = [widget.get_lines() for widget in widgets]
+
+        for horizontal in zip(*widget_lines):
+            lines.append(separator.join(horizontal))
+
+        self.width = max(real_length(line) for line in lines) - 1
+        return lines
+
+    def debug(self) -> str:
+        """Debug identifiable information about objects"""
+
+        out = "Splitter(), widgets=["
+        for widget in self._widgets:
+            out += type(widget).__name__ + ", "
+
+        out = out.strip(", ")
+        out += "]"
+
+        return out
+
 
 class Prompt(Widget):
     """Selectable object showing a single value with a label"""
@@ -578,7 +660,7 @@ class Prompt(Widget):
         "highlight": default_background,
     }
 
-    chars: dict[str, list[str]] = {
+    chars: dict[str, CharType] = {
         "delimiter": ["< ", " >"],
     }
 
@@ -604,6 +686,7 @@ class Prompt(Widget):
         highlight_style = self.get_style("highlight")
 
         delimiters = self.get_char("delimiter")
+        assert isinstance(delimiters, list)
 
         start, end = delimiters
         label = label_style(self.depth, self.label)
@@ -653,7 +736,7 @@ class Prompt(Widget):
 
         return "Prompt." + target
 
-    def dbg(self) -> str:
+    def debug(self) -> str:
         """String representation of self"""
 
         return (
@@ -725,7 +808,7 @@ class Label(Widget):
 
         return "Label." + align
 
-    def dbg(self) -> str:
+    def debug(self) -> str:
         """Return identifiable information about object"""
 
         return f'Label(value="{self.value}", align={self.get_align_string()})'

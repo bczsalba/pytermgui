@@ -1,16 +1,27 @@
 IN PROGRESS
 -----------
 
-* ANSI implementation
-    - [ ] look into if key codes (like UP) work universally or need to be platform-specific
+* `Splitter`
+    - that exception really doesn't need to be there, the program should be able to handle the situation
+    - `ListView` doesn't align properly to the right when in a `Splitter`
 
+* add a `focus()` method to `Widget`, that sets some private attribute (like `is_selected` = True)
 * fix `InputField` up & down, duplicate cursor pos at newlines
+
 * `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
+
 * look into why `ProgressBar` ends one short when it doesn't have a `forced_width`
+
 * add background styles
+
 * `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
+
 * templating: dumping and loading from files, strings
+
 * rewrite the mess that `Container.get_lines` has become. It should be separated into more smaller protected methods.
+
+* `RichLabel` class, or the default fore & background styles being able to read `[cyan]style[/cyan]`
+
 
 FINISHED
 --------

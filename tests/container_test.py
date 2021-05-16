@@ -11,6 +11,7 @@ actions, will probably be removed once those are reliable.
 from typing import Callable
 from pytermgui import (
     Container,
+    Splitter,
     Label,
     ListView,
     Prompt,
@@ -19,10 +20,9 @@ from pytermgui import (
     InputField,
     alt_buffer,
     getch,
+    foreground256 as color,
+    background256 as highlight,
 )
-
-from pytermgui import foreground256 as color
-from pytermgui import background256 as highlight
 
 
 def create_style(pre_color: int) -> Callable[[str], str]:
@@ -46,6 +46,7 @@ def highlight_style(depth: int, item: str) -> str:
 delimiter_style = create_style(225)
 padding_label = Label()
 
+
 with alt_buffer():
     Container.set_class_char("border", ["|| ", "~", " ||", "~"])
 
@@ -59,12 +60,11 @@ with alt_buffer():
     ListView.set_class_style("highlight", highlight_style)
     ListView.set_class_style("value", value_style)
     ListView.set_class_style("delimiter", delimiter_style)
-    ListView.set_class_char("delimiter", ["- ", ""])
 
     ProgressBar.set_class_style("fill", delimiter_style)
     ProgressBar.set_class_style("delimiter", value_style)
 
-    main = Container()
+    main = Container(horiz_align=Container.HORIZ_ALIGN_CENTER)
     main.forced_height = 37
     main.set_char("border", ["|x| ", "=", " |x|", "="])
 
@@ -85,9 +85,16 @@ with alt_buffer():
     main += padding_label
     main += Label("here are some items", Label.ALIGN_LEFT)
 
-    main += ListView(
-        ["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_LEFT, padding=2
+    splitter = Splitter()
+    main += splitter
+    splitter += ListView(
+        ["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_LEFT, padding=0
     )
+
+    splitter += ListView(
+        ["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_RIGHT, padding=0
+    )
+
     progress = 0.6
     main += padding_label
     main += ProgressBar(progress_function=lambda: progress)
@@ -106,14 +113,14 @@ with alt_buffer():
         main.print()
         continue
 
-        if key == "k":
-            main.selected_index -= 1
-        elif key == "j":
-            main.selected_index += 1
-        elif key == "l":
-            progress += 0.01
-        elif key == "h":
-            progress -= 0.01
+        # if key == "k":
+            # main.selected_index -= 1
+        # elif key == "j":
+            # main.selected_index += 1
+        # elif key == "l":
+            # progress += 0.01
+        # elif key == "h":
+            # progress -= 0.01
 
         main.select()
         main.print()
