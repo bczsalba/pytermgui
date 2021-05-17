@@ -21,13 +21,13 @@ with alt_buffer(cursor=False):
     header += Label("color picker two:", Label.ALIGN_RIGHT)
 
     splitter = Splitter()
-    splitter += ColorPicker(12)
-    splitter += ColorPicker(12)
+    splitter += ColorPicker(13)
+    splitter += ColorPicker(13)
 
     main += header
     main += splitter
 
-    main += ColorPicker(25)
+    main += ColorPicker(20)
     main += Label("color picker three:")
 
     main.center()
