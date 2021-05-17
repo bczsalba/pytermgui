@@ -178,7 +178,7 @@ class ListView(Widget):
                 value = [start, value_style(self.depth, opt), end]
 
                 # highlight_style needs to be applied to all widgets in value
-                if i == self.selected_index:
+                if self._is_focused and i == self.selected_index:
                     label.value = "".join(
                         highlight_style(self.depth, widget) for widget in value
                     )

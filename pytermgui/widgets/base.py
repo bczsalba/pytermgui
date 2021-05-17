@@ -67,6 +67,8 @@ class Widget:
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
 
+        self._is_focused = False
+
     def __repr__(self) -> str:
         """Print self.debug() by default"""
 
@@ -174,6 +176,16 @@ class Widget:
 
         cls._set_char(cls, key, value)
 
+    def focus(self) -> None:
+        """Focus widget"""
+
+        self._is_focused = True
+
+    def blur(self) -> None:
+        """Blur (unfocus) widget"""
+
+        self._is_focused = False
+
     def set_style(self, key: str, value: StyleType) -> None:
         """Set instance_style key to value"""
 
@@ -199,13 +211,15 @@ class Widget:
 
         return [type(self).__name__]
 
-    def select(self, index: int) -> None:
+    def select(self, index: Union[int, tuple[int, int]]) -> None:
         """Select part of self"""
 
         if not self.is_selectable:
             raise TypeError(f"Object of type {type(self)} is marked non-selectable.")
 
         index = min(max(0, index), self.selectables_length - 1)
+
+        self.focus()
         self.selected_index = index
 
     def debug(self) -> str:
@@ -513,6 +527,8 @@ class Container(Widget):
         if self._prev_selected is not None and self._prev_selected is not widget:
             self._prev_selected.selected_index = None
 
+        self.focus()
+
         # update self._prev_selected
         _ = self.selected
 
@@ -539,6 +555,18 @@ class Container(Widget):
         self._prev_screen = screen_size()
 
         return self
+
+    def focus(self) -> None:
+        """Focus all widgets"""
+
+        for widget in self._widgets:
+            widget.focus()
+
+    def blur(self) -> None:
+        """Focus all widgets"""
+
+        for widget in self._widgets:
+            widget.blur()
 
     def wipe(self) -> None:
         """Wipe characters occupied by the object"""
@@ -697,7 +725,7 @@ class Prompt(Widget):
             delimiter_style(self.depth, end),
         ]
 
-        if self.selected_index is not None:
+        if self.selected_index is not None and self._is_focused:
             if self.highlight_target in [Prompt.HIGHLIGHT_LEFT, Prompt.HIGHLIGHT_ALL]:
                 label = highlight_style(self.depth, label)
 
