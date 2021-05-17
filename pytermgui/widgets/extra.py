@@ -217,31 +217,30 @@ class InputField(Widget):
 
     styles: dict[str, StyleType] = {
         "value": default_foreground,
-        "highlight": default_background,
         "cursor": default_background,
+        "highlight": Widget.OVERRIDE,
     }
 
     def __init__(self, value: str = "", prompt: str = "", tab_length: int = 4) -> None:
         """Initialize object"""
 
         super().__init__()
-        self.selected: list[Optional[int]] = [None, None]
+        self._selected_range: tuple[Optional[int], Optional[int]] = (None, None)
         self.prompt = prompt
         self.value = value + " "
         self.tab_length = tab_length
         self.cursor = real_length(value)
+        self.width = 40
 
         self._donor_label = Label(align=Label.ALIGN_LEFT)
         self._donor_label.width = self.width
         self._donor_label.set_style("value", self.get_style("value"))
 
-        self._last_line: str = ""
-
     @property
     def selected_value(self) -> Optional[str]:
         """Get text that is selected"""
 
-        start, end = self.selected
+        start, end = self._selected_range
         if any(value is None for value in [start, end]):
             return None
 
@@ -259,6 +258,22 @@ class InputField(Widget):
 
         self._cursor = min(max(0, value), real_length(self.value) - 1)
 
+    def clear_value(self) -> None:
+        """Reset value of field"""
+
+        self.value = " "
+        self.cursor = 1
+
+    def clear_selected(self) -> None:
+        """Reset self._selected"""
+
+        self._selected_range = (None, None)
+
+    def has_selection(self) -> bool:
+        """Return if there is text selected"""
+
+        return all(val is not None for val in self._selected_range)
+
     def get_lines(self) -> list[str]:
         """Return broken-up lines from object"""
 
@@ -269,25 +284,49 @@ class InputField(Widget):
             label.value = buff
             return label.get_lines()
 
+        def _normalize_cursor(
+            coords: tuple[Optional[int], Optional[int]]
+        ) -> tuple[int, int]:
+            """Figure out switching None positions and ordering"""
+
+            start, end = coords
+            if start is None or end is None:
+                start = end = self.cursor
+
+            elif start > end:
+                start, end = end, start
+
+            return start, end
+
         self._donor_label.width = self.width
 
         lines = []
-        buff = self.prompt
+        buff = ""
         value_style = self.get_style("value")
         cursor_style = self.get_style("cursor")
         highlight_style = self.get_style("highlight")
 
-        start, end = self.selected
-        if self.selected_value is None or start is None or end is None:
-            start = end = self.cursor
+        # highlight_style is optional
+        if highlight_style is Widget.OVERRIDE:
+            highlight_style = cursor_style
 
-        else:
-            self.cursor = end
+        start, end = _normalize_cursor(self._selected_range)
+        self.cursor = end
 
-            if start > end:
-                start, end = end, start
+        for i, char in enumerate(self.prompt + self.value):
+            charindex = i - real_length(self.prompt)
 
-        for i, char in enumerate(self.value):
+            if char == keys.RETURN:
+                buff_list = list(buff)
+                buff_end = ""
+
+                if self._is_focused and charindex == self.cursor:
+                    buff_end = cursor_style(self.depth, " ")
+
+                lines += _get_label_lines("".join(buff_list) + buff_end)
+                buff = ""
+                continue
+
             # currently all lines visually have an extra " " at the end
             if real_length(buff) > self.width:
                 lines += _get_label_lines(buff[:-1])
@@ -297,21 +336,10 @@ class InputField(Widget):
 
                 buff = ""
 
-            elif char == keys.RETURN:
-                buff_list = list(buff)
-                buff_end = ""
-
-                if i == self.cursor:
-                    buff_end = cursor_style(self.depth, " ")
-
-                lines += _get_label_lines("".join(buff_list) + buff_end)
-                buff = ""
-                continue
-
-            if i == self.cursor:
+            elif self._is_focused and charindex == self.cursor:
                 buff += cursor_style(self.depth, char)
 
-            elif start <= i <= end:
+            elif self._is_focused and start <= charindex <= end:
                 buff += highlight_style(self.depth, char)
 
             else:
@@ -321,9 +349,13 @@ class InputField(Widget):
             lines += _get_label_lines(buff)
 
         self._height = len(lines)
-        self._last_line = buff
 
         return lines
+
+    def select_range(self, rng: tuple[int, int]) -> None:
+        """Overwrite select method to do a visual selection in range"""
+
+        self._selected_range = rng
 
     def send(self, key: Optional[str]) -> None:
         """Send key to InputField"""

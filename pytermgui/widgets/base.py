@@ -40,9 +40,17 @@ def default_background(depth: int, item: str) -> str:
     return background16(item, 30 + depth)
 
 
+def overrideable_style(depth: int, item: str) -> str:
+    """A style method that is meant to be overwritten,
+    to use in optional values."""
+
+    return depth * item
+
+
 class Widget:
     """The widget from which all UI classes derive from"""
 
+    OVERRIDE: StyleType = overrideable_style
     styles: dict[str, StyleType] = {}
     chars: dict[str, CharType] = {}
 
@@ -211,7 +219,7 @@ class Widget:
 
         return [type(self).__name__]
 
-    def select(self, index: Union[int, tuple[int, int]]) -> None:
+    def select(self, index: int) -> None:
         """Select part of self"""
 
         if not self.is_selectable:

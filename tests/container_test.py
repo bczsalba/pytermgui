@@ -78,8 +78,8 @@ with alt_buffer():
     main += inner
     main += padding_label
 
-    main += ColorPicker(36)
-    main += padding_label
+    # main += ColorPicker(25)
+    # main += padding_label
 
     main += Prompt("hello", "there")
     main += padding_label
@@ -98,8 +98,9 @@ with alt_buffer():
     progress = 0.6
     main += padding_label
     main += ProgressBar(progress_function=lambda: progress)
-    main[-1].forced_width = 100
+    main[-1].forced_width = 70
 
+    main += padding_label
     main += InputField()
 
     main.select(0)
