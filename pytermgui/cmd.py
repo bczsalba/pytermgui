@@ -8,7 +8,7 @@ This module provides the command-line capabilities of the module.
 """
 
 import sys
-from typing import Any, Callable
+from typing import Callable
 from argparse import ArgumentParser
 
 from . import (
@@ -16,27 +16,21 @@ from . import (
     Prompt,
     Label,
     bold,
-    italic,
     foreground256 as color,
-    clear,
     getch,
     keys,
-    alt_buffer,
     real_length,
     screen_size,
     cursor_up,
     cursor_right,
-    hide_cursor,
-    save_cursor,
-    show_cursor,
-    restore_cursor,
     report_cursor,
     move_cursor,
     screen_height,
 )
 
 
-def prompt_label_style(depth: int, item: str) -> str:
+# depth is not used but is always provided
+def prompt_label_style(depth: int, item: str) -> str:  # pylint: disable=unused-argument
     """Colorful prompt labels"""
 
     color_one = [
@@ -61,7 +55,9 @@ def prompt_label_style(depth: int, item: str) -> str:
 
     return out
 
-def prompt_value_style(depth: int, item: str) -> str:
+
+# depth is not used but is always provided
+def prompt_value_style(depth: int, item: str) -> str:  # pylint: disable=unused-argument
     """Colorful prompt_values"""
 
     if item == "None":
@@ -73,15 +69,22 @@ def prompt_value_style(depth: int, item: str) -> str:
     else:
         col = 157
 
-    return bold(color(item, col))
+    # mypy doesn't believe this to be str, so we have to be verbose.
+    return str(bold(color(item, col)))
+
 
 def color_call(col: int, set_bold: bool = False) -> Callable[[int, str], str]:
     """Create a color callable"""
 
+    out: Callable[[int, str], str]
+
+    # bold() and color() are typed to return str, but mypy can't read it
     if set_bold:
-        return lambda _, item: bold(color(item, col))
-    
-    return lambda _, item: color(item, col)
+        out = lambda _, item: str(bold(color(item, col)))
+    else:
+        out = lambda _, item: str(color(item, col))
+
+    return out
 
 
 def key_info() -> None:
@@ -132,6 +135,7 @@ def key_info() -> None:
     for line in output.get_lines():
         print(line)
 
+
 def main() -> None:
     """Main function for command line things."""
 
@@ -141,7 +145,10 @@ def main() -> None:
     Prompt.set_class_style("label", prompt_label_style)
     Prompt.set_class_style("value", prompt_value_style)
 
-    parser = ArgumentParser(prog="pytermgui", description="a command line utility for working with pytermgui.")
+    parser = ArgumentParser(
+        prog="pytermgui",
+        description="a command line utility for working with pytermgui.",
+    )
     parser.add_argument("file", help="open a .ptg file", nargs="?")
     parser.add_argument(
         "-g", "--getch", help="print information about a keypress", action="store_true"
@@ -169,6 +176,7 @@ def main() -> None:
         try:
             with open(args.file, "r") as ptg_file:
                 print("this is currently not supported.")
+                ptg_file.readlines()
 
-        except Exception as e:
-            print(f'pytermgui: Could not open file "{args.file}": {e}')
+        except Exception as error:  # pylint: disable=broad-except
+            print(f'pytermgui: Could not open file "{args.file}": {error}')
