@@ -7,70 +7,168 @@ author: bczsalba
 This module provides the command-line capabilities of the module.
 """
 
-from sys import argv
-from typing import Any
+import sys
+from typing import Any, Callable
+from argparse import ArgumentParser
 
 from . import (
-    __version__,
+    Container,
+    Prompt,
+    Label,
+    bold,
+    italic,
+    foreground256 as color,
+    clear,
     getch,
     keys,
-    Prompt,
-    cursor_up,
+    alt_buffer,
     real_length,
+    screen_size,
+    cursor_up,
+    cursor_right,
+    hide_cursor,
+    save_cursor,
+    show_cursor,
+    restore_cursor,
+    report_cursor,
+    move_cursor,
+    screen_height,
 )
 
-HELP = f"""\
-pytermgui v{__version__}:
 
-    ptg <path>
-        - currently not implemented
+def prompt_label_style(depth: int, item: str) -> str:
+    """Colorful prompt labels"""
 
-    ptg -g/--getch
-        - print information about key press
+    color_one = [
+        "(",
+        ")",
+    ]
 
-"""
+    color_two = [
+        ":",
+    ]
+
+    out = ""
+    for char in item:
+        if char in color_one:
+            out += color(bold(char), 157)
+
+        elif char in color_two:
+            out += color(bold(char), 210)
+
+        else:
+            out += color(char, 252)
+
+    return out
+
+def prompt_value_style(depth: int, item: str) -> str:
+    """Colorful prompt_values"""
+
+    if item == "None":
+        col = 210
+    elif item.isdigit():
+        col = 157
+    elif item.startswith("keys."):
+        col = 210
+    else:
+        col = 157
+
+    return bold(color(item, col))
+
+def color_call(col: int, set_bold: bool = False) -> Callable[[int, str], str]:
+    """Create a color callable"""
+
+    if set_bold:
+        return lambda _, item: bold(color(item, col))
+    
+    return lambda _, item: color(item, col)
 
 
-def get_value_from_prompt(prompt: Prompt, label: str, value: str) -> Any:
-    """Get value from a prompt object"""
+def key_info() -> None:
+    """Show information about a keypress"""
 
-    prompt.label = label
-    prompt.value = value
-    return prompt.get_lines()[0]
+    old = report_cursor()
 
+    dialog = Container() + Label("press a key... ")
+    for line in dialog.get_lines():
+        print(line)
+
+    # move cursor into "... >< "
+    cursor_up(2)
+    cursor_right(dialog.width - 3)
+    sys.stdout.flush()
+
+    user_key = getch()
+    move_cursor(old)
+
+    # things get messy when the terminal scrolls at EOB
+    if old[1] == screen_height():
+        cursor_up(4)
+
+    # get data
+    printable = '"' + user_key.encode("unicode_escape").decode("utf-8") + '"'
+    length = str(len(user_key))
+    real_len = str(real_length(user_key))
+
+    aka = "None"
+    if user_key in keys.values():
+        for key, value in keys.items():
+            if value == user_key:
+                aka = "keys." + key
+                break
+
+    output = Container()
+    for label, value in [
+        ("key:", printable),
+        ("aka:", aka),
+        ("len():", length),
+        ("real_length():", real_len),
+    ]:
+        prompt = Prompt(label, value)
+        prompt.width = 15 + max(len(printable), len(aka))
+        prompt.set_char("delimiter", ["", ""])
+        output += prompt
+
+    for line in output.get_lines():
+        print(line)
 
 def main() -> None:
     """Main function for command line things."""
 
-    args = argv[1:]
+    Container.set_class_char("border", ["│ ", "─", " │", "─"])
+    Container.set_class_char("corner", ["╭", "╮", "╯", "╰"])
+    Container.set_class_style("border", color_call(60, set_bold=True))
+    Prompt.set_class_style("label", prompt_label_style)
+    Prompt.set_class_style("value", prompt_value_style)
 
-    if len(args) == 0:
-        print(HELP)
+    parser = ArgumentParser(prog="pytermgui", description="a command line utility for working with pytermgui.")
+    parser.add_argument("file", help="open a .ptg file", nargs="?")
+    parser.add_argument(
+        "-g", "--getch", help="print information about a keypress", action="store_true"
+    )
+    parser.add_argument(
+        "--size",
+        help="print current terminal size as {rows}x{cols}",
+        action="store_true",
+    )
 
-    elif args[0] == "-g" or args[0] == "--getch":
-        print("press a key...")
-        cursor_up()
-        user_key = getch()
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
 
-        printable = '"' + user_key.encode("unicode_escape").decode("utf-8") + '"'
-        _len = str(len(user_key))
-        _real_len = str(real_length(user_key))
+    args = parser.parse_args()
 
-        prompt = Prompt()
-        prompt.set_char("delimiter", ["", ""])
+    if args.getch:
+        key_info()
 
-        from_keys = "None"
-        if user_key in keys.values():
-            for key, value in keys.items():
-                if value == user_key:
-                    from_keys = "keys." + key
+    elif args.size:
+        rows, cols = screen_size()
+        print(f"{rows}x{cols}")
 
-        prompt.width = 15 + max(len(printable), len(from_keys))
+    elif args.file:
+        try:
+            with open(args.file, "r") as ptg_file:
+                print("this is currently not supported.")
 
-        print(get_value_from_prompt(prompt, "key:", printable))
-        print(get_value_from_prompt(prompt, "aka:", from_keys))
-        print(get_value_from_prompt(prompt, "len():", _len))
-        print(get_value_from_prompt(prompt, "real_length():", _real_len))
-
-    else:
-        print(HELP)
+        except Exception as e:
+            print(f'pytermgui: Could not open file "{args.file}": {e}')
