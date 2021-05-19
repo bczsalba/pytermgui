@@ -11,6 +11,7 @@ the `+=` operator to append elements to it.
 
 from .base import Widget, Container, Splitter, Prompt, Label
 from .extra import ListView, ColorPicker, InputField, ProgressBar
+from . import boxes
 
 __all__ = [
     "Widget",
@@ -22,4 +23,5 @@ __all__ = [
     "ColorPicker",
     "InputField",
     "ProgressBar",
+    "boxes",
 ]
