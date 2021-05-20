@@ -16,7 +16,7 @@ from typing import Optional, Callable, Type, Union, Iterator, Any
 from ..helpers import real_length
 from ..context_managers import cursor_at
 from ..ansi_interface import (
-    background16,
+    background,
     screen_width,
     screen_height,
     screen_size,
@@ -37,7 +37,7 @@ def default_foreground(depth: int, item: str) -> str:
 def default_background(depth: int, item: str) -> str:
     """Default background style"""
 
-    return background16(item, 30 + depth)
+    return background(item, 30 + depth)
 
 
 def overrideable_style(depth: int, item: str) -> str:

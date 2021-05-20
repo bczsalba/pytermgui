@@ -20,19 +20,20 @@ Credits:
 
 
 from typing import Optional, Any, Union
-from subprocess import run as _run
-from subprocess import Popen as _Popen
 from sys import stdout as _stdout
-from os import name as _name
-from os import get_terminal_size
-
+from string import hexdigits
+from subprocess import (
+    run as _run,
+    Popen as _Popen,
+)
+from os import (
+    name as _name,
+    get_terminal_size,
+)
 from .input import getch
 
 
 __all__ = [
-    "Color16",
-    "Color256",
-    "ColorRGB",
     "screen_size",
     "screen_width",
     "screen_height",
@@ -69,12 +70,8 @@ __all__ = [
     "inverse",
     "invisible",
     "strikethrough",
-    "foreground16",
-    "background16",
-    "foreground256",
-    "background256",
-    "foregroundRGB",
-    "backgroundRGB",
+    "foreground",
+    "background",
 ]
 
 
@@ -89,90 +86,18 @@ class _Color:
                 f"Layer {layer} is not supported for Color256 objects! Please choose from 0, 1"
             )
 
-        self.layer_offset = layer * 10
-
-    def __call__(
-        self,
-        text: str,
-        color: Union[
-            int, str, tuple[Union[int, str], Union[int, str], Union[int, str]]
-        ],
-    ) -> str:
-        """Return colored text with reset code at the end"""
-
-        if not isinstance(color, tuple):
-            color = str(color)
-
-        color_value = self.get_color(color)
-        if color_value is None:
-            return text
-
-        return color_value + text + set_mode("reset")
-
-    def get_color(self, attr: Any) -> Optional[str]:
-        """This method needs to be overwritten."""
-
-        _ = self
-        return str(attr)
-
-
-class Color16(_Color):
-    """Class for using 16-bit colors"""
-
-    def __init__(self, layer: int = 0) -> None:
-        """Set up _colors dict"""
-
-        super().__init__(layer)
-
         self._colors = {
-            "black": 30,
-            "red": 31,
-            "green": 32,
-            "yellow": 33,
-            "blue": 34,
-            "magenta": 35,
-            "cyan": 36,
-            "white": 37,
+            "black": 0,
+            "red": 1,
+            "green": 2,
+            "yellow": 3,
+            "blue": 4,
+            "magenta": 5,
+            "cyan": 6,
+            "white": 7,
         }
 
-    def __getattr__(self, attr: str) -> Optional[str]:
-        return self.get_color(attr)
-
-    def get_color(self, attr: str) -> Optional[str]:
-        """Overwrite __getattr__ to look in self._colors"""
-
-        if str(attr).isdigit():
-            if not 30 <= int(attr) <= 37:
-                raise ValueError("16-bit color values have to be in the range 30-37.")
-
-            color = int(attr)
-
-        else:
-            color = self._colors[attr]
-
-        return f"\x1b[{color+(self.layer_offset)}m"
-
-
-class Color256(_Color):
-    """Class for using 256-bit colors"""
-
-    def get_color(self, attr: str) -> Optional[str]:
-        """Return color values"""
-
-        if not attr.isdigit():
-            return None
-
-        if not 1 <= int(attr) <= 255:
-            return None
-
-        return f"\x1b[{38+self.layer_offset};5;{attr}m"
-
-
-class ColorRGB(_Color):
-    """Class for using RGB or HEX colors
-
-    Note:
-        This requires a true-color terminal, like Kitty or Alacritty."""
+        self.layer_offset = layer * 10
 
     @staticmethod
     def _translate_hex(color: str) -> tuple[int, int, int]:
@@ -187,21 +112,49 @@ class ColorRGB(_Color):
 
         return rgb[0], rgb[1], rgb[2]
 
-    def get_color(self, colors: Union[str, tuple[int, int, int]]) -> Optional[str]:
-        """Get RGB color code"""
+    def __call__(
+        self,
+        text: str,
+        color: Union[
+            int, str, tuple[Union[int, str], Union[int, str], Union[int, str]]
+        ],
+        reset: bool = True,
+    ) -> str:
+        """Return colored text with reset code at the end"""
 
-        if isinstance(colors, str):
-            colors = self._translate_hex(colors)
+        # convert hex string to tuple[int, int, int]
+        if isinstance(color, str) and all(
+            char in hexdigits or char == "#" for char in color
+        ):
+            try:
+                color = self._translate_hex(color)
+            except ValueError:
+                # value is not a hex number, but is string
+                pass
+        
+        if color in self._colors:
+            color = self._colors.get(color)
 
-        if not len(colors) == 3:
-            return None
+        # rgb values
+        if isinstance(color, tuple):
+            red, green, blue = color
+            color_value = f"2;{red};{green};{blue}m"
 
-        for col in colors:
-            if not str(col).isdigit():
-                return None
+        # 8-bit colors (including 0-16)
+        elif isinstance(color, int) or color.isdigit():
+            color_value = f"5;{color}m"
 
-        strings = [str(col) for col in colors]
-        return f"\x1b[{38+self.layer_offset};2;" + ";".join(strings) + "m"
+        else:
+            raise NotImplementedError(
+                f"Not sure what to do with {color} of type {type(color)}"
+            )
+
+        return (
+            f"\x1b[{38 + self.layer_offset};"
+            + color_value
+            + text
+            + (set_mode("reset") if reset else "")
+        )
 
 
 # helpers
@@ -415,7 +368,7 @@ def cursor_home() -> None:
     _stdout.write("\x1b[H")
 
 
-def set_mode(mode: Union[str, int]) -> str:
+def set_mode(mode: Union[str, int], write: bool = True) -> str:
     """Set terminal display mode
 
     Available options:
@@ -447,7 +400,8 @@ def set_mode(mode: Union[str, int]) -> str:
         mode = options[str(mode)]
 
     code = f"\x1b[{mode}m"
-    _stdout.write(code)
+    if write:
+        _stdout.write(code)
 
     return code
 
@@ -541,62 +495,65 @@ def print_to(pos: tuple[int, int], *args: tuple[Any, ...]) -> None:
 def reset() -> str:
     """Reset printing mode"""
 
-    return set_mode("reset")
+    return set_mode("reset", False)
 
 
 def bold(text: str) -> str:
     """Return text in bold"""
 
-    return set_mode("bold") + text + reset()
+    return set_mode("bold", False) + text + reset()
 
 
 def dim(text: str) -> str:
     """Return text in dim"""
 
-    return set_mode("dim") + text + reset()
+    return set_mode("dim", False) + text + reset()
 
 
 def italic(text: str) -> str:
     """Return text in italic"""
 
-    return set_mode("italic") + text + reset()
+    return set_mode("italic", False) + text + reset()
 
 
 def underline(text: str) -> str:
     """Return text underlined"""
 
-    return set_mode("underline") + text + reset()
+    return set_mode("underline", False) + text + reset()
 
 
 def blinking(text: str) -> str:
     """Return text blinking"""
 
-    return set_mode("blink") + text + reset()
+    return set_mode("blink", False) + text + reset()
 
 
 def inverse(text: str) -> str:
     """Return text inverse-colored"""
 
-    return set_mode("inverse") + text + reset()
+    return set_mode("inverse", False) + text + reset()
 
 
 def invisible(text: str) -> str:
     """Return text in invisible"""
 
-    return set_mode("invisible") + text + reset()
+    return set_mode("invisible", False) + text + reset()
 
 
 def strikethrough(text: str) -> str:
     """Return text as strikethrough"""
 
-    return set_mode("strikethrough") + text + reset()
+    return set_mode("strikethrough", False) + text + reset()
 
 
-foreground16 = Color16()
-background16 = Color16(layer=1)
+foreground = _Color()
+background = _Color(layer=1)
 
-foreground256 = Color256()
-background256 = Color256(layer=1)
+# foreground16 = Color16()
+# background16 = Color16(layer=1)
 
-foregroundRGB = ColorRGB()
-backgroundRGB = ColorRGB(layer=1)
+# foreground256 = Color256()
+# background256 = Color256(layer=1)
+
+# foregroundRGB = ColorRGB()
+# backgroundRGB = ColorRGB(layer=1)

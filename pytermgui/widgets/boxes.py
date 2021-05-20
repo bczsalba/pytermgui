@@ -177,6 +177,27 @@ HEAVY = Box(
         "┗━━━┛",
     ]
 )
+EMPTY = Box(
+    [
+        "   ",
+        " x ",
+        "   ",
+    ]
+)
+EMPTY_VERTICAL = Box(
+    [
+        "─────",
+        "  x  ",
+        "─────",
+    ]
+)
+EMPTY_HORIZONTAL = Box(
+    [
+        "│   │",
+        "│ x │",
+        "│   │",
+    ]
+)
 SINGLE = Box(
     [
         "╭───╮",

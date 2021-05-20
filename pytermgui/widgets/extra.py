@@ -25,7 +25,7 @@ from .base import (
 )
 
 from ..input import keys
-from ..ansi_interface import foreground256
+from ..ansi_interface import foreground
 from ..helpers import real_length
 
 
@@ -61,7 +61,7 @@ class ColorPicker(Container):
                     continue
 
                 padding = 3 - len(col)
-                buff += foreground256(padding * " " + col, col) + " "
+                buff += foreground(padding * " " + col, col) + " "
 
             buff = buff[:-1]
             lines.append(buff + "" + right_border)

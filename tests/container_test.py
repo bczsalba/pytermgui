@@ -20,8 +20,8 @@ from pytermgui import (
     InputField,
     alt_buffer,
     getch,
-    foreground256 as color,
-    background256 as highlight,
+    foreground as color,
+    background as highlight,
 )
 
 

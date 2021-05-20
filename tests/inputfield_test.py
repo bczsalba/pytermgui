@@ -16,7 +16,7 @@ from pytermgui import (
     getch,
     keys,
     clear,
-    background256 as color,
+    background as color,
 )
 
 def create_container(height: int = 0):

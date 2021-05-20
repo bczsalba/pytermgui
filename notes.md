@@ -1,11 +1,14 @@
 IN PROGRESS
 -----------
 
+* `RichLabel` class, or the default fore & background styles being able to read `[cyan]style[/cyan]`
+
+* templating: dumping and loading from files, strings
+
 * `Splitter`
     - that exception really doesn't need to be there, the program should be able to handle the situation
     - `ListView` doesn't align properly to the right when in a `Splitter`
 
-* add a `focus()` method to `Widget`, that sets some private attribute (like `is_selected` = True)
 * fix `InputField` up & down
 
 * `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
@@ -16,11 +19,7 @@ IN PROGRESS
 
 * `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
 
-* templating: dumping and loading from files, strings
-
 * rewrite the mess that `Container.get_lines` has become. It should be separated into more smaller protected methods.
-
-* `RichLabel` class, or the default fore & background styles being able to read `[cyan]style[/cyan]`
 
 
 FINISHED
@@ -56,3 +55,5 @@ FINISHED
     - [x] Prompt
     - [x] ListView
     - [x] Label
+
+* `_Color` class should do 16, 256, RGB and HEX colors instead of 3 different functions
