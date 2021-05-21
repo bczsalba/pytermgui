@@ -77,7 +77,7 @@ class ColorParser:
             [#{123456}]                - hex colors
             [@{color}]                 - background version of one of the above
 
-        - modifiers & misc: 
+        - modifiers & misc:
         *: TODO
             [/]                        - clear all styles
             *[/color]                  - clear colors, leave style
@@ -356,7 +356,7 @@ class ColorParser:
                 continue
 
             if not old_attributes == attributes:
-                new = [attr for attr in attributes if attr not in old_attributes] 
+                new = [attr for attr in attributes if attr not in old_attributes]
                 out += self._apply(new, char)
 
             else:

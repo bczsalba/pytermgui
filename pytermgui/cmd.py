@@ -17,6 +17,7 @@ from . import (
     Label,
     bold,
     foreground as color,
+    ColorParser,
     getch,
     keys,
     real_length,
@@ -26,6 +27,7 @@ from . import (
     report_cursor,
     move_cursor,
     screen_height,
+    reset,
 )
 
 
@@ -154,6 +156,18 @@ def main() -> None:
         "-g", "--getch", help="print information about a keypress", action="store_true"
     )
     parser.add_argument(
+        "-p", "--parse", metavar=("txt"), help="parse rich text", nargs=1
+    )
+    parser.add_argument("--inverse", help="inverse parsing", action="store_true")
+    parser.add_argument(
+        "--escape", help="escape parsed text output", action="store_true"
+    )
+    parser.add_argument(
+        "--show-inverse",
+        help="show result of inverse parse operation",
+        action="store_true",
+    )
+    parser.add_argument(
         "--size",
         help="print current terminal size as {rows}x{cols}",
         action="store_true",
@@ -167,6 +181,31 @@ def main() -> None:
 
     if args.getch:
         key_info()
+
+    elif args.parse:
+        txt = args.parse[0]
+        colorparser = ColorParser()
+
+        if args.inverse:
+            parsed = colorparser.inverse_parse(txt)
+            inverse_result = colorparser.parse(parsed)
+        else:
+            parsed = colorparser.parse(txt)
+            inverse_result = colorparser.inverse_parse(parsed)
+
+        if args.escape:
+            parsed = parsed.encode("unicode_escape").decode("utf-8")
+
+        display = (
+            Container() + Label(txt + reset()) + Label("|") + Label("V") + Label(parsed)
+        )
+
+        if args.show_inverse:
+            display += Label()
+            display += Label("(" + inverse_result + ")")
+
+        for line in display.get_lines():
+            print(line)
 
     elif args.size:
         rows, cols = screen_size()
