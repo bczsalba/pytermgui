@@ -184,6 +184,14 @@ class Widget:
 
         cls._set_char(cls, key, value)
 
+    def copy(self) -> Widget:
+        """Copy widget into a new object"""
+
+        new: Widget = type(self).__new__(type(self))
+        new.__dict__ = self.__dict__
+
+        return new
+
     def focus(self) -> None:
         """Focus widget"""
 

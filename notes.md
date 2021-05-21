@@ -1,8 +1,6 @@
 IN PROGRESS
 -----------
 
-* `RichLabel` class, or the default fore & background styles being able to read `[cyan]style[/cyan]`
-
 * templating: dumping and loading from files, strings
 
 * `Splitter`
@@ -57,3 +55,5 @@ FINISHED
     - [x] Label
 
 * `_Color` class should do 16, 256, RGB and HEX colors instead of 3 different functions
+
+* `RichLabel` class, or the default fore & background styles being able to read `[cyan]style[/cyan]`
