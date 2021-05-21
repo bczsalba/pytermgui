@@ -138,14 +138,14 @@ def key_info() -> None:
         print(line)
 
 
-def main() -> None:
+def main() -> None:  # pylint: disable=too-many-statements
     """Main function for command line things."""
 
-    Container.set_class_char("border", ["│ ", "─", " │", "─"])
-    Container.set_class_char("corner", ["╭", "╮", "╯", "╰"])
-    Container.set_class_style("border", color_call(60, set_bold=True))
-    Prompt.set_class_style("label", prompt_label_style)
-    Prompt.set_class_style("value", prompt_value_style)
+    Container.set_char("border", ["│ ", "─", " │", "─"])
+    Container.set_char("corner", ["╭", "╮", "╯", "╰"])
+    Container.set_style("border", color_call(60, set_bold=True))
+    Prompt.set_style("label", prompt_label_style)
+    Prompt.set_style("value", prompt_value_style)
 
     parser = ArgumentParser(
         prog="pytermgui",
@@ -165,6 +165,11 @@ def main() -> None:
     parser.add_argument(
         "--show-inverse",
         help="show result of inverse parse operation",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--no-container",
+        help="show getch/parse output without a container surrounding it",
         action="store_true",
     )
     parser.add_argument(
@@ -195,6 +200,11 @@ def main() -> None:
 
         if args.escape:
             parsed = parsed.encode("unicode_escape").decode("utf-8")
+
+        if args.no_container:
+            print("input:", txt + reset())
+            print("output:", parsed)
+            sys.exit(0)
 
         display = (
             Container() + Label(txt + reset()) + Label("|") + Label("V") + Label(parsed)

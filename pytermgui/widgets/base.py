@@ -145,44 +145,26 @@ class Widget:
 
         self.pos = (self.posx, value)
 
-    @staticmethod
-    def _set_style(
-        cls_or_obj: Union[Type[Widget], Widget], key: str, value: StyleType
-    ) -> None:
-        """Protected method for setting styles"""
+    @classmethod
+    def set_style(cls: Union[Type[Widget], Widget], key: str, value: StyleType) -> None:
+        """Method for setting styles of both classes and instances"""
 
-        if not key in cls_or_obj.styles.keys():
-            raise KeyError(f"Style {key} is not valid for {cls_or_obj}!")
+        if not key in cls.styles.keys():
+            raise KeyError(f"Style {key} is not valid for {cls}!")
 
         if not callable(value):
-            raise ValueError(
-                f"Style {key} for {type(cls_or_obj)} has to be a callable."
-            )
+            raise ValueError(f"Style {key} for {type(cls)} has to be a callable.")
 
-        cls_or_obj.styles[key] = value
-
-    @staticmethod
-    def _set_char(
-        cls_or_obj: Union[Type[Widget], Widget], key: str, value: list[str]
-    ) -> None:
-        """Protected method for setting chars"""
-
-        if not key in cls_or_obj.chars.keys():
-            raise KeyError(f"Char {key} is not valid for {cls_or_obj}!")
-
-        cls_or_obj.chars[key] = value
+        cls.styles[key] = value
 
     @classmethod
-    def set_class_style(cls, key: str, value: StyleType) -> None:
-        """Set class_style key to value"""
+    def set_char(cls: Union[Type[Widget], Widget], key: str, value: list[str]) -> None:
+        """Method for setting chars of both classes and instances"""
 
-        cls._set_style(cls, key, value)
+        if not key in cls.chars.keys():
+            raise KeyError(f"Char {key} is not valid for {cls}!")
 
-    @classmethod
-    def set_class_char(cls, key: str, value: list[str]) -> None:
-        """Set class_char key to value"""
-
-        cls._set_char(cls, key, value)
+        cls.chars[key] = value
 
     def copy(self) -> Widget:
         """Copy widget into a new object"""
@@ -201,16 +183,6 @@ class Widget:
         """Blur (unfocus) widget"""
 
         self._is_focused = False
-
-    def set_style(self, key: str, value: StyleType) -> None:
-        """Set instance_style key to value"""
-
-        self._set_style(self, key, value)
-
-    def set_char(self, key: str, value: list[str]) -> None:
-        """Set instance_char key to value"""
-
-        self._set_char(self, key, value)
 
     def get_style(self, key: str) -> StyleType:
         """Try to get style"""

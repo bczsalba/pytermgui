@@ -48,21 +48,21 @@ padding_label = Label()
 
 
 with alt_buffer():
-    Container.set_class_char("border", ["|| ", "~", " ||", "~"])
+    Container.set_char("border", ["|| ", "~", " ||", "~"])
 
-    Label.set_class_style("value", value_style)
+    Label.set_style("value", value_style)
 
-    Prompt.set_class_style("value", value_style)
-    Prompt.set_class_style("label", delimiter_style)
-    Prompt.set_class_style("delimiter", delimiter_style)
-    Prompt.set_class_style("highlight", highlight_style)
+    Prompt.set_style("value", value_style)
+    Prompt.set_style("label", delimiter_style)
+    Prompt.set_style("delimiter", delimiter_style)
+    Prompt.set_style("highlight", highlight_style)
 
-    ListView.set_class_style("highlight", highlight_style)
-    ListView.set_class_style("value", value_style)
-    ListView.set_class_style("delimiter", delimiter_style)
+    ListView.set_style("highlight", highlight_style)
+    ListView.set_style("value", value_style)
+    ListView.set_style("delimiter", delimiter_style)
 
-    ProgressBar.set_class_style("fill", delimiter_style)
-    ProgressBar.set_class_style("delimiter", value_style)
+    ProgressBar.set_style("fill", delimiter_style)
+    ProgressBar.set_style("delimiter", value_style)
 
     main = Container(horiz_align=Container.HORIZ_ALIGN_CENTER)
     main.forced_height = 37
