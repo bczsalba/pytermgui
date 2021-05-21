@@ -86,7 +86,7 @@ class _Color:
                 f"Layer {layer} is not supported for Color256 objects! Please choose from 0, 1"
             )
 
-        self._colors = {
+        self.names = {
             "black": 0,
             "red": 1,
             "green": 2,
@@ -118,7 +118,7 @@ class _Color:
         color: Union[
             int, str, tuple[Union[int, str], Union[int, str], Union[int, str]]
         ],
-        reset: bool = True,
+        reset_color: bool = True,
     ) -> str:
         """Return colored text with reset code at the end"""
 
@@ -131,9 +131,11 @@ class _Color:
             except ValueError:
                 # value is not a hex number, but is string
                 pass
-        
-        if color in self._colors:
-            color = self._colors.get(color)
+
+        if color in self.names:
+            new = self.names[str(color)]
+            assert isinstance(new, int)
+            color = new
 
         # rgb values
         if isinstance(color, tuple):
@@ -153,7 +155,7 @@ class _Color:
             f"\x1b[{38 + self.layer_offset};"
             + color_value
             + text
-            + (set_mode("reset") if reset else "")
+            + (set_mode("reset") if reset_color else "")
         )
 
 
@@ -498,62 +500,53 @@ def reset() -> str:
     return set_mode("reset", False)
 
 
-def bold(text: str) -> str:
+def bold(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text in bold"""
 
-    return set_mode("bold", False) + text + reset()
+    return set_mode("bold", False) + text + (reset() if reset_style else "")
 
 
-def dim(text: str) -> str:
+def dim(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text in dim"""
 
-    return set_mode("dim", False) + text + reset()
+    return set_mode("dim", False) + text + (reset() if reset_style else "")
 
 
-def italic(text: str) -> str:
+def italic(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text in italic"""
 
-    return set_mode("italic", False) + text + reset()
+    return set_mode("italic", False) + text + (reset() if reset_style else "")
 
 
-def underline(text: str) -> str:
+def underline(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text underlined"""
 
-    return set_mode("underline", False) + text + reset()
+    return set_mode("underline", False) + text + (reset() if reset_style else "")
 
 
-def blinking(text: str) -> str:
+def blinking(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text blinking"""
 
-    return set_mode("blink", False) + text + reset()
+    return set_mode("blink", False) + text + (reset() if reset_style else "")
 
 
-def inverse(text: str) -> str:
+def inverse(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text inverse-colored"""
 
-    return set_mode("inverse", False) + text + reset()
+    return set_mode("inverse", False) + text + (reset() if reset_style else "")
 
 
-def invisible(text: str) -> str:
+def invisible(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text in invisible"""
 
-    return set_mode("invisible", False) + text + reset()
+    return set_mode("invisible", False) + text + (reset() if reset_style else "")
 
 
-def strikethrough(text: str) -> str:
+def strikethrough(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text as strikethrough"""
 
-    return set_mode("strikethrough", False) + text + reset()
+    return set_mode("strikethrough", False) + text + (reset() if reset_style else "")
 
 
 foreground = _Color()
 background = _Color(layer=1)
-
-# foreground16 = Color16()
-# background16 = Color16(layer=1)
-
-# foreground256 = Color256()
-# background256 = Color256(layer=1)
-
-# foregroundRGB = ColorRGB()
-# backgroundRGB = ColorRGB(layer=1)

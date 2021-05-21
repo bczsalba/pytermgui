@@ -16,7 +16,7 @@ from . import (
     Prompt,
     Label,
     bold,
-    foreground256 as color,
+    foreground as color,
     getch,
     keys,
     real_length,
