@@ -17,7 +17,8 @@ from . import (
     Label,
     bold,
     foreground as color,
-    ColorParser,
+    ansi_to_markup,
+    markup_to_ansi,
     getch,
     keys,
     real_length,
@@ -189,14 +190,13 @@ def main() -> None:  # pylint: disable=too-many-statements
 
     elif args.parse:
         txt = args.parse[0]
-        colorparser = ColorParser()
 
         if args.inverse:
-            parsed = colorparser.inverse_parse(txt)
-            inverse_result = colorparser.parse(parsed)
+            parsed = ansi_to_markup(txt)
+            inverse_result = markup_to_ansi(parsed)
         else:
-            parsed = colorparser.parse(txt)
-            inverse_result = colorparser.inverse_parse(parsed)
+            parsed = markup_to_ansi(txt)
+            inverse_result = ansi_to_markup(parsed)
 
         if args.escape:
             parsed = parsed.encode("unicode_escape").decode("utf-8")

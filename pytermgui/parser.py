@@ -4,402 +4,316 @@ pytermgui.parser
 author: bczsalba
 
 
-This module provides a class to parse rich text formatted strings into
-ANSI text, and the reverse."""
-
-import sys
-from typing import Optional, Callable, no_type_check
-
-from .ansi_interface import (
-    bold,
-    reset,
-    dim,
-    italic,
-    underline,
-    blinking,
-    inverse,
-    invisible,
-    strikethrough,
-    foreground as color,
-    background as color_bg,
-)
-
-__all__ = ["ColorParser"]
-
-FunctionType = Callable[[str, Optional[bool]], str]
-FunctionDict = dict[str, FunctionType]
+This module provides a tokenizer for both ANSI and markup type strings,
+and some higher level methods for converting between the two.
 
 
-class ColorParser:
-    """This class parses rich text and ANSI containing strings
-    back and forth.
+The tags available are:
+    - /                                         (reset: 0)
+    - bold                                      (1)
+    - dim                                       (2)
+    - italic                                    (3)
+    - underline                                 (4)
+    - blink                                     (5)
+    - blink2                                    (6)
+    - inverse                                   (7)
+    - invisible                                 (8)
+    - strikethrough                             (9)
+    - removers of all of the above              ([ /{tag} ])
 
-    The basic usage is:
-        ```
-        >>> parser = ColorParser()
-        >>> ansi = parser.parse("[@60 141 bold]this is rich text[/]")
-        "\\x1b[0m\\x1b[48;5;60m\\x1b[38;5;141m\\x1b[1mthis is rich text\\x1b[0m"
+    - 4-bit colors                              (0-16)
+    - 8-bit colors                              (16-256)
+    - 24-bit colors                             (RGB: [rrr;bbb;ggg], HEX: [#rr;bb;gg])
 
-        >>> rich = parser.inverse_parse(ansi)
-        "[@60 141 bold]this is rich text[/]"
-        ```
+    - black                                     color code 0
+    - red                                       color code 1
+    - green                                     color code 2
+    - yellow                                    color code 3
+    - blue                                      color code 4
+    - magenta                                   color code 5
+    - cyan                                      color code 6
+    - white                                     color code 7
 
-    Notes about syntax:
-        Because of the way the function calls work, the first applied color will take
-        precedence over any that are applied to the same "channel" (foreground/background).
+    - background versions of all of the above   ([ @{color} ])
 
-        For example, "[141 60 @60]text[/]" will apply background color 60, and foreground color
-        141, while ignoring the foreground 60.
 
-    Rich text tokens:
-        - basic styling:
-            [bold]
-            [dim]
-            [italic]
-            [underline]
-            [blinking]
-            [inverse]
-            [invisible]
-            [strikethrough]
+Notes on syntax:
+    - The tokenizer only yields tokens if it is different from the previous one,
+        so if your markup is `[bold bold bold]hello` it will only yield 1 bold token.
 
-        - colors:
-            black                      - color code 0
-            red                        - color code 1
-            green                      - color code 2
-            yellow                     - color code 3
-            blue                       - color code 4
-            magenta                    - color code 5
-            cyan                       - color code 6
-            white                      - color code 7
+    - The tokenizer also implicitly adds a reset tag at the end of all strings it's given,
+        if it doesn't already end in one.
 
-            [{0-255}]                  - 8-bit colors
-            [{0-255};{0-255};{0-255}]  - 24-bit (rgb) colors
-            [#{123456}]                - hex colors
-            [@{color}]                 - background version of one of the above
 
-        - modifiers & misc:
-        *: TODO
-            [/]                        - clear all styles
-            *[/color]                  - clear colors, leave style
-            *[/style]                  - clear style, leave colors
+Example syntax:
+    >>> from pytermgui import markup_to_ansi, ansi_to_markup
 
-    The object also takes an optional dict[str, FunctionType] for token calls,
-    which allows you to completely redefine what it parses and how. Not sure why,
-    but hey, you can.
-    """
+    >>> ansi = markup_to_ansi("[@141 60 bold italic]Hello[/italic underline inverse]There!")
+    '\\x1b[48;5;141m\\x1b[38;5;60m\\x1b[1m\\x1b[3mHello\\x1b[23m\\x1b[4m\\x1b[7mThere!'\\x1b[0m'
 
-    def __init__(self, token_map: Optional[FunctionDict] = None) -> None:
-        """Initialize object"""
+    >>> markup = ansi_to_markup(ansi)
+    '[@141 60 bold italic]Hello[/italic underline inverse]There![/]''
+"""
 
-        if token_map is None:
-            self.token_map: FunctionDict = {
-                "bold": bold,
-                "dim": dim,
-                "italic": italic,
-                "underline": underline,
-                "blinking": blinking,
-                "inverse": inverse,
-                "invisible": invisible,
-                "strikethrough": strikethrough,
-            }
+import re
+from dataclasses import dataclass
+from typing import Optional, Iterator
 
-        else:
-            self.token_map = token_map.copy()
+from .ansi_interface import foreground, reset
 
-        self.tokens = list(self.token_map.keys())
 
-        self._color_functions: FunctionDict = {}
+__all__ = [
+    "escape_ansi",
+    "tokenize_ansi",
+    "tokenize_markup",
+    "markup_to_ansi",
+    "ansi_to_markup",
+]
 
-    @staticmethod
-    def _peek(value: str, index: int) -> Optional[str]:
-        """Show next (+ index) character"""
+RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
+RE_TAGS = re.compile(r"""((\\*)\[([a-z0-9#@\/].*?)\])""", re.VERBOSE)
 
-        if index < len(value):
-            return value[index]
+NAMES = [
+    "/",
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "blink",
+    "blink2",
+    "inverse",
+    "invisible",
+    "strikethrough",
+]
 
-        return None
+UNSET_NAMES = {
+    "/bold": "22",
+    "/dim": "22",
+    "/italic": "23",
+    "/underline": "24",
+    "/blink": "25",
+    "/blink2": "26",
+    "/inverse": "27",
+    "/invisible": "28",
+    "/strikethrough": "29",
+}
 
-    @staticmethod
-    def _apply(functions: list[FunctionType], value: str) -> str:
-        """Apply functions to value"""
 
-        for function in reversed(functions):
-            value = function(value, False).rstrip(reset())
+def escape_ansi(text: str) -> str:
+    """Escape ANSI sequence"""
 
-        return value
+    return text.encode("unicode_escape").decode("utf-8")
 
-    def _clear_colors(self, attributes: list[FunctionType]) -> None:
-        """Clear all color attributes"""
 
-        for function in self._color_functions.values():
-            attributes.remove(function)
+@dataclass
+class Token:
+    """Result of ansi tokenized string."""
 
-    @no_type_check
-    def _check_for_color(self, token: str) -> list[FunctionType]:
-        """Check for color in token and return callables if found
-        Mypy cannot infern the type of the lambdas used here."""
+    start: int
+    end: int
+    plain: Optional[str] = None
+    code: Optional[str] = None
 
-        def _create_color(clr: str) -> int:
-            """Return integer from color and check if valid"""
+    def to_name(self) -> str:
+        """Convert token to named attribute for rich text"""
 
-            numbers = [int(number) for number in list(clr)]
+        if self.plain is not None:
+            return self.plain
 
-            if len(numbers) > 3:
-                raise NotImplementedError(
-                    "Color values are constrained to range [0; 256]."
-                )
+        # only one of [self.code, self.plain] can be None
+        assert self.code is not None
 
-            while not len(numbers) == 3:
-                numbers.insert(0, 0)
-
-            first, second, third = numbers
-            number = first * 100 + second * 10 + third
-
-            if number > 256:
-                raise NotImplementedError(
-                    "Color values are constrained to range [0; 256]."
-                )
-
-            return number
-
-        def _add_callable(function: FunctionType) -> list[FunctionType]:
-            """Add callable to self._color_functions and return same object"""
-
-            self._color_functions[token] = function
-            return [function]
-
-        if token.startswith("@"):
-            token = token[1:]
-            color_fun = color_bg
-        else:
-            color_fun = color
-
-        if token in color_fun.names:
-            name_function: FunctionType = lambda item, _: color_fun(item, token)
-            return _add_callable(name_function)
-
-        values = token.split(";")
-
-        if token.startswith("#"):
-            hex_function: FunctionType = lambda item, _: color_fun(item, token)
-            return _add_callable(hex_function)
-
-        out = []
-        for value in values:
-            if not all(char.isdigit() for char in value):
-                return []
-
-            out.append(_create_color(value))
-
-        if len(out) == 1:
-            color_function: FunctionType = lambda item, _: color_fun(item, out[0])
-            return _add_callable(color_function)
-
-        rgb_function: FunctionType = lambda item, _: color_fun(item, tuple(out))
-        return _add_callable(rgb_function)
-
-    def inverse_parse(self, value: str) -> str:
-        """Parse formatted value to a string that can be `parse`-d to the original"""
-
-        def _convert_sequence(seq: str) -> str:
-            """Convert ANSI sequence into parsable string"""
-
-            if seq == reset():
-                if len(out) > 1:
-                    return "/"
-                return ""
-
-            if seq in targets.keys():
-                return targets[seq]
-
-            maybe_colors = seq[seq.find("[") + 1 : seq.rfind(reset())].split(";")
-            attrs = ";".join(maybe_colors[2:])
-
-            if attrs.isdigit() and int(attrs) in color.names.values():
-                for key, value in color.names.items():
-                    if value == int(attrs):
+        if self.code is not None and self.code.isdigit():
+            if self.code in UNSET_NAMES.values():
+                for key, value in UNSET_NAMES.items():
+                    if value == self.code:
                         return key
 
-            if attrs == "0":
-                return ""
+            index = int(self.code)
+            return NAMES[index]
 
-            if maybe_colors[0] == "48":
-                attrs = "@" + attrs
-
-            return attrs
-
-        targets = {value("", False): key for key, value in self.token_map.items()}
-        in_sequence = False
-        current_sequence = ""
-        join_attrs = False
         out = ""
-        old = None
+        numbers = self.code.split(";")
 
-        for i, char in enumerate(value):
-            if in_sequence:
-                current_sequence += char
+        if numbers[0] == "48":
+            out += "@"
 
-                if char == "m":
-                    in_sequence = False
-                    new = _convert_sequence("\x1b" + current_sequence)
+        if len(numbers) < 3:
+            raise SyntaxError(
+                f'Invalid ANSI code "{escape_ansi(self.code)}" in token {self}.'
+            )
 
-                    if not new == old:
-                        join_attrs = self._peek(value, i + 1) == "\x1b"
-                        padding = " " if len(new) > 0 else ""
+        if simple := int(numbers[2]) in foreground.names.values():
+            for name, fore_value in foreground.names.items():
+                if fore_value == simple:
+                    return out + name
 
-                        out += new + (padding if join_attrs > 0 else "]")
+        out += ";".join(numbers[2:])
 
-                    current_sequence = ""
-                    old = new
-                    continue
-
-                continue
-
-            if char == "\x1b":
-                if not join_attrs and not out.endswith("["):
-                    out += "["
-
-                in_sequence = True
-                continue
-
-            out += char
-
-        self._color_functions = {}
         return out
 
-    # pylint: disable=too-many-statements,too-many-branches
-    def parse(self, value: str) -> str:
-        """Parse value and create string with applied attributes
+    def to_sequence(self) -> str:
+        """Convert token to an ANSI sequence"""
 
-        Less statements & branches would mean the function would have to be
-        split into even more smaller parts, which would ruin readability."""
+        if self.code is None:
+            # only one of [self.code, self.plain] can be None
+            assert self.plain is not None
+            return self.plain
 
-        def _parse_token(
-            token: str, attributes: list[FunctionType], removing_attr: bool
-        ) -> None:
-            """Parse token and add it to attributes"""
+        return "\x1b[" + self.code + "m"
 
-            if token in self.tokens or token in self._color_functions:
-                if token in self._color_functions:
-                    function = self._color_functions[token]
-                    del self._color_functions[token]
-                else:
-                    function = self.token_map[token]
 
-                if removing_attr:
-                    attributes.remove(function)
-                else:
-                    attributes.append(function)
+def tokenize_ansi(text: str) -> Iterator[Token]:
+    """Tokenize text containing ANSI sequences"""
 
-        token = ""
-        attributes: list[FunctionType] = []
-        old_attributes: list[FunctionType] = []
-        out = ""
+    position = start = end = 0
+    previous = None
 
-        in_attr = False
-        removing_attr = False
-        background_color = False
+    if not text.endswith(reset()):
+        text += "\x1b[0m"
 
-        def _reset_values() -> None:
-            """Reset token, removing_attr, background_color,
-            run self._check_for_color(token)
+    for match in RE_ANSI.finditer(text):
+        start, end = match.span(0)
+        sgr, _ = match.groups()
 
-            This function is below var definitions because of issues
-            from unbound non-locals."""
+        # add plain text between last and current sequence
+        if start > position:
+            token = Token(start, end, plain=text[position:start])
+            previous = token
+            yield token
 
-            nonlocal removing_attr, background_color, token, attributes
+        token = Token(start, end, code=sgr)
 
-            if not removing_attr:
-                attributes += self._check_for_color(token)
+        if previous is None or not previous.code == sgr:
+            previous = token
+            yield token
 
-            removing_attr = False
-            background_color = False
-            token = ""
+        position = end
 
-        for i, char in enumerate(value):
-            if in_attr:
-                if char == "/":
-                    removing_attr = True
+    if position < len(text):
+        yield Token(start, end, plain=text[position:])
 
-                    # remove all attributes
-                    if self._peek(value, i + 1) in [" ", "]"]:
-                        attributes = []
-                        self._color_functions = {}
-                        out += reset()
 
-                    continue
+def tokenize_markup(text: str) -> Iterator[Token]:
+    """Tokenize markup text"""
 
-                if char == "]":
-                    in_attr = False
-                    _reset_values()
-                    continue
+    def _handle_color(tag: str) -> Optional[str]:
+        """Handle color fore/background, hex conversions"""
 
-                if char == " ":
-                    _reset_values()
-                    continue
+        # sort out non-colors
+        if not all(char.isdigit() or char in "#;@abcdef" for char in tag):
+            return None
 
-                token += char
-                if removing_attr and token == "color":
-                    self._clear_colors(attributes)
-                    self._color_functions = {}
+        # convert into background color
+        if tag.startswith("@"):
+            pretext = "48;"
+            tag = tag[1:]
+        else:
+            pretext = "38;"
 
-                elif removing_attr and token == "style":
-                    for function in attributes:
-                        if not function in self._color_functions.values():
-                            attributes.remove(function)
+        hexcolor = tag.startswith("#")
 
-                _parse_token(token, attributes, removing_attr)
+        # 8-bit (256) and 24-bit (RGB) colors use different id numbers
+        color_pre = "5;" if tag.count(";") < 2 and not hexcolor else "2;"
+
+        # hex colors are essentially RGB in a different format
+        if hexcolor:
+            tag = ";".join(str(val) for val in foreground.translate_hex(tag))
+
+        return pretext + color_pre + tag
+
+    def _handle_named_color(tag: str) -> Optional[str]:
+        """Check if name is in foreground.names and return its value if possible"""
+
+        if not tag.lstrip("@") in foreground.names:
+            return None
+
+        if tag.startswith("@"):
+            tag = tag[1:]
+            background = "@"
+
+        else:
+            background = ""
+
+        return _handle_color(background + str(foreground.names[tag]))
+
+    position = 0
+    for match in RE_TAGS.finditer(text):
+        _, escapes, tag_text = match.groups()
+        start, end = match.span()
+
+        if start > position:
+            yield Token(start, end, plain=text[position:start])
+
+        if escapes is not None:
+            backslashes, escaped = divmod(len(escapes), 2)
+            if backslashes > 0:
+                yield Token(start, end, plain=backslashes * "\\")
+                start += backslashes * 2
+
+            if escaped > 0:
+                yield Token(start, end, plain=tag_text[len(escapes) :])
+                position = end
                 continue
 
-            if char == "[":
-                in_attr = True
-                continue
+        for tag in tag_text.split():
+            if tag in NAMES:
+                yield Token(start, end, code=str(NAMES.index(tag)))
 
-            if not old_attributes == attributes:
-                new = [attr for attr in attributes if attr not in old_attributes]
-                out += self._apply(new, char)
+            elif tag in UNSET_NAMES:
+                yield Token(start, end, code=str(UNSET_NAMES[tag]))
 
             else:
-                out += char
+                if (code := _handle_named_color(tag)) is not None:
+                    yield Token(start, end, code=code)
 
-            old_attributes = attributes.copy()
+                elif (color := _handle_color(tag)) is not None:
+                    yield Token(start, end, code=color)
 
-        self._color_functions = {}
-        return out + reset()
+                else:
+                    raise SyntaxError(f'Markup tag "{tag}" is not recognized.')
+
+        position = end
+
+    if position < len(text):
+        yield Token(start, end, plain=text[position:])
 
 
-if __name__ == "__main__":
+def markup_to_ansi(markup: str) -> str:
+    """Turn markup text into ANSI str"""
+
+    ansi = ""
+    for token in tokenize_markup(markup):
+        ansi += token.to_sequence()
+
+    if not ansi.endswith(reset()):
+        ansi += reset()
+
+    return ansi
+
+
+def ansi_to_markup(ansi: str) -> str:
+    """Turn ansi text into markup"""
+
+    markup = ""
+    in_attr = False
+    current_bracket: list[str] = []
+
+    for token in tokenize_ansi(ansi):
+        # start/add to attr bracket
+        if token.code is not None:
+            in_attr = True
+            current_bracket.append(token.to_name())
+            continue
+
+        # close previous attr bracket
+        if in_attr:
+            markup += "[" + " ".join(current_bracket) + "]"
+            current_bracket = []
+
+        markup += token.to_name()
+
+    markup += "[" + " ".join(current_bracket) + "]"
+    return markup
+
     # "[italic bold 141;35;60]hello there[/][141] alma[/] [18;218;168 underline]fa"
-
-    from argparse import ArgumentParser
-
-    argparser = ArgumentParser()
-    argparser.add_argument("parsed_text", help="parse string into ansi text")
-    argparser.add_argument(
-        "--inverse", help="inverse parse string into rich string", action="store_true"
-    )
-    argparser.add_argument(
-        "-e", "--escape", help="show output with escaped codes", action="store_true"
-    )
-    arguments = argparser.parse_args()
-
-    parser = ColorParser()
-    if arguments.inverse:
-        rich_to_parsed = parser.inverse_parse(arguments.parsed_text)
-        print(rich_to_parsed)
-        print(parser.parse(rich_to_parsed))
-
-    elif arguments.parsed_text:
-        parsed = parser.parse(arguments.parsed_text)
-        if arguments.escape:
-            print(parsed.encode("unicode_escape").decode("utf-8"))
-        else:
-            print(parsed)
-
-        parsed_to_rich = parser.inverse_parse(parsed)
-        print(parsed_to_rich)
-        print(parser.parse(parsed_to_rich))
-
-    else:
-        argparser.print_help(sys.stderr)
-        sys.exit(1)
