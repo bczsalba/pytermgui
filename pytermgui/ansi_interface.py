@@ -100,7 +100,7 @@ class _Color:
         self.layer_offset = layer * 10
 
     @staticmethod
-    def _translate_hex(color: str) -> tuple[int, int, int]:
+    def translate_hex(color: str) -> tuple[int, int, int]:
         """Translate hex string to rgb values"""
 
         if color.startswith("#"):
@@ -127,7 +127,7 @@ class _Color:
             char in hexdigits or char == "#" for char in color
         ):
             try:
-                color = self._translate_hex(color)
+                color = self.translate_hex(color)
             except ValueError:
                 # value is not a hex number, but is string
                 pass
