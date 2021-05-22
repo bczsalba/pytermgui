@@ -141,11 +141,7 @@ class Box(Widget):
     def set_chars_of(self, cls_or_obj: object) -> None:
         """Set border & corner chars of cls_or_obj to self values"""
 
-        if isinstance(cls_or_obj, type):
-            cls_or_obj.set_class_char("border", self.borders)
-            cls_or_obj.set_class_char("corner", self.corners)
-
-        elif isinstance(cls_or_obj, object):
+        if isinstance(cls_or_obj, object):
             cls_or_obj.set_char("border", self.borders)
             cls_or_obj.set_char("corner", self.corners)
 
