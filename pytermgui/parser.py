@@ -19,11 +19,8 @@ The tags available are:
     - inverse                                   (7)
     - invisible                                 (8)
     - strikethrough                             (9)
-    - removers of all of the above              ([ /{tag} ])
 
-    - 4-bit colors                              (0-16)
-    - 8-bit colors                              (16-256)
-    - 24-bit colors                             (RGB: [rrr;bbb;ggg], HEX: [#rr;bb;gg])
+    - removers of all of the above              ([ /{tag} ])
 
     - black                                     color code 0
     - red                                       color code 1
@@ -33,6 +30,12 @@ The tags available are:
     - magenta                                   color code 5
     - cyan                                      color code 6
     - white                                     color code 7
+
+    - 4-bit colors                              (0-16)
+    - 8-bit colors                              (16-256)
+    - 24-bit colors                             (RGB: [rrr;bbb;ggg], HEX: [#rr;bb;gg])
+    - /fg                                       unset foreground color (go to default)
+    - /bg                                       unset background color (go to default)
 
     - background versions of all of the above   ([ @{color} ])
 
@@ -92,7 +95,7 @@ NAMES = [
     "strikethrough",
 ]
 
-UNSET_NAMES = {
+UNSET_MAP = {
     "/bold": "22",
     "/dim": "22",
     "/italic": "23",
@@ -102,6 +105,8 @@ UNSET_NAMES = {
     "/inverse": "27",
     "/invisible": "28",
     "/strikethrough": "29",
+    "/fg": "39",
+    "/bg": "49",
 }
 
 
@@ -182,8 +187,8 @@ class Token:
         assert self.code is not None
 
         if self.code is not None and self.code.isdigit():
-            if self.code in UNSET_NAMES.values():
-                for key, value in UNSET_NAMES.items():
+            if self.code in UNSET_MAP.values():
+                for key, value in UNSET_MAP.items():
                     if value == self.code:
                         return key
 
@@ -287,11 +292,11 @@ def tokenize_markup(text: str) -> Iterator[Token]:
                     ),
                 )
 
-            elif tag in UNSET_NAMES:
+            elif tag in UNSET_MAP:
                 yield Token(
                     start,
                     end,
-                    code=str(UNSET_NAMES[tag]),
+                    code=str(UNSET_MAP[tag]),
                     attribute=TokenAttribute.CLEAR,
                 )
 
@@ -419,9 +424,11 @@ def prettify_markup(markup: str) -> str:
                     else:
                         offset = 20
 
-                    applied_bracket.remove(
-                        Token(0, 0, code=str(int(code) - offset)).to_sequence()
-                    )
+                    sequence = "\x1b[" + str(int(code) - offset) + "m"
+                    if sequence in applied_bracket:
+                        applied_bracket.remove(
+                                sequence
+                        )
 
             applied_bracket.append(token.to_sequence())
             visual_bracket.append(token)
