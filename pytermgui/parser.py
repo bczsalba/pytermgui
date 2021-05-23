@@ -36,6 +36,10 @@ The tags available are:
 
     - background versions of all of the above   ([ @{color} ])
 
+Future:
+    - !save                                     save current color attributes
+    - !restore                                  restore saved color attributes
+
 
 Notes on syntax:
     - The tokenizer only yields tokens if it is different from the previous one,
@@ -56,10 +60,11 @@ Example syntax:
 """
 
 import re
+from enum import Enum, auto
 from dataclasses import dataclass
 from typing import Optional, Iterator
 
-from .ansi_interface import foreground, reset
+from .ansi_interface import foreground, reset, bold
 
 
 __all__ = [
@@ -68,10 +73,11 @@ __all__ = [
     "tokenize_markup",
     "markup_to_ansi",
     "ansi_to_markup",
+    "prettify_markup",
 ]
 
 RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
-RE_TAGS = re.compile(r"""((\\*)\[([a-z0-9#@\/].*?)\])""", re.VERBOSE)
+RE_TAGS = re.compile(r"""((\\*)\[([a-z0-9!#@\/].*?)\])""", re.VERBOSE)
 
 NAMES = [
     "/",
@@ -105,6 +111,57 @@ def escape_ansi(text: str) -> str:
     return text.encode("unicode_escape").decode("utf-8")
 
 
+def _handle_color(tag: str) -> Optional[tuple[str, bool]]:
+    """Handle color fore/background, hex conversions"""
+
+    # sort out non-colors
+    if not all(char.isdigit() or char in "#;@abcdef" for char in tag):
+        return None
+
+    # convert into background color
+    if tag.startswith("@"):
+        pretext = "48;"
+        tag = tag[1:]
+    else:
+        pretext = "38;"
+
+    hexcolor = tag.startswith("#")
+
+    # 8-bit (256) and 24-bit (RGB) colors use different id numbers
+    color_pre = "5;" if tag.count(";") < 2 and not hexcolor else "2;"
+
+    # hex colors are essentially RGB in a different format
+    if hexcolor:
+        tag = ";".join(str(val) for val in foreground.translate_hex(tag))
+
+    return pretext + color_pre + tag, pretext == "48;"
+
+
+def _handle_named_color(tag: str) -> Optional[tuple[str, int]]:
+    """Check if name is in foreground.names and return its value if possible"""
+
+    if not tag.lstrip("@") in foreground.names:
+        return None
+
+    if tag.startswith("@"):
+        tag = tag[1:]
+        background = "@"
+
+    else:
+        background = ""
+
+    return _handle_color(background + str(foreground.names[tag]))
+
+
+class TokenAttribute(Enum):
+    """Special attribute for a Token"""
+
+    CLEAR = auto()
+    COLOR = auto()
+    STYLE = auto()
+    BACKGROUND_COLOR = auto()
+
+
 @dataclass
 class Token:
     """Result of ansi tokenized string."""
@@ -113,6 +170,7 @@ class Token:
     end: int
     plain: Optional[str] = None
     code: Optional[str] = None
+    attribute: Optional[TokenAttribute] = None
 
     def to_name(self) -> str:
         """Convert token to named attribute for rich text"""
@@ -143,7 +201,8 @@ class Token:
                 f'Invalid ANSI code "{escape_ansi(self.code)}" in token {self}.'
             )
 
-        if simple := int(numbers[2]) in foreground.names.values():
+        simple = int(numbers[2])
+        if simple in foreground.names.values():
             for name, fore_value in foreground.names.items():
                 if fore_value == simple:
                     return out + name
@@ -164,7 +223,8 @@ class Token:
 
 
 def tokenize_ansi(text: str) -> Iterator[Token]:
-    """Tokenize text containing ANSI sequences"""
+    """Tokenize text containing ANSI sequences
+    Todo: add attributes to ansi tokens"""
 
     position = start = end = 0
     previous = None
@@ -197,46 +257,6 @@ def tokenize_ansi(text: str) -> Iterator[Token]:
 def tokenize_markup(text: str) -> Iterator[Token]:
     """Tokenize markup text"""
 
-    def _handle_color(tag: str) -> Optional[str]:
-        """Handle color fore/background, hex conversions"""
-
-        # sort out non-colors
-        if not all(char.isdigit() or char in "#;@abcdef" for char in tag):
-            return None
-
-        # convert into background color
-        if tag.startswith("@"):
-            pretext = "48;"
-            tag = tag[1:]
-        else:
-            pretext = "38;"
-
-        hexcolor = tag.startswith("#")
-
-        # 8-bit (256) and 24-bit (RGB) colors use different id numbers
-        color_pre = "5;" if tag.count(";") < 2 and not hexcolor else "2;"
-
-        # hex colors are essentially RGB in a different format
-        if hexcolor:
-            tag = ";".join(str(val) for val in foreground.translate_hex(tag))
-
-        return pretext + color_pre + tag
-
-    def _handle_named_color(tag: str) -> Optional[str]:
-        """Check if name is in foreground.names and return its value if possible"""
-
-        if not tag.lstrip("@") in foreground.names:
-            return None
-
-        if tag.startswith("@"):
-            tag = tag[1:]
-            background = "@"
-
-        else:
-            background = ""
-
-        return _handle_color(background + str(foreground.names[tag]))
-
     position = 0
     for match in RE_TAGS.finditer(text):
         _, escapes, tag_text = match.groups()
@@ -258,17 +278,49 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
         for tag in tag_text.split():
             if tag in NAMES:
-                yield Token(start, end, code=str(NAMES.index(tag)))
+                yield Token(
+                    start,
+                    end,
+                    code=str(NAMES.index(tag)),
+                    attribute=(
+                        TokenAttribute.CLEAR if tag == "/" else TokenAttribute.STYLE
+                    ),
+                )
 
             elif tag in UNSET_NAMES:
-                yield Token(start, end, code=str(UNSET_NAMES[tag]))
+                yield Token(
+                    start,
+                    end,
+                    code=str(UNSET_NAMES[tag]),
+                    attribute=TokenAttribute.CLEAR,
+                )
 
             else:
-                if (code := _handle_named_color(tag)) is not None:
-                    yield Token(start, end, code=code)
+                if (data := _handle_named_color(tag)) is not None:
+                    code, background = data
+                    yield Token(
+                        start,
+                        end,
+                        code=code,
+                        attribute=(
+                            TokenAttribute.BACKGROUND_COLOR
+                            if background
+                            else TokenAttribute.COLOR
+                        ),
+                    )
 
-                elif (color := _handle_color(tag)) is not None:
-                    yield Token(start, end, code=color)
+                elif (data := _handle_color(tag)) is not None:
+                    color, background = data
+                    yield Token(
+                        start,
+                        end,
+                        code=color,
+                        attribute=(
+                            TokenAttribute.BACKGROUND_COLOR
+                            if background
+                            else TokenAttribute.COLOR
+                        ),
+                    )
 
                 else:
                     raise SyntaxError(f'Markup tag "{tag}" is not recognized.')
@@ -315,5 +367,75 @@ def ansi_to_markup(ansi: str) -> str:
 
     markup += "[" + " ".join(current_bracket) + "]"
     return markup
+
+
+def prettify_markup(markup: str) -> str:
+    """Return syntax-highlighted markup"""
+
+    def _style_attributes(attributes: list[Token]) -> str:
+        """Style all attributes"""
+
+        styled = bold("[")
+        for i, item in enumerate(attributes):
+            if i > 0:
+                styled += " "
+
+            if item.attribute is TokenAttribute.CLEAR:
+                styled += foreground(item.to_name(), 210)
+                continue
+
+            if item.attribute is TokenAttribute.COLOR:
+                styled += item.to_sequence() + item.to_name() + reset()
+                continue
+
+            if item.attribute is TokenAttribute.BACKGROUND_COLOR:
+                seq = item.to_sequence()
+                numbers = seq.split(";")
+                numbers[0] = bold("", reset_style=False) + "\x1b[38"
+                styled += ";".join(numbers) + item.to_name() + reset()
+                continue
+
+            if (seq := item.to_sequence()) :
+                styled += seq
+
+            styled += foreground(item.to_name(), 114)
+
+        return styled + bold("]")
+
+    visual_bracket: list[Token] = []
+    applied_bracket: list[str] = []
+
+    out = ""
+    for token in tokenize_markup(markup):
+        if token.code:
+            if token.attribute is TokenAttribute.CLEAR:
+                name = token.to_name()
+                if name == "/":
+                    applied_bracket = []
+                else:
+                    code = token.code
+                    if code == "22":
+                        offset = 21
+                    else:
+                        offset = 20
+
+                    applied_bracket.remove(
+                        Token(0, 0, code=str(int(code) - offset)).to_sequence()
+                    )
+
+            applied_bracket.append(token.to_sequence())
+            visual_bracket.append(token)
+            continue
+
+        if len(visual_bracket) > 0:
+            out += _style_attributes(visual_bracket)
+            visual_bracket = []
+
+        out += "".join(applied_bracket) + token.to_name() + reset()
+
+    if len(visual_bracket) > 0:
+        out += _style_attributes(visual_bracket)
+
+    return out
 
     # "[italic bold 141;35;60]hello there[/][141] alma[/] [18;218;168 underline]fa"

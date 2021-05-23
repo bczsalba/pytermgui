@@ -19,6 +19,7 @@ from . import (
     foreground as color,
     ansi_to_markup,
     markup_to_ansi,
+    prettify_markup,
     getch,
     keys,
     real_length,
@@ -194,9 +195,12 @@ def main() -> None:  # pylint: disable=too-many-statements
         if args.inverse:
             parsed = ansi_to_markup(txt)
             inverse_result = markup_to_ansi(parsed)
+            parsed = prettify_markup(parsed)
+
         else:
             parsed = markup_to_ansi(txt)
             inverse_result = ansi_to_markup(parsed)
+            txt = prettify_markup(txt)
 
         if args.escape:
             parsed = parsed.encode("unicode_escape").decode("utf-8")
