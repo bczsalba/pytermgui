@@ -1,4 +1,4 @@
-"""
+r"""
 pytermgui.parser
 ----------------
 author: bczsalba
@@ -42,12 +42,16 @@ The tags available are:
 
     - background versions of all of the above   ([ @{color} ])
 
+
 Future:
     - !save                                     save current color attributes
     - !restore                                  restore saved color attributes
 
 
 Notes on syntax:
+    - Tags are escapable by putting a "\" before the opening square bracket, such as:
+        "[bold italic] < these are parsed \[but this is not]"
+
     - The tokenizer only yields tokens if it is different from the previous one,
         so if your markup is `[bold bold bold]hello` it will only yield 1 bold token.
 
@@ -58,8 +62,12 @@ Notes on syntax:
 Example syntax:
     >>> from pytermgui import markup_to_ansi, ansi_to_markup
 
-    >>> ansi = markup_to_ansi("[@141 60 bold italic]Hello[/italic underline inverse]There!")
-    '\\x1b[48;5;141m\\x1b[38;5;60m\\x1b[1m\\x1b[3mHello\\x1b[23m\\x1b[4m\\x1b[7mThere!'\\x1b[0m'
+    >>> ansi = markup_to_ansi(
+    ... "[@141 60 bold italic] Hello "
+    ... + "[/italic underline inverse] There! "
+    ... + "[/inverse /underline italic] \[escape] "
+    ... )
+    '\x1b[48;5;141m\x1b[38;5;60m\x1b[1m\x1b[3m Hello \x1b[23m\x1b[4m\x1b[7m There! \x1b[27m\x1b[24m\x1b[3m [escape] \x1b[0m'
 
     >>> markup = ansi_to_markup(ansi)
     '[@141 60 bold italic]Hello[/italic underline inverse]There![/]''
@@ -167,6 +175,7 @@ class TokenAttribute(Enum):
     CLEAR = auto()
     COLOR = auto()
     STYLE = auto()
+    ESCAPED = auto()
     BACKGROUND_COLOR = auto()
 
 
@@ -210,7 +219,7 @@ class Token:
             )
 
         simple = int(numbers[2])
-        if simple in foreground.names.values():
+        if len(numbers) == 3 and simple in foreground.names.values():
             for name, fore_value in foreground.names.items():
                 if fore_value == simple:
                     return out + name
@@ -267,22 +276,17 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
     position = 0
     for match in RE_TAGS.finditer(text):
-        _, escapes, tag_text = match.groups()
+        full, escapes, tag_text = match.groups()
         start, end = match.span()
 
         if start > position:
             yield Token(start, end, plain=text[position:start])
 
-        if escapes is not None:
-            backslashes, escaped = divmod(len(escapes), 2)
-            if backslashes > 0:
-                yield Token(start, end, plain=backslashes * "\\")
-                start += backslashes * 2
+        if not escapes == "":
+            yield Token(start, end, plain=full[len(escapes):], attribute=TokenAttribute.ESCAPED)
+            position = end
 
-            if escaped > 0:
-                yield Token(start, end, plain=tag_text[len(escapes) :])
-                position = end
-                continue
+            continue
 
         for tag in tag_text.split():
             if tag in NAMES:
@@ -371,7 +375,8 @@ def ansi_to_markup(ansi: str) -> str:
             markup += "[" + " ".join(current_bracket) + "]"
             current_bracket = []
 
-        markup += token.to_name()
+        # add name with starting '[' escaped
+        markup += token.to_name().replace('[', '\\[', 1)
 
     markup += "[" + " ".join(current_bracket) + "]"
     return markup
@@ -403,7 +408,12 @@ def prettify_markup(markup: str) -> str:
                 styled += ";".join(numbers) + item.to_name() + reset()
                 continue
 
-            if (seq := item.to_sequence()) :
+            if item.attribute is TokenAttribute.ESCAPED:
+                chars = list(item.to_name())
+                styled += foreground("\\" + chars[0], 210) + ''.join(chars[1:])
+                continue
+
+            if (seq := item.to_sequence()):
                 styled += seq
 
             styled += foreground(item.to_name(), 114)
@@ -415,7 +425,7 @@ def prettify_markup(markup: str) -> str:
 
     out = ""
     for token in tokenize_markup(markup):
-        if token.code:
+        if token.code is not None:
             if token.attribute is TokenAttribute.CLEAR:
                 name = token.to_name()
                 if name == "/":
@@ -439,7 +449,11 @@ def prettify_markup(markup: str) -> str:
             out += _style_attributes(visual_bracket)
             visual_bracket = []
 
-        out += "".join(applied_bracket) + token.to_name() + reset()
+        name = token.to_name()
+        if token.attribute is TokenAttribute.ESCAPED:
+            name = "\\" + name
+
+        out += "".join(applied_bracket) + name + reset()
 
     if len(visual_bracket) > 0:
         out += _style_attributes(visual_bracket)
