@@ -7,6 +7,9 @@ author: bczsalba
 This module provides a tokenizer for both ANSI and markup type strings,
 and some higher level methods for converting between the two.
 
+Major credit goes to https://github.com/willmcgugan/rich/blob/master/ansi.py,
+the code here started out as a refactored version of his.
+
 
 The tags available are:
     - /                                         (reset: 0)
@@ -120,7 +123,7 @@ def _handle_color(tag: str) -> Optional[tuple[str, bool]]:
     """Handle color fore/background, hex conversions"""
 
     # sort out non-colors
-    if not all(char.isdigit() or char in "#;@abcdef" for char in tag):
+    if not all(char.isdigit() or char.lower() in "#;@abcdef" for char in tag):
         return None
 
     # convert into background color
@@ -426,9 +429,7 @@ def prettify_markup(markup: str) -> str:
 
                     sequence = "\x1b[" + str(int(code) - offset) + "m"
                     if sequence in applied_bracket:
-                        applied_bracket.remove(
-                                sequence
-                        )
+                        applied_bracket.remove(sequence)
 
             applied_bracket.append(token.to_sequence())
             visual_bracket.append(token)
