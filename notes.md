@@ -3,6 +3,8 @@ IN PROGRESS
 
 * templating: dumping and loading from files, strings
 
+* add a whole-line style for `InputField`
+
 * `Splitter`
     - that exception really doesn't need to be there, the program should be able to handle the situation
     - `ListView` doesn't align properly to the right when in a `Splitter`

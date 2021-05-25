@@ -46,7 +46,7 @@ def field() -> InputField:
     return selected[0]
 
 with alt_buffer(cursor=False):
-    InputField.set_class_style("cursor", lambda depth, item: color(item, 72))
+    InputField.set_style("cursor", lambda depth, item: color(item, 72))
 
     main = Container(vert_align=Container.VERT_ALIGN_TOP)
     splitter = Splitter()
