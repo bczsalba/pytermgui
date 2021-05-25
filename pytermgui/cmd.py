@@ -9,12 +9,14 @@ This module provides the command-line capabilities of the module.
 
 import sys
 from typing import Callable
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 from . import (
     Container,
+    InputField,
     Prompt,
     Label,
+    clear,
     bold,
     foreground as color,
     ansi_to_markup,
@@ -23,6 +25,8 @@ from . import (
     getch,
     keys,
     real_length,
+    alt_buffer,
+    cursor_at,
     screen_size,
     cursor_up,
     cursor_right,
@@ -105,7 +109,7 @@ def key_info() -> None:
     cursor_right(dialog.width - 3)
     sys.stdout.flush()
 
-    user_key = getch()
+    user_key = getch(interrupts=False)
     move_cursor(old)
 
     # things get messy when the terminal scrolls at EOB
@@ -140,12 +144,112 @@ def key_info() -> None:
         print(line)
 
 
-def main() -> None:  # pylint: disable=too-many-statements
+def parse_text(args: Namespace) -> None:
+    """Parse input text"""
+
+    txt = args.parse[0]
+
+    if args.inverse:
+        parsed = ansi_to_markup(txt)
+        inverse_result = markup_to_ansi(parsed)
+        parsed = prettify_markup(parsed)
+
+    else:
+        parsed = markup_to_ansi(txt)
+        inverse_result = ansi_to_markup(parsed)
+        txt = prettify_markup(txt)
+
+    if args.escape:
+        parsed = parsed.encode("unicode_escape").decode("utf-8")
+
+    if args.no_container:
+        print("input:", txt + reset())
+        print("output:", parsed)
+        sys.exit(0)
+
+    display = (
+        Container() + Label(txt + reset()) + Label("|") + Label("V") + Label(parsed)
+    )
+
+    if args.show_inverse:
+        display += Label()
+        display += Label("(" + inverse_result + ")")
+
+    for line in display.get_lines():
+        print(line)
+
+
+def markup_writer() -> None:
+    """An interactive program to write markup"""
+
+    from .parser import escape_ansi
+
+    def create_container() -> Container:
+        """Create a container with the right attributes"""
+
+        cont = Container(vert_align=Container.VERT_ALIGN_TOP)
+        cont.forced_height = 12
+        return cont
+
+    cont = Container()
+    cont += Label(markup_to_ansi(" [bold underline 67]Markup Live Editor[/] "))
+
+    infield = InputField("[bold 141 @60] This is a test")
+    prettify = Label("This will show your markup, but prettified.", align=Label.ALIGN_LEFT)
+    view = Label("This will show a live view of your markup.", align=Label.ALIGN_LEFT)
+
+    cont += create_container() + infield
+    chars = cont[-1].get_char("corner").copy()
+    chars[0] += " editor "
+    cont[-1].set_char("corner", chars)
+
+    cont += create_container() + view
+    chars = cont[-1].get_char("corner").copy()
+    chars[0] += " viewer "
+    cont[-1].set_char("corner", chars)
+
+    cont.forced_width = 100
+    cont.center()
+    cont.focus()
+
+    markup = ""
+    with alt_buffer():
+        while True:
+            key = getch(interrupts=False)
+
+            if key is keys.CTRL_C:
+                break
+
+            infield.send(key)
+
+            try:
+                view.value = markup_to_ansi(infield.value)
+                prettify.value = prettify_markup(infield.value)
+
+            except SyntaxError as e:
+                view.value = bold(color("SyntaxError: ", 210)) + str(e)
+                prettify.value = ""
+
+            cont.print()
+
+        clear()
+
+        cont.pop(1)
+        cont.pop(2)
+        prettify.align = Label.ALIGN_CENTER
+        cont[1].vert_align = Container.VERT_ALIGN_CENTER
+
+        cont.center()
+        getch()
+
+
+def main() -> None:
     """Main function for command line things."""
 
     Container.set_char("border", ["│ ", "─", " │", "─"])
     Container.set_char("corner", ["╭", "╮", "╯", "╰"])
     Container.set_style("border", color_call(60, set_bold=True))
+    Container.set_style("corner", color_call(60, set_bold=True))
     Prompt.set_style("label", prompt_label_style)
     Prompt.set_style("value", prompt_value_style)
 
@@ -158,9 +262,12 @@ def main() -> None:  # pylint: disable=too-many-statements
         "-g", "--getch", help="print information about a keypress", action="store_true"
     )
     parser.add_argument(
-        "-p", "--parse", metavar=("txt"), help="parse rich text", nargs=1
+        "--markup", help="open interactive markup editor", action="store_true"
     )
-    parser.add_argument("--inverse", help="inverse parsing", action="store_true")
+    parser.add_argument(
+        "-p", "--parse", metavar=("txt"), help="parse markup->ansi", nargs=1
+    )
+    parser.add_argument("--inverse", help="parse ansi->markup", action="store_true")
     parser.add_argument(
         "--escape", help="escape parsed text output", action="store_true"
     )
@@ -189,37 +296,11 @@ def main() -> None:  # pylint: disable=too-many-statements
     if args.getch:
         key_info()
 
+    elif args.markup:
+        markup_writer()
+
     elif args.parse:
-        txt = args.parse[0]
-
-        if args.inverse:
-            parsed = ansi_to_markup(txt)
-            inverse_result = markup_to_ansi(parsed)
-            parsed = prettify_markup(parsed)
-
-        else:
-            parsed = markup_to_ansi(txt)
-            inverse_result = ansi_to_markup(parsed)
-            txt = prettify_markup(txt)
-
-        if args.escape:
-            parsed = parsed.encode("unicode_escape").decode("utf-8")
-
-        if args.no_container:
-            print("input:", txt + reset())
-            print("output:", parsed)
-            sys.exit(0)
-
-        display = (
-            Container() + Label(txt + reset()) + Label("|") + Label("V") + Label(parsed)
-        )
-
-        if args.show_inverse:
-            display += Label()
-            display += Label("(" + inverse_result + ")")
-
-        for line in display.get_lines():
-            print(line)
+        parse_text(args)
 
     elif args.size:
         rows, cols = screen_size()
