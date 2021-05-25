@@ -11,6 +11,7 @@ This submodule the basic elements this library provides.
 # pylint: disable=too-many-instance-attributes
 
 from __future__ import annotations
+from copy import deepcopy
 from typing import Optional, Callable, Type, Union, Iterator, Any
 
 from ..helpers import real_length
@@ -56,6 +57,9 @@ class Widget:
 
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
         """Initialize universal data for objects"""
+
+        self.set_style = self._set_style
+        self.set_char = self._set_char
 
         self.forced_width: Optional[int] = None
         self.forced_height: Optional[int] = None
@@ -147,32 +151,39 @@ class Widget:
 
     @classmethod
     def set_style(cls: Union[Type[Widget], Widget], key: str, value: StyleType) -> None:
-        """Method for setting styles of both classes and instances"""
+        """Call self._set_style"""
 
-        if not key in cls.styles.keys():
-            raise KeyError(f"Style {key} is not valid for {cls}!")
-
-        if not callable(value):
-            raise ValueError(f"Style {key} for {type(cls)} has to be a callable.")
-
-        cls.styles[key] = value
+        return cls._set_style(cls, key, value)
 
     @classmethod
-    def set_char(cls: Union[Type[Widget], Widget], key: str, value: list[str]) -> None:
+    def set_char(cls: Union[Type[Widget], Widget], key: str, value: StyleType) -> None:
+        """Call self._set_char"""
+
+        return cls._set_char(cls, key, value)
+
+    def _set_style(obj: Union[Type[Widget], Widget], key: str, value: StyleType) -> None:
+        """Method for setting styles of both classes and instances"""
+
+        if not key in obj.styles.keys():
+            raise KeyError(f"Style {key} is not valid for {obj}!")
+
+        if not callable(value):
+            raise ValueError(f"Style {key} for {type(obj)} has to be a callable.")
+
+        obj.styles[key] = value
+
+    def _set_char(obj: Union[Type[Widget], Widget], key: str, value: list[str]) -> None:
         """Method for setting chars of both classes and instances"""
 
-        if not key in cls.chars.keys():
-            raise KeyError(f"Char {key} is not valid for {cls}!")
+        if not key in obj.chars.keys():
+            raise KeyError(f"Char {key} is not valid for {obj}!")
 
-        cls.chars[key] = value
+        obj.chars[key] = value
 
     def copy(self) -> Widget:
         """Copy widget into a new object"""
 
-        new: Widget = type(self).__new__(type(self))
-        new.__dict__ = self.__dict__
-
-        return new
+        return deepcopy(self)
 
     def focus(self) -> None:
         """Focus widget"""
@@ -316,6 +327,12 @@ class Container(Widget):
 
         self._widgets[index] = value
 
+    def __iter__(self) -> Iterator[Widget]:
+        """Iterate through self._widgets"""
+
+        for widget in self._widgets:
+            yield widget
+
     def _add_widget(self, other: Widget) -> None:
         """Add other to self._widgets"""
 
@@ -345,6 +362,16 @@ class Container(Widget):
         self._height += other.height
         self.get_lines()
 
+    def pop(self, index: int) -> Widget:
+        """Pop widget from self._widgets"""
+
+        return self._widgets.pop(index)
+
+    def remove(self, other: Widget) -> None:
+        """Remove widget from self._widgets"""
+
+        return self._widgets.remove(other)
+
     def set_recursive_depth(self, value: int) -> None:
         """Set depth for all children, recursively"""
 
@@ -369,7 +396,7 @@ class Container(Widget):
 
             if source.forced_width is not None and not target.forced_width is not None:
                 source.width = source.forced_width
-                if source.width > target.width - self.sidelength:
+                if target.width < source.width - self.sidelength:
                     target.width = source.width + self.sidelength
 
                 return True
@@ -437,7 +464,7 @@ class Container(Widget):
                     raise ValueError(
                         f"Object `{widget.debug()}` "
                         + "could not be resized to self.forced_width. "
-                        + f"({other_len} > {self.forced_width}) "
+                        + f"({other_len} + {self.sidelength} > {self.forced_width}) "
                     )
 
                 if self.horiz_align is Container.HORIZ_ALIGN_CENTER:
@@ -465,7 +492,9 @@ class Container(Widget):
         if self.forced_height is not None:
             padding_range = self.forced_height - len(lines) - 2
             empty_line = (
-                left_border + (self.width - self.sidelength) * " " + right_border
+                border_style(self.depth, left_border)
+                + (self.width - self.sidelength) * " " 
+                + border_style(self.depth, right_border)
             )
 
             if self.vert_align is Container.VERT_ALIGN_TOP:
@@ -789,24 +818,28 @@ class Label(Widget):
         """Get lines of object"""
 
         value_style = self.get_style("value")
+        lines = []
 
         if self.align is Label.ALIGN_CENTER:
-            padding = (self.width - real_length(self.value) - self.padding) // 2
-            outline = (padding + self.padding + 1) * " " + self.value
-            outline += (self.width - real_length(outline) + 1) * " "
+            for line in self.value.split('\n'):
+                padding = (self.width - real_length(line) - self.padding) // 2
+                outline = (padding + self.padding + 1) * " " + line
+                outline += (self.width - real_length(outline) + 1) * " "
 
-            lines = [outline]
+                lines.append(outline)
 
         elif self.align is Label.ALIGN_LEFT:
-            padding = self.width - real_length(self.value) - self.padding + 1
-            lines = [self.padding * " " + self.value + padding * " "]
+            for line in self.value.split('\n'):
+                padding = self.width - real_length(line) - self.padding + 1
+                lines.append(self.padding * " " + line + padding * " ")
 
         elif self.align is Label.ALIGN_RIGHT:
-            lines = [
-                (self.width - real_length(self.value) - self.padding + 1) * " "
-                + self.value
-                + self.padding * " "
-            ]
+            for line in self.value.split('\n'):
+                lines.append(
+                    (self.width - real_length(line) - self.padding + 1) * " "
+                    + line
+                    + self.padding * " "
+                )
 
         return [value_style(self.depth, line) for line in lines]
 
