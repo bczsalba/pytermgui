@@ -65,9 +65,8 @@ Example syntax:
     >>> ansi = markup_to_ansi(
     ... "[@141 60 bold italic] Hello "
     ... + "[/italic underline inverse] There! "
-    ... + "[/inverse /underline italic] \[escape] "
     ... )
-    '\x1b[48;5;141m\x1b[38;5;60m\x1b[1m\x1b[3m Hello \x1b[23m\x1b[4m\x1b[7m There! \x1b[27m\x1b[24m\x1b[3m [escape] \x1b[0m'
+    '\x1b[48;5;141m\x1b[38;5;60m\x1b[1m\x1b[3m Hello \x1b[23m\x1b[4m\x1b[7m There! \x1b[0m'
 
     >>> markup = ansi_to_markup(ansi)
     '[@141 60 bold italic]Hello[/italic underline inverse]There![/]''
@@ -148,7 +147,10 @@ def _handle_color(tag: str) -> Optional[tuple[str, bool]]:
 
     # hex colors are essentially RGB in a different format
     if hexcolor:
-        tag = ";".join(str(val) for val in foreground.translate_hex(tag))
+        try:
+            tag = ";".join(str(val) for val in foreground.translate_hex(tag))
+        except ValueError as e:
+            raise SyntaxError(f"\"{val}\" could not be converted to HEX.")
 
     return pretext + color_pre + tag, pretext == "48;"
 
@@ -218,6 +220,9 @@ class Token:
                 f'Invalid ANSI code "{escape_ansi(self.code)}" in token {self}.'
             )
 
+        if not all(char.isdigit() for char in numbers):
+            raise SyntaxError(f"Cannot convert non-digit to color.")
+
         simple = int(numbers[2])
         if len(numbers) == 3 and simple in foreground.names.values():
             for name, fore_value in foreground.names.items():
@@ -275,6 +280,7 @@ def tokenize_markup(text: str) -> Iterator[Token]:
     """Tokenize markup text"""
 
     position = 0
+    start = end = 0
     for match in RE_TAGS.finditer(text):
         full, escapes, tag_text = match.groups()
         start, end = match.span()
@@ -283,7 +289,9 @@ def tokenize_markup(text: str) -> Iterator[Token]:
             yield Token(start, end, plain=text[position:start])
 
         if not escapes == "":
-            yield Token(start, end, plain=full[len(escapes):], attribute=TokenAttribute.ESCAPED)
+            yield Token(
+                start, end, plain=full[len(escapes) :], attribute=TokenAttribute.ESCAPED
+            )
             position = end
 
             continue
@@ -376,7 +384,7 @@ def ansi_to_markup(ansi: str) -> str:
             current_bracket = []
 
         # add name with starting '[' escaped
-        markup += token.to_name().replace('[', '\\[', 1)
+        markup += token.to_name().replace("[", "\\[", 1)
 
     markup += "[" + " ".join(current_bracket) + "]"
     return markup
@@ -410,10 +418,10 @@ def prettify_markup(markup: str) -> str:
 
             if item.attribute is TokenAttribute.ESCAPED:
                 chars = list(item.to_name())
-                styled += foreground("\\" + chars[0], 210) + ''.join(chars[1:])
+                styled += foreground("\\" + chars[0], 210) + "".join(chars[1:])
                 continue
 
-            if (seq := item.to_sequence()):
+            if (seq := item.to_sequence()) :
                 styled += seq
 
             styled += foreground(item.to_name(), 114)
@@ -431,13 +439,9 @@ def prettify_markup(markup: str) -> str:
                 if name == "/":
                     applied_bracket = []
                 else:
-                    code = token.code
-                    if code == "22":
-                        offset = 21
-                    else:
-                        offset = 20
+                    offset = 21 if token.code == "22" else 20
 
-                    sequence = "\x1b[" + str(int(code) - offset) + "m"
+                    sequence = "\x1b[" + str(int(token.code) - offset) + "m"
                     if sequence in applied_bracket:
                         applied_bracket.remove(sequence)
 
