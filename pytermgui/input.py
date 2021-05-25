@@ -247,10 +247,16 @@ except ImportError:
     keys = _Keys(_platform_keys, "posix")
 
 
-def getch(printable: bool = False) -> Any:
+def getch(printable: bool = False, interrupts: bool = True) -> Any:
     """Wrapper for the getch functions"""
 
-    key = _getch()
+    try:
+        key = _getch()
+    except KeyboardInterrupt:
+        if interrupts:
+            raise
+
+        return chr(3)
 
     if printable:
         key = key.encode("unicode_escape").decode("utf-8")
