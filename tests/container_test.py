@@ -64,8 +64,9 @@ with alt_buffer():
     ProgressBar.set_style("fill", delimiter_style)
     ProgressBar.set_style("delimiter", value_style)
 
-    main = Container(horiz_align=Container.HORIZ_ALIGN_CENTER)
+    main = Container(horiz_align=Container.HORIZ_ALIGN_CENTER, vert_align=Container.VERT_ALIGN_CENTER)
     main.forced_height = 37
+    main.forced_width = 70
     main.set_char("border", ["|x| ", "=", " |x|", "="])
 
     main += Label("Please excuse how terrible this looks")
@@ -92,13 +93,17 @@ with alt_buffer():
     )
 
     splitter += ListView(
+        ["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_CENTER, padding=0
+    )
+
+    splitter += ListView(
         ["hello", "tehre", "master", "kenobi"], align=Label.ALIGN_RIGHT, padding=0
     )
 
     progress = 0.6
     main += padding_label
     main += ProgressBar(progress_function=lambda: progress)
-    main[-1].forced_width = 70
+    main[-1].forced_width = 30
 
     main += padding_label
     main += InputField()
