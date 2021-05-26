@@ -48,8 +48,36 @@ def overrideable_style(depth: int, item: str) -> str:
     return depth * item
 
 
+def _set_obj_or_cls_style(
+    obj_or_cls: Union[Type[Widget], Widget], key: str, value: StyleType
+) -> None:
+    """Set the style of an object or class"""
+
+    if not key in obj_or_cls.styles.keys():
+        raise KeyError(f"Style {key} is not valid for {obj_or_cls}!")
+
+    if not callable(value):
+        raise ValueError(f"Style {key} for {type(obj_or_cls)} has to be a callable.")
+
+    obj_or_cls.styles[key] = value
+
+
+def _set_obj_or_cls_char(
+    obj_or_cls: Union[Type[Widget], Widget], key: str, value: CharType
+) -> None:
+    """Set a char of an object or class"""
+
+    if not key in obj_or_cls.chars.keys():
+        raise KeyError(f"Char {key} is not valid for {obj_or_cls}!")
+
+    obj_or_cls.chars[key] = value
+
+
 class Widget:
     """The widget from which all UI classes derive from"""
+
+    set_style = classmethod(_set_obj_or_cls_style)
+    set_char = classmethod(_set_obj_or_cls_char)
 
     OVERRIDE: StyleType = overrideable_style
     styles: dict[str, StyleType] = {}
@@ -58,14 +86,14 @@ class Widget:
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
         """Initialize universal data for objects"""
 
-        self.set_style = self._set_style
-        self.set_char = self._set_char
+        self.set_style = lambda key, value: _set_obj_or_cls_style(self, key, value)
+        self.set_char = lambda key, value: _set_obj_or_cls_char(self, key, value)
 
         self.forced_width: Optional[int] = None
         self.forced_height: Optional[int] = None
 
         self._width = width
-        self._height = 1
+        self.height = 1
 
         if pos is None:
             pos = 1, 1
@@ -105,21 +133,6 @@ class Widget:
         self._width = value
 
     @property
-    def height(self) -> int:
-        """Getter for height property"""
-
-        return self._height
-
-    @height.setter
-    def height(self, value: int) -> None:
-        """Non-setter for height property"""
-
-        raise TypeError(
-            "`widget.height` is not settable, it is currently "
-            + f"{self.height}. Use widget.forced_height instead."
-        )
-
-    @property
     def posx(self) -> int:
         """Return x position of object"""
 
@@ -149,36 +162,15 @@ class Widget:
 
         self.pos = (self.posx, value)
 
-    @classmethod
-    def set_style(cls: Union[Type[Widget], Widget], key: str, value: StyleType) -> None:
-        """Call self._set_style"""
-
-        return cls._set_style(cls, key, value)
-
-    @classmethod
-    def set_char(cls: Union[Type[Widget], Widget], key: str, value: StyleType) -> None:
-        """Call self._set_char"""
-
-        return cls._set_char(cls, key, value)
-
-    def _set_style(obj: Union[Type[Widget], Widget], key: str, value: StyleType) -> None:
+    def _private_set_style(
+        self: Union[Type[Widget], Widget], key: str, value: StyleType
+    ) -> None:
         """Method for setting styles of both classes and instances"""
 
-        if not key in obj.styles.keys():
-            raise KeyError(f"Style {key} is not valid for {obj}!")
-
-        if not callable(value):
-            raise ValueError(f"Style {key} for {type(obj)} has to be a callable.")
-
-        obj.styles[key] = value
-
-    def _set_char(obj: Union[Type[Widget], Widget], key: str, value: list[str]) -> None:
+    def _private_set_char(
+        self: Union[Type[Widget], Widget], key: str, value: list[str]
+    ) -> None:
         """Method for setting chars of both classes and instances"""
-
-        if not key in obj.chars.keys():
-            raise KeyError(f"Char {key} is not valid for {obj}!")
-
-        obj.chars[key] = value
 
     def copy(self) -> Widget:
         """Copy widget into a new object"""
@@ -203,7 +195,11 @@ class Widget:
     def get_char(self, key: str) -> CharType:
         """Try to get char"""
 
-        return self.chars[key]
+        chars = self.chars[key]
+        if isinstance(chars, str):
+            return chars
+
+        return chars.copy()
 
     def get_lines(self) -> list[str]:
         """Stub for widget.get_lines"""
@@ -312,7 +308,7 @@ class Container(Widget):
         return self
 
     def __iter__(self) -> Iterator[Widget]:
-        """Iterate through self._widget"""
+        """Iterate through self._widgets"""
 
         for widget in self._widgets:
             yield widget
@@ -326,12 +322,6 @@ class Container(Widget):
         """Set item in self._widgets"""
 
         self._widgets[index] = value
-
-    def __iter__(self) -> Iterator[Widget]:
-        """Iterate through self._widgets"""
-
-        for widget in self._widgets:
-            yield widget
 
     def _add_widget(self, other: Widget) -> None:
         """Add other to self._widgets"""
@@ -359,7 +349,7 @@ class Container(Widget):
         for i in range(other.selectables_length):
             self._selectables[sel_len + i] = other, i
 
-        self._height += other.height
+        self.height += other.height
         self.get_lines()
 
     def pop(self, index: int) -> Widget:
@@ -382,14 +372,35 @@ class Container(Widget):
             else:
                 widget.depth = value
 
-    def get_lines(self) -> list[str]:
-        """Get lines to represent the object"""
+    def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
+        """Get lines of all widgets
 
-        # pylint: disable=too-many-locals, too-many-branches, too-many-statements
-        #  All the locals here are used,
-        # reducing their number would make the code less readable
-        # This method might need a refactor because of the branches
-        # issue, but I don't see what could really be improved.
+        Less locals would make the code really messy."""
+
+        def _apply_style(style: StyleType, target: list[str]) -> list[str]:
+            """Apply style to target list elements"""
+
+            for i, char in enumerate(target):
+                target[i] = style(self.depth, char)
+
+            return target
+
+        corner_style = self.get_style("corner")
+        border_style = self.get_style("border")
+
+        border_char = self.get_char("border")
+        assert isinstance(border_char, list)
+        corner_char = self.get_char("corner")
+        assert isinstance(corner_char, list)
+
+        left, top, right, bottom = _apply_style(
+            border_style,
+            border_char,
+        )
+        t_left, t_right, b_right, b_left = _apply_style(
+            corner_style,
+            corner_char,
+        )
 
         def _apply_forced_width(source: Widget, target: Widget) -> bool:
             """Apply source's forced_width attribute to target, return False if not possible."""
@@ -403,121 +414,84 @@ class Container(Widget):
 
             return False
 
-        def _create_border_line(left: str, middle: str, right: str) -> str:
-            """Create border line by combining left + middle + right"""
+        def _border_line(border: str, left: str, right: str) -> str:
+            """Create border line of border and corners"""
 
-            corner_len = real_length(left + right)
+            _len = real_length(left + right)
+            return left + border * int(self.width - _len) + right
 
-            # pad middle if theres no length
-            if real_length(middle) == 0:
-                middle = " "
+        def _pad_vertically(lines: list[str]) -> None:
+            """Pad lines vertically"""
 
-            return (
-                corner_style(self.depth, left)
-                + border_style(self.depth, (self.width - corner_len) * middle)
-                + corner_style(self.depth, right)
+            if self.forced_height is None:
+                return
+
+            if self.vert_align is Container.VERT_ALIGN_TOP:
+                for _ in range(self.forced_height - len(lines)):
+                    lines.append(left + (self.width - self.sidelength) * " " + right)
+
+            elif self.vert_align is Container.VERT_ALIGN_BOTTOM:
+                for _ in range(self.forced_height - len(lines)):
+                    lines.insert(0, left + (self.width - self.sidelength) * " " + right)
+
+            elif self.vert_align is Container.VERT_ALIGN_CENTER:
+                for _ in range((self.forced_height - len(lines)) // 2):
+                    lines.insert(0, left + (self.width - self.sidelength) * " " + right)
+                    lines.append(left + (self.width - self.sidelength) * " " + right)
+
+        def _pad_horizontally(line: str) -> str:
+            """Pad a line horizontally"""
+
+            length = self.width - self.sidelength - real_length(line)
+
+            if self.horiz_align is Container.HORIZ_ALIGN_LEFT:
+                return line + length * " "
+
+            if self.horiz_align is Container.HORIZ_ALIGN_RIGHT:
+                return length * " " + line
+
+            if self.horiz_align is Container.HORIZ_ALIGN_CENTER:
+                extra = length % 2
+                side = length // 2
+                return (side + extra) * " " + line + side * " "
+
+            raise NotImplementedError(
+                f"Horizontal aligment {self.horiz_align} is not implemented"
             )
 
-        lines: list[str] = []
-
-        borders = self.get_char("border")
-        assert isinstance(borders, list)
-        left_border, top_border, right_border, bottom_border = borders
-
-        corners = self.get_char("corner")
-        assert isinstance(corners, list)
-        top_left, top_right, bottom_right, bottom_left = corners
-
-        corner_style = self.get_style("corner")
-        border_style = self.get_style("border")
-
-        has_height_remaining = True
+        lines = []
         for widget in self._widgets:
-            if not has_height_remaining:
-                break
-
-            if not _apply_forced_width(widget, self):
-                _apply_forced_width(self, widget)
-
-            # Container()-s need an extra padding
             container_offset = 1 if not isinstance(widget, Container) else 0
+
+            if widget.forced_width is not None:
+                widget.width = widget.forced_width
+
+            # try apply forced width self->widget, then widget->self
+            if not _apply_forced_width(self, widget):
+                _apply_forced_width(widget, self)
 
             if widget.width >= self.width and not self.forced_width is not None:
                 self.width = widget.width + self.sidelength + container_offset
 
-            elif not widget.forced_width is not None:
+            elif widget.forced_width is None:
                 widget.width = self.width - self.sidelength - container_offset
 
             for line in widget.get_lines():
-                if (
-                    self.forced_height is not None
-                    and len(lines) + 2 >= self.forced_height
-                ):
-                    has_height_remaining = False
-                    break
+                bordered = left + _pad_horizontally(line) + right
 
-                if (
-                    self.forced_width is not None
-                    and (other_len := real_length(line)) + self.sidelength
-                    > self.forced_width
-                ):
+                if (invalid := real_length(bordered)) != self.width:
                     raise ValueError(
-                        f"Object `{widget.debug()}` "
-                        + "could not be resized to self.forced_width. "
-                        + f"({other_len} + {self.sidelength} > {self.forced_width}) "
+                        f"{widget} returned a line of invalid length"
+                        + f' ({invalid} != {self.width}): \n"{bordered}".'
                     )
 
-                if self.horiz_align is Container.HORIZ_ALIGN_CENTER:
-                    side_padding = (
-                        (self.width - real_length(line) - self.sidelength) // 2 * " "
-                    )
+                lines.append(bordered)
 
-                elif self.horiz_align is Container.HORIZ_ALIGN_LEFT:
-                    side_padding = ""
+        _pad_vertically(lines)
+        lines.insert(0, _border_line(top, t_left, t_right))
+        lines.append(_border_line(bottom, b_left, b_right))
 
-                elif self.horiz_align is Container.HORIZ_ALIGN_RIGHT:
-                    side_padding = (
-                        self.width - real_length(line) - self.sidelength
-                    ) * " "
-
-                lines.append(
-                    border_style(self.depth, left_border)
-                    + side_padding
-                    + line
-                    + (self.width - self.sidelength - real_length(line + side_padding))
-                    * " "
-                    + border_style(self.depth, right_border)
-                )
-
-        if self.forced_height is not None:
-            padding_range = self.forced_height - len(lines) - 2
-            empty_line = (
-                border_style(self.depth, left_border)
-                + (self.width - self.sidelength) * " " 
-                + border_style(self.depth, right_border)
-            )
-
-            if self.vert_align is Container.VERT_ALIGN_TOP:
-                for _ in range(padding_range):
-                    lines.append(empty_line)
-
-            elif self.vert_align is Container.VERT_ALIGN_CENTER:
-                for _ in range(padding_range // 2):
-                    lines.insert(0, empty_line)
-                    lines.append(empty_line)
-
-                if padding_range % 2 == 1:
-                    lines.append(empty_line)
-
-            elif self.vert_align is Container.VERT_ALIGN_BOTTOM:
-                for _ in range(padding_range):
-                    lines.insert(0, empty_line)
-
-        lines.insert(0, _create_border_line(top_left, top_border, top_right))
-        lines.append(_create_border_line(bottom_left, bottom_border, bottom_right))
-
-        if not len(lines) == self._height:
-            self._height = len(lines)
+        self.height = len(lines)
 
         return lines
 
@@ -564,7 +538,7 @@ class Container(Widget):
             self.posx = (screen_width() - self.width + 2) // 2
 
         if centery:
-            self.posy = (screen_height() - self.height + 2) // 2
+            self.posy = (screen_height() - self.height - 2) // 2
 
         if store:
             self._centered_axis = where

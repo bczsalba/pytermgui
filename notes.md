@@ -19,8 +19,6 @@ IN PROGRESS
 
 * `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
 
-* rewrite the mess that `Container.get_lines` has become. It should be separated into more smaller protected methods.
-
 
 FINISHED
 --------
@@ -59,3 +57,5 @@ FINISHED
 * `_Color` class should do 16, 256, RGB and HEX colors instead of 3 different functions
 
 * `RichLabel` class, or the default fore & background styles being able to read `[cyan]style[/cyan]`
+
+* rewrite the mess that `Container.get_lines` has become. It should be separated into more smaller protected methods.
