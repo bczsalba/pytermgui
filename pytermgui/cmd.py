@@ -12,6 +12,7 @@ from typing import Callable
 from argparse import ArgumentParser, Namespace
 
 from . import (
+    Widget,
     Container,
     InputField,
     Prompt,
@@ -26,7 +27,6 @@ from . import (
     keys,
     real_length,
     alt_buffer,
-    cursor_at,
     screen_size,
     cursor_up,
     cursor_right,
@@ -182,38 +182,41 @@ def parse_text(args: Namespace) -> None:
 def markup_writer() -> None:
     """An interactive program to write markup"""
 
-    from .parser import escape_ansi
-
-    def create_container() -> Container:
+    def create_container(obj: Widget, label: str, corners: list[str]) -> Container:
         """Create a container with the right attributes"""
 
         cont = Container(vert_align=Container.VERT_ALIGN_TOP)
         cont.forced_height = 12
+        cont += obj
+
+        chars = corners.copy()
+        chars[0] += label
+        cont.set_char("corner", chars)
+
+
         return cont
 
     cont = Container()
     cont += Label(markup_to_ansi(" [bold underline 67]Markup Live Editor[/] "))
 
-    infield = InputField("[bold 141 @60] This is a test")
-    prettify = Label("This will show your markup, but prettified.", align=Label.ALIGN_LEFT)
+    infield = InputField()
     view = Label("This will show a live view of your markup.", align=Label.ALIGN_LEFT)
+    final = Label(align=Label.ALIGN_LEFT)
 
-    cont += create_container() + infield
-    chars = cont[-1].get_char("corner").copy()
-    chars[0] += " editor "
-    cont[-1].set_char("corner", chars)
+    corners = cont.get_char("corner")
+    assert isinstance(corners, list)
 
-    cont += create_container() + view
-    chars = cont[-1].get_char("corner").copy()
-    chars[0] += " viewer "
-    cont[-1].set_char("corner", chars)
+    cont += create_container(infield, " editor ", corners)
+    cont += create_container(view, " view ", corners)
+    output = create_container(final, " output ", corners)
 
     cont.forced_width = 100
     cont.center()
     cont.focus()
 
-    markup = ""
     with alt_buffer():
+        cont.print()
+
         while True:
             key = getch(interrupts=False)
 
@@ -223,23 +226,27 @@ def markup_writer() -> None:
             infield.send(key)
 
             try:
-                view.value = markup_to_ansi(infield.value)
-                prettify.value = prettify_markup(infield.value)
+                new = infield.value.replace('\n', '[/]\n')
+                view.value = markup_to_ansi(new)
+                final.value = prettify_markup(new)
 
-            except SyntaxError as e:
-                view.value = bold(color("SyntaxError: ", 210)) + str(e)
-                prettify.value = ""
+            except SyntaxError as error:
+                view.value = bold(color("SyntaxError: ", 210)) + str(error)
 
             cont.print()
 
         clear()
 
-        cont.pop(1)
-        cont.pop(2)
-        prettify.align = Label.ALIGN_CENTER
-        cont[1].vert_align = Container.VERT_ALIGN_CENTER
+        for widget in cont[1:]:
+            cont.remove(widget)
+
+        output.width = real_length(final.value) + output.sidelength
+        cont += output
+        output.align = Label.ALIGN_CENTER
+        output.vert_align = Container.VERT_ALIGN_TOP
 
         cont.center()
+        cont.print()
         getch()
 
 
