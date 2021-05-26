@@ -8,6 +8,7 @@ lint() {
     mypy --show-error-codes --disable-error-code attr-defined $VIM_PROJNAME
 }
 
+export -f lint
 export VIM_PROJNAME="pytermgui"
 export VIM_PROJCONF="$BASH_SOURCE"
 export VIM_PROJPATH="$(realpath `dirname $VIM_PROJCONF`)"
