@@ -114,6 +114,11 @@ class Widget:
 
         return self.debug()
 
+    def __iter__(self) -> Iterator[Widget]:
+        """Return self for iteration"""
+
+        yield self
+
     @property
     def width(self) -> int:
         """Getter for width property"""
@@ -303,10 +308,10 @@ class Container(Widget):
         for widget in self._widgets:
             yield widget
 
-    def __getitem__(self, index: int) -> Widget:
+    def __getitem__(self, sli: Union[int, slice]) -> Union[Widget, list[Widget]]:
         """Index in self._widget"""
 
-        return self._widgets[index]
+        return self._widgets[sli]
 
     def __setitem__(self, index: int, value: Any) -> None:
         """Set item in self._widgets"""
@@ -478,8 +483,11 @@ class Container(Widget):
                 lines.append(bordered)
 
         _pad_vertically(lines)
-        lines.insert(0, _border_line(top, t_left, t_right))
-        lines.append(_border_line(bottom, b_left, b_right))
+        if real_length(top) > 0:
+            lines.insert(0, _border_line(top, t_left, t_right))
+
+        if real_length(bottom) > 0:
+            lines.append(_border_line(bottom, b_left, b_right))
 
         self.height = len(lines)
 
@@ -587,10 +595,11 @@ class Splitter(Widget):
         "separator": " | ",
     }
 
-    def __init__(self) -> None:
+    def __init__(self, arrangement: Optional[str] = None) -> None:
         """Initiate object"""
 
         super().__init__()
+        self.arrangement = arrangement
         self._widgets: list[Widget] = []
 
     def __add__(self, other: object) -> Splitter:
@@ -626,12 +635,24 @@ class Splitter(Widget):
         separator = self.get_char("separator")
         assert isinstance(separator, str)
 
-        widget_width = self.width // len(widgets)
-        widget_width -= real_length((len(widgets) - 1) * separator)
+        if self.arrangement is None:
+            widget_width = self.width // len(widgets)
+            widget_width -= real_length((len(widgets) - 1) * separator)
+            widths = [widget_width] * len(widgets)
 
-        for widget in widgets:
+        else:
+            # there should be "fluid" widths, not just static ones.
+            widths = [int(val) for val in self.arrangement.split(";")]
+
+        for i, widget in enumerate(widgets):
             if widget.forced_width is None:
-                widget.width = widget_width
+                try:
+                    widget.width = widths[i]
+                except IndexError as error:
+                    raise ValueError(
+                        "There were not enough widths supplied in the arrangement:"
+                        + f" expected {len(widgets)}, got {len(widths)}."
+                    ) from error
 
         lines = []
         widget_lines = [widget.get_lines() for widget in widgets]
