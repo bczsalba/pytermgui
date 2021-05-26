@@ -27,6 +27,7 @@ with alt_buffer(cursor=False):
     splitter += ColorPicker(8)
     splitter += ColorPicker(8)
     splitter += ColorPicker(8)
+    splitter += ColorPicker(8)
 
     main += header
     main += splitter

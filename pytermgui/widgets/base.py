@@ -162,16 +162,6 @@ class Widget:
 
         self.pos = (self.posx, value)
 
-    def _private_set_style(
-        self: Union[Type[Widget], Widget], key: str, value: StyleType
-    ) -> None:
-        """Method for setting styles of both classes and instances"""
-
-    def _private_set_char(
-        self: Union[Type[Widget], Widget], key: str, value: list[str]
-    ) -> None:
-        """Method for setting chars of both classes and instances"""
-
     def copy(self) -> Widget:
         """Copy widget into a new object"""
 
