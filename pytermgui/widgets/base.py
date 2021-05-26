@@ -795,7 +795,7 @@ class Label(Widget):
         lines = []
 
         if self.align is Label.ALIGN_CENTER:
-            for line in self.value.split('\n'):
+            for line in self.value.split("\n"):
                 padding = (self.width - real_length(line) - self.padding) // 2
                 outline = (padding + self.padding + 1) * " " + line
                 outline += (self.width - real_length(outline) + 1) * " "
@@ -803,12 +803,12 @@ class Label(Widget):
                 lines.append(outline)
 
         elif self.align is Label.ALIGN_LEFT:
-            for line in self.value.split('\n'):
+            for line in self.value.split("\n"):
                 padding = self.width - real_length(line) - self.padding + 1
                 lines.append(self.padding * " " + line + padding * " ")
 
         elif self.align is Label.ALIGN_RIGHT:
-            for line in self.value.split('\n'):
+            for line in self.value.split("\n"):
                 lines.append(
                     (self.width - real_length(line) - self.padding + 1) * " "
                     + line

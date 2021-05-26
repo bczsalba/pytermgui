@@ -60,8 +60,7 @@ class ColorPicker(Container):
                     buff += "    "
                     continue
 
-                padding = 3 - len(col)
-                buff += foreground(padding * " " + col, col) + " "
+                buff += foreground(f"{col:>3}", col) + " "
 
             buff = buff[:-1]
             lines.append(buff + "" + right_border)
@@ -111,7 +110,7 @@ class ProgressBar(Widget):
         middle = fill_style(self.depth, progress * fill_char)
 
         line = start + middle
-        return [line + (self.width + 1 - real_length(line + end)) * " " + end]
+        return [line + (self.width - real_length(line + end)) * " " + end]
 
     def debug(self) -> str:
         """Return identifiable information about object"""
@@ -149,7 +148,7 @@ class ListView(Widget):
         self.layout = layout
         self.align = align
         self._donor_label = Label(align=self.align)
-        self._height = len(self.options)
+        self.height = len(self.options)
 
         self.is_selectable = True
         self.selectables_length = len(options)
@@ -348,7 +347,7 @@ class InputField(Widget):
         if len(buff) > 0:
             lines += _get_label_lines(buff)
 
-        self._height = len(lines)
+        self.height = len(lines)
 
         return lines
 

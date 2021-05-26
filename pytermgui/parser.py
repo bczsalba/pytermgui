@@ -149,8 +149,8 @@ def _handle_color(tag: str) -> Optional[tuple[str, bool]]:
     if hexcolor:
         try:
             tag = ";".join(str(val) for val in foreground.translate_hex(tag))
-        except ValueError as e:
-            raise SyntaxError(f"\"{val}\" could not be converted to HEX.")
+        except ValueError as error:
+            raise SyntaxError(f'"{tag}" could not be converted to HEX.') from error
 
     return pretext + color_pre + tag, pretext == "48;"
 
@@ -221,7 +221,7 @@ class Token:
             )
 
         if not all(char.isdigit() for char in numbers):
-            raise SyntaxError(f"Cannot convert non-digit to color.")
+            raise SyntaxError("Cannot convert non-digit to color.")
 
         simple = int(numbers[2])
         if len(numbers) == 3 and simple in foreground.names.values():

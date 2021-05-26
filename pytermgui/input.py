@@ -252,9 +252,9 @@ def getch(printable: bool = False, interrupts: bool = True) -> Any:
 
     try:
         key = _getch()
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as error:
         if interrupts:
-            raise
+            raise KeyboardInterrupt("Unhandled interrupt") from error
 
         return chr(3)
 
