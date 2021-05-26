@@ -8,18 +8,21 @@ This module provides the command-line capabilities of the module.
 """
 
 import sys
-from typing import Callable
+from typing import Callable, Optional
 from argparse import ArgumentParser, Namespace
 
 from . import (
     Widget,
     Container,
     InputField,
+    ListView,
+    Splitter,
     Prompt,
     Label,
     clear,
     bold,
     foreground as color,
+    background as color_bg,
     ansi_to_markup,
     markup_to_ansi,
     prettify_markup,
@@ -35,6 +38,8 @@ from . import (
     screen_height,
     reset,
 )
+
+from .parser import NAMES as parser_names
 
 
 # depth is not used but is always provided
@@ -179,75 +184,118 @@ def parse_text(args: Namespace) -> None:
         print(line)
 
 
-def markup_writer() -> None:
-    """An interactive program to write markup"""
+def markup_writer() -> None:  # pylint: disable=too-many-statements
+    """An interactive program to write markup
 
-    def create_container(obj: Widget, label: str, corners: list[str]) -> Container:
-        """Create a container with the right attributes"""
+    This will become a lot simpler once templating is a thing, for now
+    it relies on some hacks."""
 
-        cont = Container(vert_align=Container.VERT_ALIGN_TOP)
-        cont.forced_height = 12
-        cont += obj
+    def create_container(
+        obj: Widget, label: str, corners: list[str], width: Optional[int] = None
+    ) -> Container:
+        """Create a innerainer with the right attributes"""
+
+        new = Container(vert_align=Container.VERT_ALIGN_TOP)
+        new.forced_height = 15
+        new.forced_width = width
+        new += obj
 
         chars = corners.copy()
-        chars[0] += label
-        cont.set_char("corner", chars)
+        chars[0] += color(label, 67)
+        new.set_char("corner", chars)
 
+        return new
 
-        return cont
+    def input_loop(main_container: Container) -> None:
+        """Input loop for the menu"""
 
-    cont = Container()
-    cont += Label(markup_to_ansi(" [bold underline 67]Markup Live Editor[/] "))
+        main_container.center()
+
+        with alt_buffer():
+            main_container.print()
+
+            while True:
+                key = getch(interrupts=False)
+
+                if key is keys.CTRL_C:
+                    break
+
+                infield.send(key)
+
+                try:
+                    value = infield.value
+                    view.value = markup_to_ansi(value)
+                    final.value = prettify_markup(value)
+
+                except SyntaxError as error:
+                    view.value = bold(color("SyntaxError: ", 210)) + str(error)
+
+                main_container.print()
+
+            clear()
+
+            for widget in main_container[1:]:
+                main_container.remove(widget)
+
+            output.width = 100 - main_container.sidelength
+            main_container += output
+            output.vert_align = Container.VERT_ALIGN_TOP
+
+            main_container.center()
+            main_container.print()
+            getch()
+
+    Container.set_style("corner", lambda depth, item: color(item, 60))
+    main_container = Container()
+    inner = Container()
+
+    inner.set_char("border", [""] * 4)
+    main_container += Label(markup_to_ansi("[bold 67]Markup Live Editor[/]"))
 
     infield = InputField()
+    infield.set_style("cursor", lambda depth, item: color_bg(item, 67))
+
     view = Label("This will show a live view of your markup.", align=Label.ALIGN_LEFT)
     final = Label(align=Label.ALIGN_LEFT)
 
-    corners = cont.get_char("corner")
+    corners = inner.get_char("corner")
     assert isinstance(corners, list)
 
-    cont += create_container(infield, " editor ", corners)
-    cont += create_container(view, " view ", corners)
+    inner += create_container(infield, " editor ", corners)
+    inner += create_container(view, " view ", corners)
     output = create_container(final, " output ", corners)
 
-    cont.forced_width = 100
-    cont.center()
-    cont.focus()
+    main_container.forced_width = 119
 
-    with alt_buffer():
-        cont.print()
+    options = []
+    for option in parser_names:
+        options.append(markup_to_ansi(f"[{option} 243]{option}"))
 
-        while True:
-            key = getch(interrupts=False)
+    options += [
+        markup_to_ansi("0-255"),
+        markup_to_ansi("#rrbbgg"),
+        markup_to_ansi("rrr;bbb;ggg"),
+        "",
+        markup_to_ansi("/fg"),
+        markup_to_ansi("/bg"),
+        markup_to_ansi("/{tag}"),
+    ]
 
-            if key is keys.CTRL_C:
-                break
+    for _ in range(inner.height - len(options) - 2):
+        options.append("")
 
-            infield.send(key)
+    listview = ListView(options=options, align=Label.ALIGN_RIGHT)
+    listview.set_style("value", color_call(243))
+    listview.set_char("delimiter", ["", ""])
 
-            try:
-                new = infield.value.replace('\n', '[/]\n')
-                view.value = markup_to_ansi(new)
-                final.value = prettify_markup(new)
+    helpmenu = create_container(listview, " available tags ", corners, 21)
 
-            except SyntaxError as error:
-                view.value = bold(color("SyntaxError: ", 210)) + str(error)
+    splitter = Splitter("91;15") + inner + helpmenu
+    splitter.set_char("separator", " ")
 
-            cont.print()
-
-        clear()
-
-        for widget in cont[1:]:
-            cont.remove(widget)
-
-        output.width = real_length(final.value) + output.sidelength
-        cont += output
-        output.align = Label.ALIGN_CENTER
-        output.vert_align = Container.VERT_ALIGN_TOP
-
-        cont.center()
-        cont.print()
-        getch()
+    main_container += splitter
+    inner.focus()
+    input_loop(main_container)
 
 
 def main() -> None:
