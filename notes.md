@@ -3,18 +3,15 @@ IN PROGRESS
 
 * templating: dumping and loading from files, strings
 
-* add a whole-line style for `InputField`
-
 * fix `InputField` up & down
+
+* add a whole-line style for `InputField`
 
 * `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
 
-* look into why `ProgressBar` ends one short when it doesn't have a `forced_width`
-
-* add background styles
-
 * `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
 
+* add background styles
 
 FINISHED
 --------

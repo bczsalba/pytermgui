@@ -4,7 +4,7 @@ setup(
     name="pytermgui",
     version="0.1.0",
     include_package_data=True,
-    packages=["pytermgui"],
+    packages=["pytermgui", "pytermgui/widgets"],
     license="MIT",
     description="A simple and robust terminal UI library, written in Python.",
     long_description=open("README.md").read(),
