@@ -6,7 +6,6 @@ author: bczsalba
 
 This module provides the command-line capabilities of the module.
 """
-
 import sys
 from typing import Callable, Optional
 from argparse import ArgumentParser, Namespace
@@ -173,7 +172,7 @@ def parse_text(args: Namespace) -> None:
         sys.exit(0)
 
     display = (
-        Container() + Label(txt + reset()) + Label("|") + Label("V") + Label(parsed)
+        Container() + Label(txt + reset(), markup=False) + Label("|") + Label("V") + Label(parsed, markup=False)
     )
 
     if args.show_inverse:
@@ -232,25 +231,15 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
 
                 main_container.print()
 
-            clear()
-
-            for widget in main_container[1:]:
-                main_container.remove(widget)
-
-            output.width = 100 - main_container.sidelength
-            main_container += output
-            output.vert_align = Container.VERT_ALIGN_TOP
-
-            main_container.center()
-            main_container.print()
-            getch()
+        cursor_up()
+        print(prettify_markup(infield.value))
 
     Container.set_style("corner", lambda depth, item: color(item, 60))
     main_container = Container()
     inner = Container()
 
     inner.set_char("border", [""] * 4)
-    main_container += Label(markup_to_ansi("[bold 67]Markup Live Editor[/]"))
+    main_container += Label("[bold 67]Markup Live Editor[/]")
 
     infield = InputField()
     infield.set_style("cursor", lambda depth, item: color_bg(item, 67))
@@ -272,6 +261,7 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
         options.append(markup_to_ansi(f"[{option} 243]{option}"))
 
     options += [
+        "",
         markup_to_ansi("0-255"),
         markup_to_ansi("#rrbbgg"),
         markup_to_ansi("rrr;bbb;ggg"),
