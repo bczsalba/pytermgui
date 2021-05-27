@@ -36,10 +36,12 @@ def default_foreground(depth: int, item: str) -> str:
     _ = depth
     return item
 
+
 def default_background(depth: int, item: str) -> str:
     """Default background style"""
 
     return background(item, 30 + depth)
+
 
 def overrideable_style(depth: int, item: str) -> str:
     """A style method that is meant to be overwritten,
@@ -47,13 +49,12 @@ def overrideable_style(depth: int, item: str) -> str:
 
     return depth * item
 
+
 def create_markup_style(markup: str) -> StyleType:
     """Create a style that uses a given markup template"""
 
-    function: StyleType = (
-        lambda depth, item: (
-            markup_to_ansi(markup.format(depth=depth, item=item))
-        )
+    function: StyleType = lambda depth, item: (
+        markup_to_ansi(markup.format(depth=depth, item=item))
     )
 
     return function
@@ -71,6 +72,7 @@ def _set_obj_or_cls_style(
         raise ValueError(f"Style {key} for {type(obj_or_cls)} has to be a callable.")
 
     obj_or_cls.styles[key] = value
+
 
 def _set_obj_or_cls_char(
     obj_or_cls: Union[Type[Widget], Widget], key: str, value: CharType
@@ -209,7 +211,7 @@ class Widget:
     def get_lines(self) -> list[str]:
         """Stub for widget.get_lines"""
 
-        return [type(self).__name__]
+        raise NotImplementedError(f"get_lines() is not defined for type {type(self)}.")
 
     def select(self, index: int) -> None:
         """Select part of self"""
@@ -338,6 +340,9 @@ class Container(Widget):
                     + f" ({other.forced_width} > {self.forced_width})"
                 )
 
+        if other.forced_height is not None:
+            other.height = other.forced_height
+
         self._widgets.append(other)
         if isinstance(other, Container):
             other.set_recursive_depth(self.depth + 2)
@@ -377,7 +382,7 @@ class Container(Widget):
             else:
                 widget.depth = value
 
-    def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
+    def get_lines(self) -> list[str]:  # pylint: disable=R0914, R0912, R0915
         """Get lines of all widgets
 
         Less locals would make the code really messy."""
@@ -440,8 +445,14 @@ class Container(Widget):
                     lines.insert(0, left + (self.width - self.sidelength) * " " + right)
 
             elif self.vert_align is Container.VERT_ALIGN_CENTER:
-                for _ in range((self.forced_height - len(lines)) // 2):
+                length = self.forced_height - len(lines)
+                extra = length % 2
+
+                for _ in range(length // 2):
                     lines.insert(0, left + (self.width - self.sidelength) * " " + right)
+                    lines.append(left + (self.width - self.sidelength) * " " + right)
+
+                for _ in range(extra):
                     lines.append(left + (self.width - self.sidelength) * " " + right)
 
         def _pad_horizontally(line: str) -> str:
@@ -464,10 +475,15 @@ class Container(Widget):
                 f"Horizontal aligment {self.horiz_align} is not implemented"
             )
 
-        lines = []
-        max_width = 0
+        lines: list[str] = []
+        total_height = (
+            screen_height() if self.forced_height is None else self.forced_height
+        )
 
         for widget in self._widgets:
+            if len(lines) >= total_height:
+                break
+
             container_offset = 1 if not isinstance(widget, Container) else 0
 
             if widget.forced_width is not None:
@@ -484,15 +500,19 @@ class Container(Widget):
                 widget.width = self.width - self.sidelength - container_offset
 
             for line in widget.get_lines():
+                if len(lines) >= total_height:
+                    break
+
                 bordered = left + _pad_horizontally(line) + right
 
                 if (new := real_length(bordered)) != self.width:
                     if self.forced_width is None:
                         self.width = new + self.sidelength
+
                     else:
                         raise ValueError(
                             f"{widget} returned a line of invalid length"
-                            + f' ({invalid} != {self.width}): \n"{bordered}".'
+                            + f' ({new} != {self.width}): \n"{bordered}".'
                         )
 
                 lines.append(bordered)
@@ -634,6 +654,12 @@ class Splitter(Widget):
     def _add_widget(self, other: Widget) -> None:
         """Add an widget"""
 
+        if other.forced_height is not None:
+            other.height = other.forced_height
+
+        if self.height is None:
+            self.height += other.height
+
         self._widgets.append(other)
 
     def get_lines(self) -> list[str]:
@@ -676,6 +702,10 @@ class Splitter(Widget):
             lines.append(separator.join(horizontal))
 
         self.width = max(real_length(line) for line in lines) - 1
+
+        if self.forced_height is None:
+            self.height = len(lines)
+
         return lines
 
     def debug(self) -> str:
@@ -710,7 +740,11 @@ class Prompt(Widget):
     }
 
     def __init__(
-        self, label: str = "", value: str = "", highlight_target: int = HIGHLIGHT_LEFT, markup: bool = True
+        self,
+        label: str = "",
+        value: str = "",
+        highlight_target: int = HIGHLIGHT_LEFT,
+        markup: bool = True,
     ) -> None:
         """Initialize object"""
 
@@ -720,7 +754,7 @@ class Prompt(Widget):
                 label = markup_to_ansi(label)
             except SyntaxError as error:
                 raise ValueError(
-                    f"SyntaxError occured in converting label markup."
+                    "SyntaxError occured in converting label markup."
                 ) from error
 
         self.label = label
@@ -812,7 +846,9 @@ class Label(Widget):
         "value": default_foreground,
     }
 
-    def __init__(self, value: str = "", align: int = ALIGN_CENTER, markup: bool = True) -> None:
+    def __init__(
+        self, value: str = "", align: int = ALIGN_CENTER, markup: bool = True
+    ) -> None:
         """Set up object"""
 
         super().__init__()
@@ -822,7 +858,7 @@ class Label(Widget):
                 value = markup_to_ansi(value)
             except SyntaxError as error:
                 raise ValueError(
-                    f"SyntaxError occured in converting value markup."
+                    "SyntaxError occured in converting value markup."
                 ) from error
 
         self.value = value

@@ -422,7 +422,7 @@ def prettify_markup(markup: str) -> str:
                 styled += foreground("\\" + chars[0], 210) + "".join(chars[1:])
                 continue
 
-            if (seq := item.to_sequence()) :
+            if seq := item.to_sequence():
                 styled += seq
 
             styled += foreground(item.to_name(), 114)

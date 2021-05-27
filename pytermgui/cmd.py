@@ -18,7 +18,6 @@ from . import (
     Splitter,
     Prompt,
     Label,
-    clear,
     bold,
     foreground as color,
     background as color_bg,
@@ -172,7 +171,11 @@ def parse_text(args: Namespace) -> None:
         sys.exit(0)
 
     display = (
-        Container() + Label(txt + reset(), markup=False) + Label("|") + Label("V") + Label(parsed, markup=False)
+        Container()
+        + Label(txt + reset(), markup=False)
+        + Label("|")
+        + Label("V")
+        + Label(parsed, markup=False)
     )
 
     if args.show_inverse:
@@ -190,12 +193,16 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
     it relies on some hacks."""
 
     def create_container(
-        obj: Widget, label: str, corners: list[str], width: Optional[int] = None
+        obj: Widget,
+        label: str,
+        corners: list[str],
+        width: Optional[int] = None,
+        height: Optional[int] = 15,
     ) -> Container:
         """Create a innerainer with the right attributes"""
 
         new = Container(vert_align=Container.VERT_ALIGN_TOP)
-        new.forced_height = 15
+        new.forced_height = height
         new.forced_width = width
         new += obj
 
@@ -252,7 +259,6 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
 
     inner += create_container(infield, " editor ", corners)
     inner += create_container(view, " view ", corners)
-    output = create_container(final, " output ", corners)
 
     main_container.forced_width = 119
 
@@ -278,7 +284,7 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
     listview.set_style("value", color_call(243))
     listview.set_char("delimiter", ["", ""])
 
-    helpmenu = create_container(listview, " available tags ", corners, 21)
+    helpmenu = create_container(listview, " available tags ", corners, 21, None)
 
     splitter = Splitter("91;15") + inner + helpmenu
     splitter.set_char("separator", " ")

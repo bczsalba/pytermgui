@@ -24,10 +24,8 @@ with alt_buffer(cursor=False):
     header += Label("color picker two:", Label.ALIGN_RIGHT)
 
     splitter = Splitter()
-    splitter += ColorPicker(8)
-    splitter += ColorPicker(8)
-    splitter += ColorPicker(8)
-    splitter += ColorPicker(8)
+    splitter += ColorPicker(16)
+    splitter += ColorPicker(16)
 
     main += header
     main += splitter
