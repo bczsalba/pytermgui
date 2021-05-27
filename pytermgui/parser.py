@@ -343,6 +343,7 @@ def tokenize_markup(text: str) -> Iterator[Token]:
                     )
 
                 else:
+                    tag += reset()
                     raise SyntaxError(f'Markup tag "{tag}" is not recognized.')
 
         position = end

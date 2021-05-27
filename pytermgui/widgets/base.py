@@ -16,6 +16,7 @@ from typing import Optional, Callable, Type, Union, Iterator, Any
 
 from ..helpers import real_length
 from ..context_managers import cursor_at
+from ..parser import markup_to_ansi
 from ..ansi_interface import (
     background,
     screen_width,
@@ -23,6 +24,7 @@ from ..ansi_interface import (
     screen_size,
     clear,
 )
+
 
 StyleType = Callable[[int, str], str]
 CharType = Union[str, list[str]]
@@ -34,18 +36,27 @@ def default_foreground(depth: int, item: str) -> str:
     _ = depth
     return item
 
-
 def default_background(depth: int, item: str) -> str:
     """Default background style"""
 
     return background(item, 30 + depth)
-
 
 def overrideable_style(depth: int, item: str) -> str:
     """A style method that is meant to be overwritten,
     to use in optional values."""
 
     return depth * item
+
+def create_markup_style(markup: str) -> StyleType:
+    """Create a style using markup"""
+
+    function: StyleType = (
+        lambda depth, item: (
+            markup.format(depth=depth, item=item)
+        )
+    )
+
+    return function
 
 
 def _set_obj_or_cls_style(
@@ -60,7 +71,6 @@ def _set_obj_or_cls_style(
         raise ValueError(f"Style {key} for {type(obj_or_cls)} has to be a callable.")
 
     obj_or_cls.styles[key] = value
-
 
 def _set_obj_or_cls_char(
     obj_or_cls: Union[Type[Widget], Widget], key: str, value: CharType
@@ -695,11 +705,19 @@ class Prompt(Widget):
     }
 
     def __init__(
-        self, label: str = "", value: str = "", highlight_target: int = HIGHLIGHT_LEFT
+        self, label: str = "", value: str = "", highlight_target: int = HIGHLIGHT_LEFT, markup: bool = True
     ) -> None:
         """Initialize object"""
 
         super().__init__()
+        if markup:
+            try:
+                label = markup_to_ansi(label)
+            except SyntaxError as error:
+                raise ValueError(
+                    f"SyntaxError occured in converting label markup."
+                ) from error
+
         self.label = label
         self.value = value
         self.highlight_target = highlight_target
@@ -789,10 +807,18 @@ class Label(Widget):
         "value": default_foreground,
     }
 
-    def __init__(self, value: str = "", align: int = ALIGN_CENTER) -> None:
+    def __init__(self, value: str = "", align: int = ALIGN_CENTER, markup: bool = True) -> None:
         """Set up object"""
 
         super().__init__()
+
+        if markup:
+            try:
+                value = markup_to_ansi(value)
+            except SyntaxError as error:
+                raise ValueError(
+                    f"SyntaxError occured in converting value markup."
+                ) from error
 
         self.value = value
         self.align = align
