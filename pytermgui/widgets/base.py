@@ -48,11 +48,11 @@ def overrideable_style(depth: int, item: str) -> str:
     return depth * item
 
 def create_markup_style(markup: str) -> StyleType:
-    """Create a style using markup"""
+    """Create a style that uses a given markup template"""
 
     function: StyleType = (
         lambda depth, item: (
-            markup.format(depth=depth, item=item)
+            markup_to_ansi(markup.format(depth=depth, item=item))
         )
     )
 

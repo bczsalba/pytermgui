@@ -5,10 +5,6 @@ IN PROGRESS
 
 * add a whole-line style for `InputField`
 
-* `Splitter`
-    - that exception really doesn't need to be there, the program should be able to handle the situation
-    - `ListView` doesn't align properly to the right when in a `Splitter`
-
 * fix `InputField` up & down
 
 * `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target

@@ -108,7 +108,8 @@ class _Color:
 
         rgb = []
         for i in (0, 2, 4):
-            rgb.append(int(color[i : i + 2], 16))
+            color_hex = color[i : i + 2]
+            rgb.append(int(color_hex, 16))
 
         return rgb[0], rgb[1], rgb[2]
 

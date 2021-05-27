@@ -9,7 +9,7 @@ The basic usage is to create a main Container(), and use
 the `+=` operator to append elements to it.
 """
 
-from .base import Widget, Container, Splitter, Prompt, Label
+from .base import Widget, Container, Splitter, Prompt, Label, create_markup_style
 from .extra import ListView, ColorPicker, InputField, ProgressBar
 from . import boxes
 
@@ -24,4 +24,5 @@ __all__ = [
     "InputField",
     "ProgressBar",
     "boxes",
+    "create_markup_style",
 ]
