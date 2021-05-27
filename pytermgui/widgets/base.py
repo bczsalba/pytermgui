@@ -465,6 +465,8 @@ class Container(Widget):
             )
 
         lines = []
+        max_width = 0
+
         for widget in self._widgets:
             container_offset = 1 if not isinstance(widget, Container) else 0
 
@@ -484,11 +486,14 @@ class Container(Widget):
             for line in widget.get_lines():
                 bordered = left + _pad_horizontally(line) + right
 
-                if (invalid := real_length(bordered)) != self.width:
-                    raise ValueError(
-                        f"{widget} returned a line of invalid length"
-                        + f' ({invalid} != {self.width}): \n"{bordered}".'
-                    )
+                if (new := real_length(bordered)) != self.width:
+                    if self.forced_width is None:
+                        self.width = new + self.sidelength
+                    else:
+                        raise ValueError(
+                            f"{widget} returned a line of invalid length"
+                            + f' ({invalid} != {self.width}): \n"{bordered}".'
+                        )
 
                 lines.append(bordered)
 
