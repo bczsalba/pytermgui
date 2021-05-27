@@ -141,12 +141,8 @@ class Box(Widget):
     def set_chars_of(self, cls_or_obj: object) -> None:
         """Set border & corner chars of cls_or_obj to self values"""
 
-        if isinstance(cls_or_obj, object):
-            cls_or_obj.set_char("border", self.borders)
-            cls_or_obj.set_char("corner", self.corners)
-
-        else:
-            raise NotImplementedError(f"Cannot set chars of {cls_or_obj}.")
+        cls_or_obj.set_char("border", self.borders)
+        cls_or_obj.set_char("corner", self.corners)
 
     def get_lines(self) -> list[str]:
         """Get lines from object"""
