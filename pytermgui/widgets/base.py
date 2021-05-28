@@ -670,7 +670,7 @@ class Splitter(Widget):
         """Set item in self._widgets"""
 
         self._widgets[index] = value
-    
+
     def _add_widget(self, other: Widget) -> None:
         """Add an widget"""
 
@@ -694,9 +694,9 @@ class Splitter(Widget):
             return []
 
         separator_style = self.get_style("separator")
-        separator = separator_style(self.depth, self.get_char("separator"))
-
-        assert isinstance(separator, str)
+        char = self.get_char("separator")
+        assert isinstance(char, str)
+        separator = separator_style(self.depth, char)
 
         if self.arrangement is None:
             widget_width = self.width // len(widgets)

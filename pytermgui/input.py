@@ -137,6 +137,11 @@ class _Keys:
         """Set up key values"""
 
         self._keys = {
+            "SPACE": " ",
+            "ESC": "\x1b",
+            "TAB": "\t",
+            "ENTER": "\n",
+            "RETURN": "\n",
             "CTRL_A": "\x01",
             "CTRL_B": "\x02",
             "CTRL_C": "\x03",
@@ -163,11 +168,6 @@ class _Keys:
             "CTRL_X": "\x18",
             "CTRL_Y": "\x19",
             "CTRL_Z": "\x1a",
-            "SPACE": " ",
-            "ESC": "\x1b",
-            "TAB": "\t",
-            "ENTER": "\n",
-            "RETURN": "\n",
         }
 
         self.platform = platform

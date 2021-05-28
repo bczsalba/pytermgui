@@ -138,7 +138,7 @@ def key_info() -> None:
         ("len():", length),
         ("real_length():", real_len),
     ]:
-        prompt = Prompt(label, value)
+        prompt = Prompt(label, value, markup=False)
         prompt.width = 15 + max(len(printable), len(aka))
         prompt.set_char("delimiter", ["", ""])
         output += prompt
