@@ -630,6 +630,10 @@ class Splitter(Widget):
         "separator": " | ",
     }
 
+    styles: dict[str, StyleType] = {
+        "separator": default_foreground,
+    }
+
     def __init__(self, arrangement: Optional[str] = None) -> None:
         """Initiate object"""
 
@@ -651,6 +655,22 @@ class Splitter(Widget):
         self._add_widget(other)
         return self
 
+    def __iter__(self) -> Iterator[Widget]:
+        """Iterate through self._widgets"""
+
+        for widget in self._widgets:
+            yield widget
+
+    def __getitem__(self, sli: Union[int, slice]) -> Union[Widget, list[Widget]]:
+        """Index in self._widget"""
+
+        return self._widgets[sli]
+
+    def __setitem__(self, index: int, value: Any) -> None:
+        """Set item in self._widgets"""
+
+        self._widgets[index] = value
+    
     def _add_widget(self, other: Widget) -> None:
         """Add an widget"""
 
@@ -673,7 +693,9 @@ class Splitter(Widget):
         if len(widgets) == 0:
             return []
 
-        separator = self.get_char("separator")
+        separator_style = self.get_style("separator")
+        separator = separator_style(self.depth, self.get_char("separator"))
+
         assert isinstance(separator, str)
 
         if self.arrangement is None:
