@@ -223,9 +223,9 @@ try:
     _getch = _GetchWindows()
     keys = _Keys(_platform_keys, "nt")
 
-except ImportError:
+except ImportError as error:
     if not os.name == "posix":
-        raise NotImplementedError(f"Platform {os.name} is not supported.") from None
+        raise NotImplementedError(f"Platform {os.name} is not supported.") from error
 
     import termios
     import tty

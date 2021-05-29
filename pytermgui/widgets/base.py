@@ -67,6 +67,7 @@ class Widget:
     chars: dict[str, CharType] = {}
 
     serialized: list[str] = [
+        "id",
         "pos",
         "depth",
         "width",
@@ -77,6 +78,8 @@ class Widget:
         "selected_index",
         "selectables_length",
     ]
+
+    _manager: Optional["IDManager"] = None
 
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
         """Initialize universal data for objects"""
@@ -104,6 +107,7 @@ class Widget:
 
         self._serialized_fields = type(self).serialized
         self._is_focused = False
+        self._id = None
 
     def __repr__(self) -> str:
         """Print self.debug() by default"""
@@ -114,6 +118,26 @@ class Widget:
         """Return self for iteration"""
 
         yield self
+
+    @property
+    def id(self) -> str:
+        """Getter for id property"""
+
+        return self._id
+
+    @id.setter
+    def id(self, value: str) -> None:
+        """Register widget to idmanager"""
+
+        if self._id == value:
+            return
+
+        manager = Widget._manager
+        if (old := manager.get_id(self)) is not None:
+            manager.deregister(old)
+
+        self._id = value
+        manager.register(self)
 
     @property
     def width(self) -> int:
