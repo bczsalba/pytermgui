@@ -250,6 +250,7 @@ def tokenize_ansi(text: str) -> Iterator[Token]:
 
     position = start = end = 0
     previous = None
+    attribute: Optional[TokenAttribute]
 
     if not text.endswith(reset()):
         text += "\x1b[0m"
@@ -264,7 +265,19 @@ def tokenize_ansi(text: str) -> Iterator[Token]:
             previous = token
             yield token
 
-        token = Token(start, end, code=sgr)
+        if sgr.startswith("38;"):
+            attribute = TokenAttribute.COLOR
+
+        elif sgr.startswith("48;"):
+            attribute = TokenAttribute.BACKGROUND_COLOR
+
+        elif sgr.startswith("/"):
+            attribute = TokenAttribute.CLEAR
+
+        else:
+            attribute = None
+
+        token = Token(start, end, code=sgr, attribute=attribute)
 
         if previous is None or not previous.code == sgr:
             previous = token
@@ -365,29 +378,57 @@ def markup_to_ansi(markup: str) -> str:
     return ansi
 
 
-def ansi_to_markup(ansi: str) -> str:
+def ansi_to_markup(ansi: str, ensure_optimized: bool = False) -> str:
     """Turn ansi text into markup"""
 
     markup = ""
     in_attr = False
     current_bracket: list[str] = []
+    color_in_group = (False, False)
+
+    if not ansi.endswith(reset()):
+        ansi += reset()
 
     for token in tokenize_ansi(ansi):
         # start/add to attr bracket
         if token.code is not None:
             in_attr = True
+
+            # keep track of both color types in current group
+            fore, back = color_in_group
+            if token.code == "0":
+                current_bracket = []
+                color_in_group = (False, False)
+
+            # skip token if the same attribute is already in the current group
+            if ensure_optimized:
+                if token.attribute == TokenAttribute.COLOR and fore:
+                    continue
+
+                if token.attribute == TokenAttribute.BACKGROUND_COLOR and back:
+                    continue
+
             current_bracket.append(token.to_name())
+
+            if token.attribute == TokenAttribute.COLOR:
+                color_in_group = (True, back)
+
+            elif token.attribute == TokenAttribute.BACKGROUND_COLOR:
+                color_in_group = (fore, True)
+
             continue
 
         # close previous attr bracket
-        if in_attr:
+        if in_attr and len(current_bracket) > 0:
             markup += "[" + " ".join(current_bracket) + "]"
             current_bracket = []
 
         # add name with starting '[' escaped
         markup += token.to_name().replace("[", "\\[", 1)
 
-    markup += "[" + " ".join(current_bracket) + "]"
+    if len(current_bracket) > 0:
+        markup += "[" + " ".join(current_bracket) + "]"
+
     return markup
 
 

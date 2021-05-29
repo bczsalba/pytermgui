@@ -27,6 +27,7 @@ from . import (
     ansi_to_markup,
     markup_to_ansi,
     prettify_markup,
+    strip_ansi,
     getch,
     keys,
     real_length,
@@ -94,9 +95,9 @@ def color_call(col: int, set_bold: bool = False) -> Callable[[int, str], str]:
 
     # bold() and color() are typed to return str, but mypy can't read it
     if set_bold:
-        out = lambda _, item: str(bold(color(item, col)))
+        out = lambda _, item: str(bold(color(strip_ansi(item), col)))
     else:
-        out = lambda _, item: str(color(item, col))
+        out = lambda _, item: str(color(strip_ansi(item), col))
 
     return out
 
@@ -183,7 +184,7 @@ def parse_text(args: Namespace) -> None:
 
     if args.show_inverse:
         display += Label()
-        display += Label("(" + inverse_result + ")")
+        display += Label("(" + inverse_result + ")", markup=False)
 
     for line in display.get_lines():
         print(line)
