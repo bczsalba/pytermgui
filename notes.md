@@ -1,8 +1,6 @@
 IN PROGRESS
 -----------
 
-* templating: dumping and loading from files, strings
-
 * fix `InputField` up & down
 
 * add a whole-line style for `InputField`
@@ -52,3 +50,5 @@ FINISHED
 * `RichLabel` class, or the default fore & background styles being able to read `[cyan]style[/cyan]`
 
 * rewrite the mess that `Container.get_lines` has become. It should be separated into more smaller protected methods.
+
+* templating: dumping and loading from files, strings

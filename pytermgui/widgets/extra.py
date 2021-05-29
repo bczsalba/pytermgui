@@ -18,12 +18,9 @@ from .base import (
     Container,
     Label,
     Widget,
-    CharType,
-    StyleType,
-    default_foreground,
-    default_background,
 )
 
+from .styles import default_foreground, default_background, StyleType, CharType
 from ..input import keys
 from ..ansi_interface import foreground
 from ..helpers import real_length
@@ -126,15 +123,22 @@ class ListView(Widget):
 
     styles: dict[str, StyleType] = {
         "delimiter": default_foreground,
-        "value": default_foreground,
+        "options": default_foreground,
         "highlight": default_background,
     }
 
     chars: dict[str, CharType] = {"delimiter": ["< ", " >"]}
 
+    serialized = Widget.serialized + [
+        "*options",
+        "padding",
+        "layout",
+        "align",
+    ]
+
     def __init__(
         self,
-        options: list[str],
+        options: Optional[list[str]] = None,
         layout: int = LAYOUT_VERTICAL,
         align: int = Label.ALIGN_CENTER,
         padding: int = 0,
@@ -142,6 +146,9 @@ class ListView(Widget):
         """Initialize object"""
 
         super().__init__()
+
+        if options is None:
+            options = []
 
         self.padding = padding
         self.options = options
@@ -158,7 +165,7 @@ class ListView(Widget):
 
         lines = []
 
-        value_style = self.get_style("value")
+        options_style = self.get_style("options")
         highlight_style = self.get_style("highlight")
         delimiter_style = self.get_style("delimiter")
 
@@ -170,11 +177,12 @@ class ListView(Widget):
 
         elif self.layout is ListView.LAYOUT_VERTICAL:
             label = self._donor_label
+            label.align = self.align
             label.padding = self.padding
             label.width = self.width
 
             for i, opt in enumerate(self.options):
-                value = [start, value_style(self.depth, opt), end]
+                value = [start, options_style(self.depth, opt), end]
 
                 # highlight_style needs to be applied to all widgets in value
                 if self._is_focused and i == self.selected_index:
@@ -219,6 +227,13 @@ class InputField(Widget):
         "cursor": default_background,
         "highlight": Widget.OVERRIDE,
     }
+
+    serialized = Widget.serialized + [
+        "*value",
+        "prompt",
+        "cursor",
+        "tab_length",
+    ]
 
     def __init__(self, value: str = "", prompt: str = "", tab_length: int = 4) -> None:
         """Initialize object"""

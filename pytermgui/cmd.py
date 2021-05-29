@@ -6,6 +6,8 @@ author: bczsalba
 
 This module provides the command-line capabilities of the module.
 """
+
+import os
 import sys
 from typing import Callable, Optional
 from argparse import ArgumentParser, Namespace
@@ -19,6 +21,7 @@ from . import (
     Prompt,
     Label,
     bold,
+    Serializer,
     foreground as color,
     background as color_bg,
     ansi_to_markup,
@@ -264,24 +267,25 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
 
     options = []
     for option in parser_names:
-        options.append(markup_to_ansi(f"[{option} 243]{option}"))
+        options.append(markup_to_ansi(f"[{option}]{option}"))
 
     options += [
         "",
-        markup_to_ansi("0-255"),
-        markup_to_ansi("#rrbbgg"),
-        markup_to_ansi("rrr;bbb;ggg"),
+        "0-255",
+        "#rrbbgg",
+        "rrr;bbb;ggg",
         "",
-        markup_to_ansi("/fg"),
-        markup_to_ansi("/bg"),
-        markup_to_ansi("/{tag}"),
+        "",
+        "/fg",
+        "/bg",
+        "/{tag}",
     ]
 
     for _ in range(inner.height - len(options) - 2):
         options.append("")
 
     listview = ListView(options=options, align=Label.ALIGN_RIGHT)
-    listview.set_style("value", color_call(243))
+    listview.set_style("options", color_call(243))
     listview.set_char("delimiter", ["", ""])
 
     helpmenu = create_container(listview, " available tags ", corners, 21, None)
@@ -290,6 +294,8 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
     splitter.set_char("separator", " ")
 
     main_container += splitter
+    main_container.center()
+
     inner.focus()
     input_loop(main_container)
 
@@ -346,6 +352,19 @@ def main() -> None:
 
     if args.getch:
         key_info()
+
+    if args.file:
+        if not os.path.isfile(args.file):
+            print(f"{args.file} is not a file!")
+            sys.exit(1)
+
+        with open(args.file, "r") as datafile:
+            serializer = Serializer()
+            obj = serializer.load_from_file(datafile)
+
+            with alt_buffer(cursor=False):
+                obj.print()
+                getch()
 
     elif args.markup:
         markup_writer()

@@ -12,52 +12,23 @@ This submodule the basic elements this library provides.
 
 from __future__ import annotations
 from copy import deepcopy
-from typing import Optional, Callable, Type, Union, Iterator, Any
-
+from typing import Optional, Type, Union, Iterator, Any
 from ..helpers import real_length
 from ..context_managers import cursor_at
-from ..parser import markup_to_ansi
+from ..parser import markup_to_ansi, ansi_to_markup
 from ..ansi_interface import (
-    background,
     screen_width,
     screen_height,
     screen_size,
     clear,
 )
-
-
-StyleType = Callable[[int, str], str]
-CharType = Union[str, list[str]]
-
-
-def default_foreground(depth: int, item: str) -> str:
-    """Default foreground style"""
-
-    _ = depth
-    return item
-
-
-def default_background(depth: int, item: str) -> str:
-    """Default background style"""
-
-    return background(item, 30 + depth)
-
-
-def overrideable_style(depth: int, item: str) -> str:
-    """A style method that is meant to be overwritten,
-    to use in optional values."""
-
-    return depth * item
-
-
-def create_markup_style(markup: str) -> StyleType:
-    """Create a style that uses a given markup template"""
-
-    function: StyleType = lambda depth, item: (
-        markup_to_ansi(markup.format(depth=depth, item=item))
-    )
-
-    return function
+from .styles import (
+    default_foreground,
+    default_background,
+    overrideable_style,
+    StyleType,
+    CharType,
+)
 
 
 def _set_obj_or_cls_style(
@@ -95,6 +66,18 @@ class Widget:
     styles: dict[str, StyleType] = {}
     chars: dict[str, CharType] = {}
 
+    serialized: list[str] = [
+        "pos",
+        "depth",
+        "width",
+        "height",
+        "forced_width",
+        "forced_height",
+        "is_selectable",
+        "selected_index",
+        "selectables_length",
+    ]
+
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
         """Initialize universal data for objects"""
 
@@ -119,6 +102,7 @@ class Widget:
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
 
+        self._serialized_fields = type(self).serialized
         self._is_focused = False
 
     def __repr__(self) -> str:
@@ -178,6 +162,50 @@ class Widget:
             raise NotImplementedError("You can only set integers as object positions.")
 
         self.pos = (self.posx, value)
+
+    def serialize(self) -> dict[str, Any]:
+        """Serialize object based on type(object).serialized"""
+
+        fields = self._serialized_fields
+
+        out: dict[str, Any] = {"type": type(self).__name__}
+        for key in fields:
+            # detect styled values
+            if key.startswith("*"):
+                style = True
+                key = key[1:]
+            else:
+                style = False
+
+            value = getattr(self, key)
+
+            # convert styled value into markup
+            if style:
+                style_call = self.get_style(key)
+                if isinstance(value, list):
+                    out[key] = [
+                        ansi_to_markup(style_call(self.depth, char)) for char in value
+                    ]
+                else:
+                    out[key] = ansi_to_markup(style_call(self.depth, value))
+
+                continue
+
+            out[key] = value
+
+        # the chars need to be handled separately
+        out["chars"] = {}
+        for key, value in self.chars.items():
+            style_call = self.get_style(key)
+
+            if isinstance(value, list):
+                out["chars"][key] = [
+                    ansi_to_markup(style_call(self.depth, char)) for char in value
+                ]
+            else:
+                out["chars"][key] = ansi_to_markup(style_call(self.depth, value))
+
+        return out
 
     def copy(self) -> Widget:
         """Copy widget into a new object"""
@@ -251,6 +279,12 @@ class Container(Widget):
         "border": default_foreground,
         "corner": default_foreground,
     }
+
+    serialized = Widget.serialized + [
+        "vert_align",
+        "horiz_align",
+        "_centered_axis",
+    ]
 
     def __init__(
         self,
@@ -361,6 +395,17 @@ class Container(Widget):
 
         self.height += other.height
         self.get_lines()
+
+    def serialize(self) -> dict[str, Any]:
+        """Serialize object"""
+
+        out = super().serialize()
+        out["_widgets"] = []
+
+        for widget in self._widgets:
+            out["_widgets"].append(widget.serialize())
+
+        return out
 
     def pop(self, index: int) -> Widget:
         """Pop widget from self._widgets"""
@@ -634,6 +679,8 @@ class Splitter(Widget):
         "separator": default_foreground,
     }
 
+    serialized = Widget.serialized + ["arrangement"]
+
     def __init__(self, arrangement: Optional[str] = None) -> None:
         """Initiate object"""
 
@@ -682,6 +729,17 @@ class Splitter(Widget):
 
         self._widgets.append(other)
 
+    def serialize(self) -> dict[str, Any]:
+        """Serialize object"""
+
+        out = super().serialize()
+        out["_widgets"] = []
+
+        for widget in self._widgets:
+            out["_widgets"].append(widget.serialize())
+
+        return out
+
     def get_lines(self) -> list[str]:
         """Get lines by joining all widgets
 
@@ -695,7 +753,7 @@ class Splitter(Widget):
 
         separator_style = self.get_style("separator")
         char = self.get_char("separator")
-        assert isinstance(char, str)
+        assert isinstance(char, str), char
         separator = separator_style(self.depth, char)
 
         if self.arrangement is None:
@@ -760,6 +818,12 @@ class Prompt(Widget):
     chars: dict[str, CharType] = {
         "delimiter": ["< ", " >"],
     }
+
+    serialized = Widget.serialized + [
+        "*value",
+        "*label",
+        "highlight_target",
+    ]
 
     def __init__(
         self,
@@ -867,6 +931,12 @@ class Label(Widget):
     styles: dict[str, StyleType] = {
         "value": default_foreground,
     }
+
+    serialized = Widget.serialized + [
+        "*value",
+        "align",
+        "padding",
+    ]
 
     def __init__(
         self, value: str = "", align: int = ALIGN_CENTER, markup: bool = True
