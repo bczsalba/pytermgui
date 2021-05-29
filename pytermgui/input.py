@@ -6,9 +6,7 @@ author: bczsalba
 
 File providing the getch() function to easily read character inputs.
 
-credits:
-    - original getch implementation: Danny Yoo (https://code.activestate.com/recipes/134892)
-    - modern additions & idea:       kcsaff (https://github.com/kcsaff/getkey)
+credits: - original getch implementation: Danny Yoo (https://code.activestate.com/recipes/134892) - modern additions & idea:       kcsaff (https://github.com/kcsaff/getkey)
 """
 
 # pylint doesn't see the C source
@@ -241,6 +239,7 @@ except ImportError:
         "BACKSPACE": "\x7f",
         "INSERT": "\x1b[2~",
         "DELETE": "\x1b[3~",
+        "BACKTAB": "\x1b[Z",
     }
 
     _getch = _GetchUnix()
