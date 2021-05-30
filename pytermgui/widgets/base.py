@@ -25,6 +25,7 @@ from ..ansi_interface import (
 from .styles import (
     default_foreground,
     default_background,
+    markup_style,
     overrideable_style,
     StyleType,
     CharType,
@@ -79,7 +80,7 @@ class Widget:
         "selectables_length",
     ]
 
-    _manager: Optional["IDManager"] = None
+    manager: Optional["IDManager"] = None
 
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
         """Initialize universal data for objects"""
@@ -132,7 +133,7 @@ class Widget:
         if self._id == value:
             return
 
-        manager = Widget._manager
+        manager = Widget.manager
         if (old := manager.get_id(self)) is not None:
             manager.deregister(old)
 
@@ -860,12 +861,7 @@ class Prompt(Widget):
 
         super().__init__()
         if markup:
-            try:
-                label = markup_to_ansi(label)
-            except SyntaxError as error:
-                raise ValueError(
-                    "SyntaxError occured in converting label markup."
-                ) from error
+            self.set_style('label', markup_style)
 
         self.label = label
         self.value = value
@@ -963,23 +959,18 @@ class Label(Widget):
     ]
 
     def __init__(
-        self, value: str = "", align: int = ALIGN_CENTER, markup: bool = True
+        self, value: str = "", align: int = ALIGN_CENTER, markup: bool = True, padding: int = 0
     ) -> None:
         """Set up object"""
 
         super().__init__()
 
         if markup:
-            try:
-                value = markup_to_ansi(value)
-            except SyntaxError as error:
-                raise ValueError(
-                    "SyntaxError occured in converting value markup."
-                ) from error
+            self.set_style('value', markup_style)
 
         self.value = value
         self.align = align
-        self.padding = 0
+        self.padding = padding
         self.width = real_length(value) + self.padding + 2
 
     def get_lines(self) -> list[str]:
@@ -990,6 +981,7 @@ class Label(Widget):
 
         if self.align is Label.ALIGN_CENTER:
             for line in self.value.split("\n"):
+                line = value_style(self.depth, line)
                 padding = (self.width - real_length(line) - self.padding) // 2
                 outline = (padding + self.padding + 1) * " " + line
                 outline += (self.width - real_length(outline) + 1) * " "
@@ -998,18 +990,20 @@ class Label(Widget):
 
         elif self.align is Label.ALIGN_LEFT:
             for line in self.value.split("\n"):
+                line = value_style(self.depth, line)
                 padding = self.width - real_length(line) - self.padding + 1
                 lines.append(self.padding * " " + line + padding * " ")
 
         elif self.align is Label.ALIGN_RIGHT:
             for line in self.value.split("\n"):
+                line = value_style(self.depth, line)
                 lines.append(
                     (self.width - real_length(line) - self.padding + 1) * " "
                     + line
                     + self.padding * " "
                 )
 
-        return [value_style(self.depth, line) for line in lines]
+        return lines
 
     def get_align_string(self) -> str:
         """Get string of align value"""

@@ -399,6 +399,7 @@ def ansi_to_markup(ansi: str, ensure_optimized: bool = False) -> str:
             if token.code == "0":
                 current_bracket = []
                 color_in_group = (False, False)
+                continue
 
             # skip token if the same attribute is already in the current group
             if ensure_optimized:

@@ -38,11 +38,6 @@ class _IDManager:
                 "Cannot register element with no ID!"
             )
 
-        if objid in self._widgets:
-            raise KeyError(
-                f"ID \"{objid}\" is already registered to object {self._widgets[objid]}."
-            )
-
         self._widgets[objid] = other
 
     def deregister(self, key: str) -> None:
@@ -80,4 +75,4 @@ __all__ = [
 ]
 
 manager = _IDManager()
-Widget._manager = manager
+Widget.manager = manager

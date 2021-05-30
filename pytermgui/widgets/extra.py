@@ -23,7 +23,7 @@ from .base import (
 from .styles import default_foreground, default_background, StyleType, CharType
 from ..input import keys
 from ..ansi_interface import foreground
-from ..helpers import real_length
+from ..helpers import real_length, strip_ansi
 
 
 class ColorPicker(Container):
@@ -235,18 +235,19 @@ class InputField(Widget):
         "tab_length",
     ]
 
-    def __init__(self, value: str = "", prompt: str = "", tab_length: int = 4) -> None:
+    def __init__(self, value: str = "", prompt: str = "", tab_length: int = 4, padding: int = 0) -> None:
         """Initialize object"""
 
         super().__init__()
         self._selected_range: tuple[Optional[int], Optional[int]] = (None, None)
         self.prompt = prompt
+        self.padding = padding
         self.value = value + " "
         self.tab_length = tab_length
         self.cursor = real_length(value)
         self.width = 40
 
-        self._donor_label = Label(align=Label.ALIGN_LEFT)
+        self._donor_label = Label(align=Label.ALIGN_LEFT, padding=padding)
         self._donor_label.width = self.width
         self._donor_label.set_style("value", self.get_style("value"))
 
@@ -272,11 +273,14 @@ class InputField(Widget):
 
         self._cursor = min(max(0, value), real_length(self.value) - 1)
 
-    def clear_value(self) -> None:
-        """Reset value of field"""
+    def clear_value(self) -> str:
+        """Reset value of field, return old value"""
 
+        old = strip_ansi(self.value).strip()
         self.value = " "
         self.cursor = 1
+
+        return old
 
     def clear_selected(self) -> None:
         """Reset self._selected"""
@@ -313,6 +317,7 @@ class InputField(Widget):
             return start, end
 
         self._donor_label.width = self.width
+        self._donor_label.padding = self.padding
 
         lines = []
         buff = ""
