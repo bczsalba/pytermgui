@@ -29,6 +29,10 @@ from ..helpers import real_length, strip_ansi
 class ColorPicker(Container):
     """A Container that shows the 256 color table"""
 
+    serialized = Widget.serialized + [
+        "grid_cols"
+    ]
+
     def __init__(self, grid_cols: int = 8) -> None:
         """Initialize object, set width"""
 

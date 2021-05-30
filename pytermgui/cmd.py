@@ -21,7 +21,7 @@ from . import (
     Prompt,
     Label,
     bold,
-    Serializer,
+    serializer,
     foreground as color,
     background as color_bg,
     ansi_to_markup,
@@ -306,8 +306,8 @@ def main() -> None:
 
     Container.set_char("border", ["│ ", "─", " │", "─"])
     Container.set_char("corner", ["╭", "╮", "╯", "╰"])
-    Container.set_style("border", color_call(60, set_bold=True))
-    Container.set_style("corner", color_call(60, set_bold=True))
+    # Container.set_style("border", color_call(60, set_bold=True))
+    # Container.set_style("corner", color_call(60, set_bold=True))
     Prompt.set_style("label", prompt_label_style)
     Prompt.set_style("value", prompt_value_style)
 
@@ -360,7 +360,6 @@ def main() -> None:
             sys.exit(1)
 
         with open(args.file, "r") as datafile:
-            serializer = Serializer()
             obj = serializer.load_from_file(datafile)
 
             with alt_buffer(cursor=False):

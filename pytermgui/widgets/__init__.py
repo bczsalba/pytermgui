@@ -17,6 +17,8 @@ from .styles import (
     default_background,
     overrideable_style,
     create_markup_style,
+    StyleType,
+    CharType,
 )
 from . import boxes
 

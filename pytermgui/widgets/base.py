@@ -301,8 +301,8 @@ class Container(Widget):
     chars: dict[str, CharType] = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
 
     styles: dict[str, StyleType] = {
-        "border": default_foreground,
-        "corner": default_foreground,
+        "border": markup_style,
+        "corner": markup_style,
     }
 
     serialized = Widget.serialized + [
