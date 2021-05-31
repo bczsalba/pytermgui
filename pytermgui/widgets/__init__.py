@@ -9,7 +9,7 @@ The basic usage is to create a main Container(), and use
 the `+=` operator to append elements to it.
 """
 
-from typing import Optional
+from typing import Optional, Union, Type
 from .base import Widget, Container, Splitter, Prompt, Label
 from .extra import ListView, ColorPicker, InputField, ProgressBar
 from .styles import (
@@ -22,6 +22,9 @@ from .styles import (
 )
 from . import boxes
 
+WidgetType = Union[Widget, Type[Widget]]
+
+
 class _IDManager:
     """Simple object to store all widgets in a program, and
     allow referencing by id."""
@@ -29,16 +32,14 @@ class _IDManager:
     def __init__(self) -> None:
         """Initialize dict"""
 
-        self._widgets: dict[str, str] = {}
+        self._widgets: dict[str, WidgetType] = {}
 
     def register(self, other: Widget) -> None:
         """Add widget to self._widgets"""
 
         objid = other.id
         if objid is None:
-            raise ValueError(
-                "Cannot register element with no ID!"
-            )
+            raise ValueError("Cannot register element with no ID!")
 
         self._widgets[objid] = other
 
@@ -56,10 +57,11 @@ class _IDManager:
 
         return None
 
-    def get_widget(self, widget_id: str) -> Optional[Widget]:
+    def get_widget(self, widget_id: str) -> Optional[WidgetType]:
         """Get widget by id"""
 
         return self._widgets.get(widget_id)
+
 
 __all__ = [
     "Widget",

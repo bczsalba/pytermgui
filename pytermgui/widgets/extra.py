@@ -20,7 +20,13 @@ from .base import (
     Widget,
 )
 
-from .styles import default_foreground, default_background, StyleType, CharType
+from .styles import (
+    default_foreground,
+    default_background,
+    markup_style,
+    StyleType,
+    CharType,
+)
 from ..input import keys
 from ..ansi_interface import foreground
 from ..helpers import real_length, strip_ansi
@@ -29,9 +35,7 @@ from ..helpers import real_length, strip_ansi
 class ColorPicker(Container):
     """A Container that shows the 256 color table"""
 
-    serialized = Widget.serialized + [
-        "grid_cols"
-    ]
+    serialized = Widget.serialized + ["grid_cols"]
 
     def __init__(self, grid_cols: int = 8) -> None:
         """Initialize object, set width"""
@@ -126,8 +130,8 @@ class ListView(Widget):
     LAYOUT_VERTICAL = 1
 
     styles: dict[str, StyleType] = {
-        "delimiter": default_foreground,
-        "options": default_foreground,
+        "delimiter": markup_style,
+        "options": markup_style,
         "highlight": default_background,
     }
 
@@ -239,7 +243,9 @@ class InputField(Widget):
         "tab_length",
     ]
 
-    def __init__(self, value: str = "", prompt: str = "", tab_length: int = 4, padding: int = 0) -> None:
+    def __init__(
+        self, value: str = "", prompt: str = "", tab_length: int = 4, padding: int = 0
+    ) -> None:
         """Initialize object"""
 
         super().__init__()
@@ -276,6 +282,11 @@ class InputField(Widget):
         """Set cursor"""
 
         self._cursor = min(max(0, value), real_length(self.value) - 1)
+
+    def get_value(self) -> str:
+        """Get stripped value of object"""
+
+        return strip_ansi(self.value).strip()
 
     def clear_value(self) -> str:
         """Reset value of field, return old value"""

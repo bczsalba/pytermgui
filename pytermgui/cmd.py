@@ -306,8 +306,8 @@ def main() -> None:
 
     Container.set_char("border", ["│ ", "─", " │", "─"])
     Container.set_char("corner", ["╭", "╮", "╯", "╰"])
-    # Container.set_style("border", color_call(60, set_bold=True))
-    # Container.set_style("corner", color_call(60, set_bold=True))
+    Container.set_style("border", color_call(60, set_bold=True))
+    Container.set_style("corner", color_call(60, set_bold=True))
     Prompt.set_style("label", prompt_label_style)
     Prompt.set_style("value", prompt_value_style)
 

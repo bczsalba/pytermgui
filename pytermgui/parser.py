@@ -357,7 +357,9 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
                 else:
                     tag += reset()
-                    raise SyntaxError(f'Markup tag "{tag}" is not recognized.')
+                    raise SyntaxError(
+                        f'Markup tag "{tag}" in string "{escape_ansi(text)}" is not recognized.'
+                    )
 
         position = end
 

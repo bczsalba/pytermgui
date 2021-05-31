@@ -14,6 +14,7 @@ from ..ansi_interface import background
 StyleType = Callable[[int, str], str]
 CharType = Union[str, list[str]]
 
+
 def default_foreground(depth: int, item: str) -> str:
     """Default foreground style"""
 
@@ -36,9 +37,10 @@ def overrideable_style(depth: int, item: str) -> str:
 
 def markup_style(depth: int, item: str) -> str:
     """A style that parses markup `item` into ansi"""
-    
+
     _ = depth
     return markup_to_ansi(item)
+
 
 def create_markup_style(markup: str) -> StyleType:
     """Create a style that uses a given markup template"""

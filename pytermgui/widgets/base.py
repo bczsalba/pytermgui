@@ -15,7 +15,7 @@ from copy import deepcopy
 from typing import Optional, Type, Union, Iterator, Any
 from ..helpers import real_length
 from ..context_managers import cursor_at
-from ..parser import markup_to_ansi, ansi_to_markup
+from ..parser import ansi_to_markup
 from ..ansi_interface import (
     screen_width,
     screen_height,
@@ -80,7 +80,9 @@ class Widget:
         "selectables_length",
     ]
 
-    manager: Optional["IDManager"] = None
+    # this class is loaded after this module, and thus
+    # mypy doesn't see its existence.
+    manager: Optional["_IDManager"] = None  # type: ignore
 
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
         """Initialize universal data for objects"""
@@ -107,8 +109,8 @@ class Widget:
         self.chars = type(self).chars.copy()
 
         self._serialized_fields = type(self).serialized
+        self._id: Optional[str] = None
         self._is_focused = False
-        self._id = None
 
     def __repr__(self) -> str:
         """Print self.debug() by default"""
@@ -121,19 +123,25 @@ class Widget:
         yield self
 
     @property
-    def id(self) -> str:
-        """Getter for id property"""
+    def id(self) -> Optional[str]:  # pylint: disable=invalid-name
+        """Getter for id property
+
+        There is no better name for this."""
 
         return self._id
 
     @id.setter
-    def id(self, value: str) -> None:
-        """Register widget to idmanager"""
+    def id(self, value: str) -> None:  # pylint: disable=invalid-name
+        """Register widget to idmanager
+
+        There is no better name for this."""
 
         if self._id == value:
             return
 
         manager = Widget.manager
+        assert manager is not None
+
         if (old := manager.get_id(self)) is not None:
             manager.deregister(old)
 
@@ -641,7 +649,7 @@ class Container(Widget):
             self.posx = (screen_width() - self.width + 2) // 2
 
         if centery:
-            self.posy = (screen_height() - self.height - 2) // 2
+            self.posy = (screen_height() - self.height + 2) // 2
 
         if store:
             self._centered_axis = where
@@ -861,7 +869,7 @@ class Prompt(Widget):
 
         super().__init__()
         if markup:
-            self.set_style('label', markup_style)
+            self.set_style("label", markup_style)
 
         self.label = label
         self.value = value
@@ -959,14 +967,18 @@ class Label(Widget):
     ]
 
     def __init__(
-        self, value: str = "", align: int = ALIGN_CENTER, markup: bool = True, padding: int = 0
+        self,
+        value: str = "",
+        align: int = ALIGN_CENTER,
+        markup: bool = True,
+        padding: int = 0,
     ) -> None:
         """Set up object"""
 
         super().__init__()
 
         if markup:
-            self.set_style('value', markup_style)
+            self.set_style("value", markup_style)
 
         self.value = value
         self.align = align
