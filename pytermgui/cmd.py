@@ -233,17 +233,19 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
                 infield.send(key)
 
                 try:
-                    value = infield.value
+                    value = infield.get_value(strip=False)
                     view.value = markup_to_ansi(value)
                     final.value = prettify_markup(value)
 
                 except SyntaxError as error:
-                    view.value = bold(color("SyntaxError: ", 210)) + str(error)
+                    # fix this
+                    view.value = "[bold 210]SyntaxError: [/fg]" + str(error)
+                    view.get_lines()
 
                 main_container.print()
 
         cursor_up()
-        print(prettify_markup(infield.value))
+        print(prettify_markup(infield.get_value()))
 
     Container.set_style("corner", lambda depth, item: color(item, 60))
     main_container = Container()

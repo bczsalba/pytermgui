@@ -22,7 +22,6 @@ __all__ = [
     "alt_buffer",
     "cursor_at",
     "cursor_up",
-    "Regex",
     "Widget",
     "Container",
     "Label",
@@ -41,8 +40,8 @@ __version__ = "0.1.0"
 
 from .parser import *
 from .widgets import *
+from .helpers import *
 from .serializer import *
 from .ansi_interface import *
 from .input import getch, keys
-from .helpers import Regex, strip_ansi, break_line, real_length
 from .context_managers import alt_buffer, cursor_at

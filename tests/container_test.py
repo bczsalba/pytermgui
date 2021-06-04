@@ -58,7 +58,7 @@ with alt_buffer():
     Prompt.set_style("highlight", highlight_style)
 
     ListView.set_style("highlight", highlight_style)
-    ListView.set_style("value", value_style)
+    ListView.set_style("options", value_style)
     ListView.set_style("delimiter", delimiter_style)
 
     ProgressBar.set_style("fill", delimiter_style)

@@ -243,6 +243,35 @@ class Token:
 
         return "\x1b[" + self.code + "m"
 
+    def get_unsetter(self) -> Optional[str]:
+        """Get unset mapping for the current sequence"""
+
+        if self.plain is not None:
+            return None
+
+        if self.attribute is TokenAttribute.CLEAR:
+            return UNSET_MAP[self.to_name()]
+
+        if self.attribute is TokenAttribute.COLOR:
+            return UNSET_MAP["/fg"]
+
+        if self.attribute is TokenAttribute.BACKGROUND_COLOR:
+            return UNSET_MAP["/bg"]
+
+        return UNSET_MAP["/" + self.to_name()]
+
+    def get_setter(self) -> Optional[str]:
+        """Get set mapping for the current (unset) sequence"""
+
+        if self.plain is not None or self.attribute is not TokenAttribute.CLEAR:
+            return None
+
+        name = self.to_name()
+        if name in ["/fg", "/bg"]:
+            return None
+
+        return str(NAMES.index(self.to_name()[1:]))
+
 
 def tokenize_ansi(text: str) -> Iterator[Token]:
     """Tokenize text containing ANSI sequences
@@ -251,9 +280,6 @@ def tokenize_ansi(text: str) -> Iterator[Token]:
     position = start = end = 0
     previous = None
     attribute: Optional[TokenAttribute]
-
-    if not text.endswith(reset()):
-        text += "\x1b[0m"
 
     for match in RE_ANSI.finditer(text):
         start, end = match.span(0)
@@ -271,7 +297,13 @@ def tokenize_ansi(text: str) -> Iterator[Token]:
         elif sgr.startswith("48;"):
             attribute = TokenAttribute.BACKGROUND_COLOR
 
-        elif sgr.startswith("/"):
+        elif sgr == "0":
+            attribute = TokenAttribute.CLEAR
+
+        elif sgr.isnumeric() and int(sgr) in range(len(NAMES)):
+            attribute = TokenAttribute.STYLE
+
+        elif sgr in UNSET_MAP.values():
             attribute = TokenAttribute.CLEAR
 
         else:
@@ -294,6 +326,11 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
     position = 0
     start = end = 0
+
+    # this doesn't seem to always work
+    # if ensure_reset and not text.endswith("/]"):
+    # text += "[/]"
+
     for match in RE_TAGS.finditer(text):
         full, escapes, tag_text = match.groups()
         start, end = match.span()
@@ -356,9 +393,9 @@ def tokenize_markup(text: str) -> Iterator[Token]:
                     )
 
                 else:
-                    tag += reset()
                     raise SyntaxError(
-                        f'Markup tag "{tag}" in string "{escape_ansi(text)}" is not recognized.'
+                        f'Markup tag "{escape_ansi(tag)+reset()}" in string'
+                        + f' "{escape_ansi(text)+reset()}" is not recognized.'
                     )
 
         position = end

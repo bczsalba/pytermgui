@@ -7,111 +7,135 @@ author: bczsalba
 This module provides methods and functions that can be imported in other files.
 """
 
-# ignore this file as its not working right now
-# mypy: ignore-errors
-# pylint: skip-file
+from typing import Iterator
+from .parser import tokenize_ansi, TokenAttribute, RE_ANSI
 
-from typing import AnyStr, Optional
-from enum import Enum
-import re
-
-
-class Regex:
-    """Class for Regex patterns"""
-
-    ANSI = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
-    UNIC = re.compile(r"[^\u0000-\u007F]")
-    EMOJI = re.compile(r":[a-z_]+:")
-    DUNDER = re.compile(r"__[a-z_]+__")
+__all__ = [
+    "strip_ansi",
+    "real_length",
+    "get_sequences",
+    "break_line",
+]
 
 
-def strip_ansi(text: AnyStr) -> str:
+def strip_ansi(text: str) -> str:
     """Remove ansi characters from `text`"""
 
-    if not type(text) in [str, bytes]:
-        raise Exception(
-            "Value <"
-            + str(text)
-            + ">'s type ("
-            + str(type(text))
-            + " is not str or bytes"
-        )
-
-    return Regex.ANSI.sub("", text)
+    return RE_ANSI.sub("", text)
 
 
-def real_length(text: AnyStr) -> int:
+def real_length(text: str) -> int:
     """Convenience wrapper for `len(strip_ansi(text))`"""
 
     return len(strip_ansi(text))
 
 
-def break_line(
-    line: str, width: int, padding: int, char: Optional[str] = " "
-) -> Optional[list[str]]:
-    """Break line up primarily by `char`,
-    creating lines of `width` length with a left-padding of `padding`."""
+def get_sequences(text: str) -> str:
+    """Get sequences from a string, optimized"""
 
-    # break line by newlines if found
-    if line.count("\n"):
-        lines = line.split("\n")
-        newlines = []
-        for l in lines:
-            newlines += break_line(l, width, padding, char)
+    sequences = ""
+    for token in tokenize_ansi(text):
+        if token.code is not None:
+            # remove sequence when its unsetter is encountered
+            if token.attribute is TokenAttribute.CLEAR:
+                setter_code = token.get_setter()
 
-        return newlines
+                # the token unsets a color, so we add the unsetter
+                # sequence as-is
+                if setter_code is None:
+                    sequences += token.to_sequence()
+                    continue
 
-    # return early if line is shorter than width
-    if not real_length(line) > width:
-        return line.split("\n")
+                setter = "\x1b[" + setter_code + "m"
+                if setter in sequences:
+                    sequences = sequences.replace(setter, "")
 
-    clean = strip_ansi(line)
+                continue
+
+            sequences += token.to_sequence()
+
+    return sequences
+
+
+def break_line(line: str, limit: int, char: str = " ") -> Iterator[str]:
+    """Break a line into a list[str] with maximum `limit` lengths
+    Todo: when a tag is broken"""
+
     current = ""
-    control = ""
-    lines = []
-    pad = padding * " "
+    cur_len = 0
+    chr_len = real_length(char)
 
-    # do initial divisions
-    zipped = zip([_line.split(char) for _line in (line, clean)])
-    for i, (clean_char, real_char) in enumerate(zipped):
-        print(i)
-        print(current)
-        # dont add separator if no current
-        sep = char if len(current) else ""
+    def _reset() -> None:
+        """Add to lines and reset value"""
 
-        # add string to line if not too long
-        if len((pad + lines) + control + char + clean_char) <= width:
-            current += sep + real_char
-            control += sep + clean_char
+        nonlocal current, cur_len
 
-        # add current to lines
-        elif len(current) > 0:
-            lines.append((pad + lines) + current)
-            current = clean_char
-            control = real_char
+        # get ansi tokens from old value
+        new = get_sequences(current)
 
-    # add leftover values
-    if len(current) > 0:
-        lines.append((pad + lines) + current)
+        current = new
+        cur_len = real_length(new)
 
-    if len(lines) == 0:
-        return line.split(char)
+    def _should_yield() -> bool:
+        """Decide if current is yieldable"""
 
-    # divide inside lines if needed
-    newlines = []
-    for i, inner_line in enumerate(lines):
-        if real_length(lines) < _len:
-            newlines.append(inner_line)
+        return real_length(current.rstrip()) > 0
+
+    limit -= chr_len
+
+    for word in line.split(char):
+        new_len = real_length(word)
+
+        # subdivide a word into right lengths
+        if new_len > limit:
+            if _should_yield():
+                yield current
+
+            _reset()
+
+            in_sequence = False
+            sequence = ""
+            end = len(word) - 1
+
+            for i, character in enumerate(word):
+                if character == "\x1b":
+                    in_sequence = True
+                    sequence = character
+                    continue
+
+                if in_sequence:
+                    sequence += character
+
+                    if not character == "m":
+                        continue
+
+                    in_sequence = False
+                    character = sequence
+                    sequence = ""
+
+                current += character
+                cur_len += real_length(character)
+
+                if cur_len > limit:
+                    # add splitting char if limit allows
+                    if i == end and cur_len + chr_len <= limit:
+                        current += char
+                        cur_len += chr_len
+
+                    if _should_yield():
+                        yield current
+                    _reset()
+
             continue
 
-        clean = clean_ansi(inner_line)
+        # add current if we pass the limit
+        if cur_len + new_len + chr_len > limit and _should_yield():
+            yield current
+            _reset()
 
-        buff = ""
-        for charindex, clean_char in enumerate(clean):
-            buff += clean_char
-            if len(buff) >= width:
-                newlines.append(buff)
-                buff = ""
+        current += word + char
+        cur_len += new_len + chr_len
 
-        if len(buff):
-            newlines.append(buff)
+    current = current.rstrip()
+    if _should_yield():
+        yield current

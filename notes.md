@@ -7,8 +7,6 @@ IN PROGRESS
 
 * `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
 
-* `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works
-
 * add background styles
 
 FINISHED
@@ -52,3 +50,5 @@ FINISHED
 * rewrite the mess that `Container.get_lines` has become. It should be separated into more smaller protected methods.
 
 * templating: dumping and loading from files, strings
+
+* `break_line` should be finished, so that ListView.LAYOUT_HORIZONTAL actually works

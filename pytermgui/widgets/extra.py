@@ -283,10 +283,13 @@ class InputField(Widget):
 
         self._cursor = min(max(0, value), real_length(self.value) - 1)
 
-    def get_value(self) -> str:
+    def get_value(self, strip: bool = True) -> str:
         """Get stripped value of object"""
 
-        return strip_ansi(self.value).strip()
+        value = strip_ansi(self.value)
+        if strip:
+            return value.strip()
+        return value
 
     def clear_value(self) -> str:
         """Reset value of field, return old value"""
