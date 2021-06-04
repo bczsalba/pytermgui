@@ -13,6 +13,7 @@ This submodule the basic elements this library provides.
 from __future__ import annotations
 from copy import deepcopy
 from typing import Optional, Type, Union, Iterator, Any
+
 from ..helpers import real_length
 from ..context_managers import cursor_at
 from ..parser import ansi_to_markup
@@ -80,8 +81,8 @@ class Widget:
         "selectables_length",
     ]
 
-    # this class is loaded after this module, and thus
-    # mypy doesn't see its existence.
+    # this class is loaded after this module,
+    # and thus mypy doesn't see its existence.
     manager: Optional["_IDManager"] = None  # type: ignore
 
     def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
@@ -975,10 +976,10 @@ class Label(Widget):
     ) -> None:
         """Set up object"""
 
-        super().__init__()
-
         if markup:
             self.set_style("value", markup_style)
+
+        super().__init__()
 
         self.value = value
         self.align = align

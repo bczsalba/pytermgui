@@ -1,9 +1,15 @@
 IN PROGRESS
 -----------
 
+* `Splitter` rewrite:
+    - better spacing (obv)
+    - fix `selectables_length`
+
+* fix whatever is going wrong with `--markup` SyntaxErrors
+
 * fix `InputField` up & down
 
-* add a whole-line style for `InputField`
+* add a syntax style for `InputField`
 
 * `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
 

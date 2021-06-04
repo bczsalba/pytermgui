@@ -69,13 +69,13 @@ with alt_buffer():
     main.forced_width = 70
     main.set_char("border", ["|x| ", "=", " |x|", "="])
 
-    main += Label("Please excuse how terrible this looks")
+    main += Label("Please excuse how terrible this looks", markup=False)
     main += padding_label
-    main += Label("hello world!")
+    main += Label("hello world!", markup=False)
 
-    inner = Container() + Label("hello inner scope!")
-    inner += Container() + Label("hello inner-er scope!")
-    inner[-1] += Container() + Label("this is getting ridonculous.")
+    inner = Container() + Label("hello inner scope!", markup=False)
+    inner += Container() + Label("hello inner-er scope!", markup=False)
+    inner[-1] += Container() + Label("this is getting ridonculous.", markup=False)
     main += inner
     main += padding_label
 
@@ -83,8 +83,9 @@ with alt_buffer():
     # main += padding_label
 
     main += Prompt("hello", "there")
+    main += Prompt("hello", "there")
     main += padding_label
-    main += Label("here are some items", Label.ALIGN_LEFT)
+    main += Label("here are some items", Label.ALIGN_LEFT, markup=False)
 
     splitter = Splitter()
     main += splitter
@@ -115,18 +116,18 @@ with alt_buffer():
     while True:
         key = getch()
 
-        main[-1].send(key)
-        main.print()
-        continue
+        # main[-1].send(key)
+        # main.print()
+        # continue
 
-        # if key == "k":
-            # main.selected_index -= 1
-        # elif key == "j":
-            # main.selected_index += 1
-        # elif key == "l":
-            # progress += 0.01
-        # elif key == "h":
-            # progress -= 0.01
+        if key == "k":
+            main.selected_index -= 1
+        elif key == "j":
+            main.selected_index += 1
+        elif key == "l":
+            progress += 0.01
+        elif key == "h":
+            progress -= 0.01
 
         main.select()
         main.print()
