@@ -121,7 +121,7 @@ def fade_widget(widget: Widget, out: bool = False) -> None:
             for line in lines:
                 print_widget(foreground(strip_ansi(line), color))
 
-            sleep(1 / 70)
+            sleep(1 / 20)
 
 
 def outer_container():
