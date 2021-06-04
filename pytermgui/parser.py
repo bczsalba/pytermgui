@@ -258,7 +258,14 @@ class Token:
         if self.attribute is TokenAttribute.BACKGROUND_COLOR:
             return UNSET_MAP["/bg"]
 
-        return UNSET_MAP["/" + self.to_name()]
+        name = "/" + self.to_name()
+
+        if not name in UNSET_MAP:
+            raise KeyError(
+                f"Could not find setter for token {self}."
+            )
+
+        return UNSET_MAP[name]
 
     def get_setter(self) -> Optional[str]:
         """Get set mapping for the current (unset) sequence"""
@@ -266,11 +273,21 @@ class Token:
         if self.plain is not None or self.attribute is not TokenAttribute.CLEAR:
             return None
 
+        if self.code == "0":
+            return None
+
         name = self.to_name()
         if name in ["/fg", "/bg"]:
             return None
 
-        return str(NAMES.index(self.to_name()[1:]))
+        name = name[1:]
+
+        if not name in NAMES:
+            raise ValueError(
+                f"Could not find setter for token {self}."
+            )
+
+        return str(NAMES.index(name))
 
 
 def tokenize_ansi(text: str) -> Iterator[Token]:
