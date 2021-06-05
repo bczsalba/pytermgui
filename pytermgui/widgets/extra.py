@@ -23,6 +23,7 @@ from .base import (
 from .styles import (
     default_foreground,
     default_background,
+    create_markup_style,
     markup_style,
     StyleType,
     CharType,
@@ -88,8 +89,8 @@ class ProgressBar(Widget):
     }
 
     styles: dict[str, StyleType] = {
-        "fill": default_foreground,
-        "delimiter": default_foreground,
+        "fill": markup_style,
+        "delimiter": markup_style,
     }
 
     def __init__(self, progress_function: Callable[[], float]) -> None:
@@ -229,8 +230,8 @@ class InputField(Widget):
     """A Label that lets you display input"""
 
     styles: dict[str, StyleType] = {
-        "value": default_foreground,
-        "cursor": default_background,
+        "value": markup_style,
+        "cursor": create_markup_style("[inverse]{item}"),
         "highlight": Widget.OVERRIDE,
     }
 

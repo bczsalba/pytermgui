@@ -27,6 +27,7 @@ from ..ansi_interface import (
 from .styles import (
     default_foreground,
     default_background,
+    create_markup_style,
     markup_style,
     overrideable_style,
     StyleType,
@@ -739,7 +740,7 @@ class Splitter(Widget):
     }
 
     styles: dict[str, StyleType] = {
-        "separator": default_foreground,
+        "separator": markup_style,
     }
 
     serialized = Widget.serialized + ["arrangement"]
@@ -872,10 +873,10 @@ class Prompt(Widget):
     HIGHLIGHT_ALL = 2
 
     styles: dict[str, StyleType] = {
-        "label": default_foreground,
-        "value": default_foreground,
-        "delimiter": default_foreground,
-        "highlight": default_background,
+        "label": markup_style,
+        "value": markup_style,
+        "delimiter": markup_style,
+        "highlight": create_markup_style('[inverse]{item}'),
     }
 
     chars: dict[str, CharType] = {
@@ -898,8 +899,9 @@ class Prompt(Widget):
         """Initialize object"""
 
         super().__init__()
-        if markup:
-            self.set_style("label", markup_style)
+        if not markup:
+            self.set_style("label", default_foreground)
+            self.set_style("value", default_foreground)
 
         self.label = label
         self.value = value
@@ -985,7 +987,7 @@ class Label(Widget):
     ALIGN_RIGHT = 2
 
     styles: dict[str, StyleType] = {
-        "value": default_foreground,
+        "value": markup_style,
     }
 
     serialized = Widget.serialized + [
@@ -1003,8 +1005,9 @@ class Label(Widget):
     ) -> None:
         """Set up object"""
 
-        if markup:
-            self.set_style("value", markup_style)
+        # this loses its meaning once Label.styles['value'] is overwritten.
+        if not markup:
+            self.set_style("value", default_foreground)
 
         super().__init__()
 
