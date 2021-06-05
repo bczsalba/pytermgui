@@ -1,19 +1,29 @@
 IN PROGRESS
 -----------
 
-* `Splitter` rewrite:
-    - better spacing (obv)
-    - fix `selectables_length`
+* 0.1.0 release:
+    - [ ] `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
+    - [ ] fix whatever is going wrong with `--markup` SyntaxErrors
+    - [ ] fix `InputField` up & down
 
-* fix whatever is going wrong with `--markup` SyntaxErrors
+* later releases:
+    - `Splitter` rewrite:
+        + move to extra, inherit from `Container`
+        + better spacing (obv)
+        + fix `selectables_length`
 
-* fix `InputField` up & down
+    - `Container.get_lines()` method rethink
+        + make it less messy
+        + the parent `Container` should send the object an available width & height
+        + add size policies
+        + while we're at it, the current handling for enums is kinda messy:
+            * you set `VERT` & `HORIZ` align as an attribute, but you call a setter with `CENTER`
 
-* add a syntax style for `InputField`
+    - add a syntax style for `InputField`
 
-* `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
+    - add background styles
 
-* add background styles
+    - maybe clean up how Widget "enum" attributes are written
 
 FINISHED
 --------

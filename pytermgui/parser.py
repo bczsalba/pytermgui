@@ -261,9 +261,7 @@ class Token:
         name = "/" + self.to_name()
 
         if not name in UNSET_MAP:
-            raise KeyError(
-                f"Could not find setter for token {self}."
-            )
+            raise KeyError(f"Could not find setter for token {self}.")
 
         return UNSET_MAP[name]
 
@@ -283,9 +281,7 @@ class Token:
         name = name[1:]
 
         if not name in NAMES:
-            raise ValueError(
-                f"Could not find setter for token {self}."
-            )
+            raise ValueError(f"Could not find setter for token {self}.")
 
         return str(NAMES.index(name))
 

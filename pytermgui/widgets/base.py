@@ -14,9 +14,10 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Optional, Type, Union, Iterator, Any
 
-from ..helpers import real_length
+from ..exceptions import WidthExceededError
 from ..context_managers import cursor_at
 from ..parser import ansi_to_markup
+from ..helpers import real_length
 from ..ansi_interface import (
     screen_width,
     screen_height,
@@ -295,14 +296,17 @@ class Widget:
 class Container(Widget):
     """The widget that serves as the outer parent to all other widgets"""
 
+    # vertical aligment policies
     VERT_ALIGN_TOP = 0
     VERT_ALIGN_CENTER = 1
     VERT_ALIGN_BOTTOM = 2
 
+    # horizontal aligment policies
     HORIZ_ALIGN_LEFT = 3
     HORIZ_ALIGN_CENTER = 4
     HORIZ_ALIGN_RIGHT = 5
 
+    # centering policies
     CENTER_X = 6
     CENTER_Y = 7
     CENTER_BOTH = 8
@@ -464,7 +468,7 @@ class Container(Widget):
     def get_lines(self) -> list[str]:  # pylint: disable=R0914, R0912, R0915
         """Get lines of all widgets
 
-        Less locals would make the code really messy."""
+        This will soon be rewritten to be more future & reader proof."""
 
         def _apply_style(style: StyleType, target: list[str]) -> list[str]:
             """Apply style to target list elements"""
@@ -494,7 +498,13 @@ class Container(Widget):
         def _apply_forced_width(source: Widget, target: Widget) -> bool:
             """Apply source's forced_width attribute to target, return False if not possible."""
 
-            if source.forced_width is not None and not target.forced_width is not None:
+            if source.forced_width is not None and target.forced_width is None:
+                width = screen_width()
+                if source.forced_width > width:
+                    raise WidthExceededError(
+                        f"Element {source}'s forced_width ({source.forced_width})"
+                        + f" will not fit in the current screen width ({width})."
+                    )
                 source.width = source.forced_width
                 if target.width < source.width - self.sidelength:
                     target.width = source.width + self.sidelength
@@ -559,6 +569,11 @@ class Container(Widget):
             screen_height() if self.forced_height is None else self.forced_height
         )
 
+        maximum_width = screen_width() - self.sidelength
+
+        if self.forced_width is None:
+            self.width = min(self.width, screen_width() - 1)
+
         for widget in self._widgets:
             if len(lines) >= total_height:
                 break
@@ -573,7 +588,9 @@ class Container(Widget):
                 _apply_forced_width(widget, self)
 
             if widget.width >= self.width and not self.forced_width is not None:
+                widget.width = min(widget.width, maximum_width - container_offset)
                 self.width = widget.width + self.sidelength + container_offset
+                self.width = min(self.width, screen_width() - 1)
 
             elif widget.forced_width is None:
                 widget.width = self.width - self.sidelength - container_offset

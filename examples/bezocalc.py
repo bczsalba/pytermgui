@@ -149,7 +149,7 @@ def generate_layout():
     root = outer_container()
     root.set_char("corner", corners)
     root.forced_height = 32
-    root.forced_width = 130
+    # root.width = 130
     root.vert_align = Container.VERT_ALIGN_TOP
 
     header = Container() + Label("title")
