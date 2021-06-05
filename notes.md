@@ -8,7 +8,7 @@ IN PROGRESS
 
 * later releases:
     - `Splitter` rewrite:
-        + move to extra, inherit from `Container`
+        + inherit from `Container`
         + better spacing (obv)
         + fix `selectables_length`
 

@@ -7,18 +7,20 @@ author: bczsalba
 This submodule provides the basic style methods for Widgets
 """
 
+# pylint: disable=unused-argument
+
 from typing import Callable, Union
 from ..parser import markup_to_ansi
 from ..ansi_interface import background
 
 StyleType = Callable[[int, str], str]
+DepthlessStyleType = Callable[[str], str]
 CharType = Union[str, list[str]]
 
 
 def default_foreground(depth: int, item: str) -> str:
     """Default foreground style"""
 
-    _ = depth
     return item
 
 
@@ -32,13 +34,15 @@ def overrideable_style(depth: int, item: str) -> str:
     """A style method that is meant to be overwritten,
     to use in optional values."""
 
-    return depth * item
+    return (
+        "This method is not meant to be called, only use"
+        + " it for setting and checking optional style fields."
+    )
 
 
 def markup_style(depth: int, item: str) -> str:
     """A style that parses markup `item` into ansi"""
 
-    _ = depth
     return markup_to_ansi(item)
 
 

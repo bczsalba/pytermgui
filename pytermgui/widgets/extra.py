@@ -107,12 +107,12 @@ class ProgressBar(Widget):
         delimiter_chars = self.get_char("delimiter")
         fill_char = self.get_char("fill")[0]
 
-        start, end = [delimiter_style(self.depth, char) for char in delimiter_chars]
+        start, end = [delimiter_style(char) for char in delimiter_chars]
         progress_float = min(self.progress_function(), 1.0)
 
         total = self.width - real_length(start + end)
         progress = int(total * progress_float) + 1
-        middle = fill_style(self.depth, progress * fill_char)
+        middle = fill_style(progress * fill_char)
 
         line = start + middle
         return [line + (self.width - real_length(line + end)) * " " + end]
@@ -178,7 +178,7 @@ class ListView(Widget):
         delimiter_style = self.get_style("delimiter")
 
         chars = self.get_char("delimiter")
-        start, end = [delimiter_style(self.depth, char) for char in chars]
+        start, end = [delimiter_style(char) for char in chars]
 
         if self.layout is ListView.LAYOUT_HORIZONTAL:
             pass
@@ -190,13 +190,11 @@ class ListView(Widget):
             label.width = self.width
 
             for i, opt in enumerate(self.options):
-                value = [start, options_style(self.depth, opt), end]
+                value = [start, options_style(opt), end]
 
                 # highlight_style needs to be applied to all widgets in value
                 if self._is_focused and i == self.selected_index:
-                    label.value = "".join(
-                        highlight_style(self.depth, widget) for widget in value
-                    )
+                    label.value = "".join(highlight_style(widget) for widget in value)
 
                 else:
                     label.value = "".join(value)
@@ -259,7 +257,7 @@ class InputField(Widget):
 
         self._donor_label = Label(align=Label.ALIGN_LEFT, padding=padding)
         self._donor_label.width = self.width
-        self._donor_label.set_style("value", self.get_style("value"))
+        self._donor_label.set_style("value", self.get_style("value").origin)
 
     @property
     def selected_value(self) -> Optional[str]:
@@ -344,7 +342,7 @@ class InputField(Widget):
         highlight_style = self.get_style("highlight")
 
         # highlight_style is optional
-        if highlight_style is Widget.OVERRIDE:
+        if highlight_style.origin is Widget.OVERRIDE:
             highlight_style = cursor_style
 
         start, end = _normalize_cursor(self._selected_range)
@@ -358,7 +356,7 @@ class InputField(Widget):
                 buff_end = ""
 
                 if self._is_focused and charindex == self.cursor:
-                    buff_end = cursor_style(self.depth, " ")
+                    buff_end = cursor_style(" ")
 
                 lines += _get_label_lines("".join(buff_list) + buff_end)
                 buff = ""
@@ -374,13 +372,13 @@ class InputField(Widget):
                 buff = ""
 
             elif self._is_focused and charindex == self.cursor:
-                buff += cursor_style(self.depth, char)
+                buff += cursor_style(char)
 
             elif self._is_focused and start <= charindex <= end:
-                buff += highlight_style(self.depth, char)
+                buff += highlight_style(char)
 
             else:
-                buff += value_style(self.depth, char)
+                buff += value_style(char)
 
         if len(buff) > 0:
             lines += _get_label_lines(buff)

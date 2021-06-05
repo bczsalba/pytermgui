@@ -30,6 +30,7 @@ from .styles import (
     markup_style,
     overrideable_style,
     StyleType,
+    DepthlessStyleType,
     CharType,
 )
 
@@ -218,11 +219,9 @@ class Widget:
             if style:
                 style_call = self.get_style(key)
                 if isinstance(value, list):
-                    out[key] = [
-                        ansi_to_markup(style_call(self.depth, char)) for char in value
-                    ]
+                    out[key] = [ansi_to_markup(style_call(char)) for char in value]
                 else:
-                    out[key] = ansi_to_markup(style_call(self.depth, value))
+                    out[key] = ansi_to_markup(style_call(value))
 
                 continue
 
@@ -234,11 +233,9 @@ class Widget:
             style_call = self.get_style(key)
 
             if isinstance(value, list):
-                out["chars"][key] = [
-                    ansi_to_markup(style_call(self.depth, char)) for char in value
-                ]
+                out["chars"][key] = [ansi_to_markup(style_call(char)) for char in value]
             else:
-                out["chars"][key] = ansi_to_markup(style_call(self.depth, value))
+                out["chars"][key] = ansi_to_markup(style_call(value))
 
         return out
 
@@ -257,10 +254,25 @@ class Widget:
 
         self._is_focused = False
 
-    def get_style(self, key: str) -> StyleType:
+    def get_style(self, key: str) -> DepthlessStyleType:
         """Try to get style"""
 
-        return self.styles[key]
+        style_method = self.styles[key]
+
+        def _apply_style(item: str) -> str:
+            """Apply style method with current depth applied"""
+
+            try:
+                return style_method(self.depth, item)
+
+            # this is purposefully broad, as anything can happen during these calls.
+            except Exception as error:
+                raise RuntimeError(
+                    f'Could not apply style {style_method} to "{item}": {error}'
+                ) from error
+
+        _apply_style.origin = style_method
+        return _apply_style
 
     def get_char(self, key: str) -> CharType:
         """Try to get char"""
@@ -470,11 +482,11 @@ class Container(Widget):
 
         This will soon be rewritten to be more future & reader proof."""
 
-        def _apply_style(style: StyleType, target: list[str]) -> list[str]:
+        def _apply_style(style: DepthlessStyleType, target: list[str]) -> list[str]:
             """Apply style to target list elements"""
 
             for i, char in enumerate(target):
-                target[i] = style(self.depth, char)
+                target[i] = style(char)
 
             return target
 
@@ -805,7 +817,7 @@ class Splitter(Widget):
         separator_style = self.get_style("separator")
         char = self.get_char("separator")
         assert isinstance(char, str), char
-        separator = separator_style(self.depth, char)
+        separator = separator_style(char)
 
         if self.arrangement is None:
             widget_width = self.width // len(widgets)
@@ -908,25 +920,23 @@ class Prompt(Widget):
         assert isinstance(delimiters, list)
 
         start, end = delimiters
-        label = label_style(self.depth, self.label)
+        label = label_style(self.label)
 
         value_list = [
-            delimiter_style(self.depth, start),
-            value_style(self.depth, self.value),
-            delimiter_style(self.depth, end),
+            delimiter_style(start),
+            value_style(self.value),
+            delimiter_style(end),
         ]
 
         if self.selected_index is not None and self._is_focused:
             if self.highlight_target in [Prompt.HIGHLIGHT_LEFT, Prompt.HIGHLIGHT_ALL]:
-                label = highlight_style(self.depth, label)
+                label = highlight_style(label)
 
                 if self.highlight_target is Prompt.HIGHLIGHT_LEFT:
                     value = "".join(value_list)
 
             if self.highlight_target in [Prompt.HIGHLIGHT_RIGHT, Prompt.HIGHLIGHT_ALL]:
-                value = "".join(
-                    highlight_style(self.depth, item) for item in value_list
-                )
+                value = "".join(highlight_style(item) for item in value_list)
 
         else:
             value = "".join(value_list)
@@ -937,7 +947,7 @@ class Prompt(Widget):
             self.selected_index is not None
             and self.highlight_target is Prompt.HIGHLIGHT_ALL
         ):
-            middle = highlight_style(self.depth, middle)
+            middle = highlight_style(middle)
 
         return [label + middle + value]
 
@@ -1011,7 +1021,7 @@ class Label(Widget):
 
         if self.align is Label.ALIGN_CENTER:
             for line in self.value.split("\n"):
-                line = value_style(self.depth, line)
+                line = value_style(line)
                 padding = (self.width - real_length(line) - self.padding) // 2
                 outline = (padding + self.padding + 1) * " " + line
                 outline += (self.width - real_length(outline) + 1) * " "
@@ -1020,13 +1030,13 @@ class Label(Widget):
 
         elif self.align is Label.ALIGN_LEFT:
             for line in self.value.split("\n"):
-                line = value_style(self.depth, line)
+                line = value_style(line)
                 padding = self.width - real_length(line) - self.padding + 1
                 lines.append(self.padding * " " + line + padding * " ")
 
         elif self.align is Label.ALIGN_RIGHT:
             for line in self.value.split("\n"):
-                line = value_style(self.depth, line)
+                line = value_style(line)
                 lines.append(
                     (self.width - real_length(line) - self.padding + 1) * " "
                     + line
