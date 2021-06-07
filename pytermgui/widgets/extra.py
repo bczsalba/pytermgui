@@ -23,8 +23,8 @@ from .base import (
 from .styles import (
     default_foreground,
     default_background,
-    create_markup_style,
-    markup_style,
+    MarkupStyle,
+    apply_markup,
     StyleType,
     CharType,
 )
@@ -89,8 +89,8 @@ class ProgressBar(Widget):
     }
 
     styles: dict[str, StyleType] = {
-        "fill": markup_style,
-        "delimiter": markup_style,
+        "fill": apply_markup,
+        "delimiter": apply_markup,
     }
 
     def __init__(self, progress_function: Callable[[], float]) -> None:
@@ -131,8 +131,8 @@ class ListView(Widget):
     LAYOUT_VERTICAL = 1
 
     styles: dict[str, StyleType] = {
-        "delimiter": markup_style,
-        "options": markup_style,
+        "delimiter": apply_markup,
+        "options": apply_markup,
         "highlight": default_background,
     }
 
@@ -231,7 +231,7 @@ class InputField(Widget):
 
     styles: dict[str, StyleType] = {
         "value": default_foreground,
-        "cursor": create_markup_style("[inverse]{item}"),
+        "cursor": MarkupStyle("[inverse]{item}"),
         "highlight": Widget.OVERRIDE,
     }
 
@@ -258,7 +258,7 @@ class InputField(Widget):
 
         self._donor_label = Label(align=Label.ALIGN_LEFT, padding=padding)
         self._donor_label.width = self.width
-        self._donor_label.set_style("value", self.get_style("value").origin)
+        self._donor_label.set_style("value", self.get_style("value").method)
 
     @property
     def selected_value(self) -> Optional[str]:
@@ -344,7 +344,7 @@ class InputField(Widget):
         highlight_style = self.get_style("highlight")
 
         # highlight_style is optional
-        if highlight_style.origin is Widget.OVERRIDE:
+        if highlight_style.method is Widget.OVERRIDE:
             highlight_style = cursor_style
 
         start, end = _normalize_cursor(self._selected_range)
@@ -401,10 +401,11 @@ class InputField(Widget):
             """Find newline in self.value stepping by `step`"""
 
             if step == -1:
-                value = self.value[self.cursor::step]
+                value = self.value[self.cursor :: step]
             else:
-                value = self.value[self.cursor::step]
+                value = self.value[self.cursor :: step]
 
+            i = 0
             for i, char in enumerate(value):
                 if char is keys.RETURN:
                     return i
@@ -420,6 +421,8 @@ class InputField(Widget):
                 visited += new + 1
                 if visited - (1 if new > 0 else 0) >= self.cursor:
                     return line
+
+            return ""
 
         valid_platform_keys = [
             keys.SPACE,

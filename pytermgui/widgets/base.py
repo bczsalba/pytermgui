@@ -25,8 +25,9 @@ from ..ansi_interface import (
     clear,
 )
 from .styles import (
-    create_markup_style,
-    markup_style,
+    StyleCall,
+    MarkupStyle,
+    apply_markup,
     overrideable_style,
     StyleType,
     DepthlessStyleType,
@@ -258,20 +259,7 @@ class Widget:
 
         style_method = self.styles[key]
 
-        def _apply_style(item: str) -> str:
-            """Apply style method with current depth applied"""
-
-            try:
-                return style_method(self.depth, item)
-
-            # this is purposefully broad, as anything can happen during these calls.
-            except Exception as error:
-                raise RuntimeError(
-                    f'Could not apply style {style_method} to "{item}": {error}'
-                ) from error
-
-        _apply_style.origin = style_method
-        return _apply_style
+        return StyleCall(self, style_method)
 
     def get_char(self, key: str) -> CharType:
         """Try to get char"""
@@ -325,8 +313,8 @@ class Container(Widget):
     chars: dict[str, CharType] = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
 
     styles: dict[str, StyleType] = {
-        "border": markup_style,
-        "corner": markup_style,
+        "border": apply_markup,
+        "corner": apply_markup,
     }
 
     serialized = Widget.serialized + [
@@ -739,7 +727,7 @@ class Splitter(Widget):
     }
 
     styles: dict[str, StyleType] = {
-        "separator": markup_style,
+        "separator": apply_markup,
     }
 
     serialized = Widget.serialized + ["arrangement"]
@@ -872,10 +860,10 @@ class Prompt(Widget):
     HIGHLIGHT_ALL = 2
 
     styles: dict[str, StyleType] = {
-        "label": markup_style,
-        "value": markup_style,
-        "delimiter": markup_style,
-        "highlight": create_markup_style("[inverse]{item}"),
+        "label": apply_markup,
+        "value": apply_markup,
+        "delimiter": apply_markup,
+        "highlight": MarkupStyle("[inverse]{item}"),
     }
 
     chars: dict[str, CharType] = {
@@ -982,7 +970,7 @@ class Label(Widget):
     ALIGN_RIGHT = 2
 
     styles: dict[str, StyleType] = {
-        "value": markup_style,
+        "value": apply_markup,
     }
 
     serialized = Widget.serialized + [

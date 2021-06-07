@@ -9,24 +9,63 @@ This submodule provides the basic style methods for Widgets
 
 # pylint: disable=unused-argument
 
-from typing import Callable, Union
+from dataclasses import dataclass
+from typing import Callable, Union, TypeVar
 from ..parser import markup_to_ansi
 from ..ansi_interface import background
 
 __all__ = [
+    "MarkupStyle",
+    "StyleCall",
     "StyleType",
     "DepthlessStyleType",
     "CharType",
     "default_foreground",
     "default_background",
     "overrideable_style",
-    "markup_style",
-    "create_markup_style",
+    "apply_markup",
 ]
 
 StyleType = Callable[[int, str], str]
 DepthlessStyleType = Callable[[str], str]
 CharType = Union[str, list[str]]
+
+@dataclass
+class StyleCall:
+    """A callable object that simplifies calling style methods"""
+
+    # Widget cannot be imported into this module
+    obj: "Widget"  # type: ignore
+    method: StyleType
+
+    def __call__(self, item: str) -> str:
+        """Apply style method to item, using depth"""
+
+        try:
+            # this is seen as passing self as an argument, and 
+            # annotating it a staticmethod (which it functionally is)
+            # does not fix the issue.
+            return self.method(self.obj.depth, item)  # type: ignore
+
+        # this is purposefully broad, as anything can happen during these calls.
+        except Exception as error:
+            raise RuntimeError(
+                # this method isn't even called, so not really sure why it gets
+                # invalid self argument.
+                f'Could not apply style {self.method} to "{item}": {error}'  # type: ignore
+            ) from error
+
+
+@dataclass
+class MarkupStyle:
+    """A style-factory that formats depth & item into the given markup on call"""
+
+    markup: str
+
+    def __call__(self, depth: int, item: str) -> str:
+        """Format depth & item into given markup"""
+
+        return markup_to_ansi(self.markup.format(depth=depth, item=item))
 
 
 def default_foreground(depth: int, item: str) -> str:
@@ -51,17 +90,7 @@ def overrideable_style(depth: int, item: str) -> str:
     )
 
 
-def markup_style(depth: int, item: str) -> str:
+def apply_markup(depth: int, item: str) -> str:
     """A style that parses markup `item` into ansi"""
 
     return markup_to_ansi(item, ensure_optimized=True)
-
-
-def create_markup_style(markup: str) -> StyleType:
-    """Create a style that uses a given markup template"""
-
-    function: StyleType = lambda depth, item: (
-        markup_to_ansi(markup.format(depth=depth, item=item))
-    )
-
-    return function
