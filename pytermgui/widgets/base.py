@@ -25,7 +25,6 @@ from ..ansi_interface import (
     clear,
 )
 from .styles import (
-    default_foreground,
     create_markup_style,
     markup_style,
     overrideable_style,
@@ -890,7 +889,11 @@ class Prompt(Widget):
     ]
 
     def __init__(
-        self, label: str = "", value: str = "", highlight_target: int = HIGHLIGHT_LEFT,) -> None:
+        self,
+        label: str = "",
+        value: str = "",
+        highlight_target: int = HIGHLIGHT_LEFT,
+    ) -> None:
         """Initialize object"""
 
         super().__init__()

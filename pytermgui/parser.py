@@ -417,7 +417,9 @@ def tokenize_markup(text: str) -> Iterator[Token]:
         yield Token(start, end, plain=text[position:])
 
 
-def markup_to_ansi(markup: str, ensure_reset: bool = True, ensure_optimized: bool = True) -> str:
+def markup_to_ansi(
+    markup: str, ensure_reset: bool = True, ensure_optimized: bool = True
+) -> str:
     """Turn markup text into ANSI str"""
 
     ansi = ""
@@ -433,9 +435,7 @@ def markup_to_ansi(markup: str, ensure_reset: bool = True, ensure_optimized: boo
     return ansi
 
 
-def ansi_to_markup(
-    ansi: str, no_duplicates: bool = False, ensure_reset: bool = True
-) -> str:
+def ansi_to_markup(ansi: str, ensure_reset: bool = True) -> str:
     """Turn ansi text into markup"""
 
     markup = ""
@@ -453,7 +453,7 @@ def ansi_to_markup(
             if token.code == "0":
                 current_bracket = []
                 if len(markup) > 0:
-                    current_bracket.append('/')
+                    current_bracket.append("/")
                 continue
 
             current_bracket.append(token.to_name())
@@ -558,7 +558,7 @@ def optimize_ansi(ansi: str) -> str:
     for token in tokenize_ansi(ansi):
         if token.code is not None:
             if token.code == "0":
-                if len(sequence):
+                if len(sequence) > 0:
                     out += reset()
 
                 sequence = ""
@@ -566,7 +566,6 @@ def optimize_ansi(ansi: str) -> str:
 
             sequence += token.to_sequence()
             continue
-
 
         if not previous_sequence == sequence:
             out += sequence

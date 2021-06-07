@@ -33,6 +33,7 @@ __all__ = [
     "get_id",
 ]
 
+
 class _IDManager:
     """Simple object to store all widgets in a program, and
     allow referencing by id."""
@@ -74,8 +75,8 @@ class _IDManager:
 
         return self._widgets.get(widget_id)
 
+
 _manager = _IDManager()
 get_widget = _manager.get_widget
 get_id = _manager.get_id
 Widget.manager = _manager
-

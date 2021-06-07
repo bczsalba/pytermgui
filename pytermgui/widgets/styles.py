@@ -10,7 +10,7 @@ This submodule provides the basic style methods for Widgets
 # pylint: disable=unused-argument
 
 from typing import Callable, Union
-from ..parser import markup_to_ansi, optimize_ansi
+from ..parser import markup_to_ansi
 from ..ansi_interface import background
 
 __all__ = [
