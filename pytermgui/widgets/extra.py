@@ -236,7 +236,7 @@ class InputField(Widget):
     }
 
     serialized = Widget.serialized + [
-        "*value",
+        "value",
         "prompt",
         "cursor",
         "tab_length",

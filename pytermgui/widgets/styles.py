@@ -61,11 +61,12 @@ class MarkupStyle:
     """A style-factory that formats depth & item into the given markup on call"""
 
     markup: str
+    ensure_reset: bool = True
 
     def __call__(self, depth: int, item: str) -> str:
         """Format depth & item into given markup"""
 
-        return markup_to_ansi(self.markup.format(depth=depth, item=item))
+        return markup_to_ansi(self.markup.format(depth=depth, item=item), self.ensure_reset)
 
 
 def default_foreground(depth: int, item: str) -> str:

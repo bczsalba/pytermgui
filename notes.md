@@ -11,6 +11,8 @@ IN PROGRESS
         + this needs parser support however
         + e.g.: `[{{30 + {depth} * 36 }}]this is a gradient of depth[/]`
 
+    - maybe make `MarkupStyle` serializable?
+
     - `cmd.py` rewrite
 
     - `Splitter` rewrite:

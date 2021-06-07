@@ -24,6 +24,7 @@ from pytermgui import (
     Splitter,
     Label,
     InputField,
+    MarkupStyle,
     serializer,
     cursor_at,
     strip_ansi,
@@ -149,7 +150,6 @@ def generate_layout():
     root = outer_container()
     root.set_char("corner", corners)
     root.forced_height = 32
-    # root.width = 130
     root.vert_align = Container.VERT_ALIGN_TOP
 
     header = Container() + Label("title")
@@ -172,9 +172,9 @@ def generate_layout():
         if i > 0:
             row.id = f"inner_row{i - 1}"
 
-        row += Label("[221] ", align=Label.ALIGN_LEFT)
-        row += Label("[157 bold] ")
-        row += Label("[214 bold] ")
+        row += Label(align=Label.ALIGN_LEFT)
+        row += Label()
+        row += Label()
         inner += row
 
     root += inner
@@ -312,11 +312,20 @@ def search_menu(people: list[Person], field: InputField, bezo: int) -> None:
                 label.value = ""
 
         for row, person in zip(inner[2:], data):
+            markups = [
+                "[221]{item}", 
+                "[157 bold]$ [/bold 246]{item} billions", 
+                "[214 bold]B [/bold 246]{item}"
+            ]
+
+            for label, markup in zip(row, markups):
+                label.set_style('value', MarkupStyle(markup))
+
             name, usd, bezo_label = row
             name.value = name_pre + person.name
-            usd.value = usd_pre + f"$ [/bold 246]{person.worth:0<7,} billion"
+            usd.value = usd_pre + f"{person.worth:0<7,}"
             bezo_label.value = (
-                bezo_pre + f"B [/bold 246]{round(person.worth/bezo, 2):0<4,}"
+                bezo_pre + f"{round(person.worth/bezo, 2):0<4,}"
             )
 
         root.print()
@@ -368,7 +377,7 @@ def main():
         root = serializer.load_from_file(datafile)
 
     field = get_widget("field")
-    field.set_style("cursor", lambda depth, item: background(item, 72))
+    field.set_style("cursor", MarkupStyle("[inverse 72]{item}"))
     title = get_widget("header_title")
     title.value = "[bold 208]What are they worth?"
 
@@ -386,12 +395,19 @@ def main():
     loading.wipe()
 
     for row, person in zip(inner[2:], people):
+        markups = [
+            "[221]{item}", 
+            "[157 bold]$ [/bold 246]{item} billions", 
+            "[214 bold]B [/bold 246]{item}"
+        ]
+
+        for label, markup in zip(row, markups):
+            label.set_style('value', MarkupStyle(markup))
+
         name, dollars, bezos = row
-        name.value = name.value[:-1] + person.name
-        dollars.value = dollars.value[:-1] + f"$ [/bold 246]{person.worth:0<7,} billion"
-        bezos.value = (
-            bezos.value[:-1] + f"B [/bold 246]{round(person.worth/bezo, 2):0<4,}"
-        )
+        name.value = person.name
+        dollars.value = f"{person.worth:0<7,}"
+        bezos.value = f"{round(person.worth/bezo, 2):0<4,}"
 
     root.focus()
     root.center()
