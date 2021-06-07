@@ -397,6 +397,30 @@ class InputField(Widget):
     def send(self, key: Optional[str]) -> None:
         """Send key to InputField"""
 
+        def _find_newline(step: int) -> int:
+            """Find newline in self.value stepping by `step`"""
+
+            if step == -1:
+                value = self.value[self.cursor::step]
+            else:
+                value = self.value[self.cursor::step]
+
+            for i, char in enumerate(value):
+                if char is keys.RETURN:
+                    return i
+
+            return i
+
+        def _find_cursor_line() -> str:
+            """Find line that cursor is in"""
+
+            visited = 0
+            for line in self.get_value().splitlines():
+                new = real_length(line)
+                visited += new + 1
+                if visited - (1 if new > 0 else 0) >= self.cursor:
+                    return line
+
         valid_platform_keys = [
             keys.SPACE,
             keys.CTRL_J,
@@ -427,10 +451,12 @@ class InputField(Widget):
             self.cursor += 1
 
         elif key in [keys.DOWN, keys.CTRL_N]:
-            self.cursor += self.width + 1
+            self.cursor += _find_newline(1) + 1
 
         elif key in [keys.UP, keys.CTRL_P]:
-            self.cursor -= self.width + 1
+            self.cursor -= max(_find_newline(-1), 1)
+            line = _find_cursor_line()
+            self.cursor -= real_length(line)
 
         # `keys.values()` might need to be renamed to something more like
         # `keys.escapes.values()`

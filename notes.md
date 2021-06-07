@@ -3,8 +3,7 @@ IN PROGRESS
 
 * 0.1.0 release:
     - [x] fix whatever is going wrong with `--markup` SyntaxErrors
-    - [ ] `ListView` should have a construction-parameter similar to `Prompt`'s highlight_target
-    - [ ] fix `InputField` up & down
+    - [x] fix `InputField` up & down
 
 * later releases:
     - `cmd.py` rewrite
