@@ -12,18 +12,26 @@ the `+=` operator to append elements to it.
 from typing import Optional, Union, Type
 from .base import Widget, Container, Splitter, Prompt, Label
 from .extra import ListView, ColorPicker, InputField, ProgressBar
-from .styles import (
-    default_foreground,
-    default_background,
-    overrideable_style,
-    create_markup_style,
-    StyleType,
-    CharType,
-)
+from .styles import *
 from . import boxes
 
 WidgetType = Union[Widget, Type[Widget]]
 
+__all__ = [
+    "Widget",
+    "Splitter",
+    "Container",
+    "Prompt",
+    "Label",
+    "ListView",
+    "ColorPicker",
+    "InputField",
+    "ProgressBar",
+    "boxes",
+    "create_markup_style",
+    "get_widget",
+    "get_id",
+]
 
 class _IDManager:
     """Simple object to store all widgets in a program, and

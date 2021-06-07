@@ -5,11 +5,13 @@ author: bczsalba
 
 
 This module provides the command-line capabilities of the module.
+
+Todo: rewrite this mess
 """
 
 import os
 import sys
-from typing import Callable, Optional
+from typing import Callable, Optional, Any
 from argparse import ArgumentParser, Namespace
 
 from . import (
@@ -39,6 +41,7 @@ from . import (
     move_cursor,
     screen_height,
     reset,
+    escape_ansi,
 )
 
 from .parser import NAMES as parser_names
@@ -142,7 +145,7 @@ def key_info() -> None:
         ("len():", length),
         ("real_length():", real_len),
     ]:
-        prompt = Prompt(label, value, markup=False)
+        prompt = Prompt(label, value)
         prompt.width = 15 + max(len(printable), len(aka))
         prompt.set_char("delimiter", ["", ""])
         output += prompt
@@ -154,20 +157,36 @@ def key_info() -> None:
 def parse_text(args: Namespace) -> None:
     """Parse input text"""
 
+    from .parser import optimize_ansi
+
+    def no_markup_label(*args: tuple[Any]) -> Label:
+        """Return a label with no markup style"""
+
+        label = Label(*args)
+        label.set_style('value', lambda depth, item: item)
+        return label
+
     txt = args.parse[0]
 
     if args.inverse:
-        parsed = ansi_to_markup(txt)
+        parsed = ansi_to_markup(optimize_ansi(txt))
+        print(escape_ansi(optimize_ansi(txt)))
         inverse_result = markup_to_ansi(parsed)
+
+        if args.escape:
+            txt = escape_ansi(txt)
+            inverse_result = escape_ansi(inverse_result)
+
         parsed = prettify_markup(parsed)
 
     else:
-        parsed = markup_to_ansi(txt)
+        parsed = optimize_ansi(markup_to_ansi(txt))
         inverse_result = ansi_to_markup(parsed)
         txt = prettify_markup(txt)
 
-    if args.escape:
-        parsed = parsed.encode("unicode_escape").decode("utf-8")
+        if args.escape:
+            parsed = escape_ansi(parsed)
+
 
     if args.no_container:
         print("input:", txt + reset())
@@ -176,15 +195,15 @@ def parse_text(args: Namespace) -> None:
 
     display = (
         Container()
-        + Label(txt + reset(), markup=False)
+        + no_markup_label(txt + reset())
         + Label("|")
         + Label("V")
-        + Label(parsed, markup=False)
+        + no_markup_label(parsed)
     )
 
     if args.show_inverse:
         display += Label()
-        display += Label("(" + inverse_result + ")", markup=False)
+        display += Label("(" + inverse_result + ")")
 
     for line in display.get_lines():
         print(line)
@@ -233,14 +252,12 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
                 infield.send(key)
 
                 try:
-                    value = infield.get_value(strip=False)
+                    value = infield.get_value(strip=False).replace('\n', '[/]\n')
                     view.value = markup_to_ansi(value)
                     final.value = prettify_markup(value)
 
                 except SyntaxError as error:
-                    # fix this
-                    view.value = "[bold 210]SyntaxError: [/fg]" + str(error)
-                    view.get_lines()
+                    view.value = markup_to_ansi("[bold 210]SyntaxError: [/fg]") + strip_ansi(str(error))
 
                 main_container.print()
 
@@ -258,6 +275,7 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
     infield.set_style("cursor", lambda depth, item: color_bg(item, 67))
 
     view = Label("This will show a live view of your markup.", align=Label.ALIGN_LEFT)
+    view.set_style('value', lambda _, item: item)
     final = Label(align=Label.ALIGN_LEFT)
 
     corners = inner.get_char("corner")
