@@ -10,8 +10,19 @@ This submodule provides the basic style methods for Widgets
 # pylint: disable=unused-argument
 
 from typing import Callable, Union
-from ..parser import markup_to_ansi
+from ..parser import markup_to_ansi, optimize_ansi
 from ..ansi_interface import background
+
+__all__ = [
+    "StyleType",
+    "DepthlessStyleType",
+    "CharType",
+    "default_foreground",
+    "default_background",
+    "overrideable_style",
+    "markup_style",
+    "create_markup_style",
+]
 
 StyleType = Callable[[int, str], str]
 DepthlessStyleType = Callable[[str], str]
@@ -43,7 +54,7 @@ def overrideable_style(depth: int, item: str) -> str:
 def markup_style(depth: int, item: str) -> str:
     """A style that parses markup `item` into ansi"""
 
-    return markup_to_ansi(item)
+    return markup_to_ansi(item, ensure_optimized=True)
 
 
 def create_markup_style(markup: str) -> StyleType:

@@ -417,28 +417,32 @@ def tokenize_markup(text: str) -> Iterator[Token]:
         yield Token(start, end, plain=text[position:])
 
 
-def markup_to_ansi(markup: str) -> str:
+def markup_to_ansi(markup: str, ensure_reset: bool = True, ensure_optimized: bool = True) -> str:
     """Turn markup text into ANSI str"""
 
     ansi = ""
     for token in tokenize_markup(markup):
         ansi += token.to_sequence()
 
-    if not ansi.endswith(reset()):
+    if ensure_reset and not ansi.endswith(reset()):
         ansi += reset()
+
+    if ensure_optimized:
+        return optimize_ansi(ansi)
 
     return ansi
 
 
-def ansi_to_markup(ansi: str, ensure_optimized: bool = False) -> str:
+def ansi_to_markup(
+    ansi: str, no_duplicates: bool = False, ensure_reset: bool = True
+) -> str:
     """Turn ansi text into markup"""
 
     markup = ""
     in_attr = False
     current_bracket: list[str] = []
-    color_in_group = (False, False)
 
-    if not ansi.endswith(reset()):
+    if ensure_reset and not ansi.endswith(reset()):
         ansi += reset()
 
     for token in tokenize_ansi(ansi):
@@ -446,29 +450,13 @@ def ansi_to_markup(ansi: str, ensure_optimized: bool = False) -> str:
         if token.code is not None:
             in_attr = True
 
-            # keep track of both color types in current group
-            fore, back = color_in_group
             if token.code == "0":
                 current_bracket = []
-                color_in_group = (False, False)
+                if len(markup) > 0:
+                    current_bracket.append('/')
                 continue
 
-            # skip token if the same attribute is already in the current group
-            if ensure_optimized:
-                if token.attribute == TokenAttribute.COLOR and fore:
-                    continue
-
-                if token.attribute == TokenAttribute.BACKGROUND_COLOR and back:
-                    continue
-
             current_bracket.append(token.to_name())
-
-            if token.attribute == TokenAttribute.COLOR:
-                color_in_group = (True, back)
-
-            elif token.attribute == TokenAttribute.BACKGROUND_COLOR:
-                color_in_group = (fore, True)
-
             continue
 
         # close previous attr bracket
@@ -559,4 +547,43 @@ def prettify_markup(markup: str) -> str:
 
     return out
 
-    # "[italic bold 141;35;60]hello there[/][141] alma[/] [18;218;168 underline]fa"
+
+def optimize_ansi(ansi: str) -> str:
+    """Remove duplicate tokens & identical sequences"""
+
+    out = ""
+    sequence = ""
+    previous_sequence = None
+
+    for token in tokenize_ansi(ansi):
+        if token.code is not None:
+            if token.code == "0":
+                if len(sequence):
+                    out += reset()
+
+                sequence = ""
+                continue
+
+            sequence += token.to_sequence()
+            continue
+
+
+        if not previous_sequence == sequence:
+            out += sequence
+            previous_sequence = sequence
+
+        sequence = ""
+        out += token.to_name()
+
+    if not out.endswith(reset()):
+        out += reset()
+
+    return out
+
+
+if __name__ == "__main__":
+    print(
+        markup_to_ansi(
+            "[italic bold 141;35;60]hello there[/][141] alma[/] [18;218;168 underline]fa"
+        )
+    )

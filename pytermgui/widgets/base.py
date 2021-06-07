@@ -16,7 +16,7 @@ from typing import Optional, Type, Union, Iterator, Any
 
 from ..exceptions import WidthExceededError
 from ..context_managers import cursor_at
-from ..parser import ansi_to_markup
+from ..parser import ansi_to_markup, optimize_ansi
 from ..helpers import real_length
 from ..ansi_interface import (
     screen_width,
@@ -26,7 +26,6 @@ from ..ansi_interface import (
 )
 from .styles import (
     default_foreground,
-    default_background,
     create_markup_style,
     markup_style,
     overrideable_style,
@@ -364,11 +363,12 @@ class Container(Widget):
         """Returns length of left+right borders"""
 
         chars = self.get_char("border")
+        style = self.get_style("border")
         if not isinstance(chars, list):
             return 0
 
         left_border, _, right_border, _ = chars
-        return real_length(left_border + right_border)
+        return real_length(style(left_border) + style(right_border))
 
     @property
     def selected(self) -> Optional[Widget]:
@@ -530,7 +530,7 @@ class Container(Widget):
             """Create border line of border and corners"""
 
             _len = real_length(left + right)
-            return left + border * int(self.width - _len) + right
+            return optimize_ansi(left + border * int(self.width - _len) + right)
 
         def _pad_vertically(lines: list[str]) -> None:
             """Pad lines vertically"""
@@ -876,7 +876,7 @@ class Prompt(Widget):
         "label": markup_style,
         "value": markup_style,
         "delimiter": markup_style,
-        "highlight": create_markup_style('[inverse]{item}'),
+        "highlight": create_markup_style("[inverse]{item}"),
     }
 
     chars: dict[str, CharType] = {
@@ -890,18 +890,10 @@ class Prompt(Widget):
     ]
 
     def __init__(
-        self,
-        label: str = "",
-        value: str = "",
-        highlight_target: int = HIGHLIGHT_LEFT,
-        markup: bool = True,
-    ) -> None:
+        self, label: str = "", value: str = "", highlight_target: int = HIGHLIGHT_LEFT,) -> None:
         """Initialize object"""
 
         super().__init__()
-        if not markup:
-            self.set_style("label", default_foreground)
-            self.set_style("value", default_foreground)
 
         self.label = label
         self.value = value
@@ -1000,14 +992,9 @@ class Label(Widget):
         self,
         value: str = "",
         align: int = ALIGN_CENTER,
-        markup: bool = True,
         padding: int = 0,
     ) -> None:
         """Set up object"""
-
-        # this loses its meaning once Label.styles['value'] is overwritten.
-        if not markup:
-            self.set_style("value", default_foreground)
 
         super().__init__()
 

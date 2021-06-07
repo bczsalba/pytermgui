@@ -40,8 +40,8 @@ def get_sequences(text: str) -> str:
             if token.attribute is TokenAttribute.CLEAR:
                 setter_code = token.get_setter()
 
-                # the token unsets a color, so we add the unsetter
-                # sequence as-is
+                # the token unsets a color, so we add
+                # the unsetter sequence as-is
                 if setter_code is None:
                     sequences += token.to_sequence()
                     continue

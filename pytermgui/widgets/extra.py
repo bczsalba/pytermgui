@@ -230,7 +230,7 @@ class InputField(Widget):
     """A Label that lets you display input"""
 
     styles: dict[str, StyleType] = {
-        "value": markup_style,
+        "value": default_foreground,
         "cursor": create_markup_style("[inverse]{item}"),
         "highlight": Widget.OVERRIDE,
     }
@@ -288,6 +288,7 @@ class InputField(Widget):
         value = strip_ansi(self.value)
         if strip:
             return value.strip()
+
         return value
 
     def clear_value(self) -> str:
