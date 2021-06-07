@@ -35,7 +35,9 @@ class _IDManager:
         self._widgets: dict[str, WidgetType] = {}
 
     def register(self, other: Widget) -> None:
-        """Add widget to self._widgets"""
+        """Add widget to self._widgets
+
+        This method is meant to be called only internally by Widget."""
 
         objid = other.id
         if objid is None:
@@ -44,7 +46,9 @@ class _IDManager:
         self._widgets[objid] = other
 
     def deregister(self, key: str) -> None:
-        """Remove widget from self._widget"""
+        """Remove widget from self._widget
+
+        This method is meant to be called only internally by Widget."""
 
         del self._widgets[key]
 
@@ -62,21 +66,8 @@ class _IDManager:
 
         return self._widgets.get(widget_id)
 
+_manager = _IDManager()
+get_widget = _manager.get_widget
+get_id = _manager.get_id
+Widget.manager = _manager
 
-__all__ = [
-    "Widget",
-    "Splitter",
-    "Container",
-    "Prompt",
-    "Label",
-    "ListView",
-    "ColorPicker",
-    "InputField",
-    "ProgressBar",
-    "boxes",
-    "create_markup_style",
-    "manager",
-]
-
-manager = _IDManager()
-Widget.manager = manager

@@ -35,8 +35,8 @@ from pytermgui import (
     markup_to_ansi,
     real_length,
     keys,
-    manager,
     cursor_home,
+    get_widget,
 )
 
 LAYOUT_DIR = "layouts"
@@ -326,9 +326,9 @@ def search_menu(people: list[Person], field: InputField, bezo: int) -> None:
 
     # Note: this overwrites the "field" id established in main()
     #       there should be an object-local get to combat this.
-    s_inner = manager.get_widget("inner")
-    s_field = manager.get_widget("field")
-    s_title = manager.get_widget("header_title")
+    s_inner = get_widget("inner")
+    s_field = get_widget("field")
+    s_title = get_widget("header_title")
 
     s_field.set_style("cursor", lambda depth, item: background(item, 72))
     s_field.prompt = " /"
@@ -367,12 +367,12 @@ def main():
     with open(to_local(LAYOUT_DIR + "/bezos.ptg"), "r") as datafile:
         root = serializer.load_from_file(datafile)
 
-    field = manager.get_widget("field")
+    field = get_widget("field")
     field.set_style("cursor", lambda depth, item: background(item, 72))
-    title = manager.get_widget("header_title")
+    title = get_widget("header_title")
     title.value = "[bold 208]What are they worth?"
 
-    inner = manager.get_widget("inner")
+    inner = get_widget("inner")
     loading = outer_container() + Label(LOADING_ART)
     loading.center()
     loading.print()
