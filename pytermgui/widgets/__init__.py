@@ -28,7 +28,7 @@ __all__ = [
     "InputField",
     "ProgressBar",
     "boxes",
-    "MarkupStyle",
+    "MarkupFormatter",
     "get_widget",
     "get_id",
 ]

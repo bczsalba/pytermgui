@@ -6,12 +6,12 @@ IN PROGRESS
     - [x] fix `InputField` up & down
 
 * later releases:
-    - make `MarkupStyle` more dynamic:
+    - make `MarkupFormatStyle` more dynamic:
         + there should be a way you can incorporate depth information into a code
         + this needs parser support however
         + e.g.: `[{{30 + {depth} * 36 }}]this is a gradient of depth[/]`
 
-    - maybe make `MarkupStyle` serializable?
+    - maybe make `MarkupFormatStyle` serializable?
 
     - `cmd.py` rewrite
 

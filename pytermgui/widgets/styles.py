@@ -15,7 +15,7 @@ from ..parser import markup_to_ansi
 from ..ansi_interface import background
 
 __all__ = [
-    "MarkupStyle",
+    "MarkupFormatter",
     "StyleCall",
     "StyleType",
     "DepthlessStyleType",
@@ -39,7 +39,7 @@ class StyleCall:
     method: StyleType
 
     def __call__(self, item: str) -> str:
-        """Apply style method to item, using depth"""
+        """DepthlessStyleType: Apply style method to item, using depth"""
 
         try:
             # this is seen as passing self as an argument, and 
@@ -57,32 +57,32 @@ class StyleCall:
 
 
 @dataclass
-class MarkupStyle:
+class MarkupFormatter:
     """A style-factory that formats depth & item into the given markup on call"""
 
     markup: str
     ensure_reset: bool = True
 
     def __call__(self, depth: int, item: str) -> str:
-        """Format depth & item into given markup"""
+        """StyleType: Format depth & item into given markup template"""
 
         return markup_to_ansi(self.markup.format(depth=depth, item=item), self.ensure_reset)
 
 
 def default_foreground(depth: int, item: str) -> str:
-    """Default foreground style"""
+    """StyleType: Default foreground style"""
 
     return item
 
 
 def default_background(depth: int, item: str) -> str:
-    """Default background style"""
+    """StyleType: Default background style"""
 
     return background(item, 30 + depth)
 
 
 def overrideable_style(depth: int, item: str) -> str:
-    """A style method that is meant to be overwritten,
+    """StyleType: A style method that is meant to be overwritten,
     to use in optional values."""
 
     return (
@@ -92,6 +92,6 @@ def overrideable_style(depth: int, item: str) -> str:
 
 
 def apply_markup(depth: int, item: str) -> str:
-    """A style that parses markup `item` into ansi"""
+    """StyleType: A style that parses markup `item` into ansi"""
 
     return markup_to_ansi(item, ensure_optimized=True)

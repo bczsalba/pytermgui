@@ -26,7 +26,7 @@ from ..ansi_interface import (
 )
 from .styles import (
     StyleCall,
-    MarkupStyle,
+    MarkupFormatter,
     apply_markup,
     overrideable_style,
     StyleType,
@@ -863,7 +863,7 @@ class Prompt(Widget):
         "label": apply_markup,
         "value": apply_markup,
         "delimiter": apply_markup,
-        "highlight": MarkupStyle("[inverse]{item}"),
+        "highlight": MarkupFormatter("[inverse]{item}"),
     }
 
     chars: dict[str, CharType] = {

@@ -23,7 +23,7 @@ from .base import (
 from .styles import (
     default_foreground,
     default_background,
-    MarkupStyle,
+    MarkupFormatter,
     apply_markup,
     StyleType,
     CharType,
@@ -231,7 +231,7 @@ class InputField(Widget):
 
     styles: dict[str, StyleType] = {
         "value": default_foreground,
-        "cursor": MarkupStyle("[inverse]{item}"),
+        "cursor": MarkupFormatter("[inverse]{item}"),
         "highlight": Widget.OVERRIDE,
     }
 

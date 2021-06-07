@@ -24,7 +24,7 @@ from pytermgui import (
     Splitter,
     Label,
     InputField,
-    MarkupStyle,
+    MarkupFormatter,
     serializer,
     cursor_at,
     strip_ansi,
@@ -319,7 +319,7 @@ def search_menu(people: list[Person], field: InputField, bezo: int) -> None:
             ]
 
             for label, markup in zip(row, markups):
-                label.set_style('value', MarkupStyle(markup))
+                label.set_style('value', MarkupFormatter(markup))
 
             name, usd, bezo_label = row
             name.value = name_pre + person.name
@@ -377,7 +377,7 @@ def main():
         root = serializer.load_from_file(datafile)
 
     field = get_widget("field")
-    field.set_style("cursor", MarkupStyle("[inverse 72]{item}"))
+    field.set_style("cursor", MarkupFormatter("[inverse 72]{item}"))
     title = get_widget("header_title")
     title.value = "[bold 208]What are they worth?"
 
@@ -402,7 +402,7 @@ def main():
         ]
 
         for label, markup in zip(row, markups):
-            label.set_style('value', MarkupStyle(markup))
+            label.set_style('value', MarkupFormatter(markup))
 
         name, dollars, bezos = row
         name.value = person.name
