@@ -313,20 +313,18 @@ def search_menu(people: list[Person], field: InputField, bezo: int) -> None:
 
         for row, person in zip(inner[2:], data):
             markups = [
-                "[221]{item}", 
-                "[157 bold]$ [/bold 246]{item} billions", 
-                "[214 bold]B [/bold 246]{item}"
+                "[221]{item}",
+                "[157 bold]$ [/bold 246]{item} billions",
+                "[214 bold]B [/bold 246]{item}",
             ]
 
             for label, markup in zip(row, markups):
-                label.set_style('value', MarkupFormatter(markup))
+                label.set_style("value", MarkupFormatter(markup))
 
             name, usd, bezo_label = row
             name.value = name_pre + person.name
             usd.value = usd_pre + f"{person.worth:0<7,}"
-            bezo_label.value = (
-                bezo_pre + f"{round(person.worth/bezo, 2):0<4,}"
-            )
+            bezo_label.value = bezo_pre + f"{round(person.worth/bezo, 2):0<4,}"
 
         root.print()
 
@@ -396,13 +394,13 @@ def main():
 
     for row, person in zip(inner[2:], people):
         markups = [
-            "[221]{item}", 
-            "[157 bold]$ [/bold 246]{item} billions", 
-            "[214 bold]B [/bold 246]{item}"
+            "[221]{item}",
+            "[157 bold]$ [/bold 246]{item} billions",
+            "[214 bold]B [/bold 246]{item}",
         ]
 
         for label, markup in zip(row, markups):
-            label.set_style('value', MarkupFormatter(markup))
+            label.set_style("value", MarkupFormatter(markup))
 
         name, dollars, bezos = row
         name.value = person.name

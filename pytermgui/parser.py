@@ -430,7 +430,7 @@ def markup_to_ansi(
         ansi += reset()
 
     if ensure_optimized:
-        return optimize_ansi(ansi)
+        return optimize_ansi(ansi, ensure_reset)
 
     return ansi
 
@@ -548,33 +548,42 @@ def prettify_markup(markup: str) -> str:
     return out
 
 
-def optimize_ansi(ansi: str) -> str:
+def optimize_ansi(ansi: str, ensure_reset: bool = True) -> str:
     """Remove duplicate tokens & identical sequences"""
 
     out = ""
     sequence = ""
-    previous_sequence = None
+    previous = ""
+    has_reset = False
 
     for token in tokenize_ansi(ansi):
         if token.code is not None:
             if token.code == "0":
-                if len(sequence) > 0:
-                    out += reset()
+                # only add reset code if there is a reason to
+                if has_reset:
+                    continue
 
+                previous = sequence
                 sequence = ""
+                out += reset()
+
+                has_reset = True
                 continue
 
             sequence += token.to_sequence()
+            has_reset = False
             continue
 
-        if not previous_sequence == sequence:
+        # only add sequence if it doesn't match the previous one
+        if not sequence == previous:
             out += sequence
-            previous_sequence = sequence
+            previous = sequence
+            has_reset = False
 
         sequence = ""
         out += token.to_name()
 
-    if not out.endswith(reset()):
+    if ensure_reset and not out.endswith(reset()):
         out += reset()
 
     return out
