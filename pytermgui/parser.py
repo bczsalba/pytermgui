@@ -87,6 +87,7 @@ __all__ = [
     "markup_to_ansi",
     "ansi_to_markup",
     "prettify_markup",
+    "optimize_ansi",
 ]
 
 RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
