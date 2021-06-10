@@ -49,20 +49,20 @@ Example to get started with
 from pytermgui import Container, Label, InputField, MarkupFormatter, getch, alt_buffer, boxes
 
 border_corner_markup = MarkupFormatter("[60 bold]{item}")
-Container.set_style('border', border_corner_markup)
-Container.set_style('corner', border_corner_markup)
+Container.set_style("border", border_corner_markup)
+Container.set_style("corner", border_corner_markup)
 boxes.SINGLE.set_chars_of(Container)
 
 root = Container()
 root.forced_width = 70
 
 boxes.DOUBLE_TOP.set_chars_of(root)
-root += Label("[210 bold] Welcome to [italic]PyTermGUI![/]", align=Label.ALIGN_LEFT)
+root += Label("[210 bold] Welcome to [italic]PyTermGUI!", align=Label.ALIGN_LEFT)
 root += Label()
 
 field = InputField("Enter something!")
-field.set_style('value', MarkupFormatter("[italic 72]{item}"))
-field.set_style('cursor', MarkupFormatter("[@72]{item}"))
+field.set_style("value", MarkupFormatter("[italic 72]{item}"))
+field.set_style("cursor", MarkupFormatter("[@72]{item}"))
 
 field_container = Container(vert_align=Container.VERT_ALIGN_TOP) + field
 field_container.forced_height = 7
@@ -86,7 +86,7 @@ with alt_buffer(cursor=False):
         root.center()
         root.print()
 
-print('Goodbye!')
+print("Goodbye!")
 ```
 [![readme](https://github.com/bczsalba/pytermgui/raw/master/assets/readme_image.png)](#example-to-get-started-with)
 
@@ -122,8 +122,8 @@ root = Container()
 root += Label("[246 italic bold] a guide on the python version you should use")
 
 root += dict_to_container({
-    "[157]python >3.9[/]": "[157]good[/]",
-    "[210]python <3.8[/]": "[210]bad[/]",
+    "[157]python >3.9": "[157]good",
+    "[210]python <3.8": "[210]bad",
 })
 root.print()
 ```

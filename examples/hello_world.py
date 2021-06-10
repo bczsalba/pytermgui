@@ -48,17 +48,17 @@ Splitter.set_char("separator", boxes.SINGLE.borders[0])
 boxes.SINGLE.set_chars_of(Container)
 
 # create root Container
-root = Container() + Prompt("[222 bold]hello[/]", "[72]world[/]")
+root = Container() + Prompt("[222 bold]hello", "[72]world")
 boxes.DOUBLE_TOP.set_chars_of(root)
 
 # create inner Container, add elements to it
 inner = Container()
-inner += Label("This is an inner [italic bold 24]label[/]")
+inner += Label("This is an inner [italic bold 24]label")
 inner += Label(
-    "All [208]widgets[/fg] support [bold @61 141]markup[/]",
+    "All [208]widgets[/fg] support [bold @61 141]markup",
 )
 inner += Label(
-    "There is also support for [green bold]named [red bold]colors[/].",
+    "There is also support for [green bold]named [red bold]colors.",
 )
 
 # add inner to root
@@ -87,9 +87,9 @@ color_tags = [
     f"[{random_hex()}]#rrbbgg",
     f"[{random_rgb()}]rrr;bbb;ggg",
     "",
-    f"[@{random_255()}]@0-255[/]",
-    f"[@{random_hex()}]@#rrbbgg[/]",
-    f"[@{random_rgb()}]@rrr;bbb;ggg[/]",
+    f"[@{random_255()}]@0-255",
+    f"[@{random_hex()}]@#rrbbgg",
+    f"[@{random_rgb()}]@rrr;bbb;ggg",
     "",
     "[210]/fg",
     "[210]/bg",

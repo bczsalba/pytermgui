@@ -97,4 +97,4 @@ def overrideable_style(depth: int, item: str) -> str:
 def apply_markup(depth: int, item: str) -> str:
     """StyleType: A style that parses markup `item` into ansi"""
 
-    return markup_to_ansi(item, ensure_optimized=True, ensure_reset=False)
+    return markup_to_ansi(item, ensure_optimized=True, ensure_reset=True)
