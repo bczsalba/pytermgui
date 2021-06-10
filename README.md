@@ -6,6 +6,7 @@
 pip3 install pytermgui
 ```
 [![PyPI version](https://badge.fury.io/py/pytermgui.svg)](https://badge.fury.io/py/pytermgui)
+![Pylint quality](assets/quality.svg)
 
 Core principles
 ---------------
