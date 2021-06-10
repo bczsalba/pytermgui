@@ -2,6 +2,10 @@
 ![title](https://github.com/bczsalba/pytermgui/raw/master/assets/title.png)
 
 > A simple yet powerful TUI framework for your Python (3.9+) applications
+```
+pip3 install pytermgui
+```
+[![PyPI version](https://badge.fury.io/py/pytermgui.svg)](https://badge.fury.io/py/pytermgui)
 
 Core principles
 ---------------
