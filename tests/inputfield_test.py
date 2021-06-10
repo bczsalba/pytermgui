@@ -19,6 +19,7 @@ from pytermgui import (
     background as color,
 )
 
+
 def create_container(height: int = 0):
     """Create container with the same data"""
 
@@ -26,24 +27,23 @@ def create_container(height: int = 0):
     container.set_char("border", ["│ ", "─", " │", "─"])
     container.set_char("corner", ["╭", "╮", "╯", "╰"])
     container += InputField(
-        prompt=(
-            "you cant edit this.\n"
-            + "-------------------\n"
-        ),
+        prompt=("you cant edit this.\n" + "-------------------\n"),
         value=(
             "this is some\n"
             + "example value\n"
             + "second line\n\n\n\n"
             + "have a nice day!"
-        )
+        ),
     )
 
     container.forced_height = height
 
     return container
 
+
 def field() -> InputField:
     return selected[0]
+
 
 with alt_buffer(cursor=False):
     InputField.set_style("cursor", lambda depth, item: color(item, 72))
@@ -87,7 +87,7 @@ with alt_buffer(cursor=False):
 
         elif key == "*":
             clear()
-            print(selected.value.split('\n'))
+            print(selected.value.split("\n"))
             getch()
 
         else:

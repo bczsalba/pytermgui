@@ -7,13 +7,23 @@ author: bczsalba
 This test file shows the basic functionality that Splitter-s provide.
 """
 
-from pytermgui import Container, Prompt, Label, Splitter, alt_buffer, getch, ListView, ColorPicker, real_length
+from pytermgui import (
+    Container,
+    Prompt,
+    Label,
+    Splitter,
+    alt_buffer,
+    getch,
+    ListView,
+    ColorPicker,
+    real_length,
+)
 
 with alt_buffer(cursor=False):
     Container.set_char("border", ["│ ", "─", " │", "─"])
     Container.set_char("corner", ["╭", "╮", "╯", "╰"])
     Splitter.set_char("separator", " ")
-    
+
     main = Container(horiz_align=Container.HORIZ_ALIGN_LEFT)
 
     header = Splitter()
