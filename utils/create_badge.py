@@ -41,12 +41,15 @@ def get_color(score: float) -> str:
         return COLORS["red"]
 
 
-def main(name: str = "assets/quality.svg") -> float:
+def main(name: str, cmd: str) -> float:
     """Create an SVG showing the code quality"""
 
-    output = check_output("make lint", shell=True).decode("utf-8")
+    output = check_output(cmd, shell=True).decode("utf-8")
     start = output.find("Your code has been rated at ")
-    assert not start == -1
+    if start == -1:
+        raise ValueError(
+            f"Could not find quality score in \"{output.rstrip()}\"."
+        )
 
     start += len("Your code has been rated at ")
     end = start + output[start:].find("/")
@@ -70,7 +73,14 @@ if __name__ == "__main__":
         help="name of the badge file"
     )
 
+    parser.add_argument(
+        "-c", 
+        "--command",
+        type=str,
+        help="command for linting result (should return 0)",
+    )
+
     args = parser.parse_args()
 
-    score = main(args.name)
+    score = main(args.name, args.command)
     print(f"Created badge for score {score} at {args.name}!")
