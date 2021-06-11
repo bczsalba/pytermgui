@@ -21,6 +21,7 @@ from .ansi_interface import (
     dont_echo,
     start_alt_buffer,
     end_alt_buffer,
+    cursor_up,
 )
 
 
@@ -69,6 +70,8 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
 
         if not echo and name == "posix":
             do_echo()
+            cursor_up()
 
         if not cursor:
             show_cursor()
+            cursor_up()
