@@ -8,10 +8,7 @@ typecheck:
 	mypy --show-error-codes --disable-error-code attr-defined pytermgui
 
 badge:
-	python3 utils/create_badge.py -c "make lint-zero"
+	python3 utils/create_badge.py -c "make lint"
 
 lint:
-	pylint pytermgui
-
-lint-zero:
 	pylint --exit-zero pytermgui
