@@ -392,6 +392,11 @@ class Container(Widget):
         for widget in self._widgets:
             yield widget
 
+    def __len__(self) -> int:
+        """Get length of widgets"""
+
+        return len(self._widgets)
+
     def __getitem__(self, sli: Union[int, slice]) -> Union[Widget, list[Widget]]:
         """Index in self._widget"""
 
@@ -433,6 +438,11 @@ class Container(Widget):
 
         self.height += other.height
         self.get_lines()
+
+    def set_widgets(self, new: list[Widget]) -> None:
+        """Set self._widgets to a new list"""
+
+        self._widgets = new
 
     def serialize(self) -> dict[str, Any]:
         """Serialize object"""
