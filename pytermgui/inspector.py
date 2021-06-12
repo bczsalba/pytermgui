@@ -10,6 +10,7 @@ to allow inspection of any Python object.
 So far it only shows the object's methods, along with their parameters & annotations,
 however in the future it will be expanded to support live object data as well.
 
+Todo: `ptg --inspect`
 Todo: live object inspection
 Todo: support for module inspection
 """
@@ -18,11 +19,12 @@ from typing import Optional, Any
 from inspect import signature, getdoc, isclass, ismodule, Signature
 
 from .input import getch
+from .parser import markup_to_ansi
 from .widgets import Container, Label
 from .context_managers import alt_buffer
 from .widgets.boxes import DOUBLE_BOTTOM
-from .ansi_interface import foreground, screen_height
 from .widgets.styles import MarkupFormatter, StyleType
+from .ansi_interface import foreground, screen_height, is_interactive
 
 __all__ = [
     "inspect",
@@ -52,7 +54,6 @@ def inspect(
     target_height = int(screen_height() * 3 / 4)
     inspector = Inspector()
     inspector.inspect(target, show_dunder=show_dunder, show_private=show_private)
-    builtin_style = inspector.get_style("builtin")
 
     def handle_scrolling(root: Container, index: int) -> Optional[Container]:
         """Handle scrolling root to index"""
@@ -77,6 +78,7 @@ def inspect(
     root = Container()
 
     if style:
+        builtin_style = inspector.get_style("builtin")
         DOUBLE_BOTTOM.set_chars_of(root)
 
         corners = root.get_char("corner")
@@ -118,6 +120,15 @@ def inspect(
             root.print()
 
     print("Inspection complete!")
+    if is_interactive():
+        print(
+            markup_to_ansi(
+                "\n[210 bold]Note: [/]"
+                + "The Python interactive shell doesn't support hiding input characters,"
+                + " so the inspect() experience is not ideal.\n"
+                + "Consider using [249]`ptg --inspect`[/fg] instead."
+            )
+        )
 
 
 class Inspector(Container):
