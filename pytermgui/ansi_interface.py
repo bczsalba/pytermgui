@@ -16,9 +16,9 @@ Credits:
     - https://wiki.bash-hackers.org/scripting/terminalcodes
     - https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 """
-# pylint: disable=too-few-public-methods, arguments-differ
 
 
+import sys
 from typing import Optional, Any, Union
 from sys import stdout as _stdout
 from string import hexdigits
@@ -34,6 +34,7 @@ from .input import getch
 
 
 __all__ = [
+    "is_interactive",
     "screen_size",
     "screen_width",
     "screen_height",
@@ -178,6 +179,12 @@ def _tput(command: list[str]) -> None:
         return
 
     _Popen(str_command)
+
+
+def is_interactive() -> bool:
+    """Check if shell is interactive (`python3` or `python3 -i`)"""
+
+    return hasattr(sys, "ps1")
 
 
 # screen commands

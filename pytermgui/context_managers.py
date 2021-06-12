@@ -12,6 +12,7 @@ from typing import Callable, Generator, Any
 from contextlib import contextmanager
 
 from .ansi_interface import (
+    is_interactive,
     save_cursor,
     restore_cursor,
     print_to,
@@ -57,7 +58,7 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
     try:
         start_alt_buffer()
 
-        if not echo and name == "posix":
+        if not echo and name == "posix" and not is_interactive():
             dont_echo()
 
         if not cursor:
@@ -68,7 +69,7 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
     finally:
         end_alt_buffer()
 
-        if not echo and name == "posix":
+        if not echo and name == "posix" and not is_interactive():
             do_echo()
             cursor_up()
 
