@@ -10,9 +10,9 @@ to allow inspection of any Python object.
 So far it only shows the object's methods, along with their parameters & annotations,
 however in the future it will be expanded to support live object data as well.
 
-Todo: `ptg --inspect`
 Todo: live object inspection
 Todo: support for module inspection
+Todo: handle long items
 """
 
 from typing import Optional, Any
@@ -76,6 +76,8 @@ def inspect(
         return root
 
     root = Container()
+    root.forced_height = target_height
+    root += Label()
 
     if style:
         builtin_style = inspector.get_style("builtin")
@@ -86,8 +88,7 @@ def inspect(
         corners[1] = " Inspecting: " + builtin_style(str(target)) + " " + corners[1]
         root.set_char("corner", corners)
 
-    root.forced_height = target_height
-    root += Label()
+        root.set_style("corner", lambda _, item: item)
 
     handle_scrolling(root, 0)
     scroll = 0
