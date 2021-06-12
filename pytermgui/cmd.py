@@ -42,6 +42,7 @@ from . import (
     screen_height,
     reset,
     escape_ansi,
+    inspect,
 )
 
 from .parser import optimize_ansi
@@ -321,60 +322,43 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
     input_loop(main_container)
 
 
-def main() -> None:
-    """Main function for command line things."""
+def inspect_module_path(args: Namespace) -> None:
+    """Inspect object at a path"""
 
-    Container.set_char("border", ["│ ", "─", " │", "─"])
-    Container.set_char("corner", ["╭", "╮", "╯", "╰"])
-    Container.set_style("border", color_call(60, set_bold=True))
-    Container.set_style("corner", color_call(60, set_bold=True))
-    Prompt.set_style("label", prompt_label_style)
-    Prompt.set_style("value", prompt_value_style)
+    path = args.inspect.split("/")
 
-    parser = ArgumentParser(
-        prog="pytermgui",
-        description="a command line utility for working with pytermgui.",
-    )
-    parser.add_argument("file", help="open a .ptg file", nargs="?")
-    parser.add_argument(
-        "-g", "--getch", help="print information about a keypress", action="store_true"
-    )
-    parser.add_argument(
-        "--markup", help="open interactive markup editor", action="store_true"
-    )
-    parser.add_argument(
-        "-p", "--parse", metavar=("txt"), help="parse markup->ansi", nargs=1
-    )
-    parser.add_argument("--inverse", help="parse ansi->markup", action="store_true")
-    parser.add_argument(
-        "--escape", help="escape parsed text output", action="store_true"
-    )
-    parser.add_argument(
-        "--show-inverse",
-        help="show result of inverse parse operation",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--no-container",
-        help="show getch/parse output without a container surrounding it",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--size",
-        help="print current terminal size as {rows}x{cols}",
-        action="store_true",
+    obj_name = path.pop(-1)
+    module_path = ""
+
+    for element in path:
+        module_path += element + "."
+
+    module_path = module_path.rstrip(".")
+
+    try:
+        obj = getattr(__import__(module_path), obj_name)
+    except AttributeError as error:
+        raise ValueError(
+            f'Could not find object at module path "{args.inspect}".'
+        ) from error
+
+    inspect(
+        obj,
+        show_dunder=(args.show_dunder or args.show_all),
+        show_private=(args.show_private or args.show_all),
     )
 
-    if len(sys.argv) == 1:
-        parser.print_help(sys.stderr)
-        sys.exit(1)
 
-    args = parser.parse_args()
+def handle_args(args: Namespace) -> None:
+    """Handle arguments"""
 
     if args.getch:
         key_info()
 
-    if args.file:
+    elif args.inspect:
+        inspect_module_path(args)
+
+    elif args.file:
         if not os.path.isfile(args.file):
             print(f"{args.file} is not a file!")
             sys.exit(1)
@@ -404,3 +388,71 @@ def main() -> None:
 
         except Exception as error:  # pylint: disable=broad-except
             print(f'pytermgui: Could not open file "{args.file}": {error}')
+
+
+def main() -> None:
+    """Main function for command line things."""
+
+    Container.set_char("border", ["│ ", "─", " │", "─"])
+    Container.set_char("corner", ["╭", "╮", "╯", "╰"])
+    Container.set_style("border", color_call(60, set_bold=True))
+    Container.set_style("corner", color_call(60, set_bold=True))
+    Prompt.set_style("label", prompt_label_style)
+    Prompt.set_style("value", prompt_value_style)
+
+    parser = ArgumentParser(
+        prog="pytermgui",
+        description="a command line utility for working with pytermgui.",
+    )
+    parser.add_argument("file", help="open a .ptg file", nargs="?")
+    parser.add_argument(
+        "-g", "--getch", help="print information about a keypress", action="store_true"
+    )
+    parser.add_argument(
+        "--size",
+        help="print current terminal size as {rows}x{cols}",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--markup", help="open interactive markup editor", action="store_true"
+    )
+    parser.add_argument(
+        "--inspect", metavar=("obj_path"), help="inspect some python object", nargs="?"
+    )
+    parser.add_argument(
+        "--show-dunder",
+        action="store_true",
+        help=":inspect: show __double_under__ methods",
+    )
+    parser.add_argument(
+        "--show-all",
+        action="store_true",
+        help=":inspect: show all methods",
+    )
+    parser.add_argument(
+        "--show-private", action="store_true", help=":inspect: show _private methods"
+    )
+    parser.add_argument("--parse", metavar=("txt"), help="parse markup->ansi", nargs=1)
+    parser.add_argument(
+        "--inverse", help=":parse: invert parsing order", action="store_true"
+    )
+    parser.add_argument(
+        "--escape", help=":parse: escape text output", action="store_true"
+    )
+    parser.add_argument(
+        "--show-inverse",
+        help=":parse: show inverse-parsed result",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--no-container",
+        help=":parse: show output without a container surrounding it",
+        action="store_true",
+    )
+
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+
+    args = parser.parse_args()
+    handle_args(args)
