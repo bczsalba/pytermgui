@@ -68,8 +68,12 @@ def inspect(
             widgets.append(label)
             current += label.height
 
-        for _ in range(target_height - current):
-            widgets.append(Label())
+        if inspector.height < target_height:
+            root.forced_height = inspector.height
+
+        else:
+            for _ in range(target_height - current):
+                widgets.append(Label())
 
         root.set_widgets(widgets)
 
@@ -290,6 +294,7 @@ class Inspector(Container):
                             not show_dunder
                             and value_name.startswith("__")
                             and value_name.endswith("__")
+                            and not value_name == "__init__"
                         ):
                             continue
 
