@@ -81,6 +81,7 @@ from .ansi_interface import foreground, reset, bold
 
 
 __all__ = [
+    "define_tag",
     "escape_ansi",
     "tokenize_ansi",
     "tokenize_markup",
@@ -119,6 +120,36 @@ UNSET_MAP = {
     "/fg": "39",
     "/bg": "49",
 }
+
+CUSTOM_MAP = {}
+
+def define_tag(name: str, value: str) -> None:
+    """Define a custom markup tag to represent given value, supporting unsetters."""
+
+    def strip_sequence(sequence: str) -> str:
+        """Strip start & end chars of sequence to format it as a code"""
+
+        sequence = sequence.lstrip("\x1b[")
+        sequence = sequence.rstrip("m")
+
+        return sequence
+
+    if name in CUSTOM_MAP:
+        markup = ansi_to_markup("\x1b[" + CUSTOM_MAP[name] + "m", ensure_reset=False)
+        raise KeyError(f"Tag {name} is already defined as value \"{markup}\".")
+
+    setter = ""
+    unsetter = ""
+
+    for token in tokenize_markup("[" + value + "]"):
+        if token.plain is not None:
+            continue
+
+        setter += token.to_sequence()
+        unsetter += Token(0, 0, code=token.get_unsetter()).to_sequence()
+
+    UNSET_MAP["/" + name] = strip_sequence(unsetter)
+    CUSTOM_MAP[name] = strip_sequence(setter)
 
 
 def escape_ansi(text: str) -> str:
@@ -341,10 +372,6 @@ def tokenize_markup(text: str) -> Iterator[Token]:
     position = 0
     start = end = 0
 
-    # this doesn't seem to always work
-    # if ensure_reset and not text.endswith("/]"):
-    # text += "[/]"
-
     for match in RE_TAGS.finditer(text):
         full, escapes, tag_text = match.groups()
         start, end = match.span()
@@ -377,6 +404,14 @@ def tokenize_markup(text: str) -> Iterator[Token]:
                     end,
                     code=str(UNSET_MAP[tag]),
                     attribute=TokenAttribute.CLEAR,
+                )
+
+            elif tag in CUSTOM_MAP:
+                yield Token(
+                    start,
+                    end,
+                    code=CUSTOM_MAP[tag],
+                    attribute=TokenAttribute.STYLE,  # maybe this could be a special CUSTOM tag
                 )
 
             else:
