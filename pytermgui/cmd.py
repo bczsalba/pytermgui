@@ -111,6 +111,7 @@ def key_info() -> None:
     """Show information about a keypress"""
 
     old = report_cursor()
+    assert old is not None
 
     dialog = Container() + Label("press a key... ")
     for line in dialog.get_lines():

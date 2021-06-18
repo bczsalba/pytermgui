@@ -1,11 +1,12 @@
 IN PROGRESS
 -----------
 
-* 0.1.0 release:
-    - [x] fix whatever is going wrong with `--markup` SyntaxErrors
-    - [x] fix `InputField` up & down
-
 * later releases:
+    - `Splitter` rewrite:
+        + inherit from `Container`
+        + better spacing (obv)
+        + fix `selectables_length`
+
     - make `MarkupFormatStyle` more dynamic:
         + there should be a way you can incorporate depth information into a code
         + this needs parser support however
@@ -14,11 +15,6 @@ IN PROGRESS
     - maybe make `MarkupFormatStyle` serializable?
 
     - `cmd.py` rewrite
-
-    - `Splitter` rewrite:
-        + inherit from `Container`
-        + better spacing (obv)
-        + fix `selectables_length`
 
     - `Container.get_lines()` method rethink:
         + make it less messy

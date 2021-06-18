@@ -121,7 +121,8 @@ UNSET_MAP = {
     "/bg": "49",
 }
 
-CUSTOM_MAP = {}
+CUSTOM_MAP: dict[str, str] = {}
+
 
 def define_tag(name: str, value: str) -> None:
     """Define a custom markup tag to represent given value, supporting unsetters."""
@@ -136,7 +137,7 @@ def define_tag(name: str, value: str) -> None:
 
     if name in CUSTOM_MAP:
         markup = ansi_to_markup("\x1b[" + CUSTOM_MAP[name] + "m", ensure_reset=False)
-        raise KeyError(f"Tag {name} is already defined as value \"{markup}\".")
+        raise KeyError(f'Tag {name} is already defined as value "{markup}".')
 
     setter = ""
     unsetter = ""
