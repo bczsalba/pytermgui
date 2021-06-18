@@ -286,6 +286,18 @@ class Widget:
         self.focus()
         self.selected_index = index
 
+    def get_container(self) -> Container:
+        """Return Container including self"""
+
+        container = Container() + self
+        return container
+
+    def print(self) -> None:
+        """Print object within a Container
+        Overwrite this for Container-like widgets."""
+
+        self.get_container().print()
+
     def debug(self) -> str:
         """Debug identifiable information about object"""
 
@@ -342,8 +354,8 @@ class Container(Widget):
         self.vert_align = vert_align
         self.horiz_align = horiz_align
 
-        self.styles = Container.styles.copy()
-        self.chars = Container.chars.copy()
+        self.styles = type(self).styles.copy()
+        self.chars = type(self).chars.copy()
 
     @property
     def sidelength(self) -> int:
