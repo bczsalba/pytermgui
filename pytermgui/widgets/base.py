@@ -16,7 +16,12 @@ from typing import Optional, Type, Union, Iterator, Any
 
 from ..exceptions import WidthExceededError
 from ..context_managers import cursor_at
-from ..parser import ansi_to_markup, optimize_ansi
+from ..parser import (
+    ansi_to_markup,
+    optimize_ansi,
+    tokenize_ansi,
+    TokenAttribute,
+)
 from ..helpers import real_length
 from ..ansi_interface import (
     screen_width,
@@ -732,139 +737,6 @@ class Container(Widget):
         """Return debug information about this object's widgets"""
 
         out = "Container(), widgets=["
-        for widget in self._widgets:
-            out += type(widget).__name__ + ", "
-
-        out = out.strip(", ")
-        out += "]"
-
-        return out
-
-
-class Splitter(Widget):
-    """A widget that holds sub-widgets, and aligns them next to eachother"""
-
-    chars: dict[str, CharType] = {
-        "separator": " | ",
-    }
-
-    styles: dict[str, StyleType] = {
-        "separator": apply_markup,
-    }
-
-    serialized = Widget.serialized + ["arrangement"]
-
-    def __init__(self, arrangement: Optional[str] = None) -> None:
-        """Initiate object"""
-
-        super().__init__()
-        self.arrangement = arrangement
-        self._widgets: list[Widget] = []
-
-    def __add__(self, other: object) -> Splitter:
-        """Overload + operator"""
-
-        return self.__iadd__(other)
-
-    def __iadd__(self, other: object) -> Splitter:
-        """Overload += operator"""
-
-        if not isinstance(other, Widget):
-            raise NotImplementedError("You can only add widgets to a Splitter.")
-
-        self._add_widget(other)
-        return self
-
-    def __iter__(self) -> Iterator[Widget]:
-        """Iterate through self._widgets"""
-
-        for widget in self._widgets:
-            yield widget
-
-    def __getitem__(self, sli: Union[int, slice]) -> Union[Widget, list[Widget]]:
-        """Index in self._widget"""
-
-        return self._widgets[sli]
-
-    def __setitem__(self, index: int, value: Any) -> None:
-        """Set item in self._widgets"""
-
-        self._widgets[index] = value
-
-    def _add_widget(self, other: Widget) -> None:
-        """Add an widget"""
-
-        if other.forced_height is not None:
-            other.height = other.forced_height
-
-        if self.height is None:
-            self.height += other.height
-
-        self._widgets.append(other)
-
-    def serialize(self) -> dict[str, Any]:
-        """Serialize object"""
-
-        out = super().serialize()
-        out["_widgets"] = []
-
-        for widget in self._widgets:
-            out["_widgets"].append(widget.serialize())
-
-        return out
-
-    def get_lines(self) -> list[str]:
-        """Get lines by joining all widgets
-
-        This is not ideal. ListView-s don't work properly, and this object's
-        width is not set correctly."""
-
-        widgets = self._widgets
-
-        if len(widgets) == 0:
-            return []
-
-        separator_style = self.get_style("separator")
-        char = self.get_char("separator")
-        assert isinstance(char, str), char
-        separator = separator_style(char)
-
-        if self.arrangement is None:
-            widget_width = self.width // len(widgets)
-            widget_width -= real_length((len(widgets) - 1) * separator)
-            widths = [widget_width] * len(widgets)
-
-        else:
-            # there should be "fluid" widths, not just static ones.
-            widths = [int(val) for val in self.arrangement.split(";")]
-
-        for i, widget in enumerate(widgets):
-            if widget.forced_width is None:
-                try:
-                    widget.width = widths[i]
-                except IndexError as error:
-                    raise ValueError(
-                        "There were not enough widths supplied in the arrangement:"
-                        + f" expected {len(widgets)}, got {len(widths)}."
-                    ) from error
-
-        lines = []
-        widget_lines = [widget.get_lines() for widget in widgets]
-
-        for horizontal in zip(*widget_lines):
-            lines.append(separator.join(horizontal))
-
-        self.width = max(real_length(line) for line in lines) - 1
-
-        if self.forced_height is None:
-            self.height = len(lines)
-
-        return lines
-
-    def debug(self) -> str:
-        """Debug identifiable information about objects"""
-
-        out = "Splitter(), widgets=["
         for widget in self._widgets:
             out += type(widget).__name__ + ", "
 

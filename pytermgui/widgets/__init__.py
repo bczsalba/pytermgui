@@ -10,8 +10,8 @@ the `+=` operator to append elements to it.
 """
 
 from typing import Optional, Union, Type
-from .base import Widget, Container, Splitter, Prompt, Label
-from .extra import ListView, ColorPicker, InputField, ProgressBar
+from .base import Widget, Container, Prompt, Label
+from .extra import Splitter, ListView, ColorPicker, InputField, ProgressBar
 from .styles import *
 from . import boxes
 

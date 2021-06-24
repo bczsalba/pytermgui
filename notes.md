@@ -8,11 +8,12 @@ IN PROGRESS
         + fix `selectables_length`
 
     - make `MarkupFormatStyle` more dynamic:
+    - make `MarkupFormatter` more dynamic:
         + there should be a way you can incorporate depth information into a code
         + this needs parser support however
         + e.g.: `[{{30 + {depth} * 36 }}]this is a gradient of depth[/]`
 
-    - maybe make `MarkupFormatStyle` serializable?
+    - maybe make `MarkupFormatter` serializable?
 
     - `cmd.py` rewrite
 
