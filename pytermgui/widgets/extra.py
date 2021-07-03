@@ -83,9 +83,7 @@ class ColorPicker(Container):
 class Splitter(Container):
     """A Container-like object that allows stacking Widgets horizontally"""
 
-    chars: dict[str, CharType] = {
-        "separator": " | "
-    }
+    chars: dict[str, CharType] = {"separator": " | "}
 
     styles: dict[str, StyleType] = {
         "separator": apply_markup,
@@ -651,4 +649,3 @@ class O_Splitter(Widget):
         out += "]"
 
         return out
-

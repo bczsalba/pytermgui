@@ -73,15 +73,17 @@ Example syntax:
 """
 
 import re
+from random import shuffle
 from enum import Enum, auto
 from dataclasses import dataclass
-from typing import Optional, Iterator
+from typing import Optional, Iterator, Callable
 
 from .ansi_interface import foreground, reset, bold
 
 
 __all__ = [
     "define_tag",
+    "define_macro",
     "escape_ansi",
     "tokenize_ansi",
     "tokenize_markup",
@@ -93,6 +95,16 @@ __all__ = [
 
 RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
 RE_TAGS = re.compile(r"""((\\*)\[([a-z0-9!#@\/].*?)\])""", re.VERBOSE)
+
+
+def random_permutation(text: str) -> str:
+    """Shuffle a string using random.shuffle on its list cast"""
+
+    shuffled = list(text)
+    shuffle(shuffled)
+
+    return "".join(shuffled)
+
 
 NAMES = [
     "/",
@@ -121,7 +133,17 @@ UNSET_MAP = {
     "/bg": "49",
 }
 
+
+MACRO_MAP = {
+    "!upper": lambda item: item.upper(),
+    "!lower": lambda item: item.lower(),
+    "!title": lambda item: item.title(),
+    "!capitalize": lambda item: item.capitalize(),
+    "!random": random_permutation,
+}
+
 CUSTOM_MAP: dict[str, str] = {}
+MacroCallable = Callable[[str], str]
 
 
 def define_tag(name: str, value: str) -> None:
@@ -135,6 +157,9 @@ def define_tag(name: str, value: str) -> None:
 
         return sequence
 
+    if name.startswith("!"):
+        raise ValueError('Only macro tags can always start with "!".')
+
     setter = ""
     unsetter = ""
 
@@ -147,6 +172,15 @@ def define_tag(name: str, value: str) -> None:
 
     UNSET_MAP["/" + name] = strip_sequence(unsetter)
     CUSTOM_MAP[name] = strip_sequence(setter)
+
+
+def define_macro(name: str, value: MacroCallable) -> None:
+    """Define custom markup macro"""
+
+    if not name.startswith("!"):
+        raise ValueError('Macro tags should always start with "!".')
+
+    MACRO_MAP[name] = value
 
 
 def escape_ansi(text: str) -> str:
@@ -206,6 +240,7 @@ class TokenAttribute(Enum):
     CLEAR = auto()
     COLOR = auto()
     STYLE = auto()
+    MACRO = auto()
     ESCAPED = auto()
     BACKGROUND_COLOR = auto()
 
@@ -219,6 +254,7 @@ class Token:
     plain: Optional[str] = None
     code: Optional[str] = None
     attribute: Optional[TokenAttribute] = None
+    macro_value: Optional[MacroCallable] = None
 
     def to_name(self) -> str:
         """Convert token to named attribute for rich text"""
@@ -411,6 +447,16 @@ def tokenize_markup(text: str) -> Iterator[Token]:
                     attribute=TokenAttribute.STYLE,  # maybe this could be a special CUSTOM tag
                 )
 
+            elif tag in MACRO_MAP:
+                yield Token(
+                    start,
+                    end,
+                    plain=tag,
+                    code="",
+                    macro_value=MACRO_MAP[tag],
+                    attribute=TokenAttribute.MACRO,
+                )
+
             else:
                 if (data := _handle_named_color(tag)) is not None:
                     code, background = data
@@ -455,9 +501,27 @@ def markup_to_ansi(
 ) -> str:
     """Turn markup text into ANSI str"""
 
+    def _apply_macros(text: str, macros: list[MacroCallable]) -> str:
+        """Apply list of macros to string"""
+
+        for macro in macros:
+            text = macro(text)
+
+        return text
+
     ansi = ""
+    macro_tokens: list[Token] = []
+    macro_callables: list[MacroCallable] = []
+
     for token in tokenize_markup(markup):
-        ansi += token.to_sequence()
+        if token.attribute is TokenAttribute.MACRO:
+            macro_callables.append(token.macro_value)
+            continue
+
+        if token.plain is not None:
+            ansi += _apply_macros(token.plain, macro_callables)
+        else:
+            ansi += token.to_sequence()
 
     if ensure_reset and not ansi.endswith(reset()):
         ansi += reset()
@@ -535,6 +599,10 @@ def prettify_markup(markup: str) -> str:
             if item.attribute is TokenAttribute.ESCAPED:
                 chars = list(item.to_name())
                 styled += foreground("\\" + chars[0], 210) + "".join(chars[1:])
+                continue
+
+            if item.attribute is TokenAttribute.MACRO:
+                styled += bold(foreground(item.to_name(), 210))
                 continue
 
             if seq := item.to_sequence():
