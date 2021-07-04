@@ -55,7 +55,9 @@ class _Serializer:
 
     @staticmethod
     def dump_to_dict(obj: widgets.Widget) -> dict[str, Any]:
-        """Dump widget to a dict, alias for obj.serialize()"""
+        """Dump widget to a dict, alias for obj.serialize()
+
+        Todo: this method should also dump custom tags"""
 
         return obj.serialize()
 

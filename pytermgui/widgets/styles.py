@@ -11,6 +11,8 @@ This submodule provides the basic style methods for Widgets
 
 from dataclasses import dataclass
 from typing import Callable, Union
+
+from ..helpers import strip_ansi
 from ..parser import markup_to_ansi
 from ..ansi_interface import background
 
@@ -63,9 +65,13 @@ class MarkupFormatter:
 
     markup: str
     ensure_reset: bool = True
+    ensure_strip: bool = False
 
     def __call__(self, depth: int, item: str) -> str:
         """StyleType: Format depth & item into given markup template"""
+
+        if self.ensure_strip:
+            item = strip_ansi(item)
 
         return markup_to_ansi(
             self.markup.format(depth=depth, item=item), self.ensure_reset
