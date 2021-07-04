@@ -12,7 +12,7 @@ This submodule the basic elements this library provides.
 
 from __future__ import annotations
 from copy import deepcopy
-from typing import Optional, Type, Union, Iterator, Any
+from typing import Callable, Optional, Type, Union, Iterator, Any
 from dataclasses import dataclass
 
 from ..exceptions import WidthExceededError
@@ -20,8 +20,6 @@ from ..context_managers import cursor_at
 from ..parser import (
     ansi_to_markup,
     optimize_ansi,
-    tokenize_ansi,
-    TokenAttribute,
 )
 from ..helpers import real_length
 from ..ansi_interface import (
@@ -68,6 +66,10 @@ def _set_obj_or_cls_char(
 
 @dataclass
 class Button:
+    """An object that is referenced in mouse events
+
+    Note: It is not yet implemented."""
+
     start: tuple[int, int]
     end: tuple[int, int]
     callback: Callable[[Widget], Any]

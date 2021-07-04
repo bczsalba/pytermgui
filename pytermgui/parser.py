@@ -510,11 +510,12 @@ def markup_to_ansi(
         return text
 
     ansi = ""
-    macro_tokens: list[Token] = []
     macro_callables: list[MacroCallable] = []
 
     for token in tokenize_markup(markup):
         if token.attribute is TokenAttribute.MACRO:
+            assert token.macro_value is not None
+
             macro_callables.append(token.macro_value)
             continue
 
@@ -590,8 +591,7 @@ def prettify_markup(markup: str) -> str:
                 continue
 
             if item.attribute is TokenAttribute.BACKGROUND_COLOR:
-                seq = item.to_sequence()
-                numbers = seq.split(";")
+                numbers = item.to_sequence().split(";")
                 numbers[0] = bold("", reset_style=False) + "\x1b[38"
                 styled += ";".join(numbers) + item.to_name() + reset()
                 continue

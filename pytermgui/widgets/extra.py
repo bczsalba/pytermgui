@@ -12,7 +12,7 @@ or at least partially use the classes provided in .base.
 # these classes will have to have more than 7 attributes mostly.
 # pylint: disable=too-many-instance-attributes
 
-from typing import Optional, Callable, Iterator, Union, Any
+from typing import Optional, Callable, Any
 
 from .base import (
     Container,
@@ -34,7 +34,7 @@ from ..ansi_interface import foreground
 from ..helpers import real_length, strip_ansi
 
 
-def _focus(button: Button, obj: Widget) -> None:
+def _focus(button: Button, obj: Widget) -> None:  # pylint: disable=unused-argument
     """Select object
 
     This is a function to avoid usage of unnamed lambdas."""
@@ -98,21 +98,24 @@ class Splitter(Container):
         "separator": apply_markup,
     }
 
-    def __init__(self, *elements: Optional[tuple[Widget, ...]]) -> None:
+    def __init__(self, *elements: Widget) -> None:
         """Initialize Splitter, add given elements to it"""
 
         super().__init__()
 
         self.widths = None
 
-        for widget in elements:
-            self += widget
+        if elements is not None:
+            for widget in elements:
+                self._add_widget(widget)
 
-    def get_lines(self) -> str:
+    def get_lines(self) -> list[str]:
         """Get lines of all objects"""
 
         lines = []
         separator = self.get_char("separator")
+        assert isinstance(separator, str)
+
         widget_lines = [widget.get_lines() for widget in self._widgets]
 
         for horizontal in zip(*widget_lines):
@@ -179,7 +182,7 @@ class ListView(Widget):
 
     chars: dict[str, CharType] = {"delimiter": ["< ", " >"]}
 
-    click_callback: Callable[[Widget], Any] = _focus
+    click_callback: Callable[[Button, Widget], Any] = _focus
 
     serialized = Widget.serialized + [
         "*options",
@@ -243,7 +246,8 @@ class ListView(Widget):
                 else:
                     label.value = "".join(value)
 
-                lines += label.get_lines()
+                for line in label.get_lines():
+                    lines.append(line)
 
         return lines
 
@@ -527,136 +531,3 @@ class InputField(Widget):
             + f"tab_length={self.tab_length}"
             + ")"
         )
-
-
-class O_Splitter(Widget):
-    """A widget that holds sub-widgets, and aligns them next to eachother"""
-
-    chars: dict[str, CharType] = {
-        "separator": " | ",
-    }
-
-    styles: dict[str, StyleType] = {
-        "separator": apply_markup,
-    }
-
-    serialized = Widget.serialized + ["arrangement"]
-
-    def __init__(self, arrangement: Optional[str] = None) -> None:
-        """Initiate object"""
-
-        super().__init__()
-        self.arrangement = arrangement
-        self._widgets: list[Widget] = []
-
-    def __add__(self, other: object) -> Splitter:
-        """Overload + operator"""
-
-        return self.__iadd__(other)
-
-    def __iadd__(self, other: object) -> Splitter:
-        """Overload += operator"""
-
-        if not isinstance(other, Widget):
-            raise NotImplementedError("You can only add widgets to a Splitter.")
-
-        self._add_widget(other)
-        return self
-
-    def __iter__(self) -> Iterator[Widget]:
-        """Iterate through self._widgets"""
-
-        for widget in self._widgets:
-            yield widget
-
-    def __getitem__(self, sli: Union[int, slice]) -> Union[Widget, list[Widget]]:
-        """Index in self._widget"""
-
-        return self._widgets[sli]
-
-    def __setitem__(self, index: int, value: Any) -> None:
-        """Set item in self._widgets"""
-
-        self._widgets[index] = value
-
-    def _add_widget(self, other: Widget) -> None:
-        """Add an widget"""
-
-        if other.forced_height is not None:
-            other.height = other.forced_height
-
-        if self.height is None:
-            self.height += other.height
-
-        self._widgets.append(other)
-
-    def serialize(self) -> dict[str, Any]:
-        """Serialize object"""
-
-        out = super().serialize()
-        out["_widgets"] = []
-
-        for widget in self._widgets:
-            out["_widgets"].append(widget.serialize())
-
-        return out
-
-    def get_lines(self) -> list[str]:
-        """Get lines by joining all widgets
-
-        This is not ideal. ListView-s don't work properly, and this object's
-        width is not set correctly."""
-
-        widgets = self._widgets
-
-        if len(widgets) == 0:
-            return []
-
-        separator_style = self.get_style("separator")
-        char = self.get_char("separator")
-        assert isinstance(char, str), char
-        separator = separator_style(char)
-
-        if self.arrangement is None:
-            widget_width = self.width // len(widgets)
-            widget_width -= real_length((len(widgets) - 1) * separator)
-            widths = [widget_width] * len(widgets)
-
-        else:
-            # there should be "fluid" widths, not just static ones.
-            widths = [int(val) for val in self.arrangement.split(";")]
-
-        for i, widget in enumerate(widgets):
-            if widget.forced_width is None:
-                try:
-                    widget.width = widths[i]
-                except IndexError as error:
-                    raise ValueError(
-                        "There were not enough widths supplied in the arrangement:"
-                        + f" expected {len(widgets)}, got {len(widths)}."
-                    ) from error
-
-        lines = []
-        widget_lines = [widget.get_lines() for widget in widgets]
-
-        for horizontal in zip(*widget_lines):
-            lines.append(separator.join(horizontal))
-
-        self.width = max(real_length(line) for line in lines) - 1
-
-        if self.forced_height is None:
-            self.height = len(lines)
-
-        return lines
-
-    def debug(self) -> str:
-        """Debug identifiable information about objects"""
-
-        out = "Splitter(), widgets=["
-        for widget in self._widgets:
-            out += type(widget).__name__ + ", "
-
-        out = out.strip(", ")
-        out += "]"
-
-        return out

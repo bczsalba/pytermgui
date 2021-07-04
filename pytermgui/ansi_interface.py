@@ -495,11 +495,13 @@ def translate_mouse(code: str) -> Optional[tuple[str, tuple[int, int]]]:
     """Translate report_mouse() (decimal_xterm) codes into tuple[action, tuple[x, y]]"""
 
     try:
-        pos = tuple(int(value) for value in code[3:-1].split(";")[1:])
+        numbers = code[3:].split(";")
+        pos = (int(numbers[0]), int(numbers[1]))
+
         action = "press" if code[-1] == "M" else "release"
         return action, pos
 
-    except:
+    except (ValueError, TypeError):
         return None
 
 

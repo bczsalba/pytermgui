@@ -45,17 +45,12 @@ class StyleCall:
         """DepthlessStyleType: Apply style method to item, using depth"""
 
         try:
-            # this is seen as passing self as an argument, and
-            # annotating it a staticmethod (which it functionally is)
-            # does not fix the issue.
-            return self.method(self.obj.depth, item)  # type: ignore
+            return self.method(self.obj.depth, item)
 
         # this is purposefully broad, as anything can happen during these calls.
         except Exception as error:
             raise RuntimeError(
-                # this method isn't even called, so not really sure why it gets
-                # invalid self argument.
-                f'Could not apply style {self.method} to "{item}": {error}'  # type: ignore
+                f'Could not apply style {self.method} to "{item}": {error}'
             ) from error
 
 
