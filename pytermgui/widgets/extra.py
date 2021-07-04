@@ -18,6 +18,7 @@ from .base import (
     Container,
     Label,
     Widget,
+    Button,
 )
 
 from .styles import (
@@ -31,6 +32,14 @@ from .styles import (
 from ..input import keys
 from ..ansi_interface import foreground
 from ..helpers import real_length, strip_ansi
+
+
+def _focus(button: Button, obj: Widget) -> None:
+    """Select object
+
+    This is a function to avoid usage of unnamed lambdas."""
+
+    obj.focus()
 
 
 class ColorPicker(Container):
@@ -169,6 +178,8 @@ class ListView(Widget):
     }
 
     chars: dict[str, CharType] = {"delimiter": ["< ", " >"]}
+
+    click_callback: Callable[[Widget], Any] = _focus
 
     serialized = Widget.serialized + [
         "*options",

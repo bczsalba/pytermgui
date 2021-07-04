@@ -13,6 +13,7 @@ This submodule the basic elements this library provides.
 from __future__ import annotations
 from copy import deepcopy
 from typing import Optional, Type, Union, Iterator, Any
+from dataclasses import dataclass
 
 from ..exceptions import WidthExceededError
 from ..context_managers import cursor_at
@@ -65,6 +66,26 @@ def _set_obj_or_cls_char(
     obj_or_cls.chars[key] = value
 
 
+@dataclass
+class Button:
+    start: tuple[int, int]
+    end: tuple[int, int]
+    callback: Callable[[Widget], Any]
+
+    def contains(self, pos: tuple[int, int]) -> bool:
+        """Check if button area contains pos"""
+
+        start = self.start
+        end = self.end
+
+        return start[0] <= pos[0] <= end[0] and start[1] <= pos[1] <= end[1]
+
+    def click(self, caller: Widget) -> None:
+        """Execute callback with caller as the argument"""
+
+        self.callback(caller)
+
+
 class Widget:
     """The widget from which all UI classes derive from"""
 
@@ -115,6 +136,7 @@ class Widget:
         self.selected_index: Optional[int] = None
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
+        self.buttons: list[Button] = []
 
         self._serialized_fields = type(self).serialized
         self._id: Optional[str] = None
@@ -203,6 +225,16 @@ class Widget:
             raise NotImplementedError("You can only set integers as object positions.")
 
         self.pos = (self.posx, value)
+
+    def click(self, pos: tuple[int, int]) -> bool:
+        """Try to click the button that contains pos, return False otherwise"""
+
+        for button in self.buttons:
+            if button.contains(pos):
+                button.click(self)
+                return True
+
+        return False
 
     def serialize(self) -> dict[str, Any]:
         """Serialize object based on type(object).serialized"""
@@ -702,6 +734,15 @@ class Container(Widget):
         self._prev_screen = screen_size()
 
         return self
+
+    def click(self, pos: tuple[int, int]) -> bool:
+        """Try to click any of our children"""
+
+        for widget in self._widgets:
+            if widget.click(pos):
+                return True
+
+        return False
 
     def focus(self) -> None:
         """Focus all widgets"""

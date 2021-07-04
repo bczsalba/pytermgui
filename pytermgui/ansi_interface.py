@@ -61,6 +61,7 @@ __all__ = [
     "dont_echo",
     "set_mode",
     "report_mouse",
+    "translate_mouse",
     "print_to",
     "reset",
     "bold",
@@ -488,6 +489,18 @@ def report_mouse(
 
     _stdout.write("h" if action == "start" else "l")
     _stdout.flush()
+
+
+def translate_mouse(code: str) -> Optional[tuple[str, tuple[int, int]]]:
+    """Translate report_mouse() (decimal_xterm) codes into tuple[action, tuple[x, y]]"""
+
+    try:
+        pos = tuple(int(value) for value in code[3:-1].split(";")[1:])
+        action = "press" if code[-1] == "M" else "release"
+        return action, pos
+
+    except:
+        return None
 
 
 # shorthand functions
