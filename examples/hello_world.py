@@ -64,8 +64,9 @@ inner += Label(
 # add inner to root
 root += inner
 
-# create tag Listview
-tag_options = [
+
+# create style container
+style_tags = [
     "/",
     "bold",
     "dim",
@@ -76,12 +77,21 @@ tag_options = [
     "inverse",
     "invisible",
     "strikethrough",
+    "",
 ]
-tags = ListView(tag_options, align=Label.ALIGN_LEFT)
-tags.set_char("delimiter", [""] * 2)
-tags.set_style("options", MarkupFormatter("[{item}]{item}"))
 
-# create color ListView
+styles = Container()
+styles.set_char("border", [""] * 4)
+styles.set_char("corner", [""] * 4)
+
+for tag in style_tags:
+    if tag == "":
+        styles += Label()
+    else:
+        styles += Label(f"[{tag}]{tag}")
+
+
+# create color container
 color_tags = [
     f"[{random_255()}]0-255",
     f"[{random_hex()}]#rrbbgg",
@@ -94,16 +104,19 @@ color_tags = [
     "[210]/fg",
     "[210]/bg",
     "[210]/{tag}",
-    "",
-    "",
-    "",
 ]
-color_tags += [""] * (len(tag_options) - len(color_tags))
-colors = ListView(color_tags, align=Label.ALIGN_RIGHT)
-colors.set_char("delimiter", ["", ""])
+
+colors = Container()
+colors.set_char("border", [""] * 4)
+colors.set_char("corner", [""] * 4)
+
+for tag in color_tags:
+    colors += Label(tag)
+
 
 # creates features Container
-features = Container() + (Splitter() + tags + colors)
+features = Container() + (Splitter() + styles + colors)
+
 
 # set up features' corners
 corners = features.get_char("corner").copy()
