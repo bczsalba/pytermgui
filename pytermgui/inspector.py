@@ -19,7 +19,7 @@ from typing import Optional, Any
 from inspect import signature, getdoc, isclass, ismodule, Signature
 
 from .input import getch
-from .parser import markup_to_ansi
+from .parser import ansi
 from .widgets import Container, Label
 from .context_managers import alt_buffer
 from .widgets.boxes import DOUBLE_BOTTOM
@@ -127,7 +127,7 @@ def inspect(
     print("Inspection complete!")
     if is_interactive():
         print(
-            markup_to_ansi(
+            ansi(
                 "\n[210 bold]Note: [/]"
                 + "The Python interactive shell doesn't support hiding input characters,"
                 + " so the inspect() experience is not ideal.\n"

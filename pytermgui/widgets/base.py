@@ -18,7 +18,7 @@ from dataclasses import dataclass
 from ..exceptions import WidthExceededError
 from ..context_managers import cursor_at
 from ..parser import (
-    ansi_to_markup,
+    markup,
     optimize_ansi,
 )
 from ..helpers import real_length
@@ -258,9 +258,9 @@ class Widget:
             if style:
                 style_call = self.get_style(key)
                 if isinstance(value, list):
-                    out[key] = [ansi_to_markup(style_call(char)) for char in value]
+                    out[key] = [markup(style_call(char)) for char in value]
                 else:
-                    out[key] = ansi_to_markup(style_call(value))
+                    out[key] = markup(style_call(value))
 
                 continue
 
@@ -272,9 +272,9 @@ class Widget:
             style_call = self.get_style(key)
 
             if isinstance(value, list):
-                out["chars"][key] = [ansi_to_markup(style_call(char)) for char in value]
+                out["chars"][key] = [markup(style_call(char)) for char in value]
             else:
-                out["chars"][key] = ansi_to_markup(style_call(value))
+                out["chars"][key] = markup(style_call(value))
 
         return out
 

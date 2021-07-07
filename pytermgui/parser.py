@@ -60,15 +60,15 @@ Notes on syntax:
 
 
 Example syntax:
-    >>> from pytermgui import markup_to_ansi, ansi_to_markup
+    >>> from pytermgui import ansi, markup
 
-    >>> ansi = markup_to_ansi(
+    >>> ansi = ansi(
     ... "[@141 60 bold italic] Hello "
     ... + "[/italic underline inverse] There! "
     ... )
     '\x1b[48;5;141m\x1b[38;5;60m\x1b[1m\x1b[3m Hello \x1b[23m\x1b[4m\x1b[7m There! \x1b[0m'
 
-    >>> markup = ansi_to_markup(ansi)
+    >>> markup = markup(ansi)
     '[@141 60 bold italic]Hello[/italic underline inverse]There![/]''
 """
 
@@ -87,8 +87,8 @@ __all__ = [
     "escape_ansi",
     "tokenize_ansi",
     "tokenize_markup",
-    "markup_to_ansi",
-    "ansi_to_markup",
+    "ansi",
+    "markup",
     "prettify_markup",
     "optimize_ansi",
 ]
@@ -496,7 +496,7 @@ def tokenize_markup(text: str) -> Iterator[Token]:
         yield Token(start, end, plain=text[position:])
 
 
-def markup_to_ansi(
+def ansi(
     markup: str, ensure_reset: bool = True, ensure_optimized: bool = True
 ) -> str:
     """Turn markup text into ANSI str"""
@@ -533,7 +533,7 @@ def markup_to_ansi(
     return ansi
 
 
-def ansi_to_markup(ansi: str, ensure_reset: bool = True) -> str:
+def markup(ansi: str, ensure_reset: bool = True) -> str:
     """Turn ansi text into markup"""
 
     markup = ""
@@ -692,7 +692,7 @@ def optimize_ansi(ansi: str, ensure_reset: bool = True) -> str:
 
 if __name__ == "__main__":
     print(
-        markup_to_ansi(
+        ansi(
             "[italic bold 141;35;60]hello there[/][141] alma[/] [18;218;168 underline]fa"
         )
     )

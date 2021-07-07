@@ -26,8 +26,8 @@ from . import (
     serializer,
     foreground as color,
     background as color_bg,
-    ansi_to_markup,
-    markup_to_ansi,
+    markup,
+    ansi,
     prettify_markup,
     strip_ansi,
     getch,
@@ -170,9 +170,9 @@ def parse_text(args: Namespace) -> None:
     txt = args.parse[0]
 
     if args.inverse:
-        parsed = ansi_to_markup(optimize_ansi(txt))
+        parsed = markup(optimize_ansi(txt))
         print(escape_ansi(optimize_ansi(txt)))
-        inverse_result = markup_to_ansi(parsed)
+        inverse_result = ansi(parsed)
 
         if args.escape:
             txt = escape_ansi(txt)
@@ -181,8 +181,8 @@ def parse_text(args: Namespace) -> None:
         parsed = prettify_markup(parsed)
 
     else:
-        parsed = optimize_ansi(markup_to_ansi(txt))
-        inverse_result = ansi_to_markup(parsed)
+        parsed = optimize_ansi(ansi(txt))
+        inverse_result = markup(parsed)
         txt = prettify_markup(txt)
 
         if args.escape:
@@ -253,11 +253,11 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
 
                 try:
                     value = infield.get_value(strip=False).replace("\n", "[/]\n")
-                    view.value = markup_to_ansi(value)
+                    view.value = ansi(value)
                     final.value = prettify_markup(value)
 
                 except SyntaxError as error:
-                    view.value = markup_to_ansi(
+                    view.value = ansi(
                         "[bold 210]SyntaxError: [/fg]"
                     ) + strip_ansi(str(error))
 
@@ -290,7 +290,7 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
 
     options = []
     for option in parser_names:
-        options.append(markup_to_ansi(f"[{option}]{option}"))
+        options.append(ansi(f"[{option}]{option}"))
 
     options += [
         "",

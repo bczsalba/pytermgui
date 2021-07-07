@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from typing import Callable, Union
 
 from ..helpers import strip_ansi
-from ..parser import markup_to_ansi
+from ..parser import ansi
 from ..ansi_interface import background
 
 __all__ = [
@@ -68,7 +68,7 @@ class MarkupFormatter:
         if self.ensure_strip:
             item = strip_ansi(item)
 
-        return markup_to_ansi(
+        return ansi(
             self.markup.format(depth=depth, item=item), self.ensure_reset
         )
 
@@ -98,4 +98,4 @@ def overrideable_style(depth: int, item: str) -> str:
 def apply_markup(depth: int, item: str) -> str:
     """StyleType: A style that parses markup `item` into ansi"""
 
-    return markup_to_ansi(item, ensure_optimized=True, ensure_reset=True)
+    return ansi(item, ensure_optimized=True, ensure_reset=True)

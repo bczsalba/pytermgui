@@ -33,7 +33,7 @@ from pytermgui import (
     alt_buffer,
     foreground,
     background,
-    markup_to_ansi,
+    ansi,
     real_length,
     keys,
     cursor_home,
@@ -457,4 +457,4 @@ if __name__ == "__main__":
     with alt_buffer(cursor=False):
         main()
 
-    print(markup_to_ansi("[bold @234 208] Goodbye! "))
+    print(ansi("[bold @234 208] Goodbye! "))
