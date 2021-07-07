@@ -497,7 +497,7 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
 
 def ansi(
-    markup: str, ensure_reset: bool = True, ensure_optimized: bool = True
+    markup_text: str, ensure_reset: bool = True, ensure_optimized: bool = True
 ) -> str:
     """Turn markup text into ANSI str"""
 
@@ -509,10 +509,10 @@ def ansi(
 
         return text
 
-    ansi = ""
+    ansi_text = ""
     macro_callables: list[MacroCallable] = []
 
-    for token in tokenize_markup(markup):
+    for token in tokenize_markup(markup_text):
         if token.attribute is TokenAttribute.MACRO:
             assert token.macro_value is not None
 
@@ -520,37 +520,37 @@ def ansi(
             continue
 
         if token.plain is not None:
-            ansi += _apply_macros(token.plain, macro_callables)
+            ansi_text += _apply_macros(token.plain, macro_callables)
         else:
-            ansi += token.to_sequence()
+            ansi_text += token.to_sequence()
 
-    if ensure_reset and not ansi.endswith(reset()):
-        ansi += reset()
+    if ensure_reset and not ansi_text.endswith(reset()):
+        ansi_text += reset()
 
     if ensure_optimized:
-        return optimize_ansi(ansi, ensure_reset)
+        return optimize_ansi(ansi_text, ensure_reset)
 
-    return ansi
+    return ansi_text
 
 
-def markup(ansi: str, ensure_reset: bool = True) -> str:
+def markup(ansi_text: str, ensure_reset: bool = True) -> str:
     """Turn ansi text into markup"""
 
-    markup = ""
+    markup_text = ""
     in_attr = False
     current_bracket: list[str] = []
 
-    if ensure_reset and not ansi.endswith(reset()):
-        ansi += reset()
+    if ensure_reset and not ansi_text.endswith(reset()):
+        ansi_text += reset()
 
-    for token in tokenize_ansi(ansi):
+    for token in tokenize_ansi(ansi_text):
         # start/add to attr bracket
         if token.code is not None:
             in_attr = True
 
             if token.code == "0":
                 current_bracket = []
-                if len(markup) > 0:
+                if len(markup_text) > 0:
                     current_bracket.append("/")
                 continue
 
@@ -559,19 +559,19 @@ def markup(ansi: str, ensure_reset: bool = True) -> str:
 
         # close previous attr bracket
         if in_attr and len(current_bracket) > 0:
-            markup += "[" + " ".join(current_bracket) + "]"
+            markup_text += "[" + " ".join(current_bracket) + "]"
             current_bracket = []
 
         # add name with starting '[' escaped
-        markup += token.to_name().replace("[", "\\[", 1)
+        markup_text += token.to_name().replace("[", "\\[", 1)
 
     if len(current_bracket) > 0:
-        markup += "[" + " ".join(current_bracket) + "]"
+        markup_text += "[" + " ".join(current_bracket) + "]"
 
-    return markup
+    return markup_text
 
 
-def prettify_markup(markup: str) -> str:
+def prettify_markup(markup_text: str) -> str:
     """Return syntax-highlighted markup"""
 
     def _style_attributes(attributes: list[Token]) -> str:
@@ -616,7 +616,7 @@ def prettify_markup(markup: str) -> str:
     applied_bracket: list[str] = []
 
     out = ""
-    for token in tokenize_markup(markup):
+    for token in tokenize_markup(markup_text):
         if token.code is not None:
             if token.attribute is TokenAttribute.CLEAR:
                 name = token.to_name()
@@ -649,7 +649,7 @@ def prettify_markup(markup: str) -> str:
     return out
 
 
-def optimize_ansi(ansi: str, ensure_reset: bool = True) -> str:
+def optimize_ansi(ansi_text: str, ensure_reset: bool = True) -> str:
     """Remove duplicate tokens & identical sequences"""
 
     out = ""
@@ -657,7 +657,7 @@ def optimize_ansi(ansi: str, ensure_reset: bool = True) -> str:
     previous = ""
     has_reset = False
 
-    for token in tokenize_ansi(ansi):
+    for token in tokenize_ansi(ansi_text):
         if token.code is not None:
             if token.code == "0":
                 # only add reset code if there is a reason to

@@ -19,6 +19,7 @@ from ..exceptions import WidthExceededError
 from ..context_managers import cursor_at
 from ..parser import (
     markup,
+    ansi,
     optimize_ansi,
 )
 from ..helpers import real_length
@@ -64,15 +65,18 @@ def _set_obj_or_cls_char(
     obj_or_cls.chars[key] = value
 
 
+MouseCallback = Callable[["MouseTarget", "Widget"], Any]
+
+
 @dataclass
-class Button:
+class MouseTarget:
     """An object that is referenced in mouse events
 
     Note: It is not yet implemented."""
 
     start: tuple[int, int]
     end: tuple[int, int]
-    callback: Callable[[Widget], Any]
+    onclick: Optional[MouseCallback] = None
 
     def contains(self, pos: tuple[int, int]) -> bool:
         """Check if button area contains pos"""
@@ -85,7 +89,17 @@ class Button:
     def click(self, caller: Widget) -> None:
         """Execute callback with caller as the argument"""
 
-        self.callback(caller)
+        if self.onclick is None:
+            raise ValueError("No onclick method set")
+
+        self.onclick(self, caller)
+
+    def debug(self, color: int = 210) -> None:
+        """Print coordinates"""
+
+        for y_pos in range(self.start[1], self.end[1] + 1):
+            with cursor_at((self.start[0], y_pos)) as print_here:
+                print_here(ansi(f"[@{color}]" + "X" * (self.end[0] - self.start[0])))
 
 
 class Widget:
@@ -136,9 +150,9 @@ class Widget:
         self.is_selectable = False
         self.selectables_length = 0
         self.selected_index: Optional[int] = None
+        self.mouse_targets: list[MouseTarget] = []
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
-        self.buttons: list[Button] = []
 
         self._serialized_fields = type(self).serialized
         self._id: Optional[str] = None
@@ -228,12 +242,34 @@ class Widget:
 
         self.pos = (self.posx, value)
 
+    def define_mouse_target(
+        self, start: tuple[int, int], end: tuple[int, int]
+    ) -> MouseTarget:
+        """Define a mouse target, return it for method assignments"""
+
+        normalized_start = list(start)
+        normalized_end = list(end)
+
+        for pos in range(2):
+            if start[pos] > end[pos]:
+                normalized_start[pos] = end[pos]
+                normalized_end[pos] = start[pos]
+
+        # print(normalized_start, normalized_end)
+        self.mouse_targets.append(
+            MouseTarget(
+                (normalized_start[0], normalized_start[1]),
+                (normalized_end[0], normalized_end[1]),
+            )
+        )
+        return self.mouse_targets[-1]
+
     def click(self, pos: tuple[int, int]) -> bool:
         """Try to click the button that contains pos, return False otherwise"""
 
-        for button in self.buttons:
-            if button.contains(pos):
-                button.click(self)
+        for target in self.mouse_targets:
+            if target.contains(pos):
+                target.click(self)
                 return True
 
         return False
@@ -638,6 +674,8 @@ class Container(Widget):
         for widget in self._widgets:
             if len(lines) >= total_height:
                 break
+
+            widget.pos = (self.pos[0] + real_length(left), self.pos[1] + len(lines))
 
             container_offset = 1 if not isinstance(widget, Container) else 0
 

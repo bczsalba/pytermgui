@@ -496,7 +496,7 @@ def translate_mouse(code: str) -> Optional[tuple[str, tuple[int, int]]]:
 
     try:
         numbers = code[3:].split(";")
-        pos = (int(numbers[0]), int(numbers[1]))
+        pos = (int(numbers[1]), int(numbers[2][:-1]))
 
         action = "press" if code[-1] == "M" else "release"
         return action, pos

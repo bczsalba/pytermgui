@@ -257,9 +257,9 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
                     final.value = prettify_markup(value)
 
                 except SyntaxError as error:
-                    view.value = ansi(
-                        "[bold 210]SyntaxError: [/fg]"
-                    ) + strip_ansi(str(error))
+                    view.value = ansi("[bold 210]SyntaxError: [/fg]") + strip_ansi(
+                        str(error)
+                    )
 
                 main_container.print()
 

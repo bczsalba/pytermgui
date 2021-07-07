@@ -10,8 +10,7 @@ This file serves to test basic mouse capabilities.
 
 from typing import Optional, Union
 
-from pytermgui import alt_buffer, report_mouse, getch, clear, print_to
-from pytermgui import foreground256 as color
+from pytermgui import alt_buffer, report_mouse, translate_mouse, getch, foreground, ListView, print_to
 
 
 def parse_mouse(code: str) -> Optional[Union[tuple[tuple[int], bool], Exception]]:
@@ -38,19 +37,21 @@ def parse_mouse(code: str) -> Optional[Union[tuple[tuple[int], bool], Exception]
 
 with alt_buffer(echo=False, cursor=False):
     report_mouse("press")
+    root = ListView(["first", "second", "third"]).get_container()
+    root.center().print()
 
-    pos = (0, 0)
     while key := getch():
-        clear()
-        pos, pressed = parse_mouse(key)
+        translated = translate_mouse(key)
 
-        if pos is None:
-            print_to((0, 0), "key: " + key)
-
-        elif pos is ValueError:
+        if translated is None:
             continue
 
-        else:
-            print_to(pos, color(("." if pressed else "x"), 210))
+        pressed, pos = translated
+        if pressed:
+            print_to(pos, "x")
+            root.click(pos)
+
+        root.print()
+        # for t in root[0].mouse_targets: t.debug('124')
 
 report_mouse("movement", action="stop")

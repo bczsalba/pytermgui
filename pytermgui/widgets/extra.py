@@ -12,13 +12,12 @@ or at least partially use the classes provided in .base.
 # these classes will have to have more than 7 attributes mostly.
 # pylint: disable=too-many-instance-attributes
 
-from typing import Optional, Callable, Any
+from typing import Optional, Callable
 
 from .base import (
     Container,
     Label,
     Widget,
-    Button,
 )
 
 from .styles import (
@@ -34,12 +33,12 @@ from ..ansi_interface import foreground
 from ..helpers import real_length, strip_ansi
 
 
-def _focus(button: Button, obj: Widget) -> None:  # pylint: disable=unused-argument
-    """Select object
+# def _focus(button: Button, obj: Widget) -> None:  # pylint: disable=unused-argument
+# """Select object
 
-    This is a function to avoid usage of unnamed lambdas."""
+# This is a function to avoid usage of unnamed lambdas."""
 
-    obj.focus()
+# obj.focus()
 
 
 class ColorPicker(Container):
@@ -182,7 +181,7 @@ class ListView(Widget):
 
     chars: dict[str, CharType] = {"delimiter": ["< ", " >"]}
 
-    click_callback: Callable[[Button, Widget], Any] = _focus
+    # click_callback: Callable[[Button, Widget], Any] = _focus
 
     serialized = Widget.serialized + [
         "*options",
@@ -218,7 +217,16 @@ class ListView(Widget):
     def get_lines(self) -> list[str]:
         """Get lines to represent object"""
 
+        def _find_start(text: str) -> int:
+            """Find first non-whitespace char of text"""
+
+            for i, char in enumerate(text):
+                if not char == " ":
+                    return i
+            return 0
+
         lines = []
+        self.mouse_targets = []
 
         options_style = self.get_style("options")
         highlight_style = self.get_style("highlight")
@@ -248,6 +256,21 @@ class ListView(Widget):
 
                 for line in label.get_lines():
                     lines.append(line)
+
+                    button = self.define_mouse_target(
+                        (
+                            self.pos[0] + _find_start(line),
+                            self.pos[1] + len(lines),
+                        ),
+                        (
+                            self.pos[0] + real_length(label.value + end),
+                            self.pos[1] + len(lines),
+                        ),
+                    )
+
+                    button.onclick = lambda target, widget: self.select(
+                        self.mouse_targets.index(target)
+                    )
 
         return lines
 

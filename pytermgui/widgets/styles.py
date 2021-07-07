@@ -45,12 +45,13 @@ class StyleCall:
         """DepthlessStyleType: Apply style method to item, using depth"""
 
         try:
-            return self.method(self.obj.depth, item)
+            # mypy fails on one machine with this, but not on the other.
+            return self.method(self.obj.depth, item)  # type: ignore
 
         # this is purposefully broad, as anything can happen during these calls.
         except Exception as error:
             raise RuntimeError(
-                f'Could not apply style {self.method} to "{item}": {error}'
+                f'Could not apply style {self.method} to "{item}": {error}'  # type: ignore
             ) from error
 
 
@@ -68,9 +69,7 @@ class MarkupFormatter:
         if self.ensure_strip:
             item = strip_ansi(item)
 
-        return ansi(
-            self.markup.format(depth=depth, item=item), self.ensure_reset
-        )
+        return ansi(self.markup.format(depth=depth, item=item), self.ensure_reset)
 
 
 def default_foreground(depth: int, item: str) -> str:
