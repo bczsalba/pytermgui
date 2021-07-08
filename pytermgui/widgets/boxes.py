@@ -17,7 +17,8 @@ They can be used as:
 For more info, check out help(pytermgui.boxes.Box)
 """
 
-from .base import Widget
+from .base import Widget, Container
+from .extra import Splitter
 from ..helpers import real_length
 
 
@@ -43,21 +44,20 @@ class Box(Widget):
     construction parameter.
 
     As such, this:
-    boxes.Box(
-        [
-            "corner1 ________________ corner2",
-            "xleft   ################ rightxx",
-            "corner3 ---------------- corner4",
-        ],
-        content_char="#",
-    )
+    >>> boxes.Box(
+    ...    [
+    ...        "corner1 ________________ corner2",
+    ...        "xleft   ################ rightxx",
+    ...        "corner3 ---------------- corner4",
+    ...    ],
+    ...    content_char="#",
+    ... )
 
     will give:
         Box(
             borders=['xleft   ', '_', ' rightxx', '-'],
             corners=['corner1 ', ' corner2', ' corner4', 'corner3 ']
         )
-
     """
 
     CharType = tuple[str, str, str, str]
@@ -141,8 +141,13 @@ class Box(Widget):
     def set_chars_of(self, cls_or_obj: object) -> None:
         """Set border & corner chars of cls_or_obj to self values"""
 
-        cls_or_obj.set_char("border", self.borders)
-        cls_or_obj.set_char("corner", self.corners)
+        if isinstance(cls_or_obj, Splitter):
+            cls_or_obj.set_char("separator", " " + self.borders[0])
+
+        elif isinstance(cls_or_obj, Container):
+            cls_or_obj.set_char("border", self.borders)
+            cls_or_obj.set_char("corner", self.corners)
+
 
     def get_lines(self) -> list[str]:
         """Get lines from object"""
