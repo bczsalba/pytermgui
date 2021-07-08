@@ -29,7 +29,7 @@ from .styles import (
     CharType,
 )
 from ..input import keys
-from ..ansi_interface import foreground
+from ..ansi_interface import foreground, background
 from ..helpers import real_length, strip_ansi
 
 
@@ -46,6 +46,18 @@ class ColorPicker(Container):
         self.grid_cols = grid_cols
         self.forced_width = self.grid_cols * 4 - 1 + self.sidelength
         self.width = self.forced_width
+
+        self._layer_functions = [
+            foreground,
+            background,
+        ]
+
+        self.layer = 1
+
+    def toggle_layer(self) -> None:
+        """Toggle foreground/background"""
+
+        self.layer = 1 if self.layer == 0 else 0
 
     def get_lines(self) -> list[str]:
         """Get color table lines"""
@@ -66,12 +78,13 @@ class ColorPicker(Container):
                     buff += "    "
                     continue
 
-                buff += foreground(f"{col:>3}", col) + " "
+                buff += self._layer_functions[self.layer](f"{col:>3}", col) + " "
 
             buff = buff[:-1]
             lines.append(buff + "" + right_border)
 
         lines.append(last_line)
+
         return lines
 
     def debug(self) -> str:
