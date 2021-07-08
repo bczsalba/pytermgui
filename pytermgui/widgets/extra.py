@@ -258,14 +258,7 @@ class ListView(Widget):
                     lines.append(line)
 
                     button = self.define_mouse_target(
-                        (
-                            self.pos[0] + _find_start(line),
-                            self.pos[1] + len(lines),
-                        ),
-                        (
-                            self.pos[0] + real_length(label.value + end),
-                            self.pos[1] + len(lines),
-                        ),
+                        _find_start(line), _find_start(line[::-1]), 1, top=i
                     )
 
                     button.onclick = lambda target, widget: self.select(
@@ -456,6 +449,10 @@ class InputField(Widget):
             lines += _get_label_lines(buff)
 
         self.height = len(lines)
+
+        self.define_mouse_target(
+            0, 0, self.height
+        ).onclick = lambda target, self: self.focus()
 
         return lines
 

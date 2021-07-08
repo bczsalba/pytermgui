@@ -13,7 +13,7 @@ This submodule the basic elements this library provides.
 from __future__ import annotations
 from copy import deepcopy
 from typing import Callable, Optional, Type, Union, Iterator, Any
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ..exceptions import WidthExceededError
 from ..context_managers import cursor_at
@@ -74,15 +74,31 @@ class MouseTarget:
 
     Note: It is not yet implemented."""
 
-    start: tuple[int, int]
-    end: tuple[int, int]
+    parent: Widget
+    left: int
+    right: int
+    height: int
+    top: int = 0
+
+    _start: tuple[int, int] = field(init=False)
+    _end: tuple[int, int] = field(init=False)
     onclick: Optional[MouseCallback] = None
+
+    def adjust(self) -> None:
+        """Adjust target positions to fit in whatever new positions we have"""
+
+        pos = self.parent.pos
+        self._start = (pos[0] + self.left, pos[1] + self.top + 1)
+        self._end = (
+            pos[0] + self.parent.width + 1 - self.right,
+            pos[1] + self.top + 1 + (self.height - 1),
+        )
 
     def contains(self, pos: tuple[int, int]) -> bool:
         """Check if button area contains pos"""
 
-        start = self.start
-        end = self.end
+        start = self._start
+        end = self._end
 
         return start[0] <= pos[0] <= end[0] and start[1] <= pos[1] <= end[1]
 
@@ -97,9 +113,9 @@ class MouseTarget:
     def debug(self, color: int = 210) -> None:
         """Print coordinates"""
 
-        for y_pos in range(self.start[1], self.end[1] + 1):
-            with cursor_at((self.start[0], y_pos)) as print_here:
-                print_here(ansi(f"[@{color}]" + "X" * (self.end[0] - self.start[0])))
+        for y_pos in range(self._start[1], self._end[1] + 1):
+            with cursor_at((self._start[0], y_pos)) as print_here:
+                print_here(ansi(f"[@{color}]" + "X" * (self._end[0] - self._start[0])))
 
 
 class Widget:
@@ -243,26 +259,16 @@ class Widget:
         self.pos = (self.posx, value)
 
     def define_mouse_target(
-        self, start: tuple[int, int], end: tuple[int, int]
+        self, left: int, right: int, height: int, top: int = 0
     ) -> MouseTarget:
         """Define a mouse target, return it for method assignments"""
 
-        normalized_start = list(start)
-        normalized_end = list(end)
+        target = MouseTarget(self, left, right, height, top)
 
-        for pos in range(2):
-            if start[pos] > end[pos]:
-                normalized_start[pos] = end[pos]
-                normalized_end[pos] = start[pos]
+        target.adjust()
+        self.mouse_targets.append(target)
 
-        # print(normalized_start, normalized_end)
-        self.mouse_targets.append(
-            MouseTarget(
-                (normalized_start[0], normalized_start[1]),
-                (normalized_end[0], normalized_end[1]),
-            )
-        )
-        return self.mouse_targets[-1]
+        return target
 
     def click(self, pos: tuple[int, int]) -> bool:
         """Try to click the button that contains pos, return False otherwise"""
@@ -671,6 +677,8 @@ class Container(Widget):
         if self.forced_width is None:
             self.width = min(self.width, screen_width() - 1)
 
+        targets: list[MouseTarget] = []
+
         for widget in self._widgets:
             if len(lines) >= total_height:
                 break
@@ -694,6 +702,7 @@ class Container(Widget):
             elif widget.forced_width is None:
                 widget.width = self.width - self.sidelength - container_offset
 
+            targets += widget.mouse_targets
             for line in widget.get_lines():
                 if len(lines) >= total_height:
                     break
@@ -720,6 +729,9 @@ class Container(Widget):
             lines.append(_border_line(bottom, b_left, b_right))
 
         self.height = len(lines)
+
+        for target in targets:
+            target.adjust()
 
         return lines
 
@@ -871,6 +883,8 @@ class Prompt(Widget):
     def get_lines(self) -> list[str]:
         """Get lines for object"""
 
+        self.mouse_targets = []
+
         label_style = self.get_style("label")
         value_style = self.get_style("value")
         delimiter_style = self.get_style("delimiter")
@@ -908,6 +922,9 @@ class Prompt(Widget):
             and self.highlight_target is Prompt.HIGHLIGHT_ALL
         ):
             middle = highlight_style(middle)
+
+        button = self.define_mouse_target(0, 0, 1)
+        button.onclick = lambda target, widget: widget.select(0)
 
         return [label + middle + value]
 

@@ -501,7 +501,7 @@ def translate_mouse(code: str) -> Optional[tuple[str, tuple[int, int]]]:
         action = "press" if code[-1] == "M" else "release"
         return action, pos
 
-    except (ValueError, TypeError):
+    except (IndexError, ValueError, TypeError):
         return None
 
 
