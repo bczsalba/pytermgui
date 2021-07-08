@@ -22,12 +22,13 @@ from ..parser import (
     ansi,
     optimize_ansi,
 )
-from ..helpers import real_length
+from ..helpers import real_length, break_line
 from ..ansi_interface import (
     screen_width,
     screen_height,
     screen_size,
     clear,
+    reset,
 )
 from .styles import (
     StyleCall,
@@ -1001,11 +1002,13 @@ class Label(Widget):
         """Get lines of object"""
 
         value_style = self.get_style("value")
+        broken = break_line(value_style(self.value), self.width)
         lines = []
 
         if self.align is Label.ALIGN_CENTER:
-            for line in self.value.split("\n"):
-                line = value_style(line)
+            for line in broken:
+                line += reset()
+
                 padding = (self.width - real_length(line) - self.padding) // 2
                 outline = (padding + self.padding + 1) * " " + line
                 outline += (self.width - real_length(outline) + 1) * " "
@@ -1013,13 +1016,17 @@ class Label(Widget):
                 lines.append(outline)
 
         elif self.align is Label.ALIGN_LEFT:
-            for line in self.value.split("\n"):
+            for line in broken:
+                line += reset()
+
                 line = value_style(line)
                 padding = self.width - real_length(line) - self.padding + 1
                 lines.append(self.padding * " " + line + padding * " ")
 
         elif self.align is Label.ALIGN_RIGHT:
-            for line in self.value.split("\n"):
+            for line in broken:
+                line += reset()
+
                 line = value_style(line)
                 lines.append(
                     (self.width - real_length(line) - self.padding + 1) * " "
