@@ -5,10 +5,14 @@ author: bczsalba
 
 
 Module providing context-manager classes & functions.
+
+There isn't much (or any) additional functionality provided
+in this module, most things are nicer-packaged combinations to
+already available methods from ansi_interface.
 """
 
 from os import name
-from typing import Callable, Generator, Any
+from typing import Callable, Generator, Any, Optional
 from contextlib import contextmanager
 
 from .ansi_interface import (
@@ -23,6 +27,8 @@ from .ansi_interface import (
     start_alt_buffer,
     end_alt_buffer,
     cursor_up,
+    report_mouse,
+    translate_mouse,
 )
 
 
@@ -76,3 +82,28 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
         if not cursor:
             show_cursor()
             cursor_up()
+
+
+@contextmanager
+def mouse_handler(
+    event: str,
+) -> Generator[Callable[[str], Optional[tuple[bool, tuple[int, int]]]], None, None]:
+    """Return a mouse handler function
+
+    Note: This only supports the method `decimal_xterm` as it seems to be the most universal,
+    and has one of the nicer interfaces.
+
+    Example use:
+        >>> from pytermgui import mouse_handler, getch
+        >>> with mouse_handler("press") as mouse:
+        ...     while True:
+        ...         event = mouse(getch())
+        '(True, (33, 55))'
+    """
+
+    try:
+        report_mouse(event, method="decimal_xterm")
+        yield translate_mouse
+
+    finally:
+        report_mouse(event, method="decimal_xterm", action="stop")

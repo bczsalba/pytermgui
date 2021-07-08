@@ -33,14 +33,6 @@ from ..ansi_interface import foreground
 from ..helpers import real_length, strip_ansi
 
 
-# def _focus(button: Button, obj: Widget) -> None:  # pylint: disable=unused-argument
-# """Select object
-
-# This is a function to avoid usage of unnamed lambdas."""
-
-# obj.focus()
-
-
 class ColorPicker(Container):
     """A Container that shows the 256 color table"""
 
@@ -261,9 +253,7 @@ class ListView(Widget):
                         _find_start(line), _find_start(line[::-1]), 1, top=i
                     )
 
-                    button.onclick = lambda target, widget: self.select(
-                        self.mouse_targets.index(target)
-                    )
+                    button.onclick = self.onclick
 
         return lines
 
@@ -318,6 +308,8 @@ class InputField(Widget):
         self.tab_length = tab_length
         self.cursor = real_length(value)
         self.width = 40
+
+        self.selectables_length = 1
 
         self._donor_label = Label(align=Label.ALIGN_LEFT, padding=padding)
         self._donor_label.width = self.width
@@ -450,9 +442,7 @@ class InputField(Widget):
 
         self.height = len(lines)
 
-        self.define_mouse_target(
-            0, 0, self.height
-        ).onclick = lambda target, self: self.focus()
+        self.define_mouse_target(0, 0, self.height).onclick = self.onclick
 
         return lines
 
@@ -538,6 +528,11 @@ class InputField(Widget):
 
             self.value = left + key + right
             self.cursor += 1
+
+    def select(self, index: int) -> None:
+        """Select object"""
+
+        self.focus()
 
     def debug(self) -> str:
         """Return identifiable information about object"""

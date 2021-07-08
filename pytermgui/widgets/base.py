@@ -82,6 +82,7 @@ class MouseTarget:
 
     _start: tuple[int, int] = field(init=False)
     _end: tuple[int, int] = field(init=False)
+
     onclick: Optional[MouseCallback] = None
 
     def adjust(self) -> None:
@@ -106,16 +107,16 @@ class MouseTarget:
         """Execute callback with caller as the argument"""
 
         if self.onclick is None:
-            raise ValueError("No onclick method set")
+            return
 
         self.onclick(self, caller)
 
-    def debug(self, color: int = 210) -> None:
+    def show(self, color: int = 210) -> None:
         """Print coordinates"""
 
         for y_pos in range(self._start[1], self._end[1] + 1):
             with cursor_at((self._start[0], y_pos)) as print_here:
-                print_here(ansi(f"[@{color}]" + "X" * (self._end[0] - self._start[0])))
+                print_here(ansi(f"[@{color}]" + " " * (self._end[0] - self._start[0])))
 
 
 class Widget:
@@ -169,6 +170,7 @@ class Widget:
         self.mouse_targets: list[MouseTarget] = []
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
+        self.onclick: Optional[MouseCallback] = None
 
         self._serialized_fields = type(self).serialized
         self._id: Optional[str] = None
@@ -270,15 +272,15 @@ class Widget:
 
         return target
 
-    def click(self, pos: tuple[int, int]) -> bool:
+    def click(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
         """Try to click the button that contains pos, return False otherwise"""
 
         for target in self.mouse_targets:
             if target.contains(pos):
                 target.click(self)
-                return True
+                return target
 
-        return False
+        return None
 
     def serialize(self) -> dict[str, Any]:
         """Serialize object based on type(object).serialized"""
@@ -753,14 +755,18 @@ class Container(Widget):
 
         widget, inner_index = data
         widget.select(inner_index)
-        self.selected_index = index
-
-        if self._prev_selected is not None and self._prev_selected is not widget:
-            self._prev_selected.selected_index = None
 
         self.focus()
+        for other in self._widgets:
+            if not widget == other:
+                other.blur()
 
-        # update self._prev_selected
+        self.selected_index = index
+
+        # if self._prev_selected is not None and self._prev_selected is not widget:
+        # self._prev_selected.selected_index = None
+
+        # call the selected property to update
         _ = self.selected
 
     def center(
@@ -787,14 +793,19 @@ class Container(Widget):
 
         return self
 
-    def click(self, pos: tuple[int, int]) -> bool:
+    def click(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
         """Try to click any of our children"""
 
-        for widget in self._widgets:
-            if widget.click(pos):
-                return True
+        selectables = [widget for (widget, _) in self._selectables.values()]
+        for i, widget in enumerate(selectables):
+            target = widget.click(pos)
 
-        return False
+            if target is not None:
+                self.select(i + widget.mouse_targets.index(target))
+
+                return target
+
+        return None
 
     def focus(self) -> None:
         """Focus all widgets"""
@@ -924,7 +935,7 @@ class Prompt(Widget):
             middle = highlight_style(middle)
 
         button = self.define_mouse_target(0, 0, 1)
-        button.onclick = lambda target, widget: widget.select(0)
+        button.onclick = self.onclick
 
         return [label + middle + value]
 

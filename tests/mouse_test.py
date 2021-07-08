@@ -10,7 +10,7 @@ This file serves to test basic mouse capabilities.
 
 from typing import Optional, Union
 
-from pytermgui import alt_buffer, report_mouse, translate_mouse, getch, foreground, ListView, Prompt, InputField, Label
+from pytermgui import alt_buffer, mouse_handler, getch, foreground, ListView, Prompt, InputField, Splitter, Label, Container
 
 
 def parse_mouse(code: str) -> Optional[Union[tuple[tuple[int], bool], Exception]]:
@@ -34,36 +34,45 @@ def parse_mouse(code: str) -> Optional[Union[tuple[tuple[int], bool], Exception]
 
     return tuple(ints), is_pressed
 
+def show_targets(root: Container) -> None:
+    """Debug all root mouse targets"""
 
-with alt_buffer(echo=False, cursor=False):
-    report_mouse("press")
+    for widget in root:
+        for target in widget.mouse_targets: 
+            target.show(103)
 
+with alt_buffer(echo=False, cursor=False), mouse_handler("press") as mouse:
     root = Label("[214 bold]ListView:").get_container()
     root += ListView(["first", "second", "third"])
     root += Label("[214 bold]Prompt:")
     root += Prompt("label", "value")
     root += Label("[214 bold]InputField:")
     root += InputField("hello\nthere")
+    root += InputField("obiwan\nkenobi")
 
-    root.forced_width = 50
+    root.forced_width = 100
     root.center().print()
-    for widget in root:
-        for t in widget.mouse_targets: 
-            t.debug(103)
+
+    show_targets(root)
 
     while key := getch():
-        translated = translate_mouse(key)
+        mouse_event = mouse(key)
 
-        if translated is None:
-            continue
+        if mouse_event is None:
+            if isinstance(root.selected, InputField):
+                root.selected.send(key)
 
-        pressed, pos = translated
-        if pressed:
-            root.blur()
-            if not root.click(pos):
-                root.blur()
+            elif key == "*":
+                show_targets(root)
+                getch()
+
+        else:
+            pressed, pos = mouse_event
+
+            if pressed:
+                # root.blur()
+
+                if not root.click(pos):
+                    root.blur()
 
         root.print()
-        # for t in root[0].mouse_targets: t.debug('124')
-
-report_mouse("movement", action="stop")

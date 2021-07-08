@@ -47,4 +47,4 @@ from .inspector import *
 from .serializer import *
 from .ansi_interface import *
 from .input import getch, keys
-from .context_managers import alt_buffer, cursor_at
+from .context_managers import alt_buffer, cursor_at, mouse_handler
