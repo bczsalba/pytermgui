@@ -27,6 +27,7 @@ root.print()
 What we provide
 ---------------
 
+- (experimental) Terminal mouse support!
 - A cross-platform [getch](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/input.py) function with key translations
 - An [interface](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/ansi_interface.py) to most terminal functionality
 - A custom markup language inspired by [Rich](https://github.com/willmcgugan/rich/tree/master/rich)
