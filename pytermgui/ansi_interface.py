@@ -19,6 +19,7 @@ Credits:
 
 
 import sys
+from enum import Enum, auto as _auto
 from typing import Optional, Any, Union
 from sys import stdout as _stdout
 from string import hexdigits
@@ -60,6 +61,7 @@ __all__ = [
     "do_echo",
     "dont_echo",
     "set_mode",
+    "MouseAction",
     "report_mouse",
     "translate_mouse",
     "print_to",
@@ -435,16 +437,27 @@ def dont_echo() -> None:
     _Popen(["stty", "-echo"])
 
 
+class MouseAction(Enum):
+    """Actions a mouse can perform"""
+
+    HOLD = _auto()
+    PRESS = _auto()
+    HOVER = _auto()
+    RELEASE = _auto()
+    SCROLL_UP = _auto()
+    SCROLL_DOWN = _auto()
+
+
 def report_mouse(
     event: str, method: Optional[str] = "decimal_xterm", action: Optional[str] = "start"
 ) -> None:
     """Start reporting mouse events
 
     options:
-        - press_release
-        - highlight
         - press
-        - movement
+        - highlight
+        - press_hold
+        - hover
 
     methods:
         None:          limited in coordinates, not recommended.
@@ -455,16 +468,16 @@ def report_mouse(
     more information: https://stackoverflow.com/a/5970472
     """
 
-    if event == "press_release":
+    if event == "press":
         _stdout.write("\x1b[?1000")
 
     elif event == "highlight":
         _stdout.write("\x1b[?1001")
 
-    elif event == "press":
+    elif event == "press_hold":
         _stdout.write("\x1b[?1002")
 
-    elif event == "movement":
+    elif event == "hover":
         _stdout.write("\x1b[?1003")
 
     else:
@@ -491,14 +504,36 @@ def report_mouse(
     _stdout.flush()
 
 
-def translate_mouse(code: str) -> Optional[tuple[bool, tuple[int, int]]]:
+def translate_mouse(code: str) -> Optional[tuple[MouseAction, tuple[int, int]]]:
     """Translate report_mouse() (decimal_xterm) codes into tuple[action, tuple[x, y]]"""
 
     try:
         numbers = code[3:].split(";")
         pos = (int(numbers[1]), int(numbers[2][:-1]))
 
-        action = code[-1] == "M"
+        released = code[-1] == "m"
+        if released:
+            action = MouseAction.RELEASE
+
+        elif numbers[0] == "0":
+            action = MouseAction.PRESS
+
+        elif numbers[0] == "32":
+            action = MouseAction.HOLD
+
+        elif numbers[0] == "35":
+            action = MouseAction.HOVER
+
+        elif numbers[0] == "64":
+            action = MouseAction.SCROLL_UP
+
+        elif numbers[0] == "65":
+            action = MouseAction.SCROLL_DOWN
+
+        else:
+            print(code)
+            return None
+
         return action, pos
 
     except (IndexError, ValueError, TypeError):

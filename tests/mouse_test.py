@@ -11,18 +11,21 @@ This file serves to test basic mouse capabilities.
 from typing import Optional, Union
 
 from pytermgui import (
-    alt_buffer,
-    mouse_handler,
-    getch,
-    foreground,
+    MouseAction,
+    ColorPicker,
+    InputField,
+    Container,
+    Splitter,
     ListView,
     Prompt,
-    InputField,
-    Splitter,
     Label,
-    Container,
-    ColorPicker,
+    getch,
     boxes,
+    clear,
+    foreground,
+    alt_buffer,
+    mouse_handler,
+    screen_size,
 )
 
 
@@ -43,9 +46,7 @@ def set_value(button: ListView, value: str) -> None:
     button.options = [value]
 
 
-with alt_buffer(echo=False, cursor=False), mouse_handler("press") as mouse:
-    boxes.DOUBLE.set_chars_of(Container)
-
+with alt_buffer(echo=False, cursor=False), mouse_handler("press_hold") as mouse:
     root = Label("[214 bold]ListView:").get_container()
     root += ListView(["first", "second", "third"])
     root += Label("[214 bold]Prompt:")
@@ -53,6 +54,8 @@ with alt_buffer(echo=False, cursor=False), mouse_handler("press") as mouse:
     root += Label("[214 bold]InputField:")
     root += InputField("hello\nthere")
     root += InputField("obiwan\nkenobi")
+
+    boxes.DOUBLE_TOP.set_chars_of(root)
 
     cp = ColorPicker(16)
     cp += ListView(["hello"])
@@ -71,11 +74,16 @@ with alt_buffer(echo=False, cursor=False), mouse_handler("press") as mouse:
     root.center().print()
 
     cp.print()
+
+    dragbar = root.define_mouse_target(0, 1, 1, -1)
+
     for target in cp.mouse_targets:
         target.show(210)
     getch()
 
     show_targets(root)
+
+    previous_pos: tuple[int, int] = None
 
     while key := getch():
         mouse_event = mouse(key)
@@ -89,10 +97,39 @@ with alt_buffer(echo=False, cursor=False), mouse_handler("press") as mouse:
                 getch()
 
         else:
-            pressed, pos = mouse_event
+            action, pos = mouse_event
 
-            if pressed:
+            # Selecting items on press
+            if action is MouseAction.PRESS:
                 if root.click(pos) is None:
                     root.blur()
+
+            # Moving window around using the top bar
+            elif action is MouseAction.HOLD:
+                target = root.click(pos)
+                if not target is dragbar and previous_pos is None:
+                    continue
+
+                if previous_pos is None:
+                    previous_pos = pos
+                    continue
+
+                # Clearing the whole screen is faster than Container.wipe()
+                clear()
+
+                width, height = screen_size()
+                new = (
+                    min(
+                        width - root.width,
+                        max(0, root.pos[0] - (previous_pos[0] - pos[0])),
+                    ),
+                    min(height - root.height, max(0, pos[1])),
+                )
+
+                root.pos = new
+                previous_pos = pos
+
+            elif action is MouseAction.RELEASE:
+                previous_pos = None
 
         root.print()

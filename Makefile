@@ -11,4 +11,4 @@ badge:
 	python3 utils/create_badge.py -c "make lint"
 
 lint:
-	pylint --exit-zero pytermgui
+	pylint --exit-zero -d fixme pytermgui

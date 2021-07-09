@@ -62,6 +62,7 @@ def auto(
 
     return None
 
+
 def _align_macro(item: str) -> str:
     """Use f-string alignment on a markup plain.
 
@@ -77,9 +78,10 @@ def _align_macro(item: str) -> str:
     content = " ".join(words[1:])
 
     width, alignment = statements.split(":")
-    aligner = ("<" if alignment == "left" else (">" if alignment == "right" else "^"))
+    aligner = "<" if alignment == "left" else (">" if alignment == "right" else "^")
 
     return f"{content:{aligner}{width}}"
+
 
 # This needs to be here to avoid circular imports
 define_macro("!strip", strip_ansi)

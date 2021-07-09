@@ -17,7 +17,7 @@ They can be used as:
 For more info, check out help(pytermgui.boxes.Box)
 """
 
-from .base import Widget, Container
+from .base import Widget
 from .extra import Splitter
 from ..helpers import real_length
 
@@ -144,7 +144,7 @@ class Box(Widget):
         if isinstance(cls_or_obj, Splitter):
             cls_or_obj.set_char("separator", " " + self.borders[0])
 
-        elif isinstance(cls_or_obj, Container):
+        else:
             cls_or_obj.set_char("border", self.borders)
             cls_or_obj.set_char("corner", self.corners)
 

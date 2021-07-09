@@ -735,7 +735,7 @@ class Container(Widget):
 
         self.height = len(lines)
 
-        for target in targets:
+        for target in targets + self.mouse_targets:
             target.adjust()
 
         return lines
@@ -798,6 +798,10 @@ class Container(Widget):
 
     def click(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
         """Try to click any of our children"""
+
+        target = super().click(pos)
+        if target is not None:
+            return target
 
         selectables = [widget for (widget, _) in self._selectables.values()]
         for i, widget in enumerate(selectables):
