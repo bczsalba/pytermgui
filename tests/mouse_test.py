@@ -70,6 +70,11 @@ with alt_buffer(echo=False, cursor=False), mouse_handler("press") as mouse:
     root.forced_width = 100
     root.center().print()
 
+    cp.print()
+    for target in cp.mouse_targets:
+        target.show(210)
+    getch()
+
     show_targets(root)
 
     while key := getch():

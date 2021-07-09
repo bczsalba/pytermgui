@@ -576,6 +576,8 @@ class Container(Widget):
 
         This will soon be rewritten to be more future & reader proof."""
 
+        # TODO: Rewrite `Container.get_lines()` to support proper widget positioning
+
         def _apply_style(style: DepthlessStyleType, target: list[str]) -> list[str]:
             """Apply style to target list elements"""
 

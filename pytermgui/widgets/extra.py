@@ -52,7 +52,7 @@ class ColorPicker(Container):
             background,
         ]
 
-        self.layer = 1
+        self.layer = 0
 
     def toggle_layer(self) -> None:
         """Toggle foreground/background"""

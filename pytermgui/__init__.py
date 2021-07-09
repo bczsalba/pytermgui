@@ -62,6 +62,25 @@ def auto(
 
     return None
 
+def _align_macro(item: str) -> str:
+    """Use f-string alignment on a markup plain.
+
+    Syntax: "[!align]width:aligment text" -> [!align]30:left hello"""
+
+    # TODO: Allow markup for content in _align_macro
+
+    words = item.split(" ")
+    statements = words[0]
+    if statements.count(":") == 0:
+        return item
+
+    content = " ".join(words[1:])
+
+    width, alignment = statements.split(":")
+    aligner = ("<" if alignment == "left" else (">" if alignment == "right" else "^"))
+
+    return f"{content:{aligner}{width}}"
 
 # This needs to be here to avoid circular imports
 define_macro("!strip", strip_ansi)
+define_macro("!align", _align_macro)
