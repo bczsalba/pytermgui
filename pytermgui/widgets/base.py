@@ -71,9 +71,9 @@ MouseCallback = Callable[["MouseTarget", "Widget"], Any]
 
 @dataclass
 class MouseTarget:
-    """An object that is referenced in mouse events
+    """A target for mouse events."""
 
-    Note: It is not yet implemented."""
+    # TODO: Support MouseTargets in nested contexts
 
     parent: Widget
     left: int

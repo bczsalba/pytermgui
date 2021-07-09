@@ -74,7 +74,7 @@ Example syntax:
 
 import re
 from random import shuffle
-from enum import Enum, auto
+from enum import Enum, auto as _auto
 from dataclasses import dataclass
 from typing import Optional, Iterator, Callable
 
@@ -237,12 +237,12 @@ def _handle_named_color(tag: str) -> Optional[tuple[str, int]]:
 class TokenAttribute(Enum):
     """Special attribute for a Token"""
 
-    CLEAR = auto()
-    COLOR = auto()
-    STYLE = auto()
-    MACRO = auto()
-    ESCAPED = auto()
-    BACKGROUND_COLOR = auto()
+    CLEAR = _auto()
+    COLOR = _auto()
+    STYLE = _auto()
+    MACRO = _auto()
+    ESCAPED = _auto()
+    BACKGROUND_COLOR = _auto()
 
 
 @dataclass

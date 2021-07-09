@@ -7,7 +7,7 @@ author: bczsalba
 This module provides methods and functions that can be imported in other files.
 """
 
-from typing import Iterator, Union
+from typing import Iterator
 from .parser import tokenize_ansi, TokenAttribute, RE_ANSI, RE_TAGS
 
 __all__ = [

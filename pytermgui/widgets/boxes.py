@@ -148,7 +148,6 @@ class Box(Widget):
             cls_or_obj.set_char("border", self.borders)
             cls_or_obj.set_char("corner", self.corners)
 
-
     def get_lines(self) -> list[str]:
         """Get lines from object"""
 
