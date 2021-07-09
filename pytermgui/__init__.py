@@ -7,7 +7,7 @@ author: bczsalba
 A simple and robust terminal UI library, written in Python.
 """
 
-from typing import Union, Any
+from typing import Union, Any, Optional
 
 from .ansi_interface import __all__ as _ansi_all
 from .serializer import __all__ as _serializer_all
@@ -15,10 +15,8 @@ from .inspector import __all__ as _inspector_all
 from .widgets import __all__ as _widgets_all
 from .parser import __all__ as _parser_all
 
-# TODO: support __all__
-__all__ = [
-    "__version__"
-]
+# TODO: Support __all__
+__all__ = ["__version__"]
 
 __all__ += _ansi_all
 __all__ += _parser_all
@@ -37,7 +35,9 @@ from .input import getch, keys
 from .context_managers import alt_buffer, cursor_at, mouse_handler
 
 
-def auto(data: Union[list, dict, str], **widget_args: Any) -> Widget:
+def auto(
+    data: Union[list[str], dict[str, str], str], **widget_args: Any
+) -> Optional[Widget]:
     """Create PyTermGUI widget automatically from data
 
     Currently supported:
@@ -59,3 +59,9 @@ def auto(data: Union[list, dict, str], **widget_args: Any) -> Widget:
             root += Prompt(key, value, **widget_args)
 
         return root
+
+    return None
+
+
+# This needs to be here to avoid circular imports
+define_macro("!strip", strip_ansi)

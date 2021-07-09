@@ -501,6 +501,8 @@ def ansi(
 ) -> str:
     """Turn markup text into ANSI str"""
 
+    # TODO: Add support for unsetting macros
+
     def _apply_macros(text: str, macros: list[MacroCallable]) -> str:
         """Apply list of macros to string"""
 
