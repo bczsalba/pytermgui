@@ -30,6 +30,7 @@ from subprocess import (
 from os import (
     name as _name,
     get_terminal_size,
+    system,
 )
 from .input import getch
 
@@ -425,7 +426,7 @@ def do_echo() -> None:
     if not _name == "posix":
         raise NotImplementedError("This method is only implemented on POSIX systems.")
 
-    _Popen(["stty", "echo"])
+    system("stty echo")
 
 
 def dont_echo() -> None:
@@ -434,7 +435,7 @@ def dont_echo() -> None:
     if not _name == "posix":
         raise NotImplementedError("This method is only implemented on POSIX systems.")
 
-    _Popen(["stty", "-echo"])
+    system("stty -echo")
 
 
 class MouseAction(Enum):
