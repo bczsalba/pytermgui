@@ -513,6 +513,8 @@ class Container(Widget):
                     + f" ({other.forced_width} > {self.forced_width})"
                 )
 
+        other.parent = self
+
         if other.forced_height is not None:
             other.height = other.forced_height
 
@@ -1008,7 +1010,11 @@ class Label(Widget):
         """Get lines of object"""
 
         value_style = self.get_style("value")
-        broken = break_line(value_style(self.value), self.width)
+        broken = list(break_line(value_style(self.value), self.width))
+
+        if broken == []:
+            return [""]
+
         lines = []
 
         if self.align is Label.ALIGN_CENTER:
