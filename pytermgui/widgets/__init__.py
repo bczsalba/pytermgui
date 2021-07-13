@@ -10,7 +10,7 @@ the `+=` operator to append elements to it.
 """
 
 from typing import Optional, Union, Type
-from .base import Widget, Container, Prompt, Label
+from .base import Widget, Container, Prompt, Label, MouseTarget, MouseCallback
 from .extra import Splitter, ListView, ColorPicker, InputField, ProgressBar
 from .styles import *
 from . import boxes
@@ -27,6 +27,8 @@ __all__ = [
     "ColorPicker",
     "InputField",
     "ProgressBar",
+    "MouseTarget",
+    "MouseCallback",
     "boxes",
     "MarkupFormatter",
     "get_widget",

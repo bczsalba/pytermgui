@@ -215,9 +215,14 @@ class ListView(Widget):
         self.align = align
         self._donor_label = Label(align=self.align)
         self.height = len(self.options)
+        self.width = (
+            max(real_length(line) for line in self.options)
+            + sum(real_length(char) for char in self.get_char("delimiter"))
+            + 2
+        )
 
         self.is_selectable = True
-        self.selectables_length = len(options)
+        self._selectables_length = len(options)
 
     def get_lines(self) -> list[str]:
         """Get lines to represent object"""
@@ -259,14 +264,12 @@ class ListView(Widget):
                 else:
                     label.value = "".join(value)
 
-                for line in label.get_lines():
+                for inner, line in enumerate(label.get_lines()):
                     lines.append(line)
 
-                    button = self.define_mouse_target(
-                        _find_start(line), _find_start(line[::-1]), 1, top=i
-                    )
-
-                    button.onclick = self.onclick
+                    self.define_mouse_target(
+                        _find_start(line), _find_start(line[::-1]), 1, top=inner
+                    ).onclick = self.onclick
 
         return lines
 
@@ -309,7 +312,11 @@ class InputField(Widget):
     ]
 
     def __init__(
-        self, value: str = "", prompt: str = "", tab_length: int = 4, padding: int = 0
+        self,
+        value: str = "",
+        prompt: str = "",
+        tab_length: int = 4,
+        padding: int = 0,
     ) -> None:
         """Initialize object"""
 
@@ -320,11 +327,12 @@ class InputField(Widget):
         self.value = value + " "
         self.tab_length = tab_length
         self.cursor = real_length(value)
+        self.align = Label.ALIGN_LEFT
         self.width = 40
 
-        self.selectables_length = 1
+        self._selectables_length = 1
 
-        self._donor_label = Label(align=Label.ALIGN_LEFT, padding=padding)
+        self._donor_label = Label(align=self.align, padding=padding)
         self._donor_label.width = self.width
         self._donor_label.set_style("value", self.get_style("value").method)
 
@@ -381,13 +389,6 @@ class InputField(Widget):
     def get_lines(self) -> list[str]:
         """Return broken-up lines from object"""
 
-        def _get_label_lines(buff: str) -> list[str]:
-            """Get lines from donor label"""
-
-            label = self._donor_label
-            label.value = buff
-            return label.get_lines()
-
         def _normalize_cursor(
             coords: tuple[Optional[int], Optional[int]]
         ) -> tuple[int, int]:
@@ -402,14 +403,28 @@ class InputField(Widget):
 
             return start, end
 
-        self._donor_label.width = self.width
+        self._donor_label.forced_width = self.width
         self._donor_label.padding = self.padding
+        self._donor_label.align = self.align
 
         lines = []
         buff = ""
         value_style = self.get_style("value")
         cursor_style = self.get_style("cursor")
         highlight_style = self.get_style("highlight")
+
+        self._donor_label.set_style("value", value_style.method)
+
+        def _get_label_lines(buff: str) -> list[str]:
+            """Get lines from donor label"""
+
+            label = self._donor_label
+            label.value = buff + (self.width - real_length(buff)) * " "
+            # return label.get_lines()
+            return [
+                (self.width - real_length(line)) * " " + line
+                for line in label.get_lines()
+            ]
 
         # highlight_style is optional
         if highlight_style.method is Widget.OVERRIDE:
@@ -454,7 +469,6 @@ class InputField(Widget):
             lines += _get_label_lines(buff)
 
         self.height = len(lines)
-
         self.define_mouse_target(0, 0, self.height).onclick = self.onclick
 
         return lines

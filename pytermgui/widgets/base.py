@@ -86,14 +86,26 @@ class MouseTarget:
 
     onclick: Optional[MouseCallback] = None
 
+    @property
+    def start(self) -> tuple[int, int]:
+        """Get object start"""
+
+        return self._start
+
+    @property
+    def end(self) -> tuple[int, int]:
+        """Get object end"""
+
+        return self._end
+
     def adjust(self) -> None:
         """Adjust target positions to fit in whatever new positions we have"""
 
         pos = self.parent.pos
-        self._start = (pos[0] + self.left, pos[1] + self.top + 1)
+        self._start = (pos[0] + self.left - 1, pos[1] + 1 + self.top)
         self._end = (
-            pos[0] + self.parent.width + 1 - self.right,
-            pos[1] + self.top + 1 + (self.height - 1),
+            pos[0] + self.parent.width - self.right,
+            pos[1] + self.top + self.height,
         )
 
     def contains(self, pos: tuple[int, int]) -> bool:
@@ -102,6 +114,7 @@ class MouseTarget:
         start = self._start
         end = self._end
 
+        # print(start, pos, end)
         return start[0] <= pos[0] <= end[0] and start[1] <= pos[1] <= end[1]
 
     def click(self, caller: Widget) -> None:
@@ -166,7 +179,7 @@ class Widget:
         self.depth = 0
 
         self.is_selectable = False
-        self.selectables_length = 0
+
         self.selected_index: Optional[int] = None
         self.mouse_targets: list[MouseTarget] = []
         self.styles = type(self).styles.copy()
@@ -174,6 +187,7 @@ class Widget:
         self.onclick: Optional[MouseCallback] = None
 
         self._serialized_fields = type(self).serialized
+        self._selectables_length = 0
         self._id: Optional[str] = None
         self._is_focused = False
 
@@ -261,6 +275,13 @@ class Widget:
 
         self.pos = (self.posx, value)
 
+    @property
+    def selectables_length(self) -> int:
+        """Override this to return count of selectables of an object,
+        defaults to attribute _selectables_length"""
+
+        return self._selectables_length
+
     def define_mouse_target(
         self, left: int, right: int, height: int, top: int = 0
     ) -> MouseTarget:
@@ -269,7 +290,7 @@ class Widget:
         target = MouseTarget(self, left, right, height, top)
 
         target.adjust()
-        self.mouse_targets.append(target)
+        self.mouse_targets.insert(0, target)
 
         return target
 
@@ -467,6 +488,12 @@ class Container(Widget):
         self._prev_selected = data[0]
         return data[0]
 
+    @property
+    def selectables_length(self) -> int:
+        """Get len(_selectables)"""
+
+        return len(self._selectables)
+
     def __iadd__(self, other: object) -> Container:
         """Call self._add_widget(other) and return self"""
 
@@ -536,6 +563,8 @@ class Container(Widget):
 
         self.height += other.height
         self.get_lines()
+
+        other.parent = self
 
     def set_widgets(self, new: list[Widget]) -> None:
         """Set self._widgets to a new list"""
@@ -690,7 +719,17 @@ class Container(Widget):
             if len(lines) >= total_height:
                 break
 
-            widget.pos = (self.pos[0] + real_length(left), self.pos[1] + len(lines))
+            pos = [self.pos[0] + real_length(left), self.pos[1] + len(lines)]
+            if isinstance(widget, Container):
+                # TODO: This makes buttons full-width, and breaks 'em
+                pos[1] += 1
+
+                for subwidget in widget:
+                    for target in subwidget.mouse_targets:
+                        if not target in self.mouse_targets:
+                            self.mouse_targets.append(target)
+
+            widget.pos = pos[0], pos[1]
 
             container_offset = 1 if not isinstance(widget, Container) else 0
 
@@ -860,7 +899,9 @@ class Container(Widget):
 
 
 class Prompt(Widget):
-    """Selectable object showing a single value with a label"""
+    """Selectable object showing a single value with a label
+
+    This is to be deprecated."""
 
     HIGHLIGHT_LEFT = 0
     HIGHLIGHT_RIGHT = 1
@@ -898,7 +939,7 @@ class Prompt(Widget):
         self.highlight_target = highlight_target
 
         self.is_selectable = True
-        self.selectables_length = 1
+        self._selectables_length = 1
 
     def get_lines(self) -> list[str]:
         """Get lines for object"""

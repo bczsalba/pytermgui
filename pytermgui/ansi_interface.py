@@ -36,6 +36,8 @@ from .input import getch
 
 
 __all__ = [
+    "foreground",
+    "background",
     "is_interactive",
     "screen_size",
     "screen_width",
@@ -75,8 +77,7 @@ __all__ = [
     "inverse",
     "invisible",
     "strikethrough",
-    "foreground",
-    "background",
+    "fill_window",
 ]
 
 
@@ -163,6 +164,10 @@ class _Color:
             + text
             + (set_mode("reset") if reset_color else "")
         )
+
+
+foreground = _Color()
+background = _Color(layer=1)
 
 
 # helpers
@@ -607,5 +612,13 @@ def strikethrough(text: str, reset_style: Optional[bool] = True) -> str:
     return set_mode("strikethrough", False) + text + (reset() if reset_style else "")
 
 
-foreground = _Color()
-background = _Color(layer=1)
+def fill_window(color: int, flush: bool = True) -> None:
+    """Fill window with a color"""
+
+    for i in range(screen_height()):
+        _stdout.write(background(screen_width() * " ", color))
+        if not i == screen_height() - 1:
+            _stdout.write("\n")
+
+    if flush:
+        _stdout.flush()
