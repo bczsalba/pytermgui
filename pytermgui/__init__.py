@@ -4,7 +4,7 @@ pytermgui
 author: bczsalba
 
 
-A simple and robust terminal UI library, written in Python.
+A simple yet powerful TUI framework for your Python (3.9+) applications
 """
 
 from typing import Union, Any, Optional
@@ -23,7 +23,7 @@ __all__ += _parser_all
 __all__ += _widgets_all
 __all__ += _inspector_all
 __all__ += _serializer_all
-__version__ = "0.1.0"
+__version__ = "0.1.2"
 
 from .parser import *
 from .widgets import *
@@ -63,7 +63,7 @@ def auto(
     return None
 
 
-def _align_macro(item: str) -> str:
+def _macro_align(item: str) -> str:
     """Use f-string alignment on a markup plain.
 
     Syntax: "[!align]width:aligment text" -> [!align]30:left hello"""
@@ -85,4 +85,5 @@ def _align_macro(item: str) -> str:
 
 # This needs to be here to avoid circular imports
 define_macro("!strip", strip_ansi)
-define_macro("!align", _align_macro)
+define_macro("!align", _macro_align)
+define_macro("!markup", markup)
