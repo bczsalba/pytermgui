@@ -15,7 +15,7 @@ from copy import deepcopy
 from typing import Callable, Optional, Type, Union, Iterator, Any
 from dataclasses import dataclass, field
 
-from ..exceptions import WidthExceededError
+from ..exceptions import WidthExceededError, LineLengthError
 from ..context_managers import cursor_at
 from ..parser import (
     markup,
@@ -155,7 +155,18 @@ class Widget:
         "selectables_length",
     ]
 
-    # this class is loaded after this module,
+    # Alignment policies
+    PARENT_LEFT = 0
+    PARENT_CENTER = 1
+    PARENT_RIGHT = 2
+    DEFAULT_PARENT_ALIGN = PARENT_CENTER
+
+    # Size policies
+    SIZE_STATIC = 3
+    SIZE_FILL = 4
+    DEFAULT_SIZE_POLICY = SIZE_FILL
+
+    # This class is loaded after this module,
     # and thus mypy doesn't see its existence.
     manager: Optional["_IDManager"] = None  # type: ignore
 
@@ -173,10 +184,9 @@ class Widget:
 
         if pos is None:
             pos = 1, 1
-        self.pos = pos
+        self.pos: tuple[int, int] = pos
 
         self.depth = 0
-
         self.is_selectable = False
 
         self.selected_index: Optional[int] = None
@@ -189,6 +199,9 @@ class Widget:
         self._selectables_length = 0
         self._id: Optional[str] = None
         self._is_focused = False
+
+        self.size_policy = Widget.DEFAULT_SIZE_POLICY
+        self.parent_align = Widget.DEFAULT_PARENT_ALIGN
 
     def __repr__(self) -> str:
         """Print self.debug() by default"""
@@ -411,16 +424,6 @@ class Widget:
 class Container(Widget):
     """The widget that serves as the outer parent to all other widgets"""
 
-    # Vertical aligment policies
-    VERT_ALIGN_TOP = 0
-    VERT_ALIGN_CENTER = 1
-    VERT_ALIGN_BOTTOM = 2
-
-    # Horizontal aligment policies
-    HORIZ_ALIGN_LEFT = 3
-    HORIZ_ALIGN_CENTER = 4
-    HORIZ_ALIGN_RIGHT = 5
-
     # Centering policies
     CENTER_X = 6
     CENTER_Y = 7
@@ -442,8 +445,6 @@ class Container(Widget):
     def __init__(
         self,
         width: int = 0,
-        horiz_align: int = HORIZ_ALIGN_CENTER,
-        vert_align: int = VERT_ALIGN_CENTER,
     ) -> None:
         """Initialize Container data"""
 
@@ -565,6 +566,158 @@ class Container(Widget):
 
         other.parent = self
 
+    def _get_aligners(
+        self, widget: Widget, borders: tuple[str, str]
+    ) -> tuple[Callable[[str], str], int]:
+        """Get aligner method & offset for alignment value"""
+
+        left, right = borders
+
+        def _align_left(text: str) -> str:
+            """Align line left"""
+
+            padding = self.width - real_length(left + right) - real_length(text)
+            return left + text + padding * " " + right
+
+        def _align_center(text: str) -> str:
+            """Align line center"""
+
+            total = self.width - real_length(left + right) - real_length(text)
+            padding, offset = divmod(total, 2)
+            return left + (padding + offset) * " " + text + padding * " " + right
+
+        def _align_right(text: str) -> str:
+            """Align line right"""
+
+            padding = self.width - real_length(left + right) - real_length(text)
+            return left + padding * " " + text + right
+
+        if widget.parent_align is Widget.PARENT_CENTER:
+            return _align_center, (self.width - widget.width) // 2
+
+        if widget.parent_align is Widget.PARENT_RIGHT:
+            return _align_right, 0
+
+        # Default to left-aligned
+        return _align_left, 0
+
+    def _update_width(self, widget: Widget) -> None:
+        """Update width of widget & self"""
+
+        if widget.forced_width is not None and self.forced_width is not None:
+            if widget.forced_width + self.sidelength > self.forced_width:
+                raise WidthExceededError(
+                    f"Widget {widget}'s forced_width value ({widget.forced_width})"
+                    + " is higher than its parent Container's ({self.forced_width})"
+                )
+
+        elif widget.forced_width is not None and self.forced_width is None:
+            if widget.forced_width + self.sidelength > self.width:
+                self.width = widget.forced_width + self.sidelength
+
+        else:
+            self.width = max(self.width, widget.width + self.sidelength + 1)
+
+    def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
+        """Get lines of all widgets
+
+        Note about pylint: Having less locals in this method would ruin readability."""
+
+        def _apply_style(style: DepthlessStyleType, target: list[str]) -> list[str]:
+            """Apply style to target list elements"""
+
+            for i, char in enumerate(target):
+                target[i] = style(char)
+
+            return target
+
+        # Get chars & styles
+        corner_style = self.get_style("corner")
+        border_style = self.get_style("border")
+
+        border_char = self.get_char("border")
+        assert isinstance(border_char, list)
+        corner_char = self.get_char("corner")
+        assert isinstance(corner_char, list)
+
+        left, top, right, bottom = _apply_style(
+            border_style,
+            border_char,
+        )
+        t_left, t_right, b_right, b_left = _apply_style(
+            corner_style,
+            corner_char,
+        )
+
+        def _get_border(left: str, char: str, right: str) -> str:
+            """Get a border line"""
+
+            offset = real_length(left + right)
+            return optimize_ansi(left + char * (self.width - offset) + right)
+
+        # Set up lines list
+        lines: list[str] = []
+
+        # Go through widgets
+        for widget in self._widgets:
+            # Update width
+            if self.width == 0:
+                self.width = widget.width
+
+            if widget.size_policy == Widget.SIZE_FILL and widget.width < self.width:
+                widget.forced_width = self.width - self.sidelength - 1
+
+            self._update_width(widget)
+
+            align, offset = self._get_aligners(widget, (left, right))
+
+            # Set position (including horizontal padding)
+            widget.pos = (
+                self.pos[0] + offset,
+                self.pos[1] + len(lines),
+            )
+
+            # get_lines()
+            widget_lines: list[str] = []
+
+            for i, line in enumerate(widget.get_lines()):
+                # Pad horizontally
+                aligned = align(line)
+                new = real_length(aligned)
+
+                # Assert well formed lines
+                if not new == self.width:
+                    raise LineLengthError(
+                        f"Widget {widget} returned a line of invalid length at index {i}:"
+                        + f" ({new} != {self.width}): {aligned}"
+                    )
+
+                widget_lines.append(aligned)
+
+            # Update height
+            if widget.forced_height is None:
+                widget.height = len(widget_lines)
+
+            # Add to lines
+            lines += widget_lines
+
+        # Update height
+        if self.forced_height is not None:
+            for _ in range(self.forced_height - len(lines)):
+                lines.append(align(""))
+        else:
+            self.height = len(lines) + 2
+
+        # Add capping lines
+        lines.insert(0, _get_border(t_left, top, t_right))
+        lines.append(_get_border(b_left, bottom, b_right))
+
+        for target in self.mouse_targets:
+            target.adjust()
+
+        # Return
+        return lines
+
     def set_widgets(self, new: list[Widget]) -> None:
         """Set self._widgets to a new list"""
 
@@ -601,186 +754,6 @@ class Container(Widget):
             else:
                 widget.depth = value
 
-    def get_lines(self) -> list[str]:  # pylint: disable=R0914, R0912, R0915
-        """Get lines of all widgets
-
-        This will soon be rewritten to be more future & reader proof."""
-
-        # TODO: Rewrite `Container.get_lines()` to support proper widget positioning
-
-        def _apply_style(style: DepthlessStyleType, target: list[str]) -> list[str]:
-            """Apply style to target list elements"""
-
-            for i, char in enumerate(target):
-                target[i] = style(char)
-
-            return target
-
-        # Get chars & styles
-        corner_style = self.get_style("corner")
-        border_style = self.get_style("border")
-
-        border_char = self.get_char("border")
-        assert isinstance(border_char, list)
-        corner_char = self.get_char("corner")
-        assert isinstance(corner_char, list)
-
-        left, top, right, bottom = _apply_style(
-            border_style,
-            border_char,
-        )
-        t_left, t_right, b_right, b_left = _apply_style(
-            corner_style,
-            corner_char,
-        )
-
-        def _apply_forced_width(source: Widget, target: Widget) -> bool:
-            """Apply source's forced_width attribute to target, return False if not possible."""
-
-            if source.forced_width is not None and target.forced_width is None:
-                width = screen_width()
-                if source.forced_width > width:
-                    raise WidthExceededError(
-                        f"Element {source}'s forced_width ({source.forced_width})"
-                        + f" will not fit in the current screen width ({width})."
-                    )
-                source.width = source.forced_width
-                if target.width < source.width - self.sidelength:
-                    target.width = source.width + self.sidelength
-
-                return True
-
-            return False
-
-        def _border_line(border: str, left: str, right: str) -> str:
-            """Create border line of border and corners"""
-
-            _len = real_length(left + right)
-            return optimize_ansi(left + border * int(self.width - _len) + right)
-
-        def _pad_vertically(lines: list[str]) -> None:
-            """Pad lines vertically"""
-
-            if self.forced_height is None:
-                return
-
-            if self.vert_align is Container.VERT_ALIGN_TOP:
-                for _ in range(self.forced_height - len(lines)):
-                    lines.append(left + (self.width - self.sidelength) * " " + right)
-
-            elif self.vert_align is Container.VERT_ALIGN_BOTTOM:
-                for _ in range(self.forced_height - len(lines)):
-                    lines.insert(0, left + (self.width - self.sidelength) * " " + right)
-
-            elif self.vert_align is Container.VERT_ALIGN_CENTER:
-                length = self.forced_height - len(lines)
-                extra = length % 2
-
-                for _ in range(length // 2):
-                    lines.insert(0, left + (self.width - self.sidelength) * " " + right)
-                    lines.append(left + (self.width - self.sidelength) * " " + right)
-
-                for _ in range(extra):
-                    lines.append(left + (self.width - self.sidelength) * " " + right)
-
-        def _pad_horizontally(line: str) -> str:
-            """Pad a line horizontally"""
-
-            length = self.width - self.sidelength - real_length(line)
-
-            if self.horiz_align is Container.HORIZ_ALIGN_LEFT:
-                return line + length * " "
-
-            if self.horiz_align is Container.HORIZ_ALIGN_RIGHT:
-                return length * " " + line
-
-            if self.horiz_align is Container.HORIZ_ALIGN_CENTER:
-                extra = length % 2
-                side = length // 2
-                return (side + extra) * " " + line + side * " "
-
-            raise NotImplementedError(
-                f"Horizontal aligment {self.horiz_align} is not implemented"
-            )
-
-        lines: list[str] = []
-        total_height = (
-            screen_height() if self.forced_height is None else self.forced_height
-        )
-
-        maximum_width = screen_width() - self.sidelength
-
-        if self.forced_width is None:
-            self.width = min(self.width, screen_width() - 1)
-
-        targets: list[MouseTarget] = []
-
-        for widget in self._widgets:
-            if len(lines) >= total_height:
-                break
-
-            pos = [self.pos[0] + real_length(left), self.pos[1] + len(lines)]
-            if isinstance(widget, Container):
-                # TODO: This makes buttons full-width, and breaks 'em
-                pos[1] += 1
-
-                for subwidget in widget:
-                    for target in subwidget.mouse_targets:
-                        if not target in self.mouse_targets:
-                            self.mouse_targets.append(target)
-
-            widget.pos = pos[0], pos[1]
-
-            container_offset = 1 if not isinstance(widget, Container) else 0
-
-            if widget.forced_width is not None:
-                widget.width = widget.forced_width
-
-            # try apply forced width self->widget, then widget->self
-            if not _apply_forced_width(self, widget):
-                _apply_forced_width(widget, self)
-
-            if widget.width >= self.width and not self.forced_width is not None:
-                widget.width = min(widget.width, maximum_width - container_offset)
-                self.width = widget.width + self.sidelength + container_offset
-                self.width = min(self.width, screen_width() - 1)
-
-            elif widget.forced_width is None:
-                widget.width = self.width - self.sidelength - container_offset
-
-            targets += widget.mouse_targets
-            for line in widget.get_lines():
-                if len(lines) >= total_height:
-                    break
-
-                bordered = left + _pad_horizontally(line) + right
-
-                if (new := real_length(bordered)) != self.width:
-                    if self.forced_width is None:
-                        self.width = new + self.sidelength
-
-                    else:
-                        raise ValueError(
-                            f"{widget} returned a line of invalid length"
-                            + f' ({new} != {self.width}): \n"{bordered}".'
-                        )
-
-                lines.append(bordered)
-
-        _pad_vertically(lines)
-        if real_length(top) > 0:
-            lines.insert(0, _border_line(top, t_left, t_right))
-
-        if real_length(bottom) > 0:
-            lines.append(_border_line(bottom, b_left, b_right))
-
-        self.height = len(lines)
-
-        for target in targets + self.mouse_targets:
-            target.adjust()
-
-        return lines
-
     def select(self, index: Optional[int] = None) -> None:
         """Select inner object"""
 
@@ -802,16 +775,11 @@ class Container(Widget):
 
         self.focus()
         for other in self._widgets:
-            if not widget == other:
+            if not other == widget:
+                other.selected_index = None
                 other.blur()
 
         self.selected_index = index
-
-        # if self._prev_selected is not None and self._prev_selected is not widget:
-        # self._prev_selected.selected_index = None
-
-        # call the selected property to update
-        _ = self.selected
 
     def center(
         self, where: Optional[int] = CENTER_BOTH, store: bool = True
@@ -896,123 +864,6 @@ class Container(Widget):
         out += "]"
 
         return out
-
-
-class Prompt(Widget):
-    """Selectable object showing a single value with a label
-
-    This is to be deprecated."""
-
-    HIGHLIGHT_LEFT = 0
-    HIGHLIGHT_RIGHT = 1
-    HIGHLIGHT_ALL = 2
-
-    styles: dict[str, StyleType] = {
-        "label": apply_markup,
-        "value": apply_markup,
-        "delimiter": apply_markup,
-        "highlight": MarkupFormatter("[inverse]{item}"),
-    }
-
-    chars: dict[str, CharType] = {
-        "delimiter": ["< ", " >"],
-    }
-
-    serialized = Widget.serialized + [
-        "*value",
-        "*label",
-        "highlight_target",
-    ]
-
-    def __init__(
-        self,
-        label: str = "",
-        value: str = "",
-        highlight_target: int = HIGHLIGHT_LEFT,
-    ) -> None:
-        """Initialize object"""
-
-        super().__init__()
-
-        self.label = label
-        self.value = value
-        self.highlight_target = highlight_target
-
-        self.is_selectable = True
-        self._selectables_length = 1
-
-    def get_lines(self) -> list[str]:
-        """Get lines for object"""
-
-        self.mouse_targets = []
-
-        label_style = self.get_style("label")
-        value_style = self.get_style("value")
-        delimiter_style = self.get_style("delimiter")
-        highlight_style = self.get_style("highlight")
-
-        delimiters = self.get_char("delimiter")
-        assert isinstance(delimiters, list)
-
-        start, end = delimiters
-        label = label_style(self.label)
-
-        value_list = [
-            delimiter_style(start),
-            value_style(self.value),
-            delimiter_style(end),
-        ]
-
-        if self.selected_index is not None and self._is_focused:
-            if self.highlight_target in [Prompt.HIGHLIGHT_LEFT, Prompt.HIGHLIGHT_ALL]:
-                label = highlight_style(label)
-
-                if self.highlight_target is Prompt.HIGHLIGHT_LEFT:
-                    value = "".join(value_list)
-
-            if self.highlight_target in [Prompt.HIGHLIGHT_RIGHT, Prompt.HIGHLIGHT_ALL]:
-                value = "".join(highlight_style(item) for item in value_list)
-
-        else:
-            value = "".join(value_list)
-
-        middle = " " * (self.width - real_length(label + value) + 1)
-
-        if (
-            self.selected_index is not None
-            and self.highlight_target is Prompt.HIGHLIGHT_ALL
-        ):
-            middle = highlight_style(middle)
-
-        button = self.define_mouse_target(0, 0, 1)
-        button.onclick = self.onclick
-
-        return [label + middle + value]
-
-    def get_highlight_target_string(self) -> str:
-        """Get highlight target string"""
-
-        if self.highlight_target == Prompt.HIGHLIGHT_LEFT:
-            target = "HIGHLIGHT_LEFT"
-
-        elif self.highlight_target == Prompt.HIGHLIGHT_RIGHT:
-            target = "HIGHLIGHT_RIGHT"
-
-        elif self.highlight_target == Prompt.HIGHLIGHT_ALL:
-            target = "HIGHLIGHT_ALL"
-
-        return "Prompt." + target
-
-    def debug(self) -> str:
-        """String representation of self"""
-
-        return (
-            "Prompt("
-            + "label={self.value}, "
-            + f"value={self.value}, "
-            + f"highlight_target={self.get_highlight_target_string()}"
-            + ")"
-        )
 
 
 class Label(Widget):
@@ -1107,3 +958,86 @@ class Label(Widget):
         """Return identifiable information about object"""
 
         return f'Label(value="{self.value}", align={self.get_align_string()})'
+
+
+class Button(Widget):
+    """A visual MouseTarget"""
+
+    chars: dict[str, CharType] = {"delimiter": ["< ", " >"]}
+
+    styles: dict[str, StyleType] = {
+        "label": apply_markup,
+        "delimiter": MarkupFormatter("[/fg]{item}"),
+        "highlight": MarkupFormatter("[!strip inverse]{item}"),
+    }
+
+    def __init__(
+        self,
+        label: str,
+        onclick: Optional[MouseCallback] = None,
+        align: int = Label.ALIGN_CENTER,
+    ) -> None:
+        """Initialize object"""
+
+        super().__init__()
+
+        self.label = label
+        self._donor = Label(label)
+        self._selectables_length = 1
+        self.is_selectable = True
+        self.onclick = onclick
+
+        self.align = align
+
+    @property
+    def align(self) -> int:
+        """Return alignment"""
+
+        return self._align
+
+    @align.setter
+    def align(self, value: int) -> None:
+        """Set button alignment"""
+
+        self._donor.align = value
+        self._align = value
+
+    def get_lines(self) -> list[str]:
+        """Get object lines"""
+
+        def _find_start(line: str) -> int:
+            """Find first non-whitespace char"""
+
+            for i, char in enumerate(line):
+                if not char == " ":
+                    return i
+
+            return 0
+
+        self.mouse_targets = []
+        highlight_style = self.get_style("highlight")
+        delimiters = self.get_char("delimiter")
+        assert len(delimiters) == 2
+
+        delimiter_style = self.get_style("delimiter")
+        left, right = [markup(delimiter_style(char)) for char in delimiters]
+
+        word = ansi(left + self.label + right)
+        if self.selected_index is not None:
+            word = highlight_style(word)
+
+        padding = (self.width - real_length(word)) // 2
+        lines = [padding * " " + word + padding * " "]
+
+        start_i = _find_start(lines[0]) + 1
+        end_i = _find_start(lines[0][::-1])
+
+        self.define_mouse_target(
+            left=start_i, right=end_i, height=1
+        ).onclick = self.onclick
+
+        # TODO: This would fix the inner-buttons being resized to full width,
+        #       But the alignment breaks.
+        # self.forced_width = real_length(word)
+
+        return lines
