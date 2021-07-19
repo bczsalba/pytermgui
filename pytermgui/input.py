@@ -139,6 +139,8 @@ class _Keys:
         self._keys = {
             "SPACE": " ",
             "ESC": "\x1b",
+            # The ALT character in key combinations is the same as ESC
+            "ALT": "\x1b",
             "TAB": "\t",
             "ENTER": "\n",
             "RETURN": "\n",
