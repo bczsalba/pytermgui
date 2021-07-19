@@ -553,7 +553,7 @@ class InputField(Widget):
             self.value = left + key + right
             self.cursor += 1
 
-    def select(self, index: int) -> None:
+    def select(self, index: Optional[int] = None) -> None:
         """Select object"""
 
         self.focus()

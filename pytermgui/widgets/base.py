@@ -294,6 +294,21 @@ class Widget:
 
         return self._selectables_length
 
+    @property
+    def forced_width(self) -> Optional[int]:
+        """Return forced/static width of object"""
+
+        return self._forced_width
+
+    @forced_width.setter
+    def forced_width(self, value: Optional[int]) -> None:
+        """Set forced width"""
+
+        self._forced_width = value
+
+        if value is not None:
+            self.width = value
+
     def define_mouse_target(
         self, left: int, right: int, height: int, top: int = 0
     ) -> MouseTarget:
@@ -392,8 +407,16 @@ class Widget:
 
         raise NotImplementedError(f"get_lines() is not defined for type {type(self)}.")
 
-    def select(self, index: int) -> None:
+    def select(self, index: Optional[int] = None) -> None:
         """Select part of self"""
+
+        if index is None:
+            if self.selected_index is None:
+                raise ValueError(
+                    "Cannot select nothing! "
+                    + "Either give an argument to select() or set object.selected_index."
+                )
+            index = self.selected_index
 
         if not self.is_selectable:
             raise TypeError(f"Object of type {type(self)} is marked non-selectable.")
@@ -553,7 +576,8 @@ class Container(Widget):
 
         other.get_lines()
 
-        if not len(keys := list(self._selectables)) > 0:
+        keys = list(self._selectables)
+        if len(keys) <= 0:
             sel_len = 0
         else:
             sel_len = max(keys) + 1
