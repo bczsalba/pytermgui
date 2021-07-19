@@ -9,10 +9,10 @@ between these and the ones in .base is that these either fully rely on,
 or at least partially use the classes provided in .base.
 """
 
-# these classes will have to have more than 7 attributes mostly.
+# These classes will have to have more than 7 attributes mostly.
 # pylint: disable=too-many-instance-attributes
 
-from typing import Optional, Callable
+from typing import Optional, Callable, Any
 
 from .base import (
     Container,
@@ -28,7 +28,7 @@ from .styles import (
     StyleType,
     CharType,
 )
-from ..input import keys
+from ..input import keys, getch
 from ..ansi_interface import foreground, background
 from ..helpers import real_length, strip_ansi
 
@@ -185,8 +185,6 @@ class ListView(Widget):
     }
 
     chars: dict[str, CharType] = {"delimiter": ["< ", " >"]}
-
-    # click_callback: Callable[[Button, Widget], Any] = _focus
 
     serialized = Widget.serialized + [
         "*options",
@@ -573,3 +571,134 @@ class InputField(Widget):
             + f"tab_length={self.tab_length}"
             + ")"
         )
+
+
+class Prompt(Widget):
+    """Selectable object showing a single value with a label
+
+    This is to be deprecated."""
+
+    HIGHLIGHT_LEFT = 0
+    HIGHLIGHT_RIGHT = 1
+    HIGHLIGHT_ALL = 2
+
+    styles: dict[str, StyleType] = {
+        "label": apply_markup,
+        "value": apply_markup,
+        "delimiter": apply_markup,
+        "highlight": MarkupFormatter("[inverse]{item}"),
+    }
+
+    chars: dict[str, CharType] = {
+        "delimiter": ["< ", " >"],
+    }
+
+    serialized = Widget.serialized + [
+        "*value",
+        "*label",
+        "highlight_target",
+    ]
+
+    def __init__(
+        self,
+        label: str = "",
+        value: str = "",
+        highlight_target: int = HIGHLIGHT_LEFT,
+    ) -> None:
+        """Initialize object"""
+
+        super().__init__()
+
+        self.label = label
+        self.value = value
+        self.highlight_target = highlight_target
+
+        self.is_selectable = True
+        self._selectables_length = 1
+
+    def get_lines(self) -> list[str]:
+        """Get lines for object"""
+
+        self.mouse_targets = []
+
+        label_style = self.get_style("label")
+        value_style = self.get_style("value")
+        delimiter_style = self.get_style("delimiter")
+        highlight_style = self.get_style("highlight")
+
+        delimiters = self.get_char("delimiter")
+        assert isinstance(delimiters, list)
+
+        start, end = delimiters
+        label = label_style(self.label)
+
+        value_list = [
+            delimiter_style(start),
+            value_style(self.value),
+            delimiter_style(end),
+        ]
+
+        if self.selected_index is not None and self._is_focused:
+            if self.highlight_target in [Prompt.HIGHLIGHT_LEFT, Prompt.HIGHLIGHT_ALL]:
+                label = highlight_style(label)
+
+                if self.highlight_target is Prompt.HIGHLIGHT_LEFT:
+                    value = "".join(value_list)
+
+            if self.highlight_target in [Prompt.HIGHLIGHT_RIGHT, Prompt.HIGHLIGHT_ALL]:
+                value = "".join(highlight_style(item) for item in value_list)
+
+        else:
+            value = "".join(value_list)
+
+        middle = " " * (self.width - real_length(label + value) + 1)
+
+        if (
+            self.selected_index is not None
+            and self.highlight_target is Prompt.HIGHLIGHT_ALL
+        ):
+            middle = highlight_style(middle)
+
+        button = self.define_mouse_target(0, 0, 1)
+        button.onclick = self.onclick
+
+        return [label + middle + value]
+
+    def get_highlight_target_string(self) -> str:
+        """Get highlight target string"""
+
+        if self.highlight_target == Prompt.HIGHLIGHT_LEFT:
+            target = "HIGHLIGHT_LEFT"
+
+        elif self.highlight_target == Prompt.HIGHLIGHT_RIGHT:
+            target = "HIGHLIGHT_RIGHT"
+
+        elif self.highlight_target == Prompt.HIGHLIGHT_ALL:
+            target = "HIGHLIGHT_ALL"
+
+        return "Prompt." + target
+
+    def debug(self) -> str:
+        """String representation of self"""
+
+        return (
+            "Prompt("
+            + "label={self.value}, "
+            + f"value={self.value}, "
+            + f"highlight_target={self.get_highlight_target_string()}"
+            + ")"
+        )
+
+
+def alert(data: Any) -> None:
+    """Create a dismissible dialogue and pause execution"""
+
+    root = Container()
+    root += Label("[210 italic bold]Alert!")
+    root += Label()
+    root += Label(str(data))
+
+    root.center()
+    root.print()
+    getch()
+    root.wipe()
