@@ -7,7 +7,7 @@ author: bczsalba
 This submodule the basic elements this library provides.
 """
 
-# these classes will have to have more than 7 attributes mostly.
+# These classes will have to have more than 7 attributes mostly.
 # pylint: disable=too-many-instance-attributes
 
 from __future__ import annotations
@@ -114,7 +114,6 @@ class MouseTarget:
         start = self._start
         end = self._end
 
-        # print(start, pos, end)
         return start[0] <= pos[0] <= end[0] and start[1] <= pos[1] <= end[1]
 
     def click(self, caller: Widget) -> None:
@@ -311,7 +310,7 @@ class Widget:
 
         out: dict[str, Any] = {"type": type(self).__name__}
         for key in fields:
-            # detect styled values
+            # Detect styled values
             if key.startswith("*"):
                 style = True
                 key = key[1:]
@@ -320,7 +319,7 @@ class Widget:
 
             value = getattr(self, key)
 
-            # convert styled value into markup
+            # Convert styled value into markup
             if style:
                 style_call = self.get_style(key)
                 if isinstance(value, list):
@@ -332,7 +331,7 @@ class Widget:
 
             out[key] = value
 
-        # the chars need to be handled separately
+        # The chars need to be handled separately
         out["chars"] = {}
         for key, value in self.chars.items():
             style_call = self.get_style(key)
@@ -412,17 +411,17 @@ class Widget:
 class Container(Widget):
     """The widget that serves as the outer parent to all other widgets"""
 
-    # vertical aligment policies
+    # Vertical aligment policies
     VERT_ALIGN_TOP = 0
     VERT_ALIGN_CENTER = 1
     VERT_ALIGN_BOTTOM = 2
 
-    # horizontal aligment policies
+    # Horizontal aligment policies
     HORIZ_ALIGN_LEFT = 3
     HORIZ_ALIGN_CENTER = 4
     HORIZ_ALIGN_RIGHT = 5
 
-    # centering policies
+    # Centering policies
     CENTER_X = 6
     CENTER_Y = 7
     CENTER_BOTH = 8
@@ -617,6 +616,7 @@ class Container(Widget):
 
             return target
 
+        # Get chars & styles
         corner_style = self.get_style("corner")
         border_style = self.get_style("border")
 
@@ -818,7 +818,7 @@ class Container(Widget):
     ) -> Container:
         """Center object on given axis, store & reapply if `store`"""
 
-        # refresh in case changes happened
+        # Refresh in case changes happened
         self.get_lines()
 
         centerx = where in [Container.CENTER_X, Container.CENTER_BOTH]

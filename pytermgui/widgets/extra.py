@@ -255,7 +255,7 @@ class ListView(Widget):
             for i, opt in enumerate(self.options):
                 value = [start, options_style(opt), end]
 
-                # highlight_style needs to be applied to all widgets in value
+                # Highlight_style needs to be applied to all widgets in value
                 if self._is_focused and i == self.selected_index:
                     label.value = "".join(highlight_style(widget) for widget in value)
 
@@ -418,7 +418,6 @@ class InputField(Widget):
 
             label = self._donor_label
             label.value = buff + (self.width - real_length(buff)) * " "
-            # return label.get_lines()
             return [
                 (self.width - real_length(line)) * " " + line
                 for line in label.get_lines()
@@ -445,7 +444,7 @@ class InputField(Widget):
                 buff = ""
                 continue
 
-            # currently all lines visually have an extra " " at the end
+            # Currently all lines visually have an extra " " at the end
             if real_length(buff) > self.width:
                 lines += _get_label_lines(buff[:-1])
 
