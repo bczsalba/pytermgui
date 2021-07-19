@@ -460,8 +460,6 @@ class Container(Widget):
     }
 
     serialized = Widget.serialized + [
-        "vert_align",
-        "horiz_align",
         "_centered_axis",
     ]
 
@@ -478,9 +476,6 @@ class Container(Widget):
         self._prev_selected: Optional[Widget] = None
 
         self._prev_screen: tuple[int, int] = (0, 0)
-
-        self.vert_align = vert_align
-        self.horiz_align = horiz_align
 
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()

@@ -64,9 +64,7 @@ with alt_buffer():
     ProgressBar.set_style("fill", delimiter_style)
     ProgressBar.set_style("delimiter", value_style)
 
-    main = Container(
-        horiz_align=Container.HORIZ_ALIGN_CENTER, vert_align=Container.VERT_ALIGN_CENTER
-    )
+    main = Container()
     main.forced_height = 37
     main.forced_width = 70
     main.set_char("border", ["|x| ", "=", " |x|", "="])
