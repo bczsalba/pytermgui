@@ -18,6 +18,7 @@ Credits:
 """
 
 
+import re
 import sys
 from enum import Enum, auto as _auto
 from typing import Optional, Any, Union
@@ -452,10 +453,12 @@ class MouseAction(Enum):
     RELEASE = _auto()
     SCROLL_UP = _auto()
     SCROLL_DOWN = _auto()
+    RIGHT_HOLD = _auto()
+    RIGHT_PRESS = _auto()
 
 
 def report_mouse(
-    event: str, method: Optional[str] = "decimal_xterm", action: Optional[str] = "start"
+    event: str, method: Optional[str] = "decimal_xterm", stop: bool = False
 ) -> None:
     """Start reporting mouse events
 
@@ -489,7 +492,7 @@ def report_mouse(
     else:
         raise NotImplementedError(f"Mouse report event {event} is not supported!")
 
-    _stdout.write("h" if action == "start" else "l")
+    _stdout.write("l" if stop else "h")
 
     if method == "decimal_utf8":
         _stdout.write("\x1b[?1005")
@@ -506,44 +509,68 @@ def report_mouse(
     else:
         raise NotImplementedError(f"Mouse report method {method} is not supported!")
 
-    _stdout.write("h" if action == "start" else "l")
+    _stdout.write("l" if stop else "h")
     _stdout.flush()
 
 
-def translate_mouse(code: str) -> Optional[tuple[MouseAction, tuple[int, int]]]:
-    """Translate report_mouse() (decimal_xterm) codes into tuple[action, tuple[x, y]]"""
+def translate_mouse(code: str, method: str) -> Optional[tuple[MouseAction, tuple[int, int]]]:
+    """Translate report_mouse() (decimal_xterm or decimal_urxvt) codes into tuple[action, tuple[x, y]]
 
-    try:
-        numbers = code[3:].split(";")
-        pos = (int(numbers[1]), int(numbers[2][:-1]))
+    See `help(report_mouse)` for more information on methods."""
 
-        released = code[-1] == "m"
-        if released:
-            action = MouseAction.RELEASE
+    mouse_codes = {
+        "decimal_xterm": {
+            "pattern": r"<(\d{1,2})\;(\d{1,3})\;(\d{1,3})(\w)",
+            "0M": MouseAction.PRESS,
+            "0m": MouseAction.RELEASE,
+            "2": MouseAction.RIGHT_PRESS,
+            "32": MouseAction.HOLD,
+            "34": MouseAction.RIGHT_HOLD,
+            "35": MouseAction.HOVER,
+            "66": MouseAction.RIGHT_HOLD,
+            "64": MouseAction.SCROLL_UP,
+            "65": MouseAction.SCROLL_DOWN,
+        },
+        "decimal_urxvt": {
+            "pattern": r"(\d{1,2})\;(\d{1,3})\;(\d{1,3})()",
+            "32": MouseAction.PRESS,
+            "34": MouseAction.RIGHT_PRESS,
+            "35": MouseAction.RELEASE,
+            "64": MouseAction.HOLD,
+            "66": MouseAction.RIGHT_HOLD,
+            "96": MouseAction.SCROLL_UP,
+            "97": MouseAction.SCROLL_DOWN,
+        }
+    }
 
-        elif numbers[0] == "0":
-            action = MouseAction.PRESS
+    mapping = mouse_codes[method]
+    pattern = re.compile(mapping["pattern"])
 
-        elif numbers[0] == "32":
-            action = MouseAction.HOLD
+    events = []
+    for sequence in code.split("\x1b"):
+        if len(sequence) == 0:
+            continue
 
-        elif numbers[0] == "35":
-            action = MouseAction.HOVER
-
-        elif numbers[0] == "64":
-            action = MouseAction.SCROLL_UP
-
-        elif numbers[0] == "65":
-            action = MouseAction.SCROLL_DOWN
-
-        else:
-            print(code)
+        matches = list(pattern.finditer(sequence))
+        if matches == []:
             return None
 
-        return action, pos
+        for match in matches:
+            identifier, *pos, release_code = match.groups()
 
-    except (IndexError, ValueError, TypeError):
-        return None
+            # decimal_xterm uses the last character's 
+            # capitalization to signify press/release state
+            if len(release_code) > 0 and identifier == "0":
+                identifier += release_code
+
+            if identifier in mapping:
+                action = mapping[identifier]
+                events.append((action, tuple(int(val) for val in pos)))
+                continue
+
+            events.append(None)
+
+    return events
 
 
 # shorthand functions

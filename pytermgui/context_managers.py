@@ -86,27 +86,27 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
 
 
 @contextmanager
-def mouse_handler(
-    event: str,
-) -> Generator[
-    Callable[[str], Optional[tuple[MouseAction, tuple[int, int]]]], None, None
+def mouse_handler(event: str, method: str = "decimal_xterm") -> Generator[
+    Callable[[str], list[Optional[tuple[MouseAction, tuple[int, int]]]]], None, None
 ]:
     """Return a mouse handler function
 
-    Note: This only supports the method `decimal_xterm` as it seems to be the most universal,
-    and has one of the nicer interfaces.
+    Note: This method only supports `decimal_urxvt` and `decimal_xterm`, as they are the most
+    universal.
+
+    See `help(report_mouse)` for help about all of the methods.
 
     Example use:
         >>> from pytermgui import mouse_handler, getch
         >>> with mouse_handler("press") as mouse:
         ...     while True:
         ...         event = mouse(getch())
-        '(True, (33, 55))'
+        '(MouseAction.PRESS, (33, 55))'
     """
 
     try:
-        report_mouse(event, method="decimal_xterm")
-        yield translate_mouse
+        report_mouse(event, method=method)
+        yield lambda code: translate_mouse(code, method=method)
 
     finally:
-        report_mouse(event, method="decimal_xterm", action="stop")
+        report_mouse(event, method=method, stop=True)
