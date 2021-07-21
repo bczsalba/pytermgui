@@ -520,7 +520,7 @@ def translate_mouse(code: str, method: str) -> Optional[tuple[MouseAction, tuple
 
     mouse_codes = {
         "decimal_xterm": {
-            "pattern": r"<(\d{1,2})\;(\d{1,3})\;(\d{1,3})(\w)",
+            "pattern": re.compile(r"<(\d{1,2})\;(\d{1,3})\;(\d{1,3})(\w)"),
             "0M": MouseAction.PRESS,
             "0m": MouseAction.RELEASE,
             "2": MouseAction.RIGHT_PRESS,
@@ -532,7 +532,7 @@ def translate_mouse(code: str, method: str) -> Optional[tuple[MouseAction, tuple
             "65": MouseAction.SCROLL_DOWN,
         },
         "decimal_urxvt": {
-            "pattern": r"(\d{1,2})\;(\d{1,3})\;(\d{1,3})()",
+            "pattern": re.compile(r"(\d{1,2})\;(\d{1,3})\;(\d{1,3})()"),
             "32": MouseAction.PRESS,
             "34": MouseAction.RIGHT_PRESS,
             "35": MouseAction.RELEASE,
@@ -544,7 +544,7 @@ def translate_mouse(code: str, method: str) -> Optional[tuple[MouseAction, tuple
     }
 
     mapping = mouse_codes[method]
-    pattern = re.compile(mapping["pattern"])
+    pattern = mapping["pattern"]
 
     events = []
     for sequence in code.split("\x1b"):
