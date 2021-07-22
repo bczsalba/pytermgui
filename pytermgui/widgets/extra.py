@@ -18,6 +18,8 @@ from .base import (
     Container,
     Label,
     Widget,
+    Button,
+    MouseCallback,
 )
 
 from .styles import (
@@ -107,23 +109,69 @@ class Splitter(Container):
 
         super().__init__()
 
-        self.widths = None
-
         if elements is not None:
             for widget in elements:
                 self._add_widget(widget)
 
     def get_lines(self) -> list[str]:
         """Get lines of all objects"""
-
-        lines = []
+        
         separator = self.get_char("separator")
         assert isinstance(separator, str)
+        separator_length = real_length(separator)
 
-        widget_lines = [widget.get_lines() for widget in self._widgets]
+        target_width = (self.width - (len(self._widgets) - 1) * separator_length) // len(self._widgets)
+
+        def _align_left(line: str, width: int) -> str:
+            """Align string left"""
+
+            difference = width - real_length(line)
+            return line + difference * " "
+
+        def _align_center(line: str, width: int) -> str:
+            """Align string center"""
+
+            difference, offset = divmod(width - real_length(line), 2)
+            return (difference + offset) * " " + line + difference * " "
+
+        def _align_right(line: str, width: int) -> str:
+            """Align string right"""
+
+            difference = width - real_length(line)
+            return difference * " " + line
+
+        lines = []
+        widget_lines = []
+        offset_buffer = 0
+        current_offset = 0
+
+        for widget in self._widgets:
+            if widget.parent_align is Widget.PARENT_LEFT:
+                align = _align_left
+
+            elif widget.parent_align is Widget.PARENT_CENTER:
+                align = _align_center
+
+            elif widget.parent_align is Widget.PARENT_RIGHT:
+                align = _align_right
+            
+            if widget.forced_width is None:
+                widget.width = target_width
+
+            inner_lines = []
+            for line in widget.get_lines():
+                inner_lines.append(align(line, widget.width))
+
+            widget_lines.append(inner_lines)
+
+            current_offset = widget.width + separator_length
+            offset_buffer += current_offset
+            widget.pos = (self.pos[0] + offset_buffer, self.pos[1])
 
         for horizontal in zip(*widget_lines):
             lines.append(separator.join(horizontal))
+
+        self.width = real_length(lines[-1])
 
         return lines
 
@@ -172,125 +220,45 @@ class ProgressBar(Widget):
         return f"ProgressBar(progress_function={self.progress_function})"
 
 
-class ListView(Widget):
-    """Allow selection from a list of options"""
+class ListView(Container):
+    """Display a list of buttons"""
 
-    LAYOUT_HORIZONTAL = 0
-    LAYOUT_VERTICAL = 1
-
-    styles: dict[str, StyleType] = {
+    styles = Container.styles | {
         "delimiter": apply_markup,
-        "options": apply_markup,
+        "option": apply_markup,
         "highlight": default_background,
     }
 
-    chars: dict[str, CharType] = {"delimiter": ["< ", " >"]}
-
-    serialized = Widget.serialized + [
-        "*options",
-        "padding",
-        "layout",
-        "align",
-    ]
+    chars = Container.chars | {"delimiter": ["< ", " >"]}
 
     def __init__(
-        self,
-        options: Optional[list[str]] = None,
-        layout: int = LAYOUT_VERTICAL,
-        align: int = Label.ALIGN_CENTER,
-        padding: int = 0,
+        self, options: list[str], onclick: Optional[MouseCallback] = None
     ) -> None:
         """Initialize object"""
 
         super().__init__()
 
-        if options is None:
-            options = []
+        self.set_char("border", [""] * 4)
+        self.set_char("corner", [""] * 4)
 
-        self.padding = padding
         self.options = options
-        self.layout = layout
-        self.align = align
-        self._donor_label = Label(align=self.align)
-        self.height = len(self.options)
-        self.width = (
-            max(real_length(line) for line in self.options)
-            + sum(real_length(char) for char in self.get_char("delimiter"))
-            + 2
-        )
+        self.update_options()
 
-        self.is_selectable = True
-        self._selectables_length = len(options)
+    @property
+    def selectables_length(self) -> int:
+        """Return count of selectables"""
 
-    def get_lines(self) -> list[str]:
-        """Get lines to represent object"""
+        return len(self.options)
 
-        def _find_start(text: str) -> int:
-            """Find first non-whitespace char of text"""
+    def update_options(self) -> None:
+        """Refresh inner Button-s"""
 
-            for i, char in enumerate(text):
-                if not char == " ":
-                    return i
-            return 0
+        self._widgets = []
 
-        lines = []
-        self.mouse_targets = []
-
-        options_style = self.get_style("options")
-        highlight_style = self.get_style("highlight")
-        delimiter_style = self.get_style("delimiter")
-
-        chars = self.get_char("delimiter")
-        start, end = [delimiter_style(char) for char in chars]
-
-        if self.layout is ListView.LAYOUT_HORIZONTAL:
-            pass
-
-        elif self.layout is ListView.LAYOUT_VERTICAL:
-            label = self._donor_label
-            label.align = self.align
-            label.padding = self.padding
-            label.width = self.width
-
-            for i, opt in enumerate(self.options):
-                value = [start, options_style(opt), end]
-
-                # Highlight_style needs to be applied to all widgets in value
-                if self._is_focused and i == self.selected_index:
-                    label.value = "".join(highlight_style(widget) for widget in value)
-
-                else:
-                    label.value = "".join(value)
-
-                for inner, line in enumerate(label.get_lines()):
-                    lines.append(line)
-
-                    self.define_mouse_target(
-                        _find_start(line), _find_start(line[::-1]), 1, top=inner
-                    ).onclick = self.onclick
-
-        return lines
-
-    def get_layout_string(self) -> str:
-        """Get layout string"""
-
-        if self.layout is ListView.LAYOUT_HORIZONTAL:
-            layout = "LAYOUT_HORIZONTAL"
-        elif self.layout is ListView.LAYOUT_VERTICAL:
-            layout = "LAYOUT_VERTICAL"
-
-        return "ListView." + layout
-
-    def debug(self) -> str:
-        """Return identifiable information about object"""
-
-        return (
-            "ListView("
-            + f"options={self.options}, "
-            + f"layout={self.get_layout_string()}, "
-            + f"align={self._donor_label.get_align_string()}"
-            + ")"
-        )
+        for option in self.options:
+            button = Button(option)
+            button.onclick = self.onclick
+            self._add_widget(button)
 
 
 class InputField(Widget):
@@ -325,14 +293,11 @@ class InputField(Widget):
         self.value = value + " "
         self.tab_length = tab_length
         self.cursor = real_length(value)
-        self.align = Label.ALIGN_LEFT
         self.width = 40
 
         self._selectables_length = 1
 
-        self._donor_label = Label(align=self.align, padding=padding)
-        self._donor_label.width = self.width
-        self._donor_label.set_style("value", self.get_style("value").method)
+        self.parent_align = Widget.PARENT_LEFT
 
     @property
     def selected_value(self) -> Optional[str]:
@@ -401,27 +366,18 @@ class InputField(Widget):
 
             return start, end
 
-        self._donor_label.forced_width = self.width
-        self._donor_label.padding = self.padding
-        self._donor_label.align = self.align
-
         lines = []
         buff = ""
         value_style = self.get_style("value")
         cursor_style = self.get_style("cursor")
         highlight_style = self.get_style("highlight")
 
-        self._donor_label.set_style("value", value_style.method)
-
         def _get_label_lines(buff: str) -> list[str]:
-            """Get lines from donor label"""
+            """Get lines from donor label
 
-            label = self._donor_label
-            label.value = buff + (self.width - real_length(buff)) * " "
-            return [
-                (self.width - real_length(line)) * " " + line
-                for line in label.get_lines()
-            ]
+            Note: This is temporary, the entire class will be rewritten."""
+
+            return [buff]
 
         # highlight_style is optional
         if highlight_style.method is Widget.OVERRIDE:

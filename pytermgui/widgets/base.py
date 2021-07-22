@@ -612,13 +612,15 @@ class Container(Widget):
             return left + padding * " " + text + right
 
         if widget.parent_align is Widget.PARENT_CENTER:
-            return _align_center, (self.width - widget.width) // 2
+            total = self.width - real_length(left + right) - widget.width
+            padding, offset = divmod(total, 2)
+            return _align_center, real_length(left) + padding + offset
 
         if widget.parent_align is Widget.PARENT_RIGHT:
-            return _align_right, 0
+            return _align_right, self.width - real_length(left) - widget.width
 
         # Default to left-aligned
-        return _align_left, 0
+        return _align_left, real_length(left)
 
     def _update_width(self, widget: Widget) -> None:
         """Update width of widget & self"""
@@ -626,15 +628,15 @@ class Container(Widget):
         if widget.forced_width is not None and self.forced_width is not None:
             if widget.forced_width + self.sidelength > self.forced_width:
                 raise WidthExceededError(
-                    f"Widget {widget}'s forced_width value ({widget.forced_width})"
-                    + " is higher than its parent Container's ({self.forced_width})"
+                    f"Widget {widget}'s forced_width value ({widget.forced_width + self.sidelength})"
+                    + f" is higher than its parent Container's ({self.forced_width})"
                 )
 
         elif widget.forced_width is not None and self.forced_width is None:
             if widget.forced_width + self.sidelength > self.width:
                 self.width = widget.forced_width + self.sidelength
 
-        else:
+        elif self.forced_width is None:
             self.width = max(self.width, widget.width + self.sidelength + 1)
 
     def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
@@ -683,17 +685,24 @@ class Container(Widget):
             if self.width == 0:
                 self.width = widget.width
 
-            if widget.size_policy == Widget.SIZE_FILL and widget.width < self.width:
-                widget.forced_width = self.width - self.sidelength - 1
+            # Fill container
+            if (
+                widget.size_policy == Widget.SIZE_FILL
+                and widget.width < self.width
+                and widget.forced_width is None
+            ):
+                widget.width = self.width - self.sidelength - 1
 
             self._update_width(widget)
 
             align, offset = self._get_aligners(widget, (left, right))
 
+            container_vertical_offset = 1 if real_length(top) > 0 else 0
+
             # Set position (including horizontal padding)
             widget.pos = (
                 self.pos[0] + offset,
-                self.pos[1] + len(lines),
+                self.pos[1] + len(lines) + 0,
             )
 
             # get_lines()
@@ -728,8 +737,11 @@ class Container(Widget):
             self.height = len(lines) + 2
 
         # Add capping lines
-        lines.insert(0, _get_border(t_left, top, t_right))
-        lines.append(_get_border(b_left, bottom, b_right))
+        if real_length(top):
+            lines.insert(0, _get_border(t_left, top, t_right))
+
+        if real_length(bottom):
+            lines.append(_get_border(b_left, bottom, b_right))
 
         for target in self.mouse_targets:
             target.adjust()
@@ -835,7 +847,7 @@ class Container(Widget):
         for i, widget in enumerate(selectables):
             target = widget.click(pos)
 
-            if target is not None:
+            if target is not None and target.parent is widget:
                 self.select(i + widget.mouse_targets.index(target))
 
                 return target
@@ -888,10 +900,6 @@ class Container(Widget):
 class Label(Widget):
     """Unselectable text object"""
 
-    ALIGN_LEFT = 0
-    ALIGN_CENTER = 1
-    ALIGN_RIGHT = 2
-
     styles: dict[str, StyleType] = {
         "value": apply_markup,
     }
@@ -905,7 +913,6 @@ class Label(Widget):
     def __init__(
         self,
         value: str = "",
-        align: int = ALIGN_CENTER,
         padding: int = 0,
     ) -> None:
         """Set up object"""
@@ -913,70 +920,21 @@ class Label(Widget):
         super().__init__()
 
         self.value = value
-        self.align = align
         self.padding = padding
-        self.width = real_length(value) + self.padding + 2
+        self.width = real_length(value) + self.padding
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""
 
         value_style = self.get_style("value")
-        broken = list(break_line(value_style(self.value), self.width))
+        lines = break_line(value_style(self.padding * " " + self.value), self.width)
 
-        if broken == []:
-            return [""]
-
-        lines = []
-
-        if self.align is Label.ALIGN_CENTER:
-            for line in broken:
-                line += reset()
-
-                padding = (self.width - real_length(line) - self.padding) // 2
-                outline = (padding + self.padding + 1) * " " + line
-                outline += (self.width - real_length(outline) + 1) * " "
-
-                lines.append(outline)
-
-        elif self.align is Label.ALIGN_LEFT:
-            for line in broken:
-                line += reset()
-
-                line = value_style(line)
-                padding = self.width - real_length(line) - self.padding + 1
-                lines.append(self.padding * " " + line + padding * " ")
-
-        elif self.align is Label.ALIGN_RIGHT:
-            for line in broken:
-                line += reset()
-
-                line = value_style(line)
-                lines.append(
-                    (self.width - real_length(line) - self.padding + 1) * " "
-                    + line
-                    + self.padding * " "
-                )
-
-        return lines
-
-    def get_align_string(self) -> str:
-        """Get string of align value"""
-
-        if self.align is Label.ALIGN_LEFT:
-            align = "ALIGN_LEFT"
-
-        elif self.align is Label.ALIGN_RIGHT:
-            align = "ALIGN_RIGHT"
-
-        elif self.align is Label.ALIGN_CENTER:
-            align = "ALIGN_CENTER"
-
-        return "Label." + align
+        return list(lines) or [""]
 
     def debug(self) -> str:
         """Return identifiable information about object"""
 
-        return f'Label(value="{self.value}", align={self.get_align_string()})'
+        return f'Label(value="{self.value}")'
 
 
 class Button(Widget):
@@ -994,44 +952,18 @@ class Button(Widget):
         self,
         label: str,
         onclick: Optional[MouseCallback] = None,
-        align: int = Label.ALIGN_CENTER,
     ) -> None:
         """Initialize object"""
 
         super().__init__()
 
         self.label = label
-        self._donor = Label(label)
         self._selectables_length = 1
         self.is_selectable = True
         self.onclick = onclick
 
-        self.align = align
-
-    @property
-    def align(self) -> int:
-        """Return alignment"""
-
-        return self._align
-
-    @align.setter
-    def align(self, value: int) -> None:
-        """Set button alignment"""
-
-        self._donor.align = value
-        self._align = value
-
     def get_lines(self) -> list[str]:
         """Get object lines"""
-
-        def _find_start(line: str) -> int:
-            """Find first non-whitespace char"""
-
-            for i, char in enumerate(line):
-                if not char == " ":
-                    return i
-
-            return 0
 
         self.mouse_targets = []
         highlight_style = self.get_style("highlight")
@@ -1045,18 +977,12 @@ class Button(Widget):
         if self.selected_index is not None:
             word = highlight_style(word)
 
-        padding = (self.width - real_length(word)) // 2
-        lines = [padding * " " + word + padding * " "]
+        self.define_mouse_target(left=0, right=0, height=1).onclick = self.onclick
+        self.forced_width = real_length(word)
 
-        start_i = _find_start(lines[0]) + 1
-        end_i = _find_start(lines[0][::-1])
+        return [word]
 
-        self.define_mouse_target(
-            left=start_i, right=end_i, height=1
-        ).onclick = self.onclick
+    def debug(self) -> str:
+        """Show identifiable information"""
 
-        # TODO: This would fix the inner-buttons being resized to full width,
-        #       But the alignment breaks.
-        # self.forced_width = real_length(word)
-
-        return lines
+        return f'Button(label="{self.label}", onclick={self.onclick})'
