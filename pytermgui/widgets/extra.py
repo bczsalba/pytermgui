@@ -113,14 +113,9 @@ class Splitter(Container):
             for widget in elements:
                 self._add_widget(widget)
 
-    def get_lines(self) -> list[str]:
-        """Get lines of all objects"""
-        
-        separator = self.get_char("separator")
-        assert isinstance(separator, str)
-        separator_length = real_length(separator)
-
-        target_width = (self.width - (len(self._widgets) - 1) * separator_length) // len(self._widgets)
+    @staticmethod
+    def _get_aligner(widget: Widget) -> Callable[[str, int], str]:
+        """Get aligner method for alignment value"""
 
         def _align_left(line: str, width: int) -> str:
             """Align string left"""
@@ -140,21 +135,38 @@ class Splitter(Container):
             difference = width - real_length(line)
             return difference * " " + line
 
+        if widget.parent_align is Widget.PARENT_LEFT:
+            return _align_left
+
+        if widget.parent_align is Widget.PARENT_CENTER:
+            return _align_center
+
+        if widget.parent_align is Widget.PARENT_RIGHT:
+            return _align_right
+
+        raise NotImplementedError(
+            f"Parent-Alignment {widget.parent_align} is not implemented."
+        )
+
+    def get_lines(self) -> list[str]:
+        """Get lines of all objects"""
+
+        separator = self.get_char("separator")
+        assert isinstance(separator, str)
+        separator_length = real_length(separator)
+
+        target_width = (
+            self.width - (len(self._widgets) - 1) * separator_length
+        ) // len(self._widgets)
+
         lines = []
         widget_lines = []
         offset_buffer = 0
         current_offset = 0
 
         for widget in self._widgets:
-            if widget.parent_align is Widget.PARENT_LEFT:
-                align = _align_left
+            align = self._get_aligner(widget)
 
-            elif widget.parent_align is Widget.PARENT_CENTER:
-                align = _align_center
-
-            elif widget.parent_align is Widget.PARENT_RIGHT:
-                align = _align_right
-            
             if widget.forced_width is None:
                 widget.width = target_width
 
@@ -232,7 +244,10 @@ class ListView(Container):
     chars = Container.chars | {"delimiter": ["< ", " >"]}
 
     def __init__(
-        self, options: list[str], onclick: Optional[MouseCallback] = None
+        self,
+        options: list[str],
+        onclick: Optional[MouseCallback] = None,
+        parent_align: int = Widget.PARENT_CENTER,
     ) -> None:
         """Initialize object"""
 
@@ -241,8 +256,10 @@ class ListView(Container):
         self.set_char("border", [""] * 4)
         self.set_char("corner", [""] * 4)
 
+        self.onclick = onclick
         self.options = options
         self.update_options()
+        self.parent_align = parent_align
 
     @property
     def selectables_length(self) -> int:
@@ -258,6 +275,7 @@ class ListView(Container):
         for option in self.options:
             button = Button(option)
             button.onclick = self.onclick
+            button.parent_align = self.parent_align
             self._add_widget(button)
 
 
@@ -528,7 +546,7 @@ class InputField(Widget):
         )
 
 
-class Prompt(Widget):
+class old_Prompt(Widget):
     """Selectable object showing a single value with a label
 
     This is to be deprecated."""
@@ -644,6 +662,19 @@ class Prompt(Widget):
             + ")"
         )
 
+
+def prompt(left: tuple[Widget, int], right: tuple[Widget, int]) -> Splitter:
+    """Create a splitter with two sides"""
+
+    l_widget, l_width = left
+    left = l_widget
+    left.forced_width = l_width
+
+    r_widget, r_width = right
+    right = r_widget
+    right.forced_width = r_width
+
+    return Splitter() + left + right
 
 def alert(data: Any) -> None:
     """Create a dismissible dialogue and pause execution"""

@@ -17,7 +17,7 @@ from .extra import (
     ColorPicker,
     InputField,
     ProgressBar,
-    Prompt,
+    prompt,
     alert,
 )
 from .styles import *
@@ -29,7 +29,6 @@ __all__ = [
     "Widget",
     "Splitter",
     "Container",
-    "Prompt",
     "Label",
     "Button",
     "ListView",
@@ -37,6 +36,7 @@ __all__ = [
     "InputField",
     "ProgressBar",
     "alert",
+    "prompt",
     "MouseTarget",
     "MouseCallback",
     "boxes",

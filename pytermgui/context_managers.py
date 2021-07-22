@@ -29,7 +29,7 @@ from .ansi_interface import (
     cursor_up,
     report_mouse,
     translate_mouse,
-    MouseAction,
+    MouseEvent,
 )
 
 
@@ -86,9 +86,9 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
 
 
 @contextmanager
-def mouse_handler(event: str, method: str = "decimal_xterm") -> Generator[
-    Callable[[str], list[Optional[tuple[MouseAction, tuple[int, int]]]]], None, None
-]:
+def mouse_handler(
+    event: str, method: str = "decimal_xterm"
+) -> Generator[Callable[[str], Optional[list[Optional[MouseEvent]]]], None, None]:
     """Return a mouse handler function
 
     Note: This method only supports `decimal_urxvt` and `decimal_xterm`, as they are the most

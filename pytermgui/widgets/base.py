@@ -28,7 +28,6 @@ from ..ansi_interface import (
     screen_height,
     screen_size,
     clear,
-    reset,
 )
 from .styles import (
     StyleCall,
@@ -628,7 +627,8 @@ class Container(Widget):
         if widget.forced_width is not None and self.forced_width is not None:
             if widget.forced_width + self.sidelength > self.forced_width:
                 raise WidthExceededError(
-                    f"Widget {widget}'s forced_width value ({widget.forced_width + self.sidelength})"
+                    f"Widget {widget}'s forced_width value"
+                    + f" ({widget.forced_width + self.sidelength})"
                     + f" is higher than its parent Container's ({self.forced_width})"
                 )
 
@@ -697,12 +697,14 @@ class Container(Widget):
 
             align, offset = self._get_aligners(widget, (left, right))
 
-            container_vertical_offset = 1 if real_length(top) > 0 else 0
-
             # Set position (including horizontal padding)
+            # TODO: Containers with non-empty top/bottom borders don't set
+            #       y-pos properly.
+            # container_vertical_offset = 1 if real_length(top) > 0 else 0
+
             widget.pos = (
                 self.pos[0] + offset,
-                self.pos[1] + len(lines) + 0,
+                self.pos[1] + len(lines),
             )
 
             # get_lines()
@@ -914,6 +916,7 @@ class Label(Widget):
         self,
         value: str = "",
         padding: int = 0,
+        parent_align: int = Widget.PARENT_CENTER,
     ) -> None:
         """Set up object"""
 
@@ -922,6 +925,7 @@ class Label(Widget):
         self.value = value
         self.padding = padding
         self.width = real_length(value) + self.padding
+        self.parent_align = parent_align
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""

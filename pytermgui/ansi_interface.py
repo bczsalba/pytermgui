@@ -457,6 +457,9 @@ class MouseAction(Enum):
     RIGHT_PRESS = _auto()
 
 
+MouseEvent = tuple[MouseAction, tuple[int, int]]
+
+
 def report_mouse(
     event: str, method: Optional[str] = "decimal_xterm", stop: bool = False
 ) -> None:
@@ -513,8 +516,9 @@ def report_mouse(
     _stdout.flush()
 
 
-def translate_mouse(code: str, method: str) -> Optional[tuple[MouseAction, tuple[int, int]]]:
-    """Translate report_mouse() (decimal_xterm or decimal_urxvt) codes into tuple[action, tuple[x, y]]
+def translate_mouse(code: str, method: str) -> Optional[list[Optional[MouseEvent]]]:
+    """Translate report_mouse() (decimal_xterm or decimal_urxvt) codes into
+    tuple[action, tuple[x, y]].
 
     See `help(report_mouse)` for more information on methods."""
 
@@ -540,13 +544,13 @@ def translate_mouse(code: str, method: str) -> Optional[tuple[MouseAction, tuple
             "66": MouseAction.RIGHT_HOLD,
             "96": MouseAction.SCROLL_UP,
             "97": MouseAction.SCROLL_DOWN,
-        }
+        },
     }
 
     mapping = mouse_codes[method]
     pattern = mapping["pattern"]
 
-    events = []
+    events: list[Optional[tuple[MouseAction, tuple[int, int]]]] = []
     for sequence in code.split("\x1b"):
         if len(sequence) == 0:
             continue
@@ -558,14 +562,16 @@ def translate_mouse(code: str, method: str) -> Optional[tuple[MouseAction, tuple
         for match in matches:
             identifier, *pos, release_code = match.groups()
 
-            # decimal_xterm uses the last character's 
+            # decimal_xterm uses the last character's
             # capitalization to signify press/release state
             if len(release_code) > 0 and identifier == "0":
                 identifier += release_code
 
             if identifier in mapping:
                 action = mapping[identifier]
-                events.append((action, tuple(int(val) for val in pos)))
+                assert isinstance(action, MouseAction)
+
+                events.append((action, (int(pos[0]), int(pos[1]))))
                 continue
 
             events.append(None)

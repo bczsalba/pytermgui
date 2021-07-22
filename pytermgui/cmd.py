@@ -307,7 +307,7 @@ def markup_writer() -> None:  # pylint: disable=too-many-statements
     for _ in range(inner.height - len(options) - 2):
         options.append("")
 
-    listview = ListView(options=options, align=Label.ALIGN_RIGHT)
+    listview = ListView(options=options, parent_align=Widget.ALIGN_RIGHT)
     listview.set_style("options", color_call(243))
     listview.set_char("delimiter", ["", ""])
 

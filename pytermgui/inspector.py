@@ -20,7 +20,7 @@ from inspect import signature, getdoc, isclass, ismodule, Signature
 
 from .input import getch
 from .parser import ansi
-from .widgets import Container, Label
+from .widgets import Widget, Container, Label
 from .context_managers import alt_buffer
 from .widgets.boxes import DOUBLE_BOTTOM
 from .widgets.styles import MarkupFormatter, StyleType
@@ -262,7 +262,9 @@ class Inspector(Container):
             self._widgets = []
 
         definition = Label(
-            self._get_definition(target), padding=_padding, align=Label.ALIGN_LEFT
+            self._get_definition(target),
+            padding=_padding,
+            parent_align=Widget.PARENT_LEFT,
         )
         definition.set_style("value", lambda _, item: item)
 
@@ -270,7 +272,7 @@ class Inspector(Container):
         self += definition  # type: ignore
 
         for line in self._get_docstring(target):
-            doc = Label(line, padding=_padding + 4, align=Label.ALIGN_LEFT)
+            doc = Label(line, padding=_padding + 4, parent_align=Widget.PARENT_LEFT)
             doc.set_style("value", lambda _, item: item)
             self += doc  # type: ignore
 
