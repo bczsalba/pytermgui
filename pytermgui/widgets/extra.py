@@ -545,7 +545,7 @@ class InputField(Widget):
         )
 
 
-class old_Prompt(Widget):
+class Prompt(Widget):
     """Selectable object showing a single value with a label
 
     This is to be deprecated."""
@@ -661,19 +661,6 @@ class old_Prompt(Widget):
             + ")"
         )
 
-
-def prompt(left: tuple[Widget, int], right: tuple[Widget, int]) -> Splitter:
-    """Create a splitter with two sides"""
-
-    l_widget, l_width = left
-    left = l_widget
-    left.forced_width = l_width
-
-    r_widget, r_width = right
-    right = r_widget
-    right.forced_width = r_width
-
-    return Splitter() + left + right
 
 def alert(data: Any) -> None:
     """Create a dismissible dialogue and pause execution"""

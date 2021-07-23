@@ -9,6 +9,7 @@ A simple yet powerful TUI framework for your Python (3.9+) applications
 
 from typing import Union, Any, Optional
 
+from .window_manager import __all__ as _manager_all
 from .ansi_interface import __all__ as _ansi_all
 from .serializer import __all__ as _serializer_all
 from .inspector import __all__ as _inspector_all
@@ -20,6 +21,7 @@ __all__ = ["__version__"]
 
 __all__ += _ansi_all
 __all__ += _parser_all
+__all__ += _manager_all
 __all__ += _widgets_all
 __all__ += _inspector_all
 __all__ += _serializer_all
@@ -31,6 +33,7 @@ from .helpers import *
 from .inspector import *
 from .serializer import *
 from .ansi_interface import *
+from .window_manager import *
 from .input import getch, keys
 from .context_managers import alt_buffer, cursor_at, mouse_handler
 
