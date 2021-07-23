@@ -956,6 +956,7 @@ class Button(Widget):
         self,
         label: str,
         onclick: Optional[MouseCallback] = None,
+        parent_align: int = Widget.PARENT_CENTER,
     ) -> None:
         """Initialize object"""
 
@@ -965,6 +966,7 @@ class Button(Widget):
         self._selectables_length = 1
         self.is_selectable = True
         self.onclick = onclick
+        self.parent_align = parent_align
 
     def get_lines(self) -> list[str]:
         """Get object lines"""

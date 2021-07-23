@@ -155,14 +155,14 @@ class Splitter(Container):
         assert isinstance(separator, str)
         separator_length = real_length(separator)
 
-        target_width = (
-            self.width - (len(self._widgets) - 1) * separator_length
-        ) // len(self._widgets)
+        # target_width = self.width // len(self._widgets)
 
         lines = []
         widget_lines = []
         offset_buffer = 0
         current_offset = 0
+
+        target_width = self.width // 2
 
         for widget in self._widgets:
             align = self._get_aligner(widget)
@@ -273,10 +273,9 @@ class ListView(Container):
         self._widgets = []
 
         for option in self.options:
-            button = Button(option)
-            button.onclick = self.onclick
-            button.parent_align = self.parent_align
-            self._add_widget(button)
+            self._add_widget(
+                Button(option, parent_align=self.parent_align, onclick=self.onclick)
+            )
 
 
 class InputField(Widget):
