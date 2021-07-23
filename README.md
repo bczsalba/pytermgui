@@ -1,4 +1,4 @@
-<!-- Todo: these colors could be randomly generated -->
+<!-- TODO: these colors could be randomly generated -->
 ![title](https://github.com/bczsalba/pytermgui/raw/master/assets/title.png)
 
 > A simple yet powerful TUI framework for your Python (3.9+) applications
@@ -27,21 +27,38 @@ root.print()
 What we provide
 ---------------
 
-- (experimental) Terminal mouse support!
+- Terminal mouse support
+- A fully flegded [WindowManager](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/window_manager.py) in the terminal
 - A cross-platform [getch](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/input.py) function with key translations
 - An [interface](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/ansi_interface.py) to most terminal functionality
-- A custom markup language inspired by [Rich](https://github.com/willmcgugan/rich/tree/master/rich)
+- A custom markup language with definable tags & macros inspired by [Rich](https://github.com/willmcgugan/rich/tree/master/rich)
 - [Tokenizer & optimizer](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/parser.py) methods for ANSI-sequence strings
 - A robust, extensible and customizable [Widget](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/widgets) class
 - helpful [CLI tools](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/cmd.py) (`ptg --help`)
 - Helpful [example files](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/cmd.py) covering most of the library
 
 ```python
->>> from pytermgui import optimize_ansi
->>> original = "\x1b[0m\x1b[0m\x1b[0m\x1b[38;5;141m\x1b[38;5;65m\x1b[0m\x1b[1mSee the difference?\x1b[0m"
->>> optimize_ansi(original)
+import sys
+from pytermgui import WindowManager, Window, Label, Button
 
-'\x1b[1mSee the difference?\x1b[0m'
+manager = WindowManager()
+window = (
+    Window()
+    + Label("[210 bold]My first Window!")
+    + Label()
+    + Label("[157]Try resizing the window by dragging the right border")
+    + Label("[157]Or drag the top border to move the window")
+    + Label("[193 bold]Alt-Tab[/bold 157] cycles windows")
+    + Label("[193 bold]CTRL_C[/bold 157] exits the program")
+    + Label()
+    + Button("New window", onclick=lambda *_: manager.add(window.copy().center()))
+    + Button("Close current", onclick=lambda _, button: button.parent.manager.close(button.parent))
+    + Button("Exit program", onclick=lambda *_: sys.exit(0))
+)
+
+window.min_width = 55
+manager.add(window)
+manager.run()
 ```
 
 Example to get started with
@@ -107,22 +124,13 @@ The previous method is now deprecated, and there isn't any nice way of supportin
 There isn't really much to help this issue, and its good practice to stay on the most recent release regardless.
 
 ```python
-from pytermgui import Container, Prompt, Label, boxes
+from pytermgui import Container, Label, boxes, auto
 boxes.EMPTY_VERTICAL.set_chars_of(Container)
-
-def dict_to_container(data: dict[str, str]) -> Container:
-    """Create container from a dict"""
-
-    root = Container()
-    for key, value in data.items():
-        root += Prompt(key, value)
-
-    return root
 
 root = Container()
 root += Label("[246 italic bold] a guide on the python version you should use")
 
-root += dict_to_container({
+root += auto({
     "[157]python >3.9": "[157]good",
     "[210]python <3.8": "[210]bad",
 })
