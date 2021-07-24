@@ -11,6 +11,8 @@ It has no outside dependencies, only depends on the rest of pytermgui. There is 
 including moving windows by dragging their top borders, clicking buttons inside windows and resizing
 windows by dragging their right borders.
 
+Inspired by https://github.com/epiclabs-io/winman.
+
 Notes:
     - Instead of Container-s, this module uses Window-s, which are essentially Container++
     - Window-s can have some special types:
@@ -35,6 +37,7 @@ from random import randint
 from typing import Optional, Callable, Any
 
 from .widgets import (
+    MarkupFormatter,
     MouseCallback,
     MouseTarget,
     InputField,
@@ -95,6 +98,7 @@ class Window(Container):
         self._is_full_screen: bool = False
         self._restore_size: tuple[int, int] = self.width, self.height
         self._restore_pos: tuple[int, int] = self.pos
+        self._toolbar_buttons: list[MouseTarget] = []
 
         self.title = title
         corners = self.get_char("corner")
@@ -151,7 +155,7 @@ class Window(Container):
     def add_button(self, text: str, position: int = TOP_RIGHT) -> MouseTarget:
         """Add a MouseTarget to either corner, return it"""
 
-        # TODO: Something wong
+        # TODO: Something wong, resize breaks this.
 
         corners = self.get_char("corner")
         assert isinstance(corners, list) and len(corners) == 4
@@ -175,6 +179,7 @@ class Window(Container):
         target = self.define_mouse_target(left=left, right=right, top=-1, height=1)
         target.adjust()
 
+        self._toolbar_buttons.append(target)
         self.set_char("corner", corners)
 
         return target
@@ -260,6 +265,10 @@ class WindowManager(Container):
     aforementioned action. Pressing CTRL_C will call the manager's `exit()` method,
     which can return True (default) to break input loop.
     """
+
+    styles = {
+        "blurred": MarkupFormatter("[240 !strip]{item}")
+    }
 
     def __init__(self) -> None:
         """Initialize object"""
@@ -495,6 +504,8 @@ class WindowManager(Container):
             return f"\033[{new[1]};{new[0]}H"
 
         buff = ""
+        blurred_style = self.get_style("blurred")
+
         for i, window in enumerate(reversed(self._windows)):
             if i == len(self._windows) - 1 or window.force_focus:
                 for lineindex, line in enumerate(window.get_lines()):
@@ -502,7 +513,7 @@ class WindowManager(Container):
 
             else:
                 for lineindex, line in enumerate(window.get_lines()):
-                    buff += get_pos(window, lineindex) + ansi(f"[!strip 245]{line}")
+                    buff += get_pos(window, lineindex) + blurred_style(line)
 
         # fill_window(0, False)
         clear()
@@ -693,6 +704,7 @@ def test() -> None:
     """Run test program"""
 
     boxes.DOUBLE_TOP.set_chars_of(Window)
+    Window.set_char("button", ["/", "\\"])
 
     def manager_exit(self: WindowManager) -> bool:
         """Ask for confirmation"""
