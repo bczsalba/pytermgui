@@ -59,12 +59,16 @@ window = (
 window.min_width = 55
 manager.add(window)
 manager.run()
+
 ```
+
+<!-- TODO: Figure out a better quality for this -->
+![readme wm gif](https://github.com/bczsalba/pytermgui/raw/master/assets/readme_wm.gif)
 
 Example to get started with
 ---------------------------
 ```python
-from pytermgui import Container, Label, InputField, MarkupFormatter, getch, alt_buffer, boxes
+from pytermgui import Widget, Container, Label, InputField, MarkupFormatter, getch, alt_buffer, boxes
 
 border_corner_markup = MarkupFormatter("[60 bold]{item}")
 Container.set_style("border", border_corner_markup)
@@ -75,18 +79,18 @@ root = Container()
 root.forced_width = 70
 
 boxes.DOUBLE_TOP.set_chars_of(root)
-root += Label("[210 bold] Welcome to [italic]PyTermGUI!", align=Label.ALIGN_LEFT)
+root += Label("[210 bold] Welcome to [italic]PyTermGUI!", parent_align=Widget.PARENT_LEFT)
 root += Label()
 
 field = InputField("Enter something!")
 field.set_style("value", MarkupFormatter("[italic 72]{item}"))
 field.set_style("cursor", MarkupFormatter("[@72]{item}"))
 
-field_container = Container(vert_align=Container.VERT_ALIGN_TOP) + field
+field_container = Container() + field
 field_container.forced_height = 7
 root += field_container
 
-root += Label("[245 italic]> Press CTRL_C to exit...", align=Label.ALIGN_RIGHT)
+root += Label("[245 italic]> Press CTRL_C to exit...", parent_align=Widget.PARENT_RIGHT)
 
 root.focus()
 
