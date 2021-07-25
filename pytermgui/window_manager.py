@@ -80,10 +80,12 @@ class Window(Container):
         modal: bool = False,
         resizable: bool = True,
         title: str = "",
+        forced_width: Optional[int] = None,
     ) -> None:
         """Initialize object"""
 
         super().__init__()
+        self.forced_width = forced_width
         self.is_static: bool = static
         self.is_modal: bool = modal
         self.is_resizable: bool = resizable
@@ -279,6 +281,8 @@ class WindowManager(Container):
         define_tag("wm-title", "210 bold")
         define_tag("wm-section", "157")
 
+        self._bindings: dict[str, Callable[[WindowManager], Any]] = {}
+
     @staticmethod
     def get_root(widget: Widget) -> Widget:
         """Get root widget"""
@@ -296,6 +300,11 @@ class WindowManager(Container):
             return self._windows[0]
 
         return None
+
+    def bind(self, key: str, action: Callable[[WindowManager], Any]) -> None:
+        """Bind a key to a callable"""
+
+        self._bindings[key] = action
 
     def align_widgets(self, new: int) -> None:
         """Set all widgets' parent_align"""
@@ -387,6 +396,10 @@ class WindowManager(Container):
 
             while True:  # pylint: disable=R1702
                 key = getch(interrupts=False)
+
+                if key in self._bindings:
+                    self._bindings[key](self)
+                    continue
 
                 if key == chr(3):
                     if self.exit(self):
