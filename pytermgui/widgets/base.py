@@ -679,6 +679,8 @@ class Container(Widget):
         # Set up lines list
         lines: list[str] = []
 
+        align, offset = self._get_aligners(self, (left, right))
+
         # Go through widgets
         for widget in self._widgets:
             # Update width
