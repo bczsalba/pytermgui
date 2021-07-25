@@ -50,7 +50,7 @@ from .widgets import (
 
 from .input import getch, keys
 from .helpers import real_length
-from .parser import ansi, define_tag
+from .parser import define_tag
 from .context_managers import alt_buffer, mouse_handler
 from .ansi_interface import clear, screen_size, screen_width, MouseAction
 
@@ -266,9 +266,7 @@ class WindowManager(Container):
     which can return True (default) to break input loop.
     """
 
-    styles = {
-        "blurred": MarkupFormatter("[240 !strip]{item}")
-    }
+    styles = {"blurred": MarkupFormatter("[240 !strip]{item}")}
 
     def __init__(self) -> None:
         """Initialize object"""
