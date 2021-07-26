@@ -123,8 +123,11 @@ class MouseTarget:
 
         self.onclick(self, caller)
 
-    def show(self, color: int = 210) -> None:
+    def show(self, color: Optional[int] = None) -> None:
         """Print coordinates"""
+
+        if color is None:
+            color = 210
 
         for y_pos in range(self._start[1], self._end[1] + 1):
             with cursor_at((self._start[0], y_pos)) as print_here:
@@ -430,6 +433,12 @@ class Widget:
 
         container = Container() + self
         return container
+
+    def show_targets(self, color: Optional[int] = None) -> None:
+        """Show all mouse targets of this Widget"""
+
+        for target in self.mouse_targets:
+            target.show(color)
 
     def print(self) -> None:
         """Print object within a Container
@@ -876,6 +885,14 @@ class Container(Widget):
         with cursor_at(self.pos) as print_here:
             for line in self.get_lines():
                 print_here(real_length(line) * " ")
+
+    def show_targets(self, color: Optional[int] = None) -> None:
+        """Show all mouse targets of this Widget"""
+
+        super().show_targets(color)
+
+        for widget in self._widgets:
+            widget.show_targets(color)
 
     def print(self) -> None:
         """Print object"""

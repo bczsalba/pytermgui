@@ -532,6 +532,15 @@ class WindowManager(Container):
         sys.stdout.flush()
         # super().print()
 
+    def show_targets(self, color: Optional[int] = None) -> None:
+        """Show all targets"""
+
+        for window in self._windows:
+            window.show_targets(color)
+
+        getch()
+        self.print()
+
     @staticmethod
     def exit(obj: WindowManager) -> bool:
         """if self.exit() == True: break"""
