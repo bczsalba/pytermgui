@@ -168,6 +168,8 @@ class Widget:
     SIZE_FILL = 4
     DEFAULT_SIZE_POLICY = SIZE_FILL
 
+    ALLOW_TYPE_CONVERSION = 5
+
     # This class is loaded after this module,
     # and thus mypy doesn't see its existence.
     manager: Optional["_IDManager"] = None  # type: ignore
@@ -181,7 +183,7 @@ class Widget:
         self.forced_width: Optional[int] = None
         self.forced_height: Optional[int] = None
 
-        self._width = 0
+        self.width = 0
         self.height = 1
 
         self.pos: tuple[int, int] = 1, 1
@@ -524,9 +526,6 @@ class Container(Widget):
     def __iadd__(self, other: object) -> Container:
         """Call self._add_widget(other) and return self"""
 
-        if not isinstance(other, Widget):
-            raise NotImplementedError("You can only add widgets to a Container.")
-
         self._add_widget(other)
         return self
 
@@ -557,8 +556,21 @@ class Container(Widget):
 
         self._widgets[index] = value
 
-    def _add_widget(self, other: Widget) -> None:
-        """Add other to self._widgets"""
+    def _add_widget(self, other: object) -> None:
+        """Add other to self._widgets
+
+        If (Widget.ALLOW_TYPE_CONVERSION == True) non-widgets
+        are ran through the auto() method, and converted to
+        a Widget if possible."""
+
+        if Widget.ALLOW_TYPE_CONVERSION and not isinstance(other, Widget):
+            to_widget = Widget.from_data(other)
+            if to_widget is None:
+                raise ValueError(
+                    f"Could not convert {other} of type {type(other)} to a Widget!"
+                )
+
+            other = to_widget
 
         if self.forced_width is not None and other.forced_width is not None:
             if self.forced_width < other.forced_width:
@@ -909,12 +921,12 @@ class Container(Widget):
     def debug(self) -> str:
         """Return debug information about this object's widgets"""
 
-        out = "Container(), widgets=["
+        out = "Container("
         for widget in self._widgets:
-            out += type(widget).__name__ + ", "
+            out += widget.debug() + ", "
 
         out = out.strip(", ")
-        out += "]"
+        out += ")"
 
         return out
 

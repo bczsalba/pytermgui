@@ -38,6 +38,26 @@ from .input import getch, keys
 from .context_managers import alt_buffer, cursor_at, mouse_handler
 
 
+def _macro_align(item: str) -> str:
+    """Use f-string alignment on a markup plain.
+
+    Syntax: "[!align]width:aligment text" -> [!align]30:left hello"""
+
+    # TODO: Allow markup for content in _align_macro
+
+    words = item.split(" ")
+    statements = words[0]
+    if statements.count(":") == 0:
+        return item
+
+    content = " ".join(words[1:])
+
+    width, alignment = statements.split(":")
+    aligner = "<" if alignment == "left" else (">" if alignment == "right" else "^")
+
+    return f"{content:{aligner}{width}}"
+
+
 def auto(
     data: Union[list[str], dict[str, str], str], **widget_args: Any
 ) -> Optional[Widget]:
@@ -66,27 +86,9 @@ def auto(
     return None
 
 
-def _macro_align(item: str) -> str:
-    """Use f-string alignment on a markup plain.
-
-    Syntax: "[!align]width:aligment text" -> [!align]30:left hello"""
-
-    # TODO: Allow markup for content in _align_macro
-
-    words = item.split(" ")
-    statements = words[0]
-    if statements.count(":") == 0:
-        return item
-
-    content = " ".join(words[1:])
-
-    width, alignment = statements.split(":")
-    aligner = "<" if alignment == "left" else (">" if alignment == "right" else "^")
-
-    return f"{content:{aligner}{width}}"
-
-
 # This needs to be here to avoid circular imports
 define_macro("!strip", strip_ansi)
 define_macro("!align", _macro_align)
 define_macro("!markup", markup)
+
+Widget.from_data = staticmethod(auto)
