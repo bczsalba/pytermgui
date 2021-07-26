@@ -172,7 +172,7 @@ class Widget:
     # and thus mypy doesn't see its existence.
     manager: Optional["_IDManager"] = None  # type: ignore
 
-    def __init__(self, width: int = 0, pos: Optional[tuple[int, int]] = None) -> None:
+    def __init__(self, **attrs: Any) -> None:
         """Initialize universal data for objects"""
 
         self.set_style = lambda key, value: _set_obj_or_cls_style(self, key, value)
@@ -181,12 +181,10 @@ class Widget:
         self.forced_width: Optional[int] = None
         self.forced_height: Optional[int] = None
 
-        self._width = width
+        self._width = 0
         self.height = 1
 
-        if pos is None:
-            pos = 1, 1
-        self.pos: tuple[int, int] = pos
+        self.pos: tuple[int, int] = 1, 1
 
         self.depth = 0
         self.is_selectable = False
@@ -204,6 +202,9 @@ class Widget:
 
         self.size_policy = Widget.DEFAULT_SIZE_POLICY
         self.parent_align = Widget.DEFAULT_PARENT_ALIGN
+
+        for attr, value in attrs.items():
+            setattr(self, attr, value)
 
     def __repr__(self) -> str:
         """Print self.debug() by default"""
@@ -471,13 +472,10 @@ class Container(Widget):
         "_centered_axis",
     ]
 
-    def __init__(
-        self,
-        width: int = 0,
-    ) -> None:
+    def __init__(self, *widgets: Widget, **attrs: Any) -> None:
         """Initialize Container data"""
 
-        super().__init__(width)
+        super().__init__(**attrs)
         self._widgets: list[Widget] = []
         self._selectables: dict[int, tuple[Widget, int]] = {}
         self._centered_axis: Optional[int] = None
@@ -487,6 +485,9 @@ class Container(Widget):
 
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
+
+        for widget in widgets:
+            self._add_widget(widget)
 
     @property
     def sidelength(self) -> int:
@@ -931,20 +932,14 @@ class Label(Widget):
         "padding",
     ]
 
-    def __init__(
-        self,
-        value: str = "",
-        padding: int = 0,
-        parent_align: int = Widget.PARENT_CENTER,
-    ) -> None:
+    def __init__(self, value: str = "", padding: int = 0, **attrs: Any) -> None:
         """Set up object"""
 
-        super().__init__()
+        super().__init__(**attrs)
 
         self.value = value
         self.padding = padding
         self.width = real_length(value) + self.padding
-        self.parent_align = parent_align
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""
@@ -976,10 +971,11 @@ class Button(Widget):
         label: str,
         onclick: Optional[MouseCallback] = None,
         parent_align: int = Widget.PARENT_CENTER,
+        **attrs: Any,
     ) -> None:
         """Initialize object"""
 
-        super().__init__()
+        super().__init__(**attrs)
 
         self.label = label
         self._selectables_length = 1

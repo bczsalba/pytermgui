@@ -80,12 +80,11 @@ class Window(Container):
         modal: bool = False,
         resizable: bool = True,
         title: str = "",
-        forced_width: Optional[int] = None,
+        **attrs: Any,
     ) -> None:
         """Initialize object"""
 
-        super().__init__()
-        self.forced_width = forced_width
+        super().__init__(**attrs)
         self.is_static: bool = static
         self.is_modal: bool = modal
         self.is_resizable: bool = resizable
@@ -270,7 +269,7 @@ class WindowManager(Container):
 
     styles = {"blurred": MarkupFormatter("[240 !strip]{item}")}
 
-    def __init__(self) -> None:
+    def __init__(self, *windows: Window) -> None:
         """Initialize object"""
 
         super().__init__()
@@ -282,6 +281,9 @@ class WindowManager(Container):
         define_tag("wm-section", "157")
 
         self._bindings: dict[str, Callable[[WindowManager], Any]] = {}
+
+        for window in windows:
+            self.add(window)
 
     @staticmethod
     def get_root(widget: Widget) -> Widget:
@@ -548,17 +550,18 @@ class WindowManager(Container):
         _ = obj
         return True
 
+    def debug(self) -> str:
+        return "WINDOWMANAGER"
+
 
 class DebugWindow(Window):
     """Window with debug capabilities"""
 
-    def __init__(
-        self, destroyer: Optional[MouseCallback] = None, **window_args: Any
-    ) -> None:
+    def __init__(self, destroyer: Optional[MouseCallback] = None, **attrs: Any) -> None:
         """Initialize object"""
 
         # Mypy doesn't quite understand this structure
-        super().__init__(**{"title": " debug "} | window_args)  # type: ignore
+        super().__init__(title=" debug ", **attrs)
         self.min_width = 25
         self.forced_width = 50
 
@@ -643,10 +646,10 @@ class DebugWindow(Window):
 class MouseDebugger(Window):
     """Window to show mouse status"""
 
-    def __init__(self) -> None:
+    def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
 
-        super().__init__(title=" mouse ")
+        super().__init__(title=" mouse ", **attrs)
         self.min_width = 25
         self.width = 25
         self.force_focus = True
@@ -679,10 +682,10 @@ class MouseDebugger(Window):
 class WindowDebugger(Window):
     """Window to show information on other windows"""
 
-    def __init__(self) -> None:
+    def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
 
-        super().__init__(title=" window ")
+        super().__init__(title=" window ", **attrs)
         self.min_width = 25
         self.width = 25
         self.force_focus = True

@@ -40,10 +40,10 @@ class ColorPicker(Container):
 
     serialized = Widget.serialized + ["grid_cols"]
 
-    def __init__(self, grid_cols: int = 8) -> None:
+    def __init__(self, grid_cols: int = 8, **attrs: Any) -> None:
         """Initialize object, set width"""
 
-        super().__init__()
+        super().__init__(**attrs)
 
         self.grid_cols = grid_cols
         self.forced_width = self.grid_cols * 4 - 1 + self.sidelength
@@ -104,14 +104,11 @@ class Splitter(Container):
         "separator": apply_markup,
     }
 
-    def __init__(self, *elements: Widget) -> None:
+    def __init__(self, *widgets: Widget, **attrs: Any) -> None:
         """Initialize Splitter, add given elements to it"""
 
-        super().__init__()
-
-        if elements is not None:
-            for widget in elements:
-                self._add_widget(widget)
+        super().__init__(*widgets, **attrs)
+        self.parent_align = Widget.PARENT_RIGHT
 
     @staticmethod
     def _get_aligner(widget: Widget) -> Callable[[str, int], str]:
@@ -201,10 +198,10 @@ class ProgressBar(Widget):
         "delimiter": apply_markup,
     }
 
-    def __init__(self, progress_function: Callable[[], float]) -> None:
+    def __init__(self, progress_function: Callable[[], float], **attrs: Any) -> None:
         """Initialize object"""
 
-        super().__init__()
+        super().__init__(**attrs)
         self.progress_function = progress_function
 
     def get_lines(self) -> list[str]:
@@ -247,11 +244,11 @@ class ListView(Container):
         self,
         options: list[str],
         onclick: Optional[MouseCallback] = None,
-        parent_align: int = Widget.PARENT_CENTER,
+        **attrs: Any,
     ) -> None:
         """Initialize object"""
 
-        super().__init__()
+        super().__init__(**attrs)
 
         self.set_char("border", [""] * 4)
         self.set_char("corner", [""] * 4)
@@ -259,7 +256,6 @@ class ListView(Container):
         self.onclick = onclick
         self.options = options
         self.update_options()
-        self.parent_align = parent_align
 
     @property
     def selectables_length(self) -> int:
@@ -300,10 +296,11 @@ class InputField(Widget):
         prompt: str = "",
         tab_length: int = 4,
         padding: int = 0,
+        **attrs: Any,
     ) -> None:
         """Initialize object"""
 
-        super().__init__()
+        super().__init__(**attrs)
         self._selected_range: tuple[Optional[int], Optional[int]] = (None, None)
         self.prompt = prompt
         self.padding = padding
@@ -576,10 +573,11 @@ class Prompt(Widget):
         label: str = "",
         value: str = "",
         highlight_target: int = HIGHLIGHT_LEFT,
+        **attrs: Any,
     ) -> None:
         """Initialize object"""
 
-        super().__init__()
+        super().__init__(**attrs)
 
         self.label = label
         self.value = value
