@@ -64,9 +64,10 @@ def auto(
     """Create PyTermGUI widget automatically from data
 
     Currently supported:
-        - list -> ListView(data)
-        - dict -> Container(), elements=[Prompt(), ...]
-        - str -> Label(data)
+        - str   -> Label(data)
+        - list  -> ListView(data)
+        - dict  -> Container(Prompt(), ...)
+        - tuple -> Splitter(*data)
     """
 
     if isinstance(data, str):
@@ -76,12 +77,20 @@ def auto(
         return ListView(data, **widget_args)
 
     if isinstance(data, dict):
-        root = Container()
+        rows = [
+            Splitter(
+                Label(key, parent_align=0), Button(value, parent_align=2), **widget_args
+            )
+            for key, value in data.items()
+        ]
 
-        for key, value in data.items():
-            root += Prompt(key, value, **widget_args)
+        if len(rows) == 1:
+            return rows[0]
 
-        return root
+        return rows
+
+    if isinstance(data, tuple):
+        return Splitter(*data, **widget_args)
 
     return None
 
