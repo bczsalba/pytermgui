@@ -107,7 +107,7 @@ class MouseTarget:
         pos = self.parent.pos
         self._start = (pos[0] + self.left - 1, pos[1] + 1 + self.top)
         self._end = (
-            pos[0] + self.parent.width - self.right,
+            pos[0] + self.parent.width - 1 - self.right,
             pos[1] + self.top + self.height,
         )
 
