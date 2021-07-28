@@ -759,6 +759,8 @@ class Container(Widget):
             # Add to lines
             lines += widget_lines
 
+            self.mouse_targets += widget.mouse_targets
+
         # Update height
         if self.forced_height is not None:
             for _ in range(self.forced_height - len(lines)):
@@ -974,11 +976,10 @@ class Label(Widget):
 class Button(Widget):
     """A visual MouseTarget"""
 
-    chars: dict[str, CharType] = {"delimiter": ["< ", " >"]}
+    chars: dict[str, CharType] = {"delimiter": [" ", " "]}
 
     styles: dict[str, StyleType] = {
-        "label": apply_markup,
-        "delimiter": MarkupFormatter("[/fg]{item}"),
+        "label": MarkupFormatter("[!strip inverse 72]{item}"),
         "highlight": MarkupFormatter("[!strip inverse]{item}"),
     }
 
@@ -1003,14 +1004,14 @@ class Button(Widget):
         """Get object lines"""
 
         self.mouse_targets = []
-        highlight_style = self.get_style("highlight")
+        label_style = self.get_style("label")
         delimiters = self.get_char("delimiter")
+        highlight_style = self.get_style("highlight")
+
         assert len(delimiters) == 2
+        left, right = delimiters
 
-        delimiter_style = self.get_style("delimiter")
-        left, right = [markup(delimiter_style(char)) for char in delimiters]
-
-        word = ansi(left + self.label + right)
+        word = label_style(ansi(left + self.label + right))
         if self.selected_index is not None:
             word = highlight_style(word)
 
