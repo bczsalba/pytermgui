@@ -53,6 +53,8 @@ def _set_obj_or_cls_style(
 
     obj_or_cls.styles[key] = value
 
+    return obj_or_cls
+
 
 def _set_obj_or_cls_char(
     obj_or_cls: Union[Type[Widget], Widget], key: str, value: CharType
@@ -63,6 +65,8 @@ def _set_obj_or_cls_char(
         raise KeyError(f"Char {key} is not valid for {obj_or_cls}!")
 
     obj_or_cls.chars[key] = value
+
+    return obj_or_cls
 
 
 MouseCallback = Callable[["MouseTarget", "Widget"], Any]
