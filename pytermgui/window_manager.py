@@ -511,10 +511,9 @@ class WindowManager(Container):
 
                 # Change window width
                 elif self._drag_edge is Edge.RIGHT and window.is_resizable:
-                    width_too_high = pos[0] - startx > window.min_width
-
-                    if window.min_width is not None and not width_too_high:
-                        return True
+                    if window.min_width is not None:
+                        if pos[0] - startx < window.min_width:
+                            return False
 
                     window.rect = startx, starty, pos[0], endy - 2
 
@@ -614,7 +613,7 @@ class WindowManager(Container):
         return True
 
     def debug(self) -> str:
-        return "WINDOWMANAGER"
+        return f"WindowManager(Window() * {len(self._windows)})"
 
 
 class DebugWindow(Window):
