@@ -9,6 +9,7 @@ This test file shows the basic functionality that Splitter-s provide.
 
 from pytermgui import (
     Container,
+    Widget,
     Prompt,
     Label,
     Splitter,
@@ -24,14 +25,14 @@ with alt_buffer(cursor=False):
     Container.set_char("corner", ["╭", "╮", "╯", "╰"])
     Splitter.set_char("separator", " ")
 
-    main = Container(horiz_align=Container.HORIZ_ALIGN_LEFT)
+    main = Container()
 
     header = Splitter()
-    header += Label("color picker one:", Label.ALIGN_LEFT)
+    header += Label("color picker one:", parent_align=Widget.PARENT_LEFT)
     # header += Label("one", Label.ALIGN_CENTER)
     # header += Label("onne", Label.ALIGN_CENTER)
     # header += Label("onne", Label.ALIGN_CENTER)
-    header += Label("color picker two:", Label.ALIGN_RIGHT)
+    header += Label("color picker two:", parent_align=Widget.PARENT_RIGHT)
 
     splitter = Splitter()
     splitter += ColorPicker(16)
