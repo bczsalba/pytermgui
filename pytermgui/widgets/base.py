@@ -871,10 +871,6 @@ class Container(Widget):
     def click(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
         """Try to click any of our children"""
 
-        target = super().click(pos)
-        if target is not None:
-            return target
-
         selectables = [widget for (widget, _) in self._selectables.values()]
         for i, widget in enumerate(selectables):
             target = widget.click(pos)
@@ -883,6 +879,8 @@ class Container(Widget):
                 self.select(i + widget.mouse_targets.index(target))
 
                 return target
+
+            widget.selected_index = None
 
         return None
 
@@ -1023,4 +1021,4 @@ class Button(Widget):
     def debug(self) -> str:
         """Show identifiable information"""
 
-        return f'Button(label="{self.label}", onclick={self.onclick})'
+        return f'Button(label="{self.label}", onclick={type(self.onclick)})'
