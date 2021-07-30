@@ -724,6 +724,7 @@ class Container(Widget):
             self._update_width(widget)
 
             align, offset = self._get_aligners(widget, (left, right))
+            widget.parent_offset = offset
 
             # Set position (including horizontal padding)
             # TODO: Containers with non-empty top/bottom borders don't set
@@ -974,11 +975,11 @@ class Label(Widget):
 class Button(Widget):
     """A visual MouseTarget"""
 
-    chars: dict[str, CharType] = {"delimiter": [" ", " "]}
+    chars: dict[str, CharType] = {"delimiter": ["  ", "  "]}
 
     styles: dict[str, StyleType] = {
-        "label": MarkupFormatter("[!strip inverse 72]{item}"),
-        "highlight": MarkupFormatter("[!strip inverse]{item}"),
+        "label": MarkupFormatter("[@243]{item}"),
+        "highlight": MarkupFormatter("[inverse]{item}"),
     }
 
     def __init__(
@@ -986,6 +987,7 @@ class Button(Widget):
         label: str,
         onclick: Optional[MouseCallback] = None,
         parent_align: int = Widget.PARENT_CENTER,
+        padding: int = 0,
         **attrs: Any,
     ) -> None:
         """Initialize object"""
@@ -996,6 +998,7 @@ class Button(Widget):
         self._selectables_length = 1
         self.is_selectable = True
         self.onclick = onclick
+        self.padding = padding
         self.parent_align = parent_align
 
     def get_lines(self) -> list[str]:
@@ -1009,14 +1012,16 @@ class Button(Widget):
         assert len(delimiters) == 2
         left, right = delimiters
 
-        word = label_style(ansi(left + self.label + right))
-        if self.selected_index is not None:
+        word = ansi(left + self.label + right)
+        if self.selected_index is None:
+            word = label_style(word)
+        else:
             word = highlight_style(word)
 
-        self.define_mouse_target(left=0, right=0, height=1).onclick = self.onclick
+        self.define_mouse_target(left=self.padding, right=-self.padding, height=1).onclick = self.onclick
         self.forced_width = real_length(word)
 
-        return [word]
+        return [self.padding * " " + word]
 
     def debug(self) -> str:
         """Show identifiable information"""
