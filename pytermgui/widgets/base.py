@@ -704,6 +704,7 @@ class Container(Widget):
 
         # Set up lines list
         lines: list[str] = []
+        self.mouse_targets = []
 
         align, offset = self._get_aligners(self, (left, right))
 
@@ -1018,7 +1019,9 @@ class Button(Widget):
         else:
             word = highlight_style(word)
 
-        self.define_mouse_target(left=self.padding, right=-self.padding, height=1).onclick = self.onclick
+        self.define_mouse_target(
+            left=self.padding, right=-self.padding, height=1
+        ).onclick = self.onclick
         self.forced_width = real_length(word)
 
         return [self.padding * " " + word]
