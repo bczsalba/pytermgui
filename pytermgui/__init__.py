@@ -74,7 +74,12 @@ def auto(
         return Label(data, **widget_args)
 
     if isinstance(data, list):
-        return ListView(data, **widget_args)
+        label = data[0]
+        onclick = None
+        if len(data) > 1:
+            onclick = data[1]
+
+        return Button(label, onclick, **widget_args)
 
     if isinstance(data, dict):
         rows = [
