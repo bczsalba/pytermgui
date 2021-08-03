@@ -1,12 +1,28 @@
-IN PROGRESS
------------
+Current Progress
+----------------
 
-* version 0.1.4:
-    - Improvements to the `Button` class
-    - Improvements to targeting
-    - Fix performance
+* version 0.1.4 - Significantly better syntax:
+    - [x] Magic type conversion for `Container`
+    - [x] Arbitrary attribute setting in any `Widget` construction
 
-* version 0.1.5:
+    - [x] Various improvements to the `window_manager` module
+        + `WindowManager.bind()`
+        + `WindowManager.run()` rewrite
+        + Performance & usability improvements
+
+    - [x] Various improvements to `Button`
+        + More button-like style
+        + New padding attribute
+
+    - [x] Various improvements to `MouseTarget`
+        + Fix right offset
+        + Better handling by parent objects
+
+    - [x] Better performance
+        + Fix infinite `Container()` mouse_target additions
+
+* version 0.2.0 - The Widget update!:
+    - change to semantic versioning?
     - `Splitter()` rewrite
     - `InputField()` rewrite
     - `widgets/buttons.py` module:
@@ -14,10 +30,13 @@ IN PROGRESS
         + `Checkbox`
         + `IconButton`
         + `LabelButton`
+        + `Dropdown`
 
 * later releases:
     - `Splitter` rewrite:
         + fix width issues
+
+    - look into making mouse events callback-based (see winman)
 
     - `InputField` rewrite:
         + inherit from Label, make use of its `get_lines()` line breaking
