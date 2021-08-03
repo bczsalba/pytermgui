@@ -138,7 +138,7 @@ class Box(Widget):
         # return top_border, left_border, right_border, bottom_border
         return left_border, top_border, right_border, bottom_border
 
-    def set_chars_of(self, cls_or_obj: object) -> None:
+    def set_chars_of(self, cls_or_obj: object) -> object:
         """Set border & corner chars of cls_or_obj to self values"""
 
         if isinstance(cls_or_obj, Splitter):
@@ -147,6 +147,8 @@ class Box(Widget):
         else:
             cls_or_obj.set_char("border", self.borders)
             cls_or_obj.set_char("corner", self.corners)
+
+        return cls_or_obj
 
     def get_lines(self) -> list[str]:
         """Get lines from object"""
