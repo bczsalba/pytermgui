@@ -873,16 +873,18 @@ class Container(Widget):
     def click(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
         """Try to click any of our children"""
 
-        selectables = [widget for (widget, _) in self._selectables.values()]
-        for i, widget in enumerate(selectables):
+        visited: list[Widget] = []
+        for i, (widget, _) in enumerate(self._selectables.values()):
+            if widget in visited:
+                continue
+
+            visited.append(widget)
             target = widget.click(pos)
-
-            if target is not None and target.parent is widget:
-                self.select(i + widget.mouse_targets.index(target))
-
-                return target
-
             widget.selected_index = None
+
+            if target is not None:
+                self.select(i + widget.mouse_targets.index(target))
+                return None
 
         return None
 
