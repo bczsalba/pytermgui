@@ -80,6 +80,24 @@ def auto(
         - list  -> ListView(data)
         - dict  -> Container(Prompt(), ...)
         - tuple -> Splitter(*data)
+
+    If Widget.ALLOW_TYPE_CONVERSION is True (default), this method is
+    called implicitly whenever a non-widget is attempted to be added to
+    a Widget.
+
+    Example:
+        >>> from pytermgui import Container, get_widget, clear
+        >>> form = (
+        ... Container(id="form")
+        ... + "[157 bold]This is a title"
+        ... + ""
+        ... + {"[72 italic]Label1": "[210]Button1"}
+        ... + {"[72 italic]Label2": "[210]Button2"}
+        ... + {"[72 italic]Label3": "[210]Button3"}
+        ... + ""
+        ... + ["Submit", lambda _, button, your_submit_handler(button.parent)]
+        ... )
+        Container(Label(...), Label(...), Splitter(...), Splitter(...), Splitter(...), Label(...), Button(...))
     """
 
     if isinstance(data, str):
@@ -91,15 +109,26 @@ def auto(
         if len(data) > 1:
             onclick = data[1]
 
+        if isinstance(label, bool):
+            return Checkbox(onclick, checked=label)
+
+        elif isinstance(label, list):
+            assert len(label) == 2
+            toggle = Checkbox(onclick)
+            toggle.set_char("checked", label[0])
+            toggle.set_char("unchecked", label[1])
+            toggle.label = label[0]
+            return toggle
+
         return Button(label, onclick, **widget_args)
 
     if isinstance(data, dict):
-        rows = [
-            Splitter(
-                Label(key, parent_align=0), Button(value, parent_align=2), **widget_args
-            )
-            for key, value in data.items()
-        ]
+        rows: list[Splitter] = []
+
+        for key, value in data.items():
+            key.parent_align = 0
+            value.parent_align = 2
+            rows.append(Splitter(key, value, **widget_args))
 
         if len(rows) == 1:
             return rows[0]
