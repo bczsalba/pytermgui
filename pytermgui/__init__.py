@@ -58,6 +58,18 @@ def _macro_align(item: str) -> str:
     return f"{content:{aligner}{width}}"
 
 
+def _macro_strip_fg(item: str) -> str:
+    """Strip foreground color from item"""
+
+    return ansi("[/fg]" + item)
+
+
+def _macro_strip_bg(item: str) -> str:
+    """Strip foreground color from item"""
+
+    return ansi("[/bg]" + item)
+
+
 def auto(
     data: Union[list[str], dict[str, str], str], **widget_args: Any
 ) -> Optional[Widget]:
@@ -102,6 +114,8 @@ def auto(
 
 # This needs to be here to avoid circular imports
 define_macro("!strip", strip_ansi)
+define_macro("!strip_fg", _macro_strip_fg)
+define_macro("!strip_bg", _macro_strip_bg)
 define_macro("!align", _macro_align)
 define_macro("!markup", markup)
 
