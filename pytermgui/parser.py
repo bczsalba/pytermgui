@@ -399,7 +399,7 @@ def tokenize_ansi(text: str) -> Iterator[Token]:
         yield Token(start, end, plain=text[position:])
 
 
-def tokenize_markup(text: str) -> Iterator[Token]:
+def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Token]:
     """Tokenize markup text"""
 
     position = 0
@@ -484,7 +484,7 @@ def tokenize_markup(text: str) -> Iterator[Token]:
                         ),
                     )
 
-                else:
+                elif not silence_exception:
                     raise SyntaxError(
                         f'Markup tag "{escape_ansi(tag)+reset()}" in string'
                         + f' "{escape_ansi(text)+reset()}" is not recognized.'
@@ -497,7 +497,10 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
 
 def ansi(
-    markup_text: str, ensure_reset: bool = True, ensure_optimized: bool = True
+    markup_text: str,
+    ensure_reset: bool = True,
+    ensure_optimized: bool = True,
+    silence_exception: bool = False,
 ) -> str:
     """Turn markup text into ANSI str"""
 
@@ -514,7 +517,7 @@ def ansi(
     ansi_text = ""
     macro_callables: list[MacroCallable] = []
 
-    for token in tokenize_markup(markup_text):
+    for token in tokenize_markup(markup_text, silence_exception=silence_exception):
         if token.attribute is TokenAttribute.MACRO:
             assert token.macro_value is not None
 

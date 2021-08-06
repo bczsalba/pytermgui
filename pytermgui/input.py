@@ -20,6 +20,7 @@ import sys
 from typing import (
     IO,
     AnyStr,
+    Iterator,
     Generator,
     Any,
     Union,
