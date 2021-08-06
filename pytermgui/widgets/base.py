@@ -520,8 +520,11 @@ class Container(Widget):
         if data is None:
             return data
 
-        self._prev_selected = data[0]
-        return data[0]
+        selected = data[0]
+
+        # TODO: Add deeper selection
+        self._prev_selected = selected
+        return selected
 
     @property
     def selectables_length(self) -> int:
@@ -562,7 +565,7 @@ class Container(Widget):
 
         self._widgets[index] = value
 
-    def _add_widget(self, other: object) -> None:
+    def _add_widget(self, other: object, run_get_lines: bool = True) -> None:
         """Add other to self._widgets
 
         If (Widget.ALLOW_TYPE_CONVERSION == True) non-widgets
@@ -586,7 +589,6 @@ class Container(Widget):
                 )
 
         other.parent = self
-
         if other.forced_height is not None:
             other.height = other.forced_height
 
@@ -597,6 +599,7 @@ class Container(Widget):
             other.depth = self.depth + 1
 
         other.get_lines()
+        other.parent = self
 
         keys = list(self._selectables)
         if len(keys) <= 0:
@@ -608,9 +611,9 @@ class Container(Widget):
             self._selectables[sel_len + i] = other, i
 
         self.height += other.height
-        self.get_lines()
 
-        other.parent = self
+        if run_get_lines:
+            self.get_lines()
 
     def _get_aligners(
         self, widget: Widget, borders: tuple[str, str]
@@ -884,7 +887,7 @@ class Container(Widget):
             target = widget.click(pos)
             widget.selected_index = None
 
-            if target is not None:
+            if target is not None and target in widget.mouse_targets:
                 self.select(i + widget.mouse_targets.index(target))
                 return None
 
@@ -923,6 +926,8 @@ class Container(Widget):
         if not screen_size() == self._prev_screen:
             clear()
             self.center(self._centered_axis)
+
+        self._prev_screen = screen_size()
 
         with cursor_at(self.pos) as print_here:
             for line in self.get_lines():
