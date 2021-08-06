@@ -40,6 +40,11 @@ from .styles import (
 )
 
 
+__all__ = ["MouseTarget", "MouseCallback", "Widget", "Container", "Label"]
+
+MouseCallback = Callable[["MouseTarget", "Widget"], Any]
+
+
 def _set_obj_or_cls_style(
     obj_or_cls: Union[Type[Widget], Widget], key: str, value: StyleType
 ) -> None:
@@ -67,9 +72,6 @@ def _set_obj_or_cls_char(
     obj_or_cls.chars[key] = value
 
     return obj_or_cls
-
-
-MouseCallback = Callable[["MouseTarget", "Widget"], Any]
 
 
 @dataclass

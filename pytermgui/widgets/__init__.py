@@ -10,40 +10,22 @@ the `+=` operator to append elements to it.
 """
 
 from typing import Optional, Union, Type
-from .base import Widget, Container, Label, Button, MouseTarget, MouseCallback
-from .extra import (
-    Splitter,
-    ListView,
-    ColorPicker,
-    InputField,
-    ProgressBar,
-    Prompt,
-    alert,
-)
-from .styles import *
+
 from . import boxes
+from .base import __all__ as _base_all
+from .extra import __all__ as _extra_all
+from .styles import __all__ as _styles_all
+
+from .base import *
+from .extra import *
+from .styles import *
 
 WidgetType = Union[Widget, Type[Widget]]
 
-__all__ = [
-    "Widget",
-    "Splitter",
-    "Container",
-    "Label",
-    "Button",
-    "ListView",
-    "ColorPicker",
-    "InputField",
-    "ProgressBar",
-    "alert",
-    "Prompt",
-    "MouseTarget",
-    "MouseCallback",
-    "boxes",
-    "MarkupFormatter",
-    "get_widget",
-    "get_id",
-]
+
+__all__ = ["boxes", "WidgetType", "get_widget", "get_id"] + (
+    _base_all + _extra_all + _styles_all
+)
 
 
 class _IDManager:
