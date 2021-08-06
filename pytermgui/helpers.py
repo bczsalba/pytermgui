@@ -9,6 +9,7 @@ This module provides methods and functions that can be imported in other files.
 
 from typing import Iterator
 from .parser import tokenize_ansi, TokenAttribute, RE_ANSI, RE_TAGS
+from .ansi_interface import reset
 
 __all__ = [
     "strip_ansi",
@@ -96,7 +97,7 @@ def break_line(line: str, limit: int, char: str = " ") -> Iterator[str]:
         # subdivide a word into right lengths
         if new_len > limit:
             if _should_yield():
-                yield current
+                yield current + reset()
 
             _reset()
 
@@ -130,14 +131,21 @@ def break_line(line: str, limit: int, char: str = " ") -> Iterator[str]:
                         cur_len += chr_len
 
                     if _should_yield():
-                        yield current
+                        yield current + reset()
                     _reset()
 
             continue
 
+        if "\n" in word:
+            for line in word.split("\n"):
+                yield line + reset()
+
+            _reset()
+            continue
+
         # add current if we pass the limit
         if cur_len + new_len + chr_len > limit and _should_yield():
-            yield current
+            yield current + reset()
             _reset()
 
         current += word + char
@@ -145,4 +153,4 @@ def break_line(line: str, limit: int, char: str = " ") -> Iterator[str]:
 
     current = current.rstrip()
     if _should_yield():
-        yield current
+        yield current + reset()
