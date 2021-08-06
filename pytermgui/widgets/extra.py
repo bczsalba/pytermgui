@@ -18,9 +18,10 @@ from .base import (
     Container,
     Label,
     Widget,
-    Button,
     MouseCallback,
 )
+
+from .buttons import Button
 
 from .styles import (
     default_foreground,

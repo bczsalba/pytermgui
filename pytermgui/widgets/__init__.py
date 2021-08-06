@@ -15,16 +15,18 @@ from . import boxes
 from .base import __all__ as _base_all
 from .extra import __all__ as _extra_all
 from .styles import __all__ as _styles_all
+from .buttons import __all__ as _buttons_all
 
 from .base import *
 from .extra import *
 from .styles import *
+from .buttons import *
 
 WidgetType = Union[Widget, Type[Widget]]
 
 
 __all__ = ["boxes", "WidgetType", "get_widget", "get_id"] + (
-    _base_all + _extra_all + _styles_all
+    _base_all + _extra_all + _styles_all + _buttons_all
 )
 
 
