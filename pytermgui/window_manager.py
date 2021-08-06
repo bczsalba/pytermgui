@@ -541,7 +541,7 @@ class WindowManager(Container):
 
                 if not self.handle_mouse(mouse_events):
                     # Send key to focused window
-                    if self.focused is not None:
+                    if self.focused is not None and mouse_events is None:
                         self.focused.handle_key(key)
 
                 # TODO: Implement Bottom, Left bars
@@ -606,10 +606,9 @@ class WindowManager(Container):
         self.print()
 
     @staticmethod
-    def exit(obj: WindowManager) -> bool:
+    def exit(_: WindowManager) -> bool:
         """if self.exit() == True: break"""
 
-        _ = obj
         return True
 
     def debug(self) -> str:
