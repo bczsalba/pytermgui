@@ -1,3 +1,18 @@
+Versioning method
+-----------------
+
+### `major`.`minor`.`patch`
+
+#### Before v1.0.0:
+- `major`: always 0
+- `minor`: feature theme
+- `patch`: fixes under the same feature theme
+
+#### After v1.0.0:
+- `major`: feature theme
+- `minor`: lesser additions under the same feature theme
+- `patch`: fixes for `minor` versions, no new features
+
 Planned Versions
 ----------------
 
