@@ -32,7 +32,7 @@ export -f lint
 export VIM_PROJNAME="pytermgui"
 export VIM_PROJCONF="$BASH_SOURCE"
 export VIM_PROJPATH="$(realpath `dirname $VIM_PROJCONF`)"
-export VIM_COMMAND="python3 $VIM_PROJPATH/tests/container_test.py"
+export VIM_COMMAND="python3 $VIM_PROJPATH/tests/ongoing.py"
 export VIM_NOTES="$VIM_PROJPATH/notes.md"
 
 generate_makefile
