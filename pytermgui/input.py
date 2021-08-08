@@ -186,6 +186,9 @@ class _Keys:
     def __getattr__(self, attr: str) -> str:
         """Overwrite __getattr__ to get from self._keys"""
 
+        if attr == "ANY_KEY":
+            return attr
+
         return self._keys[attr]
 
     def values(self) -> ValuesView[str]:
