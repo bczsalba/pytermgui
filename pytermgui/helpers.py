@@ -95,7 +95,7 @@ def break_line(line: str, limit: int, char: str = " ") -> Iterator[str]:
         new_len = real_length(word)
 
         # subdivide a word into right lengths
-        if new_len > limit:
+        if new_len > limit or "\n" in word:
             if _should_yield():
                 yield current + reset()
 
@@ -109,6 +109,10 @@ def break_line(line: str, limit: int, char: str = " ") -> Iterator[str]:
                 if character == "\x1b":
                     in_sequence = True
                     sequence = character
+                    continue
+
+                if character == "\n":
+                    # TODO: Handle this case.
                     continue
 
                 if in_sequence:
@@ -134,13 +138,6 @@ def break_line(line: str, limit: int, char: str = " ") -> Iterator[str]:
                         yield current + reset()
                     _reset()
 
-            continue
-
-        if "\n" in word:
-            for line in word.split("\n"):
-                yield line + reset()
-
-            _reset()
             continue
 
         # add current if we pass the limit
