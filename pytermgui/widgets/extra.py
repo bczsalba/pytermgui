@@ -275,272 +275,130 @@ class ListView(Container):
             )
 
 
-class InputField(Widget):
-    """A Label that lets you display input"""
+class InputField(Label):
+    """An element to display user input"""
 
-    styles: dict[str, StyleType] = {
+    styles = {
         "value": default_foreground,
         "cursor": MarkupFormatter("[inverse]{item}"),
-        "highlight": Widget.OVERRIDE,
+        "syntax": lambda _, item: prettify_markup(item),
     }
 
-    serialized = Widget.serialized + [
-        "value",
-        "prompt",
-        "cursor",
-        "tab_length",
-    ]
-
-    def __init__(
-        self,
-        value: str = "",
-        prompt: str = "",
-        tab_length: int = 4,
-        padding: int = 0,
-        **attrs: Any,
-    ) -> None:
+    def __init__(self, default: str = "", prompt: str = "", **attrs: Any) -> None:
         """Initialize object"""
 
-        super().__init__(**attrs)
-        self._selected_range: tuple[Optional[int], Optional[int]] = (None, None)
+        super().__init__(prompt + default, **attrs)
+        self.parent_align = 0
+
+        self.value = default
         self.prompt = prompt
-        self.padding = padding
-        self.value = value + " "
-        self.tab_length = tab_length
-        self.cursor = real_length(value)
-        self.width = 40
+        self.cursor = real_length(self.value)
+        self.is_selectable = True
 
-        self._selectables_length = 1
-
-        self.parent_align = Widget.PARENT_LEFT
+        self._bindings: dict[str, Callable[[str], Any]] = {}
 
     @property
-    def selected_value(self) -> Optional[str]:
-        """Get text that is selected"""
+    def selectables_length(self) -> int:
+        """Get length of selectables in object"""
 
-        start, end = self._selected_range
-        if any(value is None for value in [start, end]):
-            return None
-
-        return self.value[start:end]
+        return 1
 
     @property
     def cursor(self) -> int:
-        """Return cursor of self"""
+        """Get cursor"""
 
         return self._cursor
 
     @cursor.setter
     def cursor(self, value: int) -> None:
-        """Set cursor"""
+        """Set cursor as an always-valid value"""
 
-        self._cursor = min(max(0, value), real_length(self.value) - 1)
+        self._cursor = max(0, min(value, real_length(self.value)))
 
-    def get_value(self, strip: bool = True) -> str:
-        """Get stripped value of object"""
+    def send(self, key: str) -> bool:
+        """Handle keypress, return True if success, False if failure"""
 
-        value = strip_ansi(self.value)
-        if strip:
-            return value.strip()
+        def _run_callback() -> None:
+            """Call callback if `keys.ANY_KEY` is bound"""
 
-        return value
+            if keys.ANY_KEY in self._bindings:
+                self._bindings[keys.ANY_KEY](key)
 
-    def clear_value(self) -> str:
-        """Reset value of field, return old value"""
-
-        old = strip_ansi(self.value).strip()
-        self.value = " "
-        self.cursor = 1
-
-        return old
-
-    def clear_selected(self) -> None:
-        """Reset self._selected"""
-
-        self._selected_range = (None, None)
-
-    def has_selection(self) -> bool:
-        """Return if there is text selected"""
-
-        return all(val is not None for val in self._selected_range)
-
-    def get_lines(self) -> list[str]:
-        """Return broken-up lines from object"""
-
-        def _normalize_cursor(
-            coords: tuple[Optional[int], Optional[int]]
-        ) -> tuple[int, int]:
-            """Figure out switching None positions and ordering"""
-
-            start, end = coords
-            if start is None or end is None:
-                start = end = self.cursor
-
-            elif start > end:
-                start, end = end, start
-
-            return start, end
-
-        lines = []
-        buff = ""
-        value_style = self.get_style("value")
-        cursor_style = self.get_style("cursor")
-        highlight_style = self.get_style("highlight")
-
-        def _get_label_lines(buff: str) -> list[str]:
-            """Get lines from donor label
-
-            Note: This is temporary, the entire class will be rewritten."""
-
-            return [buff]
-
-        # highlight_style is optional
-        if highlight_style.method is Widget.OVERRIDE:
-            highlight_style = cursor_style
-
-        start, end = _normalize_cursor(self._selected_range)
-        self.cursor = end
-
-        for i, char in enumerate(self.prompt + self.value):
-            charindex = i - real_length(self.prompt)
-
-            if char == keys.RETURN:
-                buff_list = list(buff)
-                buff_end = ""
-
-                if self._is_focused and charindex == self.cursor:
-                    buff_end = cursor_style(" ")
-
-                lines += _get_label_lines("".join(buff_list) + buff_end)
-                buff = ""
-                continue
-
-            # Currently all lines visually have an extra " " at the end
-            if real_length(buff) > self.width:
-                lines += _get_label_lines(buff[:-1])
-
-                if char == keys.RETURN:
-                    char = " "
-
-                buff = ""
-
-            elif self._is_focused and charindex == self.cursor:
-                buff += cursor_style(char)
-
-            elif self._is_focused and start <= charindex <= end:
-                buff += highlight_style(char)
-
-            else:
-                buff += value_style(char)
-
-        if len(buff) > 0:
-            lines += _get_label_lines(buff)
-
-        self.height = len(lines)
-        self.define_mouse_target(0, 0, self.height).onclick = self.onclick
-
-        return lines
-
-    def select_range(self, rng: tuple[int, int]) -> None:
-        """Overwrite select method to do a visual selection in range"""
-
-        self._selected_range = rng
-
-    def send(self, key: Optional[str]) -> None:
-        """Send key to InputField"""
-
-        def _find_newline(step: int) -> int:
-            """Find newline in self.value stepping by `step`"""
-
-            if step == -1:
-                value = self.value[self.cursor :: step]
-            else:
-                value = self.value[self.cursor :: step]
-
-            i = 0
-            for i, char in enumerate(value):
-                if char is keys.RETURN:
-                    return i
-
-            return i
-
-        def _find_cursor_line() -> str:
-            """Find line that cursor is in"""
-
-            visited = 0
-            for line in self.get_value().splitlines():
-                new = real_length(line)
-                visited += new + 1
-                if visited - (1 if new > 0 else 0) >= self.cursor:
-                    return line
-
-            return ""
-
-        valid_platform_keys = [
-            keys.SPACE,
-            keys.CTRL_J,
-            keys.CTRL_I,
-        ]
-
-        if key is None:
-            return
+        if key in self._bindings:
+            self._bindings[key](key)
+            _run_callback()
+            return True
 
         if key == keys.BACKSPACE:
-            if self.cursor <= 0:
-                return
+            if self.cursor == 0:
+                return True
 
             left = self.value[: self.cursor - 1]
             right = self.value[self.cursor :]
-
             self.value = left + right
-            self.send(keys.LEFT)
 
-        elif key is keys.CTRL_I:
-            for _ in range(self.tab_length):
-                self.send(keys.SPACE)
-
-        elif key in [keys.LEFT, keys.CTRL_B]:
             self.cursor -= 1
 
-        elif key in [keys.RIGHT, keys.CTRL_F]:
+            _run_callback()
+            return True
+
+        if key in [keys.LEFT, keys.CTRL_B]:
+            self.cursor -= 1
+            return True
+
+        if key in [keys.RIGHT, keys.CTRL_F]:
             self.cursor += 1
+            return True
 
-        elif key in [keys.DOWN, keys.CTRL_N]:
-            self.cursor += _find_newline(1) + 1
+        if key == keys.RETURN:
+            # TODO: This is currently unhandled, needs fix in break_line.
+            return True
 
-        elif key in [keys.UP, keys.CTRL_P]:
-            self.cursor -= max(_find_newline(-1), 1)
-            line = _find_cursor_line()
-            self.cursor -= real_length(line)
+        # Ignore unhandled non-printing keys
+        if not key in [keys.SPACE, keys.RETURN] and key in keys.values():
+            return False
 
-        # `keys.values()` might need to be renamed to something more like
-        # `keys.escapes.values()`
-        elif key in valid_platform_keys or (
-            real_length(key) == 1 and not key in keys.values()
-        ):
-            left = self.value[: self.cursor]
-            right = self.value[self.cursor :]
+        left = self.value[: self.cursor] + key
+        right = self.value[self.cursor :]
 
-            self.value = left + key + right
-            self.cursor += 1
+        self.value = left + right
+        self.cursor += len(key)
+        _run_callback()
 
-    def select(self, index: Optional[int] = None) -> None:
-        """Select object"""
+    def bind(self, key: str, action: Callable[[str], Any]) -> None:
+        """Call `action` when `key` is sent to widget"""
 
-        self.focus()
+        self._bindings[key] = action
 
-    def debug(self) -> str:
-        """Return identifiable information about object"""
+    def get_lines(self) -> list[str]:
+        """Get lines of object"""
 
-        value = self.value if real_length(self.value) < 7 else "..."
+        cursor_style = self.get_style("cursor")
+        syntax_style = self.get_style("syntax")
 
-        return (
-            "InputField("
-            + f'prompt="{self.prompt}", '
-            + f'value="{value}", '
-            + f"tab_length={self.tab_length}"
-            + ")"
-        )
+        # Cache value to be reset later
+        old = self.value
+
+        # Create sides separated by cursor
+        # TODO: Fix syntax highlighing breaking beyond cursor
+        left = syntax_style(self.value[: self.cursor])
+        right = syntax_style(self.value[self.cursor + 1 :])
+
+        if len(self.value) > self.cursor:
+            cursor_char = self.value[self.cursor]
+        else:
+            cursor_char = " "
+
+        self.value = self.prompt + left + cursor_style(cursor_char) + right
+
+        old_height = self.height
+        lines = super().get_lines()
+        self.value = old
+
+        self.mouse_targets = []
+        self.define_mouse_target(0, 0, height=self.height)
+
+        return lines
 
 
 class Prompt(Widget):

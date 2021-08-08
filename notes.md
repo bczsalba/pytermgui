@@ -1,4 +1,4 @@
-Versioning method
+Versioning scheme
 -----------------
 
 ### `major`.`minor`.`patch`
@@ -24,7 +24,7 @@ Planned Versions
         + `Button`
         + `Checkbox`
         + `Dropdown`
-    - `widgets/` reorginization
+    - `widgets/` reorganization
 
 
 Current Progress
@@ -37,13 +37,15 @@ Current Progress
         + [x] `Dropdown`
 
     * [ ] `InputField` rewrite:
-        + [ ] inherit from Label, make use of its `get_lines()` line breaking
-        + [ ] add `bind()` method, similarly to `WindowManager`
-        + [ ] better styling, support for syntax highlights
+        + [x] inherit from Label, make use of its `get_lines()` line breaking
+        + [x] add `bind()` method, similarly to `WindowManager`
+        + [x] better styling, support for syntax highlights
 
     * [ ] `Splitter` rewrite:
         + [ ] fix width issues
         + [ ] add support for differing heights
+
+    * [ ] Look into removing/rewriting the various extra widgets that don't do much
 
     * [ ] Reorganize `widgets/`
         - `base.py`
@@ -53,6 +55,16 @@ Current Progress
         - `buttons.py`
 
 - future
+    * [ ] Rework `Widget.click()`
+        + [ ] targets should be found using `Widget.get_target()`
+        + [ ] `target.click()` can then be called directly
+
+    * [ ] Add color methods
+        + [ ] gradient (`[<@141]`, `[<141]`, `[>@141]`, `get_gradient(including: int)`)
+        + [ ] complement (`get_complement(color: int)`)
+
+    + [ ] `WindowManager` tiling layout
+
     * [ ] look into making mouse events callback-based (see winman)
 
     * [ ] Rework width & height systems
