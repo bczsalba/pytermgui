@@ -52,9 +52,9 @@ from .widgets import (
 )
 
 from .input import getch, keys
-from .parser import define_tag
-from .helpers import real_length
+from .parser import define_tag, ansi
 from .exceptions import LineLengthError
+from .helpers import real_length, strip_ansi
 from .context_managers import alt_buffer, mouse_handler, MouseEvent
 from .ansi_interface import clear, screen_size, screen_width, MouseAction
 
@@ -141,6 +141,11 @@ class Window(Container):
 
         self.forced_width = endx - startx
         self.forced_height = endy - starty
+
+    def close(self) -> None:
+        """Instruct manager to close this window"""
+
+        self.manager.close(self)
 
     def change_align(self, new: int) -> None:
         """Change all widgets' parent_align"""
@@ -282,7 +287,7 @@ class WindowManager(Container):
     which can return True (default) to break input loop.
     """
 
-    styles = {"blurred": MarkupFormatter("[240 !strip]{item}")}
+    styles = {"blurred": lambda _, item: ansi("[240]" + strip_ansi(item))}
 
     def __init__(self, *windows: Window) -> None:
         """Initialize object"""
@@ -610,6 +615,20 @@ class WindowManager(Container):
         """if self.exit() == True: break"""
 
         return True
+
+    def alert(self, detail: Any) -> None:
+        """Show modal dialog displaying `detail`"""
+
+        window = (
+            Window(width=50, resizable=False, modal=True)
+            + "[wm-title]Alert!"
+            + ""
+            + f"[wm-section]Detail[/]: {str(detail)}"
+            + ""
+            + ["Dismiss", lambda *_: window.close()]
+        ).center()
+
+        self.add(window)
 
     def debug(self) -> str:
         return f"WindowManager(Window() * {len(self._windows)})"
