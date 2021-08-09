@@ -98,6 +98,8 @@ class Window(Container):
         """Initialize object"""
 
         super().__init__(**attrs)
+        self._is_bindable = True
+
         self.is_static: bool = static
         self.is_modal: bool = modal
         self.is_resizable: bool = resizable
@@ -211,7 +213,13 @@ class Window(Container):
     def handle_key(self, key: str) -> bool:
         """Handle mouse press, WITHOUT looping"""
 
+        if self.execute_binding(key):
+            return True
+
         if isinstance(self.selected, InputField):
+            while isinstance(self.selected, Container):
+                self.selected = self.selected.selected
+
             self.selected.send(key)
             return True
 
@@ -293,13 +301,12 @@ class WindowManager(Container):
         """Initialize object"""
 
         super().__init__()
+        self._is_bindable = True
         self._windows: list[Window] = []
         self._mouse_listener: Optional[Window] = None
 
         define_tag("wm-title", "210 bold")
         define_tag("wm-section", "157")
-
-        self._bindings: dict[str, Callable[[WindowManager], Any]] = {}
 
         for window in windows:
             self.add(window)
@@ -374,11 +381,6 @@ class WindowManager(Container):
 
         return None
 
-    def bind(self, key: str, action: Callable[[WindowManager], Any]) -> None:
-        """Bind a key to a callable"""
-
-        self._bindings[key] = action
-
     def align_widgets(self, new: int) -> None:
         """Set all widgets' parent_align"""
 
@@ -450,8 +452,7 @@ class WindowManager(Container):
 
         Note: This is called by the run loop on every iteration."""
 
-        if key in self._bindings:
-            self._bindings[key](self)
+        if self.execute_binding(key):
             return True
 
         if (

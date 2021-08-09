@@ -299,14 +299,14 @@ class InputField(Label):
         """Initialize object"""
 
         super().__init__(prompt + default, **attrs)
+        self._is_bindable = True
+
         self.parent_align = 0
 
         self.value = default
         self.prompt = prompt
         self.cursor = real_length(self.value)
         self.is_selectable = True
-
-        self._bindings: dict[str, Callable[[str], Any]] = {}
 
     @property
     def selectables_length(self) -> int:
@@ -333,11 +333,9 @@ class InputField(Label):
             """Call callback if `keys.ANY_KEY` is bound"""
 
             if keys.ANY_KEY in self._bindings:
-                self._bindings[keys.ANY_KEY](key)
+                self._bindings[keys.ANY_KEY](self, key)
 
-        if key in self._bindings:
-            self._bindings[key](key)
-            _run_callback()
+        if self.execute_binding(key):
             return True
 
         if key == keys.BACKSPACE:
@@ -375,11 +373,6 @@ class InputField(Label):
         self.value = left + right
         self.cursor += len(key)
         _run_callback()
-
-    def bind(self, key: str, action: Callable[[str], Any]) -> None:
-        """Call `action` when `key` is sent to widget"""
-
-        self._bindings[key] = action
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""

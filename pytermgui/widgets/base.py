@@ -44,6 +44,7 @@ from .styles import (
 __all__ = ["MouseTarget", "MouseCallback", "Widget", "Container", "Label"]
 
 MouseCallback = Callable[["MouseTarget", "Widget"], Any]
+BoundCallback = Callable[["Widget", str], Any]
 
 
 def _set_obj_or_cls_style(
@@ -208,6 +209,9 @@ class Widget:
         self._selectables_length = 0
         self._id: Optional[str] = None
         self._is_focused = False
+        self._is_bindable = False
+
+        self._bindings: dict[str, BoundCallback] = {}
 
         self.size_policy = Widget.DEFAULT_SIZE_POLICY
         self.parent_align = Widget.DEFAULT_PARENT_ALIGN
@@ -418,6 +422,29 @@ class Widget:
         """Stub for widget.get_lines"""
 
         raise NotImplementedError(f"get_lines() is not defined for type {type(self)}.")
+
+    def bind(self, key: str, action: BoundAction) -> None:
+        """Bind a key to a callable"""
+
+        if not self._is_bindable:
+            raise TypeError(f"Widget of type {type(self)} does not accept bindings.")
+
+        self._bindings[key] = action
+
+    def execute_binding(self, key: str) -> bool:
+        """Execute a binding if this widget is bindable
+
+        True: binding found & execute
+        False: binding not found"""
+
+        if not self._is_bindable:
+            raise TypeError(f"Widget of type {type(self)} does not accept bindings.")
+
+        if key in self._bindings:
+            self._bindings[key](self, key)
+            return True
+
+        return False
 
     def select(self, index: Optional[int] = None) -> None:
         """Select part of self"""
