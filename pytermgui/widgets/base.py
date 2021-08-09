@@ -12,6 +12,7 @@ This submodule the basic elements this library provides.
 
 from __future__ import annotations
 from copy import deepcopy
+from inspect import signature, Signature
 from typing import Callable, Optional, Type, Union, Iterator, Any
 from dataclasses import dataclass, field
 
@@ -458,7 +459,28 @@ class Widget:
     def debug(self) -> str:
         """Debug identifiable information about object"""
 
-        return type(self).__name__ + "()"
+        constructor = "("
+        for name, parameter in signature(self.__init__).parameters.items():
+            if name == "attrs":
+                constructor += ", **attrs"
+                continue
+
+            if len(constructor) > 1:
+                constructor += ", "
+
+            constructor += name
+
+            attr = getattr(self, name)
+            constructor += "="
+
+            if isinstance(attr, str):
+                constructor += f'"{attr}"'
+            else:
+                constructor += str(attr)
+
+        constructor += ")"
+
+        return type(self).__name__ + constructor
 
 
 class Container(Widget):
@@ -524,6 +546,7 @@ class Container(Widget):
 
         # TODO: Add deeper selection
         self._prev_selected = selected
+
         return selected
 
     @property
@@ -941,7 +964,7 @@ class Container(Widget):
             out += widget.debug() + ", "
 
         out = out.strip(", ")
-        out += ")"
+        out += ", **attrs)"
 
         return out
 
@@ -975,8 +998,3 @@ class Label(Widget):
         lines = break_line(value_style(self.padding * " " + self.value), self.width)
 
         return list(lines) or [""]
-
-    def debug(self) -> str:
-        """Return identifiable information about object"""
-
-        return f'Label(value="{self.value}")'

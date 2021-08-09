@@ -35,7 +35,6 @@ class Button(Widget):
         self,
         label: str,
         onclick: Optional[MouseCallback] = None,
-        parent_align: int = Widget.PARENT_CENTER,
         padding: int = 0,
         **attrs: Any,
     ) -> None:
@@ -48,7 +47,6 @@ class Button(Widget):
         self.is_selectable = True
         self.onclick = onclick
         self.padding = padding
-        self.parent_align = parent_align
 
     def get_lines(self) -> list[str]:
         """Get object lines"""
@@ -73,11 +71,6 @@ class Button(Widget):
         self.forced_width = real_length(word)
 
         return [self.padding * " " + word]
-
-    def debug(self) -> str:
-        """Show identifiable information"""
-
-        return f'Button(label="{self.label}", onclick={type(self.onclick)})'
 
 
 class Checkbox(Button):
