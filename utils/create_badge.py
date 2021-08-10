@@ -1,6 +1,5 @@
 import requests
 from subprocess import check_output
-from argparse import ArgumentParser
 
 
 def get_score(command: str) -> float:
