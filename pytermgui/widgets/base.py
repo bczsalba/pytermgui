@@ -488,22 +488,28 @@ class Widget:
 
         constructor = "("
         for name, parameter in signature(self.__init__).parameters.items():
+            current = ""
             if name == "attrs":
-                constructor += ", **attrs"
+                current += ", **attrs"
                 continue
 
             if len(constructor) > 1:
-                constructor += ", "
+                current += ", "
 
-            constructor += name
+            current += name
 
-            attr = getattr(self, name)
-            constructor += "="
+            attr = getattr(self, name, None)
+            if attr is None:
+                continue
+
+            current += "="
 
             if isinstance(attr, str):
-                constructor += f'"{attr}"'
+                current += f'"{attr}"'
             else:
-                constructor += str(attr)
+                current += str(attr)
+
+            constructor += current
 
         constructor += ")"
 
