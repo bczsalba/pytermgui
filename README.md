@@ -5,9 +5,10 @@
 ```
 pip3 install pytermgui
 ```
-[![PyPI version](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/version.svg)](https://pypi.org/project/pytermgui)
-[![Pylint quality](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/quality.svg)](https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py)
-
+<p align="center">
+    <img href="https://pypi.org/project/pytermgui" alt="PyPi package" src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/version.svg">
+    <img href="https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py" alt="Pylint quality" src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/quality.svg">
+</p>
 
 
 Core principles
