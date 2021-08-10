@@ -70,16 +70,38 @@ def _macro_strip_bg(item: str) -> str:
     return ansi("[/bg]" + item)
 
 
-def auto(
-    data: Union[list[str], dict[str, str], str], **widget_args: Any
-) -> Optional[Widget]:
-    """Create PyTermGUI widget automatically from data
+def auto(data: Any, **widget_args: Any) -> Optional[Union[Widget, list[Splitter]]]:
+    """Create a Widget from data
+
+    This conversion includes various widget classes, as well as some shorthands for
+    more complex objects.
 
     Currently supported:
-        - str   -> Label(data)
-        - list  -> ListView(data)
-        - dict  -> Container(Prompt(), ...)
-        - tuple -> Splitter(*data)
+        - Label (str):
+             + value: str   -> Label(value, **attrs)
+
+        - Splitter (tuple):
+             + tuple[item1: Any, item2: Any] -> Splitter(item1, item2, ..., **attrs)
+
+        - buttons (list):
+             + default:
+                 * list[label: str, onclick: ButtonCallback]  -> Button(label, onclick, **attrs)
+
+             + Checkbox:
+                 * list[default: bool, callback: Callable[[bool], Any]]  -> Checkbox(default, callback, **attrs)
+
+             + Toggle:
+                 * list[tuple[state1: str, state2: str], callback: Callable[[str], Any] ->
+                     Toggle((state1, state2), callback)
+
+        - prompt splitter:
+            + dict[left: Any, right: Any]  -> (
+                Splitter(
+                    auto(left, parent_align=0),
+                    auto(right, parent_align=2),
+                    **attrs
+                )
+            )
 
     If Widget.ALLOW_TYPE_CONVERSION is True (default), this method is
     called implicitly whenever a non-widget is attempted to be added to
@@ -100,43 +122,50 @@ def auto(
         Container(Label(...), Label(...), Splitter(...), Splitter(...), Splitter(...), Label(...), Button(...))
     """
 
+    # Nothing to do.
+    if isinstance(data, Widget):
+        return data
+
+    # Label
     if isinstance(data, str):
         return Label(data, **widget_args)
 
+    # Splitter
+    if isinstance(data, tuple):
+        return Splitter(*data, **widget_args)
+
+    # buttons
     if isinstance(data, list):
         label = data[0]
         onclick = None
         if len(data) > 1:
             onclick = data[1]
 
+        # Checkbox
         if isinstance(label, bool):
-            return Checkbox(onclick, checked=label)
+            return Checkbox(onclick, checked=label, **widget_args)
 
+        # Toggle
         elif isinstance(label, list):
             assert len(label) == 2
-            toggle = Checkbox(onclick)
-            toggle.set_char("checked", label[0])
-            toggle.set_char("unchecked", label[1])
-            toggle.label = label[0]
-            return toggle
+            return Toggle(label, onclick, **widget_args)
 
         return Button(label, onclick, **widget_args)
 
+    # prompt splitter
     if isinstance(data, dict):
         rows: list[Splitter] = []
 
         for key, value in data.items():
-            key.parent_align = 0
-            value.parent_align = 2
-            rows.append(Splitter(key, value, **widget_args))
+            left = auto(key, parent_align=0)
+            right = auto(value, parent_align=2)
+
+            rows.append(Splitter(left, right, **widget_args))
 
         if len(rows) == 1:
             return rows[0]
 
         return rows
-
-    if isinstance(data, tuple):
-        return Splitter(*data, **widget_args)
 
     return None
 
