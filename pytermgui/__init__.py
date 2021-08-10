@@ -26,9 +26,8 @@ from .window_manager import *
 from .input import getch, keys
 from .context_managers import alt_buffer, cursor_at, mouse_handler
 
-# TODO: Support __all__
+# Build `__all__` for star import (which you really shouldn't do.)
 __all__ = ["__version__"]
-
 __all__ += _ansi_all
 __all__ += _parser_all
 __all__ += _manager_all
@@ -43,7 +42,8 @@ def _macro_align(item: str) -> str:
 
     Syntax: "[!align]width:aligment text" -> [!align]30:left hello"""
 
-    # TODO: Allow markup for content in _align_macro
+    # TODO: A better syntax for macros might be !align(30:left) or
+    #       !align_30:left.
 
     words = item.split(" ")
     statements = words[0]
@@ -170,11 +170,12 @@ def auto(data: Any, **widget_args: Any) -> Optional[Union[Widget, list[Splitter]
     return None
 
 
-# This needs to be here to avoid circular imports
+# Built-in macro definitions
 define_macro("!strip", strip_ansi)
 define_macro("!strip_fg", _macro_strip_fg)
 define_macro("!strip_bg", _macro_strip_bg)
 define_macro("!align", _macro_align)
 define_macro("!markup", markup)
 
+# Alternative binding for the `auto` method
 Widget.from_data = staticmethod(auto)
