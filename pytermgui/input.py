@@ -19,14 +19,13 @@ import sys
 
 from typing import (
     IO,
-    AnyStr,
-    Iterator,
-    Generator,
     Any,
     Union,
-    ValuesView,
+    AnyStr,
     KeysView,
+    Generator,
     ItemsView,
+    ValuesView,
 )
 
 from select import select

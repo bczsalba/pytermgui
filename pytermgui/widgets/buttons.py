@@ -87,7 +87,7 @@ class Checkbox(Button):
 
         self.callback = None
         self.checked = False
-        if not self.checked == checked:
+        if self.checked != checked:
             self.toggle()
 
         self.callback = callback
@@ -174,7 +174,7 @@ class Dropdown(Container):
         self._item_buttons = []
 
         if self.trigger.checked:
-            for i, item in enumerate(self.items):
+            for item in self.items:
                 button = Button(
                     item, onclick=self._item_callback, parent_align=self.parent_align
                 )

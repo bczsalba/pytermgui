@@ -338,10 +338,7 @@ class InputField(Label):
         if self.execute_binding(key):
             return True
 
-        if key == keys.BACKSPACE:
-            if self.cursor == 0:
-                return True
-
+        if key == keys.BACKSPACE and self.cursor > 0:
             left = self.value[: self.cursor - 1]
             right = self.value[self.cursor :]
             self.value = left + right

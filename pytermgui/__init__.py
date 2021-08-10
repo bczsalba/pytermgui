@@ -70,7 +70,9 @@ def _macro_strip_bg(item: str) -> str:
     return ansi("[/bg]" + item)
 
 
-def auto(data: Any, **widget_args: Any) -> Optional[Union[Widget, list[Splitter]]]:
+def auto(  # pylint: disable=R0911
+    data: Any, **widget_args: Any
+) -> Optional[Union[Widget, list[Splitter]]]:
     """Create a Widget from data
 
     This conversion includes various widget classes, as well as some shorthands for
@@ -88,7 +90,8 @@ def auto(data: Any, **widget_args: Any) -> Optional[Union[Widget, list[Splitter]
                  * list[label: str, onclick: ButtonCallback]  -> Button(label, onclick, **attrs)
 
              + Checkbox:
-                 * list[default: bool, callback: Callable[[bool], Any]]  -> Checkbox(default, callback, **attrs)
+                 * list[default: bool, callback: Callable[[bool], Any]]  ->
+                     Checkbox(default, callback, **attrs)
 
              + Toggle:
                  * list[tuple[state1: str, state2: str], callback: Callable[[str], Any] ->
@@ -119,7 +122,9 @@ def auto(data: Any, **widget_args: Any) -> Optional[Union[Widget, list[Splitter]
         ... + ""
         ... + ["Submit", lambda _, button, your_submit_handler(button.parent)]
         ... )
-        Container(Label(...), Label(...), Splitter(...), Splitter(...), Splitter(...), Label(...), Button(...))
+        Container(Label(...), Label(...), Splitter(...), Splitter(...), Splitter(...), ...)
+
+    Note on pylint: In my opinion, returning immediately after construction is much more readable.
     """
 
     # Nothing to do.
@@ -146,7 +151,7 @@ def auto(data: Any, **widget_args: Any) -> Optional[Union[Widget, list[Splitter]
             return Checkbox(onclick, checked=label, **widget_args)
 
         # Toggle
-        elif isinstance(label, list):
+        if isinstance(label, list):
             assert len(label) == 2
             return Toggle(label, onclick, **widget_args)
 

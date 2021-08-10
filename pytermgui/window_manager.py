@@ -38,17 +38,14 @@ from enum import Enum, auto as _auto
 from typing import Optional, Callable, Any
 
 from .widgets import (
-    MarkupFormatter,
     MouseCallback,
     MouseTarget,
     InputField,
     Container,
-    Splitter,
     Widget,
     Button,
     Label,
     boxes,
-    alert,
 )
 
 from .input import getch, keys

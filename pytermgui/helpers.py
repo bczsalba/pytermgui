@@ -65,9 +65,12 @@ def get_sequences(text: str) -> str:
     return sequences
 
 
-def break_line(line: str, limit: int, char: str = " ") -> Iterator[str]:
-    """Break a line into a list[str] with maximum `limit` lengths
-    Todo: when a tag is broken"""
+def break_line(  # pylint: disable=too-many-branches
+    line: str, limit: int, char: str = " "
+) -> Iterator[str]:
+    """Break a line into a list[str] with maximum `limit` lengths"""
+
+    # TODO: Refactor this method & handle newlines, avoid pylint disables.
 
     current = ""
     cur_len = 0

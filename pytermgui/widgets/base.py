@@ -11,13 +11,14 @@ This submodule the basic elements this library provides.
 # pylint: disable=too-many-instance-attributes
 
 from __future__ import annotations
-from copy import deepcopy
-from inspect import signature, Signature
-from typing import Callable, Optional, Type, Union, Iterator, Any
-from dataclasses import dataclass, field
 
-from ..exceptions import WidthExceededError, LineLengthError
+from copy import deepcopy
+from inspect import signature
+from dataclasses import dataclass, field
+from typing import Callable, Optional, Type, Union, Iterator, Any
+
 from ..context_managers import cursor_at
+from ..exceptions import WidthExceededError, LineLengthError
 from ..parser import (
     markup,
     ansi,
@@ -31,13 +32,12 @@ from ..ansi_interface import (
     clear,
 )
 from .styles import (
-    StyleCall,
-    MarkupFormatter,
-    apply_markup,
-    overrideable_style,
-    StyleType,
-    DepthlessStyleType,
     CharType,
+    StyleType,
+    StyleCall,
+    apply_markup,
+    DepthlessStyleType,
+    overrideable_style,
 )
 
 
@@ -423,7 +423,7 @@ class Widget:
 
         raise NotImplementedError(f"get_lines() is not defined for type {type(self)}.")
 
-    def bind(self, key: str, action: BoundAction) -> None:
+    def bind(self, key: str, action: BoundCallback) -> None:
         """Bind a key to a callable"""
 
         if not self._is_bindable:
@@ -487,7 +487,7 @@ class Widget:
         """Debug identifiable information about object"""
 
         constructor = "("
-        for name, parameter in signature(self.__init__).parameters.items():
+        for name in signature(self.__init__).parameters:
             current = ""
             if name == "attrs":
                 current += ", **attrs"
