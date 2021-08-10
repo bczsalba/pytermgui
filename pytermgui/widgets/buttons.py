@@ -18,7 +18,7 @@ from .styles import StyleType, CharType, MarkupFormatter
 from ..parser import ansi
 from ..helpers import real_length
 
-__all__ = ["Button", "Checkbox", "Dropdown"]
+__all__ = ["Button", "Checkbox", "Toggle", "Dropdown"]
 
 
 class Button(Widget):
@@ -106,10 +106,22 @@ class Checkbox(Button):
         if self.callback is not None:
             self.callback(self.checked)
 
-    def debug(self) -> str:
-        """Return identifiable information"""
 
-        return f"Checkbox(callback={type(self.callback)}, checked={self.checked})"
+class Toggle(Checkbox):
+    """A specialized checkbox showing either of two states"""
+
+    chars = Checkbox.chars | {"delimiter": [" ", " "], "checked": "choose"}
+
+    def __init__(
+        self, states: tuple[str, str], callback: Callable[[str], Any], **attrs: Any
+    ) -> None:
+        """Initialize object"""
+
+        self.set_char("checked", states[0])
+        self.set_char("unchecked", states[1])
+
+        super().__init__(callback, **attrs)
+        self.toggle()
 
 
 class Dropdown(Container):
