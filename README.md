@@ -5,7 +5,7 @@
 ```
 pip3 install pytermgui
 ```
-[![PyPI version](https://badge.fury.io/py/pytermgui.svg)](https://badge.fury.io/py/pytermgui)
+[![PyPI version](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/version.svg)](https://pypi.org/project/pytermgui)
 [![Pylint quality](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/quality.svg)](https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py)
 
 
