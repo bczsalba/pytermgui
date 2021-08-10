@@ -217,6 +217,7 @@ _getch: Union[_GetchWindows, _GetchUnix]
 try:
     import msvcrt
 
+    # TODO: Add shift+arrow keys
     _platform_keys = {
         "ESC": "\x1b",
         "LEFT": "\x1bK",
@@ -244,6 +245,10 @@ except ImportError as error:
         "DOWN": "\x1b[B",
         "RIGHT": "\x1b[C",
         "LEFT": "\x1b[D",
+        "SHIFT_UP": "\x1b[1;2A",
+        "SHIFT_DOWN": "\x1b[1;2B",
+        "SHIFT_RIGHT": "\x1b[1;2C",
+        "SHIFT_LEFT": "\x1b[1;2D",
         "BACKSPACE": "\x7f",
         "INSERT": "\x1b[2~",
         "DELETE": "\x1b[3~",
