@@ -529,31 +529,29 @@ class WindowManager(Container):
     def run(self) -> None:
         """Run window manager"""
 
-        with alt_buffer(echo=False, cursor=False), mouse_handler(
-            "press_hold", "decimal_urxvt"
-        ) as mouse:
-            self.print()
-
-            while True:
-                key = getch(interrupts=False)
-
-                if key == chr(3):
-                    if self.exit(self):
-                        break
-
-                if self.handle_key(key):
-                    continue
-
-                mouse_events = mouse(key)
-
-                if not self.handle_mouse(mouse_events):
-                    # Send key to focused window
-                    if self.focused is not None and mouse_events is None:
-                        self.focused.handle_key(key)
-
-                # TODO: Implement Bottom, Left bars
-
+        with mouse_handler("press_hold", "decimal_urxvt") as mouse:
+            with alt_buffer(echo=False, cursor=False):
                 self.print()
+
+                while True:
+                    key = getch(interrupts=False)
+
+                    if key == chr(3):
+                        if self.exit(self):
+                            break
+
+                    events = mouse(key)
+
+                    if self.handle_mouse(events):
+                        self.print()
+                        continue
+
+                    if self.focused.handle_key(key):
+                        self.print()
+                        continue
+
+                    if self.handle_key(key):
+                        self.print()
 
     def print(self) -> None:
         """Print all windows"""
@@ -572,9 +570,9 @@ class WindowManager(Container):
         for i, window in enumerate(reversed(self._windows)):
             try:
                 lines = window.get_lines()
-            except LineLengthError:
+            except LineLengthError as error:
                 if window.safe_state is None:
-                    raise
+                    raise ValueError("No safe fallback state") from error
 
                 # Fall back to previously known safe-state
                 # TODO: This is temporary! Somehow widgets
@@ -587,7 +585,10 @@ class WindowManager(Container):
                 else:
                     window.width = width
 
-                lines = window.get_lines()
+                try:
+                    lines = window.get_lines()
+                except LineLengthError:
+                    continue
 
             window.safe_state = window.width, window.forced_width
 
