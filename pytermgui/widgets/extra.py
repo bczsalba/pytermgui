@@ -33,7 +33,6 @@ from .styles import (
 )
 from ..input import keys, getch
 from ..helpers import real_length
-from ..parser import prettify_markup
 from ..ansi_interface import foreground, background, reset
 
 
@@ -278,7 +277,6 @@ class InputField(Label):
     styles = {
         "value": default_foreground,
         "cursor": MarkupFormatter("[inverse]{item}"),
-        "syntax": default_foreground,  # Note: for now, setting both fill & syntax won't work.
         "fill": MarkupFormatter("[@blue]{item}"),
     }
 
@@ -359,17 +357,14 @@ class InputField(Label):
         """Get lines of object"""
 
         cursor_style = self.get_style("cursor")
-        syntax_style = self.get_style("syntax")
         fill_style = self.get_style("fill")
-
-        combined_style = lambda item: fill_style(syntax_style(item))
 
         # Cache value to be reset later
         old = self.value
 
         # Create sides separated by cursor
-        left = combined_style(self.value[: self.cursor])
-        right = combined_style(self.value[self.cursor + 1 :])
+        left = fill_style(self.value[: self.cursor])
+        right = fill_style(self.value[self.cursor + 1 :])
 
         # Assign cursor character
         if self.selected_index is None:
@@ -391,7 +386,7 @@ class InputField(Label):
         self.define_mouse_target(0, 0, height=self.height)
 
         return [
-            fill_style(line) + fill_style((self.width - real_length(line) + 1) * " ")
+            line + fill_style((self.width - real_length(line) + 1) * " ")
             for line in lines
         ]
 
