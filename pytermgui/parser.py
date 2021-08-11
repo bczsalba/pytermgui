@@ -163,6 +163,12 @@ def define_tag(name: str, value: str) -> None:
     setter = ""
     unsetter = ""
 
+    # Try to link to existing tag
+    if value in CUSTOM_MAP:
+        UNSET_MAP["/" + name] = value
+        CUSTOM_MAP[name] = value
+        return
+
     for token in tokenize_markup("[" + value + "]"):
         if token.plain is not None:
             continue
