@@ -643,8 +643,11 @@ class DebugWindow(Window):
     def __init__(self, destroyer: Optional[MouseCallback] = None, **attrs: Any) -> None:
         """Initialize object"""
 
-        # Mypy doesn't quite understand this structure
-        super().__init__(title=" debug ", **attrs)
+        # Set default title argument
+        if not "title" in attrs:
+            attrs["title"] = " debug "
+
+        super().__init__(**attrs)
         self.min_width = 25
         self.forced_width = 50
 
