@@ -17,6 +17,7 @@ from inspect import signature
 from dataclasses import dataclass, field
 from typing import Callable, Optional, Type, Union, Iterator, Any
 
+from ..input import keys
 from ..context_managers import cursor_at
 from ..exceptions import WidthExceededError, LineLengthError
 from ..parser import (
@@ -440,6 +441,10 @@ class Widget:
         if not self._is_bindable:
             raise TypeError(f"Widget of type {type(self)} does not accept bindings.")
 
+        # Execute special binding
+        if keys.ANY_KEY in self._bindings:
+            self._bindings[keys.ANY_KEY](self, key)
+
         if key in self._bindings:
             self._bindings[key](self, key)
             return True
@@ -490,7 +495,7 @@ class Widget:
         for name in signature(getattr(self, "__init__")).parameters:
             current = ""
             if name == "attrs":
-                current += ", **attrs"
+                current += "**attrs"
                 continue
 
             if len(constructor) > 1:
@@ -660,11 +665,11 @@ class Container(Widget):
         other.get_lines()
         other.parent = self
 
-        keys = list(self._selectables)
-        if len(keys) <= 0:
+        selectables = list(self._selectables)
+        if len(selectables) <= 0:
             sel_len = 0
         else:
-            sel_len = max(keys) + 1
+            sel_len = max(selectables) + 1
 
         for i in range(other.selectables_length):
             self._selectables[sel_len + i] = other, i
