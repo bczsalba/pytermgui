@@ -88,11 +88,17 @@ class Checkbox(Button):
         self.callback = None
         self.checked = False
         if self.checked != checked:
-            self.toggle()
+            self.toggle(run_callback=False)
 
         self.callback = callback
 
-    def toggle(self, *_) -> None:
+    def _run_callback(self) -> None:
+        """Run the checkbox callback with the new checked flag as its argument"""
+
+        if self.callback is not None:
+            self.callback(self.checked)
+
+    def toggle(self, run_callback: bool = False, *_) -> None:
         """Toggle state"""
 
         self.checked ^= True
@@ -103,8 +109,8 @@ class Checkbox(Button):
 
         self.get_lines()
 
-        if self.callback is not None:
-            self.callback(self.checked)
+        if run_callback:
+            self._run_callback()
 
 
 class Toggle(Checkbox):
@@ -122,6 +128,12 @@ class Toggle(Checkbox):
 
         super().__init__(callback, **attrs)
         self.toggle()
+
+    def _run_callback(self) -> None:
+        """Run the toggle callback with the label as its argument"""
+
+        if self.callback is not None:
+            self.callback(self.label)
 
 
 class Dropdown(Container):
