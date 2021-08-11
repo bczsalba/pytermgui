@@ -322,6 +322,23 @@ class WindowManager(Container):
         self._drag_edge: Optional[Edge] = None
         self._drag_offset_x: int = 0
         self._drag_offset_y: int = 0
+        self._is_stopped: bool = False
+
+        self.mouse_handler: Optional[Callable[[str], Optional[list[MouseEvent]]]] = None
+
+    def __enter__(self) -> WindowManager:
+        """Start context manager"""
+
+        return self
+
+    def __exit__(self, _: Any, exception: Exception, __: Any) -> bool:
+        """End context manager"""
+
+        if exception is not None:
+            raise exception
+
+        self.stop()
+        return True
 
     def _click_or_init_drag(self, pos: tuple[int, int]) -> bool:
         """Initialize data for dragging a window"""
@@ -491,19 +508,19 @@ class WindowManager(Container):
             if event is None or (
                 self._mouse_listener is not None and self._mouse_listener.notify(event)
             ):
-                return True
+                continue
 
             action, pos = event
 
             # Try clicking a Window, else try initializing dragging
             if action is MouseAction.PRESS:
                 self._click_or_init_drag(pos)
-                return False
+                continue
 
             # Reset drag data
             if action is MouseAction.RELEASE:
                 self._drag_target = None
-                return True
+                continue
 
             # Move or resize windows
             if action is MouseAction.HOLD and self._drag_target is not None:
@@ -531,18 +548,22 @@ class WindowManager(Container):
 
                     window.rect = startx, starty, pos[0], endy - 2
 
-            return True
-
         return True
 
     def run(self) -> None:
         """Run window manager"""
 
         with mouse_handler("press_hold", "decimal_urxvt") as mouse:
+            # This is set so this method is accessible from the outside
+            self.mouse_handler = mouse
+
             with alt_buffer(echo=False, cursor=False):
                 self.print()
 
                 while True:
+                    if self._is_stopped:
+                        break
+
                     key = getch(interrupts=False)
 
                     if key == chr(3):
@@ -561,6 +582,11 @@ class WindowManager(Container):
 
                     if self.handle_key(key):
                         self.print()
+
+    def stop(self) -> None:
+        """Stop window manager"""
+
+        self._is_stopped = True
 
     def print(self) -> None:
         """Print all windows"""
