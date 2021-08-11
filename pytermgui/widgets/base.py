@@ -901,7 +901,7 @@ class Container(Widget):
 
         self.focus()
         for other in self._widgets:
-            if not other == widget:
+            if other is not widget:
                 other.selected_index = None
                 other.blur()
 
