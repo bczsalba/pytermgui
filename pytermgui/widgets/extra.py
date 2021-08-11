@@ -32,8 +32,9 @@ from .styles import (
     CharType,
 )
 from ..input import keys, getch
-from ..ansi_interface import foreground, background
-from ..helpers import real_length, strip_ansi
+from ..helpers import real_length
+from ..parser import prettify_markup
+from ..ansi_interface import foreground, background, reset
 
 
 __all__ = [
@@ -123,39 +124,19 @@ class Splitter(Container):
         self.parent_align = Widget.PARENT_RIGHT
 
     @staticmethod
-    def _get_aligner(widget: Widget) -> Callable[[str, int], str]:
-        """Get aligner method for alignment value"""
-
-        def _align_left(line: str, width: int) -> str:
-            """Align string left"""
-
-            difference = width - real_length(line)
-            return line + difference * " "
-
-        def _align_center(line: str, width: int) -> str:
-            """Align string center"""
-
-            difference, offset = divmod(width - real_length(line), 2)
-            return (difference + offset) * " " + line + difference * " "
-
-        def _align_right(line: str, width: int) -> str:
-            """Align string right"""
-
-            difference = width - real_length(line)
-            return difference * " " + line
-
-        if widget.parent_align is Widget.PARENT_LEFT:
-            return _align_left
+    def _get_offset(widget: Widget, target_width: int) -> tuple[int, int]:
+        """Get alignment offset of a widget"""
 
         if widget.parent_align is Widget.PARENT_CENTER:
-            return _align_center
+            total = target_width - widget.width
+            padding = total // 2
+            return padding + total % 2, padding
 
         if widget.parent_align is Widget.PARENT_RIGHT:
-            return _align_right
+            return target_width - widget.width, 0
 
-        raise NotImplementedError(
-            f"Parent-Alignment {widget.parent_align} is not implemented."
-        )
+        # Default to left-aligned
+        return 0, target_width - widget.width + 1
 
     def get_lines(self) -> list[str]:
         """Get lines of all objects"""
@@ -164,37 +145,42 @@ class Splitter(Container):
         assert isinstance(separator, str)
         separator_length = real_length(separator)
 
-        # target_width = self.width // len(self._widgets)
-
         lines = []
         widget_lines = []
-        offset_buffer = 0
-        current_offset = 0
+        self.mouse_targets = []
 
-        target_width = self.width // 2
+        target_width = self.width // len(self._widgets) - len(self._widgets) + 1
+        total_width = 0
 
         for widget in self._widgets:
-            align = self._get_aligner(widget)
+            left, right = self._get_offset(widget, target_width)
+            widget.pos = (self.pos[0] + total_width + left, self.pos[1])
 
+            line = widget.get_lines()[0].strip()
             if widget.forced_width is None:
-                widget.width = target_width
+                widget.width = real_length(line)
 
             inner_lines = []
             for line in widget.get_lines():
-                inner_lines.append(align(line, widget.width))
+                inner_lines.append(left * " " + line + right * " ")
 
             widget_lines.append(inner_lines)
+            total_width += target_width + separator_length
 
-            current_offset = widget.width + separator_length
-            offset_buffer += current_offset
-            widget.pos = (self.pos[0] + offset_buffer, self.pos[1])
+            self.mouse_targets += widget.mouse_targets
 
         for horizontal in zip(*widget_lines):
-            lines.append(separator.join(horizontal))
+            lines.append((reset() + separator).join(horizontal))
 
-        self.width = real_length(lines[-1])
+        for target in self.mouse_targets:
+            target.adjust()
 
         return lines
+
+    def debug(self) -> str:
+        """Return identifiable information"""
+
+        return super().debug().replace("Container", "Splitter")
 
 
 class ProgressBar(Widget):
