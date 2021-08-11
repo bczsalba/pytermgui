@@ -12,8 +12,8 @@ callbacks.
 
 from typing import Optional, Any, Callable
 
-from .base import Widget, Container, MouseTarget
 from .styles import StyleType, CharType, MarkupFormatter
+from .base import Widget, MouseCallback, Container, MouseTarget
 
 from ..parser import ansi
 from ..helpers import real_length
@@ -34,7 +34,7 @@ class Button(Widget):
     def __init__(
         self,
         label: str,
-        onclick: Optional[Callable[..., Any]] = None,
+        onclick: Optional[MouseCallback] = None,
         padding: int = 0,
         **attrs: Any,
     ) -> None:
@@ -101,19 +101,17 @@ class Checkbox(Button):
         if self.callback is not None:
             self.callback(self.checked)
 
-    def toggle(self, *_: Any, run_callback: bool = False) -> None:
+    def toggle(self, *_: Any, run_callback: bool = True) -> None:
         """Toggle state"""
 
+        chars = self.get_char("checked"), self.get_char("unchecked")
+        assert isinstance(chars[0], str) and isinstance(chars[1], str)
+
         self.checked ^= True
-
-        checked = self.get_char("checked")
-        unchecked = self.get_char("unchecked")
-        assert isinstance(checked, str) and isinstance(unchecked, str)
-
         if self.checked:
-            self.label = checked
+            self.label = chars[0]
         else:
-            self.label = unchecked
+            self.label = chars[1]
 
         self.get_lines()
 
@@ -135,7 +133,7 @@ class Toggle(Checkbox):
         self.set_char("unchecked", states[1])
 
         super().__init__(callback, **attrs)
-        self.toggle()
+        self.toggle(run_callback=False)
 
     def _run_callback(self) -> None:
         """Run the toggle callback with the label as its argument"""
@@ -159,7 +157,6 @@ class Dropdown(Container):
 
         super().__init__(**attrs)
         self.trigger = Checkbox(lambda *_: self.print(), parent_align=self.parent_align)
-        self.trigger.set_char("delimiter", [" ", " "])
         self._update_label(items[0])
         self._add_widget(self.trigger)
 

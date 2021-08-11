@@ -12,20 +12,16 @@ or at least partially use the classes provided in .base.
 # These classes will have to have more than 7 attributes mostly.
 # pylint: disable=too-many-instance-attributes
 
-from typing import Optional, Callable, Any
+from typing import Any
 
 from .base import (
     Container,
     Label,
     Widget,
-    MouseCallback,
 )
-
-from .buttons import Button
 
 from .styles import (
     default_foreground,
-    default_background,
     MarkupFormatter,
     apply_markup,
     StyleType,
@@ -38,11 +34,8 @@ from ..ansi_interface import foreground, background, reset
 
 __all__ = [
     "Splitter",
-    "ListView",
-    "ProgressBar",
     "ColorPicker",
     "InputField",
-    "Prompt",
     "alert",
 ]
 
@@ -68,7 +61,7 @@ class ColorPicker(Container):
 
         self.layer = 0
 
-    def toggle_layer(self) -> None:
+    def toggle_layer(self, *_: Any) -> None:
         """Toggle foreground/background"""
 
         self.layer = 1 if self.layer == 0 else 0
@@ -102,9 +95,9 @@ class ColorPicker(Container):
         return lines
 
     def debug(self) -> str:
-        """Return identifiable information about object"""
+        """Show identifiable information on widget"""
 
-        return f"ColorPicker(grid_cols={self.grid_cols})"
+        return Widget.debug(self)
 
 
 class Splitter(Container):
