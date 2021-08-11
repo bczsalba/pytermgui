@@ -278,18 +278,19 @@ class InputField(Label):
     styles = {
         "value": default_foreground,
         "cursor": MarkupFormatter("[inverse]{item}"),
-        "syntax": lambda _, item: prettify_markup(item),
+        "syntax": default_foreground,  # Note: for now, setting both fill & syntax won't work.
+        "fill": MarkupFormatter("[@blue]{item}"),
     }
 
-    def __init__(self, default: str = "", prompt: str = "", **attrs: Any) -> None:
+    def __init__(self, value: str = "", prompt: str = "", **attrs: Any) -> None:
         """Initialize object"""
 
-        super().__init__(prompt + default, **attrs)
+        super().__init__(prompt + value, **attrs)
         self._is_bindable = True
 
         self.parent_align = 0
 
-        self.value = default
+        self.value = value
         self.prompt = prompt
         self.cursor = real_length(self.value)
         self.is_selectable = True
@@ -332,60 +333,67 @@ class InputField(Label):
             self.cursor -= 1
 
             _run_callback()
-            return True
 
-        if key in [keys.LEFT, keys.CTRL_B]:
+        elif key in [keys.LEFT, keys.CTRL_B]:
             self.cursor -= 1
-            return True
 
-        if key in [keys.RIGHT, keys.CTRL_F]:
+        elif key in [keys.RIGHT, keys.CTRL_F]:
             self.cursor += 1
-            return True
-
-        if key == keys.RETURN:
-            # TODO: This is currently unhandled, needs fix in break_line.
-            return True
 
         # Ignore unhandled non-printing keys
-        if not key in [keys.SPACE, keys.RETURN] and key in keys.values():
+        elif not key == keys.SPACE and key in keys.values():
             return False
 
-        left = self.value[: self.cursor] + key
-        right = self.value[self.cursor :]
+        # Add character
+        else:
+            left = self.value[: self.cursor] + key
+            right = self.value[self.cursor :]
 
-        self.value = left + right
-        self.cursor += len(key)
-        _run_callback()
+            self.value = left + right
+            self.cursor += len(key)
+            _run_callback()
+
+        return True
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""
 
         cursor_style = self.get_style("cursor")
         syntax_style = self.get_style("syntax")
+        fill_style = self.get_style("fill")
+
+        combined_style = lambda item: fill_style(syntax_style(item))
 
         # Cache value to be reset later
         old = self.value
 
         # Create sides separated by cursor
-        # TODO: Fix syntax highlighing breaking beyond cursor
-        left = syntax_style(self.value[: self.cursor])
-        right = syntax_style(self.value[self.cursor + 1 :])
+        left = combined_style(self.value[: self.cursor])
+        right = combined_style(self.value[self.cursor + 1 :])
 
-        if len(self.value) > self.cursor:
+        # Assign cursor character
+        if self.selected_index is None:
+            cursor_char = ""
+        elif len(self.value) > self.cursor:
             cursor_char = self.value[self.cursor]
         else:
             cursor_char = " "
 
+        # Set new value, get lines using it
         self.value = self.prompt + left + cursor_style(cursor_char) + right
-
-        old_height = self.height
         lines = super().get_lines()
+
+        # Set old value
         self.value = old
 
+        # Reset & set mouse targets
         self.mouse_targets = []
         self.define_mouse_target(0, 0, height=self.height)
 
-        return lines
+        return [
+            fill_style(line) + fill_style((self.width - real_length(line) + 1) * " ")
+            for line in lines
+        ]
 
 
 class Prompt(Widget):
