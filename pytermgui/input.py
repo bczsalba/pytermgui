@@ -22,6 +22,7 @@ from typing import (
     Any,
     Union,
     AnyStr,
+    Optional,
     KeysView,
     Generator,
     ItemsView,
@@ -189,6 +190,15 @@ class _Keys:
             return attr
 
         return self._keys[attr]
+
+    def get_name(self, key: str, default: Optional[str] = None) -> Optional[str]:
+        """Get name of a key code"""
+
+        for name, value in self._keys.items():
+            if key == value:
+                return name
+
+        return default
 
     def values(self) -> ValuesView[str]:
         """Return values() of self._keys"""
