@@ -959,6 +959,7 @@ class Container(Widget):
         """Focus all widgets"""
 
         for widget in self._widgets:
+            widget.selected_index = None
             widget.blur()
 
     def wipe(self) -> None:
