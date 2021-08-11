@@ -60,7 +60,7 @@ def write_version_badge(output_file: str) -> None:
 
     from pytermgui import __version__ as version
 
-    link = f"https://img.shields.io/badge/pylint_package-{version}-bright_green"
+    link = f"https://img.shields.io/badge/pypi_package-{version}-bright_green"
 
     with open(output_file, "wb") as output:
         data = requests.get(link).content
