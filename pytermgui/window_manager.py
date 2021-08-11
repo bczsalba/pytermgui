@@ -217,8 +217,10 @@ class Window(Container):
             while isinstance(self.selected, Container):
                 self.selected = self.selected.selected
 
-            self.selected.send(key)
-            return True
+            self.selected.selected_index = 0
+            if self.selected.send(key):
+                self.manager.print()
+                return True
 
         if len(self._selectables) == 0:
             return False
@@ -323,6 +325,7 @@ class WindowManager(Container):
 
                 # We clicked a non-button area
                 if window.click(pos) is None:
+                    window.selected_index = None
                     self._drag_edge = self._get_edge(window, pos)
 
                     if self._drag_edge is None:
@@ -487,15 +490,16 @@ class WindowManager(Container):
 
             # Try clicking a Window, else try initializing dragging
             if action is MouseAction.PRESS:
-                if not self._click_or_init_drag(pos):
-                    return False
+                self._click_or_init_drag(pos)
+                return False
 
             # Reset drag data
-            elif action is MouseAction.RELEASE:
+            if action is MouseAction.RELEASE:
                 self._drag_target = None
+                return True
 
             # Move or resize windows
-            elif action is MouseAction.HOLD and self._drag_target is not None:
+            if action is MouseAction.HOLD and self._drag_target is not None:
                 width, height = screen_size()
                 window = self._drag_target
 
