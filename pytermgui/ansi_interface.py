@@ -208,11 +208,7 @@ def screen_size() -> tuple[int, int]:
     and makes for glitchy printing.
     """
 
-    # save_cursor()
-    # move_cursor((9999, 9999))
-    # size = report_cursor()
-    # restore_cursor()
-    # return size
+    # TODO: Add SIGWINCH handling
 
     return get_terminal_size()
 

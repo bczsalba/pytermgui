@@ -35,13 +35,15 @@ import sys
 from time import time
 from random import randint
 from enum import Enum, auto as _auto
-from typing import Optional, Callable, Any
+from typing import Optional, Callable, Any, cast
+
+# https://github.com/python/mypy/issues/4930
+from .widgets.base import Container
 
 from .widgets import (
     MouseCallback,
     MouseTarget,
     InputField,
-    Container,
     Widget,
     Button,
     Label,
@@ -144,6 +146,7 @@ class Window(Container):
     def close(self) -> None:
         """Instruct manager to close this window"""
 
+        assert self.manager is not None
         self.manager.close(self)
 
     def change_align(self, new: int) -> None:
@@ -213,18 +216,22 @@ class Window(Container):
         if self.execute_binding(key):
             return True
 
+        self.selected: Widget
         if isinstance(self.selected, InputField):
             while isinstance(self.selected, Container):
                 self.selected = self.selected.selected
 
             self.selected.selected_index = 0
+
             if self.selected.send(key):
+                assert self.manager is not None
                 self.manager.print()
                 return True
 
         if len(self._selectables) == 0:
             return False
 
+        self.selected_index: Optional[int]
         if self.selected_index is None:
             self.selected_index = 0
 
@@ -312,7 +319,7 @@ class WindowManager(Container):
 
         self._focus_index = 0
         self._drag_target: Optional[Window] = None
-        self._drag_edge: Optional[int] = None
+        self._drag_edge: Optional[Edge] = None
         self._drag_offset_x: int = 0
         self._drag_offset_y: int = 0
 
@@ -344,7 +351,7 @@ class WindowManager(Container):
         return True
 
     @staticmethod
-    def _get_edge(window: Window, pos: tuple[int, int]) -> Optional[int]:
+    def _get_edge(window: Window, pos: tuple[int, int]) -> Optional[Edge]:
         """Get which edge mouse input overlaps with"""
 
         startx, starty, endx, endy = window.rect
@@ -526,6 +533,8 @@ class WindowManager(Container):
 
             return True
 
+        return True
+
     def run(self) -> None:
         """Run window manager"""
 
@@ -546,7 +555,7 @@ class WindowManager(Container):
                         self.print()
                         continue
 
-                    if self.focused.handle_key(key):
+                    if self.focused is not None and self.focused.handle_key(key):
                         self.print()
                         continue
 
@@ -622,14 +631,19 @@ class WindowManager(Container):
     def alert(self, detail: Any) -> None:
         """Show modal dialog displaying `detail`"""
 
-        window = (
-            Window(width=50, resizable=False, modal=True)
-            + "[wm-title]Alert!"
-            + ""
-            + f"[wm-section]Detail[/]: {str(detail)}"
-            + ""
-            + ["Dismiss", lambda *_: window.close()]
-        ).center()
+        window: Window
+
+        window = cast(
+            Window,
+            (
+                Window(width=50, resizable=False, modal=True)
+                + "[wm-title]Alert!"
+                + ""
+                + f"[wm-section]Detail[/]: {str(detail)}"
+                + ""
+                + ["Dismiss", lambda *_: window.close()]
+            ).center(),
+        )
 
         self.add(window)
 
@@ -644,7 +658,7 @@ class DebugWindow(Window):
         """Initialize object"""
 
         # Set default title argument
-        if not "title" in attrs:
+        if "title" not in attrs:
             attrs["title"] = " debug "
 
         super().__init__(**attrs)

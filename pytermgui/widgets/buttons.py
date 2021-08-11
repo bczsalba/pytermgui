@@ -12,7 +12,7 @@ callbacks.
 
 from typing import Optional, Any, Callable
 
-from .base import Widget, MouseCallback, Container
+from .base import Widget, Container, MouseTarget
 from .styles import StyleType, CharType, MarkupFormatter
 
 from ..parser import ansi
@@ -34,7 +34,7 @@ class Button(Widget):
     def __init__(
         self,
         label: str,
-        onclick: Optional[MouseCallback] = None,
+        onclick: Optional[Callable[..., Any]] = None,
         padding: int = 0,
         **attrs: Any,
     ) -> None:
@@ -56,7 +56,7 @@ class Button(Widget):
         delimiters = self.get_char("delimiter")
         highlight_style = self.get_style("highlight")
 
-        assert len(delimiters) == 2
+        assert isinstance(delimiters, list) and len(delimiters) == 2
         left, right = delimiters
 
         word = ansi(left + self.label + right, silence_exception=True)
@@ -79,11 +79,14 @@ class Checkbox(Button):
     chars = Button.chars | {"delimiter": ["[", "]"], "checked": "X", "unchecked": " "}
 
     def __init__(
-        self, callback: Callable[[bool], Any], checked: bool = False, **attrs
+        self, callback: Callable[[Any], Any], checked: bool = False, **attrs: Any
     ) -> None:
         """Initialize object"""
 
-        super().__init__(self.get_char("unchecked"), onclick=self.toggle, **attrs)
+        unchecked = self.get_char("unchecked")
+        assert isinstance(unchecked, str)
+
+        super().__init__(unchecked, onclick=self.toggle, **attrs)
 
         self.callback = None
         self.checked = False
@@ -98,14 +101,19 @@ class Checkbox(Button):
         if self.callback is not None:
             self.callback(self.checked)
 
-    def toggle(self, run_callback: bool = False, *_) -> None:
+    def toggle(self, *_: Any, run_callback: bool = False) -> None:
         """Toggle state"""
 
         self.checked ^= True
+
+        checked = self.get_char("checked")
+        unchecked = self.get_char("unchecked")
+        assert isinstance(checked, str) and isinstance(unchecked, str)
+
         if self.checked:
-            self.label = self.get_char("checked")
+            self.label = checked
         else:
-            self.label = self.get_char("unchecked")
+            self.label = unchecked
 
         self.get_lines()
 
@@ -142,15 +150,16 @@ class Dropdown(Container):
     # TODO: Add Widget support for overlaying lines
 
     chars = Container.chars | {"default_value": "Choose an item"}
-    styles = Container.styles | {"item": Button.get_style(Button, "label").method}
+    styles = Container.styles | {"item": Button("").get_style("label").method}
 
     def __init__(
-        self, items: list[str], callback: Callable[[str], Any], **attrs
+        self, items: list[str], callback: Callable[[str], Any], **attrs: Any
     ) -> None:
         """Initialize object"""
 
         super().__init__(**attrs)
         self.trigger = Checkbox(lambda *_: self.print(), parent_align=self.parent_align)
+        self.trigger.set_char("delimiter", [" ", " "])
         self._update_label(items[0])
         self._add_widget(self.trigger)
 
@@ -170,7 +179,7 @@ class Dropdown(Container):
         self.trigger.set_char("unchecked", new)
         self.trigger.label = new
 
-    def _item_callback(self, _, widget: Widget) -> None:
+    def _item_callback(self, _: MouseTarget, widget: Widget) -> None:
         """Callback assigned to all item buttons"""
 
         self.trigger.toggle()

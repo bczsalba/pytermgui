@@ -20,7 +20,8 @@ from inspect import signature, getdoc, isclass, ismodule, Signature
 
 from .input import getch
 from .parser import ansi
-from .widgets import Widget, Container, Label
+
+from .widgets.base import Widget, Container, Label
 from .context_managers import alt_buffer
 from .widgets.boxes import DOUBLE_BOTTOM
 from .widgets.styles import MarkupFormatter, StyleType
@@ -140,10 +141,10 @@ class Inspector(Container):
     """A Container subclass that allows inspection of any Python object"""
 
     styles = Container.styles | {
-        "builtin": create_color_style(208),
+        "builtin": MarkupFormatter("[208]{item}"),
         "declaration": MarkupFormatter("[9 bold]{item}"),
-        "name": create_color_style(114),
-        "string": create_color_style(142),
+        "name": MarkupFormatter("[114]{item}"),
+        "string": MarkupFormatter("[142]{item}"),
     }
 
     _inspectable = [
@@ -269,15 +270,15 @@ class Inspector(Container):
         definition.set_style("value", lambda _, item: item)
 
         # it keeps the same type
-        self += definition  # type: ignore
+        self._add_widget(definition)
 
         for line in self._get_docstring(target):
             doc = Label(line, padding=_padding + 4, parent_align=Widget.PARENT_LEFT)
             doc.set_style("value", lambda _, item: item)
-            self += doc  # type: ignore
+            self._add_widget(doc)
 
         if isclass(target):
-            self += Label()  # type: ignore
+            self._add_widget(Label())
 
             if hasattr(target, "_inspectable"):
                 functions = [
@@ -312,6 +313,6 @@ class Inspector(Container):
 
             for function in functions:
                 self.inspect(function, keep_elements=True, _padding=_padding + 4)
-                self += Label()  # type: ignore
+                self._add_widget(Label())
 
         return self

@@ -13,9 +13,10 @@ from typing import Any, Type, IO
 
 from . import widgets
 from .parser import ansi
+from .widgets.base import Widget
 from .widgets.styles import default_foreground, CharType
 
-WidgetDict = dict[str, Type[widgets.Widget]]
+WidgetDict = dict[str, Type[Widget]]
 
 __all__ = ["serializer"]
 
@@ -48,26 +49,26 @@ class _Serializer:
             if not isinstance(item, type):
                 continue
 
-            if issubclass(item, widgets.Widget):
+            if issubclass(item, Widget):
                 known[name] = item
 
         return known
 
     @staticmethod
-    def dump_to_dict(obj: widgets.Widget) -> dict[str, Any]:
+    def dump_to_dict(obj: Widget) -> dict[str, Any]:
         """Dump widget to a dict, alias for obj.serialize()
 
         Todo: this method should also dump custom tags"""
 
         return obj.serialize()
 
-    def register(self, cls: widgets.Widget) -> None:
+    def register(self, cls: Widget) -> None:
         """Make object aware of a custom widget class, so
         it can be serialized."""
 
         self.known_widgets[cls.__name__] = type(cls)
 
-    def load_from_dict(self, data: dict[str, Any]) -> widgets.Widget:
+    def load_from_dict(self, data: dict[str, Any]) -> Widget:
         """Load a widget from a dictionary"""
 
         def _apply_markup(value: CharType) -> CharType:
@@ -127,13 +128,13 @@ class _Serializer:
 
         return obj
 
-    def load_from_file(self, file: IO[str]) -> widgets.Widget:
+    def load_from_file(self, file: IO[str]) -> Widget:
         """Load widget from a file object"""
 
         return self.load_from_dict(json.load(file))
 
     def dump_to_file(
-        self, obj: widgets.Widget, file: IO[str], **json_args: dict[str, Any]
+        self, obj: Widget, file: IO[str], **json_args: dict[str, Any]
     ) -> None:
         """Dump widget to a file object"""
 

@@ -49,7 +49,7 @@ BoundCallback = Callable[["Widget", str], Any]
 
 def _set_obj_or_cls_style(
     obj_or_cls: Union[Type[Widget], Widget], key: str, value: StyleType
-) -> None:
+) -> Union[Type[Widget], Widget]:
     """Set the style of an object or class"""
 
     if not key in obj_or_cls.styles.keys():
@@ -65,7 +65,7 @@ def _set_obj_or_cls_style(
 
 def _set_obj_or_cls_char(
     obj_or_cls: Union[Type[Widget], Widget], key: str, value: CharType
-) -> None:
+) -> Union[Type[Widget], Widget]:
     """Set a char of an object or class"""
 
     if not key in obj_or_cls.chars.keys():
@@ -191,7 +191,7 @@ class Widget:
         self.forced_width: Optional[int] = None
         self.forced_height: Optional[int] = None
 
-        self.width = 0
+        self._width: int = 0
         self.height = 1
 
         self.pos: tuple[int, int] = 1, 1
@@ -487,7 +487,7 @@ class Widget:
         """Debug identifiable information about object"""
 
         constructor = "("
-        for name in signature(self.__init__).parameters:
+        for name in signature(getattr(self, "__init__")).parameters:
             current = ""
             if name == "attrs":
                 current += ", **attrs"
@@ -647,6 +647,9 @@ class Container(Widget):
         other.parent = self
         if other.forced_height is not None:
             other.height = other.forced_height
+
+        # This is safe to do, as it would've raised an exception above already
+        assert isinstance(other, Widget)
 
         self._widgets.append(other)
         if isinstance(other, Container):
