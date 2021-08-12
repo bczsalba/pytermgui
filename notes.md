@@ -30,21 +30,6 @@ Planned Versions
 Current Progress
 ----------------
 
-- 0.2.0 - The Widget update!
-    * [x] `widgets/buttons.py`
-        + [x] `Button`
-        + [x] `Checkbox`
-        + [x] `Dropdown`
-
-    * [x] `InputField` rewrite:
-        + [x] inherit from Label, make use of its `get_lines()` line breaking
-        + [x] add `bind()` method, similarly to `WindowManager`
-        + [x] better styling, support for syntax highlights
-
-    * [x] `Splitter` rewrite:
-
-    * [x] Look into removing/rewriting the various extra widgets that don't do much
-
 - 1.0.0 - First stable release!
     * [ ] Rework width & height systems
         + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy
