@@ -78,6 +78,7 @@ from enum import Enum, auto as _auto
 from dataclasses import dataclass
 from typing import Optional, Iterator, Callable
 
+from .exceptions import MarkupSyntaxError
 from .ansi_interface import foreground, reset, bold
 
 
@@ -491,9 +492,10 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
                     )
 
                 elif not silence_exception:
-                    raise SyntaxError(
-                        f'Markup tag "{escape_ansi(tag)+reset()}" in string'
-                        + f' "{escape_ansi(text)+reset()}" is not recognized.'
+                    raise MarkupSyntaxError(
+                        tag=tag,
+                        context=text,
+                        cause="is not defined",
                     )
 
         position = end
