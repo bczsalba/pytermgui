@@ -36,6 +36,16 @@ from . import (
 from .parser import NAMES as TOKENS
 
 
+def _get_key_name(key: str) -> str:
+    """Get canonical name of a key"""
+
+    name = keys.get_name(key)
+    if name is not None:
+        return str("keys." + name)
+
+    return ascii(key)
+
+
 class Application(ABC):
     """A class to hold application details"""
 
@@ -83,26 +93,56 @@ class Application(ABC):
         return Window(**attrs)
 
 
+class LauncherApplication(Application):
+    """Application class for launching other apps"""
+
+    title = "Launcher"
+    description = "Launch other apps"
+
+    def __init__(self, manager: WindowManager, apps: list[Type[Application]]) -> None:
+        """Initialize object"""
+
+        super().__init__(manager)
+
+        instantiated_apps: list[Application] = []
+        for app in apps:
+            instantiated_apps.append(app(manager))
+
+        self.apps = instantiated_apps
+
+    def finish(self, _: Window) -> None:
+        """Do nothing on finish"""
+
+    def construct_window(self) -> Window:
+        """Construct an application window"""
+
+        window = self._get_base_window(width=30) + ""
+        manager = self.manager
+
+        for app in self.apps:
+            button = Button(
+                app.title,
+                lambda _, button: manager.add(button.app.construct_window()),
+            )
+            button.app = app
+            window += button
+
+        window += ""
+        window += Label("[247 italic]> Choose an app to run", parent_align=0)
+
+        return window
+
+
 class GetchApplication(Application):
     """Application class for the getch() utility"""
 
     title = "Getch"
     description = "See your keypresses"
 
-    @staticmethod
-    def _get_key_name(key: str) -> str:
-        """Get canonical name of a key"""
-
-        name = keys.get_name(key)
-        if name is not None:
-            return str("keys." + name)
-
-        return ascii(key)
-
     def _key_callback(self, window: Window, key: str) -> None:
         """Edit window state if key is pressed"""
 
-        name = self._get_key_name(key)
+        name = _get_key_name(key)
         items = [
             "[wm-title]Your output",
             "",
@@ -130,7 +170,9 @@ class GetchApplication(Application):
         """Construct an application window"""
 
         window = self._get_base_window() + "[wm-title]Press any key..."
-        window.bind(keys.ANY_KEY, self._key_callback)
+        window.bind(
+            keys.ANY_KEY, self._key_callback, description="Read key & update window"
+        )
         window.center()
 
         return window
@@ -255,7 +297,11 @@ class MarkupApplication(Application):
 
         field.bind(keys.ANY_KEY, lambda field, _: self._update_value(output, field))
 
-        window.bind(keys.CTRL_R, self._update_colors)
+        window.bind(
+            keys.CTRL_R,
+            self._update_colors,
+            description="Randomize colors in the guide",
+        )
 
         if self.standalone:
             field.bind(keys.RETURN, lambda *_: self._request_exit())
@@ -264,41 +310,39 @@ class MarkupApplication(Application):
         return window
 
 
-class LauncherApplication(Application):
-    """Application class for launching other apps"""
+class HelperApplication(Application):
+    """Application class to show all currently-active bindings"""
 
-    title = "Launcher"
-    description = "Launch other apps"
+    title = "Help"
+    description = "See all current bindings"
 
-    def __init__(self, manager: WindowManager, apps: list[Type[Application]]) -> None:
-        """Initialize object"""
-
-        super().__init__(manager)
-
-        instantiated_apps: list[Application] = []
-        for app in apps:
-            instantiated_apps.append(app(manager))
-
-        self.apps = instantiated_apps
-
-    def finish(self, _: Window) -> None:
+    def finish(self, window: Window) -> None:
         """Do nothing on finish"""
 
     def construct_window(self) -> Window:
         """Construct an application window"""
 
-        window = self._get_base_window(width=30)
-        manager = self.manager
+        window = self._get_base_window(width=50) + "[wm-title]Current bindings" + ""
 
-        for app in self.apps:
-            button = Button(
-                app.title,
-                lambda _, button: manager.add(button.app.construct_window()),
-            )
-            button.app = app
-            window += button
+        bindings = self.manager.list_bindings() + self.manager.focused.list_bindings()
 
-        return window
+        # Convert keycode into key name
+        for i, binding in enumerate(bindings):
+            binding_mutable = list(binding)
+            binding_mutable[0] = _get_key_name(binding[0]).strip("'")
+            bindings[i] = tuple(binding_mutable)
+
+        # Sort keys according to key name length
+        bindings.sort(key=lambda item: real_length(item[0]))
+
+        for (key, _, description) in bindings:
+            window += Label("[wm-section]" + key + ": ", parent_align=0)
+            window += Label(description, padding=2, parent_align=0)
+            window += ""
+
+        window.bind(keys.ESC, lambda *_: window.close())
+
+        return window.center()
 
 
 def run_wm(args: Namespace) -> None:
@@ -328,9 +372,24 @@ def run_wm(args: Namespace) -> None:
         Splitter.set_char("separator", " " + boxes.SINGLE.borders[0])
         InputField.set_style("cursor", MarkupFormatter("[@72]{item}"))
 
+        helper = HelperApplication(manager)
+
         # Setup bindings
-        manager.bind("*", lambda *_: manager.show_targets())
-        manager.bind(keys.CTRL_W, lambda *_: manager.focused.close())
+        manager.bind(
+            "*", lambda *_: manager.show_targets(), description="Show all mouse targets"
+        )
+
+        manager.bind(
+            keys.CTRL_W,
+            lambda *_: manager.focused.close(),
+            description="Close focused window",
+        )
+
+        manager.bind(
+            "?",
+            lambda *_: manager.add(helper.construct_window()),
+            description="Show all active bindings",
+        )
 
         # Run with a launcher
         if len(sys.argv) == 1:
