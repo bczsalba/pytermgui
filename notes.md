@@ -36,7 +36,7 @@ Current Progress
         + [x] `Checkbox`
         + [x] `Dropdown`
 
-    * [ ] `InputField` rewrite:
+    * [x] `InputField` rewrite:
         + [x] inherit from Label, make use of its `get_lines()` line breaking
         + [x] add `bind()` method, similarly to `WindowManager`
         + [x] better styling, support for syntax highlights
