@@ -354,7 +354,9 @@ def run_wm(args: Namespace) -> None:
 def main() -> None:
     """Main method"""
 
-    parser = ArgumentParser()
+    parser = ArgumentParser(
+        description="Command line interface & demo for some utilities related to TUI development."
+    )
     parser.add_argument(
         "--app",
         type=str.lower,
