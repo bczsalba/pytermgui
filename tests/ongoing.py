@@ -6,6 +6,7 @@ from pytermgui import (
     Window,
     WindowManager,
     InputField,
+    ColorPicker,
     get_widget,
     Toggle,
     alert,
@@ -20,8 +21,8 @@ def _handle_command(manager: WindowManager, command: str) -> None:
     """Handle a command from the command window"""
 
     keywords = {
-        "print": print,
         "get": get_widget,
+        "dbg": lambda _id: get_widget(_id).debug(),
     }
 
     args = []
@@ -75,6 +76,8 @@ def main() -> None:
             )
         ).center()
     )
+
+    manager.add(Window() + ColorPicker(16, id="cp").debug())
 
     field = get_widget("field")
     field.bind(keys.RETURN, lambda *_: manager.alert(field.value))
