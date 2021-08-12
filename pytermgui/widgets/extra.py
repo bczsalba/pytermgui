@@ -12,6 +12,7 @@ or at least partially use the classes provided in .base.
 # These classes will have to have more than 7 attributes mostly.
 # pylint: disable=too-many-instance-attributes
 
+import string
 from typing import Any
 
 from .base import (
@@ -245,7 +246,7 @@ class InputField(Label):
             self.cursor += 1
 
         # Ignore unhandled non-printing keys
-        elif not key == keys.SPACE and key in keys.values():
+        elif not key == keys.SPACE and key not in string.printable:
             return False
 
         # Add character
