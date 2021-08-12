@@ -11,8 +11,8 @@ import sys
 from random import randint
 from itertools import zip_longest
 from abc import ABC, abstractmethod
-from argparse import ArgumentParser
-from typing import Any, Optional
+from typing import Any, Optional, Type
+from argparse import ArgumentParser, Namespace
 
 from . import (
     MarkupSyntaxError,
@@ -26,11 +26,11 @@ from . import (
     Container,
     Splitter,
     Window,
+    Button,
     Label,
     boxes,
     keys,
     ansi,
-    auto,
 )
 
 from .parser import NAMES as TOKENS
@@ -59,14 +59,18 @@ class Application(ABC):
     @abstractmethod
     def finish(self, window: Window) -> None:
         """Print output information on Application finish.
-        Must be called by the Application"""
+        Called by the main method after self.manager exits.
+
+        In order to support `standalone` mode, the Application should
+        call `_request_exit()` once it is done with its duty. This method
+        is called directly after."""
 
     @abstractmethod
     def construct_window(self) -> Window:
         """Construct an application window"""
 
     def _request_exit(self) -> None:
-        """Send a request to parent manager to stop the execution"""
+        """Send a request to parent manager to stop execution"""
 
         self.manager.stop()
 
@@ -82,7 +86,7 @@ class Application(ABC):
 class GetchApplication(Application):
     """Application class for the getch() utility"""
 
-    title = "getch()"
+    title = "Getch"
     description = "See your keypresses"
 
     @staticmethod
@@ -91,7 +95,7 @@ class GetchApplication(Application):
 
         name = keys.get_name(key)
         if name is not None:
-            return "keys." + name
+            return str("keys." + name)
 
         return ascii(key)
 
@@ -135,7 +139,7 @@ class GetchApplication(Application):
 class MarkupApplication(Application):
     """Application class for the markup parsing methods"""
 
-    title = "markup playground"
+    title = "MarkApp"
     description = "Play around with markup in this interactive editor."
 
     def __init__(self, manager: WindowManager) -> None:
@@ -187,7 +191,8 @@ class MarkupApplication(Application):
         """Avoid SyntaxError with `prettify_markup`"""
 
         try:
-            return prettify_markup(item)
+            # This method *always* returns str, but Mypy doesn't see that.
+            return str(prettify_markup(item))
 
         except MarkupSyntaxError:
             return item
@@ -259,54 +264,57 @@ class MarkupApplication(Application):
         return window
 
 
-class Launcher(Window):
-    """A window to launch applications"""
+class LauncherApplication(Application):
+    """Application class for launching other apps"""
 
-    def __init__(self, applications: list[Application], **attrs: Any) -> None:
+    title = "Launcher"
+    description = "Launch other apps"
+
+    def __init__(self, manager: WindowManager, apps: list[Type[Application]]) -> None:
         """Initialize object"""
 
-        attrs["is_force_focus"] = True
-        super().__init__(**attrs)
+        super().__init__(manager)
 
-        self.applications = applications
+        instantiated_apps: list[Application] = []
+        for app in apps:
+            instantiated_apps.append(app(manager))
 
-    def get_lines(self) -> list[str]:
-        """Get lines representing Widget"""
+        self.apps = instantiated_apps
 
-        self._widgets = [auto("[wm-title]Launch any application!"), auto(" ")]
+    def finish(self, _: Window) -> None:
+        """Do nothing on finish"""
+
+    def construct_window(self) -> Window:
+        """Construct an application window"""
+
+        window = self._get_base_window(width=30)
         manager = self.manager
 
-        def _open(app: Application) -> None:
-            """Open application"""
-
-            manager.add(app.construct_window())
-
-        for app in self.applications:
-            button = auto([app.title, lambda _, button: _open(button.app)])
+        for app in self.apps:
+            button = Button(
+                app.title,
+                lambda _, button: manager.add(button.app.construct_window()),
+            )
             button.app = app
+            window += button
 
-            self._add_widget(button, run_get_lines=False)
-
-        return super().get_lines()
+        return window
 
 
-def main() -> None:
-    """Main method"""
+def run_wm(args: Namespace) -> None:
+    """Run WindowManager according to args"""
 
-    apps = {
+    # This is used for finding Application from arguments
+    app_mapping = {
         "getch": GetchApplication,
-        "markup": MarkupApplication,
+        "markapp": MarkupApplication,
     }
 
-    parser = ArgumentParser()
-    parser.add_argument(
-        "--app", choices=["getch", "markup"], help="launch an app in standalone mode."
-    )
-
-    args = parser.parse_args()
-
     window: Optional[Window] = None
+
     with WindowManager() as manager:
+
+        # Define styles
         define_tag("wm-title", "210")
         boxes.DOUBLE_TOP.set_chars_of(Window)
         boxes.SINGLE.set_chars_of(Container)
@@ -317,17 +325,21 @@ def main() -> None:
             widget.set_style("corner", style)
 
         Splitter.set_style("separator", style)
+        Splitter.set_char("separator", " " + boxes.SINGLE.borders[0])
         InputField.set_style("cursor", MarkupFormatter("[@72]{item}"))
 
+        # Setup bindings
         manager.bind("*", lambda *_: manager.show_targets())
+        manager.bind(keys.CTRL_W, lambda *_: manager.focused.close())
 
-        # Run with Launcher
+        # Run with a launcher
         if len(sys.argv) == 1:
-            manager.add(Launcher(list(app(manager) for app in apps.values())))
+            launcher = LauncherApplication(manager, list(app_mapping.values()))
+            manager.add(launcher.construct_window())
 
         # Run as standalone app
         if args.app:
-            app = apps[args.app](manager)
+            app = app_mapping[args.app.lower()](manager)
             app.standalone = True
             window = app.construct_window()
             manager.add(window)
@@ -337,6 +349,21 @@ def main() -> None:
         # Run finish callback on standalone apps
         if window is not None:
             app.finish(window)
+
+
+def main() -> None:
+    """Main method"""
+
+    parser = ArgumentParser()
+    parser.add_argument(
+        "--app",
+        type=str.lower,
+        help="launch an app in standalone mode.",
+        metavar="{Getch, MarkApp}",
+        choices=["getch", "markapp"],
+    )
+
+    run_wm(parser.parse_args())
 
 
 if __name__ == "__main__":
