@@ -855,7 +855,9 @@ class Container(Widget):
     def set_widgets(self, new: list[Widget]) -> None:
         """Set self._widgets to a new list"""
 
-        self._widgets = new
+        self._widgets = []
+        for widget in new:
+            self._add_widget(widget)
 
     def serialize(self) -> dict[str, Any]:
         """Serialize object"""
