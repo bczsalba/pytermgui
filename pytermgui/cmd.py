@@ -8,93 +8,335 @@ This module provides the command-line capabilities of the module.
 """
 
 import sys
-from typing import cast
+from random import randint
+from itertools import zip_longest
+from abc import ABC, abstractmethod
 from argparse import ArgumentParser
+from typing import Any, Optional
 
 from . import (
+    MarkupSyntaxError,
+    prettify_markup,
     MarkupFormatter,
     WindowManager,
     real_length,
+    define_tag,
+    get_widget,
+    InputField,
     Container,
     Splitter,
     Window,
+    Label,
     boxes,
     keys,
+    ansi,
+    auto,
 )
 
+from .parser import NAMES as TOKENS
 
-def show_getch() -> None:
-    """Print a container with the getch output"""
 
-    def _show_output(key: str) -> None:
-        """Show output in a Container"""
+class Application(ABC):
+    """A class to hold application details"""
+
+    title: str
+    description: str
+    standalone: bool = False
+
+    def __init__(self, manager: WindowManager) -> None:
+        """Initialize object"""
+
+        self.manager = manager
+
+    @staticmethod
+    def _update_widgets(window: Window, items: list[Any]) -> None:
+        """Update window widgets, use auto() method on each item"""
+
+        window.set_widgets([])
+        for item in items:
+            window += item
+
+    @abstractmethod
+    def finish(self, window: Window) -> None:
+        """Print output information on Application finish.
+        Must be called by the Application"""
+
+    @abstractmethod
+    def construct_window(self) -> Window:
+        """Construct an application window"""
+
+    def _request_exit(self) -> None:
+        """Send a request to parent manager to stop the execution"""
+
+        self.manager.stop()
+
+    def _get_base_window(self, **attrs: Any) -> Window:
+        """Get window with basic & universal settings applied"""
+
+        if "title" not in attrs:
+            attrs["title"] = " [bold wm-title]" + self.title + " "
+
+        return Window(**attrs)
+
+
+class GetchApplication(Application):
+    """Application class for the getch() utility"""
+
+    title = "getch()"
+    description = "See your keypresses"
+
+    @staticmethod
+    def _get_key_name(key: str) -> str:
+        """Get canonical name of a key"""
 
         name = keys.get_name(key)
         if name is not None:
-            name = "keys." + name
-        else:
-            name = ascii(key)
+            return "keys." + name
 
-        root = (
-            Container(forced_width=35)
-            + {"[252]key[/fg][210]:": "[wm-section]" + name}
-            + {"[252]len[157]()[210]:": "[wm-section]" + str(len(key))}
-            + {"[252]real_length[157]()[210]:": "[wm-section]" + str(real_length(key))}
-        )
+        return ascii(key)
 
-        for line in root.get_lines():
+    def _key_callback(self, window: Window, key: str) -> None:
+        """Edit window state if key is pressed"""
+
+        name = self._get_key_name(key)
+        items = [
+            "[wm-title]Your output",
+            "",
+            {"[wm-section]key": name},
+            {"[wm-section]len()": str(len(key))},
+            {"[wm-section]real_length()": str(real_length(key))},
+        ]
+
+        window.forced_width = 40
+        self._update_widgets(window, items)
+
+        if self.standalone:
+            self._request_exit()
+            return
+
+        window.manager.print()
+
+    def finish(self, window: Window) -> None:
+        """Dump getch output"""
+
+        for line in window.get_lines():
             print(line)
 
-    Splitter.set_char("separator", "  ")
-    boxes.DOUBLE_TOP.set_chars_of(Container)
-    boxes.DOUBLE_TOP.set_chars_of(Window)
+    def construct_window(self) -> Window:
+        """Construct an application window"""
 
-    border_corner = MarkupFormatter("[60 bold]{item}")
-    for cls in [Container, Window]:
-        cls.set_style("border", border_corner)
-        cls.set_style("corner", border_corner)
+        window = self._get_base_window() + "[wm-title]Press any key..."
+        window.bind(keys.ANY_KEY, self._key_callback)
+        window.center()
 
-    with WindowManager() as manager:
+        return window
 
-        def _handle_keypress(window: Window, key: str) -> None:
-            """Handle keypress, call method if non-mouse"""
 
-            if manager.mouse_handler(key) is None:
-                manager.stop()
-                window.output_key = key
+class MarkupApplication(Application):
+    """Application class for the markup parsing methods"""
 
-        window = cast(
-            Window,
-            (Window() + "[wm-title]Press a key!").center(),
+    title = "markup playground"
+    description = "Play around with markup in this interactive editor."
+
+    def __init__(self, manager: WindowManager) -> None:
+        """Initialize object"""
+
+        super().__init__(manager)
+
+        self._255_color: str
+        self._hex_color: str
+        self._rgb_color: str
+
+    @staticmethod
+    def _get_tokens() -> list[Label]:
+        """Get all tokens form the parser module"""
+
+        tokens: list[str] = []
+        for token in TOKENS:
+            tokens.append(Label(f"[{token}]{token}", parent_align=0))
+
+        return tokens
+
+    @staticmethod
+    def _get_colors() -> list[Label]:
+        """Get all color tokens"""
+
+        def _random_hex() -> str:
+            """Return random hex number"""
+
+            return "#%02X%02X%02X" % tuple(randint(0, 255) for _ in range(3))
+
+        return [
+            randint(0, 255),
+            _random_hex(),
+            _random_hex(),
+        ]
+
+    @staticmethod
+    def _update_value(output: Label, field: InputField) -> None:
+        """Update output value if field markup is valid"""
+
+        try:
+            ansi(field.value)
+            output.value = field.value
+        except MarkupSyntaxError as error:
+            output.value = "[210 bold]SyntaxError:[/] " + error.escape_message()
+
+    @staticmethod
+    def _style_wrapper(_: int, item: str) -> str:
+        """Avoid SyntaxError with `prettify_markup`"""
+
+        try:
+            return prettify_markup(item)
+
+        except MarkupSyntaxError:
+            return item
+
+    def _update_colors(self, *_: Any) -> None:
+        """Re-generate colors for guide"""
+
+        self._255_color, self._hex_color, self._rgb_color = self._get_colors()
+
+    def finish(self, window: Window) -> None:
+        """Dump output markup"""
+
+        window.manager.stop()
+        print(prettify_markup(window.output_label.value))
+
+    def construct_window(self) -> Window:
+        """Construct an application window"""
+
+        tokens = self._get_tokens()
+        self._255_color, self._hex_color, self._rgb_color = self._get_colors()
+
+        colors = [
+            Label("[{color}]0-255", parent_align=2).set_style(
+                "value", lambda _, item: ansi(item.format(color=self._255_color))
+            ),
+            Label("[{color}]#rrgggbb", parent_align=2).set_style(
+                "value", lambda _, item: ansi(item.format(color=self._hex_color))
+            ),
+            Label("[{color}]rrr;ggg;bbb", parent_align=2).set_style(
+                "value", lambda _, item: ansi(item.format(color=self._rgb_color))
+            ),
+        ]
+
+        corners = Container.chars["corner"].copy()
+        corners[0] += " [wm-title]tokens[/] "
+        corners[1] = " [wm-title]colors[60] " + corners[1]
+
+        guide = Container(forced_width=60).set_char("corner", corners)
+
+        for token, color in zip_longest(tokens, colors, fillvalue=""):
+            guide += {token: color}
+
+        window = (
+            self._get_base_window(resizable=False)
+            + Container(
+                Label(parent_align=0, id="output_label"),
+                forced_width=60,
+            )
+            + guide
+            + Label(
+                "[247 italic]> Tip: Press CTRL_R to randomize colors", parent_align=0
+            )
+            + ""
+            + InputField(id="input_field").set_style("fill", self._style_wrapper)
         )
 
-        window.bind(keys.ANY_KEY, _handle_keypress)
+        output = get_widget("output_label")
+        field = get_widget("input_field")
+        window.output_label = output
 
-        manager.add(window)
-        manager.run()
+        field.bind(keys.ANY_KEY, lambda field, _: self._update_value(output, field))
 
-    _show_output(window.output_key)
+        window.bind(keys.CTRL_R, self._update_colors)
+
+        if self.standalone:
+            field.bind(keys.RETURN, lambda *_: self._request_exit())
+
+        window.center()
+        return window
+
+
+class Launcher(Window):
+    """A window to launch applications"""
+
+    def __init__(self, applications: list[Application], **attrs: Any) -> None:
+        """Initialize object"""
+
+        attrs["is_force_focus"] = True
+        super().__init__(**attrs)
+
+        self.applications = applications
+
+    def get_lines(self) -> list[str]:
+        """Get lines representing Widget"""
+
+        self._widgets = [auto("[wm-title]Launch any application!"), auto(" ")]
+        manager = self.manager
+
+        def _open(app: Application) -> None:
+            """Open application"""
+
+            manager.add(app.construct_window())
+
+        for app in self.applications:
+            button = auto([app.title, lambda _, button: _open(button.app)])
+            button.app = app
+
+            self._add_widget(button, run_get_lines=False)
+
+        return super().get_lines()
 
 
 def main() -> None:
     """Main method"""
 
+    apps = {
+        "getch": GetchApplication,
+        "markup": MarkupApplication,
+    }
+
     parser = ArgumentParser()
     parser.add_argument(
-        "-g",
-        "--getch",
-        action="store_true",
-        help="Get and print a keyboard input",
+        "--app", choices=["getch", "markup"], help="launch an app in standalone mode."
     )
 
     args = parser.parse_args()
 
-    if len(sys.argv) == 1:
-        parser.print_help(sys.stderr)
-        sys.exit(1)
+    window: Optional[Window] = None
+    with WindowManager() as manager:
+        define_tag("wm-title", "210")
+        boxes.DOUBLE_TOP.set_chars_of(Window)
+        boxes.SINGLE.set_chars_of(Container)
 
-    if args.getch:
-        show_getch()
+        style = MarkupFormatter("[60]{item}")
+        for widget in [Window, Container]:
+            widget.set_style("border", style)
+            widget.set_style("corner", style)
+
+        Splitter.set_style("separator", style)
+        InputField.set_style("cursor", MarkupFormatter("[@72]{item}"))
+
+        manager.bind("*", lambda *_: manager.show_targets())
+
+        # Run with Launcher
+        if len(sys.argv) == 1:
+            manager.add(Launcher(list(app(manager) for app in apps.values())))
+
+        # Run as standalone app
+        if args.app:
+            app = apps[args.app](manager)
+            app.standalone = True
+            window = app.construct_window()
+            manager.add(window)
+
+        manager.run()
+
+        # Run finish callback on standalone apps
+        if window is not None:
+            app.finish(window)
 
 
 if __name__ == "__main__":
