@@ -134,6 +134,8 @@ class Splitter(Container):
         """Get lines of all objects"""
 
         separator = self.get_char("separator")
+        separator_style = self.get_style("separator")
+
         assert isinstance(separator, str)
         separator_length = real_length(separator)
 
@@ -162,7 +164,7 @@ class Splitter(Container):
             self.mouse_targets += widget.mouse_targets
 
         for horizontal in zip(*widget_lines):
-            lines.append((reset() + separator).join(horizontal))
+            lines.append((reset() + separator_style(separator)).join(horizontal))
 
         for target in self.mouse_targets:
             target.adjust()

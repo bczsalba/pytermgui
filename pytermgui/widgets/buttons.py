@@ -10,6 +10,9 @@ These all have mouse_targets set, so are clickable. Most have `onclick`
 callbacks.
 """
 
+# Some of these classes need to have more than 7 instance attributes.
+# pylint: disable=too-many-instance-attributes
+
 from typing import Optional, Any, Callable
 
 from .styles import StyleType, CharType, MarkupFormatter
