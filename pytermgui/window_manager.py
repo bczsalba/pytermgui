@@ -576,7 +576,7 @@ class WindowManager(Container):
 
                     events = mouse(key)
 
-                    if self.handle_mouse(events):
+                    if not key == keys.ESC and self.handle_mouse(events):
                         self.print()
                         continue
 

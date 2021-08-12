@@ -225,7 +225,8 @@ class InputField(Label):
             """Call callback if `keys.ANY_KEY` is bound"""
 
             if keys.ANY_KEY in self._bindings:
-                self._bindings[keys.ANY_KEY](self, key)
+                method, _ = self._bindings[keys.ANY_KEY]
+                method(self, key)
 
         if self.execute_binding(key):
             return True
@@ -246,7 +247,7 @@ class InputField(Label):
             self.cursor += 1
 
         # Ignore unhandled non-printing keys
-        elif not key == keys.SPACE and key not in string.printable:
+        elif key == keys.ENTER or key not in string.printable:
             return False
 
         # Add character

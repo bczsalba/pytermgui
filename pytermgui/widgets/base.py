@@ -212,7 +212,7 @@ class Widget:
         self._is_focused = False
         self._is_bindable = False
 
-        self._bindings: dict[str, BoundCallback] = {}
+        self._bindings: dict[str, tuple[BoundCallback, str]] = {}
 
         self.size_policy = Widget.DEFAULT_SIZE_POLICY
         self.parent_align = Widget.DEFAULT_PARENT_ALIGN
@@ -424,13 +424,18 @@ class Widget:
 
         raise NotImplementedError(f"get_lines() is not defined for type {type(self)}.")
 
-    def bind(self, key: str, action: BoundCallback) -> None:
+    def bind(
+        self, key: str, action: BoundCallback, description: Optional[str] = None
+    ) -> None:
         """Bind a key to a callable"""
 
         if not self._is_bindable:
             raise TypeError(f"Widget of type {type(self)} does not accept bindings.")
 
-        self._bindings[key] = action
+        if description is None:
+            description = f"Binding of {key} to {action}"
+
+        self._bindings[key] = (action, description)
 
     def execute_binding(self, key: str) -> bool:
         """Execute a binding if this widget is bindable
@@ -443,13 +448,29 @@ class Widget:
 
         # Execute special binding
         if keys.ANY_KEY in self._bindings:
-            self._bindings[keys.ANY_KEY](self, key)
+            method, _ = self._bindings[keys.ANY_KEY]
+            method(self, key)
 
         if key in self._bindings:
-            self._bindings[key](self, key)
+            method, _ = self._bindings[key]
+            method(self, key)
+
             return True
 
         return False
+
+    def iter_bindings(self) -> Iterator[tuple[str, BoundCallback, str]]:
+        """Iterate through all bindings of an object, as tuple[key, callback, description]"""
+
+        for key, data in self._bindings.items():
+            callback, description = data
+
+            yield key, callback, description
+
+    def list_bindings(self) -> list[tuple[str, BoundCallback, str]]:
+        """List all bindings of an object, see `Widget.iter_bindings` for more info"""
+
+        return list(self.iter_bindings())
 
     def select(self, index: Optional[int] = None) -> None:
         """Select part of self"""
