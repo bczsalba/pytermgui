@@ -47,7 +47,7 @@ An example to get started with
 #       For more info, check out `help(pytermgui.auto)`.
 
 import sys
-from pytermgui import WindowManager, Window, Label, Button
+from pytermgui import WindowManager, Window
 
 manager = WindowManager()
 window = (
