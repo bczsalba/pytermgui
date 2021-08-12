@@ -30,7 +30,7 @@ Planned Versions
 Current Progress
 ----------------
 
-- 0.2.0
+- 0.2.0 - The Widget update!
     * [x] `widgets/buttons.py`
         + [x] `Button`
         + [x] `Checkbox`
@@ -41,27 +41,15 @@ Current Progress
         + [x] add `bind()` method, similarly to `WindowManager`
         + [x] better styling, support for syntax highlights
 
-    * [ ] `Splitter` rewrite:
-        + [ ] fix width issues
-        + [ ] add support for differing heights
+    * [x] `Splitter` rewrite:
 
-    * [ ] Look into removing/rewriting the various extra widgets that don't do much
+    * [x] Look into removing/rewriting the various extra widgets that don't do much
 
-    * [ ] Reorganize `widgets/`
-        - `base.py`
-        - `boxes.py`
-        - `layout.py`
-        - `styles.py`
-        - `buttons.py`
-
-- 0.3.0:
+- 1.0.0 - First stable release!
     * [ ] Rework width & height systems
         + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy
         + [ ] overflow/expand -> current no forced width behaviour
         + [ ] overflow/clip   -> shorten lines to fit width
-
-    * [ ] look into making mouse events callback-based (see winman)
-        + [ ] add support for multiple events reporting at the same time
 
     * [ ] Rework `Widget.click()`
         + [ ] targets should be found using `Widget.get_target()`
@@ -72,7 +60,11 @@ Current Progress
         + [ ] it really only exists for `InputField`, which doesn't need it anymore
         + [ ] `Widget.selected_index` should be used instead, or there should be deeper implementation
 
-0.4.0
+    * [ ] look into making mouse events callback-based (see winman)
+        + [ ] add support for multiple events reporting at the same time
+
+
+- 2.0.0 - The stylish update!
     * [ ] Add color methods
         + [ ] gradient (`[<@141]`, `[<141]`, `[>@141]`, `get_gradient(including: int)`)
         + [ ] complement (`get_complement(color: int)`)
