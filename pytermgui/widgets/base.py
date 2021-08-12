@@ -195,7 +195,7 @@ class Widget:
         self._width: int = 0
         self.height = 1
 
-        self.pos: tuple[int, int] = 1, 1
+        self.pos: tuple[int, int] = (1, 1)
 
         self.depth = 0
         self.is_selectable = False

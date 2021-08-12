@@ -111,7 +111,7 @@ class Window(Container):
         self._previous_mouse: Optional[tuple[int, int]] = None
 
         self._is_full_screen: bool = False
-        self._restore_size: tuple[int, int] = self.width, self.height
+        self._restore_size: tuple[int, int] = (self.width, self.height)
         self._restore_pos: tuple[int, int] = self.pos
         self._toolbar_buttons: list[MouseTarget] = []
 
