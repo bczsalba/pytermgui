@@ -105,7 +105,7 @@ class Window(Container):
         self.manager: Optional["WindowManager"] = None
 
         self.min_width: Optional[int] = None
-        self.force_focus: bool = False
+        self.is_force_focus: bool = False
 
         self._target: Optional[MouseTarget] = None
         self._previous_mouse: Optional[tuple[int, int]] = None
@@ -115,12 +115,7 @@ class Window(Container):
         self._restore_pos: tuple[int, int] = self.pos
         self._toolbar_buttons: list[MouseTarget] = []
 
-        self.title = title
-        corners = self.get_char("corner")
-        assert len(corners) == 4 and isinstance(corners, list)
-        corners[0] += title
-        self.set_char("corner", corners)
-
+        self.set_title(title)
         self.safe_state: Optional[tuple[int, Optional[int]]] = None
 
     @property
@@ -142,6 +137,15 @@ class Window(Container):
 
         self.forced_width = endx - startx
         self.forced_height = endy - starty
+
+    def set_title(self, title: str) -> None:
+        """Set top-left title string"""
+
+        self.title = title
+        corners = self.get_char("corner")
+        assert len(corners) == 4 and isinstance(corners, list)
+        corners[0] += title
+        self.set_char("corner", corners)
 
     def close(self) -> None:
         """Instruct manager to close this window"""
@@ -627,7 +631,7 @@ class WindowManager(Container):
 
             window.safe_state = window.width, window.forced_width
 
-            if i == len(self._windows) - 1 or window.force_focus:
+            if i == len(self._windows) - 1 or window.is_force_focus:
                 for lineindex, line in enumerate(lines):
                     buff += get_pos(window, lineindex) + line
 
@@ -778,7 +782,7 @@ class MouseDebugger(Window):
         super().__init__(title=" mouse ", **attrs)
         self.min_width = 25
         self.width = 25
-        self.force_focus = True
+        self.is_force_focus = True
 
         self._add_widget(Label("[wm-title]Mouse Information" ""))
 
@@ -814,7 +818,7 @@ class WindowDebugger(Window):
         super().__init__(title=" window ", **attrs)
         self.min_width = 25
         self.width = 25
-        self.force_focus = True
+        self.is_force_focus = True
         self.is_resizable = False
 
         self._add_widget(Label("[wm-title]Window information"))
@@ -823,7 +827,7 @@ class WindowDebugger(Window):
             "Title": lambda window: window.title,
             "Static": lambda window: str(window.is_static),
             "Modal": lambda window: str(window.is_modal),
-            "Focus Override": lambda window: str(window.force_focus),
+            "Focus Override": lambda window: str(window.is_force_focus),
             "Position": lambda window: str(window.pos),
             "Size": lambda window: str((window.width, window.height)),
         }
