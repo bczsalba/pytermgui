@@ -976,7 +976,7 @@ class Container(Widget):
 
             if target is not None and target in widget.mouse_targets:
                 self.select(i + widget.mouse_targets.index(target))
-                return None
+                return target
 
         return None
 

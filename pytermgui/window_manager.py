@@ -221,11 +221,9 @@ class Window(Container):
             return True
 
         self.selected: Widget
-        if isinstance(self.selected, InputField):
-            while isinstance(self.selected, Container):
-                self.selected = self.selected.selected
 
-            self.selected.selected_index = 0
+        if isinstance(self.selected, InputField):
+
 
             if self.selected.send(key):
                 assert self.manager is not None
