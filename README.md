@@ -1,7 +1,7 @@
 <!-- TODO: these colors could be randomly generated -->
 ![title](https://github.com/bczsalba/pytermgui/raw/master/assets/title.png)
 
-> A simple yet powerful TUI framework for your Python (3.9+) applications
+> A simple yet powerful TUI framework for your Python (3.7+) applications
 ```
 pip3 install pytermgui
 ```
