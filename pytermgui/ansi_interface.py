@@ -21,8 +21,9 @@ from __future__ import annotations
 
 import re
 import sys
+import signal
 
-from typing import Optional, Any, Union, Tuple
+from typing import Optional, Any, Union, Tuple, Callable
 from enum import Enum, auto as _auto
 from sys import stdout as _stdout
 from string import hexdigits
@@ -41,10 +42,9 @@ from .input import getch
 __all__ = [
     "foreground",
     "background",
+    "terminal",
     "is_interactive",
     "screen_size",
-    "screen_width",
-    "screen_height",
     "save_screen",
     "restore_screen",
     "start_alt_buffer",
@@ -173,6 +173,51 @@ foreground = _Color()
 background = _Color(layer=1)
 
 
+class _Terminal:
+    """A class to store & access data about a terminal"""
+
+    RESIZE = 0
+
+    def __init__(self) -> None:
+        """Initialize object"""
+
+        self.size: tuple[int, int] = (80, 25)
+        self._listeners: dict[int, list[Callable[[int, int], Any]]] = {}
+
+        signal.signal(signal.SIGWINCH, self._update_size)
+
+    @property
+    def width(self) -> int:
+        """Get width of terminal"""
+
+        return self.size[0]
+
+    @property
+    def height(self) -> int:
+        """Get width of terminal"""
+
+        return self.size[1]
+
+    def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
+        """Subscribe a callback to an event"""
+
+        self._listeners[event] = callback
+
+    def _call_listener(self, event: int, data: Any) -> None:
+        """Call listener of event if there is one"""
+
+        if event in self._listeners:
+            self._listeners[event](data)
+
+    def _update_size(self, *_: Any) -> None:
+        """Update screen size at SIGWINCH"""
+
+        self.size = screen_size()
+        self._call_listener(self.RESIZE, self.size)
+
+
+terminal = _Terminal()
+
 # helpers
 def _tput(command: list[str]) -> None:
     """Shorthand for tput calls"""
@@ -210,29 +255,7 @@ def screen_size() -> tuple[int, int]:
     and makes for glitchy printing.
     """
 
-    # TODO: Add SIGWINCH handling
-
-    return get_terminal_size()
-
-
-def screen_width() -> int:
-    """Get screen width"""
-
-    size = screen_size()
-
-    if size is None:
-        return 0
-    return size[0]
-
-
-def screen_height() -> int:
-    """Get screen height"""
-
-    size = screen_size()
-
-    if size is None:
-        return 0
-    return size[1]
+    return tuple(get_terminal_size())
 
 
 def save_screen() -> None:

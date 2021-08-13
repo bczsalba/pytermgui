@@ -16,21 +16,9 @@ Versioning scheme
 Planned Versions
 ----------------
 
-* version 0.2.0 - The Widget update!:
-    - `Splitter()` rewrite
-    - `InputField()` rewrite
-    - `widgets/buttons.py` module:
-        + `Button`
-        + `Checkbox`
-        + `Dropdown`
-    - reorganize `widgets/`
-    - remove unnecessary widgets
-
-
-Current Progress
-----------------
-
 - 1.0.0 - First stable release!
+    * [x] Capture `signal.WINCH`, use it for window size detection
+
     * [ ] Rework width & height systems
         + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy
         + [ ] overflow/expand -> current no forced width behaviour
@@ -48,6 +36,8 @@ Current Progress
     * [ ] look into making mouse events callback-based (see winman)
         + [ ] add support for multiple events reporting at the same time
 
+Current Progress
+----------------
 
 - 2.0.0 - The stylish update!
     * [ ] Add color methods
@@ -68,7 +58,5 @@ Current Progress
     + [ ] `WindowManager` tiling layout
 
     * [ ] maybe make `MarkupFormatter` serializable?
-
-    * [ ] `cmd.py` rewrite
 
     * [ ] maybe clean up how Widget "enum" attributes are written
