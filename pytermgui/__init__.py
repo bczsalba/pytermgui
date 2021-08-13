@@ -42,7 +42,7 @@ __all__ += _widgets_all
 __all__ += _inspector_all
 __all__ += _serializer_all
 __all__ += _exceptions_all
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 
 def _macro_align(item: str) -> str:
