@@ -78,34 +78,6 @@ Some screenshots
 [![hello_world](https://github.com/bczsalba/pytermgui/raw/master/assets/hello_world.png)](https://github.com/bczsalba/pytermgui/blob/master/examples/hello_world.py)
 [![bezo calc](https://github.com/bczsalba/pytermgui/raw/master/assets/bezocalc.png)](https://github.com/bczsalba/pytermgui/blob/master/examples/bezocalc.py)
 
-Why the ~~long nose~~ version requirement?
-------------------------------------------
-
-`PyTermGUI` makes heavy use of the typing module, which in Python 3.9 saw the inclusion of container parameterizing, allowing the use of `list[str]` instead of `List[str]`.
-
-The previous method is now deprecated, and there isn't any nice way of supporting both forever. As such, the use of the new syntax makes Python 3.8x and lower raise `SyntaxError`.
-
-There isn't really much to help this issue, and its good practice to stay on the most recent release regardless.
-
-```python
-from pytermgui import Container, boxes
-boxes.EMPTY_VERTICAL.set_chars_of(Container)
-
-root = (
-    Container()
-    + "[246 italic bold] a guide on the python version you should use"
-    + (
-        Container(width=25)
-        + {"[157]python >3.9": "[157]good"}
-        + {"[210]python <3.8": "[210]bad"}
-    )
-)
-
-root.print()
-```
-
-![guide](https://github.com/bczsalba/pytermgui/raw/master/assets/version_guide.png)
-
 Documentation
 -------------
 
