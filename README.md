@@ -20,24 +20,18 @@ Core principles
 - High quality code
 - Extensibility by design
 
-```python
-from pytermgui import Container, Label
-root = Container() + Label("Clean code is [bold]cool[/bold]!")
-root.print()
-```
-
 What we provide
 ---------------
 
 - Terminal mouse support
+- A [program](https://www.reddit.com/link/p3b6ou/video/kkfhn20of0h71/player?utm_source=reddit&utm_medium=usertext&utm_name=Python&utm_content=t3_p3b6ou) with helpful [CLI applications](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/cmd.py) (`ptg --help`)
 - A fully flegded [WindowManager](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/window_manager.py) in the terminal
 - A cross-platform [getch](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/input.py) function with key translations
 - An [interface](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/ansi_interface.py) to most terminal functionality
 - A custom markup language with definable tags & macros inspired by [Rich](https://github.com/willmcgugan/rich/tree/master/rich)
 - [Tokenizer & optimizer](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/parser.py) methods for ANSI-sequence strings
 - A robust, extensible and customizable [Widget](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/widgets) class
-- helpful [CLI tools](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/cmd.py) (`ptg --help`)
-- Helpful [example files](https://github.com/bczsalba/pytermgui/blob/master/pytermgui/examples) covering most of the library
+- Helpful [example files](https://github.com/bczsalba/pytermgui/tree/master/examples) covering most of the library
 
 
 An example to get started with
