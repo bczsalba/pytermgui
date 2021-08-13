@@ -497,7 +497,7 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
                     )
                     continue
 
-                elif not silence_exception:
+                if not silence_exception:
                     raise MarkupSyntaxError(
                         tag=tag,
                         context=text,
