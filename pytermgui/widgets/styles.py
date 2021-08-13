@@ -10,7 +10,7 @@ This submodule provides the basic style methods for Widgets
 # pylint: disable=unused-argument
 
 from dataclasses import dataclass
-from typing import Callable, Union
+from typing import Callable, Union, List
 
 from ..helpers import strip_ansi
 from ..parser import ansi
@@ -30,7 +30,7 @@ __all__ = [
 
 StyleType = Callable[[int, str], str]
 DepthlessStyleType = Callable[[str], str]
-CharType = Union[str, list[str]]
+CharType = Union[str, List[str]]
 
 
 @dataclass

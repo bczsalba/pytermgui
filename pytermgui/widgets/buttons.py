@@ -10,6 +10,8 @@ These all have mouse_targets set, so are clickable. Most have `onclick`
 callbacks.
 """
 
+from __future__ import annotations
+
 # Some of these classes need to have more than 7 instance attributes.
 # pylint: disable=too-many-instance-attributes
 
@@ -79,7 +81,10 @@ class Button(Widget):
 class Checkbox(Button):
     """A simple checkbox"""
 
-    chars = Button.chars | {"delimiter": ["[", "]"], "checked": "X", "unchecked": " "}
+    chars = {
+        **Button.chars,
+        **{"delimiter": ["[", "]"], "checked": "X", "unchecked": " "},
+    }
 
     def __init__(
         self, callback: Callable[[Any], Any], checked: bool = False, **attrs: Any
@@ -125,7 +130,7 @@ class Checkbox(Button):
 class Toggle(Checkbox):
     """A specialized checkbox showing either of two states"""
 
-    chars = Checkbox.chars | {"delimiter": [" ", " "], "checked": "choose"}
+    chars = {**Checkbox.chars, **{"delimiter": [" ", " "], "checked": "choose"}}
 
     def __init__(
         self, states: tuple[str, str], callback: Callable[[str], Any], **attrs: Any
@@ -150,8 +155,8 @@ class Dropdown(Container):
 
     # TODO: Add Widget support for overlaying lines
 
-    chars = Container.chars | {"default_value": "Choose an item"}
-    styles = Container.styles | {"item": Button("").get_style("label").method}
+    chars = {**Container.chars, **{"default_value": "Choose an item"}}
+    styles = {**Container.styles, **{"item": Button("").get_style("label").method}}
 
     def __init__(
         self, items: list[str], callback: Callable[[str], Any], **attrs: Any

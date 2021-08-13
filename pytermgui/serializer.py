@@ -8,15 +8,17 @@ This submodule holds the Serializer() class, which allows
 saving & loading widgets.
 """
 
+from __future__ import annotations
+
 import json
-from typing import Any, Type, IO
+from typing import Any, Type, IO, Dict
 
 from . import widgets
 from .parser import ansi
 from .widgets.base import Widget
 from .widgets.styles import default_foreground, CharType
 
-WidgetDict = dict[str, Type[Widget]]
+WidgetDict = Dict[str, Type[Widget]]
 
 __all__ = ["serializer"]
 

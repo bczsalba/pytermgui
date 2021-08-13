@@ -12,6 +12,8 @@ or at least partially use the classes provided in .base.
 # These classes will have to have more than 7 attributes mostly.
 # pylint: disable=too-many-instance-attributes
 
+from __future__ import annotations
+
 import string
 from typing import Any
 

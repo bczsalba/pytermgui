@@ -10,7 +10,7 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     install_requires=[],
-    python_requires=">=3.9.0",
+    python_requires=">=3.7.0",
     url="https://github.com/bczsalba/pytermgui",
     author="BcZsalba",
     author_email="bczsalba@gmail.com",

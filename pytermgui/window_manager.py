@@ -84,7 +84,7 @@ class Window(Container):
     BOTTOM_LEFT = 2
     BOTTOM_RIGHT = 3
 
-    chars = Container.chars | {"button": ["<", ">"]}
+    chars = {**Container.chars, **{"button": ["<", ">"]}}
 
     def __init__(
         self,
@@ -223,7 +223,6 @@ class Window(Container):
         self.selected: Widget
 
         if isinstance(self.selected, InputField):
-
 
             if self.selected.send(key):
                 assert self.manager is not None

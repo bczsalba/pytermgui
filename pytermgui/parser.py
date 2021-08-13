@@ -72,6 +72,8 @@ Example syntax:
     '[@141 60 bold italic]Hello[/italic underline inverse]There![/]''
 """
 
+from __future__ import annotations
+
 import re
 from random import shuffle
 from enum import Enum, auto as _auto
@@ -465,8 +467,9 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
                 )
 
             else:
-                if (data := _handle_named_color(tag)) is not None:
-                    code, background = data
+                named_color_info = _handle_named_color(tag)
+                if named_color_info is not None:
+                    code, background = named_color_info
                     yield Token(
                         start,
                         end,
@@ -477,9 +480,11 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
                             else TokenAttribute.COLOR
                         ),
                     )
+                    continue
 
-                elif (data := _handle_color(tag)) is not None:
-                    color, background = data
+                color_info = _handle_color(tag)
+                if color_info is not None:
+                    color, background = color_info
                     yield Token(
                         start,
                         end,
@@ -490,6 +495,7 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
                             else TokenAttribute.COLOR
                         ),
                     )
+                    continue
 
                 elif not silence_exception:
                     raise MarkupSyntaxError(
@@ -618,8 +624,7 @@ def prettify_markup(markup_text: str) -> str:
                 styled += bold(foreground(item.to_name(), 210))
                 continue
 
-            if seq := item.to_sequence():
-                styled += seq
+            styled += item.to_sequence()
 
             styled += foreground(item.to_name(), 114)
 

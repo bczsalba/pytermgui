@@ -250,7 +250,8 @@ class Widget:
         manager = Widget.manager
         assert manager is not None
 
-        if (old := manager.get_id(self)) is not None:
+        old = manager.get_id(self)
+        if old is not None:
             manager.deregister(old)
 
         self._id = value
@@ -924,7 +925,8 @@ class Container(Widget):
 
         index = min(max(0, index), len(self._selectables) - 1)
 
-        if (data := self._selectables.get(index)) is None:
+        data = self._selectables.get(index)
+        if data is None:
             raise IndexError("Container selection index out of range")
 
         widget, inner_index = data

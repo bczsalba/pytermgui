@@ -17,11 +17,13 @@ Credits:
     - https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 """
 
+from __future__ import annotations
 
 import re
 import sys
+
+from typing import Optional, Any, Union, Tuple
 from enum import Enum, auto as _auto
-from typing import Optional, Any, Union
 from sys import stdout as _stdout
 from string import hexdigits
 from subprocess import (
@@ -453,7 +455,7 @@ class MouseAction(Enum):
     RIGHT_PRESS = _auto()
 
 
-MouseEvent = tuple[MouseAction, tuple[int, int]]
+MouseEvent = Tuple[MouseAction, Tuple[int, int]]
 
 
 def report_mouse(

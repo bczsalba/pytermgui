@@ -15,6 +15,8 @@ Todo: support for module inspection
 Todo: handle long items
 """
 
+from __future__ import annotations
+
 from typing import Optional, Any
 from inspect import signature, getdoc, isclass, ismodule, Signature
 
@@ -140,11 +142,14 @@ def inspect(
 class Inspector(Container):
     """A Container subclass that allows inspection of any Python object"""
 
-    styles = Container.styles | {
-        "builtin": MarkupFormatter("[208]{item}"),
-        "declaration": MarkupFormatter("[9 bold]{item}"),
-        "name": MarkupFormatter("[114]{item}"),
-        "string": MarkupFormatter("[142]{item}"),
+    styles = {
+        **Container.styles,
+        **{
+            "builtin": MarkupFormatter("[208]{item}"),
+            "declaration": MarkupFormatter("[9 bold]{item}"),
+            "name": MarkupFormatter("[114]{item}"),
+            "string": MarkupFormatter("[142]{item}"),
+        },
     }
 
     _inspectable = [

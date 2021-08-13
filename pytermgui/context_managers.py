@@ -11,6 +11,8 @@ in this module, most things are nicer-packaged combinations to
 already available methods from ansi_interface.
 """
 
+from __future__ import annotations
+
 from os import name
 from typing import Callable, Generator, Any, Optional
 from contextlib import contextmanager

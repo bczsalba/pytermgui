@@ -7,6 +7,8 @@ author: bczsalba
 This module provides the command-line capabilities of the module.
 """
 
+from __future__ import annotations
+
 import sys
 from random import randint
 from itertools import zip_longest
@@ -278,7 +280,7 @@ class MarkupApplication(Application):
             guide += {token: color}
 
         window = (
-            self._get_base_window(resizable=False)
+            self._get_base_window(resizable=True)
             + Container(
                 Label(parent_align=0, id="output_label"),
                 forced_width=60,

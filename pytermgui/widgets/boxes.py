@@ -17,6 +17,10 @@ They can be used as:
 For more info, check out help(pytermgui.boxes.Box)
 """
 
+from __future__ import annotations
+
+from typing import Tuple
+
 from .base import Widget
 from .extra import Splitter
 from ..helpers import real_length
@@ -60,7 +64,7 @@ class Box(Widget):
         )
     """
 
-    CharType = tuple[str, str, str, str]
+    CharType = Tuple[str, str, str, str]
 
     def __init__(self, lines: list[str], content_char: str = "x"):
         """Set instance attributes"""

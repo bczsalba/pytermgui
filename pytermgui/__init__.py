@@ -10,6 +10,8 @@ A simple yet powerful TUI framework for your Python (3.9+) applications
 # https://github.com/python/mypy/issues/4930
 # mypy: ignore-errors
 
+from __future__ import annotations
+
 from typing import Union, Any, Optional
 
 from .window_manager import __all__ as _manager_all

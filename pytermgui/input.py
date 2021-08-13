@@ -14,6 +14,8 @@ credits:
 # pylint doesn't see the C source
 # pylint: disable=c-extension-no-member, no-name-in-module
 
+from __future__ import annotations
+
 import os
 import sys
 
