@@ -402,6 +402,7 @@ def run_wm(args: Namespace) -> None:
         if args.app:
             app = app_mapping[args.app.lower()](manager)
             app.standalone = True
+
             window = app.construct_window()
             manager.add(window)
 
@@ -418,6 +419,7 @@ def main() -> None:
     parser = ArgumentParser(
         description="Command line interface & demo for some utilities related to TUI development."
     )
+
     parser.add_argument(
         "--app",
         type=str.lower,
@@ -426,7 +428,23 @@ def main() -> None:
         choices=["getch", "markapp"],
     )
 
-    run_wm(parser.parse_args())
+    parser.add_argument(
+        "-g", "--getch", help="launch Getch app in standalone mode", action="store_true"
+    )
+
+    parser.add_argument(
+        "-m", "--markapp", help="launch MarkApp in standalone mode", action="store_true"
+    )
+
+    args = parser.parse_args()
+
+    if args.getch:
+        args.app = "getch"
+
+    if args.markapp:
+        args.app = "markapp"
+
+    run_wm(args)
 
 
 if __name__ == "__main__":
