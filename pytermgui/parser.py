@@ -623,7 +623,10 @@ def prettify_markup(markup_text: str) -> str:
                 continue
 
             if item.attribute is TokenAttribute.MACRO:
-                styled += bold(foreground(item.to_name(), 210))
+                method = item.macro_value
+                assert method is not None
+
+                styled += bold(foreground(method(item.to_name()), 210))
                 continue
 
             styled += item.to_sequence()
@@ -634,6 +637,7 @@ def prettify_markup(markup_text: str) -> str:
 
     visual_bracket: list[Token] = []
     applied_bracket: list[str] = []
+    applied_macros: list[MacroCallable] = []
 
     out = ""
     for token in tokenize_markup(markup_text):
