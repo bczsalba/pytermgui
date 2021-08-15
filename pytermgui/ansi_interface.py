@@ -27,15 +27,8 @@ from typing import Optional, Any, Union, Tuple, Callable
 from enum import Enum, auto as _auto
 from sys import stdout as _stdout
 from string import hexdigits
-from subprocess import (
-    run as _run,
-    Popen as _Popen,
-)
-from os import (
-    name as _name,
-    get_terminal_size,
-    system,
-)
+from subprocess import run as _run, Popen as _Popen
+from os import name as _name, get_terminal_size, system
 from .input import getch
 
 
@@ -44,11 +37,10 @@ __all__ = [
     "background",
     "terminal",
     "is_interactive",
-    "screen_size",
     "save_screen",
     "restore_screen",
-    "start_alt_buffer",
-    "end_alt_buffer",
+    "set_alt_buffer",
+    "unset_alt_buffer",
     "clear",
     "hide_cursor",
     "show_cursor",
@@ -64,8 +56,8 @@ __all__ = [
     "cursor_prev_line",
     "cursor_column",
     "cursor_home",
-    "do_echo",
-    "dont_echo",
+    "set_echo",
+    "unset_echo",
     "set_mode",
     "MouseAction",
     "report_mouse",
@@ -80,7 +72,6 @@ __all__ = [
     "inverse",
     "invisible",
     "strikethrough",
-    "fill_window",
 ]
 
 
@@ -186,6 +177,18 @@ class _Terminal:
 
         signal.signal(signal.SIGWINCH, self._update_size)
 
+    def _call_listener(self, event: int, data: Any) -> None:
+        """Call listener of event if there is one"""
+
+        if event in self._listeners:
+            self._listeners[event](data)
+
+    def _update_size(self, *_: Any) -> None:
+        """Update screen size at SIGWINCH"""
+
+        self.size = screen_size()
+        self._call_listener(self.RESIZE, self.size)
+
     @property
     def width(self) -> int:
         """Get width of terminal"""
@@ -203,18 +206,6 @@ class _Terminal:
 
         self._listeners[event] = callback
 
-    def _call_listener(self, event: int, data: Any) -> None:
-        """Call listener of event if there is one"""
-
-        if event in self._listeners:
-            self._listeners[event](data)
-
-    def _update_size(self, *_: Any) -> None:
-        """Update screen size at SIGWINCH"""
-
-        self.size = screen_size()
-        self._call_listener(self.RESIZE, self.size)
-
 
 terminal = _Terminal()
 
@@ -222,11 +213,7 @@ terminal = _Terminal()
 def _tput(command: list[str]) -> None:
     """Shorthand for tput calls"""
 
-    waited_commands = [
-        "clear",
-        "smcup",
-        "cup",
-    ]
+    waited_commands = ["clear", "smcup", "cup"]
 
     command.insert(0, "tput")
     str_command = [str(c) for c in command]
@@ -274,13 +261,13 @@ def restore_screen() -> None:
     _tput(["rmcup"])
 
 
-def start_alt_buffer() -> None:
+def set_alt_buffer() -> None:
     """Start alternate buffer that is non-scrollable"""
 
     print("\x1b[?1049h")
 
 
-def end_alt_buffer() -> None:
+def unset_alt_buffer() -> None:
     """Return to main buffer from alt, restoring state"""
 
     print("\x1b[?1049l")
@@ -447,7 +434,7 @@ def set_mode(mode: Union[str, int], write: bool = True) -> str:
     return code
 
 
-def do_echo() -> None:
+def set_echo() -> None:
     """Echo user input"""
 
     if not _name == "posix":
@@ -456,7 +443,7 @@ def do_echo() -> None:
     system("stty echo")
 
 
-def dont_echo() -> None:
+def unset_echo() -> None:
     """Don't echo user input"""
 
     if not _name == "posix":
@@ -664,15 +651,3 @@ def strikethrough(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text as strikethrough"""
 
     return set_mode("strikethrough", False) + text + (reset() if reset_style else "")
-
-
-def fill_window(color: int, flush: bool = True) -> None:
-    """Fill window with a color"""
-
-    for i in range(screen_height()):
-        _stdout.write(background(screen_width() * " ", color))
-        if not i == screen_height() - 1:
-            _stdout.write("\n")
-
-    if flush:
-        _stdout.flush()

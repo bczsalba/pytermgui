@@ -20,18 +20,9 @@ from typing import Callable, Optional, Type, Union, Iterator, Any
 from ..input import keys
 from ..context_managers import cursor_at
 from ..exceptions import WidthExceededError, LineLengthError
-from ..parser import (
-    markup,
-    ansi,
-    optimize_ansi,
-)
+from ..parser import markup, ansi, optimize_ansi
 from ..helpers import real_length, break_line
-from ..ansi_interface import (
-    screen_width,
-    screen_height,
-    screen_size,
-    clear,
-)
+from ..ansi_interface import terminal, clear
 from .styles import (
     CharType,
     StyleType,
@@ -553,14 +544,9 @@ class Container(Widget):
 
     chars: dict[str, CharType] = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
 
-    styles: dict[str, StyleType] = {
-        "border": apply_markup,
-        "corner": apply_markup,
-    }
+    styles: dict[str, StyleType] = {"border": apply_markup, "corner": apply_markup}
 
-    serialized = Widget.serialized + [
-        "_centered_axis",
-    ]
+    serialized = Widget.serialized + ["_centered_axis"]
 
     def __init__(self, *widgets: Widget, **attrs: Any) -> None:
         """Initialize Container data"""
@@ -778,14 +764,8 @@ class Container(Widget):
         corner_char = self.get_char("corner")
         assert isinstance(corner_char, list)
 
-        left, top, right, bottom = _apply_style(
-            border_style,
-            border_char,
-        )
-        t_left, t_right, b_right, b_left = _apply_style(
-            corner_style,
-            corner_char,
-        )
+        left, top, right, bottom = _apply_style(border_style, border_char)
+        t_left, t_right, b_right, b_left = _apply_style(corner_style, corner_char)
 
         def _get_border(left: str, char: str, right: str) -> str:
             """Get a border line"""
@@ -823,10 +803,7 @@ class Container(Widget):
             #       y-pos properly.
             # container_vertical_offset = 1 if real_length(top) > 0 else 0
 
-            widget.pos = (
-                self.pos[0] + offset,
-                self.pos[1] + len(lines),
-            )
+            widget.pos = (self.pos[0] + offset, self.pos[1] + len(lines))
 
             # get_lines()
             widget_lines: list[str] = []
@@ -952,15 +929,15 @@ class Container(Widget):
         centery = where in [Container.CENTER_Y, Container.CENTER_BOTH]
 
         if centerx:
-            self.posx = (screen_width() - self.width + 2) // 2
+            self.posx = (terminal.width - self.width + 2) // 2
 
         if centery:
-            self.posy = (screen_height() - self.height + 2) // 2
+            self.posy = (terminal.height - self.height + 2) // 2
 
         if store:
             self._centered_axis = where
 
-        self._prev_screen = screen_size()
+        self._prev_screen = terminal.size()
 
         return self
 
@@ -1013,11 +990,11 @@ class Container(Widget):
     def print(self) -> None:
         """Print object"""
 
-        if not screen_size() == self._prev_screen:
+        if not terminal.size() == self._prev_screen:
             clear()
             self.center(self._centered_axis)
 
-        self._prev_screen = screen_size()
+        self._prev_screen = terminal.size()
 
         with cursor_at(self.pos) as print_here:
             for line in self.get_lines():
@@ -1039,15 +1016,9 @@ class Container(Widget):
 class Label(Widget):
     """Unselectable text object"""
 
-    styles: dict[str, StyleType] = {
-        "value": apply_markup,
-    }
+    styles: dict[str, StyleType] = {"value": apply_markup}
 
-    serialized = Widget.serialized + [
-        "*value",
-        "align",
-        "padding",
-    ]
+    serialized = Widget.serialized + ["*value", "align", "padding"]
 
     def __init__(self, value: str = "", padding: int = 0, **attrs: Any) -> None:
         """Set up object"""

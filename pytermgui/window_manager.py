@@ -54,17 +54,11 @@ from .input import getch, keys
 from .parser import define_tag, ansi
 from .exceptions import LineLengthError
 from .helpers import real_length, strip_ansi
+from .ansi_interface import terminal, clear, MouseAction
 from .context_managers import alt_buffer, mouse_handler, MouseEvent
-from .ansi_interface import clear, screen_size, screen_width, MouseAction
 
 
-__all__ = [
-    "Window",
-    "WindowManager",
-    "DebugWindow",
-    "MouseDebugger",
-    "WindowDebugger",
-]
+__all__ = ["Window", "WindowManager", "DebugWindow", "MouseDebugger", "WindowDebugger"]
 
 
 class Edge(Enum):
@@ -129,7 +123,7 @@ class Window(Container):
     def rect(self, new: tuple[int, int, int, int]) -> None:
         """Set new rectangle of Window"""
 
-        width, height = screen_size()
+        width, height = terminal.size
         startx, starty, endx, endy = new
         startx = max(0, min(startx, width))
         starty = max(0, min(starty, height))
@@ -264,7 +258,7 @@ class Window(Container):
         if not self._is_full_screen:
             self._restore_size = self.width, self.height
             self._restore_pos = self.pos
-            width, height = screen_size()
+            width, height = terminal.size
             pos = (1, 1)
 
         else:
@@ -490,7 +484,9 @@ class WindowManager(Container):
                 self._focus_index = 0
 
             self.focus_window(
-                sorted(self._windows, key=lambda window: (window.creation))[  # type: ignore
+                sorted(
+                    self._windows, key=lambda window: (window.creation)
+                )[  # type: ignore
                     self._focus_index
                 ]
             )
@@ -525,7 +521,7 @@ class WindowManager(Container):
 
             # Move or resize windows
             if action is MouseAction.HOLD and self._drag_target is not None:
-                width, height = screen_size()
+                width, height = terminal.size
                 window = self._drag_target
 
                 startx, starty, _, endy = window.rect
@@ -705,8 +701,7 @@ class DebugWindow(Window):
 
         self._add_widget(
             Button(
-                "[157 bold]Align left",
-                lambda *_: self.change_align(Widget.PARENT_LEFT),
+                "[157 bold]Align left", lambda *_: self.change_align(Widget.PARENT_LEFT)
             )
         )
 
@@ -751,13 +746,13 @@ class DebugWindow(Window):
             )
         )
 
-        width, height = screen_size()
+        width, height = terminal.size
         self.pos = randint(0, width - self.width), randint(0, height - self.height - 2)
 
     def change_width(self, amount: int) -> None:
         """Increase/decrease widget width"""
 
-        if self.width + amount > screen_width():
+        if self.width + amount > terminal.width:
             return
 
         pos = list(self.pos)
@@ -884,7 +879,7 @@ def test() -> None:
     manager.add(mouse_debugger)
     manager.add(window_debugger)
 
-    width, _ = screen_size()
+    width, _ = terminal.size
     offset = 1
     for window in [mouse_debugger, window_debugger]:
         window.pos = (width - window.width + 1, offset)

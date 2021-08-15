@@ -27,12 +27,9 @@ from .widgets.base import Widget, Container, Label
 from .context_managers import alt_buffer
 from .widgets.boxes import DOUBLE_BOTTOM
 from .widgets.styles import MarkupFormatter, StyleType
-from .ansi_interface import foreground, screen_height, is_interactive
+from .ansi_interface import foreground, terminal, is_interactive
 
-__all__ = [
-    "inspect",
-    "Inspector",
-]
+__all__ = ["inspect", "Inspector"]
 
 
 def create_color_style(color: int) -> StyleType:
@@ -54,7 +51,7 @@ def inspect(
 ) -> None:
     """Inspect an object"""
 
-    target_height = int(screen_height() * 3 / 4)
+    target_height = int(terminal.height * 3 / 4)
     inspector = Inspector()
     inspector.inspect(target, show_dunder=show_dunder, show_private=show_private)
 
@@ -152,10 +149,7 @@ class Inspector(Container):
         },
     }
 
-    _inspectable = [
-        "__init__",
-        "inspect",
-    ]
+    _inspectable = ["__init__", "inspect"]
 
     def __init__(self, **container_args: Any) -> None:
         """Initialize object and inspect something"""

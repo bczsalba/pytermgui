@@ -24,10 +24,10 @@ from .ansi_interface import (
     print_to,
     show_cursor,
     hide_cursor,
-    do_echo,
-    dont_echo,
-    start_alt_buffer,
-    end_alt_buffer,
+    set_echo,
+    unset_echo,
+    set_alt_buffer,
+    unset_alt_buffer,
     cursor_up,
     report_mouse,
     translate_mouse,
@@ -65,7 +65,7 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
     after program end."""
 
     try:
-        start_alt_buffer()
+        set_alt_buffer()
 
         if not echo and name == "posix" and not is_interactive():
             dont_echo()
@@ -76,7 +76,7 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
         yield
 
     finally:
-        end_alt_buffer()
+        unset_alt_buffer()
 
         if not echo and name == "posix" and not is_interactive():
             do_echo()
