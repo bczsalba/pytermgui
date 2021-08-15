@@ -175,6 +175,7 @@ def define_macro(name: str, value: MacroCallable) -> None:
         raise ValueError('Macro tags should always start with "!".')
 
     MACRO_MAP[name] = value
+    UNSET_MAP["/" + name] = value
 
 
 def escape_ansi(text: str) -> str:
@@ -241,6 +242,7 @@ class TokenAttribute(Enum):
     STYLE = _auto()
     MACRO = _auto()
     ESCAPED = _auto()
+    MACRO_CLEAR = _auto()
     BACKGROUND_COLOR = _auto()
 
 
@@ -428,6 +430,26 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
                     ),
                 )
 
+            elif tag in MACRO_MAP:
+                yield Token(
+                    start,
+                    end,
+                    plain=tag,
+                    code="",
+                    macro_value=MACRO_MAP[tag],
+                    attribute=TokenAttribute.MACRO,
+                )
+
+            elif tag in UNSET_MAP and tag[1:] in MACRO_MAP:
+                yield Token(
+                    start,
+                    end,
+                    plain=tag,
+                    code="",
+                    macro_value=UNSET_MAP[tag],
+                    attribute=TokenAttribute.MACRO_CLEAR,
+                )
+
             elif tag in UNSET_MAP:
                 yield Token(
                     start, end, code=str(UNSET_MAP[tag]), attribute=TokenAttribute.CLEAR
@@ -439,16 +461,6 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
                     end,
                     code=CUSTOM_MAP[tag],
                     attribute=TokenAttribute.STYLE,  # maybe this could be a special CUSTOM tag
-                )
-
-            elif tag in MACRO_MAP:
-                yield Token(
-                    start,
-                    end,
-                    plain=tag,
-                    code="",
-                    macro_value=MACRO_MAP[tag],
-                    attribute=TokenAttribute.MACRO,
                 )
 
             else:
@@ -519,6 +531,13 @@ def ansi(
             assert token.macro_value is not None
 
             macro_callables.append(token.macro_value)
+            continue
+
+        if token.attribute is TokenAttribute.MACRO_CLEAR:
+            assert token.macro_value is not None
+
+            # This raising a builtin exception is verbose enough
+            macro_callables.remove(token.macro_value)
             continue
 
         if token.plain is not None:
