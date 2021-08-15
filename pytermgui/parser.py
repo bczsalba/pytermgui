@@ -43,10 +43,6 @@ The tags available are:
     - background versions of all of the above   ([ @{color} ])
 
 
-Future:
-    - !save                                     save current color attributes
-    - !restore                                  restore saved color attributes
-
 
 Notes on syntax:
     - Tags are escapable by putting a "\" before the opening square bracket, such as:
@@ -56,19 +52,19 @@ Notes on syntax:
         so if your markup is `[bold bold bold]hello` it will only yield 1 bold token.
 
     - The tokenizer also implicitly adds a reset tag at the end of all strings it's given,
-        if it doesn't already end in one.
+        if it doesn't already end in one. This is toggleable using the `ensure_reset` flag.
 
 
 Example syntax:
     >>> from pytermgui import ansi, markup
 
-    >>> ansi = ansi(
+    >>> text = ansi(
     ... "[@141 60 bold italic] Hello "
     ... + "[/italic underline inverse] There! "
     ... )
     '\x1b[48;5;141m\x1b[38;5;60m\x1b[1m\x1b[3m Hello \x1b[23m\x1b[4m\x1b[7m There! \x1b[0m'
 
-    >>> markup = markup(ansi)
+    >>> markup(text)
     '[@141 60 bold italic]Hello[/italic underline inverse]There![/]''
 """
 
