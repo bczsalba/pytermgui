@@ -100,15 +100,6 @@ RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
 RE_TAGS = re.compile(r"((\\*)\[([a-z0-9!#@\/].*?)\])")
 
 
-def random_permutation(text: str) -> str:
-    """Shuffle a string using random.shuffle on its list cast"""
-
-    shuffled = list(text)
-    shuffle(shuffled)
-
-    return "".join(shuffled)
-
-
 NAMES = [
     "/",
     "bold",
@@ -137,13 +128,7 @@ UNSET_MAP = {
 }
 
 
-MACRO_MAP = {
-    "!upper": lambda item: item.upper(),
-    "!lower": lambda item: item.lower(),
-    "!title": lambda item: item.title(),
-    "!capitalize": lambda item: item.capitalize(),
-    "!random": random_permutation,
-}
+MACRO_MAP = {}
 
 CUSTOM_MAP: dict[str, str] = {}
 MacroCallable = Callable[[str], str]

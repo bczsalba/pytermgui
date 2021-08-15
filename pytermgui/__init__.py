@@ -78,6 +78,15 @@ def _macro_strip_bg(item: str) -> str:
     return ansi("[/bg]" + item)
 
 
+def _macro_random(item: str) -> str:
+    """Shuffle a string using random.shuffle on its list cast"""
+
+    shuffled = list(item)
+    shuffle(shuffled)
+
+    return "".join(shuffled)
+
+
 def auto(  # pylint: disable=R0911
     data: Any, **widget_args: Any
 ) -> Optional[Union[Widget, list[Splitter]]]:
@@ -184,10 +193,15 @@ def auto(  # pylint: disable=R0911
 
 
 # Built-in macro definitions
-define_macro("!strip", strip_ansi)
+define_macro("!capitalize", lambda item: item.capitalize())
+define_macro("!upper", lambda item: item.upper())
+define_macro("!lower", lambda item: item.lower())
+define_macro("!title", lambda item: item.title())
 define_macro("!strip_fg", _macro_strip_fg)
 define_macro("!strip_bg", _macro_strip_bg)
+define_macro("!random", _macro_random)
 define_macro("!align", _macro_align)
+define_macro("!strip", strip_ansi)
 define_macro("!markup", markup)
 
 # Alternative binding for the `auto` method
