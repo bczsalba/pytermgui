@@ -97,7 +97,7 @@ __all__ = [
 ]
 
 RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
-RE_TAGS = re.compile(r"""((\\*)\[([a-z0-9!#@\/].*?)\])""", re.VERBOSE)
+RE_TAGS = re.compile(r"((\\*)\[([a-z0-9!#@\/].*?)\])")
 
 
 def random_permutation(text: str) -> str:
@@ -222,7 +222,12 @@ def _handle_color(tag: str) -> Optional[tuple[str, bool]]:
         try:
             tag = ";".join(str(val) for val in foreground.translate_hex(tag))
         except ValueError as error:
-            raise SyntaxError(f'"{tag}" could not be converted to HEX.') from error
+            raise MarkupSyntaxError(
+                tag=tag, context=tag, cause="could not be converted to HEX"
+            )
+
+    elif not hexcolor and not all(char.isdigit() for char in tag):
+        return None
 
     return pretext + color_pre + tag, pretext == "48;"
 
@@ -289,13 +294,11 @@ class Token:
         if numbers[0] == "48":
             out += "@"
 
-        if len(numbers) < 3:
-            raise SyntaxError(
-                f'Invalid ANSI code "{escape_ansi(self.code)}" in token {self}.'
+        # This case should be pre-filtered by the tokenizer, so it should never trigger.
+        if len(numbers) < 3 or not all(char.isdigit() for char in numbers):
+            raise RuntimeError(
+                f'Could not convert non-digit "{numbers}" in malformed ANSI sequence "{ascii(self.code)}".'
             )
-
-        if not all(char.isdigit() for char in numbers):
-            raise SyntaxError("Cannot convert non-digit to color.")
 
         simple = int(numbers[2])
         if len(numbers) == 3 and simple in foreground.names.values():
@@ -442,10 +445,7 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
 
             elif tag in UNSET_MAP:
                 yield Token(
-                    start,
-                    end,
-                    code=str(UNSET_MAP[tag]),
-                    attribute=TokenAttribute.CLEAR,
+                    start, end, code=str(UNSET_MAP[tag]), attribute=TokenAttribute.CLEAR
                 )
 
             elif tag in CUSTOM_MAP:
@@ -499,9 +499,7 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
 
                 if not silence_exception:
                     raise MarkupSyntaxError(
-                        tag=tag,
-                        context=text,
-                        cause="is not defined",
+                        tag=tag, context=text, cause="is not defined"
                     )
 
         position = end
