@@ -123,8 +123,7 @@ class LauncherApplication(Application):
 
         for app in self.apps:
             button = Button(
-                app.title,
-                lambda _, button: manager.add(button.app.construct_window()),
+                app.title, lambda _, button: manager.add(button.app.construct_window())
             )
             button.app = app
             window += button
@@ -214,11 +213,7 @@ class MarkupApplication(Application):
 
             return "#%02X%02X%02X" % tuple(randint(0, 255) for _ in range(3))
 
-        return [
-            randint(0, 255),
-            _random_hex(),
-            _random_hex(),
-        ]
+        return [randint(0, 255), _random_hex(), _random_hex()]
 
     @staticmethod
     def _update_value(output: Label, field: InputField) -> None:
@@ -281,10 +276,7 @@ class MarkupApplication(Application):
 
         window = (
             self._get_base_window(resizable=True)
-            + Container(
-                Label(parent_align=0, id="output_label"),
-                forced_width=60,
-            )
+            + Container(Label(parent_align=0, id="output_label"), forced_width=60)
             + guide
             + Label(
                 "[247 italic]> Tip: Press CTRL_R to randomize colors", parent_align=0
@@ -351,10 +343,7 @@ def run_wm(args: Namespace) -> None:
     """Run WindowManager according to args"""
 
     # This is used for finding Application from arguments
-    app_mapping = {
-        "getch": GetchApplication,
-        "markapp": MarkupApplication,
-    }
+    app_mapping = {"getch": GetchApplication, "markapp": MarkupApplication}
 
     window: Optional[Window] = None
 
