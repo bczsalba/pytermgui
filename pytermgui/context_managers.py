@@ -68,7 +68,7 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
         set_alt_buffer()
 
         if not echo and name == "posix" and not is_interactive():
-            dont_echo()
+            unset_echo()
 
         if not cursor:
             hide_cursor()
@@ -79,7 +79,7 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
         unset_alt_buffer()
 
         if not echo and name == "posix" and not is_interactive():
-            do_echo()
+            set_echo()
             cursor_up()
 
         if not cursor:

@@ -937,7 +937,7 @@ class Container(Widget):
         if store:
             self._centered_axis = where
 
-        self._prev_screen = terminal.size()
+        self._prev_screen = terminal.size
 
         return self
 
@@ -990,11 +990,11 @@ class Container(Widget):
     def print(self) -> None:
         """Print object"""
 
-        if not terminal.size() == self._prev_screen:
+        if not terminal.size == self._prev_screen:
             clear()
             self.center(self._centered_axis)
 
-        self._prev_screen = terminal.size()
+        self._prev_screen = terminal.size
 
         with cursor_at(self.pos) as print_here:
             for line in self.get_lines():
