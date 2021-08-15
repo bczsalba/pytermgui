@@ -164,6 +164,19 @@ foreground = _Color()
 background = _Color(layer=1)
 
 
+def screen_size() -> tuple[int, int]:
+    """Get screen size using os module
+
+    This is technically possible using a method of
+    moving the cursor to an impossible location, and
+    using `report_cursor()` to get where the position
+    was clamped, but it messes with the cursor position
+    and makes for glitchy printing.
+    """
+
+    return tuple(get_terminal_size())
+
+
 class _Terminal:
     """A class to store & access data about a terminal"""
 
@@ -172,7 +185,7 @@ class _Terminal:
     def __init__(self) -> None:
         """Initialize object"""
 
-        self.size: tuple[int, int] = (80, 25)
+        self.size: tuple[int, int] = screen_size()
         self._listeners: dict[int, list[Callable[[int, int], Any]]] = {}
 
         signal.signal(signal.SIGWINCH, self._update_size)
@@ -181,7 +194,8 @@ class _Terminal:
         """Call listener of event if there is one"""
 
         if event in self._listeners:
-            self._listeners[event](data)
+            for callback in self._listeners[event]:
+                callback(data)
 
     def _update_size(self, *_: Any) -> None:
         """Update screen size at SIGWINCH"""
@@ -204,7 +218,10 @@ class _Terminal:
     def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
         """Subscribe a callback to an event"""
 
-        self._listeners[event] = callback
+        if not event in self._listeners:
+            self._listeners[event] = []
+
+        self._listeners[event].append(callback)
 
 
 terminal = _Terminal()
@@ -232,19 +249,6 @@ def is_interactive() -> bool:
 
 
 # screen commands
-def screen_size() -> tuple[int, int]:
-    """Get screen size using os module
-
-    This is technically possible using a method of
-    moving the cursor to an impossible location, and
-    using `report_cursor()` to get where the position
-    was clamped, but it messes with the cursor position
-    and makes for glitchy printing.
-    """
-
-    return tuple(get_terminal_size())
-
-
 def save_screen() -> None:
     """Save the contents of the screen, wipe.
     Use `restore_screen()` to get them back."""
