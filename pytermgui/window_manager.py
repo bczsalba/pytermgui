@@ -321,6 +321,8 @@ class WindowManager(Container):
 
         self.mouse_handler: Optional[Callable[[str], Optional[list[MouseEvent]]]] = None
 
+        terminal.subscribe(terminal.RESIZE, self.on_resize)
+
     def __enter__(self) -> WindowManager:
         """Start context manager"""
 
@@ -399,6 +401,19 @@ class WindowManager(Container):
             return self._windows[0]
 
         return None
+
+    def on_resize(self, size: tuple[int, int]) -> None:
+        """Correctly update window positions & print when terminal gets resized"""
+
+        width, height = size
+
+        for window in self._windows:
+            newx = max(0, min(window.pos[0], width - window.width))
+            newy = max(0, min(window.pos[1], height - window.height))
+
+            window.pos = (newx, newy)
+
+        self.print()
 
     def align_widgets(self, new: int) -> None:
         """Set all widgets' parent_align"""
