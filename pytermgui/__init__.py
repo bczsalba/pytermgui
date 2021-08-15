@@ -13,6 +13,7 @@ A simple yet powerful TUI framework for your Python (3.9+) applications
 from __future__ import annotations
 
 from typing import Union, Any, Optional
+from random import shuffle
 
 from .window_manager import __all__ as _manager_all
 from .exceptions import __all__ as _exceptions_all
@@ -78,8 +79,8 @@ def _macro_strip_bg(item: str) -> str:
     return ansi("[/bg]" + item)
 
 
-def _macro_random(item: str) -> str:
-    """Shuffle a string using random.shuffle on its list cast"""
+def _macro_shuffle(item: str) -> str:
+    """Shuffle a string using shuffle.shuffle on its list cast"""
 
     shuffled = list(item)
     shuffle(shuffled)
@@ -199,7 +200,7 @@ define_macro("!lower", lambda item: item.lower())
 define_macro("!title", lambda item: item.title())
 define_macro("!strip_fg", _macro_strip_fg)
 define_macro("!strip_bg", _macro_strip_bg)
-define_macro("!random", _macro_random)
+define_macro("!shuffle", _macro_shuffle)
 define_macro("!align", _macro_align)
 define_macro("!strip", strip_ansi)
 define_macro("!markup", markup)
