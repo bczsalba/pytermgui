@@ -9,11 +9,7 @@ This module stores the custom Exception-s used in this module.
 
 from dataclasses import dataclass
 
-__all__ = [
-    "WidthExceededError",
-    "LineLengthError",
-    "MarkupSyntaxError",
-]
+__all__ = ["WidthExceededError", "LineLengthError", "MarkupSyntaxError"]
 
 
 class WidthExceededError(Exception):
@@ -43,3 +39,8 @@ class MarkupSyntaxError(Exception):
         """Return message with markup tags escaped."""
 
         return self.message.replace("[", r"\[")
+
+    def __str__(self) -> str:
+        """Show message"""
+
+        return self.message
