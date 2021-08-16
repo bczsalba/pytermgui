@@ -8,16 +8,10 @@ This module provides methods and functions that can be imported in other files.
 """
 
 from typing import Iterator
-from .parser import tokenize_ansi, TokenAttribute, RE_ANSI, RE_TAGS
+from .parser import tokenize_ansi, TokenAttribute, RE_ANSI, RE_MARKUP
 from .ansi_interface import reset
 
-__all__ = [
-    "strip_ansi",
-    "strip_markup",
-    "real_length",
-    "get_sequences",
-    "break_line",
-]
+__all__ = ["strip_ansi", "strip_markup", "real_length", "get_sequences", "break_line"]
 
 
 def strip_ansi(text: str) -> str:

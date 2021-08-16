@@ -93,7 +93,7 @@ __all__ = [
 ]
 
 RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
-RE_TAGS = re.compile(r"((\\*)\[([a-z0-9!#@\/].*?)\])")
+RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/].*?)\])")
 
 
 NAMES = [
@@ -400,7 +400,7 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
     position = 0
     start = end = 0
 
-    for match in RE_TAGS.finditer(text):
+    for match in RE_MARKUP.finditer(text):
         full, escapes, tag_text = match.groups()
         start, end = match.span()
 
