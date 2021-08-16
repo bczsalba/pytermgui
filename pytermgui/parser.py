@@ -208,7 +208,7 @@ def _handle_color(tag: str) -> Optional[tuple[str, bool]]:
                 tag=tag, context=tag, cause="could not be converted to HEX"
             )
 
-    elif not hexcolor and not all(char.isdigit() for char in tag):
+    elif not hexcolor and not all(char.isdigit() or char == ";" for char in tag):
         return None
 
     return pretext + color_pre + tag, pretext == "48;"
