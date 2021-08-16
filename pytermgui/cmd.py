@@ -257,7 +257,7 @@ class MarkupApplication(Application):
             Label("[{color}]0-255", parent_align=2).set_style(
                 "value", lambda _, item: ansi(item.format(color=self._255_color))
             ),
-            Label("[{color}]#rrgggbb", parent_align=2).set_style(
+            Label("[{color}]#rrggbb", parent_align=2).set_style(
                 "value", lambda _, item: ansi(item.format(color=self._hex_color))
             ),
             Label("[{color}]rrr;ggg;bbb", parent_align=2).set_style(
