@@ -174,7 +174,8 @@ def screen_size() -> tuple[int, int]:
     and makes for glitchy printing.
     """
 
-    return tuple(get_terminal_size())
+    width, height = get_terminal_size()
+    return width + 1, height + 1
 
 
 class _Terminal:
@@ -222,6 +223,17 @@ class _Terminal:
             self._listeners[event] = []
 
         self._listeners[event].append(callback)
+
+    def fill(self, color: int = 0, flush: bool = True) -> None:
+        """Fill entire terminal with color"""
+
+        for height in range(self.height):
+            sys.stdout.write(
+                f"\033[{height};0H" + background(" " * (self.width - 1), color)
+            )
+
+        if flush:
+            sys.stdout.flush()
 
 
 terminal = _Terminal()
