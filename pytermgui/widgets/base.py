@@ -787,12 +787,18 @@ class Container(Widget):
             align, offset = self._get_aligners(widget, (left, right))
             widget.parent_offset = offset
 
-            # Set position (including horizontal padding)
-            # TODO: Containers with non-empty top/bottom borders don't set
-            #       y-pos properly.
-            # container_vertical_offset = 1 if real_length(top) > 0 else 0
+            # TODO: This is ugly, and should be avoided.
+            # For now, only Container has a top offset, but this should be
+            # opened up as some kind of API for custom widgets.
+            if type(widget).__name__ == "Container":
+                container_vertical_offset = 1
+            else:
+                container_vertical_offset = 0
 
-            widget.pos = (self.pos[0] + offset, self.pos[1] + len(lines))
+            widget.pos = (
+                self.pos[0] + offset,
+                self.pos[1] + len(lines) + container_vertical_offset,
+            )
 
             # get_lines()
             widget_lines: list[str] = []
