@@ -442,12 +442,6 @@ class WindowManager(Container):
 
         return None
 
-    def blur(self) -> None:
-        """Blur all windows"""
-
-        for window in self._windows:
-            window.blur()
-
     def add(self, window: Window) -> None:
         """Add new window"""
 

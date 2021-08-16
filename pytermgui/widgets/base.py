@@ -385,16 +385,6 @@ class Widget:
 
         return deepcopy(self)
 
-    def focus(self) -> None:
-        """Focus widget"""
-
-        self._is_focused = True
-
-    def blur(self) -> None:
-        """Blur (unfocus) widget"""
-
-        self._is_focused = False
-
     def get_style(self, key: str) -> DepthlessStyleType:
         """Try to get style"""
 
@@ -480,7 +470,6 @@ class Widget:
 
         index = min(max(0, index), self.selectables_length - 1)
 
-        self.focus()
         self.selected_index = index
 
     def get_container(self) -> Container:
@@ -909,11 +898,9 @@ class Container(Widget):
         widget, inner_index = data
         widget.select(inner_index)
 
-        self.focus()
         for other in self._widgets:
             if other is not widget:
                 other.selected_index = None
-                other.blur()
 
         self.selected_index = index
 
@@ -958,19 +945,6 @@ class Container(Widget):
                 return target
 
         return None
-
-    def focus(self) -> None:
-        """Focus all widgets"""
-
-        for widget in self._widgets:
-            widget.focus()
-
-    def blur(self) -> None:
-        """Focus all widgets"""
-
-        for widget in self._widgets:
-            widget.selected_index = None
-            widget.blur()
 
     def wipe(self) -> None:
         """Wipe characters occupied by the object"""

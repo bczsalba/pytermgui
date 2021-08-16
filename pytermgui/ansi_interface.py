@@ -76,7 +76,7 @@ __all__ = [
 
 
 class _Color:
-    """Parent class for Color objects"""
+    """Base color object"""
 
     def __init__(self, layer: int = 0) -> None:
         """Set layer"""
