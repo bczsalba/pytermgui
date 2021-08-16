@@ -13,31 +13,31 @@ Versioning scheme
 - `minor`: lesser additions under the same feature theme
 - `patch`: fixes for `minor` versions, no new features
 
-Planned Versions
+Upcoming Version
 ----------------
 
 - 1.0.0 - First stable release!
     * [x] Capture `signal.WINCH`, use it for window size detection
 
-    * [ ] Rework width & height systems
-        + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy
-        + [ ] overflow/expand -> current no forced width behaviour
-        + [ ] overflow/clip   -> shorten lines to fit width
+    * [x] Remove/rework focus system
+        + [x] it really only exists for `InputField`, which doesn't need it anymore
+        + [x] `Widget.selected_index` should be used instead, or there should be deeper implementation
+
+    * [ ] look into making mouse events callback-based (see winman)
+        + [ ] add support for multiple events reporting at the same time
 
     * [ ] Rework `Widget.click()`
         + [ ] targets should be found using `Widget.get_target()`
         + [ ] `target.click()` can then be called directly
         + [ ] add `Widget.hover(target: MouseTarget)`
 
-    * [ ] Remove/rework focus system
-        + [ ] it really only exists for `InputField`, which doesn't need it anymore
-        + [ ] `Widget.selected_index` should be used instead, or there should be deeper implementation
+    * [ ] Rework width & height systems
+        + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy
+        + [ ] overflow/expand -> current no forced width behaviour
+        + [ ] overflow/clip   -> shorten lines to fit width
 
-    * [ ] look into making mouse events callback-based (see winman)
-        + [ ] add support for multiple events reporting at the same time
-
-Current Progress
-----------------
+Future versions
+---------------
 
 - 2.0.0 - The stylish update!
     * [ ] Add color methods
@@ -54,7 +54,7 @@ Current Progress
     * [ ] add background styles
 
 
-- future *(order irrelevant)*
+- unnamed *(order irrelevant)*
     + [ ] `WindowManager` tiling layout
 
     * [ ] maybe make `MarkupFormatter` serializable?
