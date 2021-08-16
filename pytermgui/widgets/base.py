@@ -803,6 +803,9 @@ class Container(Widget):
             # get_lines()
             widget_lines: list[str] = []
 
+            if self.selected_index is None:
+                widget.selected_index = None
+
             for i, line in enumerate(widget.get_lines()):
                 # Pad horizontally
                 aligned = align(line)

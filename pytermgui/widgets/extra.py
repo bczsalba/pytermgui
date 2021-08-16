@@ -17,11 +17,7 @@ from __future__ import annotations
 import string
 from typing import Any
 
-from .base import (
-    Container,
-    Label,
-    Widget,
-)
+from .base import Container, Label, Widget
 
 from .styles import (
     default_foreground,
@@ -35,12 +31,7 @@ from ..helpers import real_length
 from ..ansi_interface import foreground, background, reset
 
 
-__all__ = [
-    "Splitter",
-    "ColorPicker",
-    "InputField",
-    "alert",
-]
+__all__ = ["Splitter", "ColorPicker", "InputField", "alert"]
 
 
 class ColorPicker(Container):
@@ -57,10 +48,7 @@ class ColorPicker(Container):
         self.forced_width = self.grid_cols * 4 - 1 + self.sidelength
         self.width = self.forced_width
 
-        self._layer_functions = [
-            foreground,
-            background,
-        ]
+        self._layer_functions = [foreground, background]
 
         self.layer = 0
 
@@ -108,9 +96,7 @@ class Splitter(Container):
 
     chars: dict[str, CharType] = {"separator": " | "}
 
-    styles: dict[str, StyleType] = {
-        "separator": apply_markup,
-    }
+    styles: dict[str, StyleType] = {"separator": apply_markup}
 
     def __init__(self, *widgets: Widget, **attrs: Any) -> None:
         """Initialize Splitter, add given elements to it"""
@@ -158,6 +144,10 @@ class Splitter(Container):
                 widget.width = real_length(line)
 
             inner_lines = []
+
+            if self.selected_index is None:
+                widget.selected_index = None
+
             for line in widget.get_lines():
                 inner_lines.append(left * " " + line + right * " ")
 
@@ -286,14 +276,16 @@ class InputField(Label):
 
         # Set new value, get lines using it
         self.value = self.prompt + left + cursor_style(cursor_char) + right
+        self.width += 2
         lines = super().get_lines()
 
         # Set old value
         self.value = old
+        self.width -= 2
 
         # Reset & set mouse targets
         self.mouse_targets = []
-        self.define_mouse_target(0, 0, height=self.height)
+        self.define_mouse_target(0, -1, height=self.height)
 
         return [
             line + fill_style((self.width - real_length(line) + 1) * " ")
