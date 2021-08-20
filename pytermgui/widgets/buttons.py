@@ -23,7 +23,7 @@ from .base import Widget, MouseCallback, Container, MouseTarget
 from ..parser import ansi
 from ..helpers import real_length
 
-__all__ = ["Button", "Checkbox", "Toggle", "Dropdown"]
+__all__ = ["Button", "Checkbox", "Toggle"]
 
 
 class Button(Widget):
@@ -148,68 +148,3 @@ class Toggle(Checkbox):
 
         if self.callback is not None:
             self.callback(self.label)
-
-
-class Dropdown(Container):
-    """A dropdown menu"""
-
-    # TODO: Add Widget support for overlaying lines
-
-    chars = {**Container.chars, **{"default_value": "Choose an item"}}
-    styles = {**Container.styles, **{"item": Button("").get_style("label").method}}
-
-    def __init__(
-        self, items: list[str], callback: Callable[[str], Any], **attrs: Any
-    ) -> None:
-        """Initialize object"""
-
-        super().__init__(**attrs)
-        self.trigger = Checkbox(lambda *_: self.print(), parent_align=self.parent_align)
-        self._update_label(items[0])
-        self._add_widget(self.trigger)
-
-        self.items = items
-        self.callback = callback
-        self.selected_index = 0
-
-        self.width = max(len(item) for item in self.items)
-
-        self.set_char("border", [""] * 4)
-        self._item_buttons: list[Button] = []
-
-    def _update_label(self, new: str) -> None:
-        """Update label of trigger button"""
-
-        self.trigger.set_char("checked", new)
-        self.trigger.set_char("unchecked", new)
-        self.trigger.label = new
-
-    def _item_callback(self, _: MouseTarget, widget: Widget) -> None:
-        """Callback assigned to all item buttons"""
-
-        self.trigger.toggle()
-        self._update_label(widget.label)
-
-        if self.callback is not None:
-            self.callback(widget.label)
-
-    def get_lines(self) -> list[str]:
-        """Get lines depending on state"""
-
-        self._widgets = [self.trigger]
-        self._item_buttons = []
-
-        if self.trigger.checked:
-            for item in self.items:
-                button = Button(
-                    item, onclick=self._item_callback, parent_align=self.parent_align
-                )
-                button.set_style("label", self.get_style("item").method)
-
-                if item == self.trigger.label:
-                    button.select(0)
-
-                self._add_widget(button, run_get_lines=False)
-                self._item_buttons.append(button)
-
-        return super().get_lines()
