@@ -130,7 +130,7 @@ class Splitter(Container):
         separator_length = real_length(separator)
 
         lines = []
-        widget_lines = []
+        widget_lines: list[str] = []
         self.mouse_targets = []
 
         target_width = self.width // len(self._widgets) - len(self._widgets) + 1
@@ -144,15 +144,13 @@ class Splitter(Container):
             if widget.forced_width is None:
                 widget.width = real_length(line)
 
-            inner_lines = []
-
             if self.selected_index is None:
                 widget.selected_index = None
 
+            widget_lines.append([])  # type: ignore
             for line in widget.get_lines():
-                inner_lines.append(left * " " + line + right * " ")
+                widget_lines[-1].append(left * " " + line + right * " ")
 
-            widget_lines.append(inner_lines)
             total_width += target_width + separator_length
 
             self.mouse_targets += widget.mouse_targets

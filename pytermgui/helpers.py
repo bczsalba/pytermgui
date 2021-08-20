@@ -23,7 +23,7 @@ def strip_ansi(text: str) -> str:
 def strip_markup(text: str) -> str:
     """Remove markup characters from `text`"""
 
-    return RE_TAGS.sub("", text)
+    return RE_MARKUP.sub("", text)
 
 
 def real_length(text: str) -> int:

@@ -80,6 +80,19 @@ def main() -> None:
     field = get_widget("field")
     field.bind(keys.RETURN, lambda *_: manager.alert(field.value))
 
+    manager.add(
+        Window(width=70)
+        + "[wm-title]Variable line test"
+        + ""
+        + (
+            "[wm-section]Test",
+            Container(*[[str(i)] for i in range(3)]),
+            Container(*[[str(i)] for i in range(10)]),
+            Container(*[[str(i)] for i in range(15)]),
+            # Container(*[[str(i)] for i in range(1)]),
+        )
+    )
+
     manager.run()
 
 

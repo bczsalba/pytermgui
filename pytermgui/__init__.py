@@ -88,6 +88,21 @@ def _macro_shuffle(item: str) -> str:
     return "".join(shuffled)
 
 
+def _macro_expand_tag(item: str) -> str:
+    """Get value of a defined tag"""
+
+    # TODO:
+
+    args = item.split()
+
+    value = CUSTOM_MAP.get(args[0])
+    if value is None:
+        return item
+
+    args[0] = value
+    return " ".join(args)
+
+
 def auto(  # pylint: disable=R0911
     data: Any, **widget_args: Any
 ) -> Optional[Union[Widget, list[Splitter]]]:
@@ -200,6 +215,7 @@ define_macro("!lower", lambda item: item.lower())
 define_macro("!title", lambda item: item.title())
 define_macro("!strip_fg", _macro_strip_fg)
 define_macro("!strip_bg", _macro_strip_bg)
+define_macro("!expand", _macro_expand_tag)
 define_macro("!shuffle", _macro_shuffle)
 define_macro("!align", _macro_align)
 define_macro("!strip", strip_ansi)

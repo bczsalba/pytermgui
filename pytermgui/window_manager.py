@@ -47,7 +47,6 @@ from .widgets import (
     Widget,
     Button,
     Label,
-    boxes,
 )
 
 from .input import getch, keys
@@ -492,13 +491,8 @@ class WindowManager(Container):
             if self._focus_index >= len(self._windows):
                 self._focus_index = 0
 
-            self.focus_window(
-                sorted(
-                    self._windows, key=lambda window: (window.creation)
-                )[  # type: ignore
-                    self._focus_index
-                ]
-            )
+            s_windows = sorted(self._windows, key=lambda window: window.creation)  # type: ignore
+            self.focus_window(s_windows[self._focus_index])
 
         return False
 

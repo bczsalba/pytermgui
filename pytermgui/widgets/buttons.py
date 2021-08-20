@@ -18,7 +18,7 @@ from __future__ import annotations
 from typing import Optional, Any, Callable
 
 from .styles import StyleType, CharType, MarkupFormatter
-from .base import Widget, MouseCallback, Container, MouseTarget
+from .base import Widget, MouseCallback
 
 from ..parser import ansi
 from ..helpers import real_length

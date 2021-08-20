@@ -185,11 +185,6 @@ class MarkupApplication(Application):
     title = "MarkApp"
     description = "Play around with markup in this interactive editor."
 
-    def __init__(self, manager: WindowManager) -> None:
-        """Initialize object"""
-
-        super().__init__(manager)
-
     @staticmethod
     def _get_tokens() -> list[Label]:
         """Get all tokens form the parser module"""
@@ -221,7 +216,8 @@ class MarkupApplication(Application):
         except MarkupSyntaxError:
             return item
 
-    def _define_colors(self, *_: Any) -> None:
+    @staticmethod
+    def _define_colors(*_: Any) -> None:
         """Re-generate colors for guide"""
 
         def _random_hex() -> str:

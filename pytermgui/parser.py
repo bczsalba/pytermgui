@@ -71,9 +71,8 @@ Example syntax:
 from __future__ import annotations
 
 import re
-from random import shuffle
-from enum import Enum, auto as _auto
 from dataclasses import dataclass
+from enum import Enum, auto as _auto
 from typing import Optional, Iterator, Callable
 
 from .exceptions import MarkupSyntaxError
@@ -171,7 +170,7 @@ def define_macro(name: str, value: MacroCallable) -> None:
         raise ValueError('Macro tags should always start with "!".')
 
     MACRO_MAP[name] = value
-    UNSET_MAP["/" + name] = value
+    UNSET_MAP["/" + name] = "<MACRO>"
 
 
 def escape_ansi(text: str) -> str:
@@ -206,7 +205,7 @@ def _handle_color(tag: str) -> Optional[tuple[str, bool]]:
         except ValueError as error:
             raise MarkupSyntaxError(
                 tag=tag, context=tag, cause="could not be converted to HEX"
-            )
+            ) from error
 
     elif not hexcolor and not all(char.isdigit() or char == ";" for char in tag):
         return None
@@ -280,7 +279,8 @@ class Token:
         # This case should be pre-filtered by the tokenizer, so it should never trigger.
         if len(numbers) < 3 or not all(char.isdigit() for char in numbers):
             raise RuntimeError(
-                f'Could not convert non-digit "{numbers}" in malformed ANSI sequence "{ascii(self.code)}".'
+                f'Could not convert non-digit "{numbers}"'
+                + ' in malformed ANSI sequence "{ascii(self.code)}".'
             )
 
         simple = int(numbers[2])
@@ -442,7 +442,7 @@ def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Toke
                     end,
                     plain=tag,
                     code="",
-                    macro_value=UNSET_MAP[tag],
+                    macro_value=MACRO_MAP[tag[1:]],
                     attribute=TokenAttribute.MACRO_CLEAR,
                 )
 
@@ -508,8 +508,6 @@ def ansi(
     silence_exception: bool = False,
 ) -> str:
     """Turn markup text into ANSI str"""
-
-    # TODO: Add support for unsetting macros
 
     def _apply_macros(text: str, macros: list[MacroCallable]) -> str:
         """Apply list of macros to string"""
@@ -633,7 +631,6 @@ def prettify_markup(markup_text: str) -> str:
 
     visual_bracket: list[Token] = []
     applied_bracket: list[str] = []
-    applied_macros: list[MacroCallable] = []
 
     out = ""
     for token in tokenize_markup(markup_text):

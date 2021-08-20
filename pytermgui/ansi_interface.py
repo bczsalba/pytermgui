@@ -187,7 +187,7 @@ class _Terminal:
         """Initialize object"""
 
         self.size: tuple[int, int] = screen_size()
-        self._listeners: dict[int, list[Callable[[int, int], Any]]] = {}
+        self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
         signal.signal(signal.SIGWINCH, self._update_size)
 
