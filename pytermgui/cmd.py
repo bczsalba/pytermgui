@@ -190,10 +190,6 @@ class MarkupApplication(Application):
 
         super().__init__(manager)
 
-        self._255_color: str
-        self._hex_color: str
-        self._rgb_color: str
-
     @staticmethod
     def _get_tokens() -> list[Label]:
         """Get all tokens form the parser module"""
@@ -203,17 +199,6 @@ class MarkupApplication(Application):
             tokens.append(Label(f"[{token}]{token}", parent_align=0))
 
         return tokens
-
-    @staticmethod
-    def _get_colors() -> list[Label]:
-        """Get all color tokens"""
-
-        def _random_hex() -> str:
-            """Return random hex number"""
-
-            return "#%02X%02X%02X" % tuple(randint(0, 255) for _ in range(3))
-
-        return [randint(0, 255), _random_hex(), _random_hex()]
 
     @staticmethod
     def _update_value(output: Label, field: InputField) -> None:
@@ -236,10 +221,17 @@ class MarkupApplication(Application):
         except MarkupSyntaxError:
             return item
 
-    def _update_colors(self, *_: Any) -> None:
+    def _define_colors(self, *_: Any) -> None:
         """Re-generate colors for guide"""
 
-        self._255_color, self._hex_color, self._rgb_color = self._get_colors()
+        def _random_hex() -> str:
+            """Return random hex number"""
+
+            return "#%02X%02X%02X" % tuple(randint(0, 255) for _ in range(3))
+
+        define_tag("demo-255", str(randint(0, 255)))
+        define_tag("demo-hex", _random_hex())
+        define_tag("demo-rgb", _random_hex())
 
     def finish(self, window: Window) -> None:
         """Dump output markup"""
@@ -251,28 +243,16 @@ class MarkupApplication(Application):
         """Construct an application window"""
 
         tokens = self._get_tokens()
-        self._255_color, self._hex_color, self._rgb_color = self._get_colors()
+        self._define_colors()
 
         colors = [
-            Label("[{color}]0-255", parent_align=2).set_style(
-                "value", lambda _, item: ansi(item.format(color=self._255_color))
-            ),
-            Label("[{color}]#rrggbb", parent_align=2).set_style(
-                "value", lambda _, item: ansi(item.format(color=self._hex_color))
-            ),
-            Label("[{color}]rrr;ggg;bbb", parent_align=2).set_style(
-                "value", lambda _, item: ansi(item.format(color=self._rgb_color))
-            ),
-            Label(),
-            Label("[@{color}]@0-255", parent_align=2).set_style(
-                "value", lambda _, item: ansi(item.format(color=self._255_color))
-            ),
-            Label("[@{color}]@#rrgggbb", parent_align=2).set_style(
-                "value", lambda _, item: ansi(item.format(color=self._hex_color))
-            ),
-            Label("[@{color}]@rrr;ggg;bbb", parent_align=2).set_style(
-                "value", lambda _, item: ansi(item.format(color=self._rgb_color))
-            ),
+            "[demo-255]0-255",
+            "[demo-hex]#rrggbb",
+            "[demo-rgb]rrr;ggg;bbb",
+            "",
+            "[inverse demo-255]@0-255",
+            "[inverse demo-hex]@#rrggbb",
+            "[inverse demo-rgb]@rrr;ggg;bbb",
         ]
 
         corners = Container.chars["corner"].copy()
@@ -303,7 +283,7 @@ class MarkupApplication(Application):
 
         window.bind(
             keys.CTRL_R,
-            self._update_colors,
+            self._define_colors,
             description="Randomize colors in the guide",
         )
 
