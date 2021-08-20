@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import string
 from typing import Any
+from itertools import zip_longest
 
 from .base import Container, Label, Widget
 
@@ -156,7 +157,7 @@ class Splitter(Container):
 
             self.mouse_targets += widget.mouse_targets
 
-        for horizontal in zip(*widget_lines):
+        for horizontal in zip_longest(*widget_lines, fillvalue=""):
             lines.append((reset() + separator_style(separator)).join(horizontal))
 
         for target in self.mouse_targets:
