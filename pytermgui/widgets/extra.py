@@ -157,7 +157,9 @@ class Splitter(Container):
 
             self.mouse_targets += widget.mouse_targets
 
-        for horizontal in zip_longest(*widget_lines, fillvalue=""):
+        filler = " " * (real_length(line))
+
+        for horizontal in zip_longest(*widget_lines, fillvalue=filler):
             lines.append((reset() + separator_style(separator)).join(horizontal))
 
         for target in self.mouse_targets:
