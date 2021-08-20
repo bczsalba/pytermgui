@@ -79,25 +79,22 @@ def main() -> None:
 
     manager.add(Window() + ColorPicker(16, id="cp").debug())
 
+    manager.add(
+        Window(width=50, title=" multiline test ")
+        + "[wm-title]Multiline splitters!"
+        + ""
+        + {
+            "[wm-section]Section-title": Container(
+                "Lorem ipsum but I",
+                "actually have no idea",
+                "of the original text.",
+                forced_width=21,
+            )
+        }
+    )
+
     field = get_widget("field")
     field.bind(keys.RETURN, lambda *_: manager.alert(field.value))
-
-    command_window = (
-        Window(forced_width=70)
-        + auto("[wm-title]Enter a command!", parent_align=0)
-        + ""
-        + InputField(prompt="!", id="command_field")
-        + ""
-        + ["Run", lambda *_: None]
-    ).center()
-
-    command_field = get_widget("command_field")
-    command_window.bind(keys.ESC, lambda window, _: window.close())
-    manager.bind("!", lambda manager, _: {manager.add(command_window), manager.print()})
-
-    command_field.bind(
-        keys.RETURN, lambda *_: _handle_command(manager, command_field.value)
-    )
 
     manager.run()
 
