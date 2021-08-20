@@ -77,22 +77,6 @@ def main() -> None:
         ).center()
     )
 
-    manager.add(Window() + ColorPicker(16, id="cp").debug())
-
-    manager.add(
-        Window(width=50, title=" multiline test ")
-        + "[wm-title]Multiline splitters!"
-        + ""
-        + {
-            "[wm-section]Section-title": Container(
-                "Lorem ipsum but I",
-                "actually have no idea",
-                "of the original text.",
-                forced_width=21,
-            )
-        }
-    )
-
     field = get_widget("field")
     field.bind(keys.RETURN, lambda *_: manager.alert(field.value))
 
