@@ -16,6 +16,14 @@ Versioning scheme
 Upcoming Version
 ----------------
 
+- 0.3.0 - Mark(up) of the Snake!
+    * [ ] Markup language Instances
+    * [ ] Markup support for maths (`[{(1 + {depth}) * 36}]Depth`)
+    * [ ] (maybe) better macro arguments (`[!align(30, center)]text`)
+
+Future versions
+---------------
+
 - 1.0.0 - First stable release!
     * [x] Capture `signal.WINCH`, use it for window size detection
 
@@ -23,21 +31,16 @@ Upcoming Version
         + [x] it really only exists for `InputField`, which doesn't need it anymore
         + [x] `Widget.selected_index` should be used instead, or there should be deeper implementation
 
-    * [ ] look into making mouse events callback-based (see winman)
-        + [ ] add support for multiple events reporting at the same time
-
     * [ ] Rework `Widget.click()`
         + [ ] targets should be found using `Widget.get_target()`
-        + [ ] `target.click()` can then be called directly
-        + [ ] add `Widget.hover(target: MouseTarget)`
+        + [ ] **MouseEvent should be sent to the widget-specific mouse handler.**
+            - [ ] `Widget.handle_mouse(event: MouseEvent) -> bool`
+            - [ ] This method can then split off into various handlers for all actions
 
     * [ ] Rework width & height systems
         + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy
         + [ ] overflow/expand -> current no forced width behaviour
         + [ ] overflow/clip   -> shorten lines to fit width
-
-Future versions
----------------
 
 - 2.0.0 - The stylish update!
     * [ ] Add color methods
