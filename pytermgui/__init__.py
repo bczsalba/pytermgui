@@ -34,6 +34,8 @@ from .window_manager import *
 from .input import getch, keys
 from .context_managers import alt_buffer, cursor_at, mouse_handler
 
+from .parser import CUSTOM_MAP as _parser_defined_tags
+
 # Build `__all__` for star import (which you really shouldn't do.)
 __all__ = ["__version__"]
 __all__ += _ansi_all
@@ -91,11 +93,9 @@ def _macro_shuffle(item: str) -> str:
 def _macro_expand_tag(item: str) -> str:
     """Get value of a defined tag"""
 
-    # TODO:
-
     args = item.split()
 
-    value = CUSTOM_MAP.get(args[0])
+    value = _parser_defined_tags.get(args[0])
     if value is None:
         return item
 

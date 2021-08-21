@@ -181,7 +181,7 @@ class InputField(Label):
     styles = {
         "value": default_foreground,
         "cursor": MarkupFormatter("[inverse]{item}"),
-        "fill": MarkupFormatter("[@blue]{item}"),
+        "fill": MarkupFormatter("[@243]{item}"),
     }
 
     def __init__(self, value: str = "", prompt: str = "", **attrs: Any) -> None:
