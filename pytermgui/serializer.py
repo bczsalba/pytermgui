@@ -14,7 +14,7 @@ import json
 from typing import Any, Type, IO, Dict
 
 from . import widgets
-from .parser import ansi
+from .parser import markup
 from .widgets.base import Widget
 from .widgets.styles import default_foreground, CharType
 
@@ -78,9 +78,9 @@ class _Serializer:
 
             formatted: CharType
             if isinstance(value, list):
-                formatted = [ansi(val) for val in value]
+                formatted = [markup.parse(val) for val in value]
             else:
-                formatted = ansi(value)
+                formatted = markup.parse(value)
 
             return formatted
 

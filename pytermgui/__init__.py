@@ -34,8 +34,6 @@ from .window_manager import *
 from .input import getch, keys
 from .context_managers import alt_buffer, cursor_at, mouse_handler
 
-from .parser import CUSTOM_MAP as _parser_defined_tags
-
 # Build `__all__` for star import (which you really shouldn't do.)
 __all__ = ["__version__"]
 __all__ += _ansi_all
@@ -46,61 +44,6 @@ __all__ += _inspector_all
 __all__ += _serializer_all
 __all__ += _exceptions_all
 __version__ = "0.2.1"
-
-
-def _macro_align(item: str) -> str:
-    """Use f-string alignment on a markup plain.
-
-    Syntax: "[!align]width:aligment text" -> [!align]30:left hello"""
-
-    # TODO: A better syntax for macros might be !align(30:left) or
-    #       !align_30:left.
-
-    words = item.split(" ")
-    statements = words[0]
-    if statements.count(":") == 0:
-        return item
-
-    content = " ".join(words[1:])
-
-    width, alignment = statements.split(":")
-    aligner = "<" if alignment == "left" else (">" if alignment == "right" else "^")
-
-    return f"{content:{aligner}{width}}"
-
-
-def _macro_strip_fg(item: str) -> str:
-    """Strip foreground color from item"""
-
-    return ansi("[/fg]" + item)
-
-
-def _macro_strip_bg(item: str) -> str:
-    """Strip foreground color from item"""
-
-    return ansi("[/bg]" + item)
-
-
-def _macro_shuffle(item: str) -> str:
-    """Shuffle a string using shuffle.shuffle on its list cast"""
-
-    shuffled = list(item)
-    shuffle(shuffled)
-
-    return "".join(shuffled)
-
-
-def _macro_expand_tag(item: str) -> str:
-    """Get value of a defined tag"""
-
-    args = item.split()
-
-    value = _parser_defined_tags.get(args[0])
-    if value is None:
-        return item
-
-    args[0] = value
-    return " ".join(args)
 
 
 def auto(  # pylint: disable=R0911
@@ -207,19 +150,6 @@ def auto(  # pylint: disable=R0911
 
     return None
 
-
-# Built-in macro definitions
-define_macro("!capitalize", lambda item: item.capitalize())
-define_macro("!upper", lambda item: item.upper())
-define_macro("!lower", lambda item: item.lower())
-define_macro("!title", lambda item: item.title())
-define_macro("!strip_fg", _macro_strip_fg)
-define_macro("!strip_bg", _macro_strip_bg)
-define_macro("!expand", _macro_expand_tag)
-define_macro("!shuffle", _macro_shuffle)
-define_macro("!align", _macro_align)
-define_macro("!strip", strip_ansi)
-define_macro("!markup", markup)
 
 # Alternative binding for the `auto` method
 Widget.from_data = staticmethod(auto)

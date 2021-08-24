@@ -124,10 +124,12 @@ class Splitter(Container):
         """Get lines of all objects"""
 
         separator = self.get_char("separator")
-        separator_style = self.get_style("separator")
 
         assert isinstance(separator, str)
         separator_length = real_length(separator)
+
+        # Apply style
+        separator = self.get_style("separator")(separator)
 
         lines = []
         widget_lines: list[str] = []
@@ -136,13 +138,13 @@ class Splitter(Container):
         target_width = self.width // len(self._widgets) - len(self._widgets) + 1
         total_width = 0
 
+        line = ""
         for widget in self._widgets:
             left, right = self._get_offset(widget, target_width)
             widget.pos = (self.pos[0] + total_width + left, self.pos[1])
 
-            line = widget.get_lines()[0].strip()
             if widget.forced_width is None:
-                widget.width = real_length(line)
+                widget.width = real_length(widget.get_lines()[0])
 
             if self.selected_index is None:
                 widget.selected_index = None
@@ -159,10 +161,9 @@ class Splitter(Container):
 
         # TODO: This falls apart a lot.
         filler_len = target_width if target_width > last_line else last_line
-        filler = " " * filler_len
 
-        for horizontal in zip_longest(*widget_lines, fillvalue=filler):
-            lines.append((reset() + separator_style(separator)).join(horizontal))
+        for horizontal in zip_longest(*widget_lines, fillvalue=" " * filler_len):
+            lines.append((reset() + separator).join(horizontal))
 
         for target in self.mouse_targets:
             target.adjust()

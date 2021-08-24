@@ -20,7 +20,7 @@ from typing import Callable, Optional, Type, Union, Iterator, Any
 from ..input import keys
 from ..context_managers import cursor_at
 from ..exceptions import WidthExceededError, LineLengthError
-from ..parser import markup, ansi, optimize_ansi
+from ..parser import markup
 from ..helpers import real_length, break_line
 from ..ansi_interface import terminal, clear
 from .styles import (
@@ -131,7 +131,9 @@ class MouseTarget:
 
         for y_pos in range(self._start[1], self._end[1] + 1):
             with cursor_at((self._start[0], y_pos)) as print_here:
-                print_here(ansi(f"[@{color}]" + " " * (self._end[0] - self._start[0])))
+                print_here(
+                    markup.parse(f"[@{color}]" + " " * (self._end[0] - self._start[0]))
+                )
 
 
 class Widget:
@@ -360,9 +362,9 @@ class Widget:
             if style:
                 style_call = self.get_style(key)
                 if isinstance(value, list):
-                    out[key] = [markup(style_call(char)) for char in value]
+                    out[key] = [markup.get_markup(style_call(char)) for char in value]
                 else:
-                    out[key] = markup(style_call(value))
+                    out[key] = markup.get_markup(style_call(value))
 
                 continue
 
@@ -374,9 +376,11 @@ class Widget:
             style_call = self.get_style(key)
 
             if isinstance(value, list):
-                out["chars"][key] = [markup(style_call(char)) for char in value]
+                out["chars"][key] = [
+                    markup.get_markup(style_call(char)) for char in value
+                ]
             else:
-                out["chars"][key] = markup(style_call(value))
+                out["chars"][key] = markup.get_markup(style_call(value))
 
         return out
 
@@ -760,7 +764,7 @@ class Container(Widget):
             """Get a border line"""
 
             offset = real_length(left + right)
-            return optimize_ansi(left + char * (self.width - offset) + right)
+            return left + char * (self.width - offset) + right
 
         # Set up lines list
         lines: list[str] = []

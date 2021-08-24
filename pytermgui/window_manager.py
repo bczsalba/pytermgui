@@ -50,7 +50,7 @@ from .widgets import (
 )
 
 from .input import getch, keys
-from .parser import define_tag, ansi
+from .parser import markup
 from .exceptions import LineLengthError
 from .helpers import real_length, strip_ansi
 from .ansi_interface import terminal, clear, MouseAction
@@ -295,7 +295,7 @@ class WindowManager(Container):
     which can return True (default) to break input loop.
     """
 
-    styles = {"blurred": lambda _, item: ansi("[240]" + strip_ansi(item))}
+    styles = {"blurred": lambda _, item: markup.parse("[240]" + strip_ansi(item))}
 
     def __init__(self, *windows: Window) -> None:
         """Initialize object"""
@@ -305,8 +305,8 @@ class WindowManager(Container):
         self._windows: list[Window] = []
         self._mouse_listener: Optional[Window] = None
 
-        define_tag("wm-title", "210 bold")
-        define_tag("wm-section", "157")
+        markup.alias("wm-title", "210 bold")
+        markup.alias("wm-section", "157")
 
         for window in windows:
             self.add(window)

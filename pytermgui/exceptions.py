@@ -7,7 +7,7 @@ author: bczsalba
 This module stores the custom Exception-s used in this module.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 __all__ = ["WidthExceededError", "LineLengthError", "MarkupSyntaxError"]
 
@@ -21,26 +21,43 @@ class LineLengthError(Exception):
 
 
 @dataclass
-class MarkupSyntaxError(Exception):
+class ParserSyntaxError(Exception):
     """Raised when parsed markup contains an error"""
 
     tag: str
     cause: str
     context: str
+    _delimiters: tuple[str, str] = field(init=False)
 
     @property
     def message(self) -> str:
         """Create message from tag, context and cause"""
 
         escaped_context = ascii(self.context).strip("'")
-        return f'Tag "[{self.tag}]" in string "{escaped_context}" {self.cause}.'
+        start, end = self._delimiters
+        return (
+            f'Tag "{start}{self.tag}{end}" in string "{escaped_context}" {self.cause}.'
+        )
 
     def escape_message(self) -> str:
         """Return message with markup tags escaped."""
 
-        return self.message.replace("[", r"\[")
+        char = self._delimiters[0]
+        return self.message.replace(char, "\\" + char)
 
     def __str__(self) -> str:
         """Show message"""
 
         return self.message
+
+
+class MarkupSyntaxError(ParserSyntaxError):
+    """Raised when parsed ANSI text contains an error"""
+
+    _delimiters = ("[", "]")
+
+
+class AnsiSyntaxError(ParserSyntaxError):
+    """Raised when parsed ANSI text contains an error"""
+
+    _delimiters = ("\x1b[", "m")

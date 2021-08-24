@@ -20,7 +20,7 @@ from typing import Optional, Any, Callable
 from .styles import StyleType, CharType, MarkupFormatter
 from .base import Widget, MouseCallback
 
-from ..parser import ansi
+from ..parser import markup
 from ..helpers import real_length
 
 __all__ = ["Button", "Checkbox", "Toggle"]
@@ -64,7 +64,7 @@ class Button(Widget):
         assert isinstance(delimiters, list) and len(delimiters) == 2
         left, right = delimiters
 
-        word = ansi(left + self.label + right, silence_exception=True)
+        word = markup.parse(left + self.label + right)
         if self.selected_index is None:
             word = label_style(word)
         else:

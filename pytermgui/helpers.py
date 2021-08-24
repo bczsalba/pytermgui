@@ -8,7 +8,7 @@ This module provides methods and functions that can be imported in other files.
 """
 
 from typing import Iterator
-from .parser import tokenize_ansi, TokenAttribute, RE_ANSI, RE_MARKUP
+from .parser import markup, TokenType, RE_ANSI, RE_MARKUP
 from .ansi_interface import reset
 
 __all__ = ["strip_ansi", "strip_markup", "real_length", "get_sequences", "break_line"]
@@ -36,16 +36,16 @@ def get_sequences(text: str) -> str:
     """Get sequences from a string, optimized"""
 
     sequences = ""
-    for token in tokenize_ansi(text):
-        if token.code is not None:
+    for token in markup.tokenize_ansi(text):
+        if token.sequence is not None:
             # remove sequence when its unsetter is encountered
-            if token.attribute is TokenAttribute.CLEAR:
-                setter_code = token.get_setter()
+            if token.ttype is TokenType.UNSETTER:
+                setter_code = token.sequence
 
                 # the token unsets a color, so we add
                 # the unsetter sequence as-is
                 if setter_code is None:
-                    sequences += token.to_sequence()
+                    sequences += setter_code
                     continue
 
                 setter = "\x1b[" + setter_code + "m"
@@ -54,7 +54,7 @@ def get_sequences(text: str) -> str:
 
                 continue
 
-            sequences += token.to_sequence()
+            sequences += token.sequence
 
     return sequences
 

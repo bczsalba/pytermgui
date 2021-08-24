@@ -21,7 +21,7 @@ from typing import Optional, Any
 from inspect import signature, getdoc, isclass, ismodule, Signature
 
 from .input import getch
-from .parser import ansi
+from .parser import markup
 
 from .widgets.base import Widget, Container, Label
 from .context_managers import alt_buffer
@@ -127,7 +127,7 @@ def inspect(
     print("Inspection complete!")
     if is_interactive():
         print(
-            ansi(
+            markup.parse(
                 "\n[210 bold]Note: [/]"
                 + "The Python interactive shell doesn't support hiding input characters,"
                 + " so the inspect() experience is not ideal.\n"

@@ -18,24 +18,21 @@ from argparse import ArgumentParser, Namespace
 
 from . import (
     MarkupSyntaxError,
-    prettify_markup,
+    # prettify_markup,
     MarkupFormatter,
     WindowManager,
     real_length,
-    define_tag,
     get_widget,
     InputField,
     Container,
     Splitter,
+    markup,
     Window,
     Button,
     Label,
     boxes,
     keys,
-    ansi,
 )
-
-from .parser import NAMES as TOKENS
 
 
 def _get_key_name(key: str) -> str:
@@ -190,7 +187,7 @@ class MarkupApplication(Application):
         """Get all tokens form the parser module"""
 
         tokens: list[str] = []
-        for token in TOKENS:
+        for token in markup.tags:
             tokens.append(Label(f"[{token}]{token}", parent_align=0))
 
         return tokens
@@ -200,7 +197,7 @@ class MarkupApplication(Application):
         """Update output value if field markup is valid"""
 
         try:
-            ansi(field.value)
+            markup.parse(field.value)
             output.value = field.value
         except MarkupSyntaxError as error:
             output.value = "[210 bold]SyntaxError:[/] " + error.escape_message()
@@ -210,8 +207,10 @@ class MarkupApplication(Application):
         """Avoid SyntaxError with `prettify_markup`"""
 
         try:
+            # TODO: reintroduce prettify_markup
             # This method *always* returns str, but Mypy doesn't see that.
-            return str(prettify_markup(item))
+            # return str(prettify_markup(item))
+            return item
 
         except MarkupSyntaxError:
             return item
@@ -225,15 +224,17 @@ class MarkupApplication(Application):
 
             return "#%02X%02X%02X" % tuple(randint(0, 255) for _ in range(3))
 
-        define_tag("demo-255", str(randint(0, 255)))
-        define_tag("demo-hex", _random_hex())
-        define_tag("demo-rgb", _random_hex())
+        markup.alias("demo-255", str(randint(0, 255)))
+        markup.alias("demo-hex", _random_hex())
+        markup.alias("demo-rgb", _random_hex())
 
     def finish(self, window: Window) -> None:
         """Dump output markup"""
 
         window.manager.stop()
-        print(prettify_markup(window.output_label.value))
+
+        # print(prettify_markup(window.output_label.value))
+        print(window.output_label.value)
 
     def construct_window(self) -> Window:
         """Construct an application window"""
@@ -260,6 +261,16 @@ class MarkupApplication(Application):
         for token, color in zip_longest(tokens, colors, fillvalue=""):
             guide += {token: color}
 
+        custom_tags = Container(forced_width=56)
+        for tag, _ in sorted(
+            markup.user_tags.items(), key=lambda item: len(item[0] + item[1])
+        ):
+            custom_tags += Label(
+                f"[{tag}]{tag}[/fg /bg /]: [!expand({tag})]{tag}",
+                parent_align=0,
+            )
+        guide += custom_tags
+
         window = (
             self._get_base_window(resizable=True)
             + Container(Label(parent_align=0, id="output_label"), forced_width=60)
@@ -281,6 +292,15 @@ class MarkupApplication(Application):
             keys.CTRL_R,
             self._define_colors,
             description="Randomize colors in the guide",
+        )
+
+        window.bind(
+            keys.CTRL_P,
+            lambda *_: {
+                open("dump", "w").write("\n".join(window.get_lines())),
+                sys.exit(),
+            },
+            description="Dump window lines and exit",
         )
 
         if self.standalone:
@@ -336,7 +356,7 @@ def run_wm(args: Namespace) -> None:
     with WindowManager() as manager:
 
         # Define styles
-        define_tag("wm-title", "210")
+        markup.alias("wm-title", "210")
         boxes.DOUBLE_TOP.set_chars_of(Window)
         boxes.SINGLE.set_chars_of(Container)
 
