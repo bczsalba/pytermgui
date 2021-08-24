@@ -1,114 +1,117 @@
-r"""
+"""
 pytermgui.parser
 ----------------
 author: bczsalba
 
 
-This module provides a tokenizer for both ANSI and markup type strings,
-and some higher level methods for converting between the two.
+This module provides all the logic for the PTG Markup language,
+as well as all the tools it uses internally.
 
-Major credit goes to https://github.com/willmcgugan/rich/blob/master/ansi.py,
-the code here started out as a refactored version of his.
+Markup Syntax
+=============
 
+Basics
+------
+- Everything inside [square_brackets] is considered a tag
+- Everything outside is considered a PLAIN text
 
-The tags available are:
-    - /                                         (reset: 0)
-    - bold                                      (1)
-    - dim                                       (2)
-    - italic                                    (3)
-    - underline                                 (4)
-    - blink                                     (5)
-    - blink2                                    (6)
-    - inverse                                   (7)
-    - invisible                                 (8)
-    - strikethrough                             (9)
+Tag types
+---------
+- Style tags use the english name of the style (e.g. `[bold]`)
 
-    - removers of all of the above              ([ /{tag} ])
+- Color tags can be of three types:
+    + 8BIT: `[141]`
+    + 24BIT/RGB: `[22;3;243]`
+    + 24BIT/HEX: `[#2203FA]`
+    + 24BIT colors are parsed as the same token type.
 
-    - black                                     color code 0
-    - red                                       color code 1
-    - green                                     color code 2
-    - yellow                                    color code 3
-    - blue                                      color code 4
-    - magenta                                   color code 5
-    - cyan                                      color code 6
-    - white                                     color code 7
+- Color tags set background when using the @ prefix: `[@141]`
 
-    - 4-bit colors                              (0-16)
-    - 8-bit colors                              (16-256)
-    - 24-bit colors                             (RGB: [rrr;bbb;ggg], HEX: [#rr;bb;gg])
-    - /fg                                       unset foreground color (go to default)
-    - /bg                                       unset background color (go to default)
+- Macros are denoted by `!` prefix, and optional `(argument:list)` suffix
 
-    - background versions of all of the above   ([ @{color} ])
+Macros
+------
 
+- Macros in markup convert from `[!name(arg1:arg2)]` to `name(arg1, arg2, text)`
+- The next PLAIN token is always passed to the macro as its last argument
+- The argument list is optional if a macro doesn't take any additional arguments
+- A macro can be defined by using `MarkupLanguage.define(name, callable)`
 
+Aliases
+-------
 
-Notes on syntax:
-    - Tags are escapable by putting a "\" before the opening square bracket, such as:
-        "[bold italic] < these are parsed \[but this is not]"
+- Tag aliases can be defined using `MarkupLanguage.alias(src, dst)`
+- These are expanded in parse-time, and are recognized as regular style tokens
+- Whenever an alias is defined, any cached markup containing it is removed
 
-    - The tokenizer only yields tokens if it is different from the previous one,
-        so if your markup is `[bold bold bold]hello` it will only yield 1 bold token.
+Caching
+-------
 
-    - The tokenizer also implicitly adds a reset tag at the end of all strings it's given,
-        if it doesn't already end in one. This is toggleable using the `ensure_reset` flag.
+- This module provides (opt-out) caching for parsed markup
+- After parsing a previously unknown string, it is stored in `MarkupLanguage._cache`
+- Next time the parser sees this markup string, it will restore the cached value
+- Alias definitions delete affected cache entries
 
+Instancing
+----------
 
-Example syntax:
-    >>> from pytermgui import ansi, markup
+- `pytermgui` provides the `markup` name, which acts as the module-level language instance
+- You can create your own instance using the `MarkupLanguage` name
+- Each instance has its own tags, user tags & macros
+- You might want a system-level and user-level instance when users can freely input markup
 
-    >>> text = ansi(
-    ... "[@141 60 bold italic] Hello "
-    ... + "[/italic underline inverse] There! "
-    ... )
-    '\x1b[48;5;141m\x1b[38;5;60m\x1b[1m\x1b[3m Hello \x1b[23m\x1b[4m\x1b[7m There! \x1b[0m'
+Usage
+-----
 
-    >>> markup(text)
-    '[@141 60 bold italic]Hello[/italic underline inverse]There![/]''
+- `MarkupLanguage.parse()`: Parse markup text into ANSI string
+- `MarkupLanguage.get_markup()`: Get markup string from ANSI text
+- `MarkupLanguage.tokenize_ansi()`, `MarkupLanguage.tokenize_markup()`: Tokenize text
+- `MarkupLanguage.define()`: Define an instance-local macro
+- `MarkupLanguage.alias()`: Define an instance-local alias
+
 """
-
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from random import shuffle
 from enum import Enum, auto as _auto
-from typing import Optional, Iterator, Callable
-
-from .exceptions import MarkupSyntaxError
-from .ansi_interface import foreground, reset, bold
+from dataclasses import dataclass
+from argparse import ArgumentParser
+from typing import Iterator, Callable
+from .exceptions import MarkupSyntaxError, AnsiSyntaxError
 
 
 __all__ = [
-    "define_tag",
-    "define_macro",
-    "escape_ansi",
-    "tokenize_ansi",
-    "tokenize_markup",
-    "ansi",
+    "MacroCallable",
+    "MacroCall",
     "markup",
-    "prettify_markup",
-    "optimize_ansi",
 ]
 
-RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
-RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/].*?)\])")
+MacroCallable = Callable[..., str]
+MacroCall = tuple[MacroCallable, list[str]]
 
+RE_ANSI = re.compile(r"(?:\x1b)\[([\d;]+)?.")
+RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w:]+)\))?")
+RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/\(,\)].*?)\])")
 
-NAMES = [
-    "/",
-    "bold",
-    "dim",
-    "italic",
-    "underline",
-    "blink",
-    "blink2",
-    "inverse",
-    "invisible",
-    "strikethrough",
-]
+RE_256 = re.compile(r"^([\d]{1,3})$")
+RE_HEX = re.compile(r"#([0-9a-fA-F]{6})")
+RE_RGB = re.compile(r"(\d{1,3};\d{1,3};\d{1,3})")
 
-UNSET_MAP = {
+STYLE_MAP = {
+    "bold": "1",
+    "dim": "2",
+    "italic": "3",
+    "underline": "4",
+    "blink": "5",
+    "blink2": "6",
+    "inverse": "7",
+    "invisible": "8",
+    "strikethrough": "9",
+}
+
+UNSETTER_MAP = {
+    "/": "0",
     "/bold": "22",
     "/dim": "22",
     "/italic": "23",
@@ -123,593 +126,578 @@ UNSET_MAP = {
 }
 
 
-MACRO_MAP = {}
+def _macro_align(width: str, alignment: str, content: str) -> str:
+    """Align text using fstring magic"""
 
-CUSTOM_MAP: dict[str, str] = {}
-MacroCallable = Callable[[str], str]
-
-
-def define_tag(name: str, value: str) -> None:
-    """Define a custom markup tag to represent given value, supporting unsetters."""
-
-    def strip_sequence(sequence: str) -> str:
-        """Strip start & end chars of sequence to format it as a code"""
-
-        sequence = sequence.lstrip("\x1b[")
-        sequence = sequence.rstrip("m")
-
-        return sequence
-
-    if name.startswith("!"):
-        raise ValueError('Only macro tags can always start with "!".')
-
-    setter = ""
-    unsetter = ""
-
-    # Try to link to existing tag
-    if value in CUSTOM_MAP:
-        UNSET_MAP["/" + name] = value
-        CUSTOM_MAP[name] = value
-        return
-
-    for token in tokenize_markup("[" + value + "]"):
-        if token.plain is not None:
-            continue
-
-        setter += token.to_sequence()
-        unsetter += Token(0, 0, code=token.get_unsetter()).to_sequence()
-
-    UNSET_MAP["/" + name] = strip_sequence(unsetter)
-    CUSTOM_MAP[name] = strip_sequence(setter)
+    aligner = "<" if alignment == "left" else (">" if alignment == "right" else "^")
+    return f"{content:{aligner}{width}}"
 
 
-def define_macro(name: str, value: MacroCallable) -> None:
-    """Define custom markup macro"""
+def _macro_expand(lang: MarkupLanguage, tag: str) -> str:
+    """Expand tag alias"""
 
-    if not name.startswith("!"):
-        raise ValueError('Macro tags should always start with "!".')
+    if not tag in lang.user_tags:
+        return tag
 
-    MACRO_MAP[name] = value
-    UNSET_MAP["/" + name] = "<MACRO>"
-
-
-def escape_ansi(text: str) -> str:
-    """Escape ANSI sequence"""
-
-    return text.encode("unicode_escape").decode("utf-8")
+    return lang.get_markup("\x1b[" + lang.user_tags[tag] + "m ")[:-1]
 
 
-def _handle_color(tag: str) -> Optional[tuple[str, bool]]:
-    """Handle color fore/background, hex conversions"""
+def _macro_strip_fg(item: str) -> str:
+    """Strip foreground color from item"""
 
-    # sort out non-colors
-    if not all(char.isdigit() or char.lower() in "#;@abcdef" for char in tag):
-        return None
-
-    # convert into background color
-    if tag.startswith("@"):
-        pretext = "48;"
-        tag = tag[1:]
-    else:
-        pretext = "38;"
-
-    hexcolor = tag.startswith("#")
-
-    # 8-bit (256) and 24-bit (RGB) colors use different id numbers
-    color_pre = "5;" if tag.count(";") < 2 and not hexcolor else "2;"
-
-    # hex colors are essentially RGB in a different format
-    if hexcolor:
-        try:
-            tag = ";".join(str(val) for val in foreground.translate_hex(tag))
-        except ValueError as error:
-            raise MarkupSyntaxError(
-                tag=tag, context=tag, cause="could not be converted to HEX"
-            ) from error
-
-    elif not hexcolor and not all(char.isdigit() or char == ";" for char in tag):
-        return None
-
-    return pretext + color_pre + tag, pretext == "48;"
+    return markup.parse("[/fg]" + item)
 
 
-def _handle_named_color(tag: str) -> Optional[tuple[str, int]]:
-    """Check if name is in foreground.names and return its value if possible"""
+def _macro_strip_bg(item: str) -> str:
+    """Strip foreground color from item"""
 
-    if not tag.lstrip("@") in foreground.names:
-        return None
-
-    if tag.startswith("@"):
-        tag = tag[1:]
-        background = "@"
-
-    else:
-        background = ""
-
-    return _handle_color(background + str(foreground.names[tag]))
+    return markup.parse("[/bg]" + item)
 
 
-class TokenAttribute(Enum):
-    """Special attribute for a Token"""
+def _macro_shuffle(item: str) -> str:
+    """Shuffle a string using shuffle.shuffle on its list cast"""
 
-    CLEAR = _auto()
-    COLOR = _auto()
+    shuffled = list(item)
+    shuffle(shuffled)
+
+    return "".join(shuffled)
+
+
+class TokenType(Enum):
+    """An Enum to store various token types"""
+
+    PLAIN = _auto()
     STYLE = _auto()
     MACRO = _auto()
     ESCAPED = _auto()
-    MACRO_CLEAR = _auto()
-    BACKGROUND_COLOR = _auto()
+    FG_8BIT = _auto()
+    BG_8BIT = _auto()
+    FG_24BIT = _auto()
+    BG_24BIT = _auto()
+    UNSETTER = _auto()
 
 
 @dataclass
 class Token:
-    """Result of ansi tokenized string."""
+    """A class holding information on a singular Markup/ANSI unit"""
 
-    start: int
-    end: int
-    plain: Optional[str] = None
-    code: Optional[str] = None
-    attribute: Optional[TokenAttribute] = None
-    macro_value: Optional[MacroCallable] = None
+    ttype: TokenType
+    data: str | MacroCall
+    name: str = "<unnamed-token>"
 
-    def to_name(self) -> str:
-        """Convert token to named attribute for rich text"""
+    def __post_init__(self) -> None:
+        """Set name to data if not provided"""
 
-        if self.plain is not None:
-            return self.plain
+        if self.name == "<unnamed-token>":
+            assert isinstance(self.data, str)
+            self.name = self.data
 
-        # only one of [self.code, self.plain] can be None
-        assert self.code is not None
+    def __eq__(self, other: object) -> bool:
+        """Check equality with other object"""
 
-        if self.code is not None and self.code.isdigit():
-            if self.code in UNSET_MAP.values():
-                for key, value in UNSET_MAP.items():
-                    if value == self.code:
-                        return key
+        if other is None:
+            return False
 
-            index = int(self.code)
-            return NAMES[index]
-
-        out = ""
-        numbers = self.code.split(";")
-
-        if numbers[0] == "48":
-            out += "@"
-
-        # This case should be pre-filtered by the tokenizer, so it should never trigger.
-        if len(numbers) < 3 or not all(char.isdigit() for char in numbers):
-            raise RuntimeError(
-                f'Could not convert non-digit "{numbers}"'
-                + ' in malformed ANSI sequence "{ascii(self.code)}".'
+        if not isinstance(other, Token):
+            raise NotImplementedError(
+                "Cannot check for equality between Token and non-Token of type"
+                + f" {type(other)}."
             )
 
-        simple = int(numbers[2])
-        if len(numbers) == 3 and simple in foreground.names.values():
-            for name, fore_value in foreground.names.items():
-                if fore_value == simple:
-                    return out + name
+        return other.data == self.data
 
-        out += ";".join(numbers[2:])
+    @property
+    def sequence(self) -> str | None:
+        """Get ANSI sequence for token"""
+
+        if self.ttype in [TokenType.PLAIN, TokenType.MACRO, TokenType.ESCAPED]:
+            return None
+
+        if self.ttype in [TokenType.STYLE, TokenType.UNSETTER]:
+            assert isinstance(self.data, str)
+            return "\033[" + self.data + "m"
+
+        # Handle colors
+        assert isinstance(self.data, str)
+
+        if self.ttype.name.startswith("BG"):
+            template = "\x1b[48;{c_id};" + self.data + "m"
+        else:
+            template = "\x1b[38;{c_id};" + self.data + "m"
+
+        if self.ttype in [TokenType.FG_8BIT, TokenType.BG_8BIT]:
+            return template.format(c_id="5")
+
+        return template.format(c_id="2")
+
+
+class MarkupLanguage:
+    """A class representing an instance of a Markup Language.
+
+    It holds data on default & custom tags and macros.
+
+    It offers tokenizer methods for both `markup` and `ANSI` text,
+    which can then be used to convert between the two formats.
+
+    You can define macros using
+        `MarkupLanguage.define(name: str, macro: MacroCallable)`.
+    And alias a set of tags using
+        `MarkupLanguage.alias(src: str, dst: str)`.
+
+    Parsing `markup` into `ANSI` text is done using the `parse()` method,
+    where `optimizer_level` sets the amount of optimization that should be
+    done on the result string.
+
+    Getting `markup` from `ANSI` is done using the `get_markup()` method. Note
+    that this method is "lossy": it does not preserve information about macros,
+    and turns aliases into their underlying values.
+    """
+
+    def __init__(self, default_macros: bool = True) -> None:
+        """Initialize object"""
+
+        self.tags: dict[str, str] = STYLE_MAP.copy()
+        self._cache: dict[str, str] = {}
+        self.macros: dict[str, MacroCallable] = {}
+        self.user_tags: dict[str, str] = {}
+        self.unsetters: dict[str, str] = UNSETTER_MAP.copy()
+
+        self.should_cache: bool = True
+
+        if default_macros:
+            self.define("!align", _macro_align)
+            self.define("!markup", self.get_markup)
+            self.define("!shuffle", _macro_shuffle)
+            self.define("!strip_bg", _macro_strip_bg)
+            self.define("!strip_fg", _macro_strip_fg)
+            self.define("!upper", lambda item: str(item.upper()))
+            self.define("!lower", lambda item: str(item.lower()))
+            self.define("!title", lambda item: str(item.title()))
+            self.define("!capitalize", lambda item: str(item.capitalize()))
+            self.define("!expand", lambda tag: _macro_expand(self, tag))
+
+    @staticmethod
+    def _get_color_token(tag: str) -> Token | None:
+        """Try to get color token from a tag"""
+
+        def _hex_to_rgb(color: str) -> str:
+            """Get rgb color from hex"""
+
+            return ";".join(str(int(color[i : i + 2], 16)) for i in (0, 2, 4))
+
+        background = tag.startswith("@")
+        if tag.startswith("@"):
+            tag = tag[1:]
+
+        data_256 = RE_256.match(tag)
+        if data_256 is not None:
+            return Token(
+                name=tag,
+                ttype=(TokenType.BG_8BIT if background else TokenType.FG_8BIT),
+                data=tag,
+            )
+
+        data_hex = RE_HEX.match(tag)
+        if data_hex is not None:
+            return Token(
+                name=tag,
+                ttype=(TokenType.BG_24BIT if background else TokenType.FG_24BIT),
+                data=_hex_to_rgb(tag[1:]),
+            )
+
+        data_rgb = RE_RGB.match(tag)
+        if data_rgb is not None:
+            return Token(
+                name=tag,
+                ttype=(TokenType.BG_24BIT if background else TokenType.FG_24BIT),
+                data=tag,
+            )
+
+        return None
+
+    def tokenize_markup(self, markup_text: str) -> Iterator[Token]:
+        """Tokenize markup text, return an Iterator to save memory"""
+
+        end = 0
+        start = 0
+        cursor = 0
+        for match in RE_MARKUP.finditer(markup_text):
+            full, escapes, tag_text = match.groups()
+            start, end = match.span()
+
+            # Add plain text between last and current match
+            if start > cursor:
+                yield Token(
+                    ttype=TokenType.PLAIN,
+                    data=markup_text[cursor:start],
+                )
+
+            if not escapes == "" and len(escapes) % 2 == 1:
+                cursor = end
+                yield Token(
+                    ttype=TokenType.ESCAPED,
+                    data=full[len(escapes) :],
+                )
+                continue
+
+            for tag in tag_text.split():
+                if tag in self.unsetters:
+                    yield Token(
+                        name=tag, ttype=TokenType.UNSETTER, data=self.unsetters[tag]
+                    )
+
+                elif tag in self.user_tags:
+                    yield Token(
+                        name=tag,
+                        ttype=TokenType.STYLE,
+                        data=self.user_tags[tag],
+                    )
+
+                elif tag in self.tags:
+                    yield Token(
+                        name=tag,
+                        ttype=TokenType.STYLE,
+                        data=self.tags[tag],
+                    )
+
+                # Try to find a color token
+                else:
+                    color_token = self._get_color_token(tag)
+                    if color_token is not None:
+                        yield color_token
+                        continue
+
+                    macro_match = RE_MACRO.match(tag)
+                    if macro_match is not None:
+                        name, args = macro_match.groups()
+                        macro_args = () if args is None else args.split(":")
+
+                        if not name in self.macros:
+                            raise MarkupSyntaxError(
+                                tag=tag,
+                                cause="is not a defined macro",
+                                context=markup_text,
+                            )
+
+                        yield Token(
+                            name=tag,
+                            ttype=TokenType.MACRO,
+                            data=(self.macros[name], macro_args),
+                        )
+                        continue
+
+                    raise MarkupSyntaxError(
+                        tag=tag,
+                        cause="not defined",
+                        context=markup_text,
+                    )
+
+            cursor = end
+
+        # Add remaining text as plain
+        if len(markup_text) > cursor:
+            yield Token(ttype=TokenType.PLAIN, data=markup_text[cursor:])
+
+    def tokenize_ansi(self, ansi: str) -> Iterator[Token]:
+        """Tokenize ansi text, return an Iterator to save memory"""
+
+        end = 0
+        start = 0
+        cursor = 0
+
+        for match in RE_ANSI.finditer(ansi):
+            code = match.groups()[0]
+            start, end = match.span()
+            parts = code.split(";")
+
+            if start > cursor:
+                plain = ansi[cursor:start].replace("[", r"\[")
+
+                yield Token(
+                    name=plain,
+                    ttype=TokenType.PLAIN,
+                    data=plain,
+                )
+
+            # Styles & unsetters
+            if len(parts) == 1:
+                for name, code in self.unsetters.items():
+                    if code == parts[0]:
+                        ttype = TokenType.UNSETTER
+                        break
+                else:
+                    for name, code in self.tags.items():
+                        if code == parts[0]:
+                            ttype = TokenType.STYLE
+                            break
+                    else:
+                        raise AnsiSyntaxError(
+                            tag=parts[0],
+                            cause="not recognized",
+                            context=ansi,
+                        )
+
+                yield Token(
+                    name=name,
+                    ttype=ttype,
+                    data=code,
+                )
+
+            # Colors
+            if len(parts) >= 3:
+                name = ";".join(parts[2:])
+
+                types = [TokenType.FG_8BIT, TokenType.FG_24BIT]
+
+                if parts[0] == "48":
+                    name = "@" + name
+                    types = [TokenType.BG_8BIT, TokenType.BG_24BIT]
+
+                ttype = types[0] if parts[1] == "5" else types[1]
+
+                yield Token(
+                    ttype=ttype,
+                    data=name,
+                )
+
+            cursor = end
+
+        if cursor < len(ansi):
+            plain = ansi[cursor:].replace("[", r"\[")
+
+            yield Token(
+                ttype=TokenType.PLAIN,
+                data=plain,
+            )
+
+    def define(self, name: str, method: MacroCallable) -> None:
+        """Define a Macro tag that executes `method`
+
+        The `!` prefix is added to the name if not there already."""
+
+        if not name.startswith("!"):
+            name = "!" + name
+
+        self.macros[name] = method
+        self.unsetters["/" + name] = "<macro>"
+
+    def alias(self, name: str, value: str) -> None:
+        """Alias a markup tag to stand for some value, generate unsetter for it"""
+
+        def _get_unsetter(token: Token) -> str | None:
+            """Get unsetter for a token"""
+
+            if token.ttype is TokenType.PLAIN:
+                return None
+
+            if token.ttype is TokenType.UNSETTER:
+                return self.unsetters[token.name]
+
+            if token.ttype.name.startswith("FG"):
+                return self.unsetters["/fg"]
+
+            if token.ttype.name.startswith("BG"):
+                return self.unsetters["/bg"]
+
+            name = "/" + token.name
+            if not name in self.unsetters:
+                raise KeyError(f"Could not find unsetter for token {token}.")
+
+            return self.unsetters[name]
+
+        if name.startswith("!"):
+            raise ValueError('Only macro tags can always start with "!".')
+
+        setter = ""
+        unsetter = ""
+
+        # Try to link to existing tag
+        if value in self.user_tags:
+            self.unsetters["/" + name] = value
+            self.user_tags[name] = value
+            return
+
+        for token in self.tokenize_markup("[" + value + "]"):
+            if token.ttype is TokenType.PLAIN:
+                continue
+
+            assert token.sequence is not None
+            setter += token.sequence
+
+            t_unsetter = _get_unsetter(token)
+            assert t_unsetter is not None
+            unsetter += "\x1b[" + t_unsetter + "m"
+
+        self.unsetters["/" + name] = unsetter.lstrip("\x1b[").rstrip("m")
+        self.user_tags[name] = setter.lstrip("\x1b[").rstrip("m")
+
+        marked: list[str] = []
+        for item in self._cache:
+            if name in item:
+                marked.append(item)
+
+        for item in marked:
+            del self._cache[item]
+
+    def parse(self, markup_text: str) -> str:
+        """Parse markup"""
+
+        # TODO: Add more optimizations:
+        #       - keep track of currently-active tokens
+        #       - clean up widget dump
+
+        applied_macros: list[tuple[str, MacroCall]] = []
+        previous_token: Token | None = None
+        previous_sequence = ""
+        sequence = ""
+        out = ""
+
+        def _apply_macros(text: str) -> str:
+            """Apply current macros to text"""
+
+            for _, (method, args) in applied_macros:
+                text = method(*args, text)
+
+            return text
+
+        if self.should_cache and markup_text in self._cache:
+            return self._cache[markup_text]
+
+        for token in self.tokenize_markup(markup_text):
+            if sequence != "" and previous_token == token:
+                continue
+
+            if token.ttype == TokenType.UNSETTER and token.data == "0":
+                out += "\033[0m"
+                sequence = ""
+                continue
+
+            previous_token = token
+
+            if token.ttype is TokenType.MACRO:
+                assert isinstance(token.data, tuple)
+
+                applied_macros.append((token.name, token.data))
+                continue
+
+            if token.data == "<macro>" and token.ttype is TokenType.UNSETTER:
+                for call_str, data in applied_macros:
+                    macro_match = RE_MACRO.match(call_str)
+                    assert macro_match is not None
+
+                    macro_name = macro_match.groups()[0]
+
+                    if "/" + macro_name == token.name:
+                        applied_macros.remove((call_str, data))
+
+                continue
+
+            if token.sequence is None:
+                if previous_sequence == sequence:
+                    out += _apply_macros(token.name)
+                    continue
+
+                previous_sequence = sequence
+
+                out += sequence + _apply_macros(token.name)
+                sequence = ""
+
+            else:
+                sequence += token.sequence
+
+        if sequence + previous_sequence != "":
+            out += "\x1b[0m"
+
+        self._cache[markup_text] = out
+        return out
+
+    def get_markup(self, ansi: str) -> str:
+        """Get markup from ANSI text"""
+
+        current_tags: list[str] = []
+        out = ""
+        for token in self.tokenize_ansi(ansi):
+            if token.ttype is TokenType.PLAIN:
+                if len(current_tags) != 0:
+                    out += "[" + " ".join(current_tags) + "]"
+
+                assert isinstance(token.data, str)
+                out += token.data
+                current_tags = []
+                continue
+
+            current_tags.append(token.name)
 
         return out
 
-    def to_sequence(self) -> str:
-        """Convert token to an ANSI sequence"""
 
-        if self.code is None:
-            # only one of [self.code, self.plain] can be None
-            assert self.plain is not None
-            return self.plain
+def main() -> None:
+    """Main method"""
 
-        return "\x1b[" + self.code + "m"
+    parser = ArgumentParser()
 
-    def get_unsetter(self) -> Optional[str]:
-        """Get unset mapping for the current sequence"""
+    markup_group = parser.add_argument_group("Markup->ANSI")
+    markup_group.add_argument(
+        "-p", "--parse", metavar=("TXT"), help="parse a markup text"
+    )
+    markup_group.add_argument(
+        "-e", "--escape", help="escape parsed markup", action="store_true"
+    )
+    # markup_group.add_argument(
+    # "-o",
+    # "--optimize",
+    # help="set optimization level for markup parsing",
+    # action="count",
+    # default=0,
+    # )
 
-        if self.plain is not None:
-            return None
+    markup_group.add_argument(
+        "--alias",
+        action="append",
+        help="alias src=dst",
+    )
 
-        if self.attribute is TokenAttribute.CLEAR:
-            return UNSET_MAP[self.to_name()]
+    ansi_group = parser.add_argument_group("ANSI->Markup")
+    ansi_group.add_argument(
+        "-m", "--markup", metavar=("TXT"), help="get markup from ANSI text"
+    )
+    ansi_group.add_argument(
+        "-s",
+        "--show-inverse",
+        action="store_true",
+        help="show result of parsing result markup",
+    )
 
-        if self.attribute is TokenAttribute.COLOR:
-            return UNSET_MAP["/fg"]
+    args = parser.parse_args()
 
-        if self.attribute is TokenAttribute.BACKGROUND_COLOR:
-            return UNSET_MAP["/bg"]
+    lang = MarkupLanguage()
 
-        name = "/" + self.to_name()
+    if args.markup:
+        markup_text = lang.get_markup(args.markup)
+        print(markup_text, end="")
 
-        if not name in UNSET_MAP:
-            raise KeyError(f"Could not find setter for token {self}.")
-
-        return UNSET_MAP[name]
-
-    def get_setter(self) -> Optional[str]:
-        """Get set mapping for the current (unset) sequence"""
-
-        if self.plain is not None or self.attribute is not TokenAttribute.CLEAR:
-            return None
-
-        if self.code == "0":
-            return None
-
-        name = self.to_name()
-        if name in ["/fg", "/bg"]:
-            return None
-
-        name = name[1:]
-
-        if not name in NAMES:
-            raise ValueError(f"Could not find setter for token {self}.")
-
-        return str(NAMES.index(name))
-
-
-def tokenize_ansi(text: str) -> Iterator[Token]:
-    """Tokenize text containing ANSI sequences
-    Todo: add attributes to ansi tokens"""
-
-    position = start = end = 0
-    previous = None
-    attribute: Optional[TokenAttribute]
-
-    for match in RE_ANSI.finditer(text):
-        start, end = match.span(0)
-        sgr, _ = match.groups()
-
-        # add plain text between last and current sequence
-        if start > position:
-            token = Token(start, end, plain=text[position:start])
-            previous = token
-            yield token
-
-        if sgr.startswith("38;"):
-            attribute = TokenAttribute.COLOR
-
-        elif sgr.startswith("48;"):
-            attribute = TokenAttribute.BACKGROUND_COLOR
-
-        elif sgr == "0":
-            attribute = TokenAttribute.CLEAR
-
-        elif sgr.isnumeric() and int(sgr) in range(len(NAMES)):
-            attribute = TokenAttribute.STYLE
-
-        elif sgr in UNSET_MAP.values():
-            attribute = TokenAttribute.CLEAR
-
+        if args.show_inverse:
+            print("->", lang.parse(markup_text))
         else:
-            attribute = None
+            print()
 
-        token = Token(start, end, code=sgr, attribute=attribute)
+    if args.parse:
+        if args.alias:
+            for alias in args.alias:
+                src, dest = alias.split("=")
+                lang.alias(src, dest)
 
-        if previous is None or not previous.code == sgr:
-            previous = token
-            yield token
+        parsed = lang.parse(args.parse)
 
-        position = end
-
-    if position < len(text):
-        yield Token(start, end, plain=text[position:])
-
-
-def tokenize_markup(text: str, silence_exception: bool = False) -> Iterator[Token]:
-    """Tokenize markup text"""
-
-    position = 0
-    start = end = 0
-
-    for match in RE_MARKUP.finditer(text):
-        full, escapes, tag_text = match.groups()
-        start, end = match.span()
-
-        if start > position:
-            yield Token(start, end, plain=text[position:start])
-
-        if not escapes == "":
-            yield Token(
-                start, end, plain=full[len(escapes) :], attribute=TokenAttribute.ESCAPED
-            )
-            position = end
-
-            continue
-
-        for tag in tag_text.split():
-            if tag in NAMES:
-                yield Token(
-                    start,
-                    end,
-                    code=str(NAMES.index(tag)),
-                    attribute=(
-                        TokenAttribute.CLEAR if tag == "/" else TokenAttribute.STYLE
-                    ),
-                )
-
-            elif tag in MACRO_MAP:
-                yield Token(
-                    start,
-                    end,
-                    plain=tag,
-                    code="",
-                    macro_value=MACRO_MAP[tag],
-                    attribute=TokenAttribute.MACRO,
-                )
-
-            elif tag in UNSET_MAP and tag[1:] in MACRO_MAP:
-                yield Token(
-                    start,
-                    end,
-                    plain=tag,
-                    code="",
-                    macro_value=MACRO_MAP[tag[1:]],
-                    attribute=TokenAttribute.MACRO_CLEAR,
-                )
-
-            elif tag in UNSET_MAP:
-                yield Token(
-                    start, end, code=str(UNSET_MAP[tag]), attribute=TokenAttribute.CLEAR
-                )
-
-            elif tag in CUSTOM_MAP:
-                yield Token(
-                    start,
-                    end,
-                    code=CUSTOM_MAP[tag],
-                    attribute=TokenAttribute.STYLE,  # maybe this could be a special CUSTOM tag
-                )
-
-            else:
-                named_color_info = _handle_named_color(tag)
-                if named_color_info is not None:
-                    code, background = named_color_info
-                    yield Token(
-                        start,
-                        end,
-                        code=code,
-                        attribute=(
-                            TokenAttribute.BACKGROUND_COLOR
-                            if background
-                            else TokenAttribute.COLOR
-                        ),
-                    )
-                    continue
-
-                color_info = _handle_color(tag)
-                if color_info is not None:
-                    color, background = color_info
-                    yield Token(
-                        start,
-                        end,
-                        code=color,
-                        attribute=(
-                            TokenAttribute.BACKGROUND_COLOR
-                            if background
-                            else TokenAttribute.COLOR
-                        ),
-                    )
-                    continue
-
-                if not silence_exception:
-                    raise MarkupSyntaxError(
-                        tag=tag, context=text, cause="is not defined"
-                    )
-
-        position = end
-
-    if position < len(text):
-        yield Token(start, end, plain=text[position:])
-
-
-def ansi(
-    markup_text: str,
-    ensure_reset: bool = True,
-    ensure_optimized: bool = True,
-    silence_exception: bool = False,
-) -> str:
-    """Turn markup text into ANSI str"""
-
-    def _apply_macros(text: str, macros: list[MacroCallable]) -> str:
-        """Apply list of macros to string"""
-
-        for macro in macros:
-            text = macro(text)
-
-        return text
-
-    ansi_text = ""
-    macro_callables: list[MacroCallable] = []
-
-    for token in tokenize_markup(markup_text, silence_exception=silence_exception):
-        if token.attribute is TokenAttribute.MACRO:
-            assert token.macro_value is not None
-
-            macro_callables.append(token.macro_value)
-            continue
-
-        if token.attribute is TokenAttribute.MACRO_CLEAR:
-            assert token.macro_value is not None
-
-            # This raising a builtin exception is verbose enough
-            macro_callables.remove(token.macro_value)
-            continue
-
-        if token.plain is not None:
-            ansi_text += _apply_macros(token.plain, macro_callables)
+        if args.escape:
+            print(ascii(parsed))
         else:
-            ansi_text += token.to_sequence()
+            print(parsed)
 
-    if ensure_reset and not ansi_text.endswith(reset()):
-        ansi_text += reset()
-
-    if ensure_optimized:
-        return optimize_ansi(ansi_text, ensure_reset)
-
-    return ansi_text
+        return
 
 
-def markup(ansi_text: str, ensure_reset: bool = True) -> str:
-    """Turn ansi text into markup"""
-
-    markup_text = ""
-    in_attr = False
-    current_bracket: list[str] = []
-
-    if ensure_reset and not ansi_text.endswith(reset()):
-        ansi_text += reset()
-
-    for token in tokenize_ansi(ansi_text):
-        # start/add to attr bracket
-        if token.code is not None:
-            in_attr = True
-
-            if token.code == "0":
-                current_bracket = []
-                if len(markup_text) > 0:
-                    current_bracket.append("/")
-                continue
-
-            current_bracket.append(token.to_name())
-            continue
-
-        # close previous attr bracket
-        if in_attr and len(current_bracket) > 0:
-            markup_text += "[" + " ".join(current_bracket) + "]"
-            current_bracket = []
-
-        # add name with starting '[' escaped
-        markup_text += token.to_name().replace("[", "\\[", 1)
-
-    if len(current_bracket) > 0:
-        markup_text += "[" + " ".join(current_bracket) + "]"
-
-    return markup_text
-
-
-def prettify_markup(markup_text: str) -> str:
-    """Return syntax-highlighted markup"""
-
-    def _style_attributes(attributes: list[Token]) -> str:
-        """Style all attributes"""
-
-        styled = bold("[")
-        for i, item in enumerate(attributes):
-            if i > 0:
-                styled += " "
-
-            if item.attribute is TokenAttribute.CLEAR:
-                styled += foreground(item.to_name(), 210)
-                continue
-
-            if item.attribute is TokenAttribute.COLOR:
-                styled += item.to_sequence() + item.to_name() + reset()
-                continue
-
-            if item.attribute is TokenAttribute.BACKGROUND_COLOR:
-                numbers = item.to_sequence().split(";")
-                numbers[0] = bold("", reset_style=False) + "\x1b[38"
-                styled += ";".join(numbers) + item.to_name() + reset()
-                continue
-
-            if item.attribute is TokenAttribute.ESCAPED:
-                chars = list(item.to_name())
-                styled += foreground("\\" + chars[0], 210) + "".join(chars[1:])
-                continue
-
-            if item.attribute is TokenAttribute.MACRO:
-                method = item.macro_value
-                assert method is not None
-
-                styled += bold(foreground(method(item.to_name()), 210))
-                continue
-
-            styled += item.to_sequence()
-
-            styled += foreground(item.to_name(), 114)
-
-        return styled + bold("]")
-
-    visual_bracket: list[Token] = []
-    applied_bracket: list[str] = []
-
-    out = ""
-    for token in tokenize_markup(markup_text):
-        if token.code is not None:
-            if token.attribute is TokenAttribute.CLEAR:
-                name = token.to_name()
-                if name == "/":
-                    applied_bracket = []
-                else:
-                    offset = 21 if token.code == "22" else 20
-
-                    sequence = "\x1b[" + str(int(token.code) - offset) + "m"
-                    if sequence in applied_bracket:
-                        applied_bracket.remove(sequence)
-
-            applied_bracket.append(token.to_sequence())
-            visual_bracket.append(token)
-            continue
-
-        if len(visual_bracket) > 0:
-            out += _style_attributes(visual_bracket)
-            visual_bracket = []
-
-        name = token.to_name()
-        if token.attribute is TokenAttribute.ESCAPED:
-            name = "\\" + name
-
-        out += "".join(applied_bracket) + name + reset()
-
-    if len(visual_bracket) > 0:
-        out += _style_attributes(visual_bracket)
-
-    return out
-
-
-def optimize_ansi(ansi_text: str, ensure_reset: bool = True) -> str:
-    """Remove duplicate tokens & identical sequences"""
-
-    out = ""
-    sequence = ""
-    previous = ""
-    has_reset = False
-
-    for token in tokenize_ansi(ansi_text):
-        if token.code is not None:
-            if token.code == "0":
-                # only add reset code if there is a reason to
-                if has_reset:
-                    continue
-
-                previous = sequence
-                sequence = ""
-                out += reset()
-
-                has_reset = True
-                continue
-
-            sequence += token.to_sequence()
-            has_reset = False
-            continue
-
-        # only add sequence if it doesn't match the previous one
-        if not sequence == previous:
-            out += sequence
-            previous = sequence
-            has_reset = False
-
-        sequence = ""
-        out += token.to_name()
-
-    if ensure_reset and not out.endswith(reset()):
-        out += reset()
-
-    return out
-
+markup = MarkupLanguage()
 
 if __name__ == "__main__":
-    print(
-        ansi(
-            "[italic bold 141;35;60]hello there[/][141] alma[/] [18;218;168 underline]fa"
-        )
-    )
+    main()
