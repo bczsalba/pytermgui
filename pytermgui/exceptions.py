@@ -9,7 +9,12 @@ This module stores the custom Exception-s used in this module.
 
 from dataclasses import dataclass, field
 
-__all__ = ["WidthExceededError", "LineLengthError", "MarkupSyntaxError"]
+__all__ = [
+    "WidthExceededError",
+    "LineLengthError",
+    "AnsiSyntaxError",
+    "MarkupSyntaxError",
+]
 
 
 class WidthExceededError(Exception):
@@ -22,7 +27,12 @@ class LineLengthError(Exception):
 
 @dataclass
 class ParserSyntaxError(Exception):
-    """Raised when parsed markup contains an error"""
+    """Parent exception for invalid parsed strings
+
+    This exception takes some basic parameters, and formats
+    a message depending on the _delimiters value. This has to
+    be supplied by each child, while the rest of the arguments
+    are to be given at construction."""
 
     tag: str
     cause: str
@@ -52,7 +62,7 @@ class ParserSyntaxError(Exception):
 
 
 class MarkupSyntaxError(ParserSyntaxError):
-    """Raised when parsed ANSI text contains an error"""
+    """Raised when parsed markup text contains an error"""
 
     _delimiters = ("[", "]")
 
@@ -60,4 +70,4 @@ class MarkupSyntaxError(ParserSyntaxError):
 class AnsiSyntaxError(ParserSyntaxError):
     """Raised when parsed ANSI text contains an error"""
 
-    _delimiters = ("\x1b[", "m")
+    _delimiters = ("\\x1b[", "m")
