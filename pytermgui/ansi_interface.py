@@ -471,14 +471,15 @@ def unset_echo() -> None:
 class MouseAction(Enum):
     """Actions a mouse can perform"""
 
-    HOLD = _auto()
-    PRESS = _auto()
+    LEFT_DRAG = _auto()
+    LEFT_CLICK = _auto()
+    RIGHT_DRAG = _auto()
+    RIGHT_CLICK = _auto()
+
     HOVER = _auto()
     RELEASE = _auto()
     SCROLL_UP = _auto()
     SCROLL_DOWN = _auto()
-    RIGHT_HOLD = _auto()
-    RIGHT_PRESS = _auto()
 
 
 MouseEvent = Tuple[MouseAction, Tuple[int, int]]
@@ -549,23 +550,23 @@ def translate_mouse(code: str, method: str) -> Optional[list[Optional[MouseEvent
     mouse_codes = {
         "decimal_xterm": {
             "pattern": re.compile(r"<(\d{1,2})\;(\d{1,3})\;(\d{1,3})(\w)"),
-            "0M": MouseAction.PRESS,
+            "0M": MouseAction.LEFT_CLICK,
             "0m": MouseAction.RELEASE,
-            "2": MouseAction.RIGHT_PRESS,
-            "32": MouseAction.HOLD,
-            "34": MouseAction.RIGHT_HOLD,
+            "2": MouseAction.RIGHT_CLICK,
+            "32": MouseAction.DRAG,
+            "34": MouseAction.RIGHT_DRAG,
             "35": MouseAction.HOVER,
-            "66": MouseAction.RIGHT_HOLD,
+            "66": MouseAction.RIGHT_DRAG,
             "64": MouseAction.SCROLL_UP,
             "65": MouseAction.SCROLL_DOWN,
         },
         "decimal_urxvt": {
             "pattern": re.compile(r"(\d{1,2})\;(\d{1,3})\;(\d{1,3})()"),
-            "32": MouseAction.PRESS,
-            "34": MouseAction.RIGHT_PRESS,
+            "32": MouseAction.CLICK,
+            "34": MouseAction.RIGHT_CLICK,
             "35": MouseAction.RELEASE,
-            "64": MouseAction.HOLD,
-            "66": MouseAction.RIGHT_HOLD,
+            "64": MouseAction.DRAG,
+            "66": MouseAction.RIGHT_CLICK,
             "96": MouseAction.SCROLL_UP,
             "97": MouseAction.SCROLL_DOWN,
         },
