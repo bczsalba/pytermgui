@@ -18,11 +18,11 @@ from dataclasses import dataclass, field
 from typing import Callable, Optional, Type, Union, Iterator, Any
 
 from ..input import keys
-from ..context_managers import cursor_at
-from ..exceptions import WidthExceededError, LineLengthError
 from ..parser import markup
+from ..context_managers import cursor_at
 from ..helpers import real_length, break_line
-from ..ansi_interface import terminal, clear
+from ..exceptions import WidthExceededError, LineLengthError
+from ..ansi_interface import terminal, clear, MouseEvent, MouseAction
 from .styles import (
     CharType,
     StyleType,
@@ -224,6 +224,12 @@ class Widget:
         yield self
 
     @property
+    def bindings(self) -> dict[str, tuple[BoundCallback, str]]:
+        """Return copy of bindings dictionary"""
+
+        return self._bindings.copy()
+
+    @property
     def id(self) -> Optional[str]:  # pylint: disable=invalid-name
         """Getter for id property
 
@@ -332,15 +338,29 @@ class Widget:
 
         return target
 
-    def click(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
-        """Try to click the button that contains pos, return False otherwise"""
+    def get_target(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
+        """Get MouseTarget for a position"""
 
         for target in self.mouse_targets:
             if target.contains(pos):
-                target.click(self)
                 return target
 
         return None
+
+    def handle_mouse(
+        self, event: MouseEvent, target: Optional[MouseTarget] = None
+    ) -> bool:
+        """Handle a mouse event, return True if success"""
+
+        action, _ = event
+        if action is MouseAction.LEFT_CLICK:
+            if target is None:
+                return False
+
+            target.click()
+            return True
+
+        return False
 
     def serialize(self) -> dict[str, Any]:
         """Serialize object based on type(object).serialized"""
@@ -444,19 +464,6 @@ class Widget:
             return True
 
         return False
-
-    def iter_bindings(self) -> Iterator[tuple[str, BoundCallback, str]]:
-        """Iterate through all bindings of an object, as tuple[key, callback, description]"""
-
-        for key, data in self._bindings.items():
-            callback, description = data
-
-            yield key, callback, description
-
-    def list_bindings(self) -> list[tuple[str, BoundCallback, str]]:
-        """List all bindings of an object, see `Widget.iter_bindings` for more info"""
-
-        return list(self.iter_bindings())
 
     def select(self, index: Optional[int] = None) -> None:
         """Select part of self"""
