@@ -948,8 +948,10 @@ class Container(Widget):
 
         return self
 
-    def click(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
-        """Try to click any of our children"""
+    def handle_mouse(
+        self, event: MouseEvent, target: Optional[MouseTarget] = None
+    ) -> bool:
+        """Handle mouse event on our children"""
 
         visited: list[Widget] = []
         for i, (widget, _) in enumerate(self._selectables.values()):
@@ -957,14 +959,12 @@ class Container(Widget):
                 continue
 
             visited.append(widget)
-            target = widget.click(pos)
             widget.selected_index = None
-
-            if target is not None and target in widget.mouse_targets:
+            if widget.handle_mouse(event, target):
                 self.select(i + widget.mouse_targets.index(target))
-                return target
+                return True
 
-        return None
+        return False
 
     def wipe(self) -> None:
         """Wipe characters occupied by the object"""

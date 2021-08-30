@@ -30,11 +30,14 @@ Future versions
 ---------------
 
 - 1.0.0 - First stable release!
-    * [ ] Rework `Widget.click()`
-        + [ ] targets should be found using `Widget.get_target()`
-        + [ ] **MouseEvent should be sent to the widget-specific mouse handler.**
-            - [ ] `Widget.handle_mouse(event: MouseEvent) -> bool`
-            - [ ] This method can then split off into various handlers for all actions
+    * [x] Rework `Widget.click()`
+        + [x] targets should be found using `Widget.get_target()`
+        + [x] **MouseEvent should be sent to the widget-specific mouse handler.**
+            - [x] `Widget.handle_mouse(event: MouseEvent, target: Optional[MouseTarget]) -> bool`
+            - [x] This method can then split off into various handlers for all actions
+
+    * [ ] Rewrite `WindowManager`
+        + The current implementation is old and rushed, with a lot of shortcuts.
 
     * [ ] Rework width & height systems
         + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy

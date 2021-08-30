@@ -475,7 +475,6 @@ class MouseAction(Enum):
     LEFT_CLICK = _auto()
     RIGHT_DRAG = _auto()
     RIGHT_CLICK = _auto()
-
     HOVER = _auto()
     RELEASE = _auto()
     SCROLL_UP = _auto()
