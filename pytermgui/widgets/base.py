@@ -632,13 +632,9 @@ class Container(Widget):
         self._widgets[index] = value
 
     def _add_widget(self, other: object, run_get_lines: bool = True) -> None:
-        """Add other to self._widgets
+        """Add other to self._widgets, convert using auto() if necessary"""
 
-        If (Widget.ALLOW_TYPE_CONVERSION == True) non-widgets
-        are ran through the auto() method, and converted to
-        a Widget if possible."""
-
-        if Widget.ALLOW_TYPE_CONVERSION and not isinstance(other, Widget):
+        if not isinstance(other, Widget):
             to_widget = Widget.from_data(other)
             if to_widget is None:
                 raise ValueError(
