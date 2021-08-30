@@ -172,7 +172,7 @@ class Widget:
 
     # This class is loaded after this module,
     # and thus mypy doesn't see its existence.
-    manager: Optional["_IDManager"] = None  # type: ignore
+    _id_manager: Optional["_IDManager"] = None  # type: ignore
 
     is_bindable = False
     is_selectable = False
@@ -243,7 +243,7 @@ class Widget:
         if self._id == value:
             return
 
-        manager = Widget.manager
+        manager = Widget._id_manager
         assert manager is not None
 
         old = manager.get_id(self)
