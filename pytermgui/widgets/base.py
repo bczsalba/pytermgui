@@ -170,11 +170,14 @@ class Widget:
     SIZE_FILL = 4
     DEFAULT_SIZE_POLICY = SIZE_FILL
 
-    ALLOW_TYPE_CONVERSION = 5
-
     # This class is loaded after this module,
     # and thus mypy doesn't see its existence.
     manager: Optional["_IDManager"] = None  # type: ignore
+
+    is_bindable = False
+    is_selectable = False
+    size_policy = SIZE_FILL
+    parent_align = PARENT_CENTER
 
     def __init__(self, **attrs: Any) -> None:
         """Initialize universal data for objects"""
@@ -191,7 +194,6 @@ class Widget:
         self.pos: tuple[int, int] = (1, 1)
 
         self.depth = 0
-        self.is_selectable = False
 
         self.selected_index: Optional[int] = None
         self.mouse_targets: list[MouseTarget] = []
@@ -202,13 +204,8 @@ class Widget:
         self._serialized_fields = type(self).serialized
         self._selectables_length = 0
         self._id: Optional[str] = None
-        self._is_focused = False
-        self._is_bindable = False
 
         self._bindings: dict[str, tuple[BoundCallback, str]] = {}
-
-        self.size_policy = Widget.DEFAULT_SIZE_POLICY
-        self.parent_align = Widget.DEFAULT_PARENT_ALIGN
 
         for attr, value in attrs.items():
             setattr(self, attr, value)
@@ -435,7 +432,7 @@ class Widget:
     ) -> None:
         """Bind a key to a callable"""
 
-        if not self._is_bindable:
+        if not self.is_bindable:
             raise TypeError(f"Widget of type {type(self)} does not accept bindings.")
 
         if description is None:
@@ -449,7 +446,7 @@ class Widget:
         True: binding found & execute
         False: binding not found"""
 
-        if not self._is_bindable:
+        if not self.is_bindable:
             raise TypeError(f"Widget of type {type(self)} does not accept bindings.")
 
         # Execute special binding

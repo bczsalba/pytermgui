@@ -185,18 +185,19 @@ class InputField(Label):
         "fill": MarkupFormatter("[@243]{item}"),
     }
 
+    is_bindable = True
+    is_selectable = True
+
     def __init__(self, value: str = "", prompt: str = "", **attrs: Any) -> None:
         """Initialize object"""
 
         super().__init__(prompt + value, **attrs)
-        self._is_bindable = True
 
         self.parent_align = 0
 
         self.value = value
         self.prompt = prompt
         self.cursor = real_length(self.value)
-        self.is_selectable = True
 
     @property
     def selectables_length(self) -> int:
