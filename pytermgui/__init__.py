@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from typing import Union, Any, Optional
 from random import shuffle
+import sys
 
 from .window_manager import __all__ as _manager_all
 from .exceptions import __all__ as _exceptions_all
@@ -33,6 +34,12 @@ from .ansi_interface import *
 from .window_manager import *
 from .input import getch, keys
 from .context_managers import alt_buffer, cursor_at, mouse_handler
+
+# Silence warning if running as standalone module
+if "-m" in sys.argv:
+    import warnings
+
+    warnings.filterwarnings("ignore")
 
 # Build `__all__` for star import (which you really shouldn't do.)
 __all__ = ["__version__"]
