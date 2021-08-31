@@ -17,20 +17,19 @@ Upcoming Version
 ----------------
 
 - 0.3.0 - Mark(up) of the Snake!
-    * [ ] Markup language Instances
-    * [ ] Markup support for maths (`[{(1 + {depth}) * 36}]Depth`)
-    * [ ] (maybe) better macro arguments (`[!align(30, center)]text`)
+    * [x] Markup language Instances
+    * [x] (maybe) better macro arguments (`[!align(30, center)]text`)
+    * [x] Caching system
+    * [x] Capture `signal.WINCH`, use it for window size detection
+    * [x] Remove/rework focus system
+        + [x] it really only exists for `InputField`, which doesn't need it anymore
+        + [x] `Widget.selected_index` should be used instead, or there should be deeper implementation
+
 
 Future versions
 ---------------
 
 - 1.0.0 - First stable release!
-    * [x] Capture `signal.WINCH`, use it for window size detection
-
-    * [x] Remove/rework focus system
-        + [x] it really only exists for `InputField`, which doesn't need it anymore
-        + [x] `Widget.selected_index` should be used instead, or there should be deeper implementation
-
     * [ ] Rework `Widget.click()`
         + [ ] targets should be found using `Widget.get_target()`
         + [ ] **MouseEvent should be sent to the widget-specific mouse handler.**
