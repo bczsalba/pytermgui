@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="pytermgui",
-    version="0.2.1",
+    version="0.3.0",
     include_package_data=True,
     packages=["pytermgui", "pytermgui/widgets"],
     license="MIT",
