@@ -140,6 +140,10 @@ class GetchApplication(Application):
     def _key_callback(self, window: Window, key: str) -> bool:
         """Edit window state if key is pressed"""
 
+        # Don't display mouse codes
+        if self.manager.mouse_translator(key) is not None:
+            return True
+
         name = _get_key_name(key)
         items = [
             "[wm-title]Your output",
@@ -358,8 +362,8 @@ def run_wm(args: Namespace) -> None:
 
         # Define styles
         markup.alias("wm-title", "210")
-        boxes.DOUBLE_TOP.set_chars_of(Window)
         boxes.SINGLE.set_chars_of(Container)
+        boxes.DOUBLE_TOP.set_chars_of(Window)
 
         style = MarkupFormatter("[60]{item}")
         for widget in [Window, Container]:
