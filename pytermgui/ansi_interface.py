@@ -29,6 +29,7 @@ from sys import stdout as _stdout
 from string import hexdigits
 from subprocess import run as _run, Popen as _Popen
 from os import name as _name, get_terminal_size, system
+
 from .input import getch
 
 
@@ -552,19 +553,18 @@ def translate_mouse(code: str, method: str) -> Optional[list[Optional[MouseEvent
             "0M": MouseAction.LEFT_CLICK,
             "0m": MouseAction.RELEASE,
             "2": MouseAction.RIGHT_CLICK,
-            "32": MouseAction.DRAG,
+            "32": MouseAction.LEFT_DRAG,
             "34": MouseAction.RIGHT_DRAG,
             "35": MouseAction.HOVER,
-            "66": MouseAction.RIGHT_DRAG,
             "64": MouseAction.SCROLL_UP,
             "65": MouseAction.SCROLL_DOWN,
         },
         "decimal_urxvt": {
             "pattern": re.compile(r"(\d{1,2})\;(\d{1,3})\;(\d{1,3})()"),
-            "32": MouseAction.CLICK,
+            "32": MouseAction.LEFT_CLICK,
             "34": MouseAction.RIGHT_CLICK,
             "35": MouseAction.RELEASE,
-            "64": MouseAction.DRAG,
+            "64": MouseAction.LEFT_DRAG,
             "66": MouseAction.RIGHT_CLICK,
             "96": MouseAction.SCROLL_UP,
             "97": MouseAction.SCROLL_DOWN,
