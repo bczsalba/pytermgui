@@ -269,7 +269,7 @@ class WindowManager(Container):
         self._windows: list[Window] = []
         self._drag_target: Optional[tuple[Window, Edge]] = None
         self._drag_offsets: tuple[int, int] = (1, 1)
-        self._mouse_translator: Optional[Callable[[str], MouseEvent]] = None
+        self.mouse_translator: Optional[Callable[[str], MouseEvent]] = None
 
         self._window_cache: dict[int, list[str]] = {}
 
@@ -396,7 +396,7 @@ class WindowManager(Container):
             MouseAction.LEFT_CLICK: self.process_click,
         }
 
-        translate = self._mouse_translator
+        translate = self.mouse_translator
         event_list = None if translate is None else translate(key)
 
         if event_list is None:
@@ -604,7 +604,7 @@ class WindowManager(Container):
 
         with alt_buffer(cursor=False, echo=False):
             with mouse_handler("press_hold", "decimal_urxvt") as translate:
-                self._mouse_translator = translate
+                self.mouse_translator = translate
                 self._start_display_thread()
 
                 self.process_input()
