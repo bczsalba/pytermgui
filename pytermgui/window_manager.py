@@ -95,11 +95,7 @@ class Rect:
         self.top = self.start[1]
         self.bottom = self.end[1] - 1
 
-    def __iter__(self) -> None:
-        """Iterate through data"""
-
-        for item in (self.left, self.top, self.right, self.bottom):
-            yield item
+        self.values = self.left, self.top, self.right, self.bottom
 
     @classmethod
     def from_widget(cls, widget: Widget) -> Rect:
@@ -108,6 +104,13 @@ class Rect:
         start = widget.pos
         end = start[0] + widget.width, start[1] + widget.height
         return cls(start, end)
+
+    @classmethod
+    def from_tuple(cls, tpl: tuple[int, int, int, int]) -> Rect:
+        """Create a Rect from a tuple of points"""
+
+        startx, starty, endx, endy = tpl
+        return cls((startx, starty), (endx, endy))
 
     @property
     def width(self) -> int:
