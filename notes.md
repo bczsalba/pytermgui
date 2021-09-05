@@ -16,19 +16,6 @@ Versioning scheme
 Upcoming Version
 ----------------
 
-- 0.3.0 - Mark(up) of the Snake!
-    * [x] Markup language Instances
-    * [x] (maybe) better macro arguments (`[!align(30, center)]text`)
-    * [x] Caching system
-    * [x] Capture `signal.WINCH`, use it for window size detection
-    * [x] Remove/rework focus system
-        + [x] it really only exists for `InputField`, which doesn't need it anymore
-        + [x] `Widget.selected_index` should be used instead, or there should be deeper implementation
-
-
-Future versions
----------------
-
 - 1.0.0 - First stable release!
     * [x] Rework `Widget.click()`
         + [x] targets should be found using `Widget.get_target()`
@@ -36,13 +23,17 @@ Future versions
             - [x] `Widget.handle_mouse(event: MouseEvent, target: Optional[MouseTarget]) -> bool`
             - [x] This method can then split off into various handlers for all actions
 
-    * [ ] Rewrite `WindowManager`
+    * [x] Rewrite `WindowManager`
         + The current implementation is old and rushed, with a lot of shortcuts.
 
     * [ ] Rework width & height systems
         + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy
         + [ ] overflow/expand -> current no forced width behaviour
         + [ ] overflow/clip   -> shorten lines to fit width
+
+
+Future versions
+---------------
 
 - 2.0.0 - The stylish update!
     * [ ] Add color methods
