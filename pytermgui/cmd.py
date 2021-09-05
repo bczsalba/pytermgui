@@ -137,7 +137,7 @@ class GetchApplication(Application):
     title = "Getch"
     description = "See your keypresses"
 
-    def _key_callback(self, window: Window, key: str) -> None:
+    def _key_callback(self, window: Window, key: str) -> bool:
         """Edit window state if key is pressed"""
 
         name = _get_key_name(key)
@@ -154,9 +154,10 @@ class GetchApplication(Application):
 
         if self.standalone:
             self._request_exit()
-            return
+            return True
 
         window.manager.print()
+        return True
 
     def finish(self, window: Window) -> None:
         """Dump getch output"""
