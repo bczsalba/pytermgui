@@ -73,7 +73,7 @@ class _IDManager:
 
 
 _manager = _IDManager()
-Widget._id_manager = _manager
+setattr(Widget, "_id_manager", _manager)
 
 get_widget = _manager.get_widget
 get_id = _manager.get_id

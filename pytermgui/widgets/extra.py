@@ -123,6 +123,8 @@ class Splitter(Container):
     def get_lines(self) -> list[str]:
         """Get lines of all objects"""
 
+        # TODO: Rewrite this, it STILL doesn't work.
+
         separator = self.get_char("separator")
 
         assert isinstance(separator, str)
@@ -135,7 +137,9 @@ class Splitter(Container):
         widget_lines: list[str] = []
         self.mouse_targets = []
 
-        target_width = self.width // len(self._widgets) - len(self._widgets) + 1
+        error = 1 if self.width % len(self._widgets) else 0
+
+        target_width = self.width // len(self._widgets) - len(self._widgets) + error
         total_width = 0
 
         line = ""

@@ -131,9 +131,8 @@ class MouseTarget:
 
         for y_pos in range(self._start[1], self._end[1] + 1):
             with cursor_at((self._start[0], y_pos)) as print_here:
-                print_here(
-                    markup.parse(f"[@{color}]" + " " * (self._end[0] - self._start[0]))
-                )
+                length = self._end[0] - self._start[0]
+                print_here(markup.parse(f"[@{color}]" + " " * length))
 
 
 class Widget:
