@@ -151,10 +151,10 @@ class Window(Container):
     """A class representing a window
 
     A Window can have some attributes:
-        modal: Only one in focus
-        static: Non-draggable
-        noresize: Non-resizable
-        noblur: Never blurred, always in focus"""
+        is_modal: Only one in focus
+        is_static: Non-draggable
+        is_noresize: Non-resizable
+        is_noblur: Never blurred, always in focus"""
 
     is_bindable = True
 
@@ -502,23 +502,25 @@ class WindowManager(Container):
             return False
 
         left, top, right, bottom = window.rect
-        if edge is Edge.TOP:
+        if not window.is_static and edge is Edge.TOP:
             window.pos = (
                 _clamp_pos(0),
                 _clamp_pos(1),
             )
 
-        elif edge is Edge.RIGHT:
-            window.rect = left, top, pos[0] + 1, bottom
+        elif not window.is_noresize:
+            if edge is Edge.RIGHT:
+                window.rect = left, top, pos[0] + 1, bottom
 
-        elif edge is Edge.LEFT:
-            window.rect = pos[0], top, right + left - pos[0], bottom
+            elif edge is Edge.LEFT:
+                window.rect = pos[0], top, right + left - pos[0], bottom
 
         try:
             window.get_lines()
         except LineLengthError:
             window.rect = left, top, right, bottom
 
+        # Wipe window from cache
         if id(window) in self._window_cache:
             del self._window_cache[id(window)]
 

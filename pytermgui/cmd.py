@@ -115,7 +115,7 @@ class LauncherApplication(Application):
     def construct_window(self) -> Window:
         """Construct an application window"""
 
-        window = self._get_base_window(width=30) + ""
+        window = self._get_base_window(width=30, is_noblur=True, is_static=True) + ""
         manager = self.manager
 
         for app in self.apps:
