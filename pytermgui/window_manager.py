@@ -7,22 +7,28 @@ author: bczsalba
 This module contains a full implementation of a traditional window manager,
 right inside your terminal.
 
-It has no outside dependencies, only depends on the rest of pytermgui. There is full mouse support,
-including moving windows by dragging their top borders, clicking buttons inside windows and resizing
-windows by dragging their right borders.
+It runs with no external dependencies, and has full mouse support. It is the
+simplest way to use pytermgui in your applications, as it handles all input
+and output in a nice and optimized manner.
 
-Inspired by https://github.com/epiclabs-io/winman.
+It runs in two threads:
+    Main thread (blocking):
+        WindowManager.process_input()
 
-Notes:
-    - Instead of Container-s, this module uses Window-s, which are essentially Container++
-    - Window-s can have some special types:
-        + static: Non-draggable
-        + modal: Forced as 0th focus item, focus cannot be changed as long as the Window is alive.
+    WM_DisplayLoop (non-blocking):
+        WindowManager._start_display_thread/_loop()
 
-Example:
-    >>> from pytermgui import WindowManager, Window, DebugWindow
+Basic usage:
+    >>> from pytermgui import WindowManager, Window
     >>> manager = WindowManager()
-    >>> manager.add(DebugWindow())
+    >>> manager.add(
+    >>> ... "[wm-title]Hello world!"
+    >>> ... + ""
+    >>> ... + {"[wm-section]Key1": ["value1", lambda *_: manager.alert("Value1")]}
+    >>> ... + {"[wm-section]Key2": ["value2", lambda *_: manager.alert("Value2")]}
+    >>> ... + InputField(prompt="Your input:")
+    >>> ... + ""
+    >>> ... + ["Submit!", lambda *_: manager.alert("Form submitted!")]
     >>> manager.run()
 """
 
@@ -57,7 +63,6 @@ from .ansi_interface import terminal, MouseAction, move_cursor
 from .context_managers import alt_buffer, mouse_handler, MouseEvent
 
 
-# __all__ = ["Window", "WindowManager", "DebugWindow", "MouseDebugger", "WindowDebugger"]
 __all__ = ["WindowManager", "Window"]
 
 
