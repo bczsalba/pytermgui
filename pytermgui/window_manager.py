@@ -32,32 +32,33 @@ Example:
 from __future__ import annotations
 
 import sys
-from time import time
-from random import randint
+import time
+import signal
+from threading import Thread
 from enum import Enum, auto as _auto
-from typing import Optional, Callable, Any, cast
+from dataclasses import dataclass, field
+from typing import Optional, Callable, Any
 
 # https://github.com/python/mypy/issues/4930
 from .widgets.base import Container
 
 from .widgets import (
-    MouseCallback,
-    MouseTarget,
+    MarkupFormatter,
     InputField,
     Widget,
-    Button,
-    Label,
+    boxes,
 )
 
-from .input import getch, keys
 from .parser import markup
+from .input import getch, keys
 from .exceptions import LineLengthError
-from .helpers import real_length, strip_ansi
-from .ansi_interface import terminal, clear, MouseAction
+from .helpers import strip_ansi
+from .ansi_interface import terminal, MouseAction, move_cursor
 from .context_managers import alt_buffer, mouse_handler, MouseEvent
 
 
-__all__ = ["Window", "WindowManager", "DebugWindow", "MouseDebugger", "WindowDebugger"]
+# __all__ = ["Window", "WindowManager", "DebugWindow", "MouseDebugger", "WindowDebugger"]
+__all__ = ["WindowManager", "Window"]
 
 
 class Edge(Enum):
@@ -69,258 +70,203 @@ class Edge(Enum):
     BOTTOM = _auto()
 
 
-class Window(Container):
-    """Essentially Container++"""
+@dataclass
+class Rect:
+    """A class representing a screen region"""
 
-    TOP_LEFT = 0
-    TOP_RIGHT = 1
-    BOTTOM_LEFT = 2
-    BOTTOM_RIGHT = 3
+    start: tuple[int, int]
+    end: tuple[int, int]
 
-    chars = {**Container.chars, **{"button": ["<", ">"]}}
+    left: int = field(init=False)
+    right: int = field(init=False)
+    top: int = field(init=False)
+    bottom: int = field(init=False)
 
-    def __init__(
-        self,
-        static: bool = False,
-        modal: bool = False,
-        resizable: bool = True,
-        title: str = "",
-        **attrs: Any,
-    ) -> None:
-        """Initialize object"""
+    def __post_init__(self) -> None:
+        """Set up extra instance attributes"""
 
-        super().__init__(**attrs)
-        self._is_bindable = True
+        self.left = self.start[0]
+        self.right = self.end[0] - 1
+        self.top = self.start[1]
+        self.bottom = self.end[1] - 1
 
-        self.is_static: bool = static
-        self.is_modal: bool = modal
-        self.is_resizable: bool = resizable
-        self.manager: Optional["WindowManager"] = None
+    def __iter__(self) -> None:
+        """Iterate through data"""
 
-        self.min_width: Optional[int] = None
-        self.is_force_focus: bool = False
+        for item in (self.left, self.top, self.right, self.bottom):
+            yield item
 
-        self._target: Optional[MouseTarget] = None
-        self._previous_mouse: Optional[tuple[int, int]] = None
+    @classmethod
+    def from_widget(cls, widget: Widget) -> Rect:
+        """Create a Rect from a widget"""
 
-        self._is_full_screen: bool = False
-        self._restore_size: tuple[int, int] = (self.width, self.height)
-        self._restore_pos: tuple[int, int] = self.pos
-        self._toolbar_buttons: list[MouseTarget] = []
-
-        self.set_title(title)
-        self.safe_state: Optional[tuple[int, Optional[int]]] = None
+        start = widget.pos
+        end = start[0] + widget.width, start[1] + widget.height
+        return cls(start, end)
 
     @property
-    def rect(self) -> tuple[int, int, int, int]:
-        """Get rectangle of Window"""
+    def width(self) -> int:
+        """Calculate width of rect"""
 
-        posx, posy = self.pos
-        return posx, posy, posx + self.width - 1, posy + self.height - 1
+        return self.end[0] - self.start[0]
+
+    @property
+    def height(self) -> int:
+        """Calculate height of rect"""
+
+        return self.end[1] - self.start[1]
+
+    def collides_with(self, other: Rect) -> bool:
+        """Calculate collision with other Rect object"""
+
+        return (
+            self.left < other.right
+            and self.right > other.left
+            and self.top > other.bottom
+            and self.bottom < other.top
+        )
+
+    def contains(self, pos: tuple[int, int]) -> bool:
+        """Get if position is contained within this area"""
+
+        return self.left <= pos[0] <= self.right and self.top <= pos[1] <= self.bottom
+
+    def show(self) -> None:
+        """Draw rect on screen"""
+
+        root = Container(self.debug(), width=10)
+        root.forced_width = self.right - self.left
+        root.forced_height = self.top - self.bottom
+        root.pos = self.start
+
+        root.print()
+
+    def debug(self) -> str:
+        """Show identifiable debug information"""
+
+        return Widget.debug(self)
+
+
+class Window(Container):
+    """A class representing a window
+
+    A Window can have some attributes:
+        modal: Only one in focus
+        static: Non-draggable
+        noresize: Non-resizable
+        noblur: Never blurred, always in focus"""
+
+    is_bindable = True
+
+    title = ""
+    is_static = False
+    is_modal = False
+    is_noblur = False
+    is_noresize = False
+
+    styles = {**Container.styles, **{"title": MarkupFormatter("[wm-title]{item}")}}
+
+    def __init__(self, *widgets: Widget, **attrs: Any) -> None:
+        """Initialize object"""
+
+        super().__init__(*widgets, **attrs)
+
+        self.has_focus: bool = False
+        self.manager: Optional[WindowManager] = None
+
+        if self.title != "":
+            self.set_title(self.title)
+
+    @property
+    def rect(self) -> Rect:
+        """Return Rect representing this window"""
+
+        # TODO: This probably shouldn't be done every time.
+        return Rect.from_widget(self)
 
     @rect.setter
     def rect(self, new: tuple[int, int, int, int]) -> None:
-        """Set new rectangle of Window"""
+        """Set new rect"""
 
-        width, height = terminal.size
-        startx, starty, endx, endy = new
-        startx = max(0, min(startx, width))
-        starty = max(0, min(starty, height))
-        self.pos = (startx, starty)
+        left, top, right, _ = new
+        self.pos = (left, top)
+        self.width = self.width = right - left
 
-        self.forced_width = endx - startx
-        self.forced_height = endy - starty
-
-    def set_title(self, title: str) -> None:
-        """Set top-left title string"""
+    def set_title(self, title: str, position: int = 0, pad: bool = True) -> None:
+        """Set window title"""
 
         self.title = title
+
+        title = "[wm-title]" + title
+        if pad:
+            title = " " + title + " "
+
         corners = self.get_char("corner")
-        assert len(corners) == 4 and isinstance(corners, list)
-        corners[0] += title
+        assert isinstance(corners, list)
+
+        if position % 2 == 0:
+            corners[position] += title
+
+        else:
+            current = corners[position]
+            corners[position] = title + current
+
         self.set_char("corner", corners)
 
     def close(self) -> None:
-        """Instruct manager to close this window"""
+        """Instruct window manager to close object"""
 
-        assert self.manager is not None
         self.manager.close(self)
 
-    def change_align(self, new: int) -> None:
-        """Change all widgets' parent_align"""
+    def print(self) -> None:
+        """Print without flushing"""
 
-        for widget in self._widgets:
-            widget.parent_align = new
-
-    def notify(self, event: Any) -> bool:
-        """Notify window of an event"""
-
-        return not (self or event)
-
-    def contains(self, pos: tuple[int, int]) -> bool:
-        """Return if self.rec contains pos"""
-
-        startx, starty, endx, endy = self.rect
-        return startx <= pos[0] <= endx and starty <= pos[1] <= endy
-
-    def get_target(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
-        """Get target at position"""
-
-        for target in self.mouse_targets:
-            if target.contains(pos):
-                return target
-
-        return None
-
-    def add_button(self, text: str, position: int = TOP_RIGHT) -> MouseTarget:
-        """Add a MouseTarget to either corner, return it"""
-
-        # TODO: Something wong, resize breaks this.
-
-        corners = self.get_char("corner")
-        assert isinstance(corners, list) and len(corners) == 4
-
-        delimiters = self.get_char("button")
-        assert len(delimiters) == 2 and isinstance(delimiters, list)
-        start, end = delimiters
-
-        current_length = real_length(corners[position])
-
-        if position % 2 == 0:
-            left = current_length + real_length(start)
-            right = self.width
-            corners[position] += start + text + end
-
-        else:
-            left = self.width - current_length - 1
-            right = current_length + real_length(start) + 1
-            corners[position] = start + text + end + corners[position]
-
-        target = self.define_mouse_target(left=left, right=right, top=-1, height=1)
-        target.adjust()
-
-        self._toolbar_buttons.append(target)
-        self.set_char("corner", corners)
-
-        return target
-
-    def handle_mouse(self, action: MouseAction, pos: tuple[int, int]) -> bool:
-        """Handle a key string, WITHOUT looping"""
-
-    def handle_key(self, key: str) -> bool:
-        """Handle mouse press, WITHOUT looping"""
-
-        if self.execute_binding(key):
-            return True
-
-        self.selected: Widget
-
-        if isinstance(self.selected, InputField):
-
-            if self.selected.send(key):
-                assert self.manager is not None
-                self.manager.print()
-                return True
-
-        if len(self._selectables) == 0:
-            return False
-
-        self.selected_index: Optional[int]
-        if self.selected_index is None:
-            self.selected_index = 0
-
-        if key in [keys.UP, keys.CTRL_P, "k"]:
-            self.selected_index -= 1
-
-        elif key in [keys.DOWN, keys.CTRL_N, "j"]:
-            self.selected_index += 1
-
-        elif key == keys.RETURN:
-            if self.selected_index is None:
-                return False
-
-            widget, inner_index = self._selectables[self.selected_index]
-            self.click(widget.mouse_targets[inner_index].start)
-
-        else:
-            return False
-
-        self.select()
-        return True
-
-    def toggle_fullscreen(self) -> None:
-        """Toggle fullscreen of a Window"""
-
-        for widget in self._widgets:
-            widget.forced_width = None
-
-        if not self._is_full_screen:
-            self._restore_size = self.width, self.height
-            self._restore_pos = self.pos
-            width, height = terminal.size
-            pos = (1, 1)
-
-        else:
-            width, height = self._restore_size
-            height -= 2
-            pos = self._restore_pos
-
-        for widget in self._widgets:
-            widget.forced_width = None
-
-        self.forced_width = width
-        self.forced_height = height
-        self.pos = pos
-
-        # TODO: Add a widget flag to "track" parent width
-        inner_width = width - self.sidelength - 1
-
-        self._is_full_screen ^= True
-
-        for widget in self._widgets:
-            widget.width = inner_width
-            for target in self.mouse_targets:
-                target.adjust()
+        for i, line in enumerate(self.get_lines()):
+            sys.stdout.write(f"\033[{self.pos[1] + i};{self.pos[0]}H" + line)
 
 
 class WindowManager(Container):
-    """A manager for Window objects
+    """A class representing a WindowManager"""
 
-    This class works similarly (in principle, at least) to a
-    desktop WM. You add Windows to it, which can then be moved, resized
-    and interacted with, all facilitated by the WindowManager object.
+    is_bindable = True
 
-    The object gets activated by calling its `run()` method, which handles every
-    aforementioned action. Pressing CTRL_C will call the manager's `exit()` method,
-    which can return True (default) to break input loop.
-    """
+    framerate = 300
+    navigation_up: set[str] = {keys.UP, keys.CTRL_P, "k"}
+    navigation_down: set[str] = {keys.DOWN, keys.CTRL_N, "j"}
 
-    styles = {"blurred": lambda _, item: markup.parse("[240]" + strip_ansi(item))}
-
-    def __init__(self, *windows: Window) -> None:
+    def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
 
-        super().__init__()
-        self._is_bindable = True
-        self._windows: list[Window] = []
-        self._mouse_listener: Optional[Window] = None
+        super().__init__(**attrs)
 
+        self._is_paused: bool = False
+        self._is_running: bool = True
+        self._should_print: bool = False
+        self._windows: list[Window] = []
+        self._drag_target: Optional[tuple[Window, Edge]] = None
+        self._drag_offsets: tuple[int, int] = (1, 1)
+        self._mouse_translator: Optional[Callable[[str], MouseEvent]] = None
+
+        self._window_cache: dict[str, list[str]] = {}
+
+        self.focused: Optional[Window] = None
+
+        # Handle some events
+        terminal.subscribe(terminal.RESIZE, self.on_resize)
+        signal.signal(signal.SIGINT, lambda *_: self.exit())
+
+        # Set global styles
         markup.alias("wm-title", "210 bold")
         markup.alias("wm-section", "157")
+        boxes.DOUBLE_TOP.set_chars_of(Window)
 
-        for window in windows:
-            self.add(window)
+    @staticmethod
+    def _sleep(duration: float) -> None:
+        """Accurately sleep some duration"""
 
-        self._focus_index = 0
-        self._drag_target: Optional[Window] = None
-        self._drag_edge: Optional[Edge] = None
-        self._drag_offset_x: int = 0
-        self._drag_offset_y: int = 0
-        self._is_stopped: bool = False
+        # TODO: Implement a better sleep function
 
-        self.mouse_handler: Optional[Callable[[str], Optional[list[MouseEvent]]]] = None
-
-        terminal.subscribe(terminal.RESIZE, self.on_resize)
+        return time.sleep(duration)
 
     def __enter__(self) -> WindowManager:
         """Start context manager"""
@@ -336,70 +282,159 @@ class WindowManager(Container):
         self.stop()
         return True
 
-    def _click_or_init_drag(self, pos: tuple[int, int]) -> bool:
-        """Initialize data for dragging a window"""
+    def _start_display_thread(self) -> None:
+        """The loop that handles all displaying
 
-        for window in self._windows:
-            if window.contains(pos):
-                self.focus_window(window)
+        This is run as a thread, with `process_input()` occupying
+        the main line."""
 
-                # We clicked a non-button area
-                if window.click(pos) is None:
-                    window.selected_index = None
-                    self._drag_edge = self._get_edge(window, pos)
+        def _loop() -> None:
+            """Body of thread"""
 
-                    if self._drag_edge is None:
-                        return False
+            last_frame = time.perf_counter()
+            frametime = 1 / self.framerate
 
-                    self._drag_target = window
-                    self._drag_offset_x = pos[0] - window.pos[0]
-                    self._drag_offset_y = pos[1] - window.pos[1]
+            while self._is_running:
+                if self._is_paused or not self._should_print:
+                    self._sleep(frametime)
+                    continue
 
-                break
+                delta = time.perf_counter() - last_frame
 
-            # Stop if a modal window was found
-            if window.is_modal:
-                break
+                # Don't print before frametime elapsed
+                if delta < frametime:
+                    self._sleep(frametime - delta)
+                    continue
 
-        return True
+                self.print()
+                last_frame = time.perf_counter()
 
-    @staticmethod
-    def _get_edge(window: Window, pos: tuple[int, int]) -> Optional[Edge]:
-        """Get which edge mouse input overlaps with"""
+        Thread(name="WM_DisplayLoop", target=_loop).start()
 
-        startx, starty, endx, endy = window.rect
+    def _is_nav_key(self, key: str) -> bool:
+        """Check if key is in any of the navigation sets"""
 
-        if pos[0] == startx:
-            return Edge.LEFT
+        return key in self.navigation_up | self.navigation_down
 
-        if pos[0] == endx:
-            return Edge.RIGHT
+    def _handle_keypress(self, key: str) -> bool:
+        """Process a keypress"""
 
-        if pos[1] == starty:
-            return Edge.TOP
+        # Apply WindowManager bindings
+        if self.execute_binding(key):
+            return True
 
-        if pos[1] == endy:
-            return Edge.BOTTOM
+        # Apply focused window binding, or send to InputField
+        if self.focused is not None:
+            if self.focused.execute_binding(key):
+                return True
 
-        return None
+            if isinstance(self.focused.selected, InputField):
+                if self.focused.selected.send(key):
+                    return True
 
-    @staticmethod
-    def get_root(widget: Widget) -> Widget:
-        """Get root widget"""
+        # Try handling key by window
+        window = self.focused
 
-        while hasattr(widget, "parent"):
-            widget = widget.parent
+        if window is not None:
+            if self._is_nav_key(key) and window.selectables_length > 0:
+                if window.selected_index is None:
+                    window.selected_index = 0
 
-        return widget
+                elif key in self.navigation_up:
+                    window.selected_index -= 1
 
-    @property
-    def focused(self) -> Optional[Window]:
-        """Return currently focused window"""
+                elif key in self.navigation_down:
+                    window.selected_index += 1
 
-        if len(self._windows) > 0:
-            return self._windows[0]
+                window.select()
+                return True
 
-        return None
+            if key == keys.ENTER and window.selected_index is not None:
+                window.mouse_targets[window.selected_index].click(self)
+                return True
+
+        return False
+
+    def _handle_mouse(self, key: str) -> None:
+        """Process (potential) mouse input"""
+
+        def _get_target() -> Window | None:
+            """Get current drag target window"""
+
+            if self._drag_target is None:
+                return None
+
+            return self._drag_target[0]
+
+        handlers = {
+            MouseAction.LEFT_DRAG: self.process_drag,
+            MouseAction.RELEASE: self.process_release,
+            MouseAction.LEFT_CLICK: self.process_click,
+        }
+
+        translate = self._mouse_translator
+        event_list = None if translate is None else translate(key)
+
+        if event_list is None:
+            return
+
+        for event in event_list:
+            target_window = _get_target()
+
+            # Ignore null-events
+            if event is None:
+                continue
+
+            action, pos = event
+
+            for window in self._windows:
+                # Ignore unhandled actions
+                if not action in handlers:
+                    continue
+
+                if window is target_window or window.rect.contains(pos):
+                    if not window.has_focus:
+                        self.focus(window)
+
+                    self._should_print = handlers[action](pos, window)
+                    break
+
+                # Break on modal window
+                if window.is_modal:
+                    break
+
+            # Unset drag_target if no windows received the input
+            else:
+                self._drag_target = None
+
+    def focus(self, window: Window) -> None:
+        """Set a window to be focused"""
+
+        for other_window in self._windows:
+            other_window.has_focus = False
+
+        window.has_focus = True
+        self._windows.remove(window)
+        self._windows.insert(0, window)
+        self.focused = window
+
+    def add(self, window: Window) -> WindowManager:
+        """Add a window to this manager"""
+
+        self._windows.insert(0, window)
+        self._should_print = True
+        window.manager = self
+
+        # New windows take focus-precedence over already
+        # existing ones, even if they are modal.
+        self.focus(window)
+
+        return self
+
+    def close(self, window: Window) -> None:
+        """Close a window"""
+
+        self._windows.remove(window)
 
     def on_resize(self, size: tuple[int, int]) -> None:
         """Correctly update window positions & print when terminal gets resized"""
@@ -412,437 +447,198 @@ class WindowManager(Container):
 
             window.pos = (newx, newy)
 
-        self.print()
+        self._should_print = True
 
-    def align_widgets(self, new: int) -> None:
-        """Set all widgets' parent_align"""
+    def process_click(self, pos: tuple[int, int], window: Window) -> bool:
+        """Process clicking a window"""
 
-        for widget in self._widgets:
-            widget.parent_align = new
-
-    def set_mouse_listener(self, window: Window) -> None:
-        """Allow window to recieve mouse events"""
-
-        self._mouse_listener = window
-
-    def focus_window(self, window: Window) -> None:
-        """Focus window"""
-
-        self._windows.pop(self._windows.index(window))
-        self._windows.insert(0, window)
-
-    def get_target(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
-        """Get target at position"""
-
-        for window in self._windows:
-            target = window.get_target(pos)
-            if isinstance(target, MouseTarget):
-                return target
-
-        return None
-
-    def add(self, window: Window) -> None:
-        """Add new window"""
-
-        self._windows.insert(0, window)
-
-        window.manager = self
-        window.creation = time()
-        if window.selectables_length > 0:
-            window.select(0)
-
-    def click(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
-        """Override click method to use windows"""
-
-        for window in self._windows:
-            target = window.click(pos)
-            if target is not None:
-                return target
-
-            # Don't pass-through clicks
-            if (
-                window.pos[0] <= pos[0] <= window.pos[0] + window.width
-                and window.pos[1] <= pos[1] <= window.pos[1] + window.height
-            ):
-                return None
-
-        return None
-
-    def close(self, window: Window) -> None:
-        """Close a window"""
-
-        self._windows.remove(window)
-        self.print()
-
-    def handle_key(self, key: str) -> bool:
-        """Handle a keypress
-
-        Note: This is called by the run loop on every iteration."""
-
-        if self.execute_binding(key):
+        target = window.get_target(pos)
+        if target is not None:
+            window.select(window.mouse_targets.index(target))
+            target.click(window.selected)
             return True
 
-        if (
-            key == keys.ALT + keys.TAB
-            and self.focused is not None
-            and not self.focused.is_modal
-        ):
-            self._focus_index += 1
-            if self._focus_index >= len(self._windows):
-                self._focus_index = 0
+        left, top, right, bottom = window.rect
 
-            s_windows = sorted(self._windows, key=lambda window: window.creation)  # type: ignore
-            self.focus_window(s_windows[self._focus_index])
+        if pos[1] == top and left <= pos[0] <= right:
+            self._drag_target = (window, Edge.TOP)
 
-        return False
+        elif pos[1] == bottom and left <= pos[0] <= right:
+            self._drag_target = (window, Edge.BOTTOM)
 
-    def handle_mouse(self, mouse_events: Optional[list[Optional[MouseEvent]]]) -> bool:
-        """Handle a possible list of mouse events
+        elif pos[0] == left and top <= pos[1] <= bottom:
+            self._drag_target = (window, Edge.LEFT)
 
-        Note: This is called by the run loop on every iteration."""
+        elif pos[0] == right and top <= pos[1] <= bottom:
+            self._drag_target = (window, Edge.RIGHT)
 
-        if mouse_events is None:
+        else:
             return False
 
-        for event in mouse_events:
-            if event is None or (
-                self._mouse_listener is not None and self._mouse_listener.notify(event)
-            ):
-                continue
-
-            action, pos = event
-
-            # Try clicking a Window, else try initializing dragging
-            if action is MouseAction.PRESS:
-                self._click_or_init_drag(pos)
-                continue
-
-            # Reset drag data
-            if action is MouseAction.RELEASE:
-                self._drag_target = None
-                continue
-
-            # Move or resize windows
-            if action is MouseAction.HOLD and self._drag_target is not None:
-                width, height = terminal.size
-                window = self._drag_target
-
-                startx, starty, _, endy = window.rect
-
-                # Move window
-                if self._drag_edge is Edge.TOP and not window.is_static:
-                    newx = max(
-                        0, min(pos[0] - self._drag_offset_x, width - window.width)
-                    )
-                    newy = max(
-                        0, min(pos[1] - self._drag_offset_y, height - window.height)
-                    )
-
-                    window.pos = (newx, newy)
-
-                # Change window width
-                elif self._drag_edge is Edge.RIGHT and window.is_resizable:
-                    if window.min_width is not None:
-                        if pos[0] - startx < window.min_width:
-                            return False
-
-                    window.rect = startx, starty, pos[0], endy - 2
+        self._drag_offsets = (
+            pos[0] - window.pos[0],
+            pos[1] - window.pos[1],
+        )
 
         return True
 
-    def run(self) -> None:
-        """Run window manager"""
+    def process_drag(self, pos: tuple[int, int], window: Window) -> bool:
+        """Process dragging a window"""
 
-        with mouse_handler("press_hold", "decimal_urxvt") as mouse:
-            # This is set so this method is accessible from the outside
-            self.mouse_handler = mouse
+        def _clamp_pos(index: int) -> int:
+            """Clamp a value using index to address x/y & width/height"""
 
-            with alt_buffer(echo=False, cursor=False):
-                self.print()
+            offset = self._drag_offsets[index]
+            maximum = terminal.size[index] - (window.width, window.height)[index]
 
-                while True:
-                    if self._is_stopped:
-                        break
+            return max(index, min(pos[index] - offset, maximum))
 
-                    key = getch(interrupts=False)
+        if self._drag_target is None:
+            return False
 
-                    if key == chr(3):
-                        if self.exit(self):
-                            break
+        target_window, edge = self._drag_target
 
-                    events = mouse(key)
+        if window is not target_window:
+            return False
 
-                    if not key == keys.ESC and self.handle_mouse(events):
-                        self.print()
-                        continue
+        left, top, right, bottom = window.rect
+        if edge is Edge.TOP:
+            window.pos = (
+                _clamp_pos(0),
+                _clamp_pos(1),
+            )
 
-                    if self.focused is not None and self.focused.handle_key(key):
-                        self.print()
-                        continue
+        elif edge is Edge.RIGHT:
+            window.rect = left, top, pos[0] + 1, bottom
 
-                    if self.handle_key(key):
-                        self.print()
+        elif edge is Edge.LEFT:
+            window.rect = pos[0], top, right + left - pos[0], bottom
+
+        try:
+            window.get_lines()
+        except LineLengthError:
+            window.rect = left, top, right, bottom
+
+        if id(window) in self._window_cache:
+            del self._window_cache[id(window)]
+
+        return True
+
+    def process_release(self, _: tuple[int, int], window: Window) -> bool:
+        """Process release of key"""
+
+        selected = self.focused
+        while hasattr(selected, "selected"):
+            selected = selected.selected
+
+        if not isinstance(selected, InputField):
+            window.selected_index = None
+
+        self._drag_target = None
+        return True
+
+    def process_input(self) -> bool:
+        """Process incoming input, set should_print"""
+
+        while self._is_running:
+            key = getch()
+
+            if self._handle_keypress(key):
+                self._should_print = True
+                continue
+
+            self._handle_mouse(key)
 
     def stop(self) -> None:
-        """Stop window manager"""
+        """Stop main loop"""
 
-        self._is_stopped = True
+        self._is_running = False
+
+    def pause(self) -> None:
+        """Pause main loop"""
+
+        self._is_paused = True
+
+    def unpause(self) -> None:
+        """Pause main loop"""
+
+        self._is_paused = False
+
+    def exit(self) -> None:
+        """Exit program"""
+
+        self.stop()
+        sys.exit()
+
+    def run(self) -> None:
+        """Run main WindowManager loop"""
+
+        with alt_buffer(cursor=False, echo=False):
+            with mouse_handler("press_hold", "decimal_urxvt") as translate:
+                self._mouse_translator = translate
+                self._start_display_thread()
+
+                self.process_input()
 
     def print(self) -> None:
         """Print all windows"""
 
-        def get_pos(window: Container, offset: int) -> str:
-            """Get position"""
+        def _get_lines(window) -> list[str]:
+            """Get cached or live lines from a Window"""
 
-            new = list(window.pos)
-            new[1] += offset
+            # This optimization is really important for
+            # a lot of windows being rendered.
+            if id(window) in self._window_cache:
+                return self._window_cache[id(window)]
 
-            return f"\033[{new[1]};{new[0]}H"
+            lines = []
+            for line in window.get_lines():
+                lines.append(
+                    markup.parse("[239]" + strip_ansi(line).replace("[", r"\["))
+                )
 
-        buff = ""
-        blurred_style = self.get_style("blurred")
+            self._window_cache[id(window)] = lines
+            return lines
 
-        for i, window in enumerate(reversed(self._windows)):
-            try:
-                lines = window.get_lines()
-            except LineLengthError as error:
-                if window.safe_state is None:
-                    raise ValueError("No safe fallback state") from error
-
-                # Fall back to previously known safe-state
-                # TODO: This is temporary! Somehow widgets
-                #       can get updated quicker than they
-                #       can react to? It's quite odd.
-                width, f_width = window.safe_state
-
-                if window.forced_width is not None:
-                    window.forced_width = f_width
-                else:
-                    window.width = width
-
+        sys.stdout.write("\033[2J")
+        for window in reversed(self._windows):
+            if window.has_focus or window.is_noblur:
                 try:
-                    lines = window.get_lines()
+                    window.print()
                 except LineLengthError:
                     continue
+                continue
 
-            window.safe_state = window.width, window.forced_width
+            lines = _get_lines(window)
+            for i, line in enumerate(lines):
+                move_cursor((window.pos[0], window.pos[1] + i))
+                sys.stdout.write(line)
 
-            if i == len(self._windows) - 1 or window.is_force_focus:
-                for lineindex, line in enumerate(lines):
-                    buff += get_pos(window, lineindex) + line
-
-            else:
-                for lineindex, line in enumerate(lines):
-                    buff += get_pos(window, lineindex) + blurred_style(line)
-
-        clear()
-        sys.stdout.write(buff)
         sys.stdout.flush()
+        self._should_print = False
 
-    def show_targets(self, color: Optional[int] = None) -> None:
-        """Show all targets"""
+    def show_targets(self, color: int = 210) -> None:
+        """Show all windows' targets"""
 
+        self.pause()
         for window in self._windows:
             window.show_targets(color)
 
         getch()
-        self.print()
+        self.unpause()
 
-    @staticmethod
-    def exit(_: WindowManager) -> bool:
-        """if self.exit() == True: break"""
+        self._should_print = True
 
-        return True
+    def alert(self, *content) -> None:
+        """Create a modal window with content"""
 
-    def alert(self, detail: Any) -> None:
-        """Show modal dialog displaying `detail`"""
+        window = Window("[wm-title]Alert!", is_modal=True, width=50)
+        for item in content:
+            window += item
 
-        window: Window
+        window += ""
+        window += ["Dismiss", lambda *_: window.close()]
+        window.select(0)
 
-        window = cast(
-            Window,
-            (
-                Window(width=50, resizable=False, modal=True)
-                + "[wm-title]Alert!"
-                + ""
-                + f"[wm-section]Detail[/]: {str(detail)}"
-                + ""
-                + ["Dismiss", lambda *_: window.close()]
-            ).center(),
-        )
-
-        self.add(window)
-
-    def debug(self) -> str:
-        return f"WindowManager(Window() * {len(self._windows)})"
-
-
-class DebugWindow(Window):
-    """Window with debug capabilities"""
-
-    def __init__(self, destroyer: Optional[MouseCallback] = None, **attrs: Any) -> None:
-        """Initialize object"""
-
-        # Set default title argument
-        if "title" not in attrs:
-            attrs["title"] = " debug "
-
-        super().__init__(**attrs)
-        self.min_width = 25
-        self.forced_width = 50
-
-        self._add_widget(Label("[210 bold]Debug"))
-        self._add_widget(Label(""))
-
-        if destroyer is None:
-            destroyer = lambda _, widget: (
-                widget.manager.close(widget) if widget.manager is not None else None
-            )
-
-        self.add_button("x").onclick = destroyer
-        self.add_button("o").onclick = lambda _, window: window.toggle_fullscreen()
-
-        self._add_widget(
-            Button(
-                "[157 bold]Align left", lambda *_: self.change_align(Widget.PARENT_LEFT)
-            )
-        )
-
-        self._add_widget(
-            Button(
-                "[157 bold]Align center",
-                lambda *_: self.change_align(Widget.PARENT_CENTER),
-            )
-        )
-
-        self._add_widget(
-            Button(
-                "[157 bold]Align right",
-                lambda *_: self.change_align(Widget.PARENT_RIGHT),
-            )
-        )
-
-        self._add_widget(Label())
-
-        self._add_widget(
-            Button(
-                "[157 bold]New window",
-                lambda _, listview: listview.parent.manager.add(DebugWindow()),
-            )
-        )
-
-        self._add_widget(
-            Button(
-                "[157 bold]New modal window",
-                lambda _, listview: listview.parent.manager.add(
-                    DebugWindow(modal=True)
-                ),
-            )
-        )
-
-        self._add_widget(
-            Button(
-                "[157 bold]New static window",
-                lambda _, listview: listview.parent.manager.add(
-                    DebugWindow(static=True)
-                ),
-            )
-        )
-
-        width, height = terminal.size
-        self.pos = randint(0, width - self.width), randint(0, height - self.height - 2)
-
-    def change_width(self, amount: int) -> None:
-        """Increase/decrease widget width"""
-
-        if self.width + amount > terminal.width:
-            return
-
-        pos = list(self.pos)
-        if self.forced_width is None:
-            self.forced_width = self.width
-
-        self.forced_width += amount
-        self.width = self.forced_width
-
-        self.pos = (pos[0], pos[1])
-
-
-class MouseDebugger(Window):
-    """Window to show mouse status"""
-
-    def __init__(self, **attrs: Any) -> None:
-        """Initialize object"""
-
-        super().__init__(title=" mouse ", **attrs)
-        self.min_width = 25
-        self.width = 25
-        self.is_force_focus = True
-
-        self._add_widget(Label("[wm-title]Mouse Information" ""))
-
-        self._label_pos = Label(parent_align=0, padding=2)
-        self._label_action = Label(parent_align=0, padding=2)
-        self._label_target = Label(parent_align=0, padding=2)
-
-        self._add_widget(Label("[wm-section]Position", parent_align=0))
-        self._add_widget(self._label_pos)
-        self._add_widget(Label("[wm-section]Action", parent_align=0))
-        self._add_widget(self._label_action)
-
-    def notify(self, event: Any) -> bool:
-        """Receive event notification"""
-
-        assert len(event) == 2
-        action, pos = event
-
-        # target = self.manager.focused.get_target(pos)
-
-        self._label_pos.value = f"({pos[0]}, {pos[1]})"
-        self._label_action.value = str(action)
-
-        return False
-
-
-class WindowDebugger(Window):
-    """Window to show information on other windows"""
-
-    def __init__(self, **attrs: Any) -> None:
-        """Initialize object"""
-
-        super().__init__(title=" window ", **attrs)
-        self.min_width = 25
-        self.width = 25
-        self.is_force_focus = True
-        self.is_resizable = False
-
-        self._add_widget(Label("[wm-title]Window information"))
-
-        self._watching: dict[str, Callable[[Window], str]] = {
-            "Title": lambda window: window.title,
-            "Static": lambda window: str(window.is_static),
-            "Modal": lambda window: str(window.is_modal),
-            "Focus Override": lambda window: str(window.is_force_focus),
-            "Position": lambda window: str(window.pos),
-            "Size": lambda window: str((window.width, window.height)),
-        }
-
-    def get_lines(self) -> list[str]:
-        """Update labels & get_lines"""
-
-        self._widgets = [self._widgets[0]]
-
-        if self.manager is not None:
-            window = self.manager.focused
-            if window is None:
-                return super().get_lines()
-
-            for label, method in self._watching.items():
-                self._widgets.append(
-                    Label("[wm-section]" + label, parent_align=Widget.PARENT_LEFT)
-                )
-                self._widgets.append(
-                    Label(method(window), padding=2, parent_align=Widget.PARENT_LEFT)
-                )
-
-        return super().get_lines()
+        self.add(window.center())
+        self.focus(window)
