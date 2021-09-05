@@ -353,7 +353,7 @@ class Widget:
             if target is None:
                 return False
 
-            target.click()
+            target.click(self)
             return True
 
         return False
@@ -953,6 +953,7 @@ class Container(Widget):
             visited.append(widget)
             widget.selected_index = None
             if widget.handle_mouse(event, target):
+                assert isinstance(target, MouseTarget)
                 self.select(i + widget.mouse_targets.index(target))
                 return True
 

@@ -142,7 +142,8 @@ class Rect:
     def show(self) -> None:
         """Draw rect on screen"""
 
-        root = Container(self.debug(), width=10)
+        root = Container(width=10)
+        root += self.debug()
         root.forced_width = self.right - self.left
         root.forced_height = self.top - self.bottom
         root.pos = self.start
@@ -152,7 +153,7 @@ class Rect:
     def debug(self) -> str:
         """Show identifiable debug information"""
 
-        return Widget.debug(self)
+        return str(Widget.debug(self))
 
 
 class Window(Container):
@@ -200,6 +201,12 @@ class Window(Container):
         self.pos = (left, top)
         self.width = self.width = right - left
 
+    def __iadd__(self, other: object) -> Window:
+        """Call self._add_widget(other) and return self"""
+
+        self._add_widget(other)
+        return self
+
     def set_title(self, title: str, position: int = 0, pad: bool = True) -> None:
         """Set window title"""
 
@@ -221,9 +228,18 @@ class Window(Container):
 
         self.set_char("corner", corners)
 
+    def center(
+        self, where: Optional[int] = Container.CENTER_BOTH, store: bool = True
+    ) -> Window:
+        """Center window"""
+
+        super().center(where, store)
+        return self
+
     def close(self) -> None:
         """Instruct window manager to close object"""
 
+        assert self.manager is not None
         self.manager.close(self)
 
     def print(self) -> None:
@@ -255,7 +271,7 @@ class WindowManager(Container):
         self._drag_offsets: tuple[int, int] = (1, 1)
         self._mouse_translator: Optional[Callable[[str], MouseEvent]] = None
 
-        self._window_cache: dict[str, list[str]] = {}
+        self._window_cache: dict[int, list[str]] = {}
 
         self.focused: Optional[Window] = None
 
@@ -463,10 +479,11 @@ class WindowManager(Container):
         target = window.get_target(pos)
         if target is not None:
             window.select(window.mouse_targets.index(target))
+            assert isinstance(window.selected, Widget)
             target.click(window.selected)
             return True
 
-        left, top, right, bottom = window.rect
+        left, top, right, bottom = window.rect.values
 
         if pos[1] == top and left <= pos[0] <= right:
             self._drag_target = (window, Edge.TOP)
@@ -509,7 +526,7 @@ class WindowManager(Container):
         if window is not target_window:
             return False
 
-        left, top, right, bottom = window.rect
+        left, top, right, bottom = window.rect.values
         if not window.is_static and edge is Edge.TOP:
             window.pos = (
                 _clamp_pos(0),
@@ -518,15 +535,17 @@ class WindowManager(Container):
 
         elif not window.is_noresize:
             if edge is Edge.RIGHT:
-                window.rect = left, top, pos[0] + 1, bottom
+                window.rect = Rect.from_tuple((left, top, pos[0] + 1, bottom))
 
             elif edge is Edge.LEFT:
-                window.rect = pos[0], top, right + left - pos[0], bottom
+                window.rect = Rect.from_tuple(
+                    (pos[0], top, right + left - pos[0], bottom)
+                )
 
         try:
             window.get_lines()
         except LineLengthError:
-            window.rect = left, top, right, bottom
+            window.rect = Rect.from_tuple((left, top, right, bottom))
 
         # Wipe window from cache
         if id(window) in self._window_cache:
@@ -537,8 +556,8 @@ class WindowManager(Container):
     def process_release(self, _: tuple[int, int], window: Window) -> bool:
         """Process release of key"""
 
-        selected = self.focused
-        while hasattr(selected, "selected"):
+        selected: Widget | Window | None = self.focused
+        while hasattr(selected, "selected") and selected is not None:
             selected = selected.selected
 
         if not isinstance(selected, InputField):
@@ -547,7 +566,7 @@ class WindowManager(Container):
         self._drag_target = None
         return True
 
-    def process_input(self) -> bool:
+    def process_input(self) -> None:
         """Process incoming input, set should_print"""
 
         while self._is_running:
@@ -593,7 +612,7 @@ class WindowManager(Container):
     def print(self) -> None:
         """Print all windows"""
 
-        def _get_lines(window) -> list[str]:
+        def _get_lines(window: Window) -> list[str]:
             """Get cached or live lines from a Window"""
 
             # This optimization is really important for
@@ -627,7 +646,7 @@ class WindowManager(Container):
         sys.stdout.flush()
         self._should_print = False
 
-    def show_targets(self, color: int = 210) -> None:
+    def show_targets(self, color: int | None = None) -> None:
         """Show all windows' targets"""
 
         self.pause()
@@ -639,7 +658,7 @@ class WindowManager(Container):
 
         self._should_print = True
 
-    def alert(self, *content) -> None:
+    def alert(self, *content: Any) -> None:
         """Create a modal window with content"""
 
         window = Window("[wm-title]Alert!", is_modal=True, width=50)
