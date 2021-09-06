@@ -32,7 +32,7 @@ from ..helpers import real_length
 from ..ansi_interface import foreground, background, reset, MouseAction
 
 
-__all__ = ["Splitter", "ColorPicker", "InputField", "alert"]
+__all__ = ["Splitter", "ColorPicker", "InputField", "Slider", "alert"]
 
 
 class ColorPicker(Container):
@@ -320,6 +320,120 @@ class InputField(Label):
             line + fill_style((self.width - real_length(line) + 1) * " ")
             for line in lines
         ]
+
+
+class Slider(Widget):
+    """A Widget to display & configure scalable data
+
+    By default, this Widget will act like a slider you might find in a
+    settings page, allowing percentage-based selection of magnitude.
+    Using `WindowManager` it can even be dragged around by the user using
+    the mouse.
+
+    However, setting the `Slider.locked` flag will disable that behaviour,
+    and freeze the `Widget` to its current value. The cursor is hidden, and
+    mouse inputs are unhandled.
+
+    The `Slider.show_percentage` flag controls whether to display the percentage
+    meter to the right side of the `Slider`.
+    """
+
+    is_selectable = True
+
+    chars = {
+        "endpoint": "",
+        "line": "─",
+        "cursor": "█",
+    }
+
+    styles = {
+        "filled": lambda _, item: len(item) * "#",
+        "unfilled": default_foreground,
+        "cursor": default_foreground,
+        "highlight": MarkupFormatter("[246]{item}"),
+    }
+
+    def __init__(
+        self, locked: bool = False, show_counter: bool = True, **attrs: Any
+    ) -> None:
+        """Initialize object"""
+
+        super().__init__(**attrs)
+
+        self.width = 10
+
+        self.locked = locked
+        self.show_counter = show_counter
+
+        self._display_value = 0
+        self._selectables_length = 1
+        self._available = self.width - 5
+
+    @property
+    def value(self) -> float:
+        """Get float value"""
+
+        return self._value
+
+    def handle_mouse(self, event: MouseEvent, target: MouseTarget | None) -> bool:
+        """Change slider position"""
+
+        action, pos = event
+
+        # Disallow changing state when Slider is locked
+        if not self.locked:
+            if action in [MouseAction.LEFT_DRAG, MouseAction.LEFT_CLICK]:
+                self._display_value = min(pos[0] - self.pos[0] + 1, self._available)
+
+                return True
+
+        return super().handle_mouse(event, target)
+
+    def get_lines(self) -> list[str]:
+        """Get lines of object"""
+
+        # Get characters
+        line_char = self.get_char("line")
+        assert isinstance(line_char, str)
+
+        endpoint_char = self.get_char("endpoint")
+        assert isinstance(endpoint_char, str)
+
+        cursor_char = self.get_char("cursor")
+        assert isinstance(cursor_char, str)
+
+        # Clamp value
+        self._display_value = min(self._display_value, self.width, self._available)
+
+        # Only show cursor if not locked
+        if self.locked:
+            cursor_char = ""
+
+        # Only highlight cursor if currently selected
+        if self.selected_index != 0:
+            cursor_char = self.get_style("highlight")(cursor_char)
+
+        # Construct left side
+        left = (self._display_value - real_length(cursor_char) + 1) * line_char
+        left = self.get_style("filled")(left) + cursor_char
+
+        # Define mouse target
+        self.mouse_targets = []
+        self.define_mouse_target(-1, 0, height=1)
+
+        # Get counter string
+        counter = ""
+        if self.show_counter:
+            percentage = (self._display_value * 100) // self._available
+            counter = f"{str(percentage) + '%': >5}"
+
+        self._value = self._display_value / self._available
+
+        # Construct final string
+        self._available = self.width - len(counter) - real_length(endpoint_char)
+        line_length = self._available - self._display_value
+
+        return [left + line_length * line_char + endpoint_char + counter]
 
 
 def alert(data: Any) -> None:
