@@ -197,9 +197,9 @@ class Window(Container):
     def rect(self, new: tuple[int, int, int, int]) -> None:
         """Set new rect"""
 
-        left, top, right, _ = new
+        left, top, right, _ = new.values
         self.pos = (left, top)
-        self.width = self.width = right - left
+        self.width = right - left
 
     def __iadd__(self, other: object) -> Window:
         """Call self._add_widget(other) and return self"""
@@ -412,15 +412,15 @@ class WindowManager(Container):
             action, pos = event
 
             for window in self._windows:
-                # Ignore unhandled actions
-                if not action in handlers:
-                    continue
-
                 if window is target_window or window.rect.contains(pos):
                     if not window.has_focus:
                         self.focus(window)
 
-                    self._should_print = handlers[action](pos, window)
+                    if not window.handle_mouse(event) and action in handlers:
+                        handlers[action](pos, window)
+
+                    self._should_print = True
+
                     break
 
                 # Break on modal window
@@ -476,13 +476,6 @@ class WindowManager(Container):
     def process_click(self, pos: tuple[int, int], window: Window) -> bool:
         """Process clicking a window"""
 
-        target = window.get_target(pos)
-        if target is not None:
-            window.select(window.mouse_targets.index(target))
-            assert isinstance(window.selected, Widget)
-            target.click(window.selected)
-            return True
-
         left, top, right, bottom = window.rect.values
 
         if pos[1] == top and left <= pos[0] <= right:
@@ -522,6 +515,7 @@ class WindowManager(Container):
             return False
 
         target_window, edge = self._drag_target
+        handled = False
 
         if window is not target_window:
             return False
@@ -533,14 +527,18 @@ class WindowManager(Container):
                 _clamp_pos(1),
             )
 
+            handled = True
+
         elif not window.is_noresize:
             if edge is Edge.RIGHT:
                 window.rect = Rect.from_tuple((left, top, pos[0] + 1, bottom))
+                handled = True
 
             elif edge is Edge.LEFT:
                 window.rect = Rect.from_tuple(
                     (pos[0], top, right + left - pos[0], bottom)
                 )
+                handled = True
 
         try:
             window.get_lines()
@@ -551,17 +549,10 @@ class WindowManager(Container):
         if id(window) in self._window_cache:
             del self._window_cache[id(window)]
 
-        return True
+        return handled
 
     def process_release(self, _: tuple[int, int], window: Window) -> bool:
         """Process release of key"""
-
-        selected: Widget | Window | None = self.focused
-        while hasattr(selected, "selected") and selected is not None:
-            selected = selected.selected
-
-        if not isinstance(selected, InputField):
-            window.selected_index = None
 
         self._drag_target = None
         return True

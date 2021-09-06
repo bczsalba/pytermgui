@@ -29,7 +29,7 @@ from .styles import (
 )
 from ..input import keys, getch
 from ..helpers import real_length
-from ..ansi_interface import foreground, background, reset
+from ..ansi_interface import foreground, background, reset, MouseAction
 
 
 __all__ = ["Splitter", "ColorPicker", "InputField", "alert"]
@@ -263,6 +263,24 @@ class InputField(Label):
             _run_callback()
 
         return True
+
+    def handle_mouse(
+        self, event: MouseEvent, target: Optional[MouseTarget] = None
+    ) -> bool:
+        """Handle mouse events"""
+
+        action, pos = event
+
+        # Ignore mouse release events
+        if action is MouseAction.RELEASE:
+            return True
+
+        # Set cursor to mouse location
+        if action is MouseAction.LEFT_CLICK:
+            self.cursor = pos[0] - self.pos[0]
+            return True
+
+        return super().handle_mouse(event, target)
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""

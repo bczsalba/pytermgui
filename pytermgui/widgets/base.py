@@ -348,7 +348,9 @@ class Widget:
     ) -> bool:
         """Handle a mouse event, return True if success"""
 
-        action, _ = event
+        action, pos = event
+        target = target or self.get_target(pos)
+
         if action is MouseAction.LEFT_CLICK:
             if target is None:
                 return False
@@ -444,9 +446,6 @@ class Widget:
 
         True: binding found & execute
         False: binding not found"""
-
-        if not self.is_bindable:
-            raise TypeError(f"Widget of type {type(self)} does not accept bindings.")
 
         # Execute special binding
         if keys.ANY_KEY in self._bindings:
@@ -946,16 +945,22 @@ class Container(Widget):
         """Handle mouse event on our children"""
 
         visited: list[Widget] = []
+
+        _, pos = event
+        target = target or self.get_target(pos)
+
         for i, (widget, _) in enumerate(self._selectables.values()):
             if widget in visited:
                 continue
 
             visited.append(widget)
             widget.selected_index = None
-            if widget.handle_mouse(event, target):
-                assert isinstance(target, MouseTarget)
-                self.select(i + widget.mouse_targets.index(target))
-                return True
+            if target in widget.mouse_targets:
+                handled = widget.handle_mouse(event, target)
+                if handled:
+                    self.select(i + widget.mouse_targets.index(target))
+
+                return handled
 
         return False
 

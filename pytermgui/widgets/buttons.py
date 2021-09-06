@@ -22,6 +22,7 @@ from .base import Widget, MouseCallback
 
 from ..parser import markup
 from ..helpers import real_length
+from ..ansi_interface import MouseAction
 
 __all__ = ["Button", "Checkbox", "Toggle"]
 
@@ -76,6 +77,23 @@ class Button(Widget):
         self.forced_width = real_length(word)
 
         return [self.padding * " " + word]
+
+    def handle_mouse(self, event: MouseEvent, target: MouseTarget | None) -> bool:
+        """Handle mouse event"""
+
+        target = target or self.get_target(pos)
+        action, _ = event
+
+        if action is MouseAction.LEFT_CLICK:
+            self.selected_index = 0
+            target.click(self)
+            return True
+
+        if action is MouseAction.RELEASE:
+            self.selected_index = None
+            return False
+
+        return super().handle_mouse(event, target)
 
 
 class Checkbox(Button):
