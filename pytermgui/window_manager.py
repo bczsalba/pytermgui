@@ -142,7 +142,7 @@ class Rect:
     def show(self) -> None:
         """Draw rect on screen"""
 
-        root = Container(width=10)
+        root = Container(width=self.right - self.left)
         root += self.debug()
         root.forced_width = self.right - self.left
         root.forced_height = self.top - self.bottom

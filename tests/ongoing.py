@@ -1,7 +1,24 @@
+from __future__ import annotations
+
 import sys
+from typing import Any
 from random import randint
 
-from pytermgui import InputField, get_widget, MarkupFormatter, Container, keys, markup
+from pytermgui import (
+    InputField,
+    get_widget,
+    MarkupFormatter,
+    MouseTarget,
+    Container,
+    keys,
+    markup,
+    Widget,
+    real_length,
+    Slider,
+)
+
+from pytermgui.widgets.styles import default_foreground, default_background
+from pytermgui.ansi_interface import MouseAction
 from pytermgui.window_manager import WindowManager, Window
 from pytermgui.cmd import MarkupApplication
 
@@ -28,6 +45,9 @@ def main() -> None:
     manager.add(app.construct_window())
 
     field: InputField
+    slider: Slider
+
+    slider = Slider(show_counter=False, locked=True)
 
     window = (
         Window(width=50, title="root", is_modal=True)
@@ -36,8 +56,16 @@ def main() -> None:
         + {"Button": ["label"]}
         + {"Toggle": [["one", "two"]]}
         + {"Checkbox": [False]}
+        + {"LockSlider": [True, lambda checked: setattr(slider, "locked", checked)]}
+        + {
+            "ShowCounter": [
+                False,
+                lambda checked: setattr(slider, "show_counter", checked),
+            ]
+        }
         + ""
-        + InputField(id="field")
+        + slider
+        + ["Check value", lambda *_: manager.alert(str(slider.value))]
         + ""
         + (
             ["Submit", lambda *_: manager.alert(field.value)],
@@ -49,8 +77,8 @@ def main() -> None:
     manager.add(window)
     manager.bind(keys.CTRL_T, lambda manager, _: manager.add(window.copy()))
 
-    field = get_widget("field")
-    assert field is not None
+    # field = get_widget("field")
+    # assert field is not None
 
     manager.run()
 
