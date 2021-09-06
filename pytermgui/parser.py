@@ -78,6 +78,8 @@ from enum import Enum, auto as _auto
 from dataclasses import dataclass
 from argparse import ArgumentParser
 from typing import Iterator, Callable
+
+from .ansi_interface import foreground
 from .exceptions import MarkupSyntaxError, AnsiSyntaxError
 
 
@@ -288,6 +290,13 @@ class MarkupLanguage:
         background = tag.startswith("@")
         if tag.startswith("@"):
             tag = tag[1:]
+
+        if tag in foreground.names:
+            return Token(
+                name=tag,
+                ttype=(TokenType.BG_8BIT if background else TokenType.FG_8BIT),
+                data=str(foreground.names[tag]),
+            )
 
         data_256 = RE_256.match(tag)
         if data_256 is not None:
