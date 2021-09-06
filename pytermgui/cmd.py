@@ -172,7 +172,7 @@ class GetchApplication(Application):
     def construct_window(self) -> Window:
         """Construct an application window"""
 
-        window = self._get_base_window() + "[wm-title]Press any key..."
+        window = self._get_base_window(is_modal=True) + "[wm-title]Press any key..."
         window.bind(
             keys.ANY_KEY, self._key_callback, description="Read key & update window"
         )
