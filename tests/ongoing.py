@@ -66,6 +66,7 @@ def main() -> None:
         + ""
         + slider
         + ["Check value", lambda *_: manager.alert(str(slider.value))]
+        + InputField()
         + ""
         + (
             ["Submit", lambda *_: manager.alert(field.value)],

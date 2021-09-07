@@ -255,8 +255,6 @@ class WindowManager(Container):
     is_bindable = True
 
     framerate = 300
-    navigation_up: set[str] = {keys.UP, keys.CTRL_P, "k"}
-    navigation_down: set[str] = {keys.DOWN, keys.CTRL_N, "j"}
 
     def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
@@ -352,28 +350,7 @@ class WindowManager(Container):
             if self.focused.execute_binding(key):
                 return True
 
-            if isinstance(self.focused.selected, InputField):
-                if self.focused.selected.send(key):
-                    return True
-
-        # Try handling key by window
-        window = self.focused
-
-        if window is not None:
-            if self._is_nav_key(key) and window.selectables_length > 0:
-                if window.selected_index is None:
-                    window.select(0)
-
-                elif key in self.navigation_up:
-                    window.select(window.selected_index - 1)
-
-                elif key in self.navigation_down:
-                    window.select(window.selected_index + 1)
-
-                return True
-
-            if key == keys.ENTER and window.selected_index is not None:
-                window.mouse_targets[window.selected_index].click(self)
+            if self.focused.handle_key(key):
                 return True
 
         return False

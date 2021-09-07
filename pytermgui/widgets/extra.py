@@ -216,7 +216,7 @@ class InputField(Label):
 
         self._cursor = max(0, min(value, real_length(self.value)))
 
-    def send(self, key: str) -> bool:
+    def handle_key(self, key: str) -> bool:
         """Handle keypress, return True if success, False if failure"""
 
         def _run_callback() -> None:
@@ -395,6 +395,19 @@ class Slider(Widget):
                 return True
 
         return super().handle_mouse(event, target)
+
+    def handle_key(self, key: str) -> bool:
+        """Change slider position with keys"""
+
+        if key in [keys.LEFT, "h", keys.CTRL_B]:
+            self._display_value -= 1
+            return True
+
+        if key in [keys.RIGHT, "l", keys.CTRL_F]:
+            self._display_value += 1
+            return True
+
+        return False
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""

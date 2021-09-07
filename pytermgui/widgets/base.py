@@ -366,6 +366,11 @@ class Widget:
 
         return False
 
+    def handle_key(self, key: str) -> bool:
+        """Handle a keystroke, return True if success"""
+
+        return not bool(key)
+
     def serialize(self) -> dict[str, Any]:
         """Serialize object based on type(object).serialized"""
 
@@ -536,10 +541,11 @@ class Container(Widget):
     CENTER_BOTH = 8
 
     chars: dict[str, CharType] = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
-
     styles: dict[str, StyleType] = {"border": apply_markup, "corner": apply_markup}
-
     serialized = Widget.serialized + ["_centered_axis"]
+
+    navigation_up: set[str] = {keys.UP, keys.CTRL_P, "k"}
+    navigation_down: set[str] = {keys.DOWN, keys.CTRL_N, "j"}
 
     def __init__(self, *widgets: Widget, **attrs: Any) -> None:
         """Initialize Container data"""
@@ -978,6 +984,41 @@ class Container(Widget):
                     self.select(i)
 
         return handled
+
+    def handle_key(self, key: str) -> bool:
+        """Handle a keypress, return True if success"""
+
+        def _is_nav(key: str) -> bool:
+            """Determine if a key is in the navigation sets"""
+
+            return key in self.navigation_up | self.navigation_down
+
+        if self.selected is not None and self.selected.handle_key(key):
+            return True
+
+        # Only use navigation when there is more than one selectable
+        if self.selectables_length > 1 and _is_nav(key):
+            if self.selected_index is None:
+                self.select(0)
+
+            # No more selectables left, user wants to exit Container
+            # upwards.
+            elif self.selected_index == 0:
+                return False
+
+            if key in self.navigation_up:
+                self.select(self.selected_index - 1)
+                return True
+
+            if key in self.navigation_down:
+                self.select(self.selected_index + 1)
+                return True
+
+        if key == keys.ENTER and self.selected_index is not None:
+            self.mouse_targets[self.selected_index].click(self)
+            return True
+
+        return False
 
     def wipe(self) -> None:
         """Wipe characters occupied by the object"""
