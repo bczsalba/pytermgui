@@ -267,9 +267,9 @@ class WindowManager(Container):
         self._is_running: bool = True
         self._should_print: bool = False
         self._windows: list[Window] = []
-        self._drag_target: Optional[tuple[Window, Edge]] = None
+        self._drag_target: tuple[Widget, Edge] | None = None
         self._drag_offsets: tuple[int, int] = (1, 1)
-        self.mouse_translator: Optional[Callable[[str], MouseEvent]] = None
+        self.mouse_translator: Callable[[str], MouseEvent] = None
 
         self._window_cache: dict[int, list[str]] = {}
 
@@ -362,15 +362,14 @@ class WindowManager(Container):
         if window is not None:
             if self._is_nav_key(key) and window.selectables_length > 0:
                 if window.selected_index is None:
-                    window.selected_index = 0
+                    window.select(0)
 
                 elif key in self.navigation_up:
-                    window.selected_index -= 1
+                    window.select(window.selected_index - 1)
 
                 elif key in self.navigation_down:
-                    window.selected_index += 1
+                    window.select(window.selected_index + 1)
 
-                window.select()
                 return True
 
             if key == keys.ENTER and window.selected_index is not None:

@@ -375,8 +375,15 @@ class Slider(Widget):
 
         # Disallow changing state when Slider is locked
         if not self.locked:
+            if action is MouseAction.RELEASE:
+                self.selected_index = None
+                return True
+
             if action in [MouseAction.LEFT_DRAG, MouseAction.LEFT_CLICK]:
-                self._display_value = min(pos[0] - self.pos[0] + 1, self._available)
+                self._display_value = max(
+                    0, min(pos[0] - self.pos[0] + 1, self._available)
+                )
+                self.selected_index = 0
 
                 return True
 
@@ -396,7 +403,9 @@ class Slider(Widget):
         assert isinstance(cursor_char, str)
 
         # Clamp value
-        self._display_value = min(self._display_value, self.width, self._available)
+        self._display_value = max(
+            0, min(self._display_value, self.width, self._available)
+        )
 
         # Only show cursor if not locked
         if self.locked:

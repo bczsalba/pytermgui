@@ -80,8 +80,8 @@ class Button(Widget):
     def handle_mouse(self, event: MouseEvent, target: MouseTarget | None) -> bool:
         """Handle mouse event"""
 
+        action, pos = event
         target = target or self.get_target(pos)
-        action, _ = event
 
         if action is MouseAction.LEFT_CLICK:
             self.selected_index = 0

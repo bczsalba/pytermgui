@@ -549,6 +549,8 @@ class Container(Widget):
         for widget in widgets:
             self._add_widget(widget)
 
+        self._drag_target: Widget | None = None
+
     @property
     def sidelength(self) -> int:
         """Returns length of left+right borders"""
@@ -795,11 +797,7 @@ class Container(Widget):
                 self.pos[1] + len(lines) + container_vertical_offset,
             )
 
-            # get_lines()
             widget_lines: list[str] = []
-
-            if self.selected_index is None:
-                widget.selected_index = None
 
             for i, line in enumerate(widget.get_lines()):
                 # Pad horizontally
@@ -934,29 +932,39 @@ class Container(Widget):
         return self
 
     def handle_mouse(
-        self, event: MouseEvent, target: Optional[MouseTarget] = None
+        self, event: MouseEvent, target: MouseTarget | None = None
     ) -> bool:
         """Handle mouse event on our children"""
 
-        visited: list[Widget] = []
+        def _get_widget(target: MouseTarget) -> Widget | None:
+            """Try to get widget from its mouse target"""
 
-        _, pos = event
+            for widget in self._widgets:
+                if target in widget.mouse_targets:
+                    return widget
+
+            return None
+
+        action, pos = event
         target = target or self.get_target(pos)
+        target_widget = self._drag_target or _get_widget(target)
 
-        for i, (widget, _) in enumerate(self._selectables.values()):
-            if widget in visited:
-                continue
+        if action is MouseAction.LEFT_CLICK:
+            self._drag_target = target_widget
 
-            visited.append(widget)
-            widget.selected_index = None
-            if target in widget.mouse_targets:
-                handled = widget.handle_mouse(event, target)
-                if handled:
-                    self.select(i + widget.mouse_targets.index(target))
+        elif action is MouseAction.RELEASE:
+            self._drag_target = None
 
-                return handled
+        if target_widget is None:
+            return False
 
-        return False
+        handled = target_widget.handle_mouse(event, target)
+        if handled:
+            for i, widget in enumerate(self._selectables.values()):
+                if target_widget is widget or target_widget in widget:
+                    self.select(i)
+
+        return handled
 
     def wipe(self) -> None:
         """Wipe characters occupied by the object"""
