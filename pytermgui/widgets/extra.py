@@ -96,7 +96,6 @@ class Splitter(Container):
     """A Container-like object that allows stacking Widgets horizontally"""
 
     chars: dict[str, CharType] = {"separator": " | "}
-
     styles: dict[str, StyleType] = {"separator": apply_markup}
 
     def __init__(self, *widgets: Widget, **attrs: Any) -> None:
@@ -150,9 +149,6 @@ class Splitter(Container):
             if widget.forced_width is None:
                 widget.width = real_length(widget.get_lines()[0])
 
-            if self.selected_index is None:
-                widget.selected_index = None
-
             widget_lines.append([])  # type: ignore
             for line in widget.get_lines():
                 widget_lines[-1].append(left * " " + line + right * " ")
@@ -190,7 +186,6 @@ class InputField(Label):
     }
 
     is_bindable = True
-    is_selectable = True
 
     def __init__(self, value: str = "", prompt: str = "", **attrs: Any) -> None:
         """Initialize object"""
@@ -337,8 +332,6 @@ class Slider(Widget):
     The `Slider.show_percentage` flag controls whether to display the percentage
     meter to the right side of the `Slider`.
     """
-
-    is_selectable = True
 
     chars = {
         "endpoint": "",

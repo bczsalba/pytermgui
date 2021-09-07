@@ -153,7 +153,6 @@ class Widget:
         "height",
         "forced_width",
         "forced_height",
-        "is_selectable",
         "selected_index",
         "selectables_length",
     ]
@@ -174,7 +173,6 @@ class Widget:
     _id_manager: Optional["_IDManager"] = None  # type: ignore
 
     is_bindable = False
-    is_selectable = False
     size_policy = SIZE_FILL
     parent_align = PARENT_CENTER
 
@@ -550,7 +548,6 @@ class Container(Widget):
         self._widgets: list[Widget] = []
         self._selectables: dict[int, tuple[Widget, int]] = {}
         self._centered_axis: Optional[int] = None
-        self._prev_selected: Optional[Widget] = None
 
         self._prev_screen: tuple[int, int] = (0, 0)
 
@@ -586,7 +583,6 @@ class Container(Widget):
         selected = data[0]
 
         # TODO: Add deeper selection
-        self._prev_selected = selected
 
         return selected
 

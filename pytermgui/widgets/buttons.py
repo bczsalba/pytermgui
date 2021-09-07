@@ -49,10 +49,9 @@ class Button(Widget):
         super().__init__(**attrs)
 
         self.label = label
-        self._selectables_length = 1
-        self.is_selectable = True
         self.onclick = onclick
         self.padding = padding
+        self._selectables_length = 1
 
     def get_lines(self) -> list[str]:
         """Get object lines"""
