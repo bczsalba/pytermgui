@@ -458,22 +458,14 @@ class Widget:
 
         return False
 
-    def select(self, index: Optional[int] = None) -> None:
+    def select(self, index: int | None = None) -> None:
         """Select part of self"""
 
-        if index is None:
-            if self.selected_index is None:
-                raise ValueError(
-                    "Cannot select nothing! "
-                    + "Either give an argument to select() or set object.selected_index."
-                )
-            index = self.selected_index
+        if self.selectables_length == 0:
+            raise TypeError(f"Object of type {type(self)} has no selectables.")
 
-        if not self.is_selectable:
-            raise TypeError(f"Object of type {type(self)} is marked non-selectable.")
-
-        index = min(max(0, index), self.selectables_length - 1)
-
+        if index is not None:
+            index = min(max(0, index), self.selectables_length - 1)
         self.selected_index = index
 
     def get_container(self) -> Container:
@@ -624,6 +616,11 @@ class Container(Widget):
         """Set item in self._widgets"""
 
         self._widgets[index] = value
+
+    def __contains__(self, other: object) -> bool:
+        """Find if Container contains other"""
+
+        return other in self._widgets
 
     def _add_widget(self, other: object, run_get_lines: bool = True) -> None:
         """Add other to self._widgets, convert using auto() if necessary"""
@@ -885,29 +882,30 @@ class Container(Widget):
             else:
                 widget.depth = value
 
-    def select(self, index: Optional[int] = None) -> None:
+    def select(self, index: int | None = None) -> None:
         """Select inner object"""
 
-        if index is None:
-            if self.selected_index is None:
-                raise ValueError(
-                    "Cannot select nothing! "
-                    + "Either give an argument to select() or set object.selected_index."
-                )
-            index = self.selected_index
+        widget = None
 
-        index = min(max(0, index), len(self._selectables) - 1)
-
-        data = self._selectables.get(index)
-        if data is None:
-            raise IndexError("Container selection index out of range")
-
-        widget, inner_index = data
-        widget.select(inner_index)
-
+        # Unselect all sub-elements
         for other in self._widgets:
-            if other is not widget:
-                other.selected_index = None
+            if other.selectables_length > 0:
+                other.select(None)
+
+                if isinstance(other, Container):
+                    for sub in other:
+                        if sub.selectables_length > 0:
+                            sub.select(None)
+
+        if index is not None:
+            index = min(max(0, index), len(self._selectables) - 1)
+
+            data = self._selectables.get(index)
+            if data is None:
+                raise IndexError("Container selection index out of range")
+
+            widget, inner_index = data
+            widget.select(inner_index)
 
         self.selected_index = index
 
