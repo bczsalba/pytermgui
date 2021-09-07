@@ -546,7 +546,6 @@ class Container(Widget):
 
         super().__init__(**attrs)
         self._widgets: list[Widget] = []
-        self._selectables: dict[int, tuple[Widget, int]] = {}
         self._centered_axis: Optional[int] = None
 
         self._prev_screen: tuple[int, int] = (0, 0)
@@ -572,27 +571,37 @@ class Container(Widget):
         return real_length(style(left_border) + style(right_border))
 
     @property
-    def selected(self) -> Optional[Widget]:
-        """Return selected object"""
+    def selectables(self) -> list[tuple[Widget, i]]:
+        """Get all selectable widgets and their inner indexes"""
 
-        if self.selected_index is None:
-            return None
+        _selectables: list[tuple[Widget, int]] = []
+        for i, widget in enumerate(self._widgets):
+            if not widget.is_selectable:
+                continue
 
-        data = self._selectables.get(self.selected_index)
-        if data is None:
-            return data
+            _selectables.append((widget, i))
 
-        selected = data[0]
-
-        # TODO: Add deeper selection
-
-        return selected
+        return _selectables
 
     @property
     def selectables_length(self) -> int:
         """Get len(_selectables)"""
 
-        return len(self._selectables)
+        return len(self.selectables)
+
+    @property
+    def selected(self) -> Optional[Widget]:
+        """Return selected object"""
+
+        # TODO: Add deeper selection
+
+        if self.selected_index is None:
+            return None
+
+        if self.selected_index >= len(self.selectables):
+            return None
+
+        return self.selectables[self.selected_index][0]
 
     def __iadd__(self, other: object) -> Container:
         """Call self._add_widget(other) and return self"""
@@ -666,15 +675,6 @@ class Container(Widget):
 
         other.get_lines()
         other.parent = self
-
-        selectables = list(self._selectables)
-        if len(selectables) <= 0:
-            sel_len = 0
-        else:
-            sel_len = max(selectables) + 1
-
-        for i in range(other.selectables_length):
-            self._selectables[sel_len + i] = other, i
 
         self.height += other.height
 
@@ -904,9 +904,14 @@ class Container(Widget):
                             sub.select(None)
 
         if index is not None:
-            index = min(max(0, index), len(self._selectables) - 1)
+            selectables = []
+            for widget in self._widgets:
+                for i in range(widget.selectables_length):
+                    selectables.append((widget, i))
 
-            data = self._selectables.get(index)
+            index = min(max(0, index), len(selectables) - 1)
+
+            data = selectables[index]
             if data is None:
                 raise IndexError("Container selection index out of range")
 
@@ -968,7 +973,7 @@ class Container(Widget):
 
         handled = target_widget.handle_mouse(event, target)
         if handled:
-            for i, widget in enumerate(self._selectables.values()):
+            for i, widget in enumerate(self.selectables):
                 if target_widget is widget or target_widget in widget:
                     self.select(i)
 
