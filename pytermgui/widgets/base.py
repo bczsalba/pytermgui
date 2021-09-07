@@ -1018,9 +1018,10 @@ class Container(Widget):
                 self.select(self.selected_index + 1)
                 return True
 
-        if key == keys.ENTER and self.selected_index is not None:
-            self.mouse_targets[self.selected_index].click(self)
-            return True
+        if key == keys.ENTER and self.selected is not None:
+            if self.selected.selected_index is not None:
+                self.selected.mouse_targets[self.selected.selected_index].click(self)
+                return True
 
         return False
 

@@ -85,8 +85,9 @@ class Button(Widget):
 
         if action is MouseAction.LEFT_CLICK:
             self.selected_index = 0
-            target.click(self)
-            return True
+            if target is not None:
+                target.click(self)
+                return True
 
         if action is MouseAction.RELEASE:
             self.selected_index = None

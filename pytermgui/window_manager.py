@@ -436,6 +436,9 @@ class WindowManager(Container):
 
         self._windows.remove(window)
 
+        if len(self._windows):
+            self.focus(self._windows[0])
+
     def on_resize(self, size: tuple[int, int]) -> None:
         """Correctly update window positions & print when terminal gets resized"""
 
