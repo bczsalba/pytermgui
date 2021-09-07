@@ -25,9 +25,10 @@ Upcoming Version
 
     * [x] Rewrite `WindowManager`
         + The current implementation is old and rushed, with a lot of shortcuts.
+	+ Handle all mouse events under the same method!!!
 
     * [x] Add `handle_mouse` method to `Widget`
-    * [ ] Add `handle_key` method to `Widget`
+    * [x] Add `handle_key` method to `Widget`
 
     * [ ] Rework width & height systems
         + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy

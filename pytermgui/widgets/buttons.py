@@ -17,12 +17,12 @@ from __future__ import annotations
 
 from typing import Optional, Any, Callable
 
+from .base import Widget, MouseCallback, MouseTarget
 from .styles import StyleType, CharType, MarkupFormatter
-from .base import Widget, MouseCallback
 
 from ..parser import markup
 from ..helpers import real_length
-from ..ansi_interface import MouseAction
+from ..ansi_interface import MouseAction, MouseEvent
 
 __all__ = ["Button", "Checkbox", "Toggle"]
 
@@ -77,19 +77,21 @@ class Button(Widget):
 
         return [self.padding * " " + word]
 
-    def handle_mouse(self, event: MouseEvent, target: MouseTarget | None) -> bool:
+    def handle_mouse(
+        self, event: MouseEvent, target: MouseTarget | None = None
+    ) -> bool:
         """Handle mouse event"""
 
         action, pos = event
         target = target or self.get_target(pos)
 
-        if action is MouseAction.LEFT_CLICK:
+        if action == MouseAction.LEFT_CLICK:
             self.selected_index = 0
             if target is not None:
                 target.click(self)
                 return True
 
-        if action is MouseAction.RELEASE:
+        if action == MouseAction.RELEASE:
             self.selected_index = None
             return False
 

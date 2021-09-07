@@ -351,7 +351,7 @@ class Widget:
         return None
 
     def handle_mouse(
-        self, event: MouseEvent, target: Optional[MouseTarget] = None
+        self, event: MouseEvent, target: MouseTarget | None = None
     ) -> bool:
         """Handle a mouse event, return True if success"""
 

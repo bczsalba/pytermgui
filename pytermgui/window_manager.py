@@ -50,15 +50,14 @@ from .widgets.base import Container
 
 from .widgets import (
     MarkupFormatter,
-    InputField,
     Widget,
     boxes,
 )
 
+from .input import getch
 from .parser import markup
-from .input import getch, keys
-from .exceptions import LineLengthError
 from .helpers import strip_ansi
+from .exceptions import LineLengthError
 from .ansi_interface import terminal, MouseAction, move_cursor
 from .context_managers import alt_buffer, mouse_handler, MouseEvent
 
@@ -333,11 +332,6 @@ class WindowManager(Container):
 
         Thread(name="WM_DisplayLoop", target=_loop).start()
 
-    def _is_nav_key(self, key: str) -> bool:
-        """Check if key is in any of the navigation sets"""
-
-        return key in self.navigation_up | self.navigation_down
-
     def _handle_keypress(self, key: str) -> bool:
         """Process a keypress"""
 
@@ -436,7 +430,7 @@ class WindowManager(Container):
 
         self._windows.remove(window)
 
-        if len(self._windows):
+        if window.has_focus and len(self._windows) > 0:
             self.focus(self._windows[0])
 
     def on_resize(self, size: tuple[int, int]) -> None:

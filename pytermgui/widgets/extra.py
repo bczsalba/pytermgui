@@ -18,7 +18,7 @@ import string
 from typing import Any
 from itertools import zip_longest
 
-from .base import Container, Label, Widget
+from .base import Container, Label, Widget, MouseTarget
 
 from .styles import (
     default_foreground,
@@ -29,7 +29,7 @@ from .styles import (
 )
 from ..input import keys, getch
 from ..helpers import real_length
-from ..ansi_interface import foreground, background, reset, MouseAction
+from ..ansi_interface import foreground, background, reset, MouseAction, MouseEvent
 
 
 __all__ = ["Splitter", "ColorPicker", "InputField", "Slider", "alert"]
@@ -260,7 +260,7 @@ class InputField(Label):
         return True
 
     def handle_mouse(
-        self, event: MouseEvent, target: Optional[MouseTarget] = None
+        self, event: MouseEvent, target: MouseTarget | None = None
     ) -> bool:
         """Handle mouse events"""
 
@@ -363,6 +363,7 @@ class Slider(Widget):
         self.locked = locked
         self.show_counter = show_counter
 
+        self._value = 0.0
         self._display_value = 0
         self._available = self.width - 5
 
@@ -380,7 +381,9 @@ class Slider(Widget):
 
         return self._value
 
-    def handle_mouse(self, event: MouseEvent, target: MouseTarget | None) -> bool:
+    def handle_mouse(
+        self, event: MouseEvent, target: MouseTarget | None = None
+    ) -> bool:
         """Change slider position"""
 
         action, pos = event
