@@ -306,6 +306,14 @@ class Widget:
         return self._selectables_length
 
     @property
+    def is_selectable(self) -> bool:
+        """Determine if this widget has any selectables.
+
+        Shorthand for `Widget.selectables_length != 0`"""
+
+        return self.selectables_length != 0
+
+    @property
     def forced_width(self) -> Optional[int]:
         """Return forced/static width of object"""
 
@@ -461,7 +469,7 @@ class Widget:
     def select(self, index: int | None = None) -> None:
         """Select part of self"""
 
-        if self.selectables_length == 0:
+        if not self.is_selectable:
             raise TypeError(f"Object of type {type(self)} has no selectables.")
 
         if index is not None:
