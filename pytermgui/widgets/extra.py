@@ -359,8 +359,15 @@ class Slider(Widget):
         self.show_counter = show_counter
 
         self._display_value = 0
-        self._selectables_length = 1
         self._available = self.width - 5
+
+    @property
+    def selectables_length(self) -> int:
+        """Return count of selectables"""
+
+        if self.locked:
+            return 0
+        return 1
 
     @property
     def value(self) -> float:
