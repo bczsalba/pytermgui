@@ -346,6 +346,11 @@ class Slider(Widget):
         "highlight": MarkupFormatter("[246]{item}"),
     }
 
+    keys = {
+        "increase": {keys.RIGHT, keys.CTRL_F, "l", "+"},
+        "decrease": {keys.LEFT, keys.CTRL_B, "h", "-"},
+    }
+
     def __init__(
         self, locked: bool = False, show_counter: bool = True, **attrs: Any
     ) -> None:
@@ -399,11 +404,11 @@ class Slider(Widget):
     def handle_key(self, key: str) -> bool:
         """Change slider position with keys"""
 
-        if key in [keys.LEFT, "h", keys.CTRL_B]:
+        if key in self.keys["decrease"]:
             self._display_value -= 1
             return True
 
-        if key in [keys.RIGHT, "l", keys.CTRL_F]:
+        if key in self.keys["increase"]:
             self._display_value += 1
             return True
 

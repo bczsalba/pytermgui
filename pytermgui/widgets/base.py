@@ -144,6 +144,7 @@ class Widget:
     OVERRIDE: StyleType = overrideable_style
     styles: dict[str, StyleType] = {}
     chars: dict[str, CharType] = {}
+    keys: dict[str, set[str]] = {}
 
     serialized: list[str] = [
         "id",
@@ -540,12 +541,15 @@ class Container(Widget):
     CENTER_Y = 7
     CENTER_BOTH = 8
 
-    chars: dict[str, CharType] = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
-    styles: dict[str, StyleType] = {"border": apply_markup, "corner": apply_markup}
-    serialized = Widget.serialized + ["_centered_axis"]
+    chars = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
+    styles = {"border": apply_markup, "corner": apply_markup}
 
-    navigation_up: set[str] = {keys.UP, keys.CTRL_P, "k"}
-    navigation_down: set[str] = {keys.DOWN, keys.CTRL_N, "j"}
+    keys = {
+        "navigation_up": {keys.UP, keys.CTRL_P, "k"},
+        "navigation_down": {keys.DOWN, keys.CTRL_N, "j"},
+    }
+
+    serialized = Widget.serialized + ["_centered_axis"]
 
     def __init__(self, *widgets: Widget, **attrs: Any) -> None:
         """Initialize Container data"""
@@ -991,7 +995,7 @@ class Container(Widget):
         def _is_nav(key: str) -> bool:
             """Determine if a key is in the navigation sets"""
 
-            return key in self.navigation_up | self.navigation_down
+            return key in self.keys["navigation_up"] | self.keys["navigation_down"]
 
         if self.selected is not None and self.selected.handle_key(key):
             return True
@@ -1001,16 +1005,16 @@ class Container(Widget):
             if self.selected_index is None:
                 self.select(0)
 
-            # No more selectables left, user wants to exit Container
-            # upwards.
-            elif self.selected_index == 0:
-                return False
+            if key in self.keys["navigation_up"]:
+                # No more selectables left, user wants to exit Container
+                # upwards.
+                if self.selected_index == 0:
+                    return False
 
-            if key in self.navigation_up:
                 self.select(self.selected_index - 1)
                 return True
 
-            if key in self.navigation_down:
+            if key in self.keys["navigation_down"]:
                 self.select(self.selected_index + 1)
                 return True
 
