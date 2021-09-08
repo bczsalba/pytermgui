@@ -25,7 +25,6 @@ Upcoming Version
 
     * [x] Rewrite `WindowManager`
         + The current implementation is old and rushed, with a lot of shortcuts.
-	+ Handle all mouse events under the same method!!!
 
     * [x] Add `handle_mouse` method to `Widget`
     * [x] Add `handle_key` method to `Widget`
