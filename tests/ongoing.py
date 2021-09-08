@@ -45,9 +45,10 @@ def main() -> None:
     manager.add(app.construct_window())
 
     field: InputField
-    slider: Slider
 
-    slider = Slider(show_counter=False, locked=True)
+    slider = Slider(
+        onchange=lambda value: (setattr(field, "value", str(value))),
+    )
 
     window = (
         Window(width=50, title="root", is_modal=True)
@@ -56,17 +57,21 @@ def main() -> None:
         + {"Button": ["label"]}
         + {"Toggle": [["one", "two"]]}
         + {"Checkbox": [False]}
-        + {"LockSlider": [True, lambda checked: setattr(slider, "locked", checked)]}
+        + {
+            "LockSlider": [
+                slider.locked,
+                lambda checked: setattr(slider, "locked", checked),
+            ]
+        }
         + {
             "ShowCounter": [
-                False,
+                slider.show_counter,
                 lambda checked: setattr(slider, "show_counter", checked),
             ]
         }
         + ""
+        + InputField(id="field")
         + slider
-        + ["Check value", lambda *_: manager.alert(str(slider.value))]
-        + InputField()
         + ""
         + (
             ["Submit", lambda *_: manager.alert(field.value)],
@@ -78,8 +83,8 @@ def main() -> None:
     manager.add(window)
     manager.bind(keys.CTRL_T, lambda manager, _: manager.add(window.copy()))
 
-    # field = get_widget("field")
-    # assert field is not None
+    field = get_widget("field")
+    assert field is not None
 
     manager.run()
 

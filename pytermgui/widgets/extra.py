@@ -352,7 +352,11 @@ class Slider(Widget):
     }
 
     def __init__(
-        self, locked: bool = False, show_counter: bool = True, **attrs: Any
+        self,
+        onchange: Callable[[float], Any] | None = None,
+        locked: bool = False,
+        show_counter: bool = True,
+        **attrs: Any,
     ) -> None:
         """Initialize object"""
 
@@ -362,6 +366,7 @@ class Slider(Widget):
 
         self.locked = locked
         self.show_counter = show_counter
+        self.onchange = onchange
 
         self._value = 0.0
         self._display_value = 0
@@ -379,7 +384,7 @@ class Slider(Widget):
     def value(self) -> float:
         """Get float value"""
 
-        return self._value
+        return self._display_value / self._available
 
     def handle_mouse(
         self, event: MouseEvent, target: MouseTarget | None = None
@@ -400,6 +405,9 @@ class Slider(Widget):
                 )
                 self.selected_index = 0
 
+                if self.onchange is not None:
+                    self.onchange(self.value)
+
                 return True
 
         return super().handle_mouse(event, target)
@@ -409,10 +417,16 @@ class Slider(Widget):
 
         if key in self.keys["decrease"]:
             self._display_value -= 1
+
+            if self.onchange is not None:
+                self.onchange(self.value)
             return True
 
         if key in self.keys["increase"]:
             self._display_value += 1
+
+            if self.onchange is not None:
+                self.onchange(self.value)
             return True
 
         return False
@@ -456,8 +470,6 @@ class Slider(Widget):
         if self.show_counter:
             percentage = (self._display_value * 100) // self._available
             counter = f"{str(percentage) + '%': >5}"
-
-        self._value = self._display_value / self._available
 
         # Construct final string
         self._available = self.width - len(counter) - real_length(endpoint_char)
