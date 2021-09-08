@@ -1004,6 +1004,7 @@ class Container(Widget):
         if self.selectables_length > 1 and _is_nav(key):
             if self.selected_index is None:
                 self.select(0)
+                return True
 
             if key in self.keys["navigation_up"]:
                 # No more selectables left, user wants to exit Container

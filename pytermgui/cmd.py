@@ -115,12 +115,13 @@ class LauncherApplication(Application):
     def construct_window(self) -> Window:
         """Construct an application window"""
 
-        window = self._get_base_window(width=30, is_noblur=True, is_static=True) + ""
+        window = self._get_base_window(width=30, is_noblur=False, is_static=True) + ""
         manager = self.manager
 
         for app in self.apps:
-            button = Button(
-                app.title, lambda _, button: manager.add(button.app.construct_window())
+            button = Button(app.title)
+            button.onclick = lambda *_, button=button: manager.add(
+                button.app.construct_window()
             )
             button.app = app
             window += button
@@ -312,6 +313,7 @@ class MarkupApplication(Application):
             field.bind(keys.RETURN, lambda *_: self._request_exit())
 
         window.center()
+        window.select(0)
         return window
 
 
