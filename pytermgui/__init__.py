@@ -50,7 +50,7 @@ __all__ += _widgets_all
 __all__ += _inspector_all
 __all__ += _serializer_all
 __all__ += _exceptions_all
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 
 def auto(  # pylint: disable=R0911

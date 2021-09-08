@@ -46,9 +46,7 @@ def main() -> None:
 
     field: InputField
 
-    slider = Slider(
-        onchange=lambda value: (setattr(field, "value", str(value))),
-    )
+    slider = Slider()
 
     window = (
         Window(width=50, title="root", is_modal=True)
@@ -70,7 +68,6 @@ def main() -> None:
             ]
         }
         + ""
-        + InputField(id="field")
         + slider
         + ""
         + (
@@ -83,8 +80,8 @@ def main() -> None:
     manager.add(window)
     manager.bind(keys.CTRL_T, lambda manager, _: manager.add(window.copy()))
 
-    field = get_widget("field")
-    assert field is not None
+    # field = get_widget("field")
+    # assert field is not None
 
     manager.run()
 
