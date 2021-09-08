@@ -332,7 +332,7 @@ class WindowManager(Container):
 
         Thread(name="WM_DisplayLoop", target=_loop).start()
 
-    def _handle_keypress(self, key: str) -> bool:
+    def handle_key(self, key: str) -> bool:
         """Process a keypress"""
 
         # Apply WindowManager bindings
@@ -349,7 +349,7 @@ class WindowManager(Container):
 
         return False
 
-    def _handle_mouse(self, key: str) -> None:
+    def process_mouse(self, key: str) -> None:
         """Process (potential) mouse input"""
 
         def _get_target() -> Window | None:
@@ -361,9 +361,9 @@ class WindowManager(Container):
             return self._drag_target[0]
 
         handlers = {
-            MouseAction.LEFT_DRAG: self.process_drag,
-            MouseAction.RELEASE: self.process_release,
-            MouseAction.LEFT_CLICK: self.process_click,
+            MouseAction.LEFT_CLICK: self._click,
+            MouseAction.LEFT_DRAG: self._drag,
+            MouseAction.RELEASE: self._release,
         }
 
         translate = self.mouse_translator
@@ -446,7 +446,7 @@ class WindowManager(Container):
 
         self._should_print = True
 
-    def process_click(self, pos: tuple[int, int], window: Window) -> bool:
+    def _click(self, pos: tuple[int, int], window: Window) -> bool:
         """Process clicking a window"""
 
         left, top, right, bottom = window.rect.values
@@ -473,7 +473,7 @@ class WindowManager(Container):
 
         return True
 
-    def process_drag(self, pos: tuple[int, int], window: Window) -> bool:
+    def _drag(self, pos: tuple[int, int], window: Window) -> bool:
         """Process dragging a window"""
 
         def _clamp_pos(index: int) -> int:
@@ -524,7 +524,7 @@ class WindowManager(Container):
 
         return handled
 
-    def process_release(self, _: tuple[int, int], window: Window) -> bool:
+    def _release(self, _: tuple[int, int], window: Window) -> bool:
         """Process release of key"""
 
         self._drag_target = None
@@ -536,11 +536,11 @@ class WindowManager(Container):
         while self._is_running:
             key = getch()
 
-            if self._handle_keypress(key):
+            if self.handle_key(key):
                 self._should_print = True
                 continue
 
-            self._handle_mouse(key)
+            self.process_mouse(key)
 
     def stop(self) -> None:
         """Stop main loop"""
