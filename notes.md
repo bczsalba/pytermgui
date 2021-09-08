@@ -33,6 +33,8 @@ Upcoming Version
         + [ ] instead of `forced_width`, there should be a combination of an overflow & a size policy
         + [ ] overflow/expand -> current no forced width behaviour
         + [ ] overflow/clip   -> shorten lines to fit width
+	+ [ ] some kind of measurement system:
+		- `Widget.measurements` property: `(min, max)`
 
 
 Future versions
@@ -51,6 +53,8 @@ Future versions
         + [ ] e.g.: `[@{30 + {depth} * 36}]this is a gradient of depth`
 
     * [ ] add background styles
+
+    * ( )? Add CSS/JSON config parsing
 
 
 - unnamed *(order irrelevant)*
