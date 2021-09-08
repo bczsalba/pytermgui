@@ -340,7 +340,7 @@ class Slider(Widget):
     }
 
     styles = {
-        "filled": lambda _, item: len(item) * "#",
+        "filled": lambda _, item: len(item) * "▇",
         "unfilled": default_foreground,
         "cursor": default_foreground,
         "highlight": MarkupFormatter("[246]{item}"),
