@@ -175,8 +175,14 @@ def screen_size() -> tuple[int, int]:
     and makes for glitchy printing.
     """
 
-    width, height = get_terminal_size()
-    return width + 1, height + 1
+    try:
+        width, height = get_terminal_size()
+        return width + 1, height + 1
+
+    except OSError as error:
+        if error.errno != 25:
+            raise
+        return 0, 0
 
 
 class _Terminal:
