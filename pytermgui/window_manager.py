@@ -233,6 +233,26 @@ class Window(Container):
 
         self.set_char("corner", corners)
 
+    def set_fullscreen(self, value: bool = True) -> Window:
+        """Set window to fullscreen"""
+
+        if value:
+            self._restore_data = self.pos, (self.width, self.height)
+
+            self.pos = (1, 1)
+            self.allow_fullscreen = True
+            self.size_policy = SizePolicy.FILL
+
+        else:
+            assert self._restore_data is not None
+            self.pos, (self.width, self.height) = self._restore_data
+
+            self._restore_size = None
+            self.allow_fullscreen = False
+            self.size_policy = SizePolicy.STATIC
+
+        return self
+
     def center(
         self, where: CenteringPolicy | None = None, store: bool = True
     ) -> Window:
