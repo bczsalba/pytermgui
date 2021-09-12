@@ -26,7 +26,15 @@ class SizePolicy(DefaultEnum):
 
     FILL = auto()
     STATIC = auto()
-    RELATIVE = auto()
+    RELATIVE = auto()  # NOTE: Not implemented
+
+
+class CenteringPolicy(DefaultEnum):
+    """Values to center according to"""
+
+    ALL = auto()
+    VERTICAL = auto()
+    HORIZONTAL = auto()
 
 
 class WidgetAlignment(DefaultEnum):
@@ -41,4 +49,5 @@ class WidgetAlignment(DefaultEnum):
 
 
 defaults[SizePolicy] = SizePolicy.FILL
+defaults[CenteringPolicy] = CenteringPolicy.ALL
 defaults[WidgetAlignment] = WidgetAlignment.CENTER

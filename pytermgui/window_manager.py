@@ -58,6 +58,7 @@ from .input import getch
 from .parser import markup
 from .helpers import strip_ansi
 from .exceptions import LineLengthError
+from .enums import CenteringPolicy, SizePolicy
 from .ansi_interface import terminal, MouseAction, move_cursor
 from .context_managers import alt_buffer, mouse_handler, MouseEvent
 
@@ -228,7 +229,7 @@ class Window(Container):
         self.set_char("corner", corners)
 
     def center(
-        self, where: Optional[int] = Container.CENTER_BOTH, store: bool = True
+        self, where: CenteringPolicy | None = None, store: bool = True
     ) -> Window:
         """Center window"""
 

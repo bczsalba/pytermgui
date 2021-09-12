@@ -21,8 +21,8 @@ from ..input import keys
 from ..parser import markup
 from ..context_managers import cursor_at
 from ..helpers import real_length, break_line
-from ..enums import SizePolicy, WidgetAlignment
 from ..exceptions import WidthExceededError, LineLengthError
+from ..enums import SizePolicy, CenteringPolicy, WidgetAlignment
 from ..ansi_interface import terminal, clear, MouseEvent, MouseAction
 
 from . import styles
@@ -451,11 +451,6 @@ class Widget:
 class Container(Widget):
     """The widget that serves as the outer parent to all other widgets"""
 
-    # Centering policies
-    CENTER_X = 6
-    CENTER_Y = 7
-    CENTER_BOTH = 8
-
     chars = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
     styles = {"border": styles.MARKUP, "corner": styles.MARKUP}
 
@@ -810,21 +805,27 @@ class Container(Widget):
         self.selected_index = index
 
     def center(
-        self, where: Optional[int] = CENTER_BOTH, store: bool = True
+        self, where: CenteringPolicy | None = None, store: bool = True
     ) -> Container:
         """Center object on given axis, store & reapply if `store`"""
 
         # Refresh in case changes happened
         self.get_lines()
 
-        centerx = where in [Container.CENTER_X, Container.CENTER_BOTH]
-        centery = where in [Container.CENTER_Y, Container.CENTER_BOTH]
+        if where is None:
+            where = CenteringPolicy.get_default()
 
+        centerx = centery = where is CenteringPolicy.ALL
+        centerx |= where is CenteringPolicy.HORIZONTAL
+        centery |= where is CenteringPolicy.VERTICAL
+
+        pos = list(self.pos)
         if centerx:
-            self.posx = (terminal.width - self.width + 2) // 2
+            pos[0] = (terminal.width - self.width + 2) // 2
 
         if centery:
-            self.posy = (terminal.height - self.height + 2) // 2
+            pos[1] = (terminal.height - self.height + 2) // 2
+        self.pos = tuple(pos[:2])
 
         if store:
             self._centered_axis = where
