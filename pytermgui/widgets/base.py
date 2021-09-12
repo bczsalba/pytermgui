@@ -17,6 +17,7 @@ from inspect import signature
 from dataclasses import dataclass, field
 from typing import Callable, Optional, Type, Union, Iterator, Any
 
+from .. import enums
 from ..input import keys
 from ..parser import markup
 from ..context_managers import cursor_at
@@ -149,24 +150,13 @@ class Widget:
         "selectables_length",
     ]
 
-    # Alignment policies
-    PARENT_LEFT = 0
-    PARENT_CENTER = 1
-    PARENT_RIGHT = 2
-    DEFAULT_PARENT_ALIGN = PARENT_CENTER
-
-    # Size policies
-    SIZE_STATIC = 3
-    SIZE_FILL = 4
-    DEFAULT_SIZE_POLICY = SIZE_FILL
-
     # This class is loaded after this module,
     # and thus mypy doesn't see its existence.
     _id_manager: Optional["_IDManager"] = None  # type: ignore
 
     is_bindable = False
-    size_policy = SIZE_FILL
-    parent_align = PARENT_CENTER
+    size_policy = enums.SizePolicy.get_default()
+    parent_align = enums.WidgetAlignment.get_default()
 
     def __init__(self, **attrs: Any) -> None:
         """Initialize universal data for objects"""
@@ -238,48 +228,6 @@ class Widget:
 
         self._id = value
         manager.register(self)
-
-    @property
-    def width(self) -> int:
-        """Getter for width property"""
-
-        return self._width
-
-    @width.setter
-    def width(self, value: int) -> None:
-        """Setter for width property"""
-
-        self._width = value
-
-    @property
-    def posx(self) -> int:
-        """Return x position of object"""
-
-        return self.pos[0]
-
-    @posx.setter
-    def posx(self, value: int) -> None:
-        """Set x position of object"""
-
-        if not isinstance(value, int):
-            raise NotImplementedError("You can only set integers as object positions.")
-
-        self.pos = (value, self.posy)
-
-    @property
-    def posy(self) -> int:
-        """Return y position of object"""
-
-        return self.pos[1]
-
-    @posy.setter
-    def posy(self, value: int) -> None:
-        """Set y position of object"""
-
-        if not isinstance(value, int):
-            raise NotImplementedError("You can only set integers as object positions.")
-
-        self.pos = (self.posx, value)
 
     @property
     def selectables_length(self) -> int:
