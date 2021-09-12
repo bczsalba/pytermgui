@@ -134,7 +134,7 @@ def auto(  # pylint: disable=R0911
             return Checkbox(onclick, checked=label, **widget_args)
 
         # Toggle
-        if isinstance(label, list):
+        if isinstance(label, tuple):
             assert len(label) == 2
             return Toggle(label, onclick, **widget_args)
 
