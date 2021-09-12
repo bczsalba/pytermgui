@@ -40,8 +40,7 @@ class ColorPicker(Container):
         super().__init__(**attrs)
 
         self.grid_cols = grid_cols
-        self.forced_width = self.grid_cols * 4 - 1 + self.sidelength
-        self.width = self.forced_width
+        self.width = self.grid_cols * 4 - 1 + self.sidelength
 
         self._layer_functions = [foreground, background]
 
@@ -143,9 +142,6 @@ class Splitter(Container):
         for widget in self._widgets:
             left, right = self._get_offset(widget, target_width)
             widget.pos = (self.pos[0] + total_width + left, self.pos[1])
-
-            if widget.forced_width is None:
-                widget.width = real_length(widget.get_lines()[0])
 
             widget_lines.append([])  # type: ignore
             for line in widget.get_lines():

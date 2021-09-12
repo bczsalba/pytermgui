@@ -41,7 +41,7 @@ def main() -> None:
     )
 
     app = MarkupApplication(manager)
-    manager.add(app.construct_window())
+    # manager.add(app.construct_window())
 
     field: InputField
 
@@ -51,37 +51,33 @@ def main() -> None:
         Window(width=50, title="root", is_modal=True)
         + f"[wm-title]This is a test window"
         + ""
-        + {"Button": ["label"]}
-        + {"Toggle": [["one", "two"]]}
-        + {"Checkbox": [False]}
-        + {
-            "LockSlider": [
-                slider.locked,
-                lambda checked: setattr(slider, "locked", checked),
-            ]
-        }
-        + {
-            "ShowCounter": [
-                slider.show_counter,
-                lambda checked: setattr(slider, "show_counter", checked),
-            ]
-        }
+        # + {"Button": ["label"]}
+        # + {"Toggle": [["one", "two"]]}
+        # + {"Checkbox": [False]}
+        # + {
+        #     "LockSlider": [
+        #         slider.locked,
+        #         lambda checked: setattr(slider, "locked", checked),
+        #     ]
+        # }
+        # + {
+        #     "ShowCounter": [
+        #         slider.show_counter,
+        #         lambda checked: setattr(slider, "show_counter", checked),
+        #     ]
+        # }
         + ""
         + slider
         + ""
-        + (
-            ["Submit", lambda *_: manager.alert(field.value)],
-            ["Reset", lambda *_: setattr(field, "value", "")],
-            ["Exit", lambda *_: manager.exit()],
-        )
+        # + (
+        #     ["Submit", lambda *_: manager.alert(field.value)],
+        #     ["Reset", lambda *_: setattr(field, "value", "")],
+        #     ["Exit", lambda *_: manager.exit()],
+        # )
     ).center()
 
     manager.add(window)
     manager.bind(keys.CTRL_T, lambda manager, _: manager.add(window.copy()))
-
-    # field = get_widget("field")
-    # assert field is not None
-
     manager.run()
 
 

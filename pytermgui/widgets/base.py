@@ -145,8 +145,6 @@ class Widget:
         "depth",
         "width",
         "height",
-        "forced_width",
-        "forced_height",
         "selected_index",
         "selectables_length",
     ]
@@ -251,12 +249,6 @@ class Widget:
     def width(self, value: int) -> None:
         """Setter for width property"""
 
-        if self.forced_width is not None and value is not self.forced_width:
-            raise TypeError(
-                "It is impossible to manually set the width "
-                + "of an object with a `forced_width` attribute."
-            )
-
         self._width = value
 
     @property
@@ -303,21 +295,6 @@ class Widget:
         Shorthand for `Widget.selectables_length != 0`"""
 
         return self.selectables_length != 0
-
-    @property
-    def forced_width(self) -> Optional[int]:
-        """Return forced/static width of object"""
-
-        return self._forced_width
-
-    @forced_width.setter
-    def forced_width(self, value: Optional[int]) -> None:
-        """Set forced width"""
-
-        self._forced_width = value
-
-        if value is not None:
-            self.width = value
 
     def define_mouse_target(
         self, left: int, right: int, height: int, top: int = 0
@@ -653,17 +630,6 @@ class Container(Widget):
 
             other = to_widget
 
-        if self.forced_width is not None and other.forced_width is not None:
-            if self.forced_width < other.forced_width:
-                raise ValueError(
-                    "Object being added has a forced width that is larger than self."
-                    + f" ({other.forced_width} > {self.forced_width})"
-                )
-
-        other.parent = self
-        if other.forced_height is not None:
-            other.height = other.forced_height
-
         # This is safe to do, as it would've raised an exception above already
         assert isinstance(other, Widget)
 
@@ -721,21 +687,6 @@ class Container(Widget):
     def _update_width(self, widget: Widget) -> None:
         """Update width of widget & self"""
 
-        if widget.forced_width is not None and self.forced_width is not None:
-            if widget.forced_width + self.sidelength > self.forced_width:
-                raise WidthExceededError(
-                    f"Widget {widget}'s forced_width value"
-                    + f" ({widget.forced_width + self.sidelength})"
-                    + f" is higher than its parent Container's ({self.forced_width})"
-                )
-
-        elif widget.forced_width is not None and self.forced_width is None:
-            if widget.forced_width + self.sidelength > self.width:
-                self.width = widget.forced_width + self.sidelength
-
-        elif self.forced_width is None:
-            self.width = max(self.width, widget.width + self.sidelength + 1)
-
     def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
         """Get lines of all widgets
 
@@ -782,11 +733,7 @@ class Container(Widget):
                 self.width = widget.width
 
             # Fill container
-            if (
-                widget.size_policy == Widget.SIZE_FILL
-                and widget.width < self.width
-                and widget.forced_width is None
-            ):
+            if widget.size_policy == Widget.SIZE_FILL and widget.width < self.width:
                 widget.width = self.width - self.sidelength - 1
 
             self._update_width(widget)
@@ -823,21 +770,13 @@ class Container(Widget):
 
                 widget_lines.append(aligned)
 
-            # Update height
-            if widget.forced_height is None:
-                widget.height = len(widget_lines)
-
             # Add to lines
             lines += widget_lines
 
             self.mouse_targets += widget.mouse_targets
 
         # Update height
-        if self.forced_height is not None:
-            for _ in range(self.forced_height - len(lines)):
-                lines.append(align(""))
-        else:
-            self.height = len(lines) + 2
+        self.height = len(lines) + 2
 
         # Add capping lines
         if real_length(top):
@@ -998,7 +937,7 @@ class Container(Widget):
                 self.select(0)
                 return True
 
-            if key in self.keys["navigation_up"]:
+            if key in self.keys["previous"]:
                 # No more selectables left, user wants to exit Container
                 # upwards.
                 if self.selected_index == 0:
