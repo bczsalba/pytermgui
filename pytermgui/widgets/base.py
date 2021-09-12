@@ -164,7 +164,7 @@ class Widget:
         self.set_style = lambda key, value: _set_obj_or_cls_style(self, key, value)
         self.set_char = lambda key, value: _set_obj_or_cls_char(self, key, value)
 
-        self._width: int = 0
+        self.width = 0
         self.height = 1
 
         self.pos: tuple[int, int] = (1, 1)
@@ -176,6 +176,7 @@ class Widget:
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
         self.onclick: Optional[MouseCallback] = None
+        self.parent: Widget | None = None
 
         self._serialized_fields = type(self).serialized
         self._selectables_length = 0
@@ -243,6 +244,15 @@ class Widget:
         Shorthand for `Widget.selectables_length != 0`"""
 
         return self.selectables_length != 0
+
+    def static_width(self, value: int) -> None:
+        """Write-only setter for width that also changes
+        `size_policy` to `STATIC`"""
+
+        self.width = value
+        self.size_policy = SizePolicy.STATIC
+
+    static_width = property(None, static_width)
 
     def define_mouse_target(
         self, left: int, right: int, height: int, top: int = 0
@@ -460,6 +470,7 @@ class Container(Widget):
     }
 
     serialized = Widget.serialized + ["_centered_axis"]
+    allow_fullscreen = True
 
     def __init__(self, *widgets: Widget, **attrs: Any) -> None:
         """Initialize Container data"""
@@ -630,6 +641,26 @@ class Container(Widget):
     def _update_width(self, widget: Widget) -> None:
         """Update width of widget & self"""
 
+        available = self.width - self.sidelength - 1
+
+        if widget.size_policy is SizePolicy.FILL:
+            widget.width = available
+            return
+
+        if widget.size_policy is SizePolicy.RELATIVE:
+            widget.width = widget.relative_width * available
+            return
+
+        if widget.width > available:
+            if widget.size_policy is SizePolicy.STATIC:
+                raise WidthExceededError(
+                    f"Widget {widget}'s static width of {widget.width}"
+                    + f" exceeds its parent's available width {available}."
+                    ""
+                )
+
+            widget.width = available
+
     def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
         """Get lines of all widgets
 
@@ -667,6 +698,14 @@ class Container(Widget):
         lines: list[str] = []
         self.mouse_targets = []
 
+        if (
+            self.allow_fullscreen
+            and self.size_policy is SizePolicy.FILL
+            and self.parent is None
+        ):
+            self.width, self.height = terminal.size
+            self.width -= 1
+
         align, offset = self._get_aligners(self, (left, right))
 
         # Go through widgets
@@ -675,10 +714,7 @@ class Container(Widget):
             if self.width == 0:
                 self.width = widget.width
 
-            # Fill container
-            if widget.size_policy == SizePolicy.FILL and widget.width < self.width:
-                widget.width = self.width - self.sidelength - 1
-
+            # Apply width policies
             self._update_width(widget)
 
             align, offset = self._get_aligners(widget, (left, right))
@@ -719,6 +755,8 @@ class Container(Widget):
             self.mouse_targets += widget.mouse_targets
 
         # Update height
+        for _ in range(self.height - len(lines) - 2):
+            lines.append(align(""))
         self.height = len(lines) + 2
 
         # Add capping lines

@@ -74,6 +74,10 @@ def main() -> None:
         #     ["Reset", lambda *_: setattr(field, "value", "")],
         #     ["Exit", lambda *_: manager.exit()],
         # )
+        + [
+            ("Fullscreen", "Floating"),
+            lambda value: window.set_fullscreen(value == "Floating"),
+        ]
     ).center()
 
     manager.add(window)

@@ -166,6 +166,8 @@ class Window(Container):
         is_noblur: Never blurred, always in focus"""
 
     is_bindable = True
+    allow_fullscreen = False
+    size_policy = SizePolicy.STATIC
 
     title = ""
     is_static = False
@@ -182,6 +184,9 @@ class Window(Container):
 
         self.has_focus: bool = False
         self.manager: Optional[WindowManager] = None
+
+        # -------------------------  position ----- width x height
+        self._restore_data: tuple[tuple[int, int], tuple[int, int]] | None = None
 
         if self.title != "":
             self.set_title(self.title)

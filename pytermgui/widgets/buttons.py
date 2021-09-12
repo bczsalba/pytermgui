@@ -48,6 +48,7 @@ class Button(Widget):
 
         super().__init__(**attrs)
 
+        self.width = 0
         self.label = label
         self.onclick = onclick
         self.padding = padding
@@ -73,7 +74,7 @@ class Button(Widget):
         self.define_mouse_target(
             left=self.padding, right=-self.padding, height=1
         ).onclick = self.onclick
-        self.forced_width = real_length(word)
+        self.width = real_length(word)
 
         return [self.padding * " " + word]
 
