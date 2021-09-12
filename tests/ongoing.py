@@ -17,7 +17,6 @@ from pytermgui import (
     Slider,
 )
 
-from pytermgui.widgets.styles import default_foreground, default_background
 from pytermgui.ansi_interface import MouseAction
 from pytermgui.window_manager import WindowManager, Window
 from pytermgui.cmd import MarkupApplication

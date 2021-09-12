@@ -17,8 +17,8 @@ from __future__ import annotations
 
 from typing import Optional, Any, Callable
 
+from . import styles
 from .base import Widget, MouseCallback, MouseTarget
-from .styles import StyleType, CharType, MarkupFormatter
 
 from ..parser import markup
 from ..helpers import real_length
@@ -30,11 +30,11 @@ __all__ = ["Button", "Checkbox", "Toggle"]
 class Button(Widget):
     """A visual MouseTarget"""
 
-    chars: dict[str, CharType] = {"delimiter": ["  ", "  "]}
+    chars: dict[str, styles.CharType] = {"delimiter": ["  ", "  "]}
 
-    styles: dict[str, StyleType] = {
-        "label": MarkupFormatter("[72 @238 bold]{item}"),
-        "highlight": MarkupFormatter("[238 @72 bold]{item}"),
+    styles: dict[str, styles.StyleType] = {
+        "label": styles.CLICKABLE,
+        "highlight": styles.CLICKED,
     }
 
     def __init__(

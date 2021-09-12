@@ -23,14 +23,8 @@ from ..context_managers import cursor_at
 from ..helpers import real_length, break_line
 from ..exceptions import WidthExceededError, LineLengthError
 from ..ansi_interface import terminal, clear, MouseEvent, MouseAction
-from .styles import (
-    CharType,
-    StyleType,
-    StyleCall,
-    apply_markup,
-    DepthlessStyleType,
-    overrideable_style,
-)
+
+from . import styles
 
 
 __all__ = ["MouseTarget", "MouseCallback", "Widget", "Container", "Label"]
@@ -40,7 +34,7 @@ BoundCallback = Callable[["Widget", str], Any]
 
 
 def _set_obj_or_cls_style(
-    obj_or_cls: Union[Type[Widget], Widget], key: str, value: StyleType
+    obj_or_cls: Union[Type[Widget], Widget], key: str, value: styles.StyleType
 ) -> Union[Type[Widget], Widget]:
     """Set the style of an object or class"""
 
@@ -56,7 +50,7 @@ def _set_obj_or_cls_style(
 
 
 def _set_obj_or_cls_char(
-    obj_or_cls: Union[Type[Widget], Widget], key: str, value: CharType
+    obj_or_cls: Union[Type[Widget], Widget], key: str, value: styles.CharType
 ) -> Union[Type[Widget], Widget]:
     """Set a char of an object or class"""
 
@@ -141,9 +135,8 @@ class Widget:
     set_style = classmethod(_set_obj_or_cls_style)
     set_char = classmethod(_set_obj_or_cls_char)
 
-    OVERRIDE: StyleType = overrideable_style
-    styles: dict[str, StyleType] = {}
-    chars: dict[str, CharType] = {}
+    styles: dict[str, styles.StyleType] = {}
+    chars: dict[str, styles.CharType] = {}
     keys: dict[str, set[str]] = {}
 
     serialized: list[str] = [
@@ -182,9 +175,6 @@ class Widget:
 
         self.set_style = lambda key, value: _set_obj_or_cls_style(self, key, value)
         self.set_char = lambda key, value: _set_obj_or_cls_char(self, key, value)
-
-        self.forced_width: Optional[int] = None
-        self.forced_height: Optional[int] = None
 
         self._width: int = 0
         self.height = 1
@@ -419,14 +409,14 @@ class Widget:
 
         return deepcopy(self)
 
-    def get_style(self, key: str) -> DepthlessStyleType:
+    def get_style(self, key: str) -> styles.DepthlessStyleType:
         """Try to get style"""
 
         style_method = self.styles[key]
 
-        return StyleCall(self, style_method)
+        return styles.StyleCall(self, style_method)
 
-    def get_char(self, key: str) -> CharType:
+    def get_char(self, key: str) -> styles.CharType:
         """Try to get char"""
 
         chars = self.chars[key]
@@ -542,11 +532,11 @@ class Container(Widget):
     CENTER_BOTH = 8
 
     chars = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
-    styles = {"border": apply_markup, "corner": apply_markup}
+    styles = {"border": styles.MARKUP, "corner": styles.MARKUP}
 
     keys = {
-        "navigation_up": {keys.UP, keys.CTRL_P, "k"},
-        "navigation_down": {keys.DOWN, keys.CTRL_N, "j"},
+        "next": {keys.DOWN, keys.CTRL_N, "j"},
+        "previous": {keys.UP, keys.CTRL_P, "k"},
     }
 
     serialized = Widget.serialized + ["_centered_axis"]
@@ -751,7 +741,9 @@ class Container(Widget):
 
         Note about pylint: Having less locals in this method would ruin readability."""
 
-        def _apply_style(style: DepthlessStyleType, target: list[str]) -> list[str]:
+        def _apply_style(
+            style: styles.DepthlessStyleType, target: list[str]
+        ) -> list[str]:
             """Apply style to target list elements"""
 
             for i, char in enumerate(target):
@@ -995,7 +987,7 @@ class Container(Widget):
         def _is_nav(key: str) -> bool:
             """Determine if a key is in the navigation sets"""
 
-            return key in self.keys["navigation_up"] | self.keys["navigation_down"]
+            return key in self.keys["next"] | self.keys["previous"]
 
         if self.selected is not None and self.selected.handle_key(key):
             return True
@@ -1015,7 +1007,7 @@ class Container(Widget):
                 self.select(self.selected_index - 1)
                 return True
 
-            if key in self.keys["navigation_down"]:
+            if key in self.keys["next"]:
                 self.select(self.selected_index + 1)
                 return True
 
@@ -1070,7 +1062,7 @@ class Container(Widget):
 class Label(Widget):
     """Unselectable text object"""
 
-    styles: dict[str, StyleType] = {"value": apply_markup}
+    styles: dict[str, styles.StyleType] = {"value": styles.MARKUP}
 
     serialized = Widget.serialized + ["*value", "align", "padding"]
 

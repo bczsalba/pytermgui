@@ -15,8 +15,9 @@ from typing import Any, Type, IO, Dict
 
 from . import widgets
 from .parser import markup
+
+from .widgets import styles
 from .widgets.base import Widget
-from .widgets.styles import default_foreground, CharType
 
 WidgetDict = Dict[str, Type[Widget]]
 
@@ -115,13 +116,13 @@ class _Serializer:
 
             # chars are converted to ansi separately,
             # then their corresponding style is set
-            # to default_foreground. Look into why this
+            # to styles.FOREGROUND. Look into why this
             # is needed.
             if key == "chars":
                 chars: dict[str, CharType] = {}
                 for name, char in value.items():
                     chars[name] = _apply_markup(char)
-                    obj.set_style(name, default_foreground)
+                    obj.set_style(name, styles.FOREGROUND)
 
                 setattr(obj, "chars", chars)
                 continue

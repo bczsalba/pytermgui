@@ -22,10 +22,11 @@ __all__ = [
     "StyleType",
     "DepthlessStyleType",
     "CharType",
-    "default_foreground",
-    "default_background",
-    "overrideable_style",
-    "apply_markup",
+    "MARKUP",
+    "FOREGROUND",
+    "BACKGROUND",
+    "CLICKABLE",
+    "CLICKED",
 ]
 
 StyleType = Callable[[int, str], str]
@@ -72,29 +73,8 @@ class MarkupFormatter:
         return markup.parse(self.markup.format(depth=depth, item=item))
 
 
-def default_foreground(depth: int, item: str) -> str:
-    """StyleType: Default foreground style"""
-
-    return item
-
-
-def default_background(depth: int, item: str) -> str:
-    """StyleType: Default background style"""
-
-    return background(item, 30 + depth)
-
-
-def overrideable_style(depth: int, item: str) -> str:
-    """StyleType: A style method that is meant to be overwritten,
-    to use in optional values."""
-
-    return (
-        "This method is not meant to be called, only use"
-        + " it for setting and checking optional style fields."
-    )
-
-
-def apply_markup(depth: int, item: str) -> str:
-    """StyleType: A style that parses markup `item` into ansi"""
-
-    return markup.parse(item)
+CLICKABLE = MarkupFormatter("[@238 72 bold]{item}")
+CLICKED = MarkupFormatter("[238 @72 bold]{item}")
+FOREGROUND = lambda depth, item: item
+BACKGROUND = lambda depth, item: item
+MARKUP = lambda depth, item: markup.parse(item)

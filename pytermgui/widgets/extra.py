@@ -20,13 +20,7 @@ from itertools import zip_longest
 
 from .base import Container, Label, Widget, MouseTarget
 
-from .styles import (
-    default_foreground,
-    MarkupFormatter,
-    apply_markup,
-    StyleType,
-    CharType,
-)
+from . import styles
 from ..input import keys, getch
 from ..helpers import real_length
 from ..ansi_interface import foreground, background, reset, MouseAction, MouseEvent
@@ -95,8 +89,12 @@ class ColorPicker(Container):
 class Splitter(Container):
     """A Container-like object that allows stacking Widgets horizontally"""
 
-    chars: dict[str, CharType] = {"separator": " | "}
-    styles: dict[str, StyleType] = {"separator": apply_markup}
+    chars = {"separator": " | "}
+    styles = {"separator": styles.MARKUP}
+    keys = {
+        "previous": {keys.LEFT, "h", keys.CTRL_B},
+        "next": {keys.RIGHT, "l", keys.CTRL_F},
+    }
 
     def __init__(self, *widgets: Widget, **attrs: Any) -> None:
         """Initialize Splitter, add given elements to it"""
@@ -180,9 +178,9 @@ class InputField(Label):
     """An element to display user input"""
 
     styles = {
-        "value": default_foreground,
-        "cursor": MarkupFormatter("[inverse]{item}"),
-        "fill": MarkupFormatter("[@243]{item}"),
+        "value": styles.FOREGROUND,
+        "cursor": styles.MarkupFormatter("[inverse]{item}"),
+        "fill": styles.MarkupFormatter("[@243]{item}"),
     }
 
     is_bindable = True
@@ -335,15 +333,16 @@ class Slider(Widget):
 
     chars = {
         "endpoint": "",
-        "line": "─",
         "cursor": "█",
+        "fill": "█",
+        "rail": "─",
     }
 
     styles = {
-        "filled": lambda _, item: len(item) * "█",
-        "unfilled": default_foreground,
-        "cursor": default_foreground,
-        "highlight": MarkupFormatter("[246]{item}"),
+        "filled": styles.CLICKABLE,
+        "unfilled": styles.FOREGROUND,
+        "cursor": styles.CLICKABLE,
+        "highlight": styles.CLICKED,
     }
 
     keys = {
@@ -435,13 +434,16 @@ class Slider(Widget):
         """Get lines of object"""
 
         # Get characters
-        line_char = self.get_char("line")
-        assert isinstance(line_char, str)
+        rail_char = self.get_char("rail")
+        assert isinstance(rail_char, str)
 
         endpoint_char = self.get_char("endpoint")
         assert isinstance(endpoint_char, str)
 
         cursor_char = self.get_char("cursor")
+        assert isinstance(cursor_char, str)
+
+        fill_char = self.get_char("fill")
         assert isinstance(cursor_char, str)
 
         # Clamp value
@@ -455,10 +457,12 @@ class Slider(Widget):
 
         # Only highlight cursor if currently selected
         if self.selected_index != 0:
-            cursor_char = self.get_style("highlight")(cursor_char)
+            highlight_style = self.get_style("highlight")
+            cursor_char = highlight_style(cursor_char)
+            fill_char = highlight_style(fill_char)
 
         # Construct left side
-        left = (self._display_value - real_length(cursor_char) + 1) * line_char
+        left = (self._display_value - real_length(cursor_char) + 1) * fill_char
         left = self.get_style("filled")(left) + cursor_char
 
         # Define mouse target
@@ -475,7 +479,7 @@ class Slider(Widget):
         self._available = self.width - len(counter) - real_length(endpoint_char)
         line_length = self._available - self._display_value
 
-        return [left + line_length * line_char + endpoint_char + counter]
+        return [left + line_length * rail_char + endpoint_char + counter]
 
 
 def alert(data: Any) -> None:
