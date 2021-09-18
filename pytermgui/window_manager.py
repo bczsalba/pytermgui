@@ -239,7 +239,7 @@ class Window(Container):
         if value:
             self._restore_data = self.pos, (self.width, self.height)
 
-            self.pos = (1, 1)
+            self.pos = terminal.origin
             self.allow_fullscreen = True
             self.size_policy = SizePolicy.FILL
 

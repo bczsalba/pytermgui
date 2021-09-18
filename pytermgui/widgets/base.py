@@ -164,24 +164,24 @@ class Widget:
         self.set_style = lambda key, value: _set_obj_or_cls_style(self, key, value)
         self.set_char = lambda key, value: _set_obj_or_cls_char(self, key, value)
 
-        self.width = 0
+        self.width = 1
         self.height = 1
-
-        self.pos: tuple[int, int] = (1, 1)
+        self.pos = terminal.origin
 
         self.depth = 0
 
-        self.selected_index: Optional[int] = None
-        self.mouse_targets: list[MouseTarget] = []
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
-        self.onclick: Optional[MouseCallback] = None
-        self.parent: Widget | None = None
 
-        self._serialized_fields = type(self).serialized
+        self.mouse_targets: list[MouseTarget] = []
+
+        self.parent: Widget | None = None
+        self.selected_index: int | None = None
+        self.onclick: MouseCallback | None = None
+
         self._selectables_length = 0
         self._id: Optional[str] = None
-
+        self._serialized_fields = type(self).serialized
         self._bindings: dict[str, tuple[BoundCallback, str]] = {}
 
         for attr, value in attrs.items():

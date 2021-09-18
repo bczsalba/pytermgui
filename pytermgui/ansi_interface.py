@@ -177,7 +177,7 @@ def screen_size() -> tuple[int, int]:
 
     try:
         width, height = get_terminal_size()
-        return width + 1, height + 1
+        return (width, height)
 
     except OSError as error:
         if error.errno != 25:
@@ -193,7 +193,8 @@ class _Terminal:
     def __init__(self) -> None:
         """Initialize object"""
 
-        self.size: tuple[int, int] = screen_size()
+        self.origin: tuple[int, int] = (1, 1)
+        self.size: tuple[int, int] = self._get_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
         signal.signal(signal.SIGWINCH, self._update_size)
@@ -205,10 +206,15 @@ class _Terminal:
             for callback in self._listeners[event]:
                 callback(data)
 
+    def _get_size(self) -> tuple[int, int]:
+        """Get screen size & substract origin position"""
+
+        return tuple(val - org for val, org in zip(screen_size(), self.origin))
+
     def _update_size(self, *_: Any) -> None:
         """Update screen size at SIGWINCH"""
 
-        self.size = screen_size()
+        self.size = self._get_size()
         self._call_listener(self.RESIZE, self.size)
 
     @property
