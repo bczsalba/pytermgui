@@ -618,7 +618,7 @@ def print_to(pos: tuple[int, int], *args: tuple[Any, ...]) -> None:
         text += " " + str(arg)
 
     move_cursor(pos)
-    print(text)
+    print(text, end="", flush=True)
 
 
 def reset() -> str:
