@@ -273,6 +273,8 @@ class Window(Container):
         for i, line in enumerate(self.get_lines()):
             sys.stdout.write(f"\033[{self.pos[1] + i};{self.pos[0]}H" + line)
 
+        self._has_printed = True
+
 
 class WindowManager(Container):
     """A class representing a WindowManager"""
@@ -466,7 +468,7 @@ class WindowManager(Container):
 
         for window in self._windows:
             newx = max(0, min(window.pos[0], width - window.width))
-            newy = max(0, min(window.pos[1], height - window.height))
+            newy = max(0, min(window.pos[1], height - window.height + 1))
 
             window.pos = (newx, newy)
 
@@ -625,7 +627,7 @@ class WindowManager(Container):
                 try:
                     window.print()
                 except LineLengthError:
-                    continue
+                    pass
                 continue
 
             lines = _get_lines(window)
