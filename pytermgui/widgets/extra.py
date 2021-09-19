@@ -23,6 +23,7 @@ from .base import Container, Label, Widget, MouseTarget
 from . import styles
 from ..input import keys, getch
 from ..helpers import real_length
+from ..enums import WidgetAlignment
 from ..ansi_interface import foreground, background, reset, MouseAction, MouseEvent
 
 
@@ -99,64 +100,70 @@ class Splitter(Container):
         """Initialize Splitter, add given elements to it"""
 
         super().__init__(*widgets, **attrs)
-        self.parent_align = Widget.PARENT_RIGHT
 
-    @staticmethod
-    def _get_offset(widget: Widget, target_width: int) -> tuple[int, int]:
-        """Get alignment offset of a widget"""
+    def _align(
+        self, alignment: WidgetAlignment, target_width: int, line: str
+    ) -> tuple[int, str]:
+        """Align a line (that sounds funny)"""
 
-        if widget.parent_align is Widget.PARENT_CENTER:
-            total = target_width - widget.width
-            padding = total // 2
-            return padding + total % 2, padding
+        available = target_width - real_length(line)
 
-        if widget.parent_align is Widget.PARENT_RIGHT:
-            return target_width - widget.width, 0
+        if alignment is WidgetAlignment.CENTER:
+            padding, offset = divmod(available, 2)
+            return padding, padding * " " + line + (padding + offset) * " "
 
-        # Default to left-aligned
-        return 0, target_width - widget.width + 1
+        if alignment is WidgetAlignment.RIGHT:
+            return available, available * " " + line
+
+        return 0, line + available * " "
 
     def get_lines(self) -> list[str]:
-        """Get lines of all objects"""
-
-        # TODO: Rewrite this, it STILL doesn't work.
+        """Join all widgets horizontally"""
 
         separator = self.get_char("separator")
 
         assert isinstance(separator, str)
         separator_length = real_length(separator)
 
-        # Apply style
-        separator = self.get_style("separator")(separator)
+        error = self.width % 2
+        w_len = len(self._widgets)
+        target_width = self.width // w_len - separator_length
+
+        total_offset = separator_length - 1
+        vertical_lines = []
+
+        for widget in self._widgets:
+            inner = []
+
+            # TODO: This is ugly, and should be avoided.
+            # For now, only Container has a top offset, but this should be
+            # opened up as some kind of API for custom widgets.
+            if type(widget).__name__ == "Container":
+                container_vertical_offset = 1
+            else:
+                container_vertical_offset = 0
+
+            if widget.width > target_width:
+                widget.width = target_width
+
+            aligned: str | None = None
+            for line in widget.get_lines():
+                padding, aligned = self._align(widget.parent_align, target_width, line)
+                inner.append(aligned)
+
+            widget.pos = (
+                self.pos[0] + padding + total_offset + error,
+                self.pos[1] + container_vertical_offset,
+            )
+
+            if aligned is not None:
+                total_offset += real_length(aligned) + separator_length
+
+            vertical_lines.append(inner)
+            self.mouse_targets.extend(widget.mouse_targets)
 
         lines = []
-        widget_lines: list[str] = []
-        self.mouse_targets = []
-
-        error = 1 if self.width % len(self._widgets) else 0
-
-        target_width = self.width // len(self._widgets) - len(self._widgets) + error
-        total_width = 0
-
-        line = ""
-        for widget in self._widgets:
-            left, right = self._get_offset(widget, target_width)
-            widget.pos = (self.pos[0] + total_width + left, self.pos[1])
-
-            widget_lines.append([])  # type: ignore
-            for line in widget.get_lines():
-                widget_lines[-1].append(left * " " + line + right * " ")
-
-            total_width += target_width + separator_length
-
-            self.mouse_targets += widget.mouse_targets
-
-        last_line = real_length(line)
-
-        # TODO: This falls apart a lot.
-        filler_len = target_width if target_width > last_line else last_line
-
-        for horizontal in zip_longest(*widget_lines, fillvalue=" " * filler_len):
+        for horizontal in zip_longest(*vertical_lines, fillvalue=" " * target_width):
             lines.append((reset() + separator).join(horizontal))
 
         for target in self.mouse_targets:
@@ -167,7 +174,7 @@ class Splitter(Container):
     def debug(self) -> str:
         """Return identifiable information"""
 
-        return super().debug().replace("Container", "Splitter")
+        return super().debug().replace("Container", "Splitter", 1)
 
 
 class InputField(Label):

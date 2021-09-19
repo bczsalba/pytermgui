@@ -50,34 +50,36 @@ def main() -> None:
     window = (
         Window(width=50, title="root", is_modal=True)
         + f"[wm-title]This is a test window"
-        + ""
-        # + {"Button": ["label"]}
-        # + {"Toggle": [["one", "two"]]}
-        # + {"Checkbox": [False]}
-        # + {
-        #     "LockSlider": [
-        #         slider.locked,
-        #         lambda checked: setattr(slider, "locked", checked),
-        #     ]
-        # }
-        # + {
-        #     "ShowCounter": [
-        #         slider.show_counter,
-        #         lambda checked: setattr(slider, "show_counter", checked),
-        #     ]
-        # }
+        ""
+        + {"Button": ["label"]}
+        + {"Toggle": [("one", "two")]}
+        + {"Checkbox": [False]}
+        + {
+            "LockSlider": [
+                slider.locked,
+                lambda checked: setattr(slider, "locked", checked),
+            ]
+        }
+        + {
+            "ShowCounter": [
+                slider.show_counter,
+                lambda checked: setattr(slider, "show_counter", checked),
+            ]
+        }
+        + {"Container Test": Container(["one"], ["two"])}
         + ""
         + slider
         + ""
-        # + (
-        #     ["Submit", lambda *_: manager.alert(field.value)],
-        #     ["Reset", lambda *_: setattr(field, "value", "")],
-        #     ["Exit", lambda *_: manager.exit()],
-        # )
+        + (
+            ["Submit", lambda *_: manager.alert(field.value)],
+            ["Reset", lambda *_: setattr(field, "value", "")],
+            ["Exit", lambda *_: manager.exit()],
+        )
         + [
-            ("Fullscreen", "Floating"),
-            lambda value: window.set_fullscreen(value == "Floating"),
+            ("Set Fullscreen", "Set Floating"),
+            lambda value: window.set_fullscreen("Floating" in value),
         ]
+        + (Container() + "test" + ["other"])
     ).center()
 
     manager.add(window)
