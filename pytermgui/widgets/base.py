@@ -476,10 +476,16 @@ class Container(Widget):
         """Initialize Container data"""
 
         super().__init__(**attrs)
+
+        # TODO: This is just a band-aid.
+        if not "width" in attrs:
+            self.width = 40
+
         self._widgets: list[Widget] = []
         self._centered_axis: Optional[int] = None
 
         self._prev_screen: tuple[int, int] = (0, 0)
+        self._has_printed = False
 
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
@@ -488,6 +494,7 @@ class Container(Widget):
             self._add_widget(widget)
 
         self._drag_target: Widget | None = None
+        terminal.subscribe(terminal.RESIZE, lambda *_: self.center(self._centered_axis))
 
     @property
     def sidelength(self) -> int:
@@ -632,7 +639,7 @@ class Container(Widget):
             padding, offset = divmod(total, 2)
             return _align_center, real_length(left) + padding + offset
 
-        if widget.parent_align is WidgetAligment.RIGHT:
+        if widget.parent_align is WidgetAlignment.RIGHT:
             return _align_right, self.width - real_length(left) - widget.width
 
         # Default to left-aligned
@@ -641,7 +648,9 @@ class Container(Widget):
     def _update_width(self, widget: Widget) -> None:
         """Update width of widget & self"""
 
-        available = self.width - self.sidelength - 1
+        available = (
+            self.width - self.sidelength - (0 if isinstance(widget, Container) else 1)
+        )
 
         if widget.size_policy is SizePolicy.FILL:
             widget.width = available
@@ -698,19 +707,20 @@ class Container(Widget):
         lines: list[str] = []
         self.mouse_targets = []
 
+        # Set root widget full screen if possible
         if (
-            self.allow_fullscreen
-            and self.size_policy is SizePolicy.FILL
+            self._has_printed
             and self.parent is None
+            and self.allow_fullscreen
+            and self.size_policy is SizePolicy.FILL
         ):
+            self.pos = terminal.origin
             self.width, self.height = terminal.size
-            self.width -= 1
 
         align, offset = self._get_aligners(self, (left, right))
 
         # Go through widgets
         for widget in self._widgets:
-            # Update width
             if self.width == 0:
                 self.width = widget.width
 
@@ -718,7 +728,6 @@ class Container(Widget):
             self._update_width(widget)
 
             align, offset = self._get_aligners(widget, (left, right))
-            widget.parent_offset = offset
 
             # TODO: This is ugly, and should be avoided.
             # For now, only Container has a top offset, but this should be
@@ -755,9 +764,10 @@ class Container(Widget):
             self.mouse_targets += widget.mouse_targets
 
         # Update height
-        for _ in range(self.height - len(lines) - 2):
+        for _ in range(self.height - len(lines)):
             lines.append(align(""))
-        self.height = len(lines) + 2
+
+        self.height = len(lines) - 2
 
         # Add capping lines
         if real_length(top):
@@ -968,9 +978,14 @@ class Container(Widget):
 
         self._prev_screen = terminal.size
 
+        if self.allow_fullscreen:
+            self.pos = terminal.origin
+
         with cursor_at(self.pos) as print_here:
             for line in self.get_lines():
                 print_here(line)
+
+        self._has_printed = True
 
     def debug(self) -> str:
         """Return debug information about this object's widgets"""
