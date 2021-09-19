@@ -15,7 +15,7 @@ from __future__ import annotations
 from copy import deepcopy
 from inspect import signature
 from dataclasses import dataclass, field
-from typing import Callable, Optional, Type, Union, Iterator, Any
+from typing import Callable, Optional, Type, Iterator, Any
 
 from ..input import keys
 from ..parser import markup
@@ -35,8 +35,8 @@ BoundCallback = Callable[["Widget", str], Any]
 
 
 def _set_obj_or_cls_style(
-    obj_or_cls: Union[Type[Widget], Widget], key: str, value: styles.StyleType
-) -> Union[Type[Widget], Widget]:
+    obj_or_cls: Type[Widget] | Widget, key: str, value: styles.StyleType
+) -> Type[Widget] | Widget:
     """Set the style of an object or class"""
 
     if not key in obj_or_cls.styles.keys():
@@ -51,8 +51,8 @@ def _set_obj_or_cls_style(
 
 
 def _set_obj_or_cls_char(
-    obj_or_cls: Union[Type[Widget], Widget], key: str, value: styles.CharType
-) -> Union[Type[Widget], Widget]:
+    obj_or_cls: Type[Widget] | Widget, key: str, value: styles.CharType
+) -> Type[Widget] | Widget:
     """Set a char of an object or class"""
 
     if not key in obj_or_cls.chars.keys():
@@ -66,8 +66,6 @@ def _set_obj_or_cls_char(
 @dataclass
 class MouseTarget:
     """A target for mouse events."""
-
-    # TODO: Support MouseTargets in nested contexts
 
     parent: Widget
     left: int
@@ -564,7 +562,7 @@ class Container(Widget):
 
         return len(self._widgets)
 
-    def __getitem__(self, sli: Union[int, slice]) -> Union[Widget, list[Widget]]:
+    def __getitem__(self, sli: int | slice) -> Widget | list[Widget]:
         """Index in self._widget"""
 
         return self._widgets[sli]
