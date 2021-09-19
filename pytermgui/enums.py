@@ -1,7 +1,20 @@
+"""
+pytermgui.enums
+---------------
+author: bczsalba
+
+
+This module provides commonly used enumerations for the library.
+It also has a class implementing Enum-s with default values. All Enums
+below subclass it, meaning you can their `get_default()` methods to get
+the global default value.
+
+To modify defaults, use the `defaults` dictionary.
+"""
+
 from __future__ import annotations
 
-from typing import Any
-from enum import Enum, auto
+from enum import Enum, auto as _auto
 
 defaults = {}
 
@@ -29,17 +42,17 @@ class SizePolicy(DefaultEnum):
     RELATIVE: adjust the Widget's size to be a percentage of the parent
     """
 
-    FILL = auto()
-    STATIC = auto()
-    RELATIVE = auto()  # NOTE: Not implemented
+    FILL = _auto()
+    STATIC = _auto()
+    RELATIVE = _auto()  # NOTE: Not implemented
 
 
 class CenteringPolicy(DefaultEnum):
     """Values to center according to"""
 
-    ALL = auto()
-    VERTICAL = auto()
-    HORIZONTAL = auto()
+    ALL = _auto()
+    VERTICAL = _auto()
+    HORIZONTAL = _auto()
 
 
 class WidgetAlignment(DefaultEnum):
@@ -48,9 +61,9 @@ class WidgetAlignment(DefaultEnum):
     These are applied by the parent object, and are
     relative to them."""
 
-    LEFT = auto()
-    CENTER = auto()
-    RIGHT = auto()
+    LEFT = _auto()
+    CENTER = _auto()
+    RIGHT = _auto()
 
 
 defaults[SizePolicy] = SizePolicy.FILL
