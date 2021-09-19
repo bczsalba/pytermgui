@@ -724,10 +724,10 @@ class Container(Widget):
             if self.width == 0:
                 self.width = widget.width
 
+            align, offset = self._get_aligners(widget, (left, right))
+
             # Apply width policies
             self._update_width(widget)
-
-            align, offset = self._get_aligners(widget, (left, right))
 
             # TODO: This is ugly, and should be avoided.
             # For now, only Container has a top offset, but this should be
@@ -752,8 +752,8 @@ class Container(Widget):
                 # Assert well formed lines
                 if not new == self.width:
                     raise LineLengthError(
-                        f"Widget {widget} returned a line of invalid length at index {i}:"
-                        + f" ({new} != {self.width}): {aligned}"
+                        f"Widget {widget} returned a line of invalid length"
+                        + f" at index {i}: ({new} != {self.width}): {aligned}"
                     )
 
                 widget_lines.append(aligned)
