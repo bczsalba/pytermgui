@@ -1020,6 +1020,6 @@ class Label(Widget):
         """Get lines of object"""
 
         value_style = self.get_style("value")
-        lines = break_line(value_style(self.padding * " " + self.value), self.width)
+        line_gen = break_line(value_style(self.padding * " " + self.value), self.width)
 
-        return list(lines) or [""]
+        return list(line_gen) or [""]
