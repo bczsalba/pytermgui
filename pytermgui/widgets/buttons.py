@@ -48,11 +48,30 @@ class Button(Widget):
 
         super().__init__(**attrs)
 
-        self.width = 0
         self.label = label
         self.onclick = onclick
         self.padding = padding
         self._selectables_length = 1
+
+    def handle_mouse(
+        self, event: MouseEvent, target: MouseTarget | None = None
+    ) -> bool:
+        """Handle mouse event"""
+
+        action, pos = event
+        target = target or self.get_target(pos)
+
+        if action == MouseAction.LEFT_CLICK:
+            self.selected_index = 0
+            if target is not None:
+                target.click(self)
+                return True
+
+        if action == MouseAction.RELEASE:
+            self.selected_index = None
+            return False
+
+        return super().handle_mouse(event, target)
 
     def get_lines(self) -> list[str]:
         """Get object lines"""
@@ -74,29 +93,11 @@ class Button(Widget):
         self.define_mouse_target(
             left=self.padding, right=-self.padding, height=1
         ).onclick = self.onclick
-        self.width = real_length(word)
 
-        return [self.padding * " " + word]
+        line = self.padding * " " + word
+        self.width = real_length(line)
 
-    def handle_mouse(
-        self, event: MouseEvent, target: MouseTarget | None = None
-    ) -> bool:
-        """Handle mouse event"""
-
-        action, pos = event
-        target = target or self.get_target(pos)
-
-        if action == MouseAction.LEFT_CLICK:
-            self.selected_index = 0
-            if target is not None:
-                target.click(self)
-                return True
-
-        if action == MouseAction.RELEASE:
-            self.selected_index = None
-            return False
-
-        return super().handle_mouse(event, target)
+        return [line]
 
 
 class Checkbox(Button):
