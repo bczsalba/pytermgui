@@ -5,6 +5,11 @@ from enum import Enum, auto
 
 defaults = {}
 
+__all__ = [
+    "SizePolicy",
+    "WidgetAlignment",
+]
+
 
 class DefaultEnum(Enum):
     """An Enum class that can return its default value"""

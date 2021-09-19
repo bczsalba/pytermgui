@@ -23,7 +23,9 @@ from .ansi_interface import __all__ as _ansi_all
 from .inspector import __all__ as _inspector_all
 from .widgets import __all__ as _widgets_all
 from .parser import __all__ as _parser_all
+from .enums import __all__ as _enums_all
 
+from .enums import *
 from .parser import *
 from .widgets import *
 from .helpers import *
@@ -44,6 +46,7 @@ if "-m" in sys.argv:
 # Build `__all__` for star import (which you really shouldn't do.)
 __all__ = ["__version__"]
 __all__ += _ansi_all
+__all__ += _enums_all
 __all__ += _parser_all
 __all__ += _manager_all
 __all__ += _widgets_all
@@ -145,8 +148,8 @@ def auto(  # pylint: disable=R0911
         rows: list[Splitter] = []
 
         for key, value in data.items():
-            left = auto(key, parent_align=0)
-            right = auto(value, parent_align=2)
+            left = auto(key, parent_align=WidgetAlignment.LEFT)
+            right = auto(value, parent_align=WidgetAlignment.RIGHT)
 
             rows.append(Splitter(left, right, **widget_args))
 
