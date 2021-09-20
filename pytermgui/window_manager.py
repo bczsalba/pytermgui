@@ -247,7 +247,7 @@ class Window(Container):
             assert self._restore_data is not None
             self.pos, (self.width, self.height) = self._restore_data
 
-            self._restore_size = None
+            self._restore_data = None
             self.allow_fullscreen = False
             self.size_policy = SizePolicy.STATIC
 
@@ -292,9 +292,9 @@ class WindowManager(Container):
         self._is_running: bool = True
         self._should_print: bool = False
         self._windows: list[Window] = []
-        self._drag_target: tuple[Widget, Edge] | None = None
+        self._drag_target: tuple[Widget, Edge] | None = None  # type: ignore
         self._drag_offsets: tuple[int, int] = (1, 1)
-        self.mouse_translator: Callable[[str], MouseEvent] = None
+        self.mouse_translator: Callable[[str], MouseEvent] | None = None
 
         self._window_cache: dict[int, list[str]] = {}
 
@@ -386,7 +386,9 @@ class WindowManager(Container):
             if self._drag_target is None:
                 return None
 
-            return self._drag_target[0]
+            win = self._drag_target[0]
+            assert isinstance(win, Window) or win is None
+            return win
 
         handlers = {
             MouseAction.LEFT_CLICK: self._click,
@@ -552,7 +554,7 @@ class WindowManager(Container):
 
         return handled
 
-    def _release(self, _: tuple[int, int], window: Window) -> bool:
+    def _release(self, _: tuple[int, int], __: Window) -> bool:
         """Process release of key"""
 
         self._drag_target = None

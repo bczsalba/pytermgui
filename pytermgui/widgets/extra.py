@@ -15,7 +15,7 @@ or at least partially use the classes provided in .base.
 from __future__ import annotations
 
 import string
-from typing import Any
+from typing import Any, Callable
 from itertools import zip_longest
 
 from .base import Container, Label, Widget, MouseTarget
@@ -89,20 +89,16 @@ class ColorPicker(Container):
 class Splitter(Container):
     """A Container-like object that allows stacking Widgets horizontally"""
 
-    chars = {"separator": " | "}
+    chars: dict[str, list[str] | str] = {"separator": " | "}
     styles = {"separator": styles.MARKUP}
     keys = {
         "previous": {keys.LEFT, "h", keys.CTRL_B},
         "next": {keys.RIGHT, "l", keys.CTRL_F},
     }
 
-    def __init__(self, *widgets: Widget, **attrs: Any) -> None:
-        """Initialize Splitter, add given elements to it"""
-
-        super().__init__(*widgets, **attrs)
-
+    @staticmethod
     def _align(
-        self, alignment: WidgetAlignment, target_width: int, line: str
+        alignment: WidgetAlignment, target_width: int, line: str
     ) -> tuple[int, str]:
         """Align a line (that sounds funny)"""
 
@@ -126,34 +122,26 @@ class Splitter(Container):
         separator_length = real_length(separator)
 
         error = self.width % 2
-        w_len = len(self._widgets)
-        target_width = self.width // w_len - separator_length
+        target_width = self.width // len(self._widgets) - separator_length
 
-        total_offset = separator_length - 1
         vertical_lines = []
+        total_offset = separator_length - 1
 
         for widget in self._widgets:
             inner = []
-
-            # TODO: This is ugly, and should be avoided.
-            # For now, only Container has a top offset, but this should be
-            # opened up as some kind of API for custom widgets.
-            if type(widget).__name__ == "Container":
-                container_vertical_offset = 1
-            else:
-                container_vertical_offset = 0
 
             if widget.width > target_width:
                 widget.width = target_width
 
             aligned: str | None = None
             for line in widget.get_lines():
-                padding, aligned = self._align(widget.parent_align, target_width, line)
+                # See `enums.py` for information about this ignore
+                padding, aligned = self._align(widget.parent_align, target_width, line)  # type: ignore
                 inner.append(aligned)
 
             widget.pos = (
                 self.pos[0] + padding + total_offset + error,
-                self.pos[1] + container_vertical_offset,
+                self.pos[1] + (1 if type(widget).__name__ == "Container" else 0),
             )
 
             if aligned is not None:
@@ -193,7 +181,7 @@ class InputField(Label):
 
         super().__init__(prompt + value, **attrs)
 
-        self.parent_align = 0
+        self.parent_align = WidgetAlignment.LEFT
 
         self.value = value
         self.prompt = prompt
@@ -447,7 +435,7 @@ class Slider(Widget):
         assert isinstance(cursor_char, str)
 
         fill_char = self.get_char("fill")
-        assert isinstance(cursor_char, str)
+        assert isinstance(fill_char, str)
 
         # Clamp value
         self._display_value = max(

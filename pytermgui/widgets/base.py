@@ -25,7 +25,7 @@ from ..exceptions import WidthExceededError, LineLengthError
 from ..enums import SizePolicy, CenteringPolicy, WidgetAlignment
 from ..ansi_interface import terminal, clear, MouseEvent, MouseAction
 
-from . import styles
+from . import styles as w_styles
 
 
 __all__ = ["MouseTarget", "MouseCallback", "Widget", "Container", "Label"]
@@ -35,7 +35,7 @@ BoundCallback = Callable[["Widget", str], Any]
 
 
 def _set_obj_or_cls_style(
-    obj_or_cls: Type[Widget] | Widget, key: str, value: styles.StyleType
+    obj_or_cls: Type[Widget] | Widget, key: str, value: w_styles.StyleType
 ) -> Type[Widget] | Widget:
     """Set the style of an object or class"""
 
@@ -51,7 +51,7 @@ def _set_obj_or_cls_style(
 
 
 def _set_obj_or_cls_char(
-    obj_or_cls: Type[Widget] | Widget, key: str, value: styles.CharType
+    obj_or_cls: Type[Widget] | Widget, key: str, value: w_styles.CharType
 ) -> Type[Widget] | Widget:
     """Set a char of an object or class"""
 
@@ -134,8 +134,8 @@ class Widget:
     set_style = classmethod(_set_obj_or_cls_style)
     set_char = classmethod(_set_obj_or_cls_char)
 
-    styles: dict[str, styles.StyleType] = {}
-    chars: dict[str, styles.CharType] = {}
+    styles: dict[str, w_styles.StyleType] = {}
+    chars: dict[str, w_styles.CharType] = {}
     keys: dict[str, set[str]] = {}
 
     serialized: list[str] = [
@@ -250,7 +250,8 @@ class Widget:
         self.width = value
         self.size_policy = SizePolicy.STATIC
 
-    static_width = property(None, static_width)
+    # Set static_width to a setter only property
+    static_width = property(None, static_width)  # type: ignore
 
     def define_mouse_target(
         self, left: int, right: int, height: int, top: int = 0
@@ -293,7 +294,7 @@ class Widget:
     def handle_key(self, key: str) -> bool:
         """Handle a keystroke, return True if success"""
 
-        return not bool(key)
+        return False and hasattr(self, key)
 
     def serialize(self) -> dict[str, Any]:
         """Serialize object based on type(object).serialized"""
@@ -342,14 +343,14 @@ class Widget:
 
         return deepcopy(self)
 
-    def get_style(self, key: str) -> styles.DepthlessStyleType:
+    def get_style(self, key: str) -> w_styles.DepthlessStyleType:
         """Try to get style"""
 
         style_method = self.styles[key]
 
-        return styles.StyleCall(self, style_method)
+        return w_styles.StyleCall(self, style_method)
 
-    def get_char(self, key: str) -> styles.CharType:
+    def get_char(self, key: str) -> w_styles.CharType:
         """Try to get char"""
 
         chars = self.chars[key]
@@ -405,12 +406,6 @@ class Widget:
             index = min(max(0, index), self.selectables_length - 1)
         self.selected_index = index
 
-    def get_container(self) -> Container:
-        """Return Container including self"""
-
-        container = Container() + self
-        return container
-
     def show_targets(self, color: Optional[int] = None) -> None:
         """Show all mouse targets of this Widget"""
 
@@ -421,7 +416,7 @@ class Widget:
         """Print object within a Container
         Overwrite this for Container-like widgets."""
 
-        self.get_container().print()
+        Container(self).print()
 
     def debug(self) -> str:
         """Debug identifiable information about object"""
@@ -459,8 +454,11 @@ class Widget:
 class Container(Widget):
     """The widget that serves as the outer parent to all other widgets"""
 
-    chars = {"border": ["| ", "-", " |", "-"], "corner": [""] * 4}
-    styles = {"border": styles.MARKUP, "corner": styles.MARKUP}
+    chars: dict[str, w_styles.CharType] = {
+        "border": ["| ", "-", " |", "-"],
+        "corner": [""] * 4,
+    }
+    styles = {"border": w_styles.MARKUP, "corner": w_styles.MARKUP}
 
     keys = {
         "next": {keys.DOWN, keys.CTRL_N, "j"},
@@ -476,11 +474,11 @@ class Container(Widget):
         super().__init__(**attrs)
 
         # TODO: This is just a band-aid.
-        if not "width" in attrs:
+        if "width" not in attrs:
             self.width = 40
 
         self._widgets: list[Widget] = []
-        self._centered_axis: Optional[int] = None
+        self._centered_axis: CenteringPolicy | None = None
 
         self._prev_screen: tuple[int, int] = (0, 0)
         self._has_printed = False
@@ -507,7 +505,7 @@ class Container(Widget):
         return real_length(style(left_border) + style(right_border))
 
     @property
-    def selectables(self) -> list[tuple[Widget, i]]:
+    def selectables(self) -> list[tuple[Widget, int]]:
         """Get all selectable widgets and their inner indexes"""
 
         _selectables: list[tuple[Widget, int]] = []
@@ -674,7 +672,7 @@ class Container(Widget):
         Note about pylint: Having less locals in this method would ruin readability."""
 
         def _apply_style(
-            style: styles.DepthlessStyleType, target: list[str]
+            style: w_styles.DepthlessStyleType, target: list[str]
         ) -> list[str]:
             """Apply style to target list elements"""
 
@@ -859,7 +857,8 @@ class Container(Widget):
         self.get_lines()
 
         if where is None:
-            where = CenteringPolicy.get_default()
+            # See `enums.py` for explanation about this ignore.
+            where = CenteringPolicy.get_default()  # type: ignore
 
         centerx = centery = where is CenteringPolicy.ALL
         centerx |= where is CenteringPolicy.HORIZONTAL
@@ -871,7 +870,8 @@ class Container(Widget):
 
         if centery:
             pos[1] = (terminal.height - self.height + 2) // 2
-        self.pos = tuple(pos[:2])
+
+        self.pos = (pos[0], pos[1])
 
         if store:
             self._centered_axis = where
@@ -896,6 +896,9 @@ class Container(Widget):
 
         action, pos = event
         target = target or self.get_target(pos)
+        if target is None:
+            return False
+
         target_widget = self._drag_target or _get_widget(target)
 
         if action is MouseAction.LEFT_CLICK:
@@ -909,7 +912,7 @@ class Container(Widget):
 
         handled = target_widget.handle_mouse(event, target)
         if handled:
-            for i, widget in enumerate(self.selectables):
+            for i, (widget, _) in enumerate(self.selectables):
                 if target_widget is widget or target_widget in widget:
                     self.select(i)
 
@@ -928,6 +931,7 @@ class Container(Widget):
 
         # Only use navigation when there is more than one selectable
         if self.selectables_length > 1 and _is_nav(key):
+            handled = False
             if self.selected_index is None:
                 self.select(0)
                 return True
@@ -939,10 +943,13 @@ class Container(Widget):
                     return False
 
                 self.select(self.selected_index - 1)
-                return True
+                handled = True
 
-            if key in self.keys["next"]:
+            elif key in self.keys["next"]:
                 self.select(self.selected_index + 1)
+                handled = True
+
+            if handled:
                 return True
 
         if key == keys.ENTER and self.selected is not None:
@@ -1001,7 +1008,7 @@ class Container(Widget):
 class Label(Widget):
     """Unselectable text object"""
 
-    styles: dict[str, styles.StyleType] = {"value": styles.MARKUP}
+    styles: dict[str, w_styles.StyleType] = {"value": w_styles.MARKUP}
 
     serialized = Widget.serialized + ["*value", "align", "padding"]
 

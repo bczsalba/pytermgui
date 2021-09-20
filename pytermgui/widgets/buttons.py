@@ -15,14 +15,16 @@ from __future__ import annotations
 # Some of these classes need to have more than 7 instance attributes.
 # pylint: disable=too-many-instance-attributes
 
-from typing import Optional, Any, Callable
+from typing import Optional, Any, Callable, TYPE_CHECKING
 
-from . import styles
 from .base import Widget, MouseCallback, MouseTarget
 
 from ..parser import markup
 from ..helpers import real_length
 from ..ansi_interface import MouseAction, MouseEvent
+
+if TYPE_CHECKING or True:
+    from . import styles
 
 __all__ = ["Button", "Checkbox", "Toggle"]
 

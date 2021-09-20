@@ -12,11 +12,18 @@ the global default value.
 To modify defaults, use the `defaults` dictionary.
 """
 
+# This file is an absolute mess to mypy-correctly type.
+# It is still typed well enough for a human to read, but
+# I could not make mypy accept it without making the code
+# horrible to read and edit.
+#
+# mypy: ignore-errors
+
 from __future__ import annotations
 
 from enum import Enum, auto as _auto
 
-defaults = {}
+defaults: dict[Enum, Type[Enum]] = {}
 
 __all__ = [
     "SizePolicy",

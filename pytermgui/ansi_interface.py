@@ -209,7 +209,8 @@ class _Terminal:
     def _get_size(self) -> tuple[int, int]:
         """Get screen size & substract origin position"""
 
-        return tuple(val - org for val, org in zip(screen_size(), self.origin))
+        # This always has len() == 2, but mypy can't see that.
+        return tuple(val - org for val, org in zip(screen_size(), self.origin))  # type: ignore
 
     def _update_size(self, *_: Any) -> None:
         """Update screen size at SIGWINCH"""

@@ -12,9 +12,8 @@ This submodule provides the basic style methods for Widgets
 from dataclasses import dataclass
 from typing import Callable, Union, List
 
-from ..helpers import strip_ansi
 from ..parser import markup
-from ..ansi_interface import background
+from ..helpers import strip_ansi
 
 __all__ = [
     "MarkupFormatter",
@@ -31,7 +30,7 @@ __all__ = [
 
 StyleType = Callable[[int, str], str]
 DepthlessStyleType = Callable[[str], str]
-CharType = Union[str, List[str]]
+CharType = Union[List[str], str]
 
 
 @dataclass

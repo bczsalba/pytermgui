@@ -16,8 +16,8 @@ from typing import Any, Type, IO, Dict
 from . import widgets
 from .parser import markup
 
-from .widgets import styles
 from .widgets.base import Widget
+from .widgets import styles, CharType
 
 WidgetDict = Dict[str, Type[Widget]]
 
