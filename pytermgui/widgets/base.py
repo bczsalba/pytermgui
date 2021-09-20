@@ -934,7 +934,6 @@ class Container(Widget):
             handled = False
             if self.selected_index is None:
                 self.select(0)
-                return True
 
             if key in self.keys["previous"]:
                 # No more selectables left, user wants to exit Container
@@ -946,7 +945,12 @@ class Container(Widget):
                 handled = True
 
             elif key in self.keys["next"]:
-                self.select(self.selected_index + 1)
+                # Stop selection at last element, return as unhandled
+                new = self.selected_index + 1
+                if new == len(self.selectables):
+                    return False
+
+                self.select(new)
                 handled = True
 
             if handled:
