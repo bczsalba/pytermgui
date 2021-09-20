@@ -96,6 +96,8 @@ class Splitter(Container):
         "next": {keys.RIGHT, "l", keys.CTRL_F},
     }
 
+    parent_align = WidgetAlignment.RIGHT
+
     @staticmethod
     def _align(
         alignment: WidgetAlignment, target_width: int, line: str
@@ -117,12 +119,14 @@ class Splitter(Container):
         """Join all widgets horizontally"""
 
         separator = self.get_char("separator")
+        separator_style = self.get_style("separator")
 
         assert isinstance(separator, str)
         separator_length = real_length(separator)
+        separator = separator_style(separator)
 
         error = self.width % 2
-        target_width = self.width // len(self._widgets) - separator_length
+        target_width = self.width // len(self._widgets) - separator_length + 1
 
         vertical_lines = []
         total_offset = separator_length - 1
@@ -130,8 +134,7 @@ class Splitter(Container):
         for widget in self._widgets:
             inner = []
 
-            if widget.width > target_width:
-                widget.width = target_width
+            widget.width = target_width
 
             aligned: str | None = None
             for line in widget.get_lines():

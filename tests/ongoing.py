@@ -55,18 +55,18 @@ def main() -> None:
         + {"Toggle": [("one", "two")]}
         + {"Checkbox": [False]}
         + {
-            "LockSlider": [
+            "Lock slider": [
                 slider.locked,
                 lambda checked: setattr(slider, "locked", checked),
             ]
         }
         + {
-            "ShowCounter": [
+            "Show counter": [
                 slider.show_counter,
                 lambda checked: setattr(slider, "show_counter", checked),
             ]
         }
-        + {"Container Test": Container(["one"], ["two"])}
+        # + {"Container test": Container(["one"], ["two"])}
         + ""
         + slider
         + ""
