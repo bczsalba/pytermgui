@@ -96,6 +96,14 @@ class _Color:
             "magenta": 5,
             "cyan": 6,
             "white": 7,
+            "grey": 8,
+            "brightred": 9,
+            "brightgreen": 10,
+            "brightyellow": 11,
+            "brightblue": 12,
+            "brightmagenta": 13,
+            "brightcyan": 14,
+            "brightwhite": 15,
         }
 
         self.layer_offset = layer * 10

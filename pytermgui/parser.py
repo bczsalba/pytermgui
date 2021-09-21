@@ -206,7 +206,7 @@ class Token:
                 + f" {type(other)}."
             )
 
-        return other.data == self.data
+        return other.data == self.data and other.ttype is self.ttype
 
     @property
     def sequence(self) -> str | None:
