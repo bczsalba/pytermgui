@@ -40,6 +40,7 @@ Upcoming Version
     	+ [ ] inner-container mouse selection is buggy
 	+ [ ] inner-container keyboard selection ends outer container
 	+ [ ] `cmd` helper menu is broken
+	+ [ ] `Container` and `WindowManager` both resize `Window` on `SIGWINCH`
 
 
 Future versions
