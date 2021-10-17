@@ -16,6 +16,7 @@ from typing import Union, Any, Optional
 from random import shuffle
 import sys
 
+from .file_loaders import __all__ as _file_loaders_all
 from .window_manager import __all__ as _manager_all
 from .exceptions import __all__ as _exceptions_all
 from .serializer import __all__ as _serializer_all
@@ -32,6 +33,7 @@ from .helpers import *
 from .inspector import *
 from .serializer import *
 from .exceptions import *
+from .file_loaders import *
 from .ansi_interface import *
 from .window_manager import *
 from .input import getch, keys
@@ -53,6 +55,7 @@ __all__ += _widgets_all
 __all__ += _inspector_all
 __all__ += _serializer_all
 __all__ += _exceptions_all
+__all__ += _file_loaders_all
 __version__ = "0.4.1"
 
 
