@@ -21,17 +21,14 @@ To modify defaults, use the `defaults` dictionary.
 
 from __future__ import annotations
 
-from enum import Enum, auto as _auto
+from enum import IntEnum, auto as _auto
 
 defaults: dict[Enum, Type[Enum]] = {}
 
-__all__ = [
-    "SizePolicy",
-    "WidgetAlignment",
-]
+__all__ = ["SizePolicy", "WidgetAlignment"]
 
 
-class DefaultEnum(Enum):
+class DefaultEnum(IntEnum):
     """An Enum class that can return its default value"""
 
     @classmethod
@@ -57,9 +54,9 @@ class SizePolicy(DefaultEnum):
 class CenteringPolicy(DefaultEnum):
     """Values to center according to"""
 
-    ALL = _auto()
-    VERTICAL = _auto()
-    HORIZONTAL = _auto()
+    ALL = 0
+    VERTICAL = 1
+    HORIZONTAL = 2
 
 
 class WidgetAlignment(DefaultEnum):

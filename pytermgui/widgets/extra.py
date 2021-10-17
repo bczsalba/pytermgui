@@ -106,11 +106,11 @@ class Splitter(Container):
 
         available = target_width - real_length(line)
 
-        if alignment is WidgetAlignment.CENTER:
+        if alignment == WidgetAlignment.CENTER:
             padding, offset = divmod(available, 2)
             return padding, padding * " " + line + (padding + offset) * " "
 
-        if alignment is WidgetAlignment.RIGHT:
+        if alignment == WidgetAlignment.RIGHT:
             return available, available * " " + line
 
         return 0, line + available * " "
@@ -139,7 +139,9 @@ class Splitter(Container):
             aligned: str | None = None
             for line in widget.get_lines():
                 # See `enums.py` for information about this ignore
-                padding, aligned = self._align(widget.parent_align, target_width, line)  # type: ignore
+                padding, aligned = self._align(
+                    widget.parent_align, target_width, line
+                )  # type: ignore
                 inner.append(aligned)
 
             widget.pos = (
@@ -325,12 +327,7 @@ class Slider(Widget):
     meter to the right side of the `Slider`.
     """
 
-    chars = {
-        "endpoint": "",
-        "cursor": "█",
-        "fill": "█",
-        "rail": "─",
-    }
+    chars = {"endpoint": "", "cursor": "█", "fill": "█", "rail": "─"}
 
     styles = {
         "filled": styles.CLICKABLE,
