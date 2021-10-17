@@ -41,7 +41,7 @@ class Button(Widget):
 
     def __init__(
         self,
-        label: str,
+        label: str = "Button",
         onclick: Optional[MouseCallback] = None,
         padding: int = 0,
         **attrs: Any,
