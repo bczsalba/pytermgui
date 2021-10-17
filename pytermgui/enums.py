@@ -54,9 +54,9 @@ class SizePolicy(DefaultEnum):
 class CenteringPolicy(DefaultEnum):
     """Values to center according to"""
 
-    ALL = 0
-    VERTICAL = 1
-    HORIZONTAL = 2
+    ALL = _auto()
+    VERTICAL = _auto()
+    HORIZONTAL = _auto()
 
 
 class WidgetAlignment(DefaultEnum):
@@ -65,9 +65,9 @@ class WidgetAlignment(DefaultEnum):
     These are applied by the parent object, and are
     relative to them."""
 
-    LEFT = _auto()
-    CENTER = _auto()
-    RIGHT = _auto()
+    LEFT = 0
+    CENTER = 1
+    RIGHT = 2
 
 
 defaults[SizePolicy] = SizePolicy.FILL

@@ -630,12 +630,12 @@ class Container(Widget):
             padding = self.width - real_length(left + right) - real_length(text)
             return left + padding * " " + text + right
 
-        if widget.parent_align is WidgetAlignment.CENTER:
+        if widget.parent_align == WidgetAlignment.CENTER:
             total = self.width - real_length(left + right) - widget.width
             padding, offset = divmod(total, 2)
             return _align_center, real_length(left) + padding + offset
 
-        if widget.parent_align is WidgetAlignment.RIGHT:
+        if widget.parent_align == WidgetAlignment.RIGHT:
             return _align_right, self.width - real_length(left) - widget.width
 
         # Default to left-aligned
@@ -648,16 +648,16 @@ class Container(Widget):
             self.width - self.sidelength - (0 if isinstance(widget, Container) else 1)
         )
 
-        if widget.size_policy is SizePolicy.FILL:
+        if widget.size_policy == SizePolicy.FILL:
             widget.width = available
             return
 
-        if widget.size_policy is SizePolicy.RELATIVE:
+        if widget.size_policy == SizePolicy.RELATIVE:
             widget.width = widget.relative_width * available
             return
 
         if widget.width > available:
-            if widget.size_policy is SizePolicy.STATIC:
+            if widget.size_policy == SizePolicy.STATIC:
                 raise WidthExceededError(
                     f"Widget {widget}'s static width of {widget.width}"
                     + f" exceeds its parent's available width {available}."
