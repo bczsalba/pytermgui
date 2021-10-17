@@ -7,6 +7,8 @@ author: bczsalba
 This module stores the custom Exception-s used in this module.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 __all__ = [

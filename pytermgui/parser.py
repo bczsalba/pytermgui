@@ -74,23 +74,19 @@ from __future__ import annotations
 
 import re
 from random import shuffle
-from enum import Enum, auto as _auto
 from dataclasses import dataclass
 from argparse import ArgumentParser
-from typing import Iterator, Callable
+from enum import Enum, auto as _auto
+from typing import Iterator, Callable, Tuple, List
 
 from .ansi_interface import foreground
 from .exceptions import MarkupSyntaxError, AnsiSyntaxError
 
 
-__all__ = [
-    "MacroCallable",
-    "MacroCall",
-    "markup",
-]
+__all__ = ["MacroCallable", "MacroCall", "markup"]
 
 MacroCallable = Callable[..., str]
-MacroCall = tuple[MacroCallable, list[str]]
+MacroCall = Tuple[MacroCallable, List[str]]
 
 RE_ANSI = re.compile(r"(?:\x1b)\[([\d;]+)?.")
 RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w:]+)\))?")
@@ -336,17 +332,11 @@ class MarkupLanguage:
 
             # Add plain text between last and current match
             if start > cursor:
-                yield Token(
-                    ttype=TokenType.PLAIN,
-                    data=markup_text[cursor:start],
-                )
+                yield Token(ttype=TokenType.PLAIN, data=markup_text[cursor:start])
 
             if not escapes == "" and len(escapes) % 2 == 1:
                 cursor = end
-                yield Token(
-                    ttype=TokenType.ESCAPED,
-                    data=full[len(escapes) :],
-                )
+                yield Token(ttype=TokenType.ESCAPED, data=full[len(escapes) :])
                 continue
 
             for tag in tag_text.split():
@@ -357,17 +347,11 @@ class MarkupLanguage:
 
                 elif tag in self.user_tags:
                     yield Token(
-                        name=tag,
-                        ttype=TokenType.STYLE,
-                        data=self.user_tags[tag],
+                        name=tag, ttype=TokenType.STYLE, data=self.user_tags[tag]
                     )
 
                 elif tag in self.tags:
-                    yield Token(
-                        name=tag,
-                        ttype=TokenType.STYLE,
-                        data=self.tags[tag],
-                    )
+                    yield Token(name=tag, ttype=TokenType.STYLE, data=self.tags[tag])
 
                 # Try to find a color token
                 else:
@@ -396,9 +380,7 @@ class MarkupLanguage:
                         continue
 
                     raise MarkupSyntaxError(
-                        tag=tag,
-                        cause="not defined",
-                        context=markup_text,
+                        tag=tag, cause="not defined", context=markup_text
                     )
 
             cursor = end
@@ -422,11 +404,7 @@ class MarkupLanguage:
             if start > cursor:
                 plain = ansi[cursor:start].replace("[", r"\[")
 
-                yield Token(
-                    name=plain,
-                    ttype=TokenType.PLAIN,
-                    data=plain,
-                )
+                yield Token(name=plain, ttype=TokenType.PLAIN, data=plain)
 
             # Styles & unsetters
             if len(parts) == 1:
@@ -441,16 +419,10 @@ class MarkupLanguage:
                             break
                     else:
                         raise AnsiSyntaxError(
-                            tag=parts[0],
-                            cause="not recognized",
-                            context=ansi,
+                            tag=parts[0], cause="not recognized", context=ansi
                         )
 
-                yield Token(
-                    name=name,
-                    ttype=ttype,
-                    data=code,
-                )
+                yield Token(name=name, ttype=ttype, data=code)
 
             # Colors
             if len(parts) >= 3:
@@ -464,20 +436,14 @@ class MarkupLanguage:
 
                 ttype = types[0] if parts[1] == "5" else types[1]
 
-                yield Token(
-                    ttype=ttype,
-                    data=name,
-                )
+                yield Token(ttype=ttype, data=name)
 
             cursor = end
 
         if cursor < len(ansi):
             plain = ansi[cursor:].replace("[", r"\[")
 
-            yield Token(
-                ttype=TokenType.PLAIN,
-                data=plain,
-            )
+            yield Token(ttype=TokenType.PLAIN, data=plain)
 
     def define(self, name: str, method: MacroCallable) -> None:
         """Define a Macro tag that executes `method`
@@ -660,11 +626,7 @@ def main() -> None:
     # default=0,
     # )
 
-    markup_group.add_argument(
-        "--alias",
-        action="append",
-        help="alias src=dst",
-    )
+    markup_group.add_argument("--alias", action="append", help="alias src=dst")
 
     ansi_group = parser.add_argument_group("ANSI->Markup")
     ansi_group.add_argument(
