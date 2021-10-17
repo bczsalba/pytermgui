@@ -85,6 +85,9 @@ class Serializer:
 
             return formatted
 
+        if widget_type is not None:
+            data["type"] = widget_type
+
         obj_class_name = data.get("type")
         if obj_class_name is None:
             raise ValueError("Object with type None could not be loaded.")
@@ -104,8 +107,9 @@ class Serializer:
 
         for key, value in data.items():
             if key == "_widgets":
-                for widget in value:
-                    new = self.load_from_dict(widget)
+                for inner in value:
+                    name, widget = list(inner.items())[0]
+                    new = self.from_dict(widget, widget_type=name)
                     assert hasattr(obj, "__iadd__")
 
                     # this object can be added to, since
