@@ -21,10 +21,10 @@ from .widgets import styles, CharType
 
 WidgetDict = Dict[str, Type[Widget]]
 
-__all__ = ["serializer"]
+__all__ = ["serializer", "Serializer"]
 
 
-class _Serializer:
+class Serializer:
     """A class to facilitate loading & dumping widgets.
 
     By default it is only aware of pytermgui objects, however
@@ -71,7 +71,7 @@ class _Serializer:
 
         self.known_widgets[cls.__name__] = type(cls)
 
-    def load_from_dict(self, data: dict[str, Any]) -> Widget:
+    def from_dict(self, data: dict[str, Any], widget_type: str | None = None) -> Widget:
         """Load a widget from a dictionary"""
 
         def _apply_markup(value: CharType) -> CharType:
@@ -127,18 +127,21 @@ class _Serializer:
                 setattr(obj, "chars", chars)
                 continue
 
+            # if key == "styles":
+            #     styles = {}
+            #     for name, markup in value.items():
+            #         styles[name] = ""
+
             setattr(obj, key, value)
 
         return obj
 
-    def load_from_file(self, file: IO[str]) -> Widget:
+    def from_file(self, file: IO[str]) -> Widget:
         """Load widget from a file object"""
 
-        return self.load_from_dict(json.load(file))
+        return self.from_dict(json.load(file))
 
-    def dump_to_file(
-        self, obj: Widget, file: IO[str], **json_args: dict[str, Any]
-    ) -> None:
+    def to_file(self, obj: Widget, file: IO[str], **json_args: dict[str, Any]) -> None:
         """Dump widget to a file object"""
 
         data = self.dump_to_dict(obj)
@@ -151,4 +154,4 @@ class _Serializer:
         json.dump(data, file, **json_args)  # type: ignore
 
 
-serializer = _Serializer()
+serializer = Serializer()
