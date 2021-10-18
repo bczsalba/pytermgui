@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from abc import abstractmethod, ABC
 
 import yaml
+import json
 
 from . import widgets
 from .serializer import Serializer
@@ -13,7 +14,7 @@ from .serializer import Serializer
 # not muddle with the pre-instantiated global.
 SERIALIZER = Serializer()
 
-__all__ = ["WidgetNamespace", "FileLoader", "YamlLoader"]
+__all__ = ["WidgetNamespace", "FileLoader", "YamlLoader", "JsonLoader"]
 
 
 @dataclass
@@ -94,6 +95,7 @@ class FileLoader(ABC):
     def load_str(self, data: str) -> WidgetNamespace:
         """Load string into namespace"""
 
+        namespace = None
         for category, data in self.parse(data).items():
             if category == "config":
                 namespace = WidgetNamespace.from_config(data)
@@ -117,6 +119,15 @@ class FileLoader(ABC):
             data = data.read()
 
         return self.load_str(data)
+
+
+class JsonLoader(FileLoader):
+    """Load JSON files for PTG"""
+
+    def parse(self, data: str) -> dict[Any]:
+        """Parse JSON str"""
+
+        return json.loads(data)
 
 
 class YamlLoader(FileLoader):
