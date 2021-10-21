@@ -1,0 +1,119 @@
+_item_splitter: &menu_item
+  type: Splitter
+  styles:
+    fill: '[@237]{item}'
+
+_detail: &detail_criteria
+  - Label:
+      value: '[bg bold 210][][/fg grey] Criteria'
+      parent_align: 0
+
+  - Label: {}
+
+  - Label:
+      value: '[bg 249 italic]: Details'
+      parent_align: 0
+
+  - Splitter:
+      <<: *menu_item
+      chars:
+        separator: ' - '
+      widgets:
+        - Label:
+            value: '[208]~[/fg] in progress'
+            parent_align: 0
+        - Label:
+            value: 69%
+
+  - Splitter:
+      <<: *menu_item
+      chars:
+        separator: ' - '
+      widgets:
+        - Label:
+            value: '[157]/[/fg] success!'
+            parent_align: 0
+        - Label:
+            value: 100%
+
+  - Splitter:
+      <<: *menu_item
+      chars:
+        separator: ' - '
+      widgets:
+        - Label:
+            value: '[210]X[/fg] failure'
+            parent_align: 0
+        - Label:
+            value: 11%
+
+_condition: &condition_criteria
+  - Label:
+      <<: *menu_item
+      value: '[bg 249 italic]: Conditions'
+      parent_align: 0
+
+  - Splitter:
+      <<: *menu_item
+      chars:
+        separator: ' > '
+      widgets:
+        - Label:
+            value: '[157]/[/fg] foo'
+            parent_align: 0
+        - Label:
+            value: bar
+
+  - Splitter:
+      <<: *menu_item
+      id: "splitter"
+      chars:
+        separator: ' = '
+      widgets:
+        - Label:
+            value: '[210]X[/fg] foobar'
+            parent_align: 0
+        - Label:
+            value: '100'
+
+markup:
+  bg: '@234 grey'
+
+config:
+  Splitter:
+    styles:
+      separator: &fill_style '[bg]{item}'
+
+  Window:
+    chars:
+      border: [' ', ' ', ' ', ' ']
+    styles:
+      fill: *fill_style
+      border: *fill_style
+      corner: *fill_style
+
+widgets:
+  Test:
+    type: Window
+    pos: [20, 5]
+    widgets:
+      - Splitter:
+          widgets:
+            - Label:
+               value: "Left"
+            - Label:
+               value: "Right"
+
+  CriteriaWindow:
+    type: Window
+    pos: [30, 10]
+    widgets__detail: *detail_criteria
+    widgets__padding: [Label: {}]
+    widgets__condition: *condition_criteria
+
+  RuleEntryWindow:
+    type: Window
+    widgets:
+      - Label:
+          value: There
+
