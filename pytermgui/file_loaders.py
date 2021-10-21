@@ -35,10 +35,17 @@ class WidgetNamespace:
             if obj is None:
                 raise KeyError(f"Unknown widget type {name}.")
 
-            namespace.config[obj] = {"styles": {}, "chars": {}}
+            namespace.config[obj] = {
+                "styles": obj.styles.copy(),
+                "chars": obj.chars.copy(),
+            }
 
             for category, inner in config.items():
                 value: str | widgets.styles.MarkupFormatter
+
+                if category not in namespace.config[obj]:
+                    setattr(obj, category, inner)
+                    continue
 
                 for key, value in inner.items():
                     namespace.config[obj][category][key] = value
@@ -52,7 +59,8 @@ class WidgetNamespace:
 
         for key, value in section.items():
             if title == "styles":
-                widget.set_style(key, widgets.styles.MarkupFormatter(value))
+                if isinstance(value, str):
+                    widget.set_style(key, widgets.styles.MarkupFormatter(value))
                 continue
 
             widget.set_char(key, value)
