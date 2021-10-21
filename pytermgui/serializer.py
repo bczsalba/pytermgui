@@ -18,6 +18,7 @@ from .parser import markup
 
 from .widgets.base import Widget
 from .widgets import styles, CharType
+from .window_manager import Window
 
 WidgetDict = Dict[str, Type[Widget]]
 
@@ -42,6 +43,7 @@ class Serializer:
         """Set up known widgets"""
 
         self.known_widgets = self.get_widgets()
+        self.register(Window)
 
     @staticmethod
     def get_widgets() -> WidgetDict:
@@ -69,7 +71,7 @@ class Serializer:
         """Make object aware of a custom widget class, so
         it can be serialized."""
 
-        self.known_widgets[cls.__name__] = type(cls)
+        self.known_widgets[cls.__name__] = cls
 
     def from_dict(self, data: dict[str, Any], widget_type: str | None = None) -> Widget:
         """Load a widget from a dictionary"""
@@ -106,7 +108,7 @@ class Serializer:
         obj = obj_class()
 
         for key, value in data.items():
-            if key == "_widgets":
+            if key.startswith("widgets"):
                 for inner in value:
                     name, widget = list(inner.items())[0]
                     new = self.from_dict(widget, widget_type=name)
@@ -131,10 +133,17 @@ class Serializer:
                 setattr(obj, "chars", chars)
                 continue
 
-            # if key == "styles":
-            #     styles = {}
-            #     for name, markup in value.items():
-            #         styles[name] = ""
+            if key == "styles":
+                obj_styles = obj.styles.copy()
+                for name, markup_str in value.items():
+                    if isinstance(markup_str, str):
+                        obj_styles[name] = styles.MarkupFormatter(markup_str)
+                        continue
+
+                    obj_styles[name] = markup_str
+
+                setattr(obj, "styles", obj_styles)
+                continue
 
             setattr(obj, key, value)
 
