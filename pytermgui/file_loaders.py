@@ -102,26 +102,26 @@ class FileLoader(ABC):
     def load_str(self, data: str) -> WidgetNamespace:
         """Load string into namespace"""
 
-        namespace = None
-        for category, data in self.parse(data).items():
-            if category == "markup":
-                for key, value in data.items():
-                    markup.alias(key, value)
+        parsed = self.parse(data)
 
-            if category == "config":
-                namespace = WidgetNamespace.from_config(data)
-                continue
+        # Get & load config data
+        config_data = parsed.get("config")
+        if config_data is not None:
+            namespace = WidgetNamespace.from_config(config_data)
+        else:
+            namespace = WidgetNamespace.from_config(data)
 
-            if category == "widgets":
-                for name, inner in data.items():
-                    if namespace is None:
-                        namespace = WidgetNamespace({}, {})
+        # Create aliases
+        for key, value in parsed.get("markup").items() or []:
+            markup.alias(key, value)
 
-                    widget_type = inner.get("type") or name
+        # Create widgets
+        for name, inner in parsed.get("widgets").items() or []:
+            widget_type = inner.get("type") or name
 
-                    namespace.widgets[name] = SERIALIZER.from_dict(
-                        inner, widget_type=widget_type
-                    )
+            namespace.widgets[name] = SERIALIZER.from_dict(
+                inner, widget_type=widget_type
+            )
 
         return namespace
 
