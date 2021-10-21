@@ -8,6 +8,7 @@ import yaml
 import json
 
 from . import widgets
+from .parser import markup
 from .serializer import Serializer
 
 # We use a module-local Serializer instance so as to
@@ -20,8 +21,6 @@ __all__ = ["WidgetNamespace", "FileLoader", "YamlLoader", "JsonLoader"]
 @dataclass
 class WidgetNamespace:
     """Class to hold data on loaded namespace"""
-
-    # TODO: Add markup language definition support
 
     config: dict[Widget, dict[dict[str[str, str]]]]
     widgets: dict[str, Widget]
@@ -97,18 +96,24 @@ class FileLoader(ABC):
 
         namespace = None
         for category, data in self.parse(data).items():
+            if category == "markup":
+                for key, value in data.items():
+                    markup.alias(key, value)
+
             if category == "config":
                 namespace = WidgetNamespace.from_config(data)
                 continue
 
-            if namespace is None:
-                namespace = WidgetNamespace({}, {})
+            if category == "widgets":
+                for name, inner in data.items():
+                    if namespace is None:
+                        namespace = WidgetNamespace({}, {})
 
-            widget_type = data.get("type") or category
+                    widget_type = inner.get("type") or name
 
-            namespace.widgets[category] = SERIALIZER.from_dict(
-                data, widget_type=widget_type
-            )
+                    namespace.widgets[name] = SERIALIZER.from_dict(
+                        inner, widget_type=widget_type
+                    )
 
         return namespace
 
