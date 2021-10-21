@@ -119,9 +119,14 @@ class FileLoader(ABC):
         for name, inner in parsed.get("widgets").items() or []:
             widget_type = inner.get("type") or name
 
-            namespace.widgets[name] = SERIALIZER.from_dict(
-                inner, widget_type=widget_type
-            )
+            try:
+                namespace.widgets[name] = SERIALIZER.from_dict(
+                    inner, widget_type=widget_type
+                )
+            except AttributeError as error:
+                raise ValueError(
+                    f'Invalid data for widget "{name}": {inner}'
+                ) from error
 
         return namespace
 

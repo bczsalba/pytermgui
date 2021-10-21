@@ -120,15 +120,10 @@ class Serializer:
 
                 continue
 
-            # chars are converted to ansi separately,
-            # then their corresponding style is set
-            # to styles.FOREGROUND. Look into why this
-            # is needed.
             if key == "chars":
                 chars: dict[str, CharType] = {}
                 for name, char in value.items():
                     chars[name] = _apply_markup(char)
-                    obj.set_style(name, styles.FOREGROUND)
 
                 setattr(obj, "chars", chars)
                 continue
