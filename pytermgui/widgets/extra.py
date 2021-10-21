@@ -90,7 +90,7 @@ class Splitter(Container):
     """A Container-like object that allows stacking Widgets horizontally"""
 
     chars: dict[str, list[str] | str] = {"separator": " | "}
-    styles = {"separator": styles.MARKUP}
+    styles = {"separator": styles.MARKUP, "fill": styles.FOREGROUND}
     keys = {
         "previous": {keys.LEFT, "h", keys.CTRL_B},
         "next": {keys.RIGHT, "l", keys.CTRL_F},
@@ -98,22 +98,25 @@ class Splitter(Container):
 
     parent_align = WidgetAlignment.RIGHT
 
-    @staticmethod
     def _align(
-        alignment: WidgetAlignment, target_width: int, line: str
+        self, alignment: WidgetAlignment, target_width: int, line: str
     ) -> tuple[int, str]:
         """Align a line (that sounds funny)"""
 
         available = target_width - real_length(line)
+        fill_style = self.get_style("fill")
+
+        char = fill_style(" ")
+        line = fill_style(line)
 
         if alignment == WidgetAlignment.CENTER:
             padding, offset = divmod(available, 2)
-            return padding, padding * " " + line + (padding + offset) * " "
+            return padding, padding * char + line + (padding + offset) * char
 
         if alignment == WidgetAlignment.RIGHT:
-            return available, available * " " + line
+            return available, available * char + line
 
-        return 0, line + available * " "
+        return 0, line + available * char
 
     def get_lines(self) -> list[str]:
         """Join all widgets horizontally"""
