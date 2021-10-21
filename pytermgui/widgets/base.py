@@ -458,7 +458,12 @@ class Container(Widget):
         "border": ["| ", "-", " |", "-"],
         "corner": [""] * 4,
     }
-    styles = {"border": w_styles.MARKUP, "corner": w_styles.MARKUP}
+
+    styles = {
+        "border": w_styles.MARKUP,
+        "corner": w_styles.MARKUP,
+        "fill": w_styles.FOREGROUND,
+    }
 
     keys = {
         "next": {keys.DOWN, keys.CTRL_N, "j"},
@@ -536,6 +541,25 @@ class Container(Widget):
             return None
 
         return self.selectables[self.selected_index][0]
+
+    @property
+    def box(self) -> boxes.Box:
+        """Return current box setting"""
+
+        return self._box
+
+    @box.setter
+    def box(self, new: str | boxes.Box) -> None:
+        """Apply new box"""
+
+        from . import boxes
+
+        if isinstance(new, str):
+            new = vars(boxes).get(new)
+            if new is None:
+                raise ValueError(f"Unknown box type {box}.")
+
+        new.set_chars_of(self)
 
     def __iadd__(self, other: object) -> Container:
         """Call self._add_widget(other) and return self"""
