@@ -101,7 +101,7 @@ class Splitter(Container):
     def _align(
         self, alignment: WidgetAlignment, target_width: int, line: str
     ) -> tuple[int, str]:
-        """Align a line (that sounds funny)"""
+        """Align a line r/wordavalanches"""
 
         available = target_width - real_length(line)
         fill_style = self.get_style("fill")
