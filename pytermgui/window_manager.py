@@ -59,8 +59,14 @@ from .parser import markup
 from .helpers import strip_ansi
 from .exceptions import LineLengthError
 from .enums import CenteringPolicy, SizePolicy
-from .ansi_interface import terminal, MouseAction, move_cursor
-from .context_managers import alt_buffer, mouse_handler, MouseEvent
+from .context_managers import alt_buffer, mouse_handler
+from .ansi_interface import (
+    terminal,
+    MouseEvent,
+    move_cursor,
+    MouseAction,
+    is_mouse_event,
+)
 
 
 __all__ = ["WindowManager", "Window"]
@@ -360,6 +366,17 @@ class WindowManager(Container):
 
         Thread(name="WM_DisplayLoop", target=_loop).start()
 
+    def execute_binding(self, key: str) -> bool:
+        """Execute bindings, including mouse ones"""
+
+        # Execute universal mouse binding
+        if is_mouse_event(key) and MouseEvent in self._bindings:
+            method, _ = self._bindings[MouseEvent]
+            method(self, key)
+            return True
+
+        return super().execute_binding(key)
+
     def handle_key(self, key: str) -> bool:
         """Process a keypress"""
 
@@ -421,6 +438,7 @@ class WindowManager(Container):
 
                     self._should_print = True
 
+                    self.execute_binding((action, pos))
                     break
 
                 # Break on modal window
