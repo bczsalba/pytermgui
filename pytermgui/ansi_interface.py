@@ -61,6 +61,8 @@ __all__ = [
     "unset_echo",
     "set_mode",
     "MouseAction",
+    "MouseEvent",
+    "is_mouse_event",
     "report_mouse",
     "translate_mouse",
     "print_to",
@@ -504,6 +506,28 @@ class MouseAction(Enum):
 
 
 MouseEvent = Tuple[MouseAction, Tuple[int, int]]
+
+
+def is_mouse_event(data: tuple[...]) -> bool:
+    """Determine if data tuple is a MouseEvent"""
+
+    if not isinstance(data, tuple):
+        return False
+
+    if len(data) != 2:
+        return False
+
+    if not isinstance(data[0], MouseAction):
+        return False
+
+    if not isinstance(data[1], tuple):
+        return False
+
+    pos = data[1]
+    if len(pos) != 2:
+        return False
+
+    return all([isinstance(element, int) for element in pos])
 
 
 def report_mouse(
