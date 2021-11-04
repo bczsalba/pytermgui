@@ -15,6 +15,7 @@ from pytermgui import (
     Widget,
     real_length,
     Slider,
+    Label,
 )
 
 from pytermgui.ansi_interface import MouseAction
@@ -75,6 +76,7 @@ def main() -> None:
             ["Reset", lambda *_: setattr(field, "value", "")],
             ["Exit", lambda *_: manager.exit()],
         )
+        + ["Hello", lambda *_: manager.exit()]
         + [
             ("Set Fullscreen", "Set Floating"),
             lambda value: window.set_fullscreen("Floating" in value),
@@ -83,6 +85,7 @@ def main() -> None:
     ).center()
 
     manager.add(window)
+    manager.add(app.construct_window())
     manager.bind(keys.CTRL_T, lambda manager, _: manager.add(window.copy()))
     manager.run()
 
