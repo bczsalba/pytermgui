@@ -99,7 +99,7 @@ class Rect:
         self.left = self.start[0]
         self.right = self.end[0] - 1
         self.top = self.start[1]
-        self.bottom = self.end[1] - 1
+        self.bottom = self.end[1] + 3
 
         self.values = self.left, self.top, self.right, self.bottom
 
