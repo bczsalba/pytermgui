@@ -37,11 +37,13 @@ Upcoming Version
 		- `Widget.measurements` property: `(min, max)`
 
     * [ ] Fix long-standing issues
-    	+ [ ] inner-container mouse selection is buggy
+    	+ [X] inner-container mouse selection is buggy
 	+ [ ] inner-container keyboard selection ends outer container
 	+ [ ] `cmd` helper menu is broken
 	+ [ ] `Container` and `WindowManager` both resize `Window` on `SIGWINCH`
 
+* [X] Add JSON config parsing
+* [ ] add background styles
 
 Future versions
 ---------------
@@ -57,11 +59,6 @@ Future versions
         + [ ] there should be a way you can incorporate depth information into a code
         + [ ] this needs parser support however
         + [ ] e.g.: `[@{30 + {depth} * 36}]this is a gradient of depth`
-
-    * [ ] add background styles
-
-    * ( )? Add CSS/JSON config parsing
-
 
 - unnamed *(order irrelevant)*
     + [ ] `WindowManager` tiling layout
