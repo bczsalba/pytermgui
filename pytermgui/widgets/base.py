@@ -515,11 +515,12 @@ class Container(Widget):
         """Get all selectable widgets and their inner indexes"""
 
         _selectables: list[tuple[Widget, int]] = []
-        for i, widget in enumerate(self._widgets):
+        for widget in self._widgets:
             if not widget.is_selectable:
                 continue
 
-            _selectables.append((widget, i))
+            for i in range(widget.selectables_length):
+                _selectables.append((widget, i))
 
         return _selectables
 
@@ -852,24 +853,11 @@ class Container(Widget):
             if other.selectables_length > 0:
                 other.select(None)
 
-                if isinstance(other, Container):
-                    for sub in other:
-                        if sub.selectables_length > 0:
-                            sub.select(None)
-
         if index is not None:
-            selectables = []
-            for widget in self._widgets:
-                for i in range(widget.selectables_length):
-                    selectables.append((widget, i))
-
-            index = min(max(0, index), len(selectables) - 1)
-
-            data = selectables[index]
-            if data is None:
+            if index >= len(self.selectables) is None:
                 raise IndexError("Container selection index out of range")
 
-            widget, inner_index = data
+            widget, inner_index = self.selectables[index]
             widget.select(inner_index)
 
         self.selected_index = index
@@ -940,6 +928,7 @@ class Container(Widget):
         if handled:
             for i, (widget, _) in enumerate(self.selectables):
                 if target_widget is widget or target_widget in widget:
+                    # TODO: Something is messing up here.
                     self.select(i)
 
         return handled
