@@ -21,9 +21,10 @@ To modify defaults, use the `defaults` dictionary.
 
 from __future__ import annotations
 
+from typing import Type
 from enum import IntEnum, auto as _auto
 
-defaults: dict[Enum, Type[Enum]] = {}
+defaults: dict[IntEnum, Type[IntEnum]] = {}
 
 __all__ = ["SizePolicy", "WidgetAlignment"]
 
@@ -32,7 +33,7 @@ class DefaultEnum(IntEnum):
     """An Enum class that can return its default value"""
 
     @classmethod
-    def get_default(cls) -> Enum | None:
+    def get_default(cls) -> IntEnum | None:
         """Get default value"""
 
         return defaults.get(cls)

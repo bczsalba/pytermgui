@@ -7,8 +7,9 @@ author: bczsalba
 This submodule the basic elements this library provides.
 """
 
-# These classes will have to have more than 7 attributes mostly.
-# pylint: disable=too-many-instance-attributes
+# The classes defined here need more than 7 instance attributes,
+# and there is no cyclic import during runtime.
+# pylint: disable=too-many-instance-attributes, cyclic-import
 
 from __future__ import annotations
 
@@ -545,22 +546,24 @@ class Container(Widget):
         return self.selectables[self.selected_index][0]
 
     @property
-    def box(self) -> boxes.Box:
+    def box(self) -> "boxes.Box":
         """Return current box setting"""
 
         return self._box
 
     @box.setter
-    def box(self, new: str | boxes.Box) -> None:
+    def box(self, new: str | "boxes.Box") -> None:
         """Apply new box"""
 
-        from . import boxes
+        # Importing this toplevel causes a cyclical import mess
+        from . import boxes # pylint: disable=import-outside-toplevel
 
         if isinstance(new, str):
             new = vars(boxes).get(new)
             if new is None:
-                raise ValueError(f"Unknown box type {box}.")
+                raise ValueError(f"Unknown box type {new}.")
 
+        self._box = new
         new.set_chars_of(self)
 
     def __iadd__(self, other: object) -> Container:
@@ -845,8 +848,6 @@ class Container(Widget):
 
     def select(self, index: int | None = None) -> None:
         """Select inner object"""
-
-        widget = None
 
         # Unselect all sub-elements
         for other in self._widgets:

@@ -9,6 +9,8 @@ The basic usage is to create a main Container(), and use
 the `+=` operator to append elements to it.
 """
 
+from __future__ import annotations
+
 from typing import Optional, Union, Type
 
 from . import boxes

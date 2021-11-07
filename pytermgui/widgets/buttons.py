@@ -15,7 +15,7 @@ from __future__ import annotations
 # Some of these classes need to have more than 7 instance attributes.
 # pylint: disable=too-many-instance-attributes
 
-from typing import Optional, Any, Callable, TYPE_CHECKING
+from typing import Optional, Any, Callable
 
 from .base import Widget, MouseCallback, MouseTarget
 
@@ -23,8 +23,7 @@ from ..parser import markup
 from ..helpers import real_length
 from ..ansi_interface import MouseAction, MouseEvent
 
-if TYPE_CHECKING or True:
-    from . import styles
+from . import styles as w_styles
 
 __all__ = ["Button", "Checkbox", "Toggle"]
 
@@ -32,11 +31,11 @@ __all__ = ["Button", "Checkbox", "Toggle"]
 class Button(Widget):
     """A visual MouseTarget"""
 
-    chars: dict[str, styles.CharType] = {"delimiter": ["  ", "  "]}
+    chars: dict[str, w_styles.CharType] = {"delimiter": ["  ", "  "]}
 
-    styles: dict[str, styles.StyleType] = {
-        "label": styles.CLICKABLE,
-        "highlight": styles.CLICKED,
+    styles: dict[str, w_styles.StyleType] = {
+        "label": w_styles.CLICKABLE,
+        "highlight": w_styles.CLICKED,
     }
 
     def __init__(
@@ -58,22 +57,22 @@ class Button(Widget):
     def handle_mouse(
         self, event: MouseEvent, target: MouseTarget | None = None
     ) -> bool:
-        """Handle mouse event"""
+        """Handle a mouse event"""
 
-        action, pos = event
-        target = target or self.get_target(pos)
+        mouse_action, position = event
+        mouse_target = target or self.get_target(position)
 
-        if action == MouseAction.LEFT_CLICK:
+        if mouse_action == MouseAction.LEFT_CLICK:
             self.selected_index = 0
-            if target is not None:
-                target.click(self)
+            if mouse_target is not None:
+                mouse_target.click(self)
                 return True
 
-        if action == MouseAction.RELEASE:
+        if mouse_action == MouseAction.RELEASE:
             self.selected_index = None
             return False
 
-        return super().handle_mouse(event, target)
+        return super().handle_mouse(event, mouse_target)
 
     def get_lines(self) -> list[str]:
         """Get object lines"""

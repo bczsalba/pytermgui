@@ -228,7 +228,7 @@ class MarkupApplication(Application):
         def _random_hex() -> str:
             """Return random hex number"""
 
-            return "#%02X%02X%02X" % tuple(randint(0, 255) for _ in range(3))
+            return "#" + "".join([hex(randint(0, 255)) for _ in range(3)])
 
         markup.alias("demo-255", str(randint(0, 255)))
         markup.alias("demo-hex", _random_hex())
@@ -244,6 +244,15 @@ class MarkupApplication(Application):
 
     def construct_window(self) -> Window:
         """Construct an application window"""
+
+        def dump(window: Window) -> None:
+            """Dump lines of window and exit program"""
+
+            with open("dump", "w") as file:
+                file.write(window.get_lines())
+
+            sys.exit()
+
 
         tokens = self._get_tokens()
         self._define_colors()
@@ -302,10 +311,7 @@ class MarkupApplication(Application):
 
         window.bind(
             keys.CTRL_P,
-            lambda *_: {
-                open("dump", "w").write("\n".join(window.get_lines())),
-                sys.exit(),
-            },
+            lambda *_: dump(window),
             description="Dump window lines and exit",
         )
 

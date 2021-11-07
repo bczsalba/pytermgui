@@ -121,12 +121,9 @@ class Splitter(Container):
     def get_lines(self) -> list[str]:
         """Join all widgets horizontally"""
 
-        separator = self.get_char("separator")
-        separator_style = self.get_style("separator")
-
+        separator = self.get_style("separator")(self.get_char("separator"))
         assert isinstance(separator, str)
         separator_length = real_length(separator)
-        separator = separator_style(separator)
 
         error = self.width % 2
         target_width = self.width // len(self._widgets) - separator_length + 1

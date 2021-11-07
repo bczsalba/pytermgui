@@ -527,7 +527,7 @@ def is_mouse_event(data: tuple[...]) -> bool:
     if len(pos) != 2:
         return False
 
-    return all([isinstance(element, int) for element in pos])
+    return all(isinstance(element, int) for element in pos)
 
 
 def report_mouse(

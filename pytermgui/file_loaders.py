@@ -1,19 +1,120 @@
+"""
+pytermgui.file_loaders
+----------------------
+author: bczsalba
+
+
+# Description
+
+This module provides the library with the capability to load files into Widget-s.
+
+It provides a FileLoader base class, which is then subclassed by various filetype-
+specific parsers with their own `parse` method. The job of this method is to take
+the file contents as a string, and create a valid json tree out of it.
+
+
+# Implementation details
+
+The main method of these classes is `load`, which takes a file-like object or a string,
+parses it and returns a `WidgetNamespace` instance. This can then be used to access all
+custom `Widget` definitions in the datafile.
+
+This module highly depends on the `serializer` module. Each file loader uses its own
+`Serializer` instance, but optionally take a pre-instantiated Serializer at construction.
+As with that module, this one depends on it "knowing" all types of Widget-s you are loading.
+If you have custom Widget subclass you would like to use in file-based definitions, use the
+`FileLoader.register` method, passing in your custom class as the sole argument.
+
+
+# File structure
+
+Regardless of filetype, all loaded files must follow a specific structure:
+
+```
+root
+|_ config
+|   |_ custom global widget configuration
+|
+|_ markup
+|   |_ custom markup definitions
+|
+|_ widgets
+    |_ custom widget definitions
+```
+
+The loading follows the order config -> markup -> widgets. It is not necessary to provide all
+sections.
+
+
+# Example of usage
+
+```yaml
+# -- data.yaml --
+
+markup:
+    label-style: '141 @61 bold'
+
+config:
+    Window:
+        styles:
+            border: '[@79]{item}'
+        box: SINGLE
+
+    Label:
+        styles:
+            value: '[label-style]{item}'
+
+widgets:
+    MyWindow:
+        type: Window
+        widgets:
+            Label:
+                value: '[210 bold]This is a title'
+
+            Label: {}
+
+            Splitter:
+                widgets:
+                    - Label:
+                        parent_align: 0
+                        value: 'This is an option'
+
+                    - Button:
+                        label: "Press me!"
+
+            Label: {}
+            Label:
+                value: '[label-style]{item}'
+```
+
+```python
+# -- loader.py --
+
+import pytermgui as ptg
+
+loader = ptg.YamlLoader()
+with open("data.yaml", "r") as datafile:
+    namespace = loader.load(datafile)
+
+with ptg.WindowManager() as manager:
+    manager.add(namespace.MyWindow)
+    manager.run()
+
+"""
+
 from __future__ import annotations
 
-from typing import Any, Dict, IO
 from dataclasses import dataclass
 from abc import abstractmethod, ABC
+from typing import Any, Type, IO, Callable
 
-import yaml
 import json
+import yaml
 
 from . import widgets
 from .parser import markup
 from .serializer import Serializer
 
-# We use a module-local Serializer instance so as to
-# not muddle with the pre-instantiated global.
-SERIALIZER = Serializer()
 
 __all__ = ["WidgetNamespace", "FileLoader", "YamlLoader", "JsonLoader"]
 
@@ -22,16 +123,16 @@ __all__ = ["WidgetNamespace", "FileLoader", "YamlLoader", "JsonLoader"]
 class WidgetNamespace:
     """Class to hold data on loaded namespace"""
 
-    config: dict[Widget, dict[dict[str[str, str]]]]
-    widgets: dict[str, Widget]
+    config: dict[widgets.Widget, dict[dict[tuple[str, str]]]]
+    widgets: dict[str, widgets.Widget]
 
     @classmethod
-    def from_config(cls, data: dict[Any, Any]) -> WidgetNamespace:
+    def from_config(cls, data: dict[Any, Any], loader: FileLoader) -> WidgetNamespace:
         """Get namespace from config"""
 
         namespace = WidgetNamespace({}, {})
         for name, config in data.items():
-            obj = SERIALIZER.known_widgets.get(name)
+            obj = loader.serializer.known_widgets.get(name)
             if obj is None:
                 raise KeyError(f"Unknown widget type {name}.")
 
@@ -54,7 +155,7 @@ class WidgetNamespace:
         return namespace
 
     @staticmethod
-    def _apply_section(widget: Widget, title: str, section: dict[str, str]) -> None:
+    def _apply_section(widget: widgets.Widget, title: str, section: dict[str, str]) -> None:
         """Apply section of config to widget"""
 
         for key, value in section.items():
@@ -72,7 +173,7 @@ class WidgetNamespace:
             for title, section in settings.items():
                 self._apply_section(widget, title, section)
 
-    def __getattr__(self, attr: str) -> Callable[None, Widget]:
+    def __getattr__(self, attr: str) -> Callable[None, widgets.Widget]:
         """Get copy of widget from namespace widget list by its name"""
 
         if attr in self.widgets:
@@ -94,10 +195,18 @@ class FileLoader(ABC):
     def parse(self, data: str) -> dict[Any]:
         """Parse string into dictionary"""
 
-    def register(self, obj: Widget) -> None:
+    def __init__(self, serializer: Serializer | None = None) -> None:
+        """Initialize object"""
+
+        if serializer is None:
+            serializer = Serializer()
+
+        self.serializer = serializer
+
+    def register(self, cls: Type[widgets.Widget]) -> None:
         """Register a widget to _name_mapping"""
 
-        SERIALIZER.register(name, obj)
+        self.serializer.register(cls)
 
     def load_str(self, data: str) -> WidgetNamespace:
         """Load string into namespace"""
@@ -107,9 +216,9 @@ class FileLoader(ABC):
         # Get & load config data
         config_data = parsed.get("config")
         if config_data is not None:
-            namespace = WidgetNamespace.from_config(config_data)
+            namespace = WidgetNamespace.from_config(config_data, loader=self)
         else:
-            namespace = WidgetNamespace.from_config(data)
+            namespace = WidgetNamespace.from_config(data, loader=self)
 
         # Create aliases
         for key, value in parsed.get("markup").items() or []:
@@ -120,7 +229,7 @@ class FileLoader(ABC):
             widget_type = inner.get("type") or name
 
             try:
-                namespace.widgets[name] = SERIALIZER.from_dict(
+                namespace.widgets[name] = self.serializer.from_dict(
                     inner, widget_type=widget_type
                 )
             except AttributeError as error:
