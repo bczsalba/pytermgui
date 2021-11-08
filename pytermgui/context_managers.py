@@ -14,8 +14,8 @@ already available methods from ansi_interface.
 from __future__ import annotations
 
 from os import name
-from typing import Callable, Generator, Any, Optional
 from contextlib import contextmanager
+from typing import Callable, Generator, Any, Union, List
 
 from .ansi_interface import (
     is_interactive,
@@ -33,6 +33,9 @@ from .ansi_interface import (
     translate_mouse,
     MouseEvent,
 )
+
+# TODO: Move this absolute beast to a types submodule
+MouseTranslator = Callable[[str], Union[List[Union[MouseEvent, None]], None]]
 
 
 @contextmanager
@@ -90,7 +93,7 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
 @contextmanager
 def mouse_handler(
     event: str, method: str = "decimal_xterm"
-) -> Generator[Callable[[str], Optional[list[Optional[MouseEvent]]]], None, None]:
+) -> Generator[MouseTranslator | None, None, None]:
     """Return a mouse handler function
 
     Note: This method only supports `decimal_urxvt` and `decimal_xterm`, as they are the most

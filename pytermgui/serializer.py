@@ -67,13 +67,15 @@ class Serializer:
 
         return obj.serialize()
 
-    def register(self, cls: Widget) -> None:
+    def register(self, cls: Type[Widget]) -> None:
         """Make object aware of a custom widget class, so
         it can be serialized."""
 
         self.known_widgets[cls.__name__] = cls
 
-    def from_dict(self, data: dict[str, Any], widget_type: str | None = None) -> Widget:  # pylint: disable=too-many-locals
+    def from_dict(
+        self, data: dict[str, Any], widget_type: str | None = None
+    ) -> Widget:  # pylint: disable=too-many-locals
         """Load a widget from a dictionary"""
 
         def _apply_markup(value: CharType) -> CharType:

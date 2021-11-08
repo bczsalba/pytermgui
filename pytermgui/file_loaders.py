@@ -106,7 +106,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from abc import abstractmethod, ABC
-from typing import Any, Type, IO, Callable
+from typing import Any, Type, IO
 
 import json
 import yaml
@@ -123,7 +123,7 @@ __all__ = ["WidgetNamespace", "FileLoader", "YamlLoader", "JsonLoader"]
 class WidgetNamespace:
     """Class to hold data on loaded namespace"""
 
-    config: dict[widgets.Widget, dict[dict[tuple[str, str]]]]
+    config: dict[Type[widgets.Widget], dict[str, Any]]
     widgets: dict[str, widgets.Widget]
 
     @classmethod
@@ -155,7 +155,9 @@ class WidgetNamespace:
         return namespace
 
     @staticmethod
-    def _apply_section(widget: widgets.Widget, title: str, section: dict[str, str]) -> None:
+    def _apply_section(
+        widget: Type[widgets.Widget], title: str, section: dict[str, str]
+    ) -> None:
         """Apply section of config to widget"""
 
         for key, value in section.items():
@@ -173,7 +175,7 @@ class WidgetNamespace:
             for title, section in settings.items():
                 self._apply_section(widget, title, section)
 
-    def __getattr__(self, attr: str) -> Callable[None, widgets.Widget]:
+    def __getattr__(self, attr: str) -> widgets.Widget:
         """Get copy of widget from namespace widget list by its name"""
 
         if attr in self.widgets:
@@ -192,7 +194,7 @@ class FileLoader(ABC):
     `register()` method."""
 
     @abstractmethod
-    def parse(self, data: str) -> dict[Any]:
+    def parse(self, data: str) -> dict[Any, Any]:
         """Parse string into dictionary"""
 
     def __init__(self, serializer: Serializer | None = None) -> None:
@@ -218,14 +220,14 @@ class FileLoader(ABC):
         if config_data is not None:
             namespace = WidgetNamespace.from_config(config_data, loader=self)
         else:
-            namespace = WidgetNamespace.from_config(data, loader=self)
+            namespace = WidgetNamespace.from_config({}, loader=self)
 
         # Create aliases
-        for key, value in parsed.get("markup").items() or []:
+        for key, value in (parsed.get("markup") or {}).items():
             markup.alias(key, value)
 
         # Create widgets
-        for name, inner in parsed.get("widgets").items() or []:
+        for name, inner in (parsed.get("widgets") or {}).items():
             widget_type = inner.get("type") or name
 
             try:
@@ -245,13 +247,14 @@ class FileLoader(ABC):
         if not isinstance(data, str):
             data = data.read()
 
+        assert isinstance(data, str)
         return self.load_str(data)
 
 
 class JsonLoader(FileLoader):
     """Load JSON files for PTG"""
 
-    def parse(self, data: str) -> dict[Any]:
+    def parse(self, data: str) -> dict[Any, Any]:
         """Parse JSON str"""
 
         return json.loads(data)
@@ -260,7 +263,7 @@ class JsonLoader(FileLoader):
 class YamlLoader(FileLoader):
     """Load YAML files for PTG"""
 
-    def parse(self, data: str) -> dict[Any]:
+    def parse(self, data: str) -> dict[Any, Any]:
         """Parse YAML str"""
 
         return yaml.safe_load(data)

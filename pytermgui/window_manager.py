@@ -43,7 +43,7 @@ import signal
 from threading import Thread
 from enum import Enum, auto as _auto
 from dataclasses import dataclass, field
-from typing import Optional, Callable, Any
+from typing import Optional, Any, cast
 
 # https://github.com/python/mypy/issues/4930
 from .widgets.base import Container
@@ -59,13 +59,12 @@ from .parser import markup
 from .helpers import strip_ansi
 from .exceptions import LineLengthError
 from .enums import CenteringPolicy, SizePolicy
-from .context_managers import alt_buffer, mouse_handler
+from .context_managers import alt_buffer, mouse_handler, MouseTranslator
 from .ansi_interface import (
     terminal,
     MouseEvent,
     move_cursor,
     MouseAction,
-    is_mouse_event,
 )
 
 
@@ -159,7 +158,7 @@ class Rect:
     def debug(self) -> str:
         """Show identifiable debug information"""
 
-        return str(Widget.debug(self))
+        return str(Widget.debug(cast(Widget, self)))
 
 
 class Window(Container):
@@ -183,7 +182,7 @@ class Window(Container):
 
     styles = {**Container.styles, **{"title": MarkupFormatter("[wm-title]{item}")}}
 
-    def __init__(self, *widgets: Widget, **attrs: Any) -> None:
+    def __init__(self, *widgets: Any, **attrs: Any) -> None:
         """Initialize object"""
 
         super().__init__(*widgets, **attrs)
@@ -300,7 +299,7 @@ class WindowManager(Container):
         self._windows: list[Window] = []
         self._drag_target: tuple[Widget, Edge] | None = None  # type: ignore
         self._drag_offsets: tuple[int, int] = (1, 1)
-        self.mouse_translator: Callable[[str], MouseEvent] | None = None
+        self.mouse_translator: MouseTranslator | None = None
 
         self._window_cache: dict[int, list[str]] = {}
 
@@ -366,11 +365,11 @@ class WindowManager(Container):
 
         Thread(name="WM_DisplayLoop", target=_loop).start()
 
-    def execute_binding(self, key: str) -> bool:
+    def execute_binding(self, key: Any) -> bool:
         """Execute bindings, including mouse ones"""
 
         # Execute universal mouse binding
-        if is_mouse_event(key) and MouseEvent in self._bindings:
+        if isinstance(key, MouseEvent) and MouseEvent in self._bindings:
             method, _ = self._bindings[MouseEvent]
             method(self, key)
             return True
@@ -426,14 +425,18 @@ class WindowManager(Container):
             if event is None:
                 continue
 
-            action, pos = event
+            # Mypy sees `event` as a tuple[MouseAction, tuple[int, int]] for some reason.
+            action, pos = cast(MouseEvent, event)
 
             for window in self._windows:
                 if window is target_window or window.rect.contains(pos):
                     if not window.has_focus:
                         self.focus(window)
 
-                    if not window.handle_mouse(event) and action in handlers:
+                    if (
+                        not window.handle_mouse(cast(MouseEvent, event))
+                        and action in handlers
+                    ):
                         handlers[action](pos, window)
 
                     self._should_print = True

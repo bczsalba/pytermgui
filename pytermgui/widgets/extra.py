@@ -15,8 +15,8 @@ or at least partially use the classes provided in .base.
 from __future__ import annotations
 
 import string
-from typing import Any, Callable
 from itertools import zip_longest
+from typing import Any, Callable, cast
 
 from .base import Container, Label, Widget, MouseTarget
 
@@ -121,7 +121,8 @@ class Splitter(Container):
     def get_lines(self) -> list[str]:
         """Join all widgets horizontally"""
 
-        separator = self.get_style("separator")(self.get_char("separator"))
+        # An error will be raised if `separator` is not the correct type (str).
+        separator = self.get_style("separator")(self.get_char("separator"))  # type: ignore
         assert isinstance(separator, str)
         separator_length = real_length(separator)
 
@@ -140,8 +141,8 @@ class Splitter(Container):
             for line in widget.get_lines():
                 # See `enums.py` for information about this ignore
                 padding, aligned = self._align(
-                    widget.parent_align, target_width, line
-                )  # type: ignore
+                    cast(WidgetAlignment, widget.parent_align), target_width, line
+                )
                 inner.append(aligned)
 
             widget.pos = (

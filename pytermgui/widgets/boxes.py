@@ -21,12 +21,11 @@ from __future__ import annotations
 
 from typing import Tuple
 
-from .base import Widget
 from .extra import Splitter
 from ..helpers import real_length
 
 
-class Box(Widget):
+class Box:
     """Class for defining border & corner styles
 
     `lines` should be list[str] of length 3, such as:
@@ -70,7 +69,6 @@ class Box(Widget):
         """Set instance attributes"""
 
         super().__init__()
-        self._lines = lines
         self.content_char = content_char
 
         top, _, bottom = lines
@@ -154,15 +152,10 @@ class Box(Widget):
 
         return cls_or_obj
 
-    def get_lines(self) -> list[str]:
-        """Get lines from object"""
-
-        return self._lines
-
     def debug(self) -> str:
         """Return identifiable information about object"""
 
-        return "Box(" + f"borders={self.borders}, " + f"corners={self.corners}" + ")"
+        return f"Box(borders={self.borders}, corners={self.corners})"
 
 
 BASIC = Box(

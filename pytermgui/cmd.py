@@ -129,6 +129,7 @@ class LauncherApplication(Application):
         window += ""
         window += Label("[247 italic]> Choose an app to run", parent_align=0)
 
+        assert isinstance(window, Window)
         return window
 
 
@@ -142,7 +143,10 @@ class GetchApplication(Application):
         """Edit window state if key is pressed"""
 
         # Don't display mouse codes
-        if self.manager.mouse_translator(key) is not None:
+        if (
+            self.manager.mouse_translator is not None
+            and self.manager.mouse_translator(key) is not None
+        ):
             return True
 
         name = _get_key_name(key)
@@ -161,6 +165,7 @@ class GetchApplication(Application):
             self._request_exit()
             return True
 
+        assert window.manager is not None
         window.manager.print()
         return True
 
@@ -179,6 +184,7 @@ class GetchApplication(Application):
         )
         window.center()
 
+        assert isinstance(window, Window)
         return window
 
 
@@ -237,6 +243,9 @@ class MarkupApplication(Application):
     def finish(self, window: Window) -> None:
         """Dump output markup"""
 
+        if window.manager is None:
+            return
+
         window.manager.stop()
 
         # print(prettify_markup(window.output_label.value))
@@ -249,10 +258,9 @@ class MarkupApplication(Application):
             """Dump lines of window and exit program"""
 
             with open("dump", "w") as file:
-                file.write(window.get_lines())
+                file.write("\n".join(window.get_lines()))
 
             sys.exit()
-
 
         tokens = self._get_tokens()
         self._define_colors()
@@ -323,39 +331,42 @@ class MarkupApplication(Application):
         return window
 
 
-class HelperApplication(Application):
-    """Application class to show all currently-active bindings"""
-
-    title = "Help"
-    description = "See all current bindings"
-
-    def finish(self, window: Window) -> None:
-        """Do nothing on finish"""
-
-    def construct_window(self) -> Window:
-        """Construct an application window"""
-
-        window = self._get_base_window(width=50) + "[wm-title]Current bindings" + ""
-
-        bindings = self.manager.list_bindings() + self.manager.focused.list_bindings()
-
-        # Convert keycode into key name
-        for i, binding in enumerate(bindings):
-            binding_mutable = list(binding)
-            binding_mutable[0] = _get_key_name(binding[0]).strip("'")
-            bindings[i] = tuple(binding_mutable)
-
-        # Sort keys according to key name length
-        bindings.sort(key=lambda item: real_length(item[0]))
-
-        for (key, _, description) in bindings:
-            window += Label("[wm-section]" + key + ": ", parent_align=0)
-            window += Label(description, padding=2, parent_align=0)
-            window += ""
-
-        window.bind(keys.ESC, lambda *_: window.close())
-
-        return window.center()
+# class HelperApplication(Application):
+#     """Application class to show all currently-active bindings"""
+#
+#     title = "Help"
+#     description = "See all current bindings"
+#
+#     def finish(self, window: Window) -> None:
+#         """Do nothing on finish"""
+#
+#     def construct_window(self) -> Window:
+#         """Construct an application window"""
+#
+#         window = self._get_base_window(width=50) + "[wm-title]Current bindings" + ""
+#
+#         bindings = list(self.manager.bindings)
+#
+#         if self.manager.focused is not None:
+#             bindings += list(self.manager.focused.bindings)
+#
+#         # Convert keycode into key name
+#         for i, binding in enumerate(bindings):
+#             binding_mutable = list(binding)
+#             binding_mutable[0] = _get_key_name(binding[0]).strip("'")
+#             bindings[i] = tuple(binding_mutable)
+#
+#         # Sort keys according to key name length
+#         bindings.sort(key=lambda item: real_length(item[0]))
+#
+#         for (key, _, description) in bindings:
+#             window += Label("[wm-section]" + key + ": ", parent_align=0)
+#             window += Label(description, padding=2, parent_align=0)
+#             window += ""
+#
+#         window.bind(keys.ESC, lambda *_: window.close())
+#
+#         return window.center()
 
 
 def run_wm(args: Namespace) -> None:
@@ -382,7 +393,7 @@ def run_wm(args: Namespace) -> None:
         Splitter.set_char("separator", " " + boxes.SINGLE.borders[0])
         InputField.set_style("cursor", MarkupFormatter("[@72]{item}"))
 
-        helper = HelperApplication(manager)
+        # helper = HelperApplication(manager)
 
         # Setup bindings
         manager.bind(
@@ -391,15 +402,15 @@ def run_wm(args: Namespace) -> None:
 
         manager.bind(
             keys.CTRL_W,
-            lambda *_: manager.focused.close(),
+            lambda *_: manager.focused.close() if manager.focused is not None else None,
             description="Close focused window",
         )
 
-        manager.bind(
-            "?",
-            lambda *_: manager.add(helper.construct_window()),
-            description="Show all active bindings",
-        )
+        # manager.bind(
+        #     "?",
+        #     lambda *_: manager.add(helper.construct_window()),
+        #     description="Show all active bindings",
+        # )
 
         # Run with a launcher
         if len(sys.argv) == 1:

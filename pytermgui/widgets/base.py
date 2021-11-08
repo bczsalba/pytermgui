@@ -26,13 +26,14 @@ from ..exceptions import WidthExceededError, LineLengthError
 from ..enums import SizePolicy, CenteringPolicy, WidgetAlignment
 from ..ansi_interface import terminal, clear, MouseEvent, MouseAction
 
+from . import boxes
 from . import styles as w_styles
 
 
 __all__ = ["MouseTarget", "MouseCallback", "Widget", "Container", "Label"]
 
 MouseCallback = Callable[["MouseTarget", "Widget"], Any]
-BoundCallback = Callable[["Widget", str], Any]
+BoundCallback = Callable[..., Any]
 
 
 def _set_obj_or_cls_style(
@@ -181,7 +182,7 @@ class Widget:
         self._selectables_length = 0
         self._id: Optional[str] = None
         self._serialized_fields = type(self).serialized
-        self._bindings: dict[str, tuple[BoundCallback, str]] = {}
+        self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
 
         for attr, value in attrs.items():
             setattr(self, attr, value)
@@ -197,7 +198,7 @@ class Widget:
         yield self
 
     @property
-    def bindings(self) -> dict[str, tuple[BoundCallback, str]]:
+    def bindings(self) -> dict[str | Type[MouseEvent], tuple[BoundCallback, str]]:
         """Return copy of bindings dictionary"""
 
         return self._bindings.copy()
@@ -379,7 +380,7 @@ class Widget:
 
         self._bindings[key] = (action, description)
 
-    def execute_binding(self, key: str) -> bool:
+    def execute_binding(self, key: Any) -> bool:
         """Execute a binding if this widget is bindable
 
         True: binding found & execute
@@ -475,7 +476,8 @@ class Container(Widget):
     serialized = Widget.serialized + ["_centered_axis"]
     allow_fullscreen = True
 
-    def __init__(self, *widgets: Widget, **attrs: Any) -> None:
+    # TODO: Add `WidgetConvertible`? type instead of Any
+    def __init__(self, *widgets: Any, **attrs: Any) -> None:
         """Initialize Container data"""
 
         super().__init__(**attrs)
@@ -546,23 +548,23 @@ class Container(Widget):
         return self.selectables[self.selected_index][0]
 
     @property
-    def box(self) -> "boxes.Box":
+    def box(self) -> boxes.Box:
         """Return current box setting"""
 
         return self._box
 
     @box.setter
-    def box(self, new: str | "boxes.Box") -> None:
+    def box(self, new: str | boxes.Box) -> None:
         """Apply new box"""
 
-        # Importing this toplevel causes a cyclical import mess
-        from . import boxes # pylint: disable=import-outside-toplevel
-
         if isinstance(new, str):
-            new = vars(boxes).get(new)
-            if new is None:
+            from_module = vars(boxes).get(new)
+            if from_module is None:
                 raise ValueError(f"Unknown box type {new}.")
 
+            new = from_module
+
+        assert isinstance(new, boxes.Box)
         self._box = new
         new.set_chars_of(self)
 
@@ -950,6 +952,8 @@ class Container(Widget):
             handled = False
             if self.selected_index is None:
                 self.select(0)
+
+            assert isinstance(self.selected_index, int)
 
             if key in self.keys["previous"]:
                 # No more selectables left, user wants to exit Container

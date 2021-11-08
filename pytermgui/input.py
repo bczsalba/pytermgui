@@ -245,7 +245,9 @@ try:
 
 except ImportError as import_error:
     if not os.name == "posix":
-        raise NotImplementedError(f"Platform {os.name} is not supported.") from import_error
+        raise NotImplementedError(
+            f"Platform {os.name} is not supported."
+        ) from import_error
 
     import termios
     import tty

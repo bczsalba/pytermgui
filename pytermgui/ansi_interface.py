@@ -23,7 +23,8 @@ import re
 import sys
 import signal
 
-from typing import Optional, Any, Union, Tuple, Callable
+from typing import Optional, Any, Union, Callable
+from dataclasses import dataclass, fields
 from enum import Enum, auto as _auto
 from sys import stdout as _stdout
 from string import hexdigits
@@ -62,7 +63,6 @@ __all__ = [
     "set_mode",
     "MouseAction",
     "MouseEvent",
-    "is_mouse_event",
     "report_mouse",
     "translate_mouse",
     "print_to",
@@ -505,29 +505,34 @@ class MouseAction(Enum):
     SCROLL_DOWN = _auto()
 
 
-MouseEvent = Tuple[MouseAction, Tuple[int, int]]
+@dataclass
+class MouseEvent:
+    """A class to store MouseEvents"""
 
+    action: MouseAction
+    position: tuple[int, int]
 
-def is_mouse_event(data: tuple[...]) -> bool:
-    """Determine if data tuple is a MouseEvent"""
+    def __post_init__(self) -> None:
+        """Initialize iteration counter"""
 
-    if not isinstance(data, tuple):
-        return False
+        self._iter_index = 0
 
-    if len(data) != 2:
-        return False
+    def __next__(self) -> MouseAction | tuple[int, int]:
+        """Get next iteration item"""
 
-    if not isinstance(data[0], MouseAction):
-        return False
+        data = fields(self)
 
-    if not isinstance(data[1], tuple):
-        return False
+        if self._iter_index >= len(data):
+            self._iter_index = 0
+            raise StopIteration
 
-    pos = data[1]
-    if len(pos) != 2:
-        return False
+        self._iter_index += 1
+        return getattr(self, data[self._iter_index - 1].name)
 
-    return all(isinstance(element, int) for element in pos)
+    def __iter__(self) -> MouseEvent:
+        """Start iteration"""
+
+        return self
 
 
 def report_mouse(
@@ -586,7 +591,7 @@ def report_mouse(
     _stdout.flush()
 
 
-def translate_mouse(code: str, method: str) -> Optional[list[Optional[MouseEvent]]]:
+def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
     """Translate report_mouse() (decimal_xterm or decimal_urxvt) codes into
     tuple[action, tuple[x, y]].
 
@@ -619,7 +624,7 @@ def translate_mouse(code: str, method: str) -> Optional[list[Optional[MouseEvent
     mapping = mouse_codes[method]
     pattern = mapping["pattern"]
 
-    events: list[Optional[tuple[MouseAction, tuple[int, int]]]] = []
+    events: list[MouseEvent | None] = []
     for sequence in code.split("\x1b"):
         if len(sequence) == 0:
             continue
@@ -640,7 +645,7 @@ def translate_mouse(code: str, method: str) -> Optional[list[Optional[MouseEvent
                 action = mapping[identifier]
                 assert isinstance(action, MouseAction)
 
-                events.append((action, (int(pos[0]), int(pos[1]))))
+                events.append(MouseEvent(action, (int(pos[0]), int(pos[1]))))
                 continue
 
             events.append(None)
