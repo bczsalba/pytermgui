@@ -27,13 +27,12 @@ lint:
 	pylint -d fixme --exit-zero \$(PROJECT)
 
 todo:
-	grep -rnw . -e '# TODO'" > $VIM_PROJPATH/Makefile
+	python3 utils/list_todos.py \"\`grep -rnw . -e '# TODO'\`\"" > $VIM_PROJPATH/Makefile
 }
-    
+
 export VIM_PROJNAME="pytermgui"
-export VIM_PROJCONF="$BASH_SOURCE"
-export VIM_PROJPATH="$(realpath `dirname $VIM_PROJCONF`)"
-export VIM_COMMAND="python3 $VIM_PROJPATH/tests/ongoing.py"
+export VIM_PROJPATH="$(realpath `dirname $BASH_SOURCE`)"
+export VIM_COMMAND="python3 $VIM_PROJPATH/tests/yamlload.py"
 export VIM_NOTES="$VIM_PROJPATH/notes.md"
 
 generate_makefile
