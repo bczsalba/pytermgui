@@ -238,6 +238,12 @@ class Widget:
         return self._selectables_length
 
     @property
+    def selectables(self) -> list[tuple[Widget, int]]:
+        """Get a list of all selectable inner objects"""
+
+        return [(self, 0)]
+
+    @property
     def is_selectable(self) -> bool:
         """Determine if this widget has any selectables.
 
