@@ -37,12 +37,12 @@ Upcoming Version
 		- `Widget.measurements` property: `(min, max)`
 
     * [ ] Fix long-standing issues
-    	+ [X] inner-container mouse selection is buggy
+    	+ [x] inner-container mouse selection is buggy
+	+ [-] `cmd` helper menu is broken
 	+ [ ] inner-container keyboard selection ends outer container
-	+ [ ] `cmd` helper menu is broken
 	+ [ ] `Container` and `WindowManager` both resize `Window` on `SIGWINCH`
 
-* [X] Add JSON config parsing
+* [x] Add JSON config parsing
 * [ ] add background styles
 
 Future versions
