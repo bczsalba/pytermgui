@@ -109,7 +109,14 @@ from abc import abstractmethod, ABC
 from typing import Any, Type, IO
 
 import json
-import yaml
+
+YAML_ERROR = None
+try:
+    import yaml
+except ImportError as error:
+    yaml = None
+    YAML_ERROR = error
+
 
 from . import widgets
 from .parser import markup
@@ -263,7 +270,18 @@ class JsonLoader(FileLoader):
 class YamlLoader(FileLoader):
     """Load YAML files for PTG"""
 
+    def __init__(self, serializer: Serializer | None = None) -> None:
+        """Initialize object, check for PyYAML"""
+
+        if YAML_ERROR is not None:
+            raise RuntimeError(
+                "YAML implementation module not found. Please install `PyYAML` to use `YamlLoader`."
+            ) from YAML_ERROR
+
+        super().__init__()
+
     def parse(self, data: str) -> dict[Any, Any]:
         """Parse YAML str"""
 
+        assert yaml is not None
         return yaml.safe_load(data)
