@@ -535,6 +535,7 @@ class MarkupLanguage:
 
             return text
 
+        # TODO: Macros are only ran once with caching enabled
         if self.should_cache and markup_text in self._cache:
             return self._cache[markup_text]
 

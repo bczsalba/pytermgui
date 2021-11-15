@@ -17,6 +17,9 @@ Upcoming Version
 ----------------
 
 - 1.0.0 - First stable release!
+    * [ ] Fix macro only running once
+    * [ ] Fix `SIGWINCH` handling (see GH issue)
+
     * [x] Rework `Widget.click()`
         + [x] targets should be found using `Widget.get_target()`
         + [x] **MouseEvent should be sent to the widget-specific mouse handler.**
@@ -38,7 +41,7 @@ Upcoming Version
 
     * [ ] Fix long-standing issues
     	+ [x] inner-container mouse selection is buggy
-	+ [-] `cmd` helper menu is broken
+	+ [-] `cmd` helper menu is broken -- problem temporarily ignored
 	+ [ ] inner-container keyboard selection ends outer container
 	+ [ ] `Container` and `WindowManager` both resize `Window` on `SIGWINCH`
 

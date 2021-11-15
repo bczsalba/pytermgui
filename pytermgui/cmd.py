@@ -219,7 +219,8 @@ class MarkupApplication(Application):
         """Avoid SyntaxError with `prettify_markup`"""
 
         try:
-            # TODO: reintroduce prettify_markup
+            # TODO: Reintroduce prettify_markup
+
             # This method *always* returns str, but Mypy doesn't see that.
             # return str(prettify_markup(item))
             return item
@@ -234,7 +235,8 @@ class MarkupApplication(Application):
         def _random_hex() -> str:
             """Return random hex number"""
 
-            return "#" + "".join([hex(randint(0, 255)) for _ in range(3)])
+            randcol = lambda: randint(0, 255)
+            return "#" + "".join(f"{randcol():02x}" for _ in range(3))
 
         markup.alias("demo-255", str(randint(0, 255)))
         markup.alias("demo-hex", _random_hex())
