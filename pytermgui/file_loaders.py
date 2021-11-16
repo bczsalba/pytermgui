@@ -110,17 +110,17 @@ from typing import Any, Type, IO
 
 import json
 
-YAML_ERROR = None
-try:
-    import yaml
-except ImportError as error:
-    yaml = None
-    YAML_ERROR = error
-
-
 from . import widgets
 from .parser import markup
 from .serializer import Serializer
+
+
+YAML_ERROR = None
+try:
+    import yaml
+except ImportError as import_error:
+    yaml = None
+    YAML_ERROR = import_error
 
 
 __all__ = ["WidgetNamespace", "FileLoader", "YamlLoader", "JsonLoader"]
