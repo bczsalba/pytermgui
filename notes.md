@@ -17,8 +17,11 @@ Upcoming Version
 ----------------
 
 - 1.0.0 - First stable release!
-    * [ ] Fix macro only running once
+    * [x] Fix mouse handling selection
+    * [o] Fix macro only running once
+    * [ ] Fix linebreak method splitting colors
     * [ ] Fix `SIGWINCH` handling (see GH issue)
+    * [ ]? Change MouseTarget callback signature -> `parent: Widget, caller: Widget`
 
     * [x] Rework `Widget.click()`
         + [x] targets should be found using `Widget.get_target()`
