@@ -109,7 +109,7 @@ def break_line(  # pylint: disable=too-many-branches
                     continue
 
                 if character == "\n":
-                    # TODO: Handle this case.
+                    # TODO: Handle newlines
                     continue
 
                 if in_sequence:

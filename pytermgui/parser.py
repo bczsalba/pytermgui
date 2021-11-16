@@ -431,7 +431,7 @@ class MarkupLanguage:
                 types = [TokenType.FG_8BIT, TokenType.FG_24BIT]
 
                 if parts[0] == "48":
-                    name = "@" + name
+                    # name = "@" + name # <- This broke line_break, but might be needed
                     types = [TokenType.BG_8BIT, TokenType.BG_24BIT]
 
                 ttype = types[0] if parts[1] == "5" else types[1]
