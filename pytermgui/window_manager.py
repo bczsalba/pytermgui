@@ -368,11 +368,27 @@ class WindowManager(Container):
     def execute_binding(self, key: Any) -> bool:
         """Execute bindings, including mouse ones"""
 
+        if not isinstance(key, str):
+            return super().execute_binding(key)
+
         # Execute universal mouse binding
-        if isinstance(key, MouseEvent) and MouseEvent in self._bindings:
-            method, _ = self._bindings[MouseEvent]
-            method(self, key)
-            return True
+        events = self.mouse_translator(key)
+
+        if events is not None:
+            handled = False
+            for event in events:
+                if not isinstance(event, MouseEvent):
+                    continue
+
+                bound = self._bindings.get(MouseEvent)
+                if bound is None:
+                    continue
+
+                method, _ = bound
+                handled = method(self, event)
+
+            if handled:
+                return True
 
         return super().execute_binding(key)
 
