@@ -528,8 +528,8 @@ class Container(Widget):
             if not widget.is_selectable:
                 continue
 
-            for i in range(widget.selectables_length):
-                _selectables.append((widget, i))
+            for i, (inner, _) in enumerate(widget.selectables):
+                _selectables.append((inner, i))
 
         return _selectables
 
@@ -935,10 +935,7 @@ class Container(Widget):
 
         handled = target_widget.handle_mouse(event, target)
         if handled:
-            for i, (widget, _) in enumerate(self.selectables):
-                if target_widget is widget or target_widget in widget:
-                    # TODO: Something is messing up here.
-                    self.select(i)
+            self.select(self.mouse_targets.index(target))
 
         return handled
 
