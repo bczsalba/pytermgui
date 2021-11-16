@@ -14,6 +14,11 @@ Note about 1.0.0
 
 I was originally planning on releasing the first stable version of this library early Q4, some time around September - October. This release would include stable versions of all initial features to the library, as well as a large-coverage documentation. I didn't quite realize the impact starting university would have on my free time, and thus the release was (very clearly) delayed. I still sit down to improve the state of the library as often as I can, and according to current plans **1.0.0 will be out before 2022**. If something prevents this from happening, I will update this part of the README accordingly.
 
+### Update // November 16.
+
+The biggest bug holding back the release has been fixed. There is a couple of minor tasks on the TODO list that need finishing, and once that is done 1.0.0 _should_ be ready, bar documentation.
+
+
 Core principles
 ---------------
 
