@@ -175,6 +175,30 @@ class WidgetNamespace:
 
             widget.set_char(key, value)
 
+    def apply_to(self, widget: widgets.Widget) -> None:
+        """Apply namespace config to widget"""
+
+        def _apply_sections(data: dict[str, str], widget: widgets.Widget) -> None:
+            """Apply sections from data to widget"""
+
+            for title, section in data.items():
+                self._apply_section(widget, title, section)
+
+        data = self.config.get(type(widget))
+        if data is None:
+            return
+
+        _apply_sections(data, widget)
+
+        if hasattr(widget, "_widgets"):
+            for inner in widget:
+                inner_section = self.config.get(type(inner))
+
+                if inner_section is None:
+                    continue
+
+                _apply_sections(inner_section, inner)
+
     def apply_config(self) -> None:
         """Apply self.config to current namespace"""
 
