@@ -4,6 +4,9 @@ setup(
     name="pytermgui",
     version="0.4.1",
     include_package_data=True,
+    package_data={
+        "pytermgui": ["py.typed"],
+    },
     packages=["pytermgui", "pytermgui/widgets"],
     license="MIT",
     description="A simple and robust terminal UI library, written in Python.",
