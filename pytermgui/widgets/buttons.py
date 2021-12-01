@@ -110,7 +110,10 @@ class Checkbox(Button):
     }
 
     def __init__(
-        self, callback: Callable[[Any], Any], checked: bool = False, **attrs: Any
+        self,
+        callback: Callable[[Any], Any] | None = None,
+        checked: bool = False,
+        **attrs: Any,
     ) -> None:
         """Initialize object"""
 
@@ -156,7 +159,10 @@ class Toggle(Checkbox):
     chars = {**Checkbox.chars, **{"delimiter": [" ", " "], "checked": "choose"}}
 
     def __init__(
-        self, states: tuple[str, str], callback: Callable[[str], Any], **attrs: Any
+        self,
+        states: tuple[str, str],
+        callback: Callable[[str], Any] | None = None,
+        **attrs: Any,
     ) -> None:
         """Initialize object"""
 
