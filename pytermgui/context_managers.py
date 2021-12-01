@@ -92,7 +92,7 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
 
 @contextmanager
 def mouse_handler(
-    event: str, method: str = "decimal_xterm"
+    events: list[str], method: str = "decimal_xterm"
 ) -> Generator[MouseTranslator | None, None, None]:
     """Return a mouse handler function
 
@@ -103,14 +103,16 @@ def mouse_handler(
 
     Example use:
         >>> from pytermgui import mouse_handler, getch
-        >>> with mouse_handler("press") as mouse:
+        >>> with mouse_handler(["press", "hover"]) as mouse:
         ...     while True:
         ...         event = mouse(getch())
         '(MouseAction.PRESS, (33, 55))'
     """
 
     try:
-        report_mouse(event, method=method)
+        for event in events:
+            report_mouse(event, method=method)
+
         yield lambda code: translate_mouse(code, method=method)
 
     finally:
