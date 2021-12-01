@@ -301,11 +301,12 @@ class WindowManager(Container):
         self._windows: list[Window] = []
         self._drag_target: tuple[Widget, Edge] | None = None  # type: ignore
         self._drag_offsets: tuple[int, int] = (1, 1)
-        self.mouse_translator: MouseTranslator | None = None
 
         self._window_cache: dict[int, list[str]] = {}
 
-        self.focused: Optional[Window] = None
+        self.fps: int | None = None
+        self.focused: Window | None = None
+        self.mouse_translator: MouseTranslator | None = None
 
         # Handle some events
         terminal.subscribe(terminal.RESIZE, self.on_resize)
