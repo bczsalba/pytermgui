@@ -185,6 +185,8 @@ class Window(Container):
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
         """Initialize object"""
 
+        self.is_dirty: bool = False
+
         super().__init__(*widgets, **attrs)
 
         self.has_focus: bool = False
@@ -322,6 +324,12 @@ class WindowManager(Container):
 
         return time.sleep(duration)
 
+    @property
+    def should_print(self) -> bool:
+        """Return flag or whether any windows have the `Window.is_dirty` flag set"""
+
+        return self._should_print or any(window.is_dirty for window in self._windows)
+
     def __enter__(self) -> WindowManager:
         """Start context manager"""
 
@@ -347,21 +355,33 @@ class WindowManager(Container):
 
             last_frame = time.perf_counter()
             frametime = 1 / self.framerate
+            sleeptime = frametime / 10
 
+            fps_start_time = time.perf_counter()
+            framecount = 0
+
+            elapsed = 0.0
             while self._is_running:
-                if self._is_paused or not self._should_print:
+                if self._is_paused or not self.should_print:
                     self._sleep(frametime)
                     continue
 
-                delta = time.perf_counter() - last_frame
-
                 # Don't print before frametime elapsed
-                if delta < frametime:
-                    self._sleep(frametime - delta)
+                # TODO: This is imprecise, framerate is not followed well
+                if time.perf_counter() - last_frame < frametime:
+                    # time.sleep(sleeptime)
                     continue
 
                 self.print()
+
                 last_frame = time.perf_counter()
+
+                if last_frame - fps_start_time >= 1:
+                    self.fps = framecount
+                    fps_start_time = last_frame
+                    framecount = 0
+
+                framecount += 1
 
         Thread(name="WM_DisplayLoop", target=_loop).start()
 
