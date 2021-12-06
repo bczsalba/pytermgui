@@ -467,7 +467,7 @@ class WindowManager(Container):
 
             for window in self._windows:
                 if window is target_window or window.rect.contains(pos):
-                    if not window.has_focus:
+                    if action is not MouseAction.HOVER and not window.has_focus:
                         self.focus(window)
 
                     if (
@@ -655,7 +655,7 @@ class WindowManager(Container):
         """Run main WindowManager loop"""
 
         with alt_buffer(cursor=False, echo=False):
-            with mouse_handler("press_hold", "decimal_urxvt") as translate:
+            with mouse_handler(["press_hold", "hover"], "decimal_xterm") as translate:
                 self.mouse_translator = translate
                 self._start_display_thread()
 
