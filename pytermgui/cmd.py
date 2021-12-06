@@ -22,10 +22,12 @@ from . import (
     MarkupFormatter,
     WindowManager,
     real_length,
+    YamlLoader,
     get_widget,
     InputField,
     Container,
     Splitter,
+    terminal,
     markup,
     Window,
     Button,
@@ -457,7 +459,32 @@ def main() -> None:
         "-m", "--markapp", help="launch MarkApp in standalone mode", action="store_true"
     )
 
+    parser.add_argument(
+        "-s",
+        "--size",
+        help="output current terminal size in WxH format",
+        action="store_true",
+    )
+
+    parser.add_argument("-f", "--file", help="interpret YAML file")
+
     args = parser.parse_args()
+
+    if args.size:
+        print("{}x{}".format(*terminal.size))
+        return
+
+    if args.file:
+        loader = YamlLoader()
+        with open(args.file, "r") as file:
+            namespace = loader.load(file)
+
+        with WindowManager() as manager:
+            for widget in namespace.widgets.values():
+                manager.add(widget)
+
+            manager.run()
+        return
 
     if args.getch:
         args.app = "getch"
