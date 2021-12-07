@@ -174,9 +174,9 @@ HEAVY = Box(
 )
 EMPTY = Box(
     [
-        "   ",
-        " x ",
-        "   ",
+        "",
+        "x",
+        "",
     ]
 )
 EMPTY_VERTICAL = Box(

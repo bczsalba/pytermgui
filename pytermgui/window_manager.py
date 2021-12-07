@@ -288,7 +288,7 @@ class WindowManager(Container):
 
     is_bindable = True
 
-    framerate = 300
+    framerate = 120
 
     def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
@@ -683,6 +683,11 @@ class WindowManager(Container):
 
         sys.stdout.write("\033[2J")
         for window in reversed(self._windows):
+            if window.allow_fullscreen:
+                window.pos = terminal.origin
+                window.width = terminal.width
+                window.height = terminal.height
+
             if window.has_focus or window.is_noblur:
                 try:
                     window.print()
