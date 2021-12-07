@@ -801,7 +801,7 @@ class Container(Widget):
         for _ in range(self.height - len(lines)):
             lines.append(align(""))
 
-        self.height = len(lines) - 2
+        self.height = len(lines)
 
         # Add capping lines
         if real_length(top):
