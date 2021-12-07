@@ -43,6 +43,7 @@ class Serializer:
         """Set up known widgets"""
 
         self.known_widgets = self.get_widgets()
+        self.known_boxes = vars(widgets.boxes)
         self.register(Window)
 
     @staticmethod
@@ -66,6 +67,11 @@ class Serializer:
         Todo: this method should also dump custom tags"""
 
         return obj.serialize()
+
+    def register_box(self, name: str, box: widgets.boxes.Box) -> None:
+        """Register a new Box type"""
+
+        self.known_boxes[name] = box
 
     def register(self, cls: Type[Widget]) -> None:
         """Make object aware of a custom widget class, so

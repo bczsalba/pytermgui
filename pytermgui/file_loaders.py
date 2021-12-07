@@ -104,7 +104,7 @@ with ptg.WindowManager() as manager:
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from abc import abstractmethod, ABC
 from typing import Any, Type, IO
 
@@ -132,6 +132,7 @@ class WidgetNamespace:
 
     config: dict[Type[widgets.Widget], dict[str, Any]]
     widgets: dict[str, widgets.Widget]
+    boxes: dict[str, widgets.boxes.Box] = field(default_factory=dict)
 
     @classmethod
     def from_config(cls, data: dict[Any, Any], loader: FileLoader) -> WidgetNamespace:
@@ -257,9 +258,20 @@ class FileLoader(ABC):
         for key, value in (parsed.get("markup") or {}).items():
             markup.alias(key, value)
 
+        # Create boxes
+        for name, inner in (parsed.get("boxes") or {}).items():
+            self.serializer.register_box(name, widgets.boxes.Box(inner))
+
         # Create widgets
         for name, inner in (parsed.get("widgets") or {}).items():
             widget_type = inner.get("type") or name
+
+            box_name = inner.get("box")
+
+            box = None
+            if box_name is not None and box_name in namespace.boxes:
+                box = namespace.boxes[box_name]
+                del inner["box"]
 
             try:
                 namespace.widgets[name] = self.serializer.from_dict(
@@ -269,6 +281,9 @@ class FileLoader(ABC):
                 raise ValueError(
                     f'Invalid data for widget "{name}": {inner}'
                 ) from error
+
+            if box is not None:
+                namespace.widgets[name].box = box
 
         return namespace
 
