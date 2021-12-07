@@ -467,6 +467,11 @@ def main() -> None:
     )
 
     parser.add_argument("-f", "--file", help="interpret YAML file")
+    parser.add_argument(
+        "--print-only",
+        help="don't run YAML WindowManager, only print it",
+        action="store_true",
+    )
 
     args = parser.parse_args()
 
@@ -482,6 +487,10 @@ def main() -> None:
         with WindowManager() as manager:
             for widget in namespace.widgets.values():
                 manager.add(widget)
+
+            if args.print_only:
+                manager.print()
+                return
 
             manager.run()
         return
