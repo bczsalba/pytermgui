@@ -35,21 +35,21 @@ Upcoming Version
     * [x] Add `handle_mouse` method to `Widget`
     * [x] Add `handle_key` method to `Widget`
 
-    * [ ] Rework width & height systems
+    * [x] Rework width & height systems
         + [x] instead of `forced_width`, there should be a combination of an overflow & a size policy
         + [x] overflow/expand -> current no forced width behaviour
         + [x] overflow/clip   -> shorten lines to fit width
 	+ [ ] some kind of measurement system:
 		- `Widget.measurements` property: `(min, max)`
 
-    * [ ] Fix long-standing issues
+    * [x] Fix long-standing issues
     	+ [x] inner-container mouse selection is buggy
 	+ [-] `cmd` helper menu is broken -- problem temporarily ignored
-	+ [ ] inner-container keyboard selection ends outer container
+	+ [x] inner-container keyboard selection ends outer container
 	+ [ ] `Container` and `WindowManager` both resize `Window` on `SIGWINCH`
 
 * [x] Add JSON config parsing
-* [ ] add background styles
+* [x] add background styles
 
 Future versions
 ---------------
