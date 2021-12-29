@@ -573,7 +573,9 @@ class WindowManager(Container):
             """Clamp a value using index to address x/y & width/height"""
 
             offset = self._drag_offsets[index]
-            maximum = terminal.size[index] - (window.width, window.height)[index]
+
+            # TODO: This -2 is a very magical number. Not good.
+            maximum = terminal.size[index] - ((window.width, window.height)[index] - 2)
 
             start_margin_index = abs(index - 1)
             return max(
