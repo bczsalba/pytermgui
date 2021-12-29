@@ -779,6 +779,9 @@ class Container(Widget):
             widget_lines: list[str] = []
 
             for i, line in enumerate(widget.get_lines()):
+                if len(lines) > self.height:
+                    break
+
                 # Pad horizontally
                 aligned = align(line)
                 new = real_length(aligned)
