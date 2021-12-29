@@ -207,7 +207,9 @@ class _Terminal:
         self.size: tuple[int, int] = self._get_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
-        signal.signal(signal.SIGWINCH, self._update_size)
+        # TODO: Windows doesn't support SIGWINCH, is there another alternative?
+        if not _name == "nt":
+            signal.signal(signal.SIGWINCH, self._update_size)
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Call listener of event if there is one"""
