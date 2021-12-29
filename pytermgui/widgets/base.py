@@ -636,8 +636,6 @@ class Container(Widget):
         other.get_lines()
         other.parent = self
 
-        self.height += other.height
-
         if run_get_lines:
             self.get_lines()
 
@@ -800,21 +798,25 @@ class Container(Widget):
 
             self.mouse_targets += widget.mouse_targets
 
-        # Update height
-        for _ in range(self.height - len(lines)):
-            lines.append(align(""))
-
-        self.height = len(lines)
+        capping_lines = 0
 
         # Add capping lines
         if real_length(top):
+            capping_lines += 1
             lines.insert(0, _get_border(t_left, top, t_right))
 
         if real_length(bottom):
+            capping_lines += 1
             lines.append(_get_border(b_left, bottom, b_right))
+
+        # Update height
+        for _ in range(self.height - len(lines) - capping_lines):
+            lines.insert(-1, align(""))
 
         for target in self.mouse_targets:
             target.adjust()
+
+        self.height = len(lines)
 
         # Return
         return lines
