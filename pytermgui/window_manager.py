@@ -496,6 +496,11 @@ class WindowManager(Container):
             other_window.has_focus = False
 
         window.has_focus = True
+
+        # Don't crash if window was removed
+        if not window in self._windows:
+            return
+
         self._windows.remove(window)
         self._windows.insert(0, window)
         self.focused = window
@@ -570,7 +575,14 @@ class WindowManager(Container):
             offset = self._drag_offsets[index]
             maximum = terminal.size[index] - (window.width, window.height)[index]
 
-            return max(index, min(pos[index] - offset, maximum))
+            start_margin_index = abs(index - 1)
+            return max(
+                index + terminal.margins[start_margin_index],
+                min(
+                    pos[index] - offset,
+                    maximum - terminal.margins[start_margin_index + 2],
+                ),
+            )
 
         if self._drag_target is None:
             return False

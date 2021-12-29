@@ -199,6 +199,7 @@ class _Terminal:
     """A class to store & access data about a terminal"""
 
     RESIZE = 0
+    margins = [0, 0, 0, 0]
 
     def __init__(self) -> None:
         """Initialize object"""
