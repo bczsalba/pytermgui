@@ -77,6 +77,9 @@ class Serializer:
         """Make object aware of a custom widget class, so
         it can be serialized."""
 
+        if not isinstance(cls, type):
+            raise TypeError("Registered object must be a type.")
+
         self.known_widgets[cls.__name__] = cls
 
     def from_dict(
