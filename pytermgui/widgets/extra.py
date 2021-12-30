@@ -287,14 +287,19 @@ class InputField(Label):
 
         # Assign cursor character
         if self.selected_index is None:
-            cursor_char = ""
+            if self.value == "":
+                cursor_char = ""
+            else:
+                cursor_char = fill_style(self.value[self.cursor])
+
         elif len(self.value) > self.cursor:
-            cursor_char = self.value[self.cursor]
+            cursor_char = cursor_style(self.value[self.cursor])
+
         else:
-            cursor_char = " "
+            cursor_char = cursor_style(" ")
 
         # Set new value, get lines using it
-        self.value = self.prompt + left + cursor_style(cursor_char) + right
+        self.value = self.prompt + left + cursor_char + right
         self.width += 2
         lines = super().get_lines()
 
