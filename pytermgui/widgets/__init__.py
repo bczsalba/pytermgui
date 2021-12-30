@@ -47,6 +47,7 @@ class _IDManager:
         This method is meant to be called only internally by Widget."""
 
         objid = other.id
+
         if objid is None:
             raise ValueError("Cannot register element with no ID!")
 

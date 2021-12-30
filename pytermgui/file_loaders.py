@@ -208,10 +208,10 @@ class WidgetNamespace:
                 self._apply_section(widget, title, section)
 
     def __getattr__(self, attr: str) -> widgets.Widget:
-        """Get copy of widget from namespace widget list by its name"""
+        """Get widget from namespace widget list by its name"""
 
         if attr in self.widgets:
-            return self.widgets[attr].copy()
+            return self.widgets[attr]
 
         return self.__dict__[attr]
 

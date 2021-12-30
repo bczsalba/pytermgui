@@ -349,7 +349,6 @@ class Widget:
     def copy(self) -> Widget:
         """Copy widget into a new object"""
 
-        # TODO: Properly handle ids
         return deepcopy(self)
 
     def get_style(self, key: str) -> w_styles.DepthlessStyleType:
