@@ -29,7 +29,7 @@ __all__ = ["Button", "Checkbox", "Toggle"]
 
 
 class Button(Widget):
-    """A visual MouseTarget"""
+    """A simple Widget representing a mouse-clickable button"""
 
     chars: dict[str, w_styles.CharType] = {"delimiter": ["  ", "  "]}
 
@@ -101,6 +101,7 @@ class Button(Widget):
         return [line]
 
 
+# TODO: Rewrite this to also have a label
 class Checkbox(Button):
     """A simple checkbox"""
 
