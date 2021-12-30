@@ -148,7 +148,7 @@ class Inspector(Container):
             "builtin": MarkupFormatter("[208]{item}"),
             "declaration": MarkupFormatter("[9 bold]{item}"),
             "name": MarkupFormatter("[114]{item}"),
-            "string": MarkupFormatter("[142]{item}"),
+            "string": lambda depth, item: foreground(item, 142),
         },
     }
 
