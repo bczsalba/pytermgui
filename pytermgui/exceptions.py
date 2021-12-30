@@ -24,12 +24,12 @@ class WidthExceededError(Exception):
 
 
 class LineLengthError(Exception):
-    """Raised when a widget line is too long or short"""
+    """Raised when a widget line is not the expected length"""
 
 
 @dataclass
 class ParserSyntaxError(Exception):
-    """Parent exception for invalid parsed strings
+    """Parent exception for unparsable strings
 
     This exception takes some basic parameters, and formats
     a message depending on the _delimiters value. This has to
