@@ -12,6 +12,8 @@ It provides a FileLoader base class, which is then subclassed by various filetyp
 specific parsers with their own `parse` method. The job of this method is to take
 the file contents as a string, and create a valid json tree out of it.
 
+You can "run" a ptg yaml file by calling `ptg -f <filename>` in your terminal.
+
 
 # Implementation details
 
@@ -32,17 +34,20 @@ Regardless of filetype, all loaded files must follow a specific structure:
 
 ```
 root
-|_ config
+|- config
 |   |_ custom global widget configuration
 |
-|_ markup
+|- markup
 |   |_ custom markup definitions
+|
+|- boxes
+|   |_ custom box definitions
 |
 |_ widgets
     |_ custom widget definitions
 ```
 
-The loading follows the order config -> markup -> widgets. It is not necessary to provide all
+The loading follows the order config -> markup -> boxes -> widgets. It is not necessary to provide all
 sections.
 
 
@@ -53,6 +58,13 @@ sections.
 
 markup:
     label-style: '141 @61 bold'
+
+boxes:
+    WINDOW_BOX: [
+        "left --- right",
+        "left x right",
+        "left --- right",
+    ]
 
 config:
     Window:
@@ -67,6 +79,7 @@ config:
 widgets:
     MyWindow:
         type: Window
+        box: WINDOW_BOX
         widgets:
             Label:
                 value: '[210 bold]This is a title'
@@ -136,7 +149,7 @@ class WidgetNamespace:
 
     @classmethod
     def from_config(cls, data: dict[Any, Any], loader: FileLoader) -> WidgetNamespace:
-        """Get namespace from config"""
+        """Create a namespace from config data"""
 
         namespace = WidgetNamespace({}, {})
         for name, config in data.items():
@@ -166,7 +179,7 @@ class WidgetNamespace:
     def _apply_section(
         widget: Type[widgets.Widget], title: str, section: dict[str, str]
     ) -> None:
-        """Apply section of config to widget"""
+        """Apply configuration section to `widget`"""
 
         for key, value in section.items():
             if title == "styles":
@@ -177,7 +190,7 @@ class WidgetNamespace:
             widget.set_char(key, value)
 
     def apply_to(self, widget: widgets.Widget) -> None:
-        """Apply namespace config to widget"""
+        """Apply namespace config to `widget`"""
 
         def _apply_sections(data: dict[str, str], widget: widgets.Widget) -> None:
             """Apply sections from data to widget"""
@@ -208,7 +221,7 @@ class WidgetNamespace:
                 self._apply_section(widget, title, section)
 
     def __getattr__(self, attr: str) -> widgets.Widget:
-        """Get widget from namespace widget list by its name"""
+        """Get widget by name from widget list"""
 
         if attr in self.widgets:
             return self.widgets[attr]
@@ -238,12 +251,14 @@ class FileLoader(ABC):
         self.serializer = serializer
 
     def register(self, cls: Type[widgets.Widget]) -> None:
-        """Register a widget to _name_mapping"""
+        """Register a widget to the serializer"""
 
         self.serializer.register(cls)
 
     def load_str(self, data: str) -> WidgetNamespace:
-        """Load string into namespace"""
+        """Create a WidgetNamespace from string data
+
+        To parse the data, the `parse` method of this object is called."""
 
         parsed = self.parse(data)
 
