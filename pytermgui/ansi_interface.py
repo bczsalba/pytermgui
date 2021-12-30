@@ -5,12 +5,6 @@ author: bczsalba
 
 
 Various functions to interface with the terminal, using ANSI sequences.
-Note:
-    While most of these are universal on all modern terminals, there might
-    be some that don't always work. I'll try to mark these separately.
-
-    Also, using the escape sequence for save/restore of terminal doesn't work,
-    only tput does. We should look into that.
 
 Credits:
     - https://wiki.bash-hackers.org/scripting/terminalcodes
@@ -79,15 +73,18 @@ __all__ = [
 
 
 class _Color:
-    """Base color object"""
+    """Class to store various color utilities"""
+
+    ColorType = Union[int, str, tuple[int, int, int]]
 
     def __init__(self, layer: int = 0) -> None:
-        """Set layer"""
+        """Initialize object
+
+        `layer` can be either 0 or 1. This value determines whether the instance
+        will represent foreground or background colors."""
 
         if layer not in [0, 1]:
-            raise NotImplementedError(
-                f"Layer {layer} is not supported for Color256 objects! Please choose from 0, 1"
-            )
+            raise NotImplementedError(f"Layer {layer} can only be one of [0, 1].")
 
         self.names = {
             "black": 0,
@@ -112,7 +109,7 @@ class _Color:
 
     @staticmethod
     def translate_hex(color: str) -> tuple[int, int, int]:
-        """Translate hex string to rgb values"""
+        """Translate hex string of format #RRGGBB into an RGB tuple of integers"""
 
         if color.startswith("#"):
             color = color[1:]
@@ -124,15 +121,16 @@ class _Color:
 
         return rgb[0], rgb[1], rgb[2]
 
-    def __call__(
-        self,
-        text: str,
-        color: Union[
-            int, str, tuple[Union[int, str], Union[int, str], Union[int, str]]
-        ],
-        reset_color: bool = True,
-    ) -> str:
-        """Return colored text with reset code at the end"""
+    def __call__(self, text: str, color: ColorType, reset_color: bool = True) -> str:
+        """Color a piece of text using `color`.
+
+        The color can be one of 4 formats:
+            - str colorname:   One of the predifined named colors. See the names dict.
+            - int 0-256:       One of the 256 terminal colors.
+            - str #RRGGBB:     CSS-style HEX string, without alpha.
+            - tuple (0-256, 0-256, 0-256): Tuple of integers, representing an RGB color.
+
+        If `reset_color` is set a reset sequence is inserted at the end."""
 
         # convert hex string to tuple[int, int, int]
         if isinstance(color, str) and all(
@@ -176,14 +174,12 @@ background = _Color(layer=1)
 
 
 def screen_size() -> tuple[int, int]:
-    """Get screen size using os module
+    """Get screen size using the os module
 
-    This is technically possible using a method of
-    moving the cursor to an impossible location, and
-    using `report_cursor()` to get where the position
-    was clamped, but it messes with the cursor position
-    and makes for glitchy printing.
-    """
+    This is technically possible using a method of moving the
+    cursor to an impossible location, and using `report_cursor()`
+    to get where the position was clamped. This however messes
+    with the cursor position and printing gets a bit glitchy."""
 
     try:
         width, height = get_terminal_size()
@@ -213,20 +209,23 @@ class _Terminal:
             signal.signal(signal.SIGWINCH, self._update_size)
 
     def _call_listener(self, event: int, data: Any) -> None:
-        """Call listener of event if there is one"""
+        """Call event callback is one is found."""
 
         if event in self._listeners:
             for callback in self._listeners[event]:
                 callback(data)
 
     def _get_size(self) -> tuple[int, int]:
-        """Get screen size & substract origin position"""
+        """Get screen size while substracting the origin position"""
 
         # This always has len() == 2, but mypy can't see that.
         return tuple(val - org for val, org in zip(screen_size(), self.origin))  # type: ignore
 
     def _update_size(self, *_: Any) -> None:
-        """Update screen size at SIGWINCH"""
+        """Resize terminal when SIGWINCH occurs.
+
+        Note:
+            SIGWINCH is not supported on Windows, so this isn't called."""
 
         self.size = self._get_size()
         self._call_listener(self.RESIZE, self.size)
@@ -239,12 +238,15 @@ class _Terminal:
 
     @property
     def height(self) -> int:
-        """Get width of terminal"""
+        """Get height of terminal"""
 
         return self.size[1]
 
     def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
-        """Subscribe a callback to an event"""
+        """Subscribe a callback function to an event
+
+        The callback takes an event-specific argument payload:
+            RESIZE: tuple[int, int] - New screen size"""
 
         if not event in self._listeners:
             self._listeners[event] = []
@@ -252,7 +254,7 @@ class _Terminal:
         self._listeners[event].append(callback)
 
     def fill(self, color: int = 0, flush: bool = True) -> None:
-        """Fill entire terminal with color"""
+        """Fill entire terminal with a color"""
 
         for height in range(self.height):
             sys.stdout.write(
@@ -290,6 +292,7 @@ def is_interactive() -> bool:
 # screen commands
 def save_screen() -> None:
     """Save the contents of the screen, wipe.
+
     Use `restore_screen()` to get them back."""
 
     # print("\x1b[?47h")
@@ -297,21 +300,22 @@ def save_screen() -> None:
 
 
 def restore_screen() -> None:
-    """Restore the contents of the screen,
-    previously saved by a call to `save_screen()`."""
+    """Restore the contents of the screen saved by `save_screen()`"""
 
     # print("\x1b[?47l")
     _tput(["rmcup"])
 
 
 def set_alt_buffer() -> None:
-    """Start alternate buffer that is non-scrollable"""
+    """Start alternate buffer
+
+    Note: This buffer is unscrollable."""
 
     print("\x1b[?1049h")
 
 
 def unset_alt_buffer() -> None:
-    """Return to main buffer from alt, restoring state"""
+    """Return to main buffer from alt, restoring its original state"""
 
     print("\x1b[?1049l")
 
@@ -320,7 +324,7 @@ def clear(what: str = "screen") -> None:
     """Clear specified region
 
     Available options:
-        - screen - clear whole screen and go home
+        - screen - clear whole screen and go to origin
         - bos    - clear screen from cursor backwards
         - eos    - clear screen from cursor forwards
         - line   - clear line and go to beginning
@@ -343,22 +347,23 @@ def clear(what: str = "screen") -> None:
 
 # cursor commands
 def hide_cursor() -> None:
-    """Don't print cursor"""
+    """Stop printing cursor"""
 
     # _tput(['civis'])
     print("\x1b[?25l")
 
 
 def show_cursor() -> None:
-    """Set cursor printing back on"""
+    """Start printing cursor"""
 
     # _tput(['cvvis'])
     print("\x1b[?25h")
 
 
 def save_cursor() -> None:
-    """Save cursor position, use `restore_cursor()`
-    to restore it."""
+    """Save cursor position.
+
+    Use `restore_cursor()` to restore it."""
 
     # _tput(['sc'])
     _stdout.write("\x1b[s")
@@ -371,7 +376,7 @@ def restore_cursor() -> None:
     _stdout.write("\x1b[u")
 
 
-def report_cursor() -> Optional[tuple[int, int]]:
+def report_cursor() -> tuple[int, int] | None:
     """Get position of cursor"""
 
     print("\x1b[6n")
@@ -385,56 +390,92 @@ def report_cursor() -> Optional[tuple[int, int]]:
 
 
 def move_cursor(pos: tuple[int, int]) -> None:
-    """Move cursor to pos"""
+    """Move cursor to `pos`
+
+    Note:
+        This does not flush the terminal for performance reasons. You
+        can do it manually with `sys.stdout.flush()`."""
 
     posx, posy = pos
     _stdout.write(f"\x1b[{posy};{posx}H")
 
 
 def cursor_up(num: int = 1) -> None:
-    """Move cursor up by `num` lines"""
+    """Move cursor up by `num` lines
+
+    Note:
+        This does not flush the terminal for performance reasons. You
+        can do it manually with `sys.stdout.flush()`."""
 
     _stdout.write(f"\x1b[{num}A")
 
 
 def cursor_down(num: int = 1) -> None:
-    """Move cursor down by `num` lines"""
+    """Move cursor down by `num` lines
+
+    Note:
+        This does not flush the terminal for performance reasons. You
+        can do it manually with `sys.stdout.flush()`."""
 
     _stdout.write(f"\x1b[{num}B")
 
 
 def cursor_right(num: int = 1) -> None:
-    """Move cursor left by `num` cols"""
+    """Move cursor left by `num` cols
+
+    Note:
+        This does not flush the terminal for performance reasons. You
+        can do it manually with `sys.stdout.flush()`."""
 
     _stdout.write(f"\x1b[{num}C")
 
 
 def cursor_left(num: int = 1) -> None:
-    """Move cursor left by `num` cols"""
+    """Move cursor left by `num` cols
+
+    Note:
+        This does not flush the terminal for performance reasons. You
+        can do it manually with `sys.stdout.flush()`."""
 
     _stdout.write(f"\x1b[{num}D")
 
 
 def cursor_next_line(num: int = 1) -> None:
-    """Move cursor to beginning of num-th line down"""
+    """Move cursor to beginning of num-th line down
+
+    Note:
+        This does not flush the terminal for performance reasons. You
+        can do it manually with `sys.stdout.flush()`."""
 
     _stdout.write(f"\x1b[{num}E")
 
 
 def cursor_prev_line(num: int = 1) -> None:
-    """Move cursor to beginning of num-th line down"""
+    """Move cursor to beginning of num-th line down
+
+    Note:
+        This does not flush the terminal for performance reasons. You
+        can do it manually with `sys.stdout.flush()`."""
 
     _stdout.write(f"\x1b[{num}F")
 
 
 def cursor_column(num: int = 0) -> None:
-    """Move cursor to num-th column in the current line"""
+    """Move cursor to num-th column in the current line
+
+    Note:
+        This does not flush the terminal for performance reasons. You
+        can do it manually with `sys.stdout.flush()`."""
 
     _stdout.write(f"\x1b[{num}G")
 
 
 def cursor_home() -> None:
-    """Move cursor to HOME"""
+    """Move cursor to HOME
+
+    Note:
+        This does not flush the terminal for performance reasons. You
+        can do it manually with `sys.stdout.flush()`."""
 
     _stdout.write("\x1b[H")
 
@@ -478,7 +519,7 @@ def set_mode(mode: Union[str, int], write: bool = True) -> str:
 
 
 def set_echo() -> None:
-    """Echo user input"""
+    """Start echoing user input"""
 
     if not _name == "posix":
         raise NotImplementedError("This method is only implemented on POSIX systems.")
@@ -487,7 +528,7 @@ def set_echo() -> None:
 
 
 def unset_echo() -> None:
-    """Don't echo user input"""
+    """Stop echoing user input"""
 
     if not _name == "posix":
         raise NotImplementedError("This method is only implemented on POSIX systems.")
@@ -496,21 +537,27 @@ def unset_echo() -> None:
 
 
 class MouseAction(Enum):
-    """Actions a mouse can perform"""
+    """Enum to hold actions a mouse can perform"""
 
     LEFT_DRAG = _auto()
     LEFT_CLICK = _auto()
+
     RIGHT_DRAG = _auto()
     RIGHT_CLICK = _auto()
-    HOVER = _auto()
-    RELEASE = _auto()
+
     SCROLL_UP = _auto()
     SCROLL_DOWN = _auto()
+
+    HOVER = _auto()
+    RELEASE = _auto()
 
 
 @dataclass
 class MouseEvent:
-    """A class to store MouseEvents"""
+    """A class to store MouseEvents
+
+    This is here for readability & typing reasons. All
+    the magic-method junk makes the instance iterable."""
 
     action: MouseAction
     position: tuple[int, int]
@@ -543,19 +590,19 @@ def report_mouse(
 ) -> None:
     """Start reporting mouse events
 
-    options:
+    Options:
         - press
         - highlight
         - press_hold
         - hover
 
-    methods:
-        None:          limited in coordinates, not recommended.
-        decimal_xterm: default, most universal
-        decimal_urxvt: older, less compatible
-        decimal_utf8:  apparently not too stable
+    Methods:
+        - None:          Limited in coordinates, not recommended.
+        - decimal_xterm: Default, most universal
+        - decimal_urxvt: Older, less compatible
+        - decimal_utf8:  Apparently not too stable
 
-    more information: https://stackoverflow.com/a/5970472
+    More information: https://stackoverflow.com/a/5970472
     """
 
     if event == "press":
@@ -595,8 +642,7 @@ def report_mouse(
 
 
 def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
-    """Translate report_mouse() (decimal_xterm or decimal_urxvt) codes into
-    tuple[action, tuple[x, y]].
+    """Translate report_mouse() (decimal_xterm or decimal_urxvt) codes into MouseEvent-s.
 
     See `help(report_mouse)` for more information on methods."""
 
@@ -657,15 +703,14 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
 
 
 # shorthand functions
-def print_to(pos: tuple[int, int], *args: tuple[Any, ...]) -> None:
-    """Print text to given position"""
+def print_to(pos: tuple[int, int], *args: Any, **kwargs: Any) -> None:
+    """Print text to given `pos`
 
-    text = ""
-    for arg in args:
-        text += " " + str(arg)
+    This passes through all arguments (except for `pos`) to the `print`
+    method."""
 
     move_cursor(pos)
-    print(text, end="", flush=True)
+    print(*args, **kwargs, end="", flush=True)
 
 
 def reset() -> str:
@@ -711,7 +756,9 @@ def inverse(text: str, reset_style: Optional[bool] = True) -> str:
 
 
 def invisible(text: str, reset_style: Optional[bool] = True) -> str:
-    """Return text in invisible"""
+    """Return text as invisible
+
+    Note: This isn't very widely supported"""
 
     return set_mode("invisible", False) + text + (reset() if reset_style else "")
 
