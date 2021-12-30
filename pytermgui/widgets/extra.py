@@ -101,7 +101,9 @@ class Splitter(Container):
     def _align(
         self, alignment: WidgetAlignment, target_width: int, line: str
     ) -> tuple[int, str]:
-        """Align a line r/wordavalanches"""
+        """Align a line
+
+        r/wordavalanches"""
 
         available = target_width - real_length(line)
         fill_style = self.get_style("fill")
@@ -119,7 +121,9 @@ class Splitter(Container):
         return 0, line + available * char
 
     def get_lines(self) -> list[str]:
-        """Join all widgets horizontally"""
+        """Join all widgets horizontally
+
+        Note: This currently has some issues."""
 
         # An error will be raised if `separator` is not the correct type (str).
         separator = self.get_style("separator")(self.get_char("separator"))  # type: ignore
