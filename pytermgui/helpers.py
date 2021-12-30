@@ -15,13 +15,13 @@ __all__ = ["strip_ansi", "strip_markup", "real_length", "get_sequences", "break_
 
 
 def strip_ansi(text: str) -> str:
-    """Remove ansi characters from `text`"""
+    """Remove ansi sequences from `text`"""
 
     return RE_ANSI.sub("", text)
 
 
 def strip_markup(text: str) -> str:
-    """Remove markup characters from `text`"""
+    """Remove markup sequences from `text`"""
 
     return RE_MARKUP.sub("", text)
 
@@ -33,7 +33,7 @@ def real_length(text: str) -> int:
 
 
 def get_sequences(text: str) -> str:
-    """Get sequences from a string, optimized"""
+    """Extract ANSI sequences from `text`"""
 
     sequences = ""
     for token in markup.tokenize_ansi(text):
@@ -62,7 +62,11 @@ def get_sequences(text: str) -> str:
 def break_line(  # pylint: disable=too-many-branches
     line: str, limit: int, char: str = " "
 ) -> Iterator[str]:
-    """Break a line into a list[str] with maximum `limit` lengths"""
+    """Break a line into a list[str] with maximum `limit` lengths
+
+    This function currently does NOT handle literal newlines (\n), instead
+    chosing to throw them away. You can get around this by splitting your text
+    by newlines prior to handing it to `break_line`."""
 
     # TODO: Refactor this method & handle newlines, avoid pylint disables.
 
