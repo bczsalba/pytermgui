@@ -10,10 +10,12 @@ to allow inspection of any Python object.
 So far it only shows the object's methods, along with their parameters & annotations,
 however in the future it will be expanded to support live object data as well.
 
-Todo: live object inspection
-Todo: support for module inspection
-Todo: handle long items
 """
+# TODO: This module should get a rewrite at some point:
+#       - Tie into WindowManager
+#       - Live object inspection
+#       - Support for module inspection
+#       - Handle long items
 
 from __future__ import annotations
 
@@ -80,7 +82,7 @@ def inspect(
 
         return root
 
-    root = Container()
+    root = Container(width=terminal.width)
     root.forced_height = target_height
     root += Label()
 
@@ -242,9 +244,9 @@ class Inspector(Container):
 
         builtin_style = self.get_style("builtin")
         if isinstance(annotation, type):
-            return builtin_style(annotation.__name__)
+            return builtin_style(annotation.__name__.replace("[", "\["))
 
-        return builtin_style(str(annotation))
+        return builtin_style(str(annotation.replace("[", "\[")))
 
     def inspect(
         self,
