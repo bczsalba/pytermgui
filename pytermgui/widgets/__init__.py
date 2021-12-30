@@ -54,7 +54,7 @@ class _IDManager:
         self._widgets[objid] = other
 
     def deregister(self, key: str) -> None:
-        """Remove widget from self._widget
+        """Remove widget from self._widgets
 
         This method is meant to be called only internally by Widget."""
 
