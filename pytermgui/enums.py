@@ -6,8 +6,8 @@ author: bczsalba
 
 This module provides commonly used enumerations for the library.
 It also has a class implementing Enum-s with default values. All Enums
-below subclass it, meaning you can their `get_default()` methods to get
-the global default value.
+below subclass it, meaning you can use their `get_default()` methods to get
+the globally set default value.
 
 To modify defaults, use the `defaults` dictionary.
 """
@@ -42,9 +42,9 @@ class DefaultEnum(IntEnum):
 class SizePolicy(DefaultEnum):
     """Values according to which Widget sizes are assigned
 
-    FILL: keep the Widget's width set exactly to its parent
-    STATIC: always use the set `width` value, don't adjust on resize
-    RELATIVE: adjust the Widget's size to be a percentage of the parent
+    FILL: Keep the Widget's width set exactly to its parent
+    STATIC: Always use the set `width` value, don't adjust on resize
+    (not implemented)RELATIVE: Adjust the Widget's size to be a percentage of the parent
     """
 
     FILL = _auto()
@@ -53,7 +53,7 @@ class SizePolicy(DefaultEnum):
 
 
 class CenteringPolicy(DefaultEnum):
-    """Values to center according to"""
+    """Policies to center `Container` according to"""
 
     ALL = _auto()
     VERTICAL = _auto()
@@ -61,7 +61,7 @@ class CenteringPolicy(DefaultEnum):
 
 
 class WidgetAlignment(DefaultEnum):
-    """Values to align widgets by.
+    """Policies to align widgets by
 
     These are applied by the parent object, and are
     relative to them."""
