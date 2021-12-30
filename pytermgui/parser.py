@@ -191,7 +191,7 @@ class Token:
             self.name = self.data
 
     def __eq__(self, other: object) -> bool:
-        """Check equality with other object"""
+        """Check equality with `other`"""
 
         if other is None:
             return False
@@ -206,7 +206,7 @@ class Token:
 
     @property
     def sequence(self) -> str | None:
-        """Get ANSI sequence for token"""
+        """Get ANSI sequence representing token"""
 
         if self.ttype in [TokenType.PLAIN, TokenType.MACRO, TokenType.ESCAPED]:
             return None
