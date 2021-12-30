@@ -4,7 +4,12 @@ pytermgui.cmd
 author: bczsalba
 
 
-This module provides the command-line capabilities of the module.
+This module provides the command-line capabilities of the library.
+
+There are some simple utilities included, and a playground for some 
+of the interesting parts of the library.
+
+See `ptg --help` for more information.
 """
 
 from __future__ import annotations
@@ -48,7 +53,7 @@ def _get_key_name(key: str) -> str:
 
 
 class Application(ABC):
-    """A class to hold application details"""
+    """A class representing an application"""
 
     title: str
     description: str
@@ -61,7 +66,7 @@ class Application(ABC):
 
     @staticmethod
     def _update_widgets(window: Window, items: list[Any]) -> None:
-        """Update window widgets, use auto() method on each item"""
+        """Update window widgets, using auto() method for each"""
 
         window.set_widgets([])
         for item in items:
@@ -69,8 +74,9 @@ class Application(ABC):
 
     @abstractmethod
     def finish(self, window: Window) -> None:
-        """Print output information on Application finish.
-        Called by the main method after self.manager exits.
+        """Print output information on Application finish
+
+        This is called by the main method after self.manager exits.
 
         In order to support `standalone` mode, the Application should
         call `_request_exit()` once it is done with its duty. This method
@@ -81,7 +87,7 @@ class Application(ABC):
         """Construct an application window"""
 
     def _request_exit(self) -> None:
-        """Send a request to parent manager to stop execution"""
+        """Send a request to the manager parent to stop execution"""
 
         self.manager.stop()
 
@@ -95,7 +101,7 @@ class Application(ABC):
 
 
 class LauncherApplication(Application):
-    """Application class for launching other apps"""
+    """Application that launches other apps"""
 
     title = "Launcher"
     description = "Launch other apps"
@@ -136,13 +142,13 @@ class LauncherApplication(Application):
 
 
 class GetchApplication(Application):
-    """Application class for the getch() utility"""
+    """Application for the getch() utility"""
 
     title = "Getch"
     description = "See your keypresses"
 
     def _key_callback(self, window: Window, key: str) -> bool:
-        """Edit window state if key is pressed"""
+        """Edit `window` state if `key` is pressed"""
 
         # Don't display mouse codes
         if (
@@ -172,7 +178,7 @@ class GetchApplication(Application):
         return True
 
     def finish(self, window: Window) -> None:
-        """Dump getch output"""
+        """Dump getch() output to stdout on finish"""
 
         for line in window.get_lines():
             print(line)
@@ -191,14 +197,14 @@ class GetchApplication(Application):
 
 
 class MarkupApplication(Application):
-    """Application class for the markup parsing methods"""
+    """Application for the markup parsing methods"""
 
     title = "MarkApp"
     description = "Play around with markup in this interactive editor."
 
     @staticmethod
     def _get_tokens() -> list[Label]:
-        """Get all tokens form the parser module"""
+        """Get all tokens using the parser"""
 
         tokens: list[str] = []
         for token in markup.tags:
@@ -208,7 +214,9 @@ class MarkupApplication(Application):
 
     @staticmethod
     def _update_value(output: Label, field: InputField) -> None:
-        """Update output value if field markup is valid"""
+        """Update output value
+
+        This shows parsed markup if parsing succeeded, SyntaxError otherwise."""
 
         try:
             markup.parse(field.value)
@@ -218,7 +226,7 @@ class MarkupApplication(Application):
 
     @staticmethod
     def _style_wrapper(_: int, item: str) -> str:
-        """Avoid SyntaxError with `prettify_markup`"""
+        """Catch MarkupSyntaxError"""
 
         try:
             # TODO: Reintroduce prettify_markup
@@ -235,7 +243,7 @@ class MarkupApplication(Application):
         """Re-generate colors for guide"""
 
         def _random_hex() -> str:
-            """Return random hex number"""
+            """Return a random hex number"""
 
             randcol = lambda: randint(0, 255)
             return "#" + "".join(f"{randcol():02x}" for _ in range(3))
@@ -245,7 +253,7 @@ class MarkupApplication(Application):
         markup.alias("demo-rgb", _random_hex())
 
     def finish(self, window: Window) -> None:
-        """Dump output markup"""
+        """Dump output markup to stdout on finish"""
 
         if window.manager is None:
             return
@@ -374,7 +382,7 @@ class MarkupApplication(Application):
 
 
 def run_wm(args: Namespace) -> None:
-    """Run WindowManager according to args"""
+    """Run WindowManager using args"""
 
     # This is used for finding Application from arguments
     app_mapping = {"getch": GetchApplication, "markapp": MarkupApplication}
