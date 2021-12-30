@@ -30,9 +30,9 @@ class Serializer:
 
     By default it is only aware of pytermgui objects, however
     if needed it can be made aware of custom widgets using the
-    `.register(cld)` method.
+    `.register(cls)` method.
 
-    It can dump all types of object, but can only load known ones.
+    It can dump all types of widgets, but can only load known ones.
 
     All styles (except for char ones) are converted to markup
     during the dump process. This is done to make the end-result
