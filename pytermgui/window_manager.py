@@ -20,16 +20,19 @@ It runs in two threads:
 
 Basic usage:
     >>> from pytermgui import WindowManager, Window
-    >>> manager = WindowManager()
-    >>> manager.add(
-    >>> ... "[wm-title]Hello world!"
-    >>> ... + ""
-    >>> ... + {"[wm-section]Key1": ["value1", lambda *_: manager.alert("Value1")]}
-    >>> ... + {"[wm-section]Key2": ["value2", lambda *_: manager.alert("Value2")]}
-    >>> ... + InputField(prompt="Your input:")
-    >>> ... + ""
-    >>> ... + ["Submit!", lambda *_: manager.alert("Form submitted!")]
-    >>> manager.run()
+    >>> with WindowManager() as manager:
+    >>> ... manager.add(
+    >>> ...     Window(
+    >>> ...         "[wm-title]Hello world!"
+    >>> ...         + ""
+    >>> ...         + {"[wm-section]Key1": ["value1", lambda *_: manager.alert("Value1")]}
+    >>> ...         + {"[wm-section]Key2": ["value2", lambda *_: manager.alert("Value2")]}
+    >>> ...         + InputField(prompt="Your input:")
+    >>> ...         + ""
+    >>> ...         + ["Submit!", lambda *_: manager.alert("Form submitted!")]
+    >>> ...     )
+    >>> ... )
+    >>> ... manager.run()
 """
 
 # These object need more than 7 attributes.
@@ -140,7 +143,7 @@ class Rect:
         )
 
     def contains(self, pos: tuple[int, int]) -> bool:
-        """Get if position is contained within this area"""
+        """Determine if position is contained within this area"""
 
         return self.left <= pos[0] <= self.right and self.top <= pos[1] <= self.bottom
 
