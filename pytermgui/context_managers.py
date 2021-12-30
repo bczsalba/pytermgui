@@ -40,8 +40,7 @@ MouseTranslator = Callable[[str], Union[List[Union[MouseEvent, None]], None]]
 
 @contextmanager
 def cursor_at(pos: tuple[int, int]) -> Generator[Callable[..., None], None, None]:
-    """Set cursor location to posx, posy, return function that
-    prints there, incrementing the y value with each print."""
+    """Get callable to print at `pos`, incrementing `y` on every print"""
 
     offset = 0
     posx, posy = pos
@@ -64,8 +63,9 @@ def cursor_at(pos: tuple[int, int]) -> Generator[Callable[..., None], None, None
 
 @contextmanager
 def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None, None]:
-    """Create non-scrollable alt-buffer. Useful for retrieving original terminal state
-    after program end."""
+    """Create non-scrollable alt-buffer
+
+    This is useful for retrieving original terminal state after program end."""
 
     try:
         set_alt_buffer()
