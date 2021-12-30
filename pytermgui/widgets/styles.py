@@ -4,7 +4,14 @@ pytermgui.widgets.styles
 author: bczsalba
 
 
-This submodule provides the basic style methods for Widgets
+This submodule provides the basic style methods for Widgets.
+
+All styles have a `depth` and `item` argument. `depth` is an int
+that represents that "deep" the Widget is within the hierarchy, and 
+`item` is the string that the style is applied to.
+
+Because writing `lambda depth, item: ...` gets quite repetetive, this
+module provides some conveniences.
 """
 
 # pylint: disable=unused-argument
@@ -35,7 +42,10 @@ CharType = Union[List[str], str]
 
 @dataclass
 class StyleCall:
-    """A callable object that simplifies calling style methods"""
+    """A callable object that simplifies calling style methods.
+
+    Instances of this class are created within the `Widget.get_style`
+    method, and this class should not be used outside of that context."""
 
     # Widget cannot be imported into this module
     obj: "Widget"  # type: ignore
