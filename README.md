@@ -18,6 +18,12 @@ I was originally planning on releasing the first stable version of this library 
 
 The biggest bug holding back the release has been fixed. There is a couple of minor tasks on the TODO list that need finishing, and once that is done 1.0.0 _should_ be ready, bar documentation.
 
+### Update // December 31.
+
+I have just finished a massive combover of the entire project, improving _every single_ docstring. I am still deciding on which documentation generator to use, as sphinx seems very complicated and pdoc breaks on some newer type syntax. Oh the wonders of life.
+
+I am getting dangerously close to the deadline I set, but I should be on track still.
+
 
 Core principles
 ---------------
