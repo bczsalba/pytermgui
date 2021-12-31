@@ -1,16 +1,9 @@
 """
-pytermgui
----------
-author: bczsalba
-
-
 A simple yet powerful TUI framework for your Python (3.6+) applications.
 
 There is a couple of parts that make up this module, all building on top
-of eachother to achieve the final result.
-
-Your usage depends on which part of the library you use. I will provide an
-example for each.
+of eachother to achieve the final result. Your usage depends on which part
+of the library you use. I will provide an example of usage for each.
 
 ## Low level
 

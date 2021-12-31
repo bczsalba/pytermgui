@@ -1,11 +1,5 @@
 """
-pytermgui.parser
-----------------
-author: bczsalba
-
-
-This module provides all the logic for the PTG Markup language,
-as well as all the tools it uses internally.
+A custom markup language to make styling `Widget`-s easier, and, well, more stylish.
 
 Markup Syntax
 =============

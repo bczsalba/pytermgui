@@ -1,13 +1,8 @@
 """
-pytermgui.cmd
------------------
-author: bczsalba
-
-
-This module provides the command-line capabilities of the library.
+The command-line module of the library.
 
 There are some simple utilities included, and a playground for some 
-of the interesting parts of the library.
+of the interesting parts of pytermgui.
 
 See `ptg --help` for more information.
 """

@@ -1,9 +1,4 @@
 """
-pytermgui.enums
----------------
-author: bczsalba
-
-
 This module provides commonly used enumerations for the library.
 It also has a class implementing Enum-s with default values. All Enums
 below subclass it, meaning you can use their `get_default()` methods to get

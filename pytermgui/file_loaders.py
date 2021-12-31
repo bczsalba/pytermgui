@@ -1,9 +1,4 @@
 """
-pytermgui.file_loaders
-----------------------
-author: bczsalba
-
-
 # Description
 
 This module provides the library with the capability to load files into Widget-s.

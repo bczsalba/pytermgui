@@ -1,9 +1,4 @@
 """
-pytermgui.ansi_interface
-------------------------
-author: bczsalba
-
-
 Various functions to interface with the terminal, using ANSI sequences.
 
 Credits:

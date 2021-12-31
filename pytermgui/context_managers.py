@@ -1,14 +1,9 @@
 """
-pytermgui.context_managers
---------------------------
-author: bczsalba
+Ease-of-use context-manager classes & functions.
 
-
-Module providing context-manager classes & functions.
-
-There isn't much (or any) additional functionality provided
-in this module, most things are nicer-packaged combinations to
-already available methods from ansi_interface.
+There isn't much (or any) additional functionality provided in this module,
+most things are nicer-packaged combinations to already available methods from 
+`ansi_interface`.
 """
 
 from __future__ import annotations

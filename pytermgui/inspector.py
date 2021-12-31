@@ -1,15 +1,6 @@
 """
-pytermgui.inspector
--------------------
-author: bczsalba
-
-
-This module provides the Inspector() class, and the inspect helper,
-to allow inspection of any Python object.
-
-So far it only shows the object's methods, along with their parameters & annotations,
-however in the future it will be expanded to support live object data as well.
-
+`Inspector` widget and inspection utilities for (in the future) any Python objects. This 
+module will soon see a full overhaul, so the API is likely to change.
 """
 # TODO: This module should get a rewrite at some point:
 #       - Tie into WindowManager

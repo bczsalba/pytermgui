@@ -1,12 +1,5 @@
 """
-pytermgui.widgets.extra
-------------------------
-author: bczsalba
-
-
-This submodule provides some extra widgets. The biggest difference
-between these and the ones in .base is that these either fully rely on,
-or at least partially use the classes provided in .base.
+Some extra Widgets that rely on and compliment the ones in `widgets/base`.
 """
 
 # These classes will have to have more than 7 attributes mostly.

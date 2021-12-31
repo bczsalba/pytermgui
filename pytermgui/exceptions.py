@@ -1,10 +1,5 @@
 """
-pytermgui.exceptions
---------------------
-author: bczsalba
-
-
-This module stores the custom Exception-s used in this module.
+Custom Exception-s used in pytermgui.
 """
 
 from __future__ import annotations

@@ -1,11 +1,6 @@
 """
-pytermgui.serializer
---------------------
-author: bczsalba
-
-
-This submodule holds the Serializer() class, which allows
-saving & loading widgets.
+`Serializer` class to allow dumping and loading `Widget`-s. This class
+uses `Widget.serialize` for each widget.
 """
 
 from __future__ import annotations

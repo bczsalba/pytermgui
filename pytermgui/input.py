@@ -1,9 +1,4 @@
 """
-pytermgui.input
----------------
-author: bczsalba
-
-
 File providing the getch() function to easily read character inputs.
 
 Credits:
@@ -48,7 +43,10 @@ class _GetchUnix:
     def __init__(self) -> None:
         """Initialize object"""
 
-        self.decode = getincrementaldecoder(sys.stdin.encoding)().decode
+        if sys.stdin.encoding is not None:
+            self.decode = getincrementaldecoder(sys.stdin.encoding)().decode
+        else:
+            self.decode = lambda item: item
 
     def _read(self, num: int) -> str:
         """Read `num` characters from sys.stdin"""

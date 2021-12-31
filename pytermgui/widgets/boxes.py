@@ -1,16 +1,11 @@
 """
-pytermgui.widgets.boxes
------------------------
-author: bczsalba
+Convenience objects for Container corner & border styles.
 
-
-This file provides some character styles for Containers.
 They can be used as:
 ```
     from pytermgui import Container, boxes
-    box = boxes.SINGLE
 
-    box.set_chars_of(Container)
+    boxes.DOUBLE_TOP.set_chars_of(Container)
     c = Container() # this will now use the style chosen
 ```
 

@@ -1,10 +1,5 @@
 """
-pytermgui.helpers
-----------------
-author: bczsalba
-
-
-This module provides methods and functions that can be imported in other files.
+Helper methods and functions for pytermgui.
 """
 
 from typing import Iterator

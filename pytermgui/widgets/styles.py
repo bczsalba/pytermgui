@@ -1,17 +1,9 @@
 """
-pytermgui.widgets.styles
-------------------------
-author: bczsalba
-
-
-This submodule provides the basic style methods for Widgets.
+Conveniences for styling widgets
 
 All styles have a `depth` and `item` argument. `depth` is an int
 that represents that "deep" the Widget is within the hierarchy, and 
 `item` is the string that the style is applied to.
-
-Because writing `lambda depth, item: ...` gets quite repetetive, this
-module provides some conveniences.
 """
 
 # pylint: disable=unused-argument

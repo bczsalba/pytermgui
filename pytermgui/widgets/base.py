@@ -1,10 +1,5 @@
 """
-pytermgui.widget.base
----------------------
-author: bczsalba
-
-
-This submodule the basic elements comprising the Widget system
+The basic building blocks making up the Widget system.
 """
 
 # The classes defined here need more than 7 instance attributes,

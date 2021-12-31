@@ -1,13 +1,5 @@
 """
-pytermgui.widget.buttons
-------------------------
-author: bczsalba
-
-
-This submodule contains all of the button-related widgets.
-
-These all have mouse_targets set, so are clickable. Most have `onclick`
-callbacks.
+Mouse interactable widgets for simple button behaviours.
 """
 
 from __future__ import annotations

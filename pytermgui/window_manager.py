@@ -12,27 +12,32 @@ simplest way to use pytermgui in your applications, as it handles all input
 and output in a nice and optimized manner.
 
 It runs in two threads:
-    Main thread (blocking):
-        WindowManager.process_input()
+    - Main thread (blocking):
+        * `WindowManager.process_input`
 
-    WM_DisplayLoop (non-blocking):
-        WindowManager._start_display_thread/_loop()
+    - WM_DisplayLoop (non-blocking):
+        * `WindowManager._start_display_thread`
 
 Basic usage:
-    >>> from pytermgui import WindowManager, Window
-    >>> with WindowManager() as manager:
-    >>> ... manager.add(
-    >>> ...     Window(
-    >>> ...         "[wm-title]Hello world!"
-    >>> ...         + ""
-    >>> ...         + {"[wm-section]Key1": ["value1", lambda *_: manager.alert("Value1")]}
-    >>> ...         + {"[wm-section]Key2": ["value2", lambda *_: manager.alert("Value2")]}
-    >>> ...         + InputField(prompt="Your input:")
-    >>> ...         + ""
-    >>> ...         + ["Submit!", lambda *_: manager.alert("Form submitted!")]
-    >>> ...     )
-    >>> ... )
-    >>> ... manager.run()
+
+```python3
+import pytermgui as ptg
+
+with ptg.WindowManager() as manager:
+    manager.add(
+        ptg.Window(
+            "[wm-title]Hello world!"
+            + ""
+            + {"[wm-section]Key1": ["value1", lambda *_: manager.alert("Value1")]}
+            + {"[wm-section]Key2": ["value2", lambda *_: manager.alert("Value2")]}
+            + InputField(prompt="Your input:")
+            + ""
+            + ["Submit!", lambda *_: manager.alert("Form submitted!")]
+        )
+    )
+
+    manager.run()
+```
 """
 
 # These object need more than 7 attributes.
