@@ -106,17 +106,6 @@ if "-m" in sys.argv:
 
     warnings.filterwarnings("ignore")
 
-# Build `__all__` for star import (which you really shouldn't do.)
-__all__ = ["__version__"]
-__all__ += _ansi_all
-__all__ += _enums_all
-__all__ += _parser_all
-__all__ += _manager_all
-__all__ += _widgets_all
-__all__ += _inspector_all
-__all__ += _serializer_all
-__all__ += _exceptions_all
-__all__ += _file_loaders_all
 __version__ = "0.4.1"
 
 
