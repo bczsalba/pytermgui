@@ -1,5 +1,6 @@
 """
-# Description
+Description
+===========
 
 This module provides the library with the capability to load files into Widget-s.
 
@@ -10,7 +11,8 @@ the file contents as a string, and create a valid json tree out of it.
 You can "run" a ptg yaml file by calling `ptg -f <filename>` in your terminal.
 
 
-# Implementation details
+Implementation details
+======================
 
 The main method of these classes is `load`, which takes a file-like object or a string,
 parses it and returns a `WidgetNamespace` instance. This can then be used to access all
@@ -23,7 +25,8 @@ If you have custom Widget subclass you would like to use in file-based definitio
 `FileLoader.register` method, passing in your custom class as the sole argument.
 
 
-# File structure
+File structure
+==============
 
 Regardless of filetype, all loaded files must follow a specific structure:
 
@@ -46,7 +49,8 @@ The loading follows the order config -> markup -> boxes -> widgets. It is not ne
 sections.
 
 
-# Example of usage
+Example of usage
+================
 
 ```yaml
 # -- data.yaml --
@@ -95,7 +99,8 @@ widgets:
                 value: '[label-style]{item}'
 ```
 
-```python
+
+```python3
 # -- loader.py --
 
 import pytermgui as ptg
@@ -107,6 +112,10 @@ with open("data.yaml", "r") as datafile:
 with ptg.WindowManager() as manager:
     manager.add(namespace.MyWindow)
     manager.run()
+
+# Alternatively, one could run `ptg -f "data.yaml"` to display all widgets defined.
+# See `ptg -h`.
+```
 
 """
 
@@ -230,12 +239,17 @@ class FileLoader(ABC):
     These allow users to load pytermgui content from a specific filetype,
     with each filetype having their own loaders.
 
-    To use custom Widget-s with these, you need to call the FileLoader's
-    `register()` method."""
+    To use custom widgets with children of this class, you need to call the `FileLoader.register`."""
+
+    serializer: Serializer
+    """Object-specific serializer instance. In order to use a specific, already created instance you need to
+    pass it on `FileLoader` construction."""
 
     @abstractmethod
     def parse(self, data: str) -> dict[Any, Any]:
-        """Parse string into dictionary"""
+        """Parse string into dictionary
+
+        This dictionary follows the structure above."""
 
     def __init__(self, serializer: Serializer | None = None) -> None:
         """Initialize object"""
@@ -251,9 +265,10 @@ class FileLoader(ABC):
         self.serializer.register(cls)
 
     def load_str(self, data: str) -> WidgetNamespace:
-        """Create a WidgetNamespace from string data
+        """Create a `WidgetNamespace` from string data
 
-        To parse the data, the `parse` method of this object is called."""
+        To parse the data, we use `FileLoader.parse`. To implement custom formats,
+        subclass `FileLoader` with your own `parse` implementation."""
 
         parsed = self.parse(data)
 
@@ -298,7 +313,10 @@ class FileLoader(ABC):
         return namespace
 
     def load(self, data: str | IO) -> WidgetNamespace:
-        """Load data from str or file"""
+        """Load data from a string or a file
+
+        When an IO object is passed, its data is extracted as a string.
+        This string can then be passed to `load_str`."""
 
         if not isinstance(data, str):
             data = data.read()
@@ -308,7 +326,7 @@ class FileLoader(ABC):
 
 
 class JsonLoader(FileLoader):
-    """Load JSON files for PTG"""
+    """JSON specific loader subclass"""
 
     def parse(self, data: str) -> dict[Any, Any]:
         """Parse JSON str"""
@@ -317,10 +335,10 @@ class JsonLoader(FileLoader):
 
 
 class YamlLoader(FileLoader):
-    """Load YAML files for PTG"""
+    """YAML specific loader subclass"""
 
     def __init__(self, serializer: Serializer | None = None) -> None:
-        """Initialize object, check for PyYAML"""
+        """Initialize object, check for installation of PyYAML"""
 
         if YAML_ERROR is not None:
             raise RuntimeError(
