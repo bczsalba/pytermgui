@@ -36,6 +36,8 @@ from . import (
     keys,
 )
 
+__all__ = ["Application"]
+
 
 def _get_key_name(key: str) -> str:
     """Get canonical name of a key"""
