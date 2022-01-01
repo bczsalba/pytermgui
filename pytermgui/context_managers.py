@@ -3,7 +3,7 @@ Ease-of-use context-manager classes & functions.
 
 There isn't much (or any) additional functionality provided in this module,
 most things are nicer-packaged combinations to already available methods from 
-`ansi_interface`.
+`pytermgui.ansi_interface`.
 """
 
 from __future__ import annotations
@@ -97,11 +97,20 @@ def mouse_handler(
     See `help(report_mouse)` for help about all of the methods.
 
     Example use:
-        >>> from pytermgui import mouse_handler, getch
-        >>> with mouse_handler(["press", "hover"]) as mouse:
-        ...     while True:
-        ...         event = mouse(getch())
-        '(MouseAction.PRESS, (33, 55))'
+    ```python3
+    import pytermgui as ptg
+
+    with ptg.mouse_handler(["press", "hover"]) as mouse:
+        while True:
+          event = mouse(ptg.getch())
+          print(type(event))
+          print(event.action)
+          print(event.position)
+
+    'pytermgui.ansi_interface.MouseEvent'
+    'pytermgui.ansi_interface.MouseAction.LEFT_CLICK'
+    (33, 55)
+    ```
     """
 
     try:
