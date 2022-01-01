@@ -1,11 +1,6 @@
 """
-pytermgui.window_manager
-------------------------
-author: bczsalba
-
-
-This module contains a full implementation of a traditional window manager,
-right inside your terminal.
+A full implementation of a WindowManager for the terminal, building on top
+of the Widget system.
 
 It runs with no external dependencies, and has full mouse support. It is the
 simplest way to use pytermgui in your applications, as it handles all input
