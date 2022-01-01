@@ -24,15 +24,15 @@ class Serializer:
     """A class to facilitate loading & dumping widgets.
 
     By default it is only aware of pytermgui objects, however
-    if needed it can be made aware of custom widgets using the
-    `.register(cls)` method.
+    if needed it can be made aware of custom widgets using
+    `Serializer.register`.
 
-    It can dump all types of widgets, but can only load known ones.
+    It can dump any widget type, but can only load ones it knows.
 
-    All styles (except for char ones) are converted to markup
+    All styles (except for char styles) are converted to markup
     during the dump process. This is done to make the end-result
     more readable, as well as more universally usable. As a result,
-    all elements use `markup_style` for their affected styles."""
+    all widgets use `markup_style` for their affected styles."""
 
     def __init__(self) -> None:
         """Set up known widgets"""
@@ -57,9 +57,9 @@ class Serializer:
 
     @staticmethod
     def dump_to_dict(obj: Widget) -> dict[str, Any]:
-        """Dump widget to a dict, alias for obj.serialize()
+        """Dump widget to a dict
 
-        Todo: this method should also dump custom tags"""
+        Note: This is an alias for `obj.serialize`"""
 
         return obj.serialize()
 
@@ -70,7 +70,9 @@ class Serializer:
 
     def register(self, cls: Type[Widget]) -> None:
         """Make object aware of a custom widget class, so
-        it can be serialized."""
+        it can be serialized.
+
+        Make sure to pass a type here, not an instance."""
 
         if not isinstance(cls, type):
             raise TypeError("Registered object must be a type.")
