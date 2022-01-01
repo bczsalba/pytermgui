@@ -1,4 +1,7 @@
 """
+Description
+-----------
+
 A full implementation of a WindowManager for the terminal, building on top
 of the Widget system.
 
@@ -7,13 +10,12 @@ simplest way to use pytermgui in your applications, as it handles all input
 and output in a nice and optimized manner.
 
 It runs in two threads:
-    - Main thread (blocking):
-        * `WindowManager.process_input`
+- Main thread (blocking): `WindowManager.process_input`
 
-    - WM_DisplayLoop (non-blocking):
-        * `WindowManager._start_display_thread`
+- WM_DisplayLoop (non-blocking): `WindowManager._start_display_thread`
 
-Basic usage:
+Usage example
+-------------
 
 ```python3
 import pytermgui as ptg
@@ -33,6 +35,8 @@ with ptg.WindowManager() as manager:
 
     manager.run()
 ```
+
+<img src=https://github.com/bczsalba/pytermgui/blob/master/assets/docs/wm_demo.gif?raw=true style="max-width: 100%">
 """
 
 # These object need more than 7 attributes.
@@ -71,7 +75,7 @@ from .ansi_interface import (
 )
 
 
-__all__ = ["WindowManager", "Window"]
+__all__ = ["Window", "WindowManager"]
 
 
 class Edge(Enum):
@@ -167,21 +171,30 @@ class Rect:
 class Window(Container):
     """A class representing a window
 
-    A Window can have some attributes:
-        is_modal: Only one in focus
-        is_static: Non-draggable
-        is_noresize: Non-resizable
-        is_noblur: Never blurred, always in focus"""
+    Windows are essentially fancy `pytermgui.widgets.Container`-s. They build on top of them
+    to store and display various widgets, while allowing some custom functionality.
+    """
 
     is_bindable = True
-    allow_fullscreen = False
     size_policy = SizePolicy.STATIC
 
+    allow_fullscreen = False
+    """When a window is allowed fullscreen its manager will try to set it so before each frame"""
+
     title = ""
+    """Title shown in left-top corner"""
+
     is_static = False
+    """Static windows cannot be moved using the mouse"""
+
     is_modal = False
+    """Modal windows stay on top of every other window and block interactions with other windows"""
+
     is_noblur = False
+    """No-blur windows will always appear to stay in focus, even if they functionally don't"""
+
     is_noresize = False
+    """No-resize windows cannot be resized using the mouse"""
 
     styles = {**Container.styles, **{"title": MarkupFormatter("[wm-title]{item}")}}
 
@@ -292,6 +305,7 @@ class WindowManager(Container):
     is_bindable = True
 
     framerate = 120
+    """Target framerate for rendering. Higher number means more resource usage."""
 
     def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
@@ -330,7 +344,10 @@ class WindowManager(Container):
 
     @property
     def should_print(self) -> bool:
-        """Return flag or whether any windows have the `Window.is_dirty` flag set"""
+        """Whether the `WindowManager` has dirty elements
+
+        An element being "dirty" means it has changes not yet shown. Windows
+        can set themselves to be dirty using the `Window.is_dirty` flag."""
 
         return self._should_print or any(window.is_dirty for window in self._windows)
 
@@ -351,7 +368,7 @@ class WindowManager(Container):
     def _start_display_thread(self) -> None:
         """The loop that handles all displaying
 
-        This is run as a thread, with `process_input()` occupying
+        This is run as a thread, with `process_input` occupying
         the main line."""
 
         def _loop() -> None:
@@ -636,7 +653,7 @@ class WindowManager(Container):
         return True
 
     def process_input(self) -> None:
-        """Process incoming input, set should_print"""
+        """Process incoming input"""
 
         while self._is_running:
             key = getch()
@@ -669,7 +686,7 @@ class WindowManager(Container):
         sys.exit()
 
     def run(self) -> None:
-        """Run main WindowManager loop"""
+        """Run main loop"""
 
         with alt_buffer(cursor=False, echo=False):
             with mouse_handler(["press_hold", "hover"], "decimal_xterm") as translate:

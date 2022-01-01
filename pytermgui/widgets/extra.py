@@ -320,7 +320,13 @@ class InputField(Label):
             cursor_char = cursor_style(" ")
 
         # Set new value, get lines using it
-        self.value = self.prompt + left + cursor_char + right
+        self.value = self.prompt
+
+        if len(self.prompt):
+            self.value += " "
+
+        self.value += left + cursor_char + right
+
         self.width += 2
         lines = super().get_lines()
 

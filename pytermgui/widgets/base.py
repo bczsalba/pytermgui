@@ -65,15 +65,25 @@ class MouseTarget:
     """A target for mouse events."""
 
     parent: Widget
+    """Parent of this target. Used for getting current position in `adjust`."""
+
     left: int
+    """Left offset from parent widget"""
+
     right: int
+    """Right offset from parent widget"""
+
     height: int
+    """Total height"""
+
     top: int = 0
+    """Top offset from parent widget"""
 
     _start: tuple[int, int] = field(init=False)
     _end: tuple[int, int] = field(init=False)
 
     onclick: Optional[MouseCallback] = None
+    """Callback function for click events"""
 
     @property
     def start(self) -> tuple[int, int]:
@@ -88,7 +98,9 @@ class MouseTarget:
         return self._end
 
     def adjust(self) -> None:
-        """Adjust target positions to fit in whatever new positions we have"""
+        """Adjust position to align with `parent`
+
+        This should be called every time the parent's position might have changed."""
 
         pos = self.parent.pos
         self._start = (pos[0] + self.left - 1, pos[1] + 1 + self.top)
@@ -134,8 +146,13 @@ class Widget:
     set_char = classmethod(_set_obj_or_cls_char)
 
     styles: dict[str, w_styles.StyleType] = {}
+    """Default styles for this class"""
+
     chars: dict[str, w_styles.CharType] = {}
+    """Default characters for this class"""
+
     keys: dict[str, set[str]] = {}
+    """Groups of keys that are used in `handle_key`"""
 
     serialized: list[str] = [
         "id",
@@ -146,14 +163,20 @@ class Widget:
         "selected_index",
         "selectables_length",
     ]
+    """Fields of widget that shall be serialized by `pytermgui.serializer.Serializer`"""
 
     # This class is loaded after this module,
     # and thus mypy doesn't see its existence.
     _id_manager: Optional["_IDManager"] = None  # type: ignore
 
     is_bindable = False
+    """Allow binding support"""
+
     size_policy = SizePolicy.get_default()
+    """`pytermgui.enums.SizePolicy` to set widget's width according to"""
+
     parent_align = WidgetAlignment.get_default()
+    """`pytermgui.enums.WidgetAlignment` to align widget by"""
 
     def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
@@ -204,17 +227,13 @@ class Widget:
 
     @property
     def id(self) -> Optional[str]:  # pylint: disable=invalid-name
-        """Getter for id property
-
-        There is no better name for this."""
+        """Getter for id property"""
 
         return self._id
 
     @id.setter
     def id(self, value: str) -> None:  # pylint: disable=invalid-name
-        """Register widget to idmanager
-
-        There is no better name for this."""
+        """Register widget to idmanager"""
 
         if self._id == value:
             return
@@ -1089,7 +1108,24 @@ class Container(Widget):
 
 
 class Label(Widget):
-    """A Widget representing a simple string"""
+    """A Widget to display a string
+
+    By default, this widget uses `pytermgui.widgets.styles.MARKUP`. This
+    allows it to house markup text that is parsed before display, such as:
+
+    ```python3
+    import pytermgui as ptg
+
+    with ptg.alt_buffer():
+        root = ptg.Container(ptg.Label(["italic 141 underline]This is some [green]fancy [white inverse]text!"))
+        root.print()
+        ptg.getch()
+    ```
+
+    <p style="text-align: center">
+        <img src="https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true">
+    </p>
+    """
 
     styles: dict[str, w_styles.StyleType] = {"value": w_styles.MARKUP}
 
@@ -1105,7 +1141,7 @@ class Label(Widget):
         self.width = real_length(value) + self.padding
 
     def get_lines(self) -> list[str]:
-        """Get lines representing Label, breaking lines as necessary"""
+        """Get lines representing `Label`, breaking lines as necessary"""
 
         value_style = self.get_style("value")
         line_gen = break_line(value_style(self.padding * " " + self.value), self.width)

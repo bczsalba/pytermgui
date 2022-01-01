@@ -5,9 +5,10 @@ There is a couple of parts that make up this module, all building on top
 of eachother to achieve the final result. Your usage depends on which part
 of the library you use. I will provide an example of usage for each.
 
+
 ## Low level
 
-At the base, there is `ansi_interface` and `input`, handling terminal APIs
+At the base, there is `pytermgui.ansi_interface` and `pytermgui.input`, handling terminal APIs
 for output and input respectively. This is the lowest-level layer of the
 library.
 
@@ -15,40 +16,49 @@ library.
 import pytermgui as ptg
 
 ptg.set_alt_buffer()
-print("This text will be discarded on '\n' input.")
-while ptg.getch() != "\n":
+
+print("This terminal will be discarded on '\\n' input.")
+while ptg.getch() != "\\n":
     print("Wrong key.")
+
 ptg.unset_alt_buffer()
 ```
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png>
+</p>
 
 
 ## Helper level
 
-On top of that, there is the helper layer, including things like `helpers`,
-`context_managers` and the kind. These provide no extra functionality, only
+On top of that, there is the helper layer, including things like `pytermgui.helpers`,
+`pytermgui.context_managers` and the kind. These provide no extra functionality, only
 combine functions defined below them in order to make them more usable.
 
 
 ```python3
 import pytermgui as ptg
 
-for line in ptg.break_line(
-    "This is some \033[1mlong\033[0m and \033[38;5;141mstyled\033[0m text.",
-    limit=10,
-)
+text = "This is some \\033[1mlong\\033[0m and \\033[38;5;141mstyled\\033[0m text."
+for line in ptg.break_line(text, limit=10):
+    print(line)
 ```
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png>
+</p>
 
 
 ## High level
 
-Building on all that is the relatively high level `widgets` module. This
+Building on all that is the relatively high level `pytermgui.widgets` module. This
 part uses things from everything defined before it to create a visually
 appealing interface system. It introduces a lot of its own APIs and 
 abstractions, and leaves all the parts below it free of cross-layer
 dependencies.
 
-The highest layer of the library is for `window_manager`. This layer combines
-parts from everything below. It introduces abstractions on top of the `Widget`
+The highest layer of the library is for `pytermgui.window_manager`. This layer combines
+parts from everything below. It introduces abstractions on top of the `pytermgui.widget`
 system, and creates its own featureset.
 
 
@@ -66,6 +76,10 @@ with ptg.WindowManager() as manager:
 
     manager.run()
 ```
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png>
+</p>
 """
 
 # https://github.com/python/mypy/issues/4930
@@ -99,65 +113,61 @@ if "-m" in sys.argv:
 __version__ = "0.4.1"
 
 
-def auto(  # pylint: disable=R0911
-    data: Any, **widget_args: Any
-) -> Optional[Union[Widget, list[Splitter]]]:
-    """Create a Widget from data
+def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
+    """
+    ### Create widgets from specific data patterns
 
     This conversion includes various widget classes, as well as some shorthands for
     more complex objects.
 
-    Currently supported:
-        - Label (str):
-            + `"This becomes a label [141] with markup!"`
-            + value: str   -> Label(value, **attrs)
+    `pytermgui.widgets.base.Label`:
 
-        - Splitter (tuple):
-            + `("left", Container("1", "2"), "right")`
-            + tuple[item1: Any, item2: Any] -> Splitter(item1, item2, ..., **attrs)
+    * Created from `str`
+    * Syntax example: `"Label value"`
 
-        - Various button types (list):
-            + Button:
-                * `["Button Label", lambda target, caller: input(caller)]`
-                * list[label: str, onclick: ButtonCallback]  -> Button(label, onclick, **attrs)
+    `pytermgui.widgets.extra.Splitter`:
 
-            + Checkbox:
-                * `[True, lambda checked: input(checked)]`
-                * list[default: bool, callback: Callable[[bool], Any]]  -> \
-                        Checkbox(default, callback, **attrs)
+    * Created from `tuple[Any]`
+    * Syntax example: `(YourWidget(), "auto_syntax", ...)`
 
-            + Toggle:
-                * `[("Default", "Modified"), lambda new_value: input(new_value)]`
-                * list[tuple[state1: str, state2: str], callback: Callable[[str], Any] -> \
-                        Toggle((state1, state2), callback)
+    `pytermgui.widgets.extra.Splitter` prompt:
 
-        - Splitter prompt:
-            + `{"key": InputField("value")}`
-            + dict[left: Any, right: Any]  -> (
-                Splitter(
-                    auto(left, parent_align=0),
-                    auto(right, parent_align=2),
-                    **attrs
-                )
-            )
+    * Created from `dict[Any, Any]`
+    * Syntax example: `{YourWidget(): "auto_syntax"}`
 
-    This method is
-    called implicitly whenever a non-widget is attempted to be added to
+    `pytermgui.widgets.buttons.Button`:
+
+    * Created from `list[str, pytermgui.widgets.buttons.MouseCallback]`
+    * Syntax example: `["Button label", lambda target, caller: ...]`
+
+    `pytermgui.widgets.buttons.Checkbox`:
+
+    * Created from `list[bool, Callable[[bool], Any]]`
+    * Syntax example: `[True, lambda checked: ...]`
+
+    `pytermgui.widgets.buttons.Toggle`:
+
+    * Created from `list[tuple[str, str], Callable[[str], Any]]`
+    * Syntax example: `[("On", "Off"), lambda new_value: ...]`
+
+    This method is called implicitly whenever a non-widget is attempted to be added to
     a Widget. It returns None in case of a failure
 
     Example:
-        >>> from pytermgui import Container
-        >>> form = (
-        ... Container(id="form")
-        ... + "[157 bold]This is a title"
-        ... + ""
-        ... + {"[72 italic]Label1": "[210]Button1"}
-        ... + {"[72 italic]Label2": "[210]Button2"}
-        ... + {"[72 italic]Label3": "[210]Button3"}
-        ... + ""
-        ... + ["Submit", lambda _, button, your_submit_handler(button.parent)]
-        ... )
-        Container(Label(...), Label(...), Splitter(...), Splitter(...), Splitter(...), ...)
+
+    ```python3
+    from pytermgui import Container
+    form = (
+        Container(id="form")
+        + "[157 bold]This is a title"
+        + ""
+        + {"[72 italic]Label1": "[210]Button1"}
+        + {"[72 italic]Label2": "[210]Button2"}
+        + {"[72 italic]Label3": "[210]Button3"}
+        + ""
+        + ["Submit", lambda _, button, your_submit_handler(button.parent)]
+    )
+    ```
 
     Note on pylint: In my opinion, returning immediately after construction is much more readable.
     """

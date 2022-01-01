@@ -77,7 +77,7 @@ from .ansi_interface import foreground
 from .exceptions import MarkupSyntaxError, AnsiSyntaxError
 
 
-__all__ = ["MacroCallable", "MacroCall", "markup"]
+__all__ = ["MacroCallable", "MacroCall", "MarkupLanguage", "markup"]
 
 MacroCallable = Callable[..., str]
 MacroCall = Tuple[MacroCallable, List[str]]
