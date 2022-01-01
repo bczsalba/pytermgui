@@ -35,16 +35,16 @@ class DefaultEnum(IntEnum):
 
 
 class SizePolicy(DefaultEnum):
-    """Values according to which Widget sizes are assigned
-
-    FILL: Keep the Widget's width set exactly to its parent
-    STATIC: Always use the set `width` value, don't adjust on resize
-    (not implemented)RELATIVE: Adjust the Widget's size to be a percentage of the parent
-    """
+    """Values according to which Widget sizes are assigned"""
 
     FILL = _auto()
+    """Inner widget will take up as much width as possible"""
+
     STATIC = _auto()
-    RELATIVE = _auto()  # NOTE: Not implemented
+    """Inner widget will take up an exact amount of width"""
+
+    RELATIVE = _auto()  # TODO: Implement this
+    """Not implemented: Inner widget will take up a percentage of the available width"""
 
 
 class CenteringPolicy(DefaultEnum):
