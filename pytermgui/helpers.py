@@ -10,13 +10,13 @@ __all__ = ["strip_ansi", "strip_markup", "real_length", "get_sequences", "break_
 
 
 def strip_ansi(text: str) -> str:
-    """Remove ansi sequences from `text`"""
+    """Remove ANSI sequences from `text`"""
 
     return RE_ANSI.sub("", text)
 
 
 def strip_markup(text: str) -> str:
-    """Remove markup sequences from `text`"""
+    """Remove markup tags from `text`"""
 
     return RE_MARKUP.sub("", text)
 
@@ -57,11 +57,15 @@ def get_sequences(text: str) -> str:
 def break_line(  # pylint: disable=too-many-branches
     line: str, limit: int, char: str = " "
 ) -> Iterator[str]:
-    """Break a line into a list[str] with maximum `limit` lengths
+    """Break a line into a `list[str]` with maximum `limit` length per line
 
-    This function currently does NOT handle literal newlines (\n), instead
-    chosing to throw them away. You can get around this by splitting your text
-    by newlines prior to handing it to `break_line`."""
+    ANSI sequences are not counted into the length, and styling stays consistent
+    even between lines.
+
+    Note:
+        This function currently does NOT handle literal newlines ("\\n"), instead
+        chosing to throw them away. You can get around this by splitting your text
+        by newlines prior to handing it to `break_line`."""
 
     # TODO: Refactor this method & handle newlines, avoid pylint disables.
 
