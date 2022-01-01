@@ -31,7 +31,7 @@ todo:
 	python3 utils/list_todos.py \"\`grep -rnw . -e '# TODO'\`\"
 
 docs:
-	pdoc --logo ../assets/title.png -o docs pytermgui" > $VIM_PROJPATH/Makefile
+	pdoc --logo https://github.com/bczsalba/pytermgui/blob/master/assets/title.png?raw=true -o docs pytermgui" > $VIM_PROJPATH/Makefile
 }
 
 export VIM_PROJNAME="pytermgui"
