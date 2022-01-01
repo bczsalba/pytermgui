@@ -25,7 +25,7 @@ ptg.unset_alt_buffer()
 ```
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png>
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png style="width: 80%">
 </p>
 
 
@@ -45,7 +45,7 @@ for line in ptg.break_line(text, limit=10):
 ```
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png>
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png style="width: 80%">
 </p>
 
 
@@ -78,7 +78,7 @@ with ptg.WindowManager() as manager:
 ```
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png>
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png style="width: 80%">
 </p>
 """
 
@@ -168,9 +168,9 @@ def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
         + ["Submit", lambda _, button, your_submit_handler(button.parent)]
     )
     ```
-
-    Note on pylint: In my opinion, returning immediately after construction is much more readable.
     """
+
+    # Note on pylint: In my opinion, returning immediately after construction is much more readable.
 
     # Nothing to do.
     if isinstance(data, Widget):
