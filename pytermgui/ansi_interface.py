@@ -2,8 +2,9 @@
 Various functions to interface with the terminal, using ANSI sequences.
 
 Credits:
-    - https://wiki.bash-hackers.org/scripting/terminalcodes
-    - https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+
+- https://wiki.bash-hackers.org/scripting/terminalcodes
+- https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 """
 
 from __future__ import annotations
@@ -24,6 +25,7 @@ from .input import getch
 
 
 __all__ = [
+    "Color",
     "foreground",
     "background",
     "terminal",
@@ -60,17 +62,52 @@ __all__ = [
     "dim",
     "italic",
     "underline",
-    "blinking",
+    "blink",
     "inverse",
     "invisible",
     "strikethrough",
 ]
 
 
-class _Color:
-    """Class to store various color utilities"""
+class Color:
+    """Class to store various color utilities
+
+    Two instances of this class are provided, `foreground`
+    and `background`. The difference between these is the color
+    layer they operate on.
+
+    To use this class you should call either instances with some
+    data type representing a color. The following patterns are supported:
+
+    - `int`: 0-256 terminal colors
+    - `str`: Name of one of the registered named colors. See `Color.names`.
+    - `#rrggbb`: RGB hex string. Note: alpha values are not supported.
+    - `tuple[int, int]`: Tuple of RGB colors, each 0-256.
+    """
 
     ColorType = Union[int, str, tuple[int, int, int]]
+    """A simple type to represent color patterns. See `Color` for more info."""
+
+    names = {
+        "black": 0,
+        "red": 1,
+        "green": 2,
+        "yellow": 3,
+        "blue": 4,
+        "magenta": 5,
+        "cyan": 6,
+        "white": 7,
+        "grey": 8,
+        "brightred": 9,
+        "brightgreen": 10,
+        "brightyellow": 11,
+        "brightblue": 12,
+        "brightmagenta": 13,
+        "brightcyan": 14,
+        "brightwhite": 15,
+    }
+    """16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`
+    will recognize, but if that is your objective it is better to use `pytermgui.parser.MarkupLanguage.alias`."""
 
     def __init__(self, layer: int = 0) -> None:
         """Initialize object
@@ -80,25 +117,6 @@ class _Color:
 
         if layer not in [0, 1]:
             raise NotImplementedError(f"Layer {layer} can only be one of [0, 1].")
-
-        self.names = {
-            "black": 0,
-            "red": 1,
-            "green": 2,
-            "yellow": 3,
-            "blue": 4,
-            "magenta": 5,
-            "cyan": 6,
-            "white": 7,
-            "grey": 8,
-            "brightred": 9,
-            "brightgreen": 10,
-            "brightyellow": 11,
-            "brightblue": 12,
-            "brightmagenta": 13,
-            "brightcyan": 14,
-            "brightwhite": 15,
-        }
 
         self.layer_offset = layer * 10
 
@@ -164,8 +182,11 @@ class _Color:
         )
 
 
-foreground = _Color()
-background = _Color(layer=1)
+foreground = Color()
+"""`Color` instance to setting foreground colors"""
+
+background = Color(layer=1)
+"""`Color` instance to setting background colors"""
 
 
 def screen_size() -> tuple[int, int]:
@@ -279,7 +300,9 @@ def _tput(command: list[str]) -> None:
 
 
 def is_interactive() -> bool:
-    """Check if shell is interactive (`python3` or `python3 -i`)"""
+    """Determine whether shell is interactive.
+
+    A shell is interactive if it is run from `python3` or `python3 -i`."""
 
     return hasattr(sys, "ps1")
 
@@ -319,12 +342,12 @@ def clear(what: str = "screen") -> None:
     """Clear specified region
 
     Available options:
-        - screen - clear whole screen and go to origin
-        - bos    - clear screen from cursor backwards
-        - eos    - clear screen from cursor forwards
-        - line   - clear line and go to beginning
-        - bol    - clear line from cursor backwards
-        - eol    - clear line from cursor forwards
+    - `screen` - clear whole screen and go to origin
+    - `bos` - clear screen from cursor backwards
+    - `eos` - clear screen from cursor forwards
+    - `line` - clear line and go to beginning
+    - `bol` - clear line from cursor backwards
+    - `eol` - clear line from cursor forwards
 
     """
 
@@ -385,7 +408,7 @@ def report_cursor() -> tuple[int, int] | None:
 
 
 def move_cursor(pos: tuple[int, int]) -> None:
-    """Move cursor to `pos`
+    """Move cursor to `pos`.
 
     Note:
         This does not flush the terminal for performance reasons. You
@@ -396,7 +419,7 @@ def move_cursor(pos: tuple[int, int]) -> None:
 
 
 def cursor_up(num: int = 1) -> None:
-    """Move cursor up by `num` lines
+    """Move cursor up by `num` lines.
 
     Note:
         This does not flush the terminal for performance reasons. You
@@ -406,7 +429,7 @@ def cursor_up(num: int = 1) -> None:
 
 
 def cursor_down(num: int = 1) -> None:
-    """Move cursor down by `num` lines
+    """Move cursor down by `num` lines.
 
     Note:
         This does not flush the terminal for performance reasons. You
@@ -416,7 +439,7 @@ def cursor_down(num: int = 1) -> None:
 
 
 def cursor_right(num: int = 1) -> None:
-    """Move cursor left by `num` cols
+    """Move cursor left by `num` cols.
 
     Note:
         This does not flush the terminal for performance reasons. You
@@ -426,7 +449,7 @@ def cursor_right(num: int = 1) -> None:
 
 
 def cursor_left(num: int = 1) -> None:
-    """Move cursor left by `num` cols
+    """Move cursor left by `num` cols.
 
     Note:
         This does not flush the terminal for performance reasons. You
@@ -436,7 +459,7 @@ def cursor_left(num: int = 1) -> None:
 
 
 def cursor_next_line(num: int = 1) -> None:
-    """Move cursor to beginning of num-th line down
+    """Move cursor to beginning of `num`-th line down.
 
     Note:
         This does not flush the terminal for performance reasons. You
@@ -446,7 +469,7 @@ def cursor_next_line(num: int = 1) -> None:
 
 
 def cursor_prev_line(num: int = 1) -> None:
-    """Move cursor to beginning of num-th line down
+    """Move cursor to beginning of `num`-th line down.
 
     Note:
         This does not flush the terminal for performance reasons. You
@@ -456,7 +479,7 @@ def cursor_prev_line(num: int = 1) -> None:
 
 
 def cursor_column(num: int = 0) -> None:
-    """Move cursor to num-th column in the current line
+    """Move cursor to `num`-th column in the current line.
 
     Note:
         This does not flush the terminal for performance reasons. You
@@ -466,7 +489,7 @@ def cursor_column(num: int = 0) -> None:
 
 
 def cursor_home() -> None:
-    """Move cursor to HOME
+    """Move cursor to `terminal.origin`.
 
     Note:
         This does not flush the terminal for performance reasons. You
@@ -479,17 +502,18 @@ def set_mode(mode: Union[str, int], write: bool = True) -> str:
     """Set terminal display mode
 
     Available options:
-        - reset         (0)
-        - bold          (1)
-        - dim           (2)
-        - italic        (3)
-        - underline     (4)
-        - blink         (5)
-        - inverse       (7)
-        - invisible     (8)
-        - strikethrough (9)
+    - 0 - `reset`
+    - 1 - `bold`
+    - 2 - `dim`
+    - 3 - `italic`
+    - 4 - `underline`
+    - 5 - `blink`
+    - 7 - `inverse`
+    - 8 - `invisible`
+    - 9 - `strikethrough`
 
-    You can use both the digit and text forms."""
+    You can use both the digit and text forms, though you should really be
+    using one of the specific setters, like `bold` or `italic`."""
 
     options = {
         "reset": 0,
@@ -532,27 +556,51 @@ def unset_echo() -> None:
 
 
 class MouseAction(Enum):
-    """Enum to hold actions a mouse can perform"""
+    """An enumeration of all the polled mouse actions"""
+
+    LEFT_CLICK = _auto()
+    """Start of a left button action sequence"""
 
     LEFT_DRAG = _auto()
-    LEFT_CLICK = _auto()
+    """Mouse moved while left button was held down"""
+
+    RIGHT_CLICK = _auto()
+    """Start of a right button action sequence"""
 
     RIGHT_DRAG = _auto()
-    RIGHT_CLICK = _auto()
+    """Mouse moved while right button was held down"""
 
     SCROLL_UP = _auto()
+    """Mouse wheel or touchpad scroll upwards"""
+
     SCROLL_DOWN = _auto()
+    """Mouse wheel or touchpad scroll downwards"""
 
     HOVER = _auto()
+    """Mouse moved without clicking
+
+    Note: This only gets registered when hover events are listened to"""
+
     RELEASE = _auto()
+    """Mouse button released; end of any and all mouse action sequences"""
 
 
 @dataclass
 class MouseEvent:
-    """A class to store MouseEvents
+    """A class to represent events created by mouse actions.
 
-    This is here for readability & typing reasons. All
-    the magic-method junk makes the instance iterable."""
+    Its first argument is a `MouseAction` describing what happened,
+    and its second argument is a `tuple[int, int]` describing where
+    it happened.
+
+    This class mostly exists for readability & typing reasons. It also
+    implements the iterable protocol, so you can use the unpacking syntax,
+    such as:
+
+    ```python3
+    action, position = MouseEvent(...)
+    ```
+    """
 
     action: MouseAction
     position: tuple[int, int]
@@ -583,21 +631,26 @@ class MouseEvent:
 def report_mouse(
     event: str, method: Optional[str] = "decimal_xterm", stop: bool = False
 ) -> None:
-    """Start reporting mouse events
+    """Start reporting mouse events.
 
     Options:
-        - press
-        - highlight
-        - press_hold
-        - hover
+    - `press`
+    - `highlight`
+    - `press_hold`
+    - `hover`
 
     Methods:
-        - None:          Limited in coordinates, not recommended.
-        - decimal_xterm: Default, most universal
-        - decimal_urxvt: Older, less compatible
-        - decimal_utf8:  Apparently not too stable
+    - `None`:          Limited in coordinates, not recommended.
+    - `decimal_xterm`: Default, most universal
+    - `decimal_urxvt`: Older, less compatible
+    - `decimal_utf8`:  Apparently not too stable
 
-    More information: https://stackoverflow.com/a/5970472
+    More information <a href='https://stackoverflow.com/a/5970472'>here</a>.
+
+    Note:
+        If you need this functionality, you're probably better off using the wrapper
+        `pytermgui.context_managers.mouse_handler`, which allows listening on multiple
+        events, gives a translator method and handles exceptions.
     """
 
     if event == "press":
@@ -637,9 +690,9 @@ def report_mouse(
 
 
 def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
-    """Translate report_mouse() (decimal_xterm or decimal_urxvt) codes into MouseEvent-s.
+    """Translate the output of produced by setting report_mouse codes into MouseEvent-s.
 
-    See `help(report_mouse)` for more information on methods."""
+    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more information."""
 
     mouse_codes = {
         "decimal_xterm": {
@@ -699,7 +752,7 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
 
 # shorthand functions
 def print_to(pos: tuple[int, int], *args: Any, **kwargs: Any) -> None:
-    """Print text to given `pos`
+    """Print text to given `pos`.
 
     This passes through all arguments (except for `pos`) to the `print`
     method."""
@@ -738,7 +791,7 @@ def underline(text: str, reset_style: Optional[bool] = True) -> str:
     return set_mode("underline", False) + text + (reset() if reset_style else "")
 
 
-def blinking(text: str, reset_style: Optional[bool] = True) -> str:
+def blink(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text blinking"""
 
     return set_mode("blink", False) + text + (reset() if reset_style else "")
