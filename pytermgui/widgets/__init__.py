@@ -47,6 +47,11 @@ with ptg.alt_buffer():
     while True:
         root.handle_key(ptg.getch())
         root.print()
+```
+
+<p style="text-align: center">
+    <img src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/widgets_demo.png">
+</p>
 """
 
 from __future__ import annotations

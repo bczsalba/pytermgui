@@ -20,7 +20,7 @@ from ..enums import WidgetAlignment
 from ..ansi_interface import foreground, background, reset, MouseAction, MouseEvent
 
 
-__all__ = ["Splitter", "ColorPicker", "InputField", "Slider", "alert"]
+__all__ = ["InputField", "Splitter", "ColorPicker", "Slider"]
 
 
 class ColorPicker(Container):
@@ -83,7 +83,7 @@ class Splitter(Container):
     """A Container-like object that allows stacking Widgets horizontally"""
 
     chars: dict[str, list[str] | str] = {"separator": " | "}
-    styles = {"separator": styles.MARKUP, "fill": styles.FOREGROUND}
+    styles = {"separator": styles.MARKUP, "fill": styles.BACKGROUND}
     keys = {
         "previous": {keys.LEFT, "h", keys.CTRL_B},
         "next": {keys.RIGHT, "l", keys.CTRL_F},
@@ -169,7 +169,31 @@ class Splitter(Container):
 
 
 class InputField(Label):
-    """An element to display user input"""
+    """An element to display user input
+
+    This class does NOT read input. To use this widget, send it
+    user data gathered by `pytermgui.input.getch` or other means.
+
+    Example of usage:
+
+    ```python3
+    import pytermgui as ptg
+
+    field = ptg.InputField()
+
+    root = ptg.Container(
+        "[210 bold]This is an InputField!",
+        field,
+    )
+
+    while True:
+        key = getch()
+
+        # Send key to field
+        field.handle_key(key)
+        root.print()
+    ```
+    """
 
     styles = {
         "value": styles.FOREGROUND,
@@ -321,14 +345,13 @@ class Slider(Widget):
     settings page, allowing percentage-based selection of magnitude.
     Using `WindowManager` it can even be dragged around by the user using
     the mouse.
-
-    However, setting the `Slider.locked` flag will disable that behaviour,
-    and freeze the `Widget` to its current value. The cursor is hidden, and
-    mouse inputs are unhandled.
-
-    The `Slider.show_percentage` flag controls whether to display the percentage
-    meter to the right side of the `Slider`.
     """
+
+    locked: bool
+    """Disallow mouse input, hide cursor and lock current state"""
+
+    show_percentage: bool
+    """Show percentage next to the bar"""
 
     chars = {"endpoint": "", "cursor": "█", "fill": "█", "rail": "─"}
 
@@ -474,17 +497,3 @@ class Slider(Widget):
         line_length = self._available - self._display_value
 
         return [left + line_length * rail_char + endpoint_char + counter]
-
-
-def alert(data: Any) -> None:
-    """Create a dismissible dialogue and pause execution"""
-
-    root = Container()
-    root += Label("[210 italic bold]Alert!")
-    root += Label()
-    root += Label(str(data))
-
-    root.center()
-    root.print()
-    getch()
-    root.wipe()

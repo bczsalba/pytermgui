@@ -59,7 +59,19 @@ class StyleCall:
 
 @dataclass
 class MarkupFormatter:
-    """A style-factory that formats depth & item into the given markup on call"""
+    """A style-factory that formats depth & item into the given markup on call.
+
+    Useful in Widget styles, such as:
+
+    ```python3
+    import pytermgui as ptg
+
+    root = ptg.Container()
+
+    # Set border style to be reactive to the widget's depth
+    root.set_style("border", ptg.MarkupFactory("[35 @{depth}]{item}]")
+    ```
+    """
 
     markup: str
     ensure_reset: bool = True
@@ -75,7 +87,16 @@ class MarkupFormatter:
 
 
 CLICKABLE = MarkupFormatter("[@238 72 bold]{item}")
+"""Style for inactive clickable things, such as `pytermgui.widgets.Button`"""
+
 CLICKED = MarkupFormatter("[238 @72 bold]{item}")
+"""Style for active clickable things, such as `pytermgui.widgets.Button`"""
+
 FOREGROUND = lambda depth, item: item
+"""Standard foreground style, currently unused by the library"""
+
 BACKGROUND = lambda depth, item: item
+"""Standard background, used by most `fill` styles"""
+
 MARKUP = lambda depth, item: markup.parse(item)
+"""Style that parses value as markup. Used by most text labels, like `pytermgui.widgets.Label`"""

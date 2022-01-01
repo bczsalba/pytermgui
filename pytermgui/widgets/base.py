@@ -491,7 +491,7 @@ class Container(Widget):
     styles = {
         "border": w_styles.MARKUP,
         "corner": w_styles.MARKUP,
-        "fill": w_styles.FOREGROUND,
+        "fill": w_styles.BACKGROUND,
     }
 
     keys = {

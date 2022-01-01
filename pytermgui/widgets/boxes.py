@@ -2,14 +2,16 @@
 Convenience objects for Container corner & border styles.
 
 They can be used as:
-```
-    from pytermgui import Container, boxes
+```python3
+from pytermgui import Container, boxes
 
-    boxes.DOUBLE_TOP.set_chars_of(Container)
-    c = Container() # this will now use the style chosen
+boxes.DOUBLE_TOP.set_chars_of(Container)
+c = Container() # this will now use the style chosen
 ```
 
-For more info, check out help(pytermgui.boxes.Box)
+Boxes are also settable as a property of `pytermgui.widgets.Container`, and can
+be referenced & defined in markup file definitions. For more info, check out 
+`pytermgui.file_loaders`.
 """
 
 from __future__ import annotations
@@ -23,10 +25,16 @@ from ..helpers import real_length
 class Box:
     """Class for defining border & corner styles
 
-    `lines` should be list[str] of length 3, such as:
-            .---.
-            | x |
-            `---`
+    `lines` should be `list[str]` of length 3, such as:
+
+    ```python3
+    lines = [
+        ".---.",
+        "| x |",
+        "`---`",
+    ]
+    ```
+
     The length of individual lines is arbitrary, only limitation is
     that the top & bottom border characters should occur most often in
     their respective lines.
@@ -42,20 +50,26 @@ class Box:
     construction parameter.
 
     As such, this:
-    >>> boxes.Box(
-    ...    [
-    ...        "corner1 ________________ corner2",
-    ...        "xleft   ################ rightxx",
-    ...        "corner3 ---------------- corner4",
-    ...    ],
-    ...    content_char="#",
-    ... )
 
-    will give:
-        Box(
-            borders=['xleft   ', '_', ' rightxx', '-'],
-            corners=['corner1 ', ' corner2', ' corner4', 'corner3 ']
-        )
+    ```python3
+    boxes.Box(
+       [
+           "corner1 ________________ corner2",
+           "xleft   ################ rightxx",
+           "corner3 ---------------- corner4",
+       ],
+       content_char="#",
+    )
+    ```
+
+    Will result in:
+
+    ```python3
+    Box(
+        borders=['xleft   ', '_', ' rightxx', '-'],
+        corners=['corner1 ', ' corner2', ' corner4', 'corner3 ']
+    )
+    ```
     """
 
     CharType = Tuple[str, str, str, str]
@@ -160,6 +174,7 @@ BASIC = Box(
         "-----",
     ]
 )
+
 HEAVY = Box(
     [
         "┏━━━┓",
