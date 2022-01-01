@@ -215,13 +215,11 @@ class _Keys:
 
         return self._keys.items()
 
-    def __repr__(self) -> str:
-        """Stringify object"""
-
-        return f"Keys(), platform: {self.platform}"
-
 
 _getch: Union[_GetchWindows, _GetchUnix]
+
+keys: _Keys
+"""Instance storing platform specific key codes"""
 
 try:
     import msvcrt
