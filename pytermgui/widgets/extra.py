@@ -310,8 +310,9 @@ class InputField(Label):
 
         # Assign cursor character
         if self.selected_index is None:
-            if self.value == "":
+            if len(self.value) <= self.cursor:
                 cursor_char = ""
+
             else:
                 cursor_char = fill_style(self.value[self.cursor])
 
