@@ -995,7 +995,9 @@ class Container(Widget):
         if target is None:
             return False
 
-        target_widget = self._drag_target or _get_widget(target)
+        target_widget = self._drag_target
+        if self._drag_target is None or target not in self._drag_target.mouse_targets:
+            target_widget = _get_widget(target)
 
         if action is MouseAction.LEFT_CLICK:
             self._drag_target = target_widget

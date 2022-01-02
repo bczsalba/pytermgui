@@ -129,6 +129,8 @@ class Splitter(Container):
         vertical_lines = []
         total_offset = separator_length - 1
 
+        self.mouse_targets = []
+
         for widget in self._widgets:
             inner = []
 
@@ -151,7 +153,7 @@ class Splitter(Container):
                 total_offset += real_length(aligned) + separator_length
 
             vertical_lines.append(inner)
-            self.mouse_targets.extend(widget.mouse_targets)
+            self.mouse_targets += widget.mouse_targets
 
         lines = []
         for horizontal in zip_longest(*vertical_lines, fillvalue=" " * target_width):
