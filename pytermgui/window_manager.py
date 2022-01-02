@@ -719,10 +719,11 @@ class WindowManager(Container):
 
         sys.stdout.write("\033[2J")
         for window in reversed(self._windows):
+            # TODO: Why are these offsets needed?
             if window.allow_fullscreen:
                 window.pos = terminal.origin
-                window.width = terminal.width
-                window.height = terminal.height
+                window.width = terminal.width + 1
+                window.height = terminal.height + 3
 
             if window.has_focus or window.is_noblur:
                 try:
