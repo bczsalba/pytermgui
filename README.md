@@ -83,6 +83,14 @@ By the way, this is what the created `Window` looks like. Nifty, huh?
 </p>
 
 
+A powerful CLI
+--------------
+
+The [cli](/blob/master/pytermgui/cmd.py) simultaneously serves as a set of powerful tooling for TUI related work, as well as a nice usage example of the higher level part of the library. You can run `ptg --getch` to get information about a keypress, `ptg --size` to get the current terminal dimensions and `ptg --file <file>` to interpret & run a YAML markup file inside of a window manager.
+
+For more info, check out `ptg -h`.
+
+
 Fully documented
 ----------------
 
