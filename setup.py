@@ -1,8 +1,10 @@
 from setuptools import setup, find_packages
 
+import pytermgui
+
 setup(
     name="pytermgui",
-    version="0.4.1",
+    version=pytermgui.__version__,
     include_package_data=True,
     package_data={
         "pytermgui": ["py.typed"],
