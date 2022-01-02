@@ -1420,7 +1420,7 @@
 <span class="sd">    import pytermgui as ptg</span>
 
 <span class="sd">    with ptg.alt_buffer():</span>
-<span class="sd">        root = ptg.Container(ptg.Label([&quot;italic 141 underline]This is some [green]fancy [white inverse]text!&quot;))</span>
+<span class="sd">        root = ptg.Container(ptg.Label(&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;))</span>
 <span class="sd">        root.print()</span>
 <span class="sd">        ptg.getch()</span>
 <span class="sd">    ```</span>
@@ -3822,7 +3822,7 @@ a Widget. It returns None in case of a failure</p>
                             <div id="Container.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x1026fa040&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x1026fa040&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x10271bee0&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x10602bee0&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -3833,7 +3833,7 @@ a Widget. It returns None in case of a failure</p>
                             <div id="Container.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;\x0e&#39;, &#39;\x1b[B&#39;, &#39;j&#39;}, &#39;previous&#39;: {&#39;\x1b[A&#39;, &#39;\x10&#39;, &#39;k&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;\x0e&#39;, &#39;j&#39;, &#39;\x1b[B&#39;}, &#39;previous&#39;: {&#39;k&#39;, &#39;\x1b[A&#39;, &#39;\x10&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Container.handle_key">handle_key</a></code></p>
@@ -4592,7 +4592,7 @@ re-applied when <code><a href="#Container.center">center()</a></code> is called 
 <span class="sd">    import pytermgui as ptg</span>
 
 <span class="sd">    with ptg.alt_buffer():</span>
-<span class="sd">        root = ptg.Container(ptg.Label([&quot;italic 141 underline]This is some [green]fancy [white inverse]text!&quot;))</span>
+<span class="sd">        root = ptg.Container(ptg.Label(&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;))</span>
 <span class="sd">        root.print()</span>
 <span class="sd">        ptg.getch()</span>
 <span class="sd">    ```</span>
@@ -4634,7 +4634,7 @@ allows it to house markup text that is parsed before display, such as:</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 
 <span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">alt_buffer</span><span class="p">():</span>
-    <span class="n">root</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">Container</span><span class="p">(</span><span class="n">ptg</span><span class="o">.</span><span class="n">Label</span><span class="p">([</span><span class="s2">&quot;italic 141 underline]This is some [green]fancy [white inverse]text!&quot;</span><span class="p">))</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">Container</span><span class="p">(</span><span class="n">ptg</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;</span><span class="p">))</span>
     <span class="n">root</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
     <span class="n">ptg</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
 </code></pre></div>
@@ -4674,7 +4674,7 @@ allows it to house markup text that is parsed before display, such as:</p>
                             <div id="Label.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Label.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x1026fa040&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
