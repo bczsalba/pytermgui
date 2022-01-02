@@ -70,8 +70,8 @@ def write_version_badge(output_file: str) -> None:
 def main() -> None:
     """Main method"""
 
-    write_quality_badge("make lint", "assets/quality.svg")
-    write_version_badge("assets/version.svg")
+    write_quality_badge("make lint", "assets/badges/quality.svg")
+    write_version_badge("assets/badges/version.svg")
 
 
 if __name__ == "__main__":
