@@ -99,7 +99,7 @@ We take pride in seeing others use the library. If you have a project you'd like
 | Project name  | Project description | Demo image|
 ----------------|---------------------|------------
 | [`sipedon`](https://github.com/bczsalba/sipedon) | An interactive aquarium for your terminal. | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/new-readme/assets/demos/sipedon.png?raw=true" width=50%></p> |
-| [`tracers`](https://github.com/bczsalba/sipedon) | Easily debug and trace attribute changes in your Python classes | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/new-readme/assets/demos/tracers.png?raw=true" width=50%></p> |
+| [`tracers`](https://github.com/bczsalba/tracers) | Easily debug and trace attribute changes in your Python classes | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/new-readme/assets/demos/tracers.png?raw=true" width=50%></p> |
 
 
 Some showcase images
