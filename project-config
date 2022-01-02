@@ -12,6 +12,9 @@ PROJECT = $VIM_PROJNAME
 install:
 	pip3 install -e .
 
+all:
+	make install edit docs todo
+
 edit:
 	make format && make lint && make typecheck && make badge
 

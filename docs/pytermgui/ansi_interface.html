@@ -245,7 +245,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">signal</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span> <span class="k">as</span> <span class="n">_auto</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">stdout</span> <span class="k">as</span> <span class="n">_stdout</span>
@@ -317,7 +317,7 @@
 <span class="sd">    - `tuple[int, int]`: Tuple of RGB colors, each 0-256.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">ColorType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
+    <span class="n">ColorType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
     <span class="sd">&quot;&quot;&quot;A simple type to represent color patterns. See `Color` for more info.&quot;&quot;&quot;</span>
 
     <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
@@ -339,7 +339,8 @@
         <span class="s2">&quot;brightwhite&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="sd">&quot;&quot;&quot;16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`</span>
-<span class="sd">    will recognize, but if that is your objective it is better to use `pytermgui.parser.MarkupLanguage.alias`.&quot;&quot;&quot;</span>
+<span class="sd">    will recognize, but if that is your objective it is better to use</span>
+<span class="sd">    `pytermgui.parser.MarkupLanguage.alias`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object</span>
@@ -528,7 +529,8 @@
         <span class="n">_run</span><span class="p">(</span><span class="n">str_command</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="n">_Popen</span><span class="p">(</span><span class="n">str_command</span><span class="p">)</span>
+    <span class="c1"># A with statement here would result in `pass`, so is unnecessary.</span>
+    <span class="n">_Popen</span><span class="p">(</span><span class="n">str_command</span><span class="p">)</span>  <span class="c1"># pylint: disable=consider-using-with</span>
 
 
 <span class="k">def</span> <span class="nf">is_interactive</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -924,7 +926,8 @@
 <span class="k">def</span> <span class="nf">translate_mouse</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">MouseEvent</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Translate the output of produced by setting report_mouse codes into MouseEvent-s.</span>
 
-<span class="sd">    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more information.&quot;&quot;&quot;</span>
+<span class="sd">    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more</span>
+<span class="sd">    information.&quot;&quot;&quot;</span>
 
     <span class="n">mouse_codes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;decimal_xterm&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1079,7 +1082,7 @@
 <span class="sd">    - `tuple[int, int]`: Tuple of RGB colors, each 0-256.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">ColorType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
+    <span class="n">ColorType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
     <span class="sd">&quot;&quot;&quot;A simple type to represent color patterns. See `Color` for more info.&quot;&quot;&quot;</span>
 
     <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
@@ -1101,7 +1104,8 @@
         <span class="s2">&quot;brightwhite&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="sd">&quot;&quot;&quot;16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`</span>
-<span class="sd">    will recognize, but if that is your objective it is better to use `pytermgui.parser.MarkupLanguage.alias`.&quot;&quot;&quot;</span>
+<span class="sd">    will recognize, but if that is your objective it is better to use</span>
+<span class="sd">    `pytermgui.parser.MarkupLanguage.alias`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object</span>
@@ -1230,7 +1234,7 @@ will represent foreground or background colors.</p>
                             <div id="Color.ColorType" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Color.ColorType">#&nbsp;&nbsp</a>
 
-        <span class="name">ColorType</span><span class="default_value"> = typing.Union[int, str, tuple[int, int, int]]</span>
+        <span class="name">ColorType</span><span class="default_value"> = typing.Union[int, str, typing.Tuple[int, int, int]]</span>
     </div>
 
             <div class="docstring"><p>A simple type to represent color patterns. See <code><a href="#Color">Color</a></code> for more info.</p>
@@ -1245,7 +1249,8 @@ will represent foreground or background colors.</p>
     </div>
 
             <div class="docstring"><p>16 default named colors. Expanding this list will expand the names <code><a href="parser.html#markup">pytermgui.parser.markup</a></code>
-will recognize, but if that is your objective it is better to use <code><a href="parser.html#MarkupLanguage.alias">pytermgui.parser.MarkupLanguage.alias</a></code>.</p>
+will recognize, but if that is your objective it is better to use
+<code><a href="parser.html#MarkupLanguage.alias">pytermgui.parser.MarkupLanguage.alias</a></code>.</p>
 </div>
 
 
@@ -2387,7 +2392,8 @@ such as:</p>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">translate_mouse</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">MouseEvent</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Translate the output of produced by setting report_mouse codes into MouseEvent-s.</span>
 
-<span class="sd">    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more information.&quot;&quot;&quot;</span>
+<span class="sd">    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more</span>
+<span class="sd">    information.&quot;&quot;&quot;</span>
 
     <span class="n">mouse_codes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;decimal_xterm&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -2449,7 +2455,8 @@ such as:</p>
 
             <div class="docstring"><p>Translate the output of produced by setting report_mouse codes into MouseEvent-s.</p>
 
-<p>This currently only supports <code>decimal_xterm</code> and <code>decimal_urvxt</code>. See <code><a href="#report_mouse">report_mouse</a></code> for more information.</p>
+<p>This currently only supports <code>decimal_xterm</code> and <code>decimal_urvxt</code>. See <code><a href="#report_mouse">report_mouse</a></code> for more
+information.</p>
 </div>
 
 

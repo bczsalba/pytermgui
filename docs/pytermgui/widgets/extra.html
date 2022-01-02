@@ -182,7 +182,7 @@
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">MouseTarget</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">styles</span>
-<span class="kn">from</span> <span class="nn">..input</span> <span class="kn">import</span> <span class="n">keys</span><span class="p">,</span> <span class="n">getch</span>
+<span class="kn">from</span> <span class="nn">..input</span> <span class="kn">import</span> <span class="n">keys</span>
 <span class="kn">from</span> <span class="nn">..helpers</span> <span class="kn">import</span> <span class="n">real_length</span>
 <span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="n">WidgetAlignment</span>
 <span class="kn">from</span> <span class="nn">..ansi_interface</span> <span class="kn">import</span> <span class="n">foreground</span><span class="p">,</span> <span class="n">background</span><span class="p">,</span> <span class="n">reset</span><span class="p">,</span> <span class="n">MouseAction</span><span class="p">,</span> <span class="n">MouseEvent</span>
@@ -216,7 +216,7 @@
     <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get color table lines&quot;&quot;&quot;</span>
 
-        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
         <span class="n">left_border</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">right_border</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">chars</span>
 
@@ -267,7 +267,7 @@
 <span class="sd">        r/wordavalanches&quot;&quot;&quot;</span>
 
         <span class="n">available</span> <span class="o">=</span> <span class="n">target_width</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
+        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
 
         <span class="n">char</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
@@ -287,7 +287,7 @@
 <span class="sd">        Note: This currently has some issues.&quot;&quot;&quot;</span>
 
         <span class="c1"># An error will be raised if `separator` is not the correct type (str).</span>
-        <span class="n">separator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="n">separator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">separator</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="n">separator_length</span> <span class="o">=</span> <span class="n">real_length</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
 
@@ -464,8 +464,8 @@
     <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get lines of object&quot;&quot;&quot;</span>
 
-        <span class="n">cursor_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
-        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
+        <span class="n">cursor_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
+        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
 
         <span class="c1"># Cache value to be reset later</span>
         <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
@@ -490,7 +490,7 @@
         <span class="c1"># Set new value, get lines using it</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">cursor_char</span> <span class="o">+</span> <span class="n">right</span>
@@ -625,16 +625,16 @@
         <span class="sd">&quot;&quot;&quot;Get lines of object&quot;&quot;&quot;</span>
 
         <span class="c1"># Get characters</span>
-        <span class="n">rail_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;rail&quot;</span><span class="p">)</span>
+        <span class="n">rail_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;rail&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rail_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">endpoint_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;endpoint&quot;</span><span class="p">)</span>
+        <span class="n">endpoint_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;endpoint&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">endpoint_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">cursor_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
+        <span class="n">cursor_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cursor_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">fill_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
+        <span class="n">fill_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="c1"># Clamp value</span>
@@ -648,13 +648,13 @@
 
         <span class="c1"># Only highlight cursor if currently selected</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
+            <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
             <span class="n">cursor_char</span> <span class="o">=</span> <span class="n">highlight_style</span><span class="p">(</span><span class="n">cursor_char</span><span class="p">)</span>
             <span class="n">fill_char</span> <span class="o">=</span> <span class="n">highlight_style</span><span class="p">(</span><span class="n">fill_char</span><span class="p">)</span>
 
         <span class="c1"># Construct left side</span>
         <span class="n">left</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_display_value</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">cursor_char</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">fill_char</span>
-        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;filled&quot;</span><span class="p">)(</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">cursor_char</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;filled&quot;</span><span class="p">)(</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">cursor_char</span>
 
         <span class="c1"># Define mouse target</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">=</span> <span class="p">[]</span>
@@ -815,8 +815,8 @@
     <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get lines of object&quot;&quot;&quot;</span>
 
-        <span class="n">cursor_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
-        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
+        <span class="n">cursor_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
+        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
 
         <span class="c1"># Cache value to be reset later</span>
         <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
@@ -841,7 +841,7 @@
         <span class="c1"># Set new value, get lines using it</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">cursor_char</span> <span class="o">+</span> <span class="n">right</span>
@@ -922,7 +922,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                             <div id="InputField.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#InputField.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x10602b940&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[inverse]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;fill&#39;: MarkupFormatter(markup=&#39;[@243]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x1061c1670&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[inverse]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;fill&#39;: MarkupFormatter(markup=&#39;[@243]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1077,8 +1077,8 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get lines of object&quot;&quot;&quot;</span>
 
-        <span class="n">cursor_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
-        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
+        <span class="n">cursor_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
+        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
 
         <span class="c1"># Cache value to be reset later</span>
         <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
@@ -1103,7 +1103,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
         <span class="c1"># Set new value, get lines using it</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">cursor_char</span> <span class="o">+</span> <span class="n">right</span>
@@ -1151,8 +1151,6 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                 <dd id="InputField.get_target" class="function"><a href="base.html#Widget.get_target">get_target</a></dd>
                 <dd id="InputField.serialize" class="function"><a href="base.html#Widget.serialize">serialize</a></dd>
                 <dd id="InputField.copy" class="function"><a href="base.html#Widget.copy">copy</a></dd>
-                <dd id="InputField.get_style" class="function"><a href="base.html#Widget.get_style">get_style</a></dd>
-                <dd id="InputField.get_char" class="function"><a href="base.html#Widget.get_char">get_char</a></dd>
                 <dd id="InputField.bind" class="function"><a href="base.html#Widget.bind">bind</a></dd>
                 <dd id="InputField.execute_binding" class="function"><a href="base.html#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="InputField.select" class="function"><a href="base.html#Widget.select">select</a></dd>
@@ -1200,7 +1198,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
 <span class="sd">        r/wordavalanches&quot;&quot;&quot;</span>
 
         <span class="n">available</span> <span class="o">=</span> <span class="n">target_width</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
+        <span class="n">fill_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
 
         <span class="n">char</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
@@ -1220,7 +1218,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
 <span class="sd">        Note: This currently has some issues.&quot;&quot;&quot;</span>
 
         <span class="c1"># An error will be raised if `separator` is not the correct type (str).</span>
-        <span class="n">separator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="n">separator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">separator</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="n">separator_length</span> <span class="o">=</span> <span class="n">real_length</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
 
@@ -1289,7 +1287,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                             <div id="Splitter.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Splitter.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;separator&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x10602bee0&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;separator&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x1061c1c10&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1300,7 +1298,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                             <div id="Splitter.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Splitter.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;\x02&#39;, &#39;\x1b[D&#39;, &#39;h&#39;}, &#39;next&#39;: {&#39;l&#39;, &#39;\x06&#39;, &#39;\x1b[C&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;\x1b[D&#39;, &#39;\x02&#39;, &#39;h&#39;}, &#39;next&#39;: {&#39;\x1b[C&#39;, &#39;\x06&#39;, &#39;l&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Splitter.handle_key">handle_key</a></code></p>
@@ -1335,7 +1333,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
 <span class="sd">        Note: This currently has some issues.&quot;&quot;&quot;</span>
 
         <span class="c1"># An error will be raised if `separator` is not the correct type (str).</span>
-        <span class="n">separator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="n">separator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;separator&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">separator</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="n">separator_length</span> <span class="o">=</span> <span class="n">real_length</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
 
@@ -1449,8 +1447,6 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                 <dd id="Splitter.define_mouse_target" class="function"><a href="base.html#Widget.define_mouse_target">define_mouse_target</a></dd>
                 <dd id="Splitter.get_target" class="function"><a href="base.html#Widget.get_target">get_target</a></dd>
                 <dd id="Splitter.copy" class="function"><a href="base.html#Widget.copy">copy</a></dd>
-                <dd id="Splitter.get_style" class="function"><a href="base.html#Widget.get_style">get_style</a></dd>
-                <dd id="Splitter.get_char" class="function"><a href="base.html#Widget.get_char">get_char</a></dd>
                 <dd id="Splitter.bind" class="function"><a href="base.html#Widget.bind">bind</a></dd>
                 <dd id="Splitter.execute_binding" class="function"><a href="base.html#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="Splitter.from_data" class="function"><a href="base.html#Widget.from_data">from_data</a></dd>
@@ -1495,7 +1491,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
     <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get color table lines&quot;&quot;&quot;</span>
 
-        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
         <span class="n">left_border</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">right_border</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">chars</span>
 
@@ -1608,7 +1604,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get color table lines&quot;&quot;&quot;</span>
 
-        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
         <span class="n">left_border</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">right_border</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">chars</span>
 
@@ -1704,8 +1700,6 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                 <dd id="ColorPicker.define_mouse_target" class="function"><a href="base.html#Widget.define_mouse_target">define_mouse_target</a></dd>
                 <dd id="ColorPicker.get_target" class="function"><a href="base.html#Widget.get_target">get_target</a></dd>
                 <dd id="ColorPicker.copy" class="function"><a href="base.html#Widget.copy">copy</a></dd>
-                <dd id="ColorPicker.get_style" class="function"><a href="base.html#Widget.get_style">get_style</a></dd>
-                <dd id="ColorPicker.get_char" class="function"><a href="base.html#Widget.get_char">get_char</a></dd>
                 <dd id="ColorPicker.bind" class="function"><a href="base.html#Widget.bind">bind</a></dd>
                 <dd id="ColorPicker.execute_binding" class="function"><a href="base.html#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="ColorPicker.from_data" class="function"><a href="base.html#Widget.from_data">from_data</a></dd>
@@ -1838,16 +1832,16 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
         <span class="sd">&quot;&quot;&quot;Get lines of object&quot;&quot;&quot;</span>
 
         <span class="c1"># Get characters</span>
-        <span class="n">rail_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;rail&quot;</span><span class="p">)</span>
+        <span class="n">rail_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;rail&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rail_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">endpoint_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;endpoint&quot;</span><span class="p">)</span>
+        <span class="n">endpoint_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;endpoint&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">endpoint_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">cursor_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
+        <span class="n">cursor_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cursor_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">fill_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
+        <span class="n">fill_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="c1"># Clamp value</span>
@@ -1861,13 +1855,13 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
 
         <span class="c1"># Only highlight cursor if currently selected</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
+            <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
             <span class="n">cursor_char</span> <span class="o">=</span> <span class="n">highlight_style</span><span class="p">(</span><span class="n">cursor_char</span><span class="p">)</span>
             <span class="n">fill_char</span> <span class="o">=</span> <span class="n">highlight_style</span><span class="p">(</span><span class="n">fill_char</span><span class="p">)</span>
 
         <span class="c1"># Construct left side</span>
         <span class="n">left</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_display_value</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">cursor_char</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">fill_char</span>
-        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;filled&quot;</span><span class="p">)(</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">cursor_char</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;filled&quot;</span><span class="p">)(</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">cursor_char</span>
 
         <span class="c1"># Define mouse target</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1976,7 +1970,7 @@ the mouse.</p>
                             <div id="Slider.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Slider.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;filled&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;unfilled&#39;: &lt;function &lt;lambda&gt; at 0x10602b940&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;highlight&#39;: MarkupFormatter(markup=&#39;[238 @72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;filled&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;unfilled&#39;: &lt;function &lt;lambda&gt; at 0x1061c1670&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;highlight&#39;: MarkupFormatter(markup=&#39;[238 @72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1987,7 +1981,7 @@ the mouse.</p>
                             <div id="Slider.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Slider.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;increase&#39;: {&#39;+&#39;, &#39;l&#39;, &#39;\x06&#39;, &#39;\x1b[C&#39;}, &#39;decrease&#39;: {&#39;\x02&#39;, &#39;-&#39;, &#39;\x1b[D&#39;, &#39;h&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;increase&#39;: {&#39;+&#39;, &#39;\x1b[C&#39;, &#39;\x06&#39;, &#39;l&#39;}, &#39;decrease&#39;: {&#39;\x1b[D&#39;, &#39;\x02&#39;, &#39;h&#39;, &#39;-&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Slider.handle_key">handle_key</a></code></p>
@@ -2116,16 +2110,16 @@ the mouse.</p>
         <span class="sd">&quot;&quot;&quot;Get lines of object&quot;&quot;&quot;</span>
 
         <span class="c1"># Get characters</span>
-        <span class="n">rail_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;rail&quot;</span><span class="p">)</span>
+        <span class="n">rail_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;rail&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rail_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">endpoint_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;endpoint&quot;</span><span class="p">)</span>
+        <span class="n">endpoint_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;endpoint&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">endpoint_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">cursor_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
+        <span class="n">cursor_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;cursor&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cursor_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">fill_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
+        <span class="n">fill_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_char</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="c1"># Clamp value</span>
@@ -2139,13 +2133,13 @@ the mouse.</p>
 
         <span class="c1"># Only highlight cursor if currently selected</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
+            <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
             <span class="n">cursor_char</span> <span class="o">=</span> <span class="n">highlight_style</span><span class="p">(</span><span class="n">cursor_char</span><span class="p">)</span>
             <span class="n">fill_char</span> <span class="o">=</span> <span class="n">highlight_style</span><span class="p">(</span><span class="n">fill_char</span><span class="p">)</span>
 
         <span class="c1"># Construct left side</span>
         <span class="n">left</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_display_value</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">cursor_char</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">fill_char</span>
-        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;filled&quot;</span><span class="p">)(</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">cursor_char</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;filled&quot;</span><span class="p">)(</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">cursor_char</span>
 
         <span class="c1"># Define mouse target</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2190,8 +2184,6 @@ the mouse.</p>
                 <dd id="Slider.get_target" class="function"><a href="base.html#Widget.get_target">get_target</a></dd>
                 <dd id="Slider.serialize" class="function"><a href="base.html#Widget.serialize">serialize</a></dd>
                 <dd id="Slider.copy" class="function"><a href="base.html#Widget.copy">copy</a></dd>
-                <dd id="Slider.get_style" class="function"><a href="base.html#Widget.get_style">get_style</a></dd>
-                <dd id="Slider.get_char" class="function"><a href="base.html#Widget.get_char">get_char</a></dd>
                 <dd id="Slider.bind" class="function"><a href="base.html#Widget.bind">bind</a></dd>
                 <dd id="Slider.execute_binding" class="function"><a href="base.html#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="Slider.select" class="function"><a href="base.html#Widget.select">select</a></dd>

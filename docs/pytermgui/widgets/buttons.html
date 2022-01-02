@@ -172,9 +172,9 @@
         <span class="sd">&quot;&quot;&quot;Get object lines&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">label_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
-        <span class="n">delimiters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;delimiter&quot;</span><span class="p">)</span>
-        <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
+        <span class="n">label_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+        <span class="n">delimiters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;delimiter&quot;</span><span class="p">)</span>
+        <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delimiters</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">delimiters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">delimiters</span>
@@ -212,7 +212,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
 
-        <span class="n">unchecked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
+        <span class="n">unchecked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unchecked</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">unchecked</span><span class="p">,</span> <span class="n">onclick</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toggle</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
@@ -233,7 +233,7 @@
     <span class="k">def</span> <span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">run_callback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Toggle state&quot;&quot;&quot;</span>
 
-        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;checked&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;checked&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">checked</span> <span class="o">^=</span> <span class="kc">True</span>
@@ -338,9 +338,9 @@
         <span class="sd">&quot;&quot;&quot;Get object lines&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">label_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
-        <span class="n">delimiters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;delimiter&quot;</span><span class="p">)</span>
-        <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
+        <span class="n">label_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+        <span class="n">delimiters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;delimiter&quot;</span><span class="p">)</span>
+        <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delimiters</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">delimiters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">delimiters</span>
@@ -483,9 +483,9 @@
         <span class="sd">&quot;&quot;&quot;Get object lines&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">label_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
-        <span class="n">delimiters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;delimiter&quot;</span><span class="p">)</span>
-        <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
+        <span class="n">label_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+        <span class="n">delimiters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;delimiter&quot;</span><span class="p">)</span>
+        <span class="n">highlight_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;highlight&quot;</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delimiters</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">delimiters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">delimiters</span>
@@ -535,8 +535,6 @@
                 <dd id="Button.handle_key" class="function"><a href="base.html#Widget.handle_key">handle_key</a></dd>
                 <dd id="Button.serialize" class="function"><a href="base.html#Widget.serialize">serialize</a></dd>
                 <dd id="Button.copy" class="function"><a href="base.html#Widget.copy">copy</a></dd>
-                <dd id="Button.get_style" class="function"><a href="base.html#Widget.get_style">get_style</a></dd>
-                <dd id="Button.get_char" class="function"><a href="base.html#Widget.get_char">get_char</a></dd>
                 <dd id="Button.bind" class="function"><a href="base.html#Widget.bind">bind</a></dd>
                 <dd id="Button.execute_binding" class="function"><a href="base.html#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="Button.select" class="function"><a href="base.html#Widget.select">select</a></dd>
@@ -576,7 +574,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
 
-        <span class="n">unchecked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
+        <span class="n">unchecked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unchecked</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">unchecked</span><span class="p">,</span> <span class="n">onclick</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toggle</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
@@ -597,7 +595,7 @@
     <span class="k">def</span> <span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">run_callback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Toggle state&quot;&quot;&quot;</span>
 
-        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;checked&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;checked&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">checked</span> <span class="o">^=</span> <span class="kc">True</span>
@@ -639,7 +637,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
 
-        <span class="n">unchecked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
+        <span class="n">unchecked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unchecked</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">unchecked</span><span class="p">,</span> <span class="n">onclick</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toggle</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
@@ -683,7 +681,7 @@
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">run_callback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Toggle state&quot;&quot;&quot;</span>
 
-        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;checked&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;checked&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;unchecked&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">checked</span> <span class="o">^=</span> <span class="kc">True</span>
@@ -733,8 +731,6 @@
                 <dd id="Checkbox.handle_key" class="function"><a href="base.html#Widget.handle_key">handle_key</a></dd>
                 <dd id="Checkbox.serialize" class="function"><a href="base.html#Widget.serialize">serialize</a></dd>
                 <dd id="Checkbox.copy" class="function"><a href="base.html#Widget.copy">copy</a></dd>
-                <dd id="Checkbox.get_style" class="function"><a href="base.html#Widget.get_style">get_style</a></dd>
-                <dd id="Checkbox.get_char" class="function"><a href="base.html#Widget.get_char">get_char</a></dd>
                 <dd id="Checkbox.bind" class="function"><a href="base.html#Widget.bind">bind</a></dd>
                 <dd id="Checkbox.execute_binding" class="function"><a href="base.html#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="Checkbox.select" class="function"><a href="base.html#Widget.select">select</a></dd>
@@ -868,8 +864,6 @@
                 <dd id="Toggle.handle_key" class="function"><a href="base.html#Widget.handle_key">handle_key</a></dd>
                 <dd id="Toggle.serialize" class="function"><a href="base.html#Widget.serialize">serialize</a></dd>
                 <dd id="Toggle.copy" class="function"><a href="base.html#Widget.copy">copy</a></dd>
-                <dd id="Toggle.get_style" class="function"><a href="base.html#Widget.get_style">get_style</a></dd>
-                <dd id="Toggle.get_char" class="function"><a href="base.html#Widget.get_char">get_char</a></dd>
                 <dd id="Toggle.bind" class="function"><a href="base.html#Widget.bind">bind</a></dd>
                 <dd id="Toggle.execute_binding" class="function"><a href="base.html#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="Toggle.select" class="function"><a href="base.html#Widget.select">select</a></dd>

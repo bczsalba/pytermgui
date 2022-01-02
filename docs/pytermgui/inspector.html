@@ -65,14 +65,14 @@
                     <h1 class="modulename">
 <a href="./../pytermgui.html">pytermgui</a><wbr>.inspector    </h1>
 
-                        <div class="docstring"><p><code><a href="#Inspector">Inspector</a></code> widget and inspection utilities for (in the future) any Python objects. This 
+                        <div class="docstring"><p><code><a href="#Inspector">Inspector</a></code> widget and inspection utilities for (in the future) any Python objects. This
 module will soon see a full overhaul, so the API is likely to change.</p>
 </div>
 
                         <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">`Inspector` widget and inspection utilities for (in the future) any Python objects. This </span>
+<span class="sd">`Inspector` widget and inspection utilities for (in the future) any Python objects. This</span>
 <span class="sd">module will soon see a full overhaul, so the API is likely to change.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1"># TODO: This module should get a rewrite at some point:</span>
@@ -93,7 +93,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
 <span class="kn">from</span> <span class="nn">.context_managers</span> <span class="kn">import</span> <span class="n">alt_buffer</span>
 <span class="kn">from</span> <span class="nn">.widgets.boxes</span> <span class="kn">import</span> <span class="n">DOUBLE_BOTTOM</span>
 <span class="kn">from</span> <span class="nn">.widgets.base</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Label</span>
-<span class="kn">from</span> <span class="nn">.widgets.styles</span> <span class="kn">import</span> <span class="n">MarkupFormatter</span><span class="p">,</span> <span class="n">StyleType</span>
+<span class="kn">from</span> <span class="nn">.widgets.styles</span> <span class="kn">import</span> <span class="n">MarkupFormatter</span><span class="p">,</span> <span class="n">StyleType</span><span class="p">,</span> <span class="n">StyleCall</span>
 <span class="kn">from</span> <span class="nn">.ansi_interface</span> <span class="kn">import</span> <span class="n">foreground</span><span class="p">,</span> <span class="n">terminal</span><span class="p">,</span> <span class="n">is_interactive</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;inspect&quot;</span><span class="p">,</span> <span class="s2">&quot;Inspector&quot;</span><span class="p">]</span>
@@ -151,10 +151,10 @@ module will soon see a full overhaul, so the API is likely to change.</p>
     <span class="n">root</span> <span class="o">+=</span> <span class="n">Label</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">style</span><span class="p">:</span>
-        <span class="n">builtin_style</span> <span class="o">=</span> <span class="n">inspector</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;builtin&quot;</span><span class="p">)</span>
+        <span class="n">builtin_style</span> <span class="o">=</span> <span class="n">StyleCall</span><span class="p">(</span><span class="n">inspector</span><span class="p">,</span> <span class="n">inspector</span><span class="o">.</span><span class="n">styles</span><span class="p">[</span><span class="s2">&quot;builtin&quot;</span><span class="p">])</span>
         <span class="n">DOUBLE_BOTTOM</span><span class="o">.</span><span class="n">set_chars_of</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
 
-        <span class="n">corners</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">corners</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">chars</span><span class="p">[</span><span class="s2">&quot;corner&quot;</span><span class="p">]</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corners</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
         <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; Inspecting: &quot;</span> <span class="o">+</span> <span class="n">builtin_style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">root</span><span class="o">.</span><span class="n">set_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">,</span> <span class="n">corners</span><span class="p">)</span>
@@ -238,7 +238,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
     <span class="k">def</span> <span class="nf">_get_docstring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get docstring of target&quot;&quot;&quot;</span>
 
-        <span class="n">string_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">)</span>
+        <span class="n">string_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">)</span>
 
         <span class="n">doc</span> <span class="o">=</span> <span class="n">getdoc</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -255,8 +255,8 @@ module will soon see a full overhaul, so the API is likely to change.</p>
     <span class="k">def</span> <span class="nf">_get_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get definition (def fun(...) / class Cls(...)) of an object&quot;&quot;&quot;</span>
 
-        <span class="n">name_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
-        <span class="n">declaration_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;declaration&quot;</span><span class="p">)</span>
+        <span class="n">name_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="n">declaration_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;declaration&quot;</span><span class="p">)</span>
 
         <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">declaration_style</span><span class="p">(</span><span class="s2">&quot;class&quot;</span> <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;def&quot;</span><span class="p">)]</span>
 
@@ -306,11 +306,11 @@ module will soon see a full overhaul, so the API is likely to change.</p>
     <span class="k">def</span> <span class="nf">_style_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Style an annotation property&quot;&quot;&quot;</span>
 
-        <span class="n">builtin_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;builtin&quot;</span><span class="p">)</span>
+        <span class="n">builtin_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;builtin&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">builtin_style</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;\[&quot;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">builtin_style</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">builtin_style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;\[&quot;</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">builtin_style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">inspect</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -443,10 +443,10 @@ module will soon see a full overhaul, so the API is likely to change.</p>
     <span class="n">root</span> <span class="o">+=</span> <span class="n">Label</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">style</span><span class="p">:</span>
-        <span class="n">builtin_style</span> <span class="o">=</span> <span class="n">inspector</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;builtin&quot;</span><span class="p">)</span>
+        <span class="n">builtin_style</span> <span class="o">=</span> <span class="n">StyleCall</span><span class="p">(</span><span class="n">inspector</span><span class="p">,</span> <span class="n">inspector</span><span class="o">.</span><span class="n">styles</span><span class="p">[</span><span class="s2">&quot;builtin&quot;</span><span class="p">])</span>
         <span class="n">DOUBLE_BOTTOM</span><span class="o">.</span><span class="n">set_chars_of</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
 
-        <span class="n">corners</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">corners</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">chars</span><span class="p">[</span><span class="s2">&quot;corner&quot;</span><span class="p">]</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corners</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
         <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; Inspecting: &quot;</span> <span class="o">+</span> <span class="n">builtin_style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">root</span><span class="o">.</span><span class="n">set_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">,</span> <span class="n">corners</span><span class="p">)</span>
@@ -548,7 +548,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
     <span class="k">def</span> <span class="nf">_get_docstring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get docstring of target&quot;&quot;&quot;</span>
 
-        <span class="n">string_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">)</span>
+        <span class="n">string_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">)</span>
 
         <span class="n">doc</span> <span class="o">=</span> <span class="n">getdoc</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -565,8 +565,8 @@ module will soon see a full overhaul, so the API is likely to change.</p>
     <span class="k">def</span> <span class="nf">_get_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get definition (def fun(...) / class Cls(...)) of an object&quot;&quot;&quot;</span>
 
-        <span class="n">name_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
-        <span class="n">declaration_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;declaration&quot;</span><span class="p">)</span>
+        <span class="n">name_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="n">declaration_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;declaration&quot;</span><span class="p">)</span>
 
         <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">declaration_style</span><span class="p">(</span><span class="s2">&quot;class&quot;</span> <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;def&quot;</span><span class="p">)]</span>
 
@@ -616,11 +616,11 @@ module will soon see a full overhaul, so the API is likely to change.</p>
     <span class="k">def</span> <span class="nf">_style_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Style an annotation property&quot;&quot;&quot;</span>
 
-        <span class="n">builtin_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;builtin&quot;</span><span class="p">)</span>
+        <span class="n">builtin_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;builtin&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">builtin_style</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;\[&quot;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">builtin_style</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">builtin_style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;\[&quot;</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">builtin_style</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">inspect</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -727,7 +727,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
                             <div id="Inspector.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Inspector.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x10602bee0&gt;, &#39;builtin&#39;: MarkupFormatter(markup=&#39;[208]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;declaration&#39;: MarkupFormatter(markup=&#39;[9 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;name&#39;: MarkupFormatter(markup=&#39;[114]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;string&#39;: &lt;function Inspector.&lt;lambda&gt; at 0x10601ef70&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x1061c1c10&gt;, &#39;builtin&#39;: MarkupFormatter(markup=&#39;[208]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;declaration&#39;: MarkupFormatter(markup=&#39;[9 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;name&#39;: MarkupFormatter(markup=&#39;[114]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;string&#39;: &lt;function Inspector.&lt;lambda&gt; at 0x1061d3c10&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -873,8 +873,6 @@ module will soon see a full overhaul, so the API is likely to change.</p>
                 <dd id="Inspector.define_mouse_target" class="function"><a href="widgets/base.html#Widget.define_mouse_target">define_mouse_target</a></dd>
                 <dd id="Inspector.get_target" class="function"><a href="widgets/base.html#Widget.get_target">get_target</a></dd>
                 <dd id="Inspector.copy" class="function"><a href="widgets/base.html#Widget.copy">copy</a></dd>
-                <dd id="Inspector.get_style" class="function"><a href="widgets/base.html#Widget.get_style">get_style</a></dd>
-                <dd id="Inspector.get_char" class="function"><a href="widgets/base.html#Widget.get_char">get_char</a></dd>
                 <dd id="Inspector.bind" class="function"><a href="widgets/base.html#Widget.bind">bind</a></dd>
                 <dd id="Inspector.execute_binding" class="function"><a href="widgets/base.html#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="Inspector.from_data" class="function"><a href="widgets/base.html#Widget.from_data">from_data</a></dd>

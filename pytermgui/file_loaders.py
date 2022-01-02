@@ -124,7 +124,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from abc import abstractmethod, ABC
 from typing import Any, Type, IO
-from types import ModuleType
 
 import json
 

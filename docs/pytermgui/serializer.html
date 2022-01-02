@@ -167,9 +167,9 @@ uses <code>Widget.serialize</code> for each widget.</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_widgets</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
 
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-locals</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load a widget from a dictionary&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">_apply_markup</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">CharType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CharType</span><span class="p">:</span>
@@ -343,9 +343,9 @@ uses <code>Widget.serialize</code> for each widget.</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_widgets</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
 
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-locals</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load a widget from a dictionary&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">_apply_markup</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">CharType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CharType</span><span class="p">:</span>
@@ -606,9 +606,9 @@ it can be serialized.</p>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-locals</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load a widget from a dictionary&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">_apply_markup</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">CharType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CharType</span><span class="p">:</span>

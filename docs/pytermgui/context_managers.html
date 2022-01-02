@@ -59,7 +59,7 @@
                         <div class="docstring"><p>Ease-of-use context-manager classes &amp; functions.</p>
 
 <p>There isn't much (or any) additional functionality provided in this module,
-most things are nicer-packaged combinations to already available methods from 
+most things are nicer-packaged combinations to already available methods from
 <code><a href="ansi_interface.html">pytermgui.ansi_interface</a></code>.</p>
 </div>
 
@@ -69,7 +69,7 @@ most things are nicer-packaged combinations to already available methods from
 <span class="sd">Ease-of-use context-manager classes &amp; functions.</span>
 
 <span class="sd">There isn&#39;t much (or any) additional functionality provided in this module,</span>
-<span class="sd">most things are nicer-packaged combinations to already available methods from </span>
+<span class="sd">most things are nicer-packaged combinations to already available methods from</span>
 <span class="sd">`pytermgui.ansi_interface`.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -180,6 +180,7 @@ most things are nicer-packaged combinations to already available methods from
 <span class="sd">    ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
             <span class="n">report_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
@@ -187,7 +188,8 @@ most things are nicer-packaged combinations to already available methods from
         <span class="k">yield</span> <span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">translate_mouse</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
 
     <span class="k">finally</span><span class="p">:</span>
-        <span class="n">report_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">report_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -330,6 +332,7 @@ most things are nicer-packaged combinations to already available methods from
 <span class="sd">    ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
             <span class="n">report_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
@@ -337,7 +340,8 @@ most things are nicer-packaged combinations to already available methods from
         <span class="k">yield</span> <span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">translate_mouse</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
 
     <span class="k">finally</span><span class="p">:</span>
-        <span class="n">report_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">report_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
         </details>

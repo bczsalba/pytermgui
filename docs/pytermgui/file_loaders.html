@@ -157,8 +157,8 @@ If you have custom Widget subclass you would like to use in file-based definitio
     |_ custom widget definitions
 </code></pre>
 
-<p>The loading follows the order config -> markup -> boxes -> widgets. It is not necessary to provide all
-sections.</p>
+<p>The loading follows the order config -> markup -> boxes -> widgets. It is not necessary to
+provide all sections.</p>
 
 <h1 id="example-of-usage">Example of usage</h1>
 
@@ -274,8 +274,8 @@ sections.</p>
 <span class="sd">    |_ custom widget definitions</span>
 <span class="sd">```</span>
 
-<span class="sd">The loading follows the order config -&gt; markup -&gt; boxes -&gt; widgets. It is not necessary to provide all</span>
-<span class="sd">sections.</span>
+<span class="sd">The loading follows the order config -&gt; markup -&gt; boxes -&gt; widgets. It is not necessary to</span>
+<span class="sd">provide all sections.</span>
 
 
 <span class="sd">Example of usage</span>
@@ -362,10 +362,12 @@ sections.</p>
 
 
 <span class="n">YAML_ERROR</span> <span class="o">=</span> <span class="kc">None</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">yaml</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
-    <span class="n">yaml</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># yaml is explicitly checked to be None later</span>
+    <span class="n">yaml</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
     <span class="n">YAML_ERROR</span> <span class="o">=</span> <span class="n">import_error</span>
 
 
@@ -425,11 +427,13 @@ sections.</p>
     <span class="k">def</span> <span class="nf">apply_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Apply namespace config to `widget`&quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">_apply_sections</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">widget</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">_apply_sections</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">widget</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Widget</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Apply sections from data to widget&quot;&quot;&quot;</span>
 
             <span class="k">for</span> <span class="n">title</span><span class="p">,</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_section</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_section</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">),</span> <span class="n">title</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -468,11 +472,11 @@ sections.</p>
 <span class="sd">    These allow users to load pytermgui content from a specific filetype,</span>
 <span class="sd">    with each filetype having their own loaders.</span>
 
-<span class="sd">    To use custom widgets with children of this class, you need to call the `FileLoader.register`.&quot;&quot;&quot;</span>
+<span class="sd">    To use custom widgets with children of this class, you need to call `FileLoader.register`.&quot;&quot;&quot;</span>
 
     <span class="n">serializer</span><span class="p">:</span> <span class="n">Serializer</span>
-    <span class="sd">&quot;&quot;&quot;Object-specific serializer instance. In order to use a specific, already created instance you need to</span>
-<span class="sd">    pass it on `FileLoader` construction.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Object-specific serializer instance. In order to use a specific, already created</span>
+<span class="sd">    instance you need to pass it on `FileLoader` construction.&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -651,11 +655,13 @@ sections.</p>
     <span class="k">def</span> <span class="nf">apply_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Apply namespace config to `widget`&quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">_apply_sections</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">widget</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">_apply_sections</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">widget</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Widget</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Apply sections from data to widget&quot;&quot;&quot;</span>
 
             <span class="k">for</span> <span class="n">title</span><span class="p">,</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_section</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_section</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">),</span> <span class="n">title</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -773,11 +779,13 @@ sections.</p>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">apply_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Apply namespace config to `widget`&quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">_apply_sections</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">widget</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">_apply_sections</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">widget</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Widget</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Apply sections from data to widget&quot;&quot;&quot;</span>
 
             <span class="k">for</span> <span class="n">title</span><span class="p">,</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_section</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_section</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">),</span> <span class="n">title</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">widget</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -845,11 +853,11 @@ sections.</p>
 <span class="sd">    These allow users to load pytermgui content from a specific filetype,</span>
 <span class="sd">    with each filetype having their own loaders.</span>
 
-<span class="sd">    To use custom widgets with children of this class, you need to call the `FileLoader.register`.&quot;&quot;&quot;</span>
+<span class="sd">    To use custom widgets with children of this class, you need to call `FileLoader.register`.&quot;&quot;&quot;</span>
 
     <span class="n">serializer</span><span class="p">:</span> <span class="n">Serializer</span>
-    <span class="sd">&quot;&quot;&quot;Object-specific serializer instance. In order to use a specific, already created instance you need to</span>
-<span class="sd">    pass it on `FileLoader` construction.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Object-specific serializer instance. In order to use a specific, already created</span>
+<span class="sd">    instance you need to pass it on `FileLoader` construction.&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -938,7 +946,7 @@ sections.</p>
 <p>These allow users to load pytermgui content from a specific filetype,
 with each filetype having their own loaders.</p>
 
-<p>To use custom widgets with children of this class, you need to call the <code><a href="#FileLoader.register">FileLoader.register</a></code>.</p>
+<p>To use custom widgets with children of this class, you need to call <code><a href="#FileLoader.register">FileLoader.register</a></code>.</p>
 </div>
 
 
@@ -973,8 +981,8 @@ with each filetype having their own loaders.</p>
         <span class="name">serializer</span><span class="annotation">: <a href="serializer.html#Serializer">pytermgui.serializer.Serializer</a></span>
     </div>
 
-            <div class="docstring"><p>Object-specific serializer instance. In order to use a specific, already created instance you need to
-pass it on <code><a href="#FileLoader">FileLoader</a></code> construction.</p>
+            <div class="docstring"><p>Object-specific serializer instance. In order to use a specific, already created
+instance you need to pass it on <code><a href="#FileLoader">FileLoader</a></code> construction.</p>
 </div>
 
 

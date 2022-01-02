@@ -211,7 +211,8 @@ and output in a nice and optimized manner.</p>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 
-<p><img src=https://github.com/bczsalba/pytermgui/blob/master/assets/docs/wm_demo.gif?raw=true style="max-width: 100%"></p>
+<p><img src=https://github.com/bczsalba/pytermgui/blob/master/assets/docs/wm_demo.gif?raw=true
+style="max-width: 100%"></p>
 </div>
 
                         <details>
@@ -253,7 +254,8 @@ and output in a nice and optimized manner.</p>
 <span class="sd">    manager.run()</span>
 <span class="sd">```</span>
 
-<span class="sd">&lt;img src=https://github.com/bczsalba/pytermgui/blob/master/assets/docs/wm_demo.gif?raw=true style=&quot;max-width: 100%&quot;&gt;</span>
+<span class="sd">&lt;img src=https://github.com/bczsalba/pytermgui/blob/master/assets/docs/wm_demo.gif?raw=true</span>
+<span class="sd">style=&quot;max-width: 100%&quot;&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># These object need more than 7 attributes.</span>
@@ -461,7 +463,7 @@ and output in a nice and optimized manner.</p>
         <span class="k">if</span> <span class="n">pad</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">title</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
 
-        <span class="n">corners</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">corners</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corners</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">position</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -593,12 +595,10 @@ and output in a nice and optimized manner.</p>
 
             <span class="n">last_frame</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
             <span class="n">frametime</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
-            <span class="n">sleeptime</span> <span class="o">=</span> <span class="n">frametime</span> <span class="o">/</span> <span class="mi">10</span>
 
             <span class="n">fps_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
             <span class="n">framecount</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">elapsed</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_print</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_sleep</span><span class="p">(</span><span class="n">frametime</span><span class="p">)</span>
@@ -630,7 +630,10 @@ and output in a nice and optimized manner.</p>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">execute_binding</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
         <span class="c1"># Execute universal mouse binding</span>
-        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_translator</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_translator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_translator</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">events</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1071,7 +1074,7 @@ and output in a nice and optimized manner.</p>
         <span class="k">if</span> <span class="n">pad</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">title</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
 
-        <span class="n">corners</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">corners</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corners</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">position</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1259,7 +1262,7 @@ to store and display various widgets, while allowing some custom functionality.<
                             <div id="Window.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Window.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x10602bee0&gt;, &#39;title&#39;: MarkupFormatter(markup=&#39;[wm-title]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x1061c1c10&gt;, &#39;title&#39;: MarkupFormatter(markup=&#39;[wm-title]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1297,7 +1300,7 @@ to store and display various widgets, while allowing some custom functionality.<
         <span class="k">if</span> <span class="n">pad</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">title</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
 
-        <span class="n">corners</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">corners</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corners</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">position</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1472,8 +1475,6 @@ to store and display various widgets, while allowing some custom functionality.<
                 <dd id="Window.define_mouse_target" class="function"><a href="widgets/base.html#Widget.define_mouse_target">define_mouse_target</a></dd>
                 <dd id="Window.get_target" class="function"><a href="widgets/base.html#Widget.get_target">get_target</a></dd>
                 <dd id="Window.copy" class="function"><a href="widgets/base.html#Widget.copy">copy</a></dd>
-                <dd id="Window.get_style" class="function"><a href="widgets/base.html#Widget.get_style">get_style</a></dd>
-                <dd id="Window.get_char" class="function"><a href="widgets/base.html#Widget.get_char">get_char</a></dd>
                 <dd id="Window.bind" class="function"><a href="widgets/base.html#Widget.bind">bind</a></dd>
                 <dd id="Window.execute_binding" class="function"><a href="widgets/base.html#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="Window.from_data" class="function"><a href="widgets/base.html#Widget.from_data">from_data</a></dd>
@@ -1570,12 +1571,10 @@ to store and display various widgets, while allowing some custom functionality.<
 
             <span class="n">last_frame</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
             <span class="n">frametime</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
-            <span class="n">sleeptime</span> <span class="o">=</span> <span class="n">frametime</span> <span class="o">/</span> <span class="mi">10</span>
 
             <span class="n">fps_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
             <span class="n">framecount</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="n">elapsed</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_print</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_sleep</span><span class="p">(</span><span class="n">frametime</span><span class="p">)</span>
@@ -1607,7 +1606,10 @@ to store and display various widgets, while allowing some custom functionality.<
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">execute_binding</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
         <span class="c1"># Execute universal mouse binding</span>
-        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_translator</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_translator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_translator</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">events</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2061,7 +2063,10 @@ can set themselves to be dirty using the <code>Window.is_dirty</code> flag.</p>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">execute_binding</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
         <span class="c1"># Execute universal mouse binding</span>
-        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_translator</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_translator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_translator</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">events</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2638,8 +2643,6 @@ can set themselves to be dirty using the <code>Window.is_dirty</code> flag.</p>
                 <dd id="WindowManager.define_mouse_target" class="function"><a href="widgets/base.html#Widget.define_mouse_target">define_mouse_target</a></dd>
                 <dd id="WindowManager.get_target" class="function"><a href="widgets/base.html#Widget.get_target">get_target</a></dd>
                 <dd id="WindowManager.copy" class="function"><a href="widgets/base.html#Widget.copy">copy</a></dd>
-                <dd id="WindowManager.get_style" class="function"><a href="widgets/base.html#Widget.get_style">get_style</a></dd>
-                <dd id="WindowManager.get_char" class="function"><a href="widgets/base.html#Widget.get_char">get_char</a></dd>
                 <dd id="WindowManager.bind" class="function"><a href="widgets/base.html#Widget.bind">bind</a></dd>
                 <dd id="WindowManager.from_data" class="function"><a href="widgets/base.html#Widget.from_data">from_data</a></dd>
 

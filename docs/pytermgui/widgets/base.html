@@ -149,12 +149,6 @@
                                 <a class="function" href="#Widget.copy">copy</a>
                         </li>
                         <li>
-                                <a class="function" href="#Widget.get_style">get_style</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Widget.get_char">get_char</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Widget.get_lines">get_lines</a>
                         </li>
                         <li>
@@ -652,7 +646,7 @@
 
             <span class="c1"># Convert styled value into markup</span>
             <span class="k">if</span> <span class="n">style</span><span class="p">:</span>
-                <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                     <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">markup</span><span class="o">.</span><span class="n">get_markup</span><span class="p">(</span><span class="n">style_call</span><span class="p">(</span><span class="n">char</span><span class="p">))</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -665,7 +659,7 @@
         <span class="c1"># The chars need to be handled separately</span>
         <span class="n">out</span><span class="p">[</span><span class="s2">&quot;chars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                 <span class="n">out</span><span class="p">[</span><span class="s2">&quot;chars&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -681,7 +675,7 @@
 
         <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">DepthlessStyleType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">DepthlessStyleType</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get style by `key`.</span>
 
 <span class="sd">        Raise `KeyError` if style key is invalid.&quot;&quot;&quot;</span>
@@ -690,7 +684,7 @@
 
         <span class="k">return</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">StyleCall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">style_method</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">CharType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">CharType</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get style by `char`.</span>
 
 <span class="sd">        Raise `KeyError` if char key is invalid.&quot;&quot;&quot;</span>
@@ -853,8 +847,8 @@
     <span class="k">def</span> <span class="nf">sidelength</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns `real_length` of left+right borders&quot;&quot;&quot;</span>
 
-        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
-        <span class="n">style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">return</span> <span class="mi">0</span>
 
@@ -1007,7 +1001,7 @@
         <span class="sd">&quot;&quot;&quot;Get method to align a widget, along with a position offset&quot;&quot;&quot;</span>
 
         <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">borders</span>
-        <span class="n">char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">_align_left</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Align line to the left&quot;&quot;&quot;</span>
@@ -1086,12 +1080,12 @@
             <span class="k">return</span> <span class="n">target</span>
 
         <span class="c1"># Get chars &amp; styles</span>
-        <span class="n">corner_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
-        <span class="n">border_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">corner_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">border_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
 
-        <span class="n">border_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">border_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">border_char</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-        <span class="n">corner_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">corner_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corner_char</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
         <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_apply_style</span><span class="p">(</span><span class="n">border_style</span><span class="p">,</span> <span class="n">border_char</span><span class="p">)</span>
@@ -1420,13 +1414,17 @@
 <span class="sd">    import pytermgui as ptg</span>
 
 <span class="sd">    with ptg.alt_buffer():</span>
-<span class="sd">        root = ptg.Container(ptg.Label(&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;))</span>
+<span class="sd">        root = ptg.Container(</span>
+<span class="sd">            ptg.Label(&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;)</span>
+<span class="sd">        )</span>
 <span class="sd">        root.print()</span>
 <span class="sd">        ptg.getch()</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    &lt;p style=&quot;text-align: center&quot;&gt;</span>
-<span class="sd">        &lt;img src=&quot;https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true&quot; width=100%&gt;</span>
+<span class="sd">     &lt;img</span>
+<span class="sd">      src=&quot;https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true&quot;</span>
+<span class="sd">      width=100%&gt;</span>
 <span class="sd">    &lt;/p&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1446,7 +1444,7 @@
     <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get lines representing `Label`, breaking lines as necessary&quot;&quot;&quot;</span>
 
-        <span class="n">value_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+        <span class="n">value_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
         <span class="n">line_gen</span> <span class="o">=</span> <span class="n">break_line</span><span class="p">(</span><span class="n">value_style</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">line_gen</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
@@ -2006,7 +2004,7 @@
 
             <span class="c1"># Convert styled value into markup</span>
             <span class="k">if</span> <span class="n">style</span><span class="p">:</span>
-                <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                     <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">markup</span><span class="o">.</span><span class="n">get_markup</span><span class="p">(</span><span class="n">style_call</span><span class="p">(</span><span class="n">char</span><span class="p">))</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -2019,7 +2017,7 @@
         <span class="c1"># The chars need to be handled separately</span>
         <span class="n">out</span><span class="p">[</span><span class="s2">&quot;chars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                 <span class="n">out</span><span class="p">[</span><span class="s2">&quot;chars&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -2035,7 +2033,7 @@
 
         <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">DepthlessStyleType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">DepthlessStyleType</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get style by `key`.</span>
 
 <span class="sd">        Raise `KeyError` if style key is invalid.&quot;&quot;&quot;</span>
@@ -2044,7 +2042,7 @@
 
         <span class="k">return</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">StyleCall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">style_method</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">CharType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">CharType</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get style by `char`.</span>
 
 <span class="sd">        Raise `KeyError` if char key is invalid.&quot;&quot;&quot;</span>
@@ -2595,7 +2593,7 @@ selectable items.</p>
 
             <span class="c1"># Convert styled value into markup</span>
             <span class="k">if</span> <span class="n">style</span><span class="p">:</span>
-                <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                     <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">markup</span><span class="o">.</span><span class="n">get_markup</span><span class="p">(</span><span class="n">style_call</span><span class="p">(</span><span class="n">char</span><span class="p">))</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -2608,7 +2606,7 @@ selectable items.</p>
         <span class="c1"># The chars need to be handled separately</span>
         <span class="n">out</span><span class="p">[</span><span class="s2">&quot;chars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">style_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                 <span class="n">out</span><span class="p">[</span><span class="s2">&quot;chars&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -2646,66 +2644,6 @@ selectable items.</p>
         </details>
 
             <div class="docstring"><p>Create a deepcopy of this Widget</p>
-</div>
-
-
-                            </div>
-                            <div id="Widget.get_style" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#Widget.get_style">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">get_style</span><span class="signature">(self, key: str) -&gt; Callable[[str], str]</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_style</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">DepthlessStyleType</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get style by `key`.</span>
-
-<span class="sd">        Raise `KeyError` if style key is invalid.&quot;&quot;&quot;</span>
-
-        <span class="n">style_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">styles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">StyleCall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">style_method</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Get style by <code>key</code>.</p>
-
-<p>Raise <code>KeyError</code> if style key is invalid.</p>
-</div>
-
-
-                            </div>
-                            <div id="Widget.get_char" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#Widget.get_char">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">get_char</span><span class="signature">(self, key: str) -&gt; Union[List[str], str]</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">w_styles</span><span class="o">.</span><span class="n">CharType</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get style by `char`.</span>
-
-<span class="sd">        Raise `KeyError` if char key is invalid.&quot;&quot;&quot;</span>
-
-        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chars</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">chars</span>
-
-        <span class="k">return</span> <span class="n">chars</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Get style by <code>char</code>.</p>
-
-<p>Raise <code>KeyError</code> if char key is invalid.</p>
 </div>
 
 
@@ -3020,8 +2958,8 @@ False: Binding was not found</p>
 <span class="sd">    )</span>
 <span class="sd">    ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Note on pylint: In my opinion, returning immediately after construction is much more readable.</span>
+    <span class="c1"># In my opinion, returning immediately after construction is much more readable.</span>
+    <span class="c1"># pylint: disable=too-many-return-statements</span>
 
     <span class="c1"># Nothing to do.</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Widget</span><span class="p">):</span>
@@ -3204,8 +3142,8 @@ a Widget. It returns None in case of a failure</p>
     <span class="k">def</span> <span class="nf">sidelength</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns `real_length` of left+right borders&quot;&quot;&quot;</span>
 
-        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
-        <span class="n">style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chars</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">return</span> <span class="mi">0</span>
 
@@ -3358,7 +3296,7 @@ a Widget. It returns None in case of a failure</p>
         <span class="sd">&quot;&quot;&quot;Get method to align a widget, along with a position offset&quot;&quot;&quot;</span>
 
         <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">borders</span>
-        <span class="n">char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;fill&quot;</span><span class="p">)(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">_align_left</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Align line to the left&quot;&quot;&quot;</span>
@@ -3437,12 +3375,12 @@ a Widget. It returns None in case of a failure</p>
             <span class="k">return</span> <span class="n">target</span>
 
         <span class="c1"># Get chars &amp; styles</span>
-        <span class="n">corner_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
-        <span class="n">border_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">corner_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">border_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
 
-        <span class="n">border_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">border_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">border_char</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-        <span class="n">corner_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">corner_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corner_char</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
         <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_apply_style</span><span class="p">(</span><span class="n">border_style</span><span class="p">,</span> <span class="n">border_char</span><span class="p">)</span>
@@ -3822,7 +3760,7 @@ a Widget. It returns None in case of a failure</p>
                             <div id="Container.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x10602bee0&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x1061c1c10&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -3833,7 +3771,7 @@ a Widget. It returns None in case of a failure</p>
                             <div id="Container.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;\x0e&#39;, &#39;j&#39;, &#39;\x1b[B&#39;}, &#39;previous&#39;: {&#39;k&#39;, &#39;\x1b[A&#39;, &#39;\x10&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;\x0e&#39;, &#39;\x1b[B&#39;, &#39;j&#39;}, &#39;previous&#39;: {&#39;\x10&#39;, &#39;\x1b[A&#39;, &#39;k&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Container.handle_key">handle_key</a></code></p>
@@ -3959,12 +3897,12 @@ a Widget. It returns None in case of a failure</p>
             <span class="k">return</span> <span class="n">target</span>
 
         <span class="c1"># Get chars &amp; styles</span>
-        <span class="n">corner_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
-        <span class="n">border_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">corner_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">border_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
 
-        <span class="n">border_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
+        <span class="n">border_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;border&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">border_char</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-        <span class="n">corner_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
+        <span class="n">corner_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corner_char</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
         <span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">_apply_style</span><span class="p">(</span><span class="n">border_style</span><span class="p">,</span> <span class="n">border_char</span><span class="p">)</span>
@@ -4561,8 +4499,6 @@ re-applied when <code><a href="#Container.center">center()</a></code> is called 
                 <dd id="Container.define_mouse_target" class="function"><a href="#Widget.define_mouse_target">define_mouse_target</a></dd>
                 <dd id="Container.get_target" class="function"><a href="#Widget.get_target">get_target</a></dd>
                 <dd id="Container.copy" class="function"><a href="#Widget.copy">copy</a></dd>
-                <dd id="Container.get_style" class="function"><a href="#Widget.get_style">get_style</a></dd>
-                <dd id="Container.get_char" class="function"><a href="#Widget.get_char">get_char</a></dd>
                 <dd id="Container.bind" class="function"><a href="#Widget.bind">bind</a></dd>
                 <dd id="Container.execute_binding" class="function"><a href="#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="Container.from_data" class="function"><a href="#Widget.from_data">from_data</a></dd>
@@ -4592,13 +4528,17 @@ re-applied when <code><a href="#Container.center">center()</a></code> is called 
 <span class="sd">    import pytermgui as ptg</span>
 
 <span class="sd">    with ptg.alt_buffer():</span>
-<span class="sd">        root = ptg.Container(ptg.Label(&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;))</span>
+<span class="sd">        root = ptg.Container(</span>
+<span class="sd">            ptg.Label(&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;)</span>
+<span class="sd">        )</span>
 <span class="sd">        root.print()</span>
 <span class="sd">        ptg.getch()</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    &lt;p style=&quot;text-align: center&quot;&gt;</span>
-<span class="sd">        &lt;img src=&quot;https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true&quot; width=100%&gt;</span>
+<span class="sd">     &lt;img</span>
+<span class="sd">      src=&quot;https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true&quot;</span>
+<span class="sd">      width=100%&gt;</span>
 <span class="sd">    &lt;/p&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -4618,7 +4558,7 @@ re-applied when <code><a href="#Container.center">center()</a></code> is called 
     <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get lines representing `Label`, breaking lines as necessary&quot;&quot;&quot;</span>
 
-        <span class="n">value_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+        <span class="n">value_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
         <span class="n">line_gen</span> <span class="o">=</span> <span class="n">break_line</span><span class="p">(</span><span class="n">value_style</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">line_gen</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
@@ -4634,13 +4574,17 @@ allows it to house markup text that is parsed before display, such as:</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 
 <span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">alt_buffer</span><span class="p">():</span>
-    <span class="n">root</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">Container</span><span class="p">(</span><span class="n">ptg</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;</span><span class="p">))</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">Container</span><span class="p">(</span>
+        <span class="n">ptg</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">root</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
     <span class="n">ptg</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
 </code></pre></div>
 
 <p style="text-align: center">
-    <img src="https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true" width=100%>
+ <img
+  src="https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true"
+  width=100%>
 </p>
 </div>
 
@@ -4674,7 +4618,7 @@ allows it to house markup text that is parsed before display, such as:</p>
                             <div id="Label.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Label.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x10600b040&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -4706,7 +4650,7 @@ allows it to house markup text that is parsed before display, such as:</p>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get lines representing `Label`, breaking lines as necessary&quot;&quot;&quot;</span>
 
-        <span class="n">value_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+        <span class="n">value_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
         <span class="n">line_gen</span> <span class="o">=</span> <span class="n">break_line</span><span class="p">(</span><span class="n">value_style</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">line_gen</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
@@ -4742,8 +4686,6 @@ allows it to house markup text that is parsed before display, such as:</p>
                 <dd id="Label.handle_key" class="function"><a href="#Widget.handle_key">handle_key</a></dd>
                 <dd id="Label.serialize" class="function"><a href="#Widget.serialize">serialize</a></dd>
                 <dd id="Label.copy" class="function"><a href="#Widget.copy">copy</a></dd>
-                <dd id="Label.get_style" class="function"><a href="#Widget.get_style">get_style</a></dd>
-                <dd id="Label.get_char" class="function"><a href="#Widget.get_char">get_char</a></dd>
                 <dd id="Label.bind" class="function"><a href="#Widget.bind">bind</a></dd>
                 <dd id="Label.execute_binding" class="function"><a href="#Widget.execute_binding">execute_binding</a></dd>
                 <dd id="Label.select" class="function"><a href="#Widget.select">select</a></dd>

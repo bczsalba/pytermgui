@@ -67,7 +67,7 @@
 
                         <div class="docstring"><p>The command-line module of the library.</p>
 
-<p>There are some simple utilities included, and a playground for some 
+<p>There are some simple utilities included, and a playground for some
 of the interesting parts of pytermgui.</p>
 
 <p>See <code>ptg --help</code> for more information.</p>
@@ -78,7 +78,7 @@ of the interesting parts of pytermgui.</p>
             <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The command-line module of the library.</span>
 
-<span class="sd">There are some simple utilities included, and a playground for some </span>
+<span class="sd">There are some simple utilities included, and a playground for some</span>
 <span class="sd">of the interesting parts of pytermgui.</span>
 
 <span class="sd">See `ptg --help` for more information.</span>
@@ -280,7 +280,7 @@ of the interesting parts of pytermgui.</p>
     <span class="k">def</span> <span class="nf">_get_tokens</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get all tokens using the parser&quot;&quot;&quot;</span>
 
-        <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">markup</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
             <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 
@@ -343,7 +343,7 @@ of the interesting parts of pytermgui.</p>
         <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Dump lines of window and exit program&quot;&quot;&quot;</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;dump&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;dump&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
                 <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()))</span>
 
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
@@ -361,7 +361,9 @@ of the interesting parts of pytermgui.</p>
             <span class="s2">&quot;[inverse demo-rgb]@rrr;ggg;bbb&quot;</span><span class="p">,</span>
         <span class="p">]</span>
 
-        <span class="n">corners</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">chars</span><span class="p">[</span><span class="s2">&quot;corner&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">corners</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">chars</span><span class="p">[</span><span class="s2">&quot;corner&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corners</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="n">corners</span> <span class="o">=</span> <span class="n">corners</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">corners</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot; [wm-title]tokens[/] &quot;</span>
         <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; [wm-title]colors[60] &quot;</span> <span class="o">+</span> <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
@@ -392,10 +394,16 @@ of the interesting parts of pytermgui.</p>
         <span class="p">)</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="n">get_widget</span><span class="p">(</span><span class="s2">&quot;output_label&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">Label</span><span class="p">)</span>
         <span class="n">field</span> <span class="o">=</span> <span class="n">get_widget</span><span class="p">(</span><span class="s2">&quot;input_field&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">InputField</span><span class="p">)</span>
+
         <span class="n">window</span><span class="o">.</span><span class="n">output_label</span> <span class="o">=</span> <span class="n">output</span>
 
-        <span class="n">field</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">keys</span><span class="o">.</span><span class="n">ANY_KEY</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">field</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_value</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span>
+        <span class="n">field</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">ANY_KEY</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">field</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_value</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">field</span><span class="p">),</span>
+        <span class="p">)</span>
 
         <span class="n">window</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span>
             <span class="n">keys</span><span class="o">.</span><span class="n">CTRL_R</span><span class="p">,</span>
@@ -558,16 +566,17 @@ of the interesting parts of pytermgui.</p>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">x</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">terminal</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">terminal</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">terminal</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">:</span>
         <span class="n">loader</span> <span class="o">=</span> <span class="n">YamlLoader</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">namespace</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">namespace</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">Window</span><span class="p">)</span>
                 <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">print_only</span><span class="p">:</span>
