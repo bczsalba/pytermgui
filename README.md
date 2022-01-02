@@ -78,8 +78,8 @@ what *we* want, rather encourage you to morph the library around your needs.
 
 By the way, this is what the created `Window` looks like. Nifty, huh?
 
-<p style="text-align: center">
-    <img src="assets/demos/versatility.png" width=50%>
+<p align="center">
+    <img src="assets/demos/versatility.png">
 </p>
 
 
@@ -94,10 +94,12 @@ Projects using pytermgui
 
 We take pride in seeing others use the library. If you have a project you'd like us to add here, create a PR!
 
-| Project name  | Project description | Demo image |
-----------------------------------------------------
 <!-- Add your project below. Try to keep an alphabetical order. -->
-| [`sipedon`](https://github.com/bczsalba/sipedon) | An interactive aquarium for your terminal. | ![sipedon](assets/demos/sipedon.png) |
+
+| Project name  | Project description | Demo image|
+----------------|---------------------|------------
+| [`sipedon`](https://github.com/bczsalba/sipedon) | An interactive aquarium for your terminal. | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/new-readme/assets/demos/sipedon.png?raw=true" width=50%></p> |
+| [`tracers`](https://github.com/bczsalba/sipedon) | Easily debug and trace attribute changes in your Python classes | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/new-readme/assets/demos/tracers.png?raw=true" width=50%></p> |
 
 
 Some showcase images
