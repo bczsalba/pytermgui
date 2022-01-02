@@ -98,8 +98,8 @@ We take pride in seeing others use the library. If you have a project you'd like
 
 | Project name  | Project description | Demo image|
 ----------------|---------------------|------------
-| [`sipedon`](https://github.com/bczsalba/sipedon) | An interactive aquarium for your terminal. | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/new-readme/assets/demos/sipedon.png?raw=true" width=50%></p> |
-| [`tracers`](https://github.com/bczsalba/tracers) | Easily debug and trace attribute changes in your Python classes | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/new-readme/assets/demos/tracers.png?raw=true" width=50%></p> |
+| [`sipedon`](https://github.com/bczsalba/sipedon) | An interactive aquarium for your terminal. | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/master/assets/demos/sipedon.png?raw=true" width=50%></p> |
+| [`tracers`](https://github.com/bczsalba/tracers) | Easily debug and trace attribute changes in your Python classes | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/master/assets/demos/tracers.png?raw=true" width=50%></p> |
 
 
 Some showcase images
@@ -109,7 +109,6 @@ Some showcase images
 
 ![hello world](assets/demos/hello_world.png)
 
--------------------------
 
 ### The markup playground app
 
@@ -117,7 +116,6 @@ Some showcase images
 
 ![markapp](assets/demos/markapp.png)
 
--------------------------
 
 ### A simple window manager demo in 14 lines of code, lifted from the [docs](https://bczsalba.github.io/pytermgui/pytermgui/window_manager.html)
 
