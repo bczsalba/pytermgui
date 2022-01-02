@@ -1123,7 +1123,7 @@ class Label(Widget):
     ```
 
     <p style="text-align: center">
-        <img src="https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true">
+        <img src="https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true" width=100%>
     </p>
     """
 
