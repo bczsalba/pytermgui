@@ -86,7 +86,7 @@ By the way, this is what the created `Window` looks like. Nifty, huh?
 A powerful CLI
 --------------
 
-The [cli](/blob/master/pytermgui/cmd.py) simultaneously serves as a set of powerful tooling for TUI related work, as well as a nice usage example of the higher level part of the library. You can run `ptg --getch` to get information about a keypress, `ptg --size` to get the current terminal dimensions and `ptg --file <file>` to interpret & run a YAML markup file inside of a window manager.
+The [cli](/pytermgui/cmd.py) simultaneously serves as a set of powerful tooling for TUI related work, as well as a nice usage example of the higher level part of the library. You can run `ptg --getch` to get information about a keypress, `ptg --size` to get the current terminal dimensions and `ptg --file <file>` to interpret & run a YAML markup file inside of a window manager.
 
 For more info, check out `ptg -h`.
 
@@ -113,19 +113,21 @@ We take pride in seeing others use the library. If you have a project you'd like
 Some showcase images
 --------------------
 
+Click on each image to see their source code!
+
 ### A hello world program
 
-![hello world](assets/demos/hello_world.png)
+[![hello world](assets/demos/hello_world.png)](examples/hello_world.yaml)
 
 
 ### The markup playground app
 
 > Note: Use `ptg --markapp` to try
 
-![markapp](assets/demos/markapp.png)
+[![markapp](assets/demos/markapp.png)](pytermgui/cmd.py)
 
 
-### A simple window manager demo in 14 lines of code, lifted from the [docs](https://bczsalba.github.io/pytermgui/pytermgui/window_manager.html)
+### A simple window manager demo in 13 lines of code, lifted from the docs
 
-![window manager](assets/docs/wm_demo.gif)
+[![window manager](assets/docs/wm_demo.gif)](https://bczsalba.github.io/pytermgui/pytermgui/window_manager.html)
 
