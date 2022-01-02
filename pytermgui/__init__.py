@@ -25,7 +25,8 @@ ptg.unset_alt_buffer()
 ```
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png style="width: 80%">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png
+    style="width: 80%">
 </p>
 
 
@@ -45,7 +46,8 @@ for line in ptg.break_line(text, limit=10):
 ```
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png style="width: 80%">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png
+    style="width: 80%">
 </p>
 
 
@@ -53,7 +55,7 @@ for line in ptg.break_line(text, limit=10):
 
 Building on all that is the relatively high level `pytermgui.widgets` module. This
 part uses things from everything defined before it to create a visually
-appealing interface system. It introduces a lot of its own APIs and 
+appealing interface system. It introduces a lot of its own APIs and
 abstractions, and leaves all the parts below it free of cross-layer
 dependencies.
 
@@ -78,7 +80,8 @@ with ptg.WindowManager() as manager:
 ```
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png style="width: 80%">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png
+    style="width: 80%">
 </p>
 """
 
@@ -169,8 +172,8 @@ def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
     )
     ```
     """
-
-    # Note on pylint: In my opinion, returning immediately after construction is much more readable.
+    # In my opinion, returning immediately after construction is much more readable.
+    # pylint: disable=too-many-return-statements
 
     # Nothing to do.
     if isinstance(data, Widget):

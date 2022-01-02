@@ -2,7 +2,7 @@
 Conveniences for styling widgets
 
 All styles have a `depth` and `item` argument. `depth` is an int
-that represents that "deep" the Widget is within the hierarchy, and 
+that represents that "deep" the Widget is within the hierarchy, and
 `item` is the string that the style is applied to.
 """
 
@@ -36,7 +36,7 @@ CharType = Union[List[str], str]
 class StyleCall:
     """A callable object that simplifies calling style methods.
 
-    Instances of this class are created within the `Widget.get_style`
+    Instances of this class are created within the `Widget._get_style`
     method, and this class should not be used outside of that context."""
 
     # Widget cannot be imported into this module

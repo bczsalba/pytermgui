@@ -45,8 +45,8 @@ root
     |_ custom widget definitions
 ```
 
-The loading follows the order config -> markup -> boxes -> widgets. It is not necessary to provide all
-sections.
+The loading follows the order config -> markup -> boxes -> widgets. It is not necessary to
+provide all sections.
 
 
 Example of usage
@@ -239,11 +239,11 @@ class FileLoader(ABC):
     These allow users to load pytermgui content from a specific filetype,
     with each filetype having their own loaders.
 
-    To use custom widgets with children of this class, you need to call the `FileLoader.register`."""
+    To use custom widgets with children of this class, you need to call `FileLoader.register`."""
 
     serializer: Serializer
-    """Object-specific serializer instance. In order to use a specific, already created instance you need to
-    pass it on `FileLoader` construction."""
+    """Object-specific serializer instance. In order to use a specific, already created
+    instance you need to pass it on `FileLoader` construction."""
 
     @abstractmethod
     def parse(self, data: str) -> dict[Any, Any]:

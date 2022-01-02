@@ -70,9 +70,9 @@ class Button(Widget):
         """Get object lines"""
 
         self.mouse_targets = []
-        label_style = self.get_style("label")
-        delimiters = self.get_char("delimiter")
-        highlight_style = self.get_style("highlight")
+        label_style = self._get_style("label")
+        delimiters = self._get_char("delimiter")
+        highlight_style = self._get_style("highlight")
 
         assert isinstance(delimiters, list) and len(delimiters) == 2
         left, right = delimiters
@@ -110,7 +110,7 @@ class Checkbox(Button):
     ) -> None:
         """Initialize object"""
 
-        unchecked = self.get_char("unchecked")
+        unchecked = self._get_char("unchecked")
         assert isinstance(unchecked, str)
 
         super().__init__(unchecked, onclick=self.toggle, **attrs)
@@ -131,7 +131,7 @@ class Checkbox(Button):
     def toggle(self, *_: Any, run_callback: bool = True) -> None:
         """Toggle state"""
 
-        chars = self.get_char("checked"), self.get_char("unchecked")
+        chars = self._get_char("checked"), self._get_char("unchecked")
         assert isinstance(chars[0], str) and isinstance(chars[1], str)
 
         self.checked ^= True

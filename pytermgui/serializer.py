@@ -79,9 +79,9 @@ class Serializer:
 
         self.known_widgets[cls.__name__] = cls
 
-    def from_dict(
+    def from_dict(  # pylint: disable=too-many-locals
         self, data: dict[str, Any], widget_type: str | None = None
-    ) -> Widget:  # pylint: disable=too-many-locals
+    ) -> Widget:
         """Load a widget from a dictionary"""
 
         def _apply_markup(value: CharType) -> CharType:

@@ -1,7 +1,7 @@
 """
 The command-line module of the library.
 
-There are some simple utilities included, and a playground for some 
+There are some simple utilities included, and a playground for some
 of the interesting parts of pytermgui.
 
 See `ptg --help` for more information.
@@ -266,7 +266,7 @@ class MarkupApplication(Application):
         def dump(window: Window) -> None:
             """Dump lines of window and exit program"""
 
-            with open("dump", "w") as file:
+            with open("dump", "w", encoding="utf8") as file:
                 file.write("\n".join(window.get_lines()))
 
             sys.exit()
@@ -481,12 +481,12 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.size:
-        print("{}x{}".format(*terminal.size))
+        print(f"{terminal.width}x{terminal.height}")
         return
 
     if args.file:
         loader = YamlLoader()
-        with open(args.file, "r") as file:
+        with open(args.file, "r", encoding="utf8") as file:
             namespace = loader.load(file)
 
         with WindowManager() as manager:

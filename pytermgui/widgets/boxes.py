@@ -10,7 +10,7 @@ c = Container() # this will now use the style chosen
 ```
 
 Boxes are also settable as a property of `pytermgui.widgets.Container`, and can
-be referenced & defined in markup file definitions. For more info, check out 
+be referenced & defined in markup file definitions. For more info, check out
 `pytermgui.file_loaders`.
 """
 

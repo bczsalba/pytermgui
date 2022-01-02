@@ -14,7 +14,7 @@ from typing import Any, Callable, cast
 from .base import Container, Label, Widget, MouseTarget
 
 from . import styles
-from ..input import keys, getch
+from ..input import keys
 from ..helpers import real_length
 from ..enums import WidgetAlignment
 from ..ansi_interface import foreground, background, reset, MouseAction, MouseEvent
@@ -48,7 +48,7 @@ class ColorPicker(Container):
     def get_lines(self) -> list[str]:
         """Get color table lines"""
 
-        chars = self.get_char("border")
+        chars = self._get_char("border")
         assert isinstance(chars, list)
         left_border, _, right_border, _ = chars
 
@@ -99,7 +99,7 @@ class Splitter(Container):
         r/wordavalanches"""
 
         available = target_width - real_length(line)
-        fill_style = self.get_style("fill")
+        fill_style = self._get_style("fill")
 
         char = fill_style(" ")
         line = fill_style(line)
@@ -119,7 +119,7 @@ class Splitter(Container):
         Note: This currently has some issues."""
 
         # An error will be raised if `separator` is not the correct type (str).
-        separator = self.get_style("separator")(self.get_char("separator"))  # type: ignore
+        separator = self._get_style("separator")(self._get_char("separator"))  # type: ignore
         assert isinstance(separator, str)
         separator_length = real_length(separator)
 
@@ -296,8 +296,8 @@ class InputField(Label):
     def get_lines(self) -> list[str]:
         """Get lines of object"""
 
-        cursor_style = self.get_style("cursor")
-        fill_style = self.get_style("fill")
+        cursor_style = self._get_style("cursor")
+        fill_style = self._get_style("fill")
 
         # Cache value to be reset later
         old = self.value
@@ -322,7 +322,7 @@ class InputField(Label):
         # Set new value, get lines using it
         self.value = self.prompt
 
-        if len(self.prompt):
+        if len(self.prompt) > 0:
             self.value += " "
 
         self.value += left + cursor_char + right
@@ -457,16 +457,16 @@ class Slider(Widget):
         """Get lines of object"""
 
         # Get characters
-        rail_char = self.get_char("rail")
+        rail_char = self._get_char("rail")
         assert isinstance(rail_char, str)
 
-        endpoint_char = self.get_char("endpoint")
+        endpoint_char = self._get_char("endpoint")
         assert isinstance(endpoint_char, str)
 
-        cursor_char = self.get_char("cursor")
+        cursor_char = self._get_char("cursor")
         assert isinstance(cursor_char, str)
 
-        fill_char = self.get_char("fill")
+        fill_char = self._get_char("fill")
         assert isinstance(fill_char, str)
 
         # Clamp value
@@ -480,13 +480,13 @@ class Slider(Widget):
 
         # Only highlight cursor if currently selected
         if self.selected_index != 0:
-            highlight_style = self.get_style("highlight")
+            highlight_style = self._get_style("highlight")
             cursor_char = highlight_style(cursor_char)
             fill_char = highlight_style(fill_char)
 
         # Construct left side
         left = (self._display_value - real_length(cursor_char) + 1) * fill_char
-        left = self.get_style("filled")(left) + cursor_char
+        left = self._get_style("filled")(left) + cursor_char
 
         # Define mouse target
         self.mouse_targets = []

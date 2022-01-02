@@ -50,7 +50,9 @@ with ptg.alt_buffer():
 ```
 
 <p style="text-align: center">
-    <img src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/widgets_demo.png" width=100%>
+ <img
+  src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/widgets_demo.png"
+  width=100%>
 </p>
 """
 

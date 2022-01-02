@@ -349,7 +349,7 @@ class Widget:
 
             # Convert styled value into markup
             if style:
-                style_call = self.get_style(key)
+                style_call = self._get_style(key)
                 if isinstance(value, list):
                     out[key] = [markup.get_markup(style_call(char)) for char in value]
                 else:
@@ -362,7 +362,7 @@ class Widget:
         # The chars need to be handled separately
         out["chars"] = {}
         for key, value in self.chars.items():
-            style_call = self.get_style(key)
+            style_call = self._get_style(key)
 
             if isinstance(value, list):
                 out["chars"][key] = [
@@ -378,7 +378,7 @@ class Widget:
 
         return deepcopy(self)
 
-    def get_style(self, key: str) -> w_styles.DepthlessStyleType:
+    def _get_style(self, key: str) -> w_styles.DepthlessStyleType:
         """Get style by `key`.
 
         Raise `KeyError` if style key is invalid."""
@@ -387,7 +387,7 @@ class Widget:
 
         return w_styles.StyleCall(self, style_method)
 
-    def get_char(self, key: str) -> w_styles.CharType:
+    def _get_char(self, key: str) -> w_styles.CharType:
         """Get style by `char`.
 
         Raise `KeyError` if char key is invalid."""
@@ -550,8 +550,8 @@ class Container(Widget):
     def sidelength(self) -> int:
         """Returns `real_length` of left+right borders"""
 
-        chars = self.get_char("border")
-        style = self.get_style("border")
+        chars = self._get_char("border")
+        style = self._get_style("border")
         if not isinstance(chars, list):
             return 0
 
@@ -704,7 +704,7 @@ class Container(Widget):
         """Get method to align a widget, along with a position offset"""
 
         left, right = borders
-        char = self.get_style("fill")(" ")
+        char = self._get_style("fill")(" ")
 
         def _align_left(text: str) -> str:
             """Align line to the left"""
@@ -783,12 +783,12 @@ class Container(Widget):
             return target
 
         # Get chars & styles
-        corner_style = self.get_style("corner")
-        border_style = self.get_style("border")
+        corner_style = self._get_style("corner")
+        border_style = self._get_style("border")
 
-        border_char = self.get_char("border")
+        border_char = self._get_char("border")
         assert isinstance(border_char, list)
-        corner_char = self.get_char("corner")
+        corner_char = self._get_char("corner")
         assert isinstance(corner_char, list)
 
         left, top, right, bottom = _apply_style(border_style, border_char)
@@ -1117,13 +1117,17 @@ class Label(Widget):
     import pytermgui as ptg
 
     with ptg.alt_buffer():
-        root = ptg.Container(ptg.Label("[italic 141 underline]This is some [green]fancy [white inverse]text!"))
+        root = ptg.Container(
+            ptg.Label("[italic 141 underline]This is some [green]fancy [white inverse]text!")
+        )
         root.print()
         ptg.getch()
     ```
 
     <p style="text-align: center">
-        <img src="https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true" width=100%>
+     <img
+      src="https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets_label.png?raw=true"
+      width=100%>
     </p>
     """
 
@@ -1143,7 +1147,7 @@ class Label(Widget):
     def get_lines(self) -> list[str]:
         """Get lines representing `Label`, breaking lines as necessary"""
 
-        value_style = self.get_style("value")
+        value_style = self._get_style("value")
         line_gen = break_line(value_style(self.padding * " " + self.value), self.width)
 
         return list(line_gen) or [""]

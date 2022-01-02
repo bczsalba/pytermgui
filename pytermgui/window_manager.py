@@ -35,7 +35,8 @@ with ptg.WindowManager() as manager:
     manager.run()
 ```
 
-<img src=https://github.com/bczsalba/pytermgui/blob/master/assets/docs/wm_demo.gif?raw=true style="max-width: 100%">
+<img src=https://github.com/bczsalba/pytermgui/blob/master/assets/docs/wm_demo.gif?raw=true
+style="max-width: 100%">
 """
 
 # These object need more than 7 attributes.
@@ -243,7 +244,7 @@ class Window(Container):
         if pad:
             title = " " + title + " "
 
-        corners = self.get_char("corner")
+        corners = self._get_char("corner")
         assert isinstance(corners, list)
 
         if position % 2 == 0:
@@ -375,12 +376,10 @@ class WindowManager(Container):
 
             last_frame = time.perf_counter()
             frametime = 1 / self.framerate
-            sleeptime = frametime / 10
 
             fps_start_time = time.perf_counter()
             framecount = 0
 
-            elapsed = 0.0
             while self._is_running:
                 if self._is_paused or not self.should_print:
                     self._sleep(frametime)

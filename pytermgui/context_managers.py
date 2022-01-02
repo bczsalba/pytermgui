@@ -2,7 +2,7 @@
 Ease-of-use context-manager classes & functions.
 
 There isn't much (or any) additional functionality provided in this module,
-most things are nicer-packaged combinations to already available methods from 
+most things are nicer-packaged combinations to already available methods from
 `pytermgui.ansi_interface`.
 """
 
@@ -113,6 +113,7 @@ def mouse_handler(
     ```
     """
 
+    event = None
     try:
         for event in events:
             report_mouse(event, method=method)

@@ -1,5 +1,5 @@
 """
-`Inspector` widget and inspection utilities for (in the future) any Python objects. This 
+`Inspector` widget and inspection utilities for (in the future) any Python objects. This
 module will soon see a full overhaul, so the API is likely to change.
 """
 # TODO: This module should get a rewrite at some point:
@@ -78,10 +78,10 @@ def inspect(
     root += Label()
 
     if style:
-        builtin_style = inspector.get_style("builtin")
+        builtin_style = inspector.styles["builtin"]
         DOUBLE_BOTTOM.set_chars_of(root)
 
-        corners = root.get_char("corner")
+        corners = root.chars["corner"]
         assert isinstance(corners, list)
         corners[1] = " Inspecting: " + builtin_style(str(target)) + " " + corners[1]
         root.set_char("corner", corners)
@@ -165,7 +165,7 @@ class Inspector(Container):
     def _get_docstring(self, target: Any) -> list[str]:
         """Get docstring of target"""
 
-        string_style = self.get_style("string")
+        string_style = self._get_style("string")
 
         doc = getdoc(target)
         if doc is None:
@@ -182,8 +182,8 @@ class Inspector(Container):
     def _get_definition(self, target: Any) -> str:
         """Get definition (def fun(...) / class Cls(...)) of an object"""
 
-        name_style = self.get_style("name")
-        declaration_style = self.get_style("declaration")
+        name_style = self._get_style("name")
+        declaration_style = self._get_style("declaration")
 
         elements = [declaration_style("class" if isclass(target) else "def")]
 
@@ -233,11 +233,11 @@ class Inspector(Container):
     def _style_annotation(self, annotation: Any) -> str:
         """Style an annotation property"""
 
-        builtin_style = self.get_style("builtin")
+        builtin_style = self._get_style("builtin")
         if isinstance(annotation, type):
-            return builtin_style(annotation.__name__.replace("[", "\["))
+            return builtin_style(annotation.__name__.replace("[", r"\["))
 
-        return builtin_style(str(annotation.replace("[", "\[")))
+        return builtin_style(str(annotation.replace("[", r"\[")))
 
     def inspect(
         self,

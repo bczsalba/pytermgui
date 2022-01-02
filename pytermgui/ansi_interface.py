@@ -13,7 +13,7 @@ import re
 import sys
 import signal
 
-from typing import Optional, Any, Union, Callable
+from typing import Optional, Any, Union, Callable, Tuple
 from dataclasses import dataclass, fields
 from enum import Enum, auto as _auto
 from sys import stdout as _stdout
@@ -85,7 +85,7 @@ class Color:
     - `tuple[int, int]`: Tuple of RGB colors, each 0-256.
     """
 
-    ColorType = Union[int, str, tuple[int, int, int]]
+    ColorType = Union[int, str, Tuple[int, int, int]]
     """A simple type to represent color patterns. See `Color` for more info."""
 
     names = {
@@ -107,7 +107,8 @@ class Color:
         "brightwhite": 15,
     }
     """16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`
-    will recognize, but if that is your objective it is better to use `pytermgui.parser.MarkupLanguage.alias`."""
+    will recognize, but if that is your objective it is better to use
+    `pytermgui.parser.MarkupLanguage.alias`."""
 
     def __init__(self, layer: int = 0) -> None:
         """Initialize object
@@ -296,7 +297,8 @@ def _tput(command: list[str]) -> None:
         _run(str_command, check=True)
         return
 
-    _Popen(str_command)
+    # A with statement here would result in `pass`, so is unnecessary.
+    _Popen(str_command)  # pylint: disable=consider-using-with
 
 
 def is_interactive() -> bool:
@@ -692,7 +694,8 @@ def report_mouse(
 def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
     """Translate the output of produced by setting report_mouse codes into MouseEvent-s.
 
-    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more information."""
+    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more
+    information."""
 
     mouse_codes = {
         "decimal_xterm": {
