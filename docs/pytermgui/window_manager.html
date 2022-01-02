@@ -203,6 +203,7 @@ and output in a nice and optimized manner.</p>
         <span class="o">+</span> <span class="s2">&quot;&quot;</span>
         <span class="o">+</span> <span class="p">{</span><span class="s2">&quot;[wm-section]Key1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;value1&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">alert</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">)]}</span>
         <span class="o">+</span> <span class="p">{</span><span class="s2">&quot;[wm-section]Key2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;value2&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">alert</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">)]}</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
         <span class="o">+</span> <span class="n">ptg</span><span class="o">.</span><span class="n">InputField</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Your input:&quot;</span><span class="p">)</span>
         <span class="o">+</span> <span class="s2">&quot;&quot;</span>
         <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Submit!&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">alert</span><span class="p">(</span><span class="s2">&quot;Form submitted!&quot;</span><span class="p">)]</span>
@@ -246,6 +247,7 @@ style="max-width: 100%"></p>
 <span class="sd">        + &quot;&quot;</span>
 <span class="sd">        + {&quot;[wm-section]Key1&quot;: [&quot;value1&quot;, lambda *_: manager.alert(&quot;Value1&quot;)]}</span>
 <span class="sd">        + {&quot;[wm-section]Key2&quot;: [&quot;value2&quot;, lambda *_: manager.alert(&quot;Value2&quot;)]}</span>
+<span class="sd">        + &quot;&quot;</span>
 <span class="sd">        + ptg.InputField(prompt=&quot;Your input:&quot;)</span>
 <span class="sd">        + &quot;&quot;</span>
 <span class="sd">        + [&quot;Submit!&quot;, lambda *_: manager.alert(&quot;Form submitted!&quot;)]</span>
@@ -937,10 +939,11 @@ style="max-width: 100%"></p>
 
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[2J&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">):</span>
+            <span class="c1"># TODO: Why are these offsets needed?</span>
             <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">allow_fullscreen</span><span class="p">:</span>
                 <span class="n">window</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">origin</span>
-                <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">width</span>
-                <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">height</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="mi">3</span>
 
             <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">has_focus</span> <span class="ow">or</span> <span class="n">window</span><span class="o">.</span><span class="n">is_noblur</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -1262,7 +1265,7 @@ to store and display various widgets, while allowing some custom functionality.<
                             <div id="Window.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Window.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x1061c1c10&gt;, &#39;title&#39;: MarkupFormatter(markup=&#39;[wm-title]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x102670d30&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x102670d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x102670c10&gt;, &#39;title&#39;: MarkupFormatter(markup=&#39;[wm-title]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1913,10 +1916,11 @@ to store and display various widgets, while allowing some custom functionality.<
 
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[2J&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">):</span>
+            <span class="c1"># TODO: Why are these offsets needed?</span>
             <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">allow_fullscreen</span><span class="p">:</span>
                 <span class="n">window</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">origin</span>
-                <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">width</span>
-                <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">height</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="mi">3</span>
 
             <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">has_focus</span> <span class="ow">or</span> <span class="n">window</span><span class="o">.</span><span class="n">is_noblur</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -2514,10 +2518,11 @@ can set themselves to be dirty using the <code>Window.is_dirty</code> flag.</p>
 
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[2J&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">):</span>
+            <span class="c1"># TODO: Why are these offsets needed?</span>
             <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">allow_fullscreen</span><span class="p">:</span>
                 <span class="n">window</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">origin</span>
-                <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">width</span>
-                <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">height</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="mi">3</span>
 
             <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">has_focus</span> <span class="ow">or</span> <span class="n">window</span><span class="o">.</span><span class="n">is_noblur</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>

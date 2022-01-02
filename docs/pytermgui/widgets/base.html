@@ -1292,7 +1292,9 @@
         <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="n">target_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="ow">or</span> <span class="n">_get_widget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">target_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="o">.</span><span class="n">mouse_targets</span><span class="p">:</span>
+            <span class="n">target_widget</span> <span class="o">=</span> <span class="n">_get_widget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">LEFT_CLICK</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="o">=</span> <span class="n">target_widget</span>
@@ -3587,7 +3589,9 @@ a Widget. It returns None in case of a failure</p>
         <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="n">target_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="ow">or</span> <span class="n">_get_widget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">target_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="o">.</span><span class="n">mouse_targets</span><span class="p">:</span>
+            <span class="n">target_widget</span> <span class="o">=</span> <span class="n">_get_widget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">LEFT_CLICK</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="o">=</span> <span class="n">target_widget</span>
@@ -3760,7 +3764,7 @@ a Widget. It returns None in case of a failure</p>
                             <div id="Container.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x1061c1c10&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x102670d30&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x102670d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x102670c10&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -3771,7 +3775,7 @@ a Widget. It returns None in case of a failure</p>
                             <div id="Container.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;\x0e&#39;, &#39;\x1b[B&#39;, &#39;j&#39;}, &#39;previous&#39;: {&#39;\x10&#39;, &#39;\x1b[A&#39;, &#39;k&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;\x0e&#39;, &#39;\x1b[B&#39;, &#39;j&#39;}, &#39;previous&#39;: {&#39;k&#39;, &#39;\x10&#39;, &#39;\x1b[A&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Container.handle_key">handle_key</a></code></p>
@@ -4272,7 +4276,9 @@ re-applied when <code><a href="#Container.center">center()</a></code> is called 
         <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="n">target_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="ow">or</span> <span class="n">_get_widget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">target_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="o">.</span><span class="n">mouse_targets</span><span class="p">:</span>
+            <span class="n">target_widget</span> <span class="o">=</span> <span class="n">_get_widget</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">LEFT_CLICK</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="o">=</span> <span class="n">target_widget</span>
@@ -4618,7 +4624,7 @@ allows it to house markup text that is parsed before display, such as:</p>
                             <div id="Label.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Label.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x102670d30&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>

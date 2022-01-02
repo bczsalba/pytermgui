@@ -297,6 +297,8 @@
         <span class="n">vertical_lines</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">total_offset</span> <span class="o">=</span> <span class="n">separator_length</span> <span class="o">-</span> <span class="mi">1</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
             <span class="n">inner</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -319,7 +321,7 @@
                 <span class="n">total_offset</span> <span class="o">+=</span> <span class="n">real_length</span><span class="p">(</span><span class="n">aligned</span><span class="p">)</span> <span class="o">+</span> <span class="n">separator_length</span>
 
             <span class="n">vertical_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inner</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span>
 
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">horizontal</span> <span class="ow">in</span> <span class="n">zip_longest</span><span class="p">(</span><span class="o">*</span><span class="n">vertical_lines</span><span class="p">,</span> <span class="n">fillvalue</span><span class="o">=</span><span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="n">target_width</span><span class="p">):</span>
@@ -476,8 +478,9 @@
 
         <span class="c1"># Assign cursor character</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">:</span>
                 <span class="n">cursor_char</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">cursor_char</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">])</span>
 
@@ -827,8 +830,9 @@
 
         <span class="c1"># Assign cursor character</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">:</span>
                 <span class="n">cursor_char</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">cursor_char</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">])</span>
 
@@ -922,7 +926,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                             <div id="InputField.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#InputField.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x1061c1670&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[inverse]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;fill&#39;: MarkupFormatter(markup=&#39;[@243]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x102670670&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[inverse]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;fill&#39;: MarkupFormatter(markup=&#39;[@243]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1089,8 +1093,9 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
 
         <span class="c1"># Assign cursor character</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">:</span>
                 <span class="n">cursor_char</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">cursor_char</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">])</span>
 
@@ -1228,6 +1233,8 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
         <span class="n">vertical_lines</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">total_offset</span> <span class="o">=</span> <span class="n">separator_length</span> <span class="o">-</span> <span class="mi">1</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
             <span class="n">inner</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -1250,7 +1257,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                 <span class="n">total_offset</span> <span class="o">+=</span> <span class="n">real_length</span><span class="p">(</span><span class="n">aligned</span><span class="p">)</span> <span class="o">+</span> <span class="n">separator_length</span>
 
             <span class="n">vertical_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inner</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span>
 
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">horizontal</span> <span class="ow">in</span> <span class="n">zip_longest</span><span class="p">(</span><span class="o">*</span><span class="n">vertical_lines</span><span class="p">,</span> <span class="n">fillvalue</span><span class="o">=</span><span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="n">target_width</span><span class="p">):</span>
@@ -1287,7 +1294,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                             <div id="Splitter.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Splitter.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;separator&#39;: &lt;function &lt;lambda&gt; at 0x1061c1d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x1061c1c10&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;separator&#39;: &lt;function &lt;lambda&gt; at 0x102670d30&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x102670c10&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1298,7 +1305,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                             <div id="Splitter.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Splitter.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;\x1b[D&#39;, &#39;\x02&#39;, &#39;h&#39;}, &#39;next&#39;: {&#39;\x1b[C&#39;, &#39;\x06&#39;, &#39;l&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;h&#39;, &#39;\x1b[D&#39;, &#39;\x02&#39;}, &#39;next&#39;: {&#39;l&#39;, &#39;\x06&#39;, &#39;\x1b[C&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Splitter.handle_key">handle_key</a></code></p>
@@ -1343,6 +1350,8 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
         <span class="n">vertical_lines</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">total_offset</span> <span class="o">=</span> <span class="n">separator_length</span> <span class="o">-</span> <span class="mi">1</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
             <span class="n">inner</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -1365,7 +1374,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                 <span class="n">total_offset</span> <span class="o">+=</span> <span class="n">real_length</span><span class="p">(</span><span class="n">aligned</span><span class="p">)</span> <span class="o">+</span> <span class="n">separator_length</span>
 
             <span class="n">vertical_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inner</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span>
 
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">horizontal</span> <span class="ow">in</span> <span class="n">zip_longest</span><span class="p">(</span><span class="o">*</span><span class="n">vertical_lines</span><span class="p">,</span> <span class="n">fillvalue</span><span class="o">=</span><span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="n">target_width</span><span class="p">):</span>
@@ -1970,7 +1979,7 @@ the mouse.</p>
                             <div id="Slider.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Slider.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;filled&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;unfilled&#39;: &lt;function &lt;lambda&gt; at 0x1061c1670&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;highlight&#39;: MarkupFormatter(markup=&#39;[238 @72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;filled&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;unfilled&#39;: &lt;function &lt;lambda&gt; at 0x102670670&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;highlight&#39;: MarkupFormatter(markup=&#39;[238 @72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1981,7 +1990,7 @@ the mouse.</p>
                             <div id="Slider.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Slider.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;increase&#39;: {&#39;+&#39;, &#39;\x1b[C&#39;, &#39;\x06&#39;, &#39;l&#39;}, &#39;decrease&#39;: {&#39;\x1b[D&#39;, &#39;\x02&#39;, &#39;h&#39;, &#39;-&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;increase&#39;: {&#39;l&#39;, &#39;\x06&#39;, &#39;\x1b[C&#39;, &#39;+&#39;}, &#39;decrease&#39;: {&#39;\x02&#39;, &#39;h&#39;, &#39;\x1b[D&#39;, &#39;-&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Slider.handle_key">handle_key</a></code></p>
