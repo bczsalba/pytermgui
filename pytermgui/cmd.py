@@ -203,7 +203,7 @@ class MarkupApplication(Application):
     def _get_tokens() -> list[Label]:
         """Get all tokens using the parser"""
 
-        tokens: list[str] = []
+        tokens: list[Label] = []
         for token in markup.tags:
             tokens.append(Label(f"[{token}]{token}", parent_align=0))
 
@@ -284,7 +284,9 @@ class MarkupApplication(Application):
             "[inverse demo-rgb]@rrr;ggg;bbb",
         ]
 
-        corners = Container.chars["corner"].copy()
+        corners = Container.chars["corner"]
+        assert isinstance(corners, list)
+        corners = corners.copy()
         corners[0] += " [wm-title]tokens[/] "
         corners[1] = " [wm-title]colors[60] " + corners[1]
 
@@ -315,10 +317,16 @@ class MarkupApplication(Application):
         )
 
         output = get_widget("output_label")
+        assert isinstance(output, Label)
         field = get_widget("input_field")
+        assert isinstance(field, InputField)
+
         window.output_label = output
 
-        field.bind(keys.ANY_KEY, lambda field, _: self._update_value(output, field))
+        field.bind(
+            keys.ANY_KEY,
+            lambda field, _, output=output: self._update_value(output, field),
+        )
 
         window.bind(
             keys.CTRL_R,
@@ -491,6 +499,7 @@ def main() -> None:
 
         with WindowManager() as manager:
             for widget in namespace.widgets.values():
+                assert isinstance(widget, Window)
                 manager.add(widget)
 
             if args.print_only:

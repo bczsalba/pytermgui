@@ -411,7 +411,10 @@ class WindowManager(Container):
             return super().execute_binding(key)
 
         # Execute universal mouse binding
-        events = self.mouse_translator(key)
+        if self.mouse_translator is None:
+            events = None
+        else:
+            events = self.mouse_translator(key)
 
         if events is not None:
             handled = False

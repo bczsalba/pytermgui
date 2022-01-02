@@ -20,7 +20,7 @@ from .enums import WidgetAlignment
 from .context_managers import alt_buffer
 from .widgets.boxes import DOUBLE_BOTTOM
 from .widgets.base import Container, Label
-from .widgets.styles import MarkupFormatter, StyleType
+from .widgets.styles import MarkupFormatter, StyleType, StyleCall
 from .ansi_interface import foreground, terminal, is_interactive
 
 __all__ = ["inspect", "Inspector"]
@@ -78,7 +78,7 @@ def inspect(
     root += Label()
 
     if style:
-        builtin_style = inspector.styles["builtin"]
+        builtin_style = StyleCall(inspector, inspector.styles["builtin"])
         DOUBLE_BOTTOM.set_chars_of(root)
 
         corners = root.chars["corner"]

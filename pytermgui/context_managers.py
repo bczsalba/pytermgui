@@ -121,4 +121,5 @@ def mouse_handler(
         yield lambda code: translate_mouse(code, method=method)
 
     finally:
-        report_mouse(event, method=method, stop=True)
+        if event is not None:
+            report_mouse(event, method=method, stop=True)

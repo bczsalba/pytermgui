@@ -124,6 +124,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from abc import abstractmethod, ABC
 from typing import Any, Type, IO
+from types import ModuleType
 
 import json
 
@@ -133,10 +134,12 @@ from .serializer import Serializer
 
 
 YAML_ERROR = None
+
 try:
     import yaml
 except ImportError as import_error:
-    yaml = None
+    # yaml is explicitly checked to be None later
+    yaml = None  # type: ignore
     YAML_ERROR = import_error
 
 
@@ -196,11 +199,13 @@ class WidgetNamespace:
     def apply_to(self, widget: widgets.Widget) -> None:
         """Apply namespace config to `widget`"""
 
-        def _apply_sections(data: dict[str, str], widget: widgets.Widget) -> None:
+        def _apply_sections(
+            data: dict[str, dict[str, str]], widget: widgets.Widget
+        ) -> None:
             """Apply sections from data to widget"""
 
             for title, section in data.items():
-                self._apply_section(widget, title, section)
+                self._apply_section(type(widget), title, section)
 
         data = self.config.get(type(widget))
         if data is None:
