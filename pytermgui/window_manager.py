@@ -22,15 +22,14 @@ import pytermgui as ptg
 
 with ptg.WindowManager() as manager:
     manager.add(
-        ptg.Window(
-            "[wm-title]Hello world!"
-            + ""
-            + {"[wm-section]Key1": ["value1", lambda *_: manager.alert("Value1")]}
-            + {"[wm-section]Key2": ["value2", lambda *_: manager.alert("Value2")]}
-            + InputField(prompt="Your input:")
-            + ""
-            + ["Submit!", lambda *_: manager.alert("Form submitted!")]
-        )
+        ptg.Window()
+        + "[wm-title]Hello world!"
+        + ""
+        + {"[wm-section]Key1": ["value1", lambda *_: manager.alert("Value1")]}
+        + {"[wm-section]Key2": ["value2", lambda *_: manager.alert("Value2")]}
+        + InputField(prompt="Your input:")
+        + ""
+        + ["Submit!", lambda *_: manager.alert("Form submitted!")]
     )
 
     manager.run()
