@@ -6,8 +6,8 @@
 pip3 install pytermgui
 ```
 
-[![PyPI version](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/version.svg)](https://pypi.org/project/pytermgui)
-[![Pylint quality](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/quality.svg)](https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py)
+[![PyPI version](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/version.svg)](https://pypi.org/project/pytermgui)
+[![Pylint quality](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/quality.svg)](https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py)
 
 
 Batteries included or bare-metal. It's your choice.
@@ -98,8 +98,8 @@ We take pride in seeing others use the library. If you have a project you'd like
 
 | Project name  | Project description | Demo image|
 ----------------|---------------------|------------
-| [`sipedon`](https://github.com/bczsalba/sipedon) | An interactive aquarium for your terminal. | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/master/assets/demos/sipedon.png?raw=true" width=50%></p> |
-| [`tracers`](https://github.com/bczsalba/tracers) | Easily debug and trace attribute changes in your Python classes | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/master/assets/demos/tracers.png?raw=true" width=50%></p> |
+| [`sipedon`](https://github.com/bczsalba/sipedon) | An interactive aquarium for your terminal. | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/master/assets/demos/sipedon.png?raw=true" width=80%></p> |
+| [`tracers`](https://github.com/bczsalba/tracers) | Easily debug and trace attribute changes in your Python classes | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/master/assets/demos/tracers.png?raw=true" width=80%></p> |
 
 
 Some showcase images
