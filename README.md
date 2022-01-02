@@ -79,7 +79,7 @@ what *we* want, rather encourage you to morph the library around your needs.
 By the way, this is what the created `Window` looks like. Nifty, huh?
 
 <p align="center">
-    <img src="assets/demos/versatility.png">
+    <img src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/demos/versatility.png">
 </p>
 
 
@@ -117,17 +117,17 @@ Click on each image to see their source code!
 
 ### A hello world program
 
-[![hello world](assets/demos/hello_world.png)](examples/hello_world.yaml)
+[![hello world](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/demos/hello_world.png)](examples/hello_world.yaml)
 
 
 ### The markup playground app
 
 > Note: Use `ptg --markapp` to try
 
-[![markapp](assets/demos/markapp.png)](pytermgui/cmd.py)
+[![markapp](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/demos/markapp.png)](pytermgui/cmd.py)
 
 
 ### A simple window manager demo in 13 lines of code, lifted from the docs
 
-[![window manager](assets/docs/wm_demo.gif)](https://bczsalba.github.io/pytermgui/pytermgui/window_manager.html)
+[![window manager](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/wm_demo.gif)](https://bczsalba.github.io/pytermgui/pytermgui/window_manager.html)
 
