@@ -27,7 +27,7 @@ with ptg.WindowManager() as manager:
         + ""
         + {"[wm-section]Key1": ["value1", lambda *_: manager.alert("Value1")]}
         + {"[wm-section]Key2": ["value2", lambda *_: manager.alert("Value2")]}
-        + InputField(prompt="Your input:")
+        + ptg.InputField(prompt="Your input:")
         + ""
         + ["Submit!", lambda *_: manager.alert("Form submitted!")]
     )
