@@ -454,7 +454,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># TODO: Windows doesn&#39;t support SIGWINCH, is there another alternative?</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="s2">&quot;SIGWINCH&quot;</span><span class="p">):</span>
             <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGWINCH</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_call_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -772,19 +772,23 @@
 
 
 <span class="k">def</span> <span class="nf">set_echo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start echoing user input&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Start echoing user input</span>
+
+<span class="sd">    Note: This is only available on POSIX&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This method is only implemented on POSIX systems.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
 
     <span class="n">system</span><span class="p">(</span><span class="s2">&quot;stty echo&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">unset_echo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Stop echoing user input&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Stop echoing user input</span>
+
+<span class="sd">    Note: This is only available on POSIX&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This method is only implemented on POSIX systems.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
 
     <span class="n">system</span><span class="p">(</span><span class="s2">&quot;stty -echo&quot;</span><span class="p">)</span>
 
@@ -1923,10 +1927,12 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_echo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start echoing user input&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Start echoing user input</span>
+
+<span class="sd">    Note: This is only available on POSIX&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This method is only implemented on POSIX systems.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
 
     <span class="n">system</span><span class="p">(</span><span class="s2">&quot;stty echo&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1934,6 +1940,8 @@ will recognize, but if that is your objective it is better to use
         </details>
 
             <div class="docstring"><p>Start echoing user input</p>
+
+<p>Note: This is only available on POSIX</p>
 </div>
 
 
@@ -1949,10 +1957,12 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">unset_echo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Stop echoing user input&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Stop echoing user input</span>
+
+<span class="sd">    Note: This is only available on POSIX&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This method is only implemented on POSIX systems.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
 
     <span class="n">system</span><span class="p">(</span><span class="s2">&quot;stty -echo&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1960,6 +1970,8 @@ will recognize, but if that is your objective it is better to use
         </details>
 
             <div class="docstring"><p>Stop echoing user input</p>
+
+<p>Note: This is only available on POSIX</p>
 </div>
 
 
