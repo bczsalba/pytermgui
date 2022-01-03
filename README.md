@@ -15,6 +15,10 @@ Batteries included or bare-metal. It's your choice.
 
 pytermgui has both higher and lower level interfaces. If you're only here for the terminal APIs, `ansi_interface` will be your friend.
 
+Zero dependencies
+-----------------
+
+Everything here is home made, just like your grandmas cookies. There is only one optional dependency, `PyYaml`, which you won't have to install unless you plan on using YAML features.
 
 Adapting to your needs
 ----------------------
