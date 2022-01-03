@@ -222,7 +222,7 @@ class _Terminal:
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
         # TODO: Windows doesn't support SIGWINCH, is there another alternative?
-        if not _name == "nt":
+        if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
 
     def _call_listener(self, event: int, data: Any) -> None:
@@ -540,19 +540,23 @@ def set_mode(mode: Union[str, int], write: bool = True) -> str:
 
 
 def set_echo() -> None:
-    """Start echoing user input"""
+    """Start echoing user input
+
+    Note: This is only available on POSIX"""
 
     if not _name == "posix":
-        raise NotImplementedError("This method is only implemented on POSIX systems.")
+        return
 
     system("stty echo")
 
 
 def unset_echo() -> None:
-    """Stop echoing user input"""
+    """Stop echoing user input
+
+    Note: This is only available on POSIX"""
 
     if not _name == "posix":
-        raise NotImplementedError("This method is only implemented on POSIX systems.")
+        return
 
     system("stty -echo")
 
