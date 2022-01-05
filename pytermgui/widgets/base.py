@@ -1006,10 +1006,18 @@ class Container(Widget):
             self._drag_target = None
 
         if target_widget is None:
-            return False
+            for widget in self._widgets:
+                if (
+                    widget.pos[0] <= pos[0] < widget.pos[0] + widget.width
+                    and widget.pos[1] <= pos[1] < widget.pos[1] + widget.height
+                ):
+                    target_widget = widget
+                    break
+            else:
+                return False
 
         handled = target_widget.handle_mouse(event, target)
-        if handled:
+        if handled and target is not None:
             self.select(self.mouse_targets.index(target))
 
         return handled
