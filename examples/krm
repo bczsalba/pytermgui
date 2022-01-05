@@ -50,7 +50,7 @@ def input_box(title: str, command: list) -> ptg.Container:
     """Create a Container with title, containing an InputField"""
 
     box = ptg.Container()
-    box.set_char("corner", ["+- " + title + " -", "x", "x", "x"])
+    box.set_char("corner", ["x- " + title + " -", "x", "x", "x"])
     box.set_char("border", ["| ", "-", " |", "-"])
 
     style = ptg.MarkupFormatter("[243]{item}")
@@ -108,8 +108,8 @@ def main() -> None:
 
         window = (
             ptg.Window(width=70)
-            + "[210 bold]Common kitty remote commands"
-            + "[210 bold]----------------------------"
+            + "[210 bold]Kitty Remote"
+            + "[210 bold]------------"
             + ""
             + ptg.Label(
                 "[240 italic]> Press RETURN to run each command", parent_align=0
