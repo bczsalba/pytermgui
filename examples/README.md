@@ -22,4 +22,4 @@ Kitty Remote
 
 > A frontend for some of the kitty terminal CLI
 
-[![kitty remote](../assets/demos/kitty_remote.png)][krm]
+[![kitty remote](../assets/demos/kitty_remote.png)](krm)
