@@ -2,13 +2,22 @@
 ![title](https://github.com/bczsalba/pytermgui/raw/master/assets/title.png)
 
 > A simple yet powerful TUI framework for your Python (3.7+) applications
+
 ```
 pip3 install pytermgui
 ```
 
-[![PyPI version](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/version.svg)](https://pypi.org/project/pytermgui)
-[![Pylint quality](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/quality.svg)](https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py)
-
+<p align=center>
+   <a href="https://pypi.org/project/pytermgui">
+      <img alt="PyPi project" src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/version.svg">
+   </a>
+    <a href="https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py">
+      <img alt="Pylint quality" src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/quality.svg">
+   </a>
+   <a href="https://reddit.com/r/pytermgui">
+      <img src="https://img.shields.io/reddit/subreddit-subscribers/pytermgui?style=flat&color=bright-green">
+   </a>
+ </p>
 
 Batteries included or bare-metal. It's your choice.
 ---------------------------------------------------
