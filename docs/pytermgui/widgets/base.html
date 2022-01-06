@@ -197,6 +197,9 @@
                                 <a class="variable" href="#Container.allow_fullscreen">allow_fullscreen</a>
                         </li>
                         <li>
+                                <a class="variable" href="#Container.is_scrollable">is_scrollable</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#Container.sidelength">sidelength</a>
                         </li>
                         <li>
@@ -818,6 +821,9 @@
     <span class="n">serialized</span> <span class="o">=</span> <span class="n">Widget</span><span class="o">.</span><span class="n">serialized</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;_centered_axis&quot;</span><span class="p">]</span>
     <span class="n">allow_fullscreen</span> <span class="o">=</span> <span class="kc">True</span>
 
+    <span class="n">is_scrollable</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="sd">&quot;&quot;&quot;Set Container scrollable. Shows a scrollbar to the right edge.&quot;&quot;&quot;</span>
+
     <span class="c1"># TODO: Add `WidgetConvertible`? type instead of Any</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">widgets</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize Container data&quot;&quot;&quot;</span>
@@ -833,6 +839,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_prev_screen</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_printed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">styles</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chars</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -841,6 +848,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="n">terminal</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centered_axis</span><span class="p">))</span>
 
     <span class="nd">@property</span>
@@ -1133,13 +1141,16 @@
 
             <span class="n">widget</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="n">container_vertical_offset</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">container_vertical_offset</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">widget_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()):</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
                     <span class="k">break</span>
 
                 <span class="c1"># Pad horizontally</span>
@@ -1155,10 +1166,11 @@
 
                 <span class="n">widget_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aligned</span><span class="p">)</span>
 
-            <span class="c1"># Add to lines</span>
-            <span class="n">lines</span> <span class="o">+=</span> <span class="n">widget_lines</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Add to lines</span>
+                <span class="n">lines</span> <span class="o">+=</span> <span class="n">widget_lines</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span>
 
         <span class="n">capping_lines</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -1303,10 +1315,18 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">target_widget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
+                    <span class="ow">and</span> <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">widget</span><span class="o">.</span><span class="n">height</span>
+                <span class="p">):</span>
+                    <span class="n">target_widget</span> <span class="o">=</span> <span class="n">widget</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
 
         <span class="n">handled</span> <span class="o">=</span> <span class="n">target_widget</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">handled</span> <span class="ow">and</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">handled</span>
@@ -1417,7 +1437,7 @@
 
 <span class="sd">    with ptg.alt_buffer():</span>
 <span class="sd">        root = ptg.Container(</span>
-<span class="sd">            ptg.Label(&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;)</span>
+<span class="sd">            ptg.Label(&quot;[italic 141 bold]This is some [green]fancy [white inverse]text!&quot;)</span>
 <span class="sd">        )</span>
 <span class="sd">        root.print()</span>
 <span class="sd">        ptg.getch()</span>
@@ -3115,6 +3135,9 @@ a Widget. It returns None in case of a failure</p>
     <span class="n">serialized</span> <span class="o">=</span> <span class="n">Widget</span><span class="o">.</span><span class="n">serialized</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;_centered_axis&quot;</span><span class="p">]</span>
     <span class="n">allow_fullscreen</span> <span class="o">=</span> <span class="kc">True</span>
 
+    <span class="n">is_scrollable</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="sd">&quot;&quot;&quot;Set Container scrollable. Shows a scrollbar to the right edge.&quot;&quot;&quot;</span>
+
     <span class="c1"># TODO: Add `WidgetConvertible`? type instead of Any</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">widgets</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize Container data&quot;&quot;&quot;</span>
@@ -3130,6 +3153,7 @@ a Widget. It returns None in case of a failure</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_prev_screen</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_printed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">styles</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chars</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -3138,6 +3162,7 @@ a Widget. It returns None in case of a failure</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="n">terminal</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centered_axis</span><span class="p">))</span>
 
     <span class="nd">@property</span>
@@ -3430,13 +3455,16 @@ a Widget. It returns None in case of a failure</p>
 
             <span class="n">widget</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="n">container_vertical_offset</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">container_vertical_offset</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">widget_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()):</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
                     <span class="k">break</span>
 
                 <span class="c1"># Pad horizontally</span>
@@ -3452,10 +3480,11 @@ a Widget. It returns None in case of a failure</p>
 
                 <span class="n">widget_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aligned</span><span class="p">)</span>
 
-            <span class="c1"># Add to lines</span>
-            <span class="n">lines</span> <span class="o">+=</span> <span class="n">widget_lines</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Add to lines</span>
+                <span class="n">lines</span> <span class="o">+=</span> <span class="n">widget_lines</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span>
 
         <span class="n">capping_lines</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -3600,10 +3629,18 @@ a Widget. It returns None in case of a failure</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">target_widget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
+                    <span class="ow">and</span> <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">widget</span><span class="o">.</span><span class="n">height</span>
+                <span class="p">):</span>
+                    <span class="n">target_widget</span> <span class="o">=</span> <span class="n">widget</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
 
         <span class="n">handled</span> <span class="o">=</span> <span class="n">target_widget</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">handled</span> <span class="ow">and</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">handled</span>
@@ -3732,6 +3769,7 @@ a Widget. It returns None in case of a failure</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_prev_screen</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_printed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">styles</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chars</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -3740,6 +3778,7 @@ a Widget. It returns None in case of a failure</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="n">terminal</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centered_axis</span><span class="p">))</span>
 </pre></div>
 
@@ -3764,7 +3803,7 @@ a Widget. It returns None in case of a failure</p>
                             <div id="Container.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x103b38dc0&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x103b38dc0&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x103b38ca0&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x106d26dc0&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x106d26dc0&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x106d26ca0&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -3775,7 +3814,7 @@ a Widget. It returns None in case of a failure</p>
                             <div id="Container.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;j&#39;, &#39;\x1b[B&#39;, &#39;\x0e&#39;}, &#39;previous&#39;: {&#39;k&#39;, &#39;\x1b[A&#39;, &#39;\x10&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;\x0e&#39;, &#39;\x1b[B&#39;, &#39;j&#39;}, &#39;previous&#39;: {&#39;\x1b[A&#39;, &#39;k&#39;, &#39;\x10&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Container.handle_key">handle_key</a></code></p>
@@ -3801,6 +3840,17 @@ a Widget. It returns None in case of a failure</p>
     </div>
 
     
+
+                            </div>
+                            <div id="Container.is_scrollable" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Container.is_scrollable">#&nbsp;&nbsp</a>
+
+        <span class="name">is_scrollable</span><span class="default_value"> = True</span>
+    </div>
+
+            <div class="docstring"><p>Set Container scrollable. Shows a scrollbar to the right edge.</p>
+</div>
+
 
                             </div>
                             <div id="Container.sidelength" class="classattr">
@@ -3954,13 +4004,16 @@ a Widget. It returns None in case of a failure</p>
 
             <span class="n">widget</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="n">container_vertical_offset</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">container_vertical_offset</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">widget_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()):</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
                     <span class="k">break</span>
 
                 <span class="c1"># Pad horizontally</span>
@@ -3976,10 +4029,11 @@ a Widget. It returns None in case of a failure</p>
 
                 <span class="n">widget_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aligned</span><span class="p">)</span>
 
-            <span class="c1"># Add to lines</span>
-            <span class="n">lines</span> <span class="o">+=</span> <span class="n">widget_lines</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Add to lines</span>
+                <span class="n">lines</span> <span class="o">+=</span> <span class="n">widget_lines</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mouse_targets</span>
 
         <span class="n">capping_lines</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -4287,10 +4341,18 @@ re-applied when <code><a href="#Container.center">center()</a></code> is called 
             <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">target_widget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
+                    <span class="ow">and</span> <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">widget</span><span class="o">.</span><span class="n">height</span>
+                <span class="p">):</span>
+                    <span class="n">target_widget</span> <span class="o">=</span> <span class="n">widget</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
 
         <span class="n">handled</span> <span class="o">=</span> <span class="n">target_widget</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">handled</span> <span class="ow">and</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mouse_targets</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">handled</span>
@@ -4535,7 +4597,7 @@ re-applied when <code><a href="#Container.center">center()</a></code> is called 
 
 <span class="sd">    with ptg.alt_buffer():</span>
 <span class="sd">        root = ptg.Container(</span>
-<span class="sd">            ptg.Label(&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;)</span>
+<span class="sd">            ptg.Label(&quot;[italic 141 bold]This is some [green]fancy [white inverse]text!&quot;)</span>
 <span class="sd">        )</span>
 <span class="sd">        root.print()</span>
 <span class="sd">        ptg.getch()</span>
@@ -4581,7 +4643,7 @@ allows it to house markup text that is parsed before display, such as:</p>
 
 <span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">alt_buffer</span><span class="p">():</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">Container</span><span class="p">(</span>
-        <span class="n">ptg</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;[italic 141 underline]This is some [green]fancy [white inverse]text!&quot;</span><span class="p">)</span>
+        <span class="n">ptg</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;[italic 141 bold]This is some [green]fancy [white inverse]text!&quot;</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">root</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
     <span class="n">ptg</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
@@ -4624,7 +4686,7 @@ allows it to house markup text that is parsed before display, such as:</p>
                             <div id="Label.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Label.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x103b38dc0&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x106d26dc0&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>

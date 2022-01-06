@@ -344,7 +344,18 @@
 <span class="sd">    This class does NOT read input. To use this widget, send it</span>
 <span class="sd">    user data gathered by `pytermgui.input.getch` or other means.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    - value: `str`, The default value of this InputField.</span>
+<span class="sd">    - prompt: `str`, Text to display to the left of the field.</span>
+<span class="sd">    - expect: `type`, Type object that all input should match. This type</span>
+<span class="sd">                      is called on each new key, and if a `ValueError` is</span>
+<span class="sd">                      raised the key is discarded. The `value` attribute</span>
+<span class="sd">                      is also converted using this type.</span>
+
 <span class="sd">    Example of usage:</span>
+<span class="sd">    -----------------</span>
 
 <span class="sd">    ```python3</span>
 <span class="sd">    import pytermgui as ptg</span>
@@ -373,7 +384,13 @@
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">expect</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
@@ -383,6 +400,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="n">real_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="o">=</span> <span class="n">expect</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">selectables_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -400,7 +418,7 @@
     <span class="k">def</span> <span class="nf">cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Set cursor as an always-valid value&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cursor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">real_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cursor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">real_length</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))))</span>
 
     <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Handle keypress, return True if success, False if failure&quot;&quot;&quot;</span>
@@ -416,6 +434,7 @@
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">BACKSPACE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
             <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
             <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span>
@@ -436,12 +455,23 @@
 
         <span class="c1"># Add character</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
             <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">]</span> <span class="o">+</span> <span class="n">key</span>
             <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="p">:]</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="n">_run_callback</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">True</span>
 
@@ -471,6 +501,9 @@
 
         <span class="c1"># Cache value to be reset later</span>
         <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># Stringify value in case `expect` is set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
         <span class="c1"># Create sides separated by cursor</span>
         <span class="n">left</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">])</span>
@@ -696,7 +729,18 @@
 <span class="sd">    This class does NOT read input. To use this widget, send it</span>
 <span class="sd">    user data gathered by `pytermgui.input.getch` or other means.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    - value: `str`, The default value of this InputField.</span>
+<span class="sd">    - prompt: `str`, Text to display to the left of the field.</span>
+<span class="sd">    - expect: `type`, Type object that all input should match. This type</span>
+<span class="sd">                      is called on each new key, and if a `ValueError` is</span>
+<span class="sd">                      raised the key is discarded. The `value` attribute</span>
+<span class="sd">                      is also converted using this type.</span>
+
 <span class="sd">    Example of usage:</span>
+<span class="sd">    -----------------</span>
 
 <span class="sd">    ```python3</span>
 <span class="sd">    import pytermgui as ptg</span>
@@ -725,7 +769,13 @@
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">expect</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
@@ -735,6 +785,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="n">real_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="o">=</span> <span class="n">expect</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">selectables_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -752,7 +803,7 @@
     <span class="k">def</span> <span class="nf">cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Set cursor as an always-valid value&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cursor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">real_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cursor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">real_length</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))))</span>
 
     <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Handle keypress, return True if success, False if failure&quot;&quot;&quot;</span>
@@ -768,6 +819,7 @@
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">BACKSPACE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
             <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
             <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span>
@@ -788,12 +840,23 @@
 
         <span class="c1"># Add character</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
             <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">]</span> <span class="o">+</span> <span class="n">key</span>
             <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="p">:]</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="n">_run_callback</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">True</span>
 
@@ -823,6 +886,9 @@
 
         <span class="c1"># Cache value to be reset later</span>
         <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># Stringify value in case `expect` is set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
         <span class="c1"># Create sides separated by cursor</span>
         <span class="n">left</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">])</span>
@@ -874,7 +940,18 @@
 <p>This class does NOT read input. To use this widget, send it
 user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch</a></code> or other means.</p>
 
-<p>Example of usage:</p>
+<h2 id="args">Args:</h2>
+
+<ul>
+<li>value: <code>str</code>, The default value of this InputField.</li>
+<li>prompt: <code>str</code>, Text to display to the left of the field.</li>
+<li>expect: <code>type</code>, Type object that all input should match. This type
+              is called on each new key, and if a <code>ValueError</code> is
+              raised the key is discarded. The <code>value</code> attribute
+              is also converted using this type.</li>
+</ul>
+
+<h2 id="example-of-usage">Example of usage:</h2>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 
@@ -899,12 +976,23 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                                         <div class="attr function"><a class="headerlink" href="#InputField.__init__">#&nbsp;&nbsp</a>
 
         
-            <span class="name">InputField</span><span class="signature">(value: str = &#39;&#39;, prompt: str = &#39;&#39;, **attrs: Any)</span>
+            <span class="name">InputField</span><span class="signature">(
+    value: str = &#39;&#39;,
+    prompt: str = &#39;&#39;,
+    expect: &#39;type | None&#39; = None,
+    **attrs: Any
+)</span>
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">expect</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
@@ -914,6 +1002,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="n">real_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="o">=</span> <span class="n">expect</span>
 </pre></div>
 
         </details>
@@ -926,7 +1015,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                             <div id="InputField.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#InputField.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x103b38700&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[inverse]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;fill&#39;: MarkupFormatter(markup=&#39;[@243]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;value&#39;: &lt;function &lt;lambda&gt; at 0x106d26700&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[inverse]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;fill&#39;: MarkupFormatter(markup=&#39;[@243]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -991,6 +1080,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">BACKSPACE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
             <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
             <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span>
@@ -1011,12 +1101,23 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
 
         <span class="c1"># Add character</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
             <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">]</span> <span class="o">+</span> <span class="n">key</span>
             <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="p">:]</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="n">_run_callback</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
@@ -1086,6 +1187,9 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
 
         <span class="c1"># Cache value to be reset later</span>
         <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># Stringify value in case `expect` is set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
         <span class="c1"># Create sides separated by cursor</span>
         <span class="n">left</span> <span class="o">=</span> <span class="n">fill_style</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">])</span>
@@ -1294,7 +1398,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                             <div id="Splitter.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Splitter.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;separator&#39;: &lt;function &lt;lambda&gt; at 0x103b38dc0&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x103b38ca0&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;separator&#39;: &lt;function &lt;lambda&gt; at 0x106d26dc0&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x106d26ca0&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1305,7 +1409,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                             <div id="Splitter.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Splitter.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;\x02&#39;, &#39;\x1b[D&#39;, &#39;h&#39;}, &#39;next&#39;: {&#39;l&#39;, &#39;\x06&#39;, &#39;\x1b[C&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;\x02&#39;, &#39;\x1b[D&#39;, &#39;h&#39;}, &#39;next&#39;: {&#39;\x1b[C&#39;, &#39;l&#39;, &#39;\x06&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Splitter.handle_key">handle_key</a></code></p>
@@ -1425,6 +1529,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                                 <dd id="Splitter.__init__" class="function"><a href="base.html#Container.__init__">Container</a></dd>
                 <dd id="Splitter.serialized" class="variable"><a href="base.html#Container.serialized">serialized</a></dd>
                 <dd id="Splitter.allow_fullscreen" class="variable"><a href="base.html#Container.allow_fullscreen">allow_fullscreen</a></dd>
+                <dd id="Splitter.is_scrollable" class="variable"><a href="base.html#Container.is_scrollable">is_scrollable</a></dd>
                 <dd id="Splitter.sidelength" class="variable"><a href="base.html#Container.sidelength">sidelength</a></dd>
                 <dd id="Splitter.selectables" class="variable"><a href="base.html#Container.selectables">selectables</a></dd>
                 <dd id="Splitter.selectables_length" class="variable"><a href="base.html#Container.selectables_length">selectables_length</a></dd>
@@ -1677,6 +1782,7 @@ user data gathered by <code><a href="../input.html#getch">pytermgui.input.getch<
                 <dd id="ColorPicker.styles" class="variable"><a href="base.html#Container.styles">styles</a></dd>
                 <dd id="ColorPicker.keys" class="variable"><a href="base.html#Container.keys">keys</a></dd>
                 <dd id="ColorPicker.allow_fullscreen" class="variable"><a href="base.html#Container.allow_fullscreen">allow_fullscreen</a></dd>
+                <dd id="ColorPicker.is_scrollable" class="variable"><a href="base.html#Container.is_scrollable">is_scrollable</a></dd>
                 <dd id="ColorPicker.sidelength" class="variable"><a href="base.html#Container.sidelength">sidelength</a></dd>
                 <dd id="ColorPicker.selectables" class="variable"><a href="base.html#Container.selectables">selectables</a></dd>
                 <dd id="ColorPicker.selectables_length" class="variable"><a href="base.html#Container.selectables_length">selectables_length</a></dd>
@@ -1979,7 +2085,7 @@ the mouse.</p>
                             <div id="Slider.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Slider.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;filled&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;unfilled&#39;: &lt;function &lt;lambda&gt; at 0x103b38700&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;highlight&#39;: MarkupFormatter(markup=&#39;[238 @72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;filled&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;unfilled&#39;: &lt;function &lt;lambda&gt; at 0x106d26700&gt;, &#39;cursor&#39;: MarkupFormatter(markup=&#39;[@238 72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;highlight&#39;: MarkupFormatter(markup=&#39;[238 @72 bold]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1990,7 +2096,7 @@ the mouse.</p>
                             <div id="Slider.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Slider.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;increase&#39;: {&#39;+&#39;, &#39;l&#39;, &#39;\x06&#39;, &#39;\x1b[C&#39;}, &#39;decrease&#39;: {&#39;\x02&#39;, &#39;\x1b[D&#39;, &#39;h&#39;, &#39;-&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;increase&#39;: {&#39;\x1b[C&#39;, &#39;l&#39;, &#39;\x06&#39;, &#39;+&#39;}, &#39;decrease&#39;: {&#39;\x02&#39;, &#39;\x1b[D&#39;, &#39;-&#39;, &#39;h&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Slider.handle_key">handle_key</a></code></p>

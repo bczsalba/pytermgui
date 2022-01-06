@@ -176,7 +176,18 @@ class InputField(Label):
     This class does NOT read input. To use this widget, send it
     user data gathered by `pytermgui.input.getch` or other means.
 
+    Args:
+    -----
+
+    - value: `str`, The default value of this InputField.
+    - prompt: `str`, Text to display to the left of the field.
+    - expect: `type`, Type object that all input should match. This type
+                      is called on each new key, and if a `ValueError` is
+                      raised the key is discarded. The `value` attribute
+                      is also converted using this type.
+
     Example of usage:
+    -----------------
 
     ```python3
     import pytermgui as ptg
