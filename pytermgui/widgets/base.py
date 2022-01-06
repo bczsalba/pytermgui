@@ -1128,7 +1128,7 @@ class Label(Widget):
 
     with ptg.alt_buffer():
         root = ptg.Container(
-            ptg.Label("[italic 141 underline]This is some [green]fancy [white inverse]text!")
+            ptg.Label("[italic 141 bold]This is some [green]fancy [white inverse]text!")
         )
         root.print()
         ptg.getch()

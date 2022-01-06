@@ -205,7 +205,13 @@ class InputField(Label):
 
     is_bindable = True
 
-    def __init__(self, value: str = "", prompt: str = "", **attrs: Any) -> None:
+    def __init__(
+        self,
+        value: str = "",
+        prompt: str = "",
+        expect: type | None = None,
+        **attrs: Any,
+    ) -> None:
         """Initialize object"""
 
         super().__init__(prompt + value, **attrs)
@@ -215,6 +221,7 @@ class InputField(Label):
         self.value = value
         self.prompt = prompt
         self.cursor = real_length(self.value)
+        self.expect = expect
 
     @property
     def selectables_length(self) -> int:
@@ -232,7 +239,7 @@ class InputField(Label):
     def cursor(self, value: int) -> None:
         """Set cursor as an always-valid value"""
 
-        self._cursor = max(0, min(value, real_length(self.value)))
+        self._cursor = max(0, min(value, real_length(str(self.value))))
 
     def handle_key(self, key: str) -> bool:
         """Handle keypress, return True if success, False if failure"""
@@ -248,6 +255,7 @@ class InputField(Label):
             return True
 
         if key == keys.BACKSPACE and self.cursor > 0:
+            self.value = str(self.value)
             left = self.value[: self.cursor - 1]
             right = self.value[self.cursor :]
             self.value = left + right
@@ -268,12 +276,23 @@ class InputField(Label):
 
         # Add character
         else:
+            if self.expect is not None:
+                try:
+                    self.expect(key)
+                except ValueError:
+                    return False
+
+            self.value = str(self.value)
+
             left = self.value[: self.cursor] + key
             right = self.value[self.cursor :]
 
             self.value = left + right
             self.cursor += len(key)
             _run_callback()
+
+        if self.expect is not None and self.value != "":
+            self.value = self.expect(self.value)
 
         return True
 
@@ -303,6 +322,9 @@ class InputField(Label):
 
         # Cache value to be reset later
         old = self.value
+
+        # Stringify value in case `expect` is set
+        self.value = str(self.value)
 
         # Create sides separated by cursor
         left = fill_style(self.value[: self.cursor])
