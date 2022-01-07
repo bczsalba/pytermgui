@@ -231,10 +231,8 @@ class MarkupLanguage:
     It offers tokenizer methods for both `markup` and `ANSI` text,
     which can then be used to convert between the two formats.
 
-    You can define macros using
-        `MarkupLanguage.define(name: str, macro: MacroCallable)`.
-    And alias a set of tags using
-        `MarkupLanguage.alias(src: str, dst: str)`.
+    You can define macros using `MarkupLanguage.define`, and alias
+    a set of tags using `MarkupLanguage.alias`.
 
     Parsing `markup` into `ANSI` text is done using the `parse()` method,
     where `optimizer_level` sets the amount of optimization that should be
@@ -243,6 +241,23 @@ class MarkupLanguage:
     Getting `markup` from `ANSI` is done using the `get_markup()` method. Note
     that this method is "lossy": it does not preserve information about macros,
     and turns aliases into their underlying values.
+
+    You can also use a `MarkupLanguage` instance as a context manager, which
+    returns a callable with the signature of print that will parse every argument
+    given to it, and pass through all **kwargs.
+
+    ```python3
+    import pytermgui as ptg
+
+    ptg.markup.alias("my-tag", "@152 72 bold")
+    with ptg.markup as mprint:
+        mprint("This is [my-tag]my-tag[/]!")
+    ```
+
+    <p style="text-align: center">
+        <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/parser.png
+        style="width: 80%">
+    </p>
     """
 
     def __init__(self, default_macros: bool = True) -> None:

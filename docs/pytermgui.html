@@ -39,6 +39,12 @@
     <li><a href="#adding-windows-during-definition">Adding windows during definition</a></li>
     <li><a href="#useful-methods-to-know-about">Useful methods to know about</a></li>
   </ul></li>
+  <li><a href="#layers-of-the-api">Layers of the API</a>
+  <ul>
+    <li><a href="#low-level">Low level</a></li>
+    <li><a href="#helper-level">Helper level</a></li>
+    <li><a href="#high-level">High level</a></li>
+  </ul></li>
 </ul>
 
 
@@ -159,6 +165,68 @@ of the library you use. I will provide an example of usage for each.</p>
 <span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">markup</span> <span class="k">as</span> <span class="n">mprint</span><span class="p">:</span>
     <span class="n">mprint</span><span class="p">(</span><span class="s2">&quot;This is [my-tag]my-tag!&quot;</span><span class="p">)</span>
 </code></pre></div>
+
+<h1 id="layers-of-the-api">Layers of the API</h1>
+
+<h2 id="low-level">Low level</h2>
+
+<p>At the base, there is <code><a href="pytermgui/ansi_interface.html">pytermgui.ansi_interface</a></code> and <code><a href="pytermgui/input.html">pytermgui.input</a></code>, handling terminal APIs for output and input respectively. This is the lowest-level layer of the library.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="n">ptg</span><span class="o">.</span><span class="n">set_alt_buffer</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This terminal will be discarded on &#39;</span><span class="se">\\</span><span class="s2">n&#39; input.&quot;</span><span class="p">)</span>
+<span class="k">while</span> <span class="n">ptg</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wrong key.&quot;</span><span class="p">)</span>
+
+<span class="n">ptg</span><span class="o">.</span><span class="n">unset_alt_buffer</span><span class="p">()</span>
+</code></pre></div>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png
+    style="width: 80%">
+</p>
+
+<h2 id="helper-level">Helper level</h2>
+
+<p>On top of that, there is the helper layer, including things like <code><a href="pytermgui/helpers.html">pytermgui.helpers</a></code>, <code><a href="pytermgui/context_managers.html">pytermgui.context_managers</a></code> and the kind. These provide no extra functionality, only combine functions defined below them in order to make them more usable.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;This is some </span><span class="se">\\</span><span class="s2">033[1mlong</span><span class="se">\\</span><span class="s2">033[0m and </span><span class="se">\\</span><span class="s2">033[38;5;141mstyled</span><span class="se">\\</span><span class="s2">033[0m text.&quot;</span>
+
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ptg</span><span class="o">.</span><span class="n">break_line</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</code></pre></div>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png
+    style="width: 80%">
+</p>
+
+<h2 id="high-level">High level</h2>
+
+<p>Building on all that is the relatively high level <code><a href="pytermgui/widgets.html">pytermgui.widgets</a></code> module. This part uses things from everything defined before it to create a visually appealing interface system. It introduces a lot of its own APIs and abstractions, and leaves all the parts below it free of cross-layer dependencies.</p>
+
+<p>The highest layer of the library is for <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code>. This layer combines parts from everything below. It introduces abstractions on top of the <code><a href="#widget">pytermgui.widget</a></code> system, and creates its own featureset.  </p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">ptg</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="o">+</span> <span class="s2">&quot;[141 bold]Title&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;[grey italic]body text&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Button&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png
+    style="width: 80%">
+</p>
 </div>
 
                         <details>

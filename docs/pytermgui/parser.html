@@ -405,10 +405,8 @@
 <span class="sd">    It offers tokenizer methods for both `markup` and `ANSI` text,</span>
 <span class="sd">    which can then be used to convert between the two formats.</span>
 
-<span class="sd">    You can define macros using</span>
-<span class="sd">        `MarkupLanguage.define(name: str, macro: MacroCallable)`.</span>
-<span class="sd">    And alias a set of tags using</span>
-<span class="sd">        `MarkupLanguage.alias(src: str, dst: str)`.</span>
+<span class="sd">    You can define macros using `MarkupLanguage.define`, and alias</span>
+<span class="sd">    a set of tags using `MarkupLanguage.alias`.</span>
 
 <span class="sd">    Parsing `markup` into `ANSI` text is done using the `parse()` method,</span>
 <span class="sd">    where `optimizer_level` sets the amount of optimization that should be</span>
@@ -417,6 +415,23 @@
 <span class="sd">    Getting `markup` from `ANSI` is done using the `get_markup()` method. Note</span>
 <span class="sd">    that this method is &quot;lossy&quot;: it does not preserve information about macros,</span>
 <span class="sd">    and turns aliases into their underlying values.</span>
+
+<span class="sd">    You can also use a `MarkupLanguage` instance as a context manager, which</span>
+<span class="sd">    returns a callable with the signature of print that will parse every argument</span>
+<span class="sd">    given to it, and pass through all **kwargs.</span>
+
+<span class="sd">    ```python3</span>
+<span class="sd">    import pytermgui as ptg</span>
+
+<span class="sd">    ptg.markup.alias(&quot;my-tag&quot;, &quot;@152 72 bold&quot;)</span>
+<span class="sd">    with ptg.markup as mprint:</span>
+<span class="sd">        mprint(&quot;This is [my-tag]my-tag[/]!&quot;)</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    &lt;p style=&quot;text-align: center&quot;&gt;</span>
+<span class="sd">        &lt;img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/parser.png</span>
+<span class="sd">        style=&quot;width: 80%&quot;&gt;</span>
+<span class="sd">    &lt;/p&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_macros</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -903,10 +918,8 @@
 <span class="sd">    It offers tokenizer methods for both `markup` and `ANSI` text,</span>
 <span class="sd">    which can then be used to convert between the two formats.</span>
 
-<span class="sd">    You can define macros using</span>
-<span class="sd">        `MarkupLanguage.define(name: str, macro: MacroCallable)`.</span>
-<span class="sd">    And alias a set of tags using</span>
-<span class="sd">        `MarkupLanguage.alias(src: str, dst: str)`.</span>
+<span class="sd">    You can define macros using `MarkupLanguage.define`, and alias</span>
+<span class="sd">    a set of tags using `MarkupLanguage.alias`.</span>
 
 <span class="sd">    Parsing `markup` into `ANSI` text is done using the `parse()` method,</span>
 <span class="sd">    where `optimizer_level` sets the amount of optimization that should be</span>
@@ -915,6 +928,23 @@
 <span class="sd">    Getting `markup` from `ANSI` is done using the `get_markup()` method. Note</span>
 <span class="sd">    that this method is &quot;lossy&quot;: it does not preserve information about macros,</span>
 <span class="sd">    and turns aliases into their underlying values.</span>
+
+<span class="sd">    You can also use a `MarkupLanguage` instance as a context manager, which</span>
+<span class="sd">    returns a callable with the signature of print that will parse every argument</span>
+<span class="sd">    given to it, and pass through all **kwargs.</span>
+
+<span class="sd">    ```python3</span>
+<span class="sd">    import pytermgui as ptg</span>
+
+<span class="sd">    ptg.markup.alias(&quot;my-tag&quot;, &quot;@152 72 bold&quot;)</span>
+<span class="sd">    with ptg.markup as mprint:</span>
+<span class="sd">        mprint(&quot;This is [my-tag]my-tag[/]!&quot;)</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    &lt;p style=&quot;text-align: center&quot;&gt;</span>
+<span class="sd">        &lt;img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/parser.png</span>
+<span class="sd">        style=&quot;width: 80%&quot;&gt;</span>
+<span class="sd">    &lt;/p&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_macros</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1302,10 +1332,8 @@
 <p>It offers tokenizer methods for both <code><a href="#markup">markup</a></code> and <code>ANSI</code> text,
 which can then be used to convert between the two formats.</p>
 
-<p>You can define macros using
-    <code><a href="#MarkupLanguage.define">MarkupLanguage.define</a>(name: str, macro: MacroCallable)</code>.
-And alias a set of tags using
-    <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a>(src: str, dst: str)</code>.</p>
+<p>You can define macros using <code><a href="#MarkupLanguage.define">MarkupLanguage.define</a></code>, and alias
+a set of tags using <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>.</p>
 
 <p>Parsing <code><a href="#markup">markup</a></code> into <code>ANSI</code> text is done using the <code><a href="#MarkupLanguage.parse">parse()</a></code> method,
 where <code>optimizer_level</code> sets the amount of optimization that should be
@@ -1314,6 +1342,22 @@ done on the result string.</p>
 <p>Getting <code><a href="#markup">markup</a></code> from <code>ANSI</code> is done using the <code><a href="#MarkupLanguage.get_markup">get_markup()</a></code> method. Note
 that this method is "lossy": it does not preserve information about macros,
 and turns aliases into their underlying values.</p>
+
+<p>You can also use a <code><a href="#MarkupLanguage">MarkupLanguage</a></code> instance as a context manager, which
+returns a callable with the signature of print that will parse every argument
+given to it, and pass through all **kwargs.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="n">ptg</span><span class="o">.</span><span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;my-tag&quot;</span><span class="p">,</span> <span class="s2">&quot;@152 72 bold&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">markup</span> <span class="k">as</span> <span class="n">mprint</span><span class="p">:</span>
+    <span class="n">mprint</span><span class="p">(</span><span class="s2">&quot;This is [my-tag]my-tag[/]!&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/parser.png
+    style="width: 80%">
+</p>
 </div>
 
 
