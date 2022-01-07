@@ -43,7 +43,7 @@ import pytermgui as ptg
 demo = ptg.Window(
    ptg.Label("[210 bold]Hello world!"),
    ptg.Label(),
-   ptg.InputField(prompt="Who are you?")
+   ptg.InputField(prompt="Who are you?"),
    ptg.Label(),
    ptg.Button("Submit!")
 )
