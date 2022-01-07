@@ -47,6 +47,9 @@
                                 <a class="variable" href="#Window.is_bindable">is_bindable</a>
                         </li>
                         <li>
+                                <a class="variable" href="#Window.box">box</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#Window.size_policy">size_policy</a>
                         </li>
                         <li>
@@ -66,6 +69,9 @@
                         </li>
                         <li>
                                 <a class="variable" href="#Window.is_noresize">is_noresize</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Window.is_dirty">is_dirty</a>
                         </li>
                         <li>
                                 <a class="variable" href="#Window.styles">styles</a>
@@ -282,9 +288,9 @@ style="max-width: 100%"></p>
     <span class="n">boxes</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span>
 <span class="kn">from</span> <span class="nn">.parser</span> <span class="kn">import</span> <span class="n">markup</span>
 <span class="kn">from</span> <span class="nn">.helpers</span> <span class="kn">import</span> <span class="n">strip_ansi</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="nb">input</span> <span class="k">as</span> <span class="n">inputlib</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">LineLengthError</span>
 <span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">CenteringPolicy</span><span class="p">,</span> <span class="n">SizePolicy</span>
 <span class="kn">from</span> <span class="nn">.context_managers</span> <span class="kn">import</span> <span class="n">alt_buffer</span><span class="p">,</span> <span class="n">mouse_handler</span><span class="p">,</span> <span class="n">MouseTranslator</span>
@@ -397,6 +403,7 @@ style="max-width: 100%"></p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span>
     <span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span>
 
     <span class="n">allow_fullscreen</span> <span class="o">=</span> <span class="kc">False</span>
@@ -417,12 +424,13 @@ style="max-width: 100%"></p>
     <span class="n">is_noresize</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="sd">&quot;&quot;&quot;No-resize windows cannot be resized using the mouse&quot;&quot;&quot;</span>
 
+    <span class="n">is_dirty</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="sd">&quot;&quot;&quot;Control whether the parent manager needs to print this Window&quot;&quot;&quot;</span>
+
     <span class="n">styles</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">Container</span><span class="o">.</span><span class="n">styles</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">MarkupFormatter</span><span class="p">(</span><span class="s2">&quot;[wm-title]</span><span class="si">{item}</span><span class="s2">&quot;</span><span class="p">)}}</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">widgets</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">widgets</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
 
@@ -548,12 +556,11 @@ style="max-width: 100%"></p>
 
         <span class="c1"># Handle some events</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_resize</span><span class="p">)</span>
-        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">())</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">())</span>
 
         <span class="c1"># Set global styles</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-title&quot;</span><span class="p">,</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">)</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-section&quot;</span><span class="p">,</span> <span class="s2">&quot;157&quot;</span><span class="p">)</span>
-        <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span><span class="o">.</span><span class="n">set_chars_of</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_sleep</span><span class="p">(</span><span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -580,15 +587,10 @@ style="max-width: 100%"></p>
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">exception</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;End context manager&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="ne">SystemExit</span><span class="p">):</span>
-                <span class="kn">import</span> <span class="nn">traceback</span>
-
-                <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-                <span class="nb">input</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">exception</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_start_display_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -883,10 +885,7 @@ style="max-width: 100%"></p>
         <span class="sd">&quot;&quot;&quot;Process incoming input&quot;&quot;&quot;</span>
 
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">inputlib</span><span class="o">.</span><span class="n">getch</span><span class="p">(</span><span class="n">interrupts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="nb">chr</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">getch</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span> <span class="o">=</span> <span class="kc">True</span>
@@ -975,7 +974,7 @@ style="max-width: 100%"></p>
         <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span>
             <span class="n">window</span><span class="o">.</span><span class="n">show_targets</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
 
-        <span class="n">inputlib</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
+        <span class="n">getch</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unpause</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1017,6 +1016,7 @@ style="max-width: 100%"></p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span>
     <span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span>
 
     <span class="n">allow_fullscreen</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1037,12 +1037,13 @@ style="max-width: 100%"></p>
     <span class="n">is_noresize</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="sd">&quot;&quot;&quot;No-resize windows cannot be resized using the mouse&quot;&quot;&quot;</span>
 
+    <span class="n">is_dirty</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="sd">&quot;&quot;&quot;Control whether the parent manager needs to print this Window&quot;&quot;&quot;</span>
+
     <span class="n">styles</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">Container</span><span class="o">.</span><span class="n">styles</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">MarkupFormatter</span><span class="p">(</span><span class="s2">&quot;[wm-title]</span><span class="si">{item}</span><span class="s2">&quot;</span><span class="p">)}}</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">widgets</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">widgets</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
 
@@ -1161,8 +1162,6 @@ to store and display various widgets, while allowing some custom functionality.<
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">widgets</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">widgets</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">has_focus</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1191,6 +1190,15 @@ to store and display various widgets, while allowing some custom functionality.<
             <div class="docstring"><p>Allow binding support</p>
 </div>
 
+
+                            </div>
+                            <div id="Window.box" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Window.box">#&nbsp;&nbsp</a>
+
+        <span class="name">box</span><span class="default_value"> = Box(borders=[&#39;│ &#39;, &#39;═&#39;, &#39; │&#39;, &#39;─&#39;], corners=[&#39;╭&#39;, &#39;╮&#39;, &#39;╯&#39;, &#39;╰&#39;])</span>
+    </div>
+
+    
 
                             </div>
                             <div id="Window.size_policy" class="classattr">
@@ -1270,10 +1278,21 @@ to store and display various widgets, while allowing some custom functionality.<
 
 
                             </div>
+                            <div id="Window.is_dirty" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Window.is_dirty">#&nbsp;&nbsp</a>
+
+        <span class="name">is_dirty</span><span class="default_value"> = False</span>
+    </div>
+
+            <div class="docstring"><p>Control whether the parent manager needs to print this Window</p>
+</div>
+
+
+                            </div>
                             <div id="Window.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Window.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x103824ee0&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x103824ee0&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x103824dc0&gt;, &#39;title&#39;: MarkupFormatter(markup=&#39;[wm-title]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x107304ee0&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x107304ee0&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x107304dc0&gt;, &#39;title&#39;: MarkupFormatter(markup=&#39;[wm-title]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1456,12 +1475,10 @@ to store and display various widgets, while allowing some custom functionality.<
                                 <dd id="Window.chars" class="variable"><a href="widgets/base.html#Container.chars">chars</a></dd>
                 <dd id="Window.keys" class="variable"><a href="widgets/base.html#Container.keys">keys</a></dd>
                 <dd id="Window.serialized" class="variable"><a href="widgets/base.html#Container.serialized">serialized</a></dd>
-                <dd id="Window.is_scrollable" class="variable"><a href="widgets/base.html#Container.is_scrollable">is_scrollable</a></dd>
                 <dd id="Window.sidelength" class="variable"><a href="widgets/base.html#Container.sidelength">sidelength</a></dd>
                 <dd id="Window.selectables" class="variable"><a href="widgets/base.html#Container.selectables">selectables</a></dd>
                 <dd id="Window.selectables_length" class="variable"><a href="widgets/base.html#Container.selectables_length">selectables_length</a></dd>
                 <dd id="Window.selected" class="variable"><a href="widgets/base.html#Container.selected">selected</a></dd>
-                <dd id="Window.box" class="variable"><a href="widgets/base.html#Container.box">box</a></dd>
                 <dd id="Window.get_lines" class="function"><a href="widgets/base.html#Container.get_lines">get_lines</a></dd>
                 <dd id="Window.set_widgets" class="function"><a href="widgets/base.html#Container.set_widgets">set_widgets</a></dd>
                 <dd id="Window.serialize" class="function"><a href="widgets/base.html#Container.serialize">serialize</a></dd>
@@ -1534,12 +1551,11 @@ to store and display various widgets, while allowing some custom functionality.<
 
         <span class="c1"># Handle some events</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_resize</span><span class="p">)</span>
-        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">())</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">())</span>
 
         <span class="c1"># Set global styles</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-title&quot;</span><span class="p">,</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">)</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-section&quot;</span><span class="p">,</span> <span class="s2">&quot;157&quot;</span><span class="p">)</span>
-        <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span><span class="o">.</span><span class="n">set_chars_of</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_sleep</span><span class="p">(</span><span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1566,15 +1582,10 @@ to store and display various widgets, while allowing some custom functionality.<
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">exception</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;End context manager&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="ne">SystemExit</span><span class="p">):</span>
-                <span class="kn">import</span> <span class="nn">traceback</span>
-
-                <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-                <span class="nb">input</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">exception</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_start_display_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1869,10 +1880,7 @@ to store and display various widgets, while allowing some custom functionality.<
         <span class="sd">&quot;&quot;&quot;Process incoming input&quot;&quot;&quot;</span>
 
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">inputlib</span><span class="o">.</span><span class="n">getch</span><span class="p">(</span><span class="n">interrupts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="nb">chr</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">getch</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1961,7 +1969,7 @@ to store and display various widgets, while allowing some custom functionality.<
         <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span>
             <span class="n">window</span><span class="o">.</span><span class="n">show_targets</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
 
-        <span class="n">inputlib</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
+        <span class="n">getch</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unpause</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span> <span class="o">=</span> <span class="kc">True</span>
@@ -2016,12 +2024,11 @@ to store and display various widgets, while allowing some custom functionality.<
 
         <span class="c1"># Handle some events</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_resize</span><span class="p">)</span>
-        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">())</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">())</span>
 
         <span class="c1"># Set global styles</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-title&quot;</span><span class="p">,</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">)</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-section&quot;</span><span class="p">,</span> <span class="s2">&quot;157&quot;</span><span class="p">)</span>
-        <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span><span class="o">.</span><span class="n">set_chars_of</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -2062,7 +2069,7 @@ to store and display various widgets, while allowing some custom functionality.<
             <div class="docstring"><p>Whether the <code><a href="#WindowManager">WindowManager</a></code> has dirty elements</p>
 
 <p>An element being "dirty" means it has changes not yet shown. Windows
-can set themselves to be dirty using the <code>Window.is_dirty</code> flag.</p>
+can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window.is_dirty</a></code> flag.</p>
 </div>
 
 
@@ -2366,10 +2373,7 @@ can set themselves to be dirty using the <code>Window.is_dirty</code> flag.</p>
         <span class="sd">&quot;&quot;&quot;Process incoming input&quot;&quot;&quot;</span>
 
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">inputlib</span><span class="o">.</span><span class="n">getch</span><span class="p">(</span><span class="n">interrupts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="nb">chr</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">getch</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span> <span class="o">=</span> <span class="kc">True</span>
@@ -2584,7 +2588,7 @@ can set themselves to be dirty using the <code>Window.is_dirty</code> flag.</p>
         <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span>
             <span class="n">window</span><span class="o">.</span><span class="n">show_targets</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
 
-        <span class="n">inputlib</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
+        <span class="n">getch</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unpause</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span> <span class="o">=</span> <span class="kc">True</span>
@@ -2638,7 +2642,6 @@ can set themselves to be dirty using the <code>Window.is_dirty</code> flag.</p>
                 <dd id="WindowManager.keys" class="variable"><a href="widgets/base.html#Container.keys">keys</a></dd>
                 <dd id="WindowManager.serialized" class="variable"><a href="widgets/base.html#Container.serialized">serialized</a></dd>
                 <dd id="WindowManager.allow_fullscreen" class="variable"><a href="widgets/base.html#Container.allow_fullscreen">allow_fullscreen</a></dd>
-                <dd id="WindowManager.is_scrollable" class="variable"><a href="widgets/base.html#Container.is_scrollable">is_scrollable</a></dd>
                 <dd id="WindowManager.sidelength" class="variable"><a href="widgets/base.html#Container.sidelength">sidelength</a></dd>
                 <dd id="WindowManager.selectables" class="variable"><a href="widgets/base.html#Container.selectables">selectables</a></dd>
                 <dd id="WindowManager.selectables_length" class="variable"><a href="widgets/base.html#Container.selectables_length">selectables_length</a></dd>

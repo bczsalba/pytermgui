@@ -39,6 +39,13 @@
     <li><a href="#adding-windows-during-definition">Adding windows during definition</a></li>
     <li><a href="#useful-methods-to-know-about">Useful methods to know about</a></li>
   </ul></li>
+  <li><a href="#how-to-configure-your-application-using-inline-yaml">How to: Configure your Application using inline YAML</a>
+  <ul>
+    <li><a href="#why-you-should-bother">Why you should bother</a></li>
+    <li><a href="#base-application">Base application</a></li>
+    <li><a href="#adding-markup">Adding markup</a></li>
+    <li><a href="#customizing-widget-styles-chars">Customizing widget styles &amp; chars</a></li>
+  </ul></li>
   <li><a href="#layers-of-the-api">Layers of the API</a>
   <ul>
     <li><a href="#low-level">Low level</a></li>
@@ -166,6 +173,148 @@ of the library you use. I will provide an example of usage for each.</p>
     <span class="n">mprint</span><span class="p">(</span><span class="s2">&quot;This is [my-tag]my-tag!&quot;</span><span class="p">)</span>
 </code></pre></div>
 
+<h1 id="how-to-configure-your-application-using-inline-yaml">How to: Configure your Application using inline YAML</h1>
+
+<h2 id="why-you-should-bother">Why you should bother</h2>
+
+<p>While the programmatic interface for the style system is <em>alright</em>, it's a bit clunky to use for serious customization. In order to improve your experience, you can use a YAML file with your configuration in its <code>config</code> section. Additionally, you can define markup in a nicer way as well.</p>
+
+<p><strong>Note:</strong> You will need to install <code>PyYAML</code> in order to use the YAML loader class.</p>
+
+<h2 id="base-application">Base application</h2>
+
+<p>For the purposes of this section, this is the application we will use:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="c1"># Define empty config as the base</span>
+<span class="c1"># </span>
+<span class="c1"># Note that we define markup tags as empty.</span>
+<span class="c1"># markup tags **need** to be defined for program</span>
+<span class="c1"># execution.</span>
+<span class="n">PTG_CONFIG</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">config: </span><span class="si">{}</span><span class="s2"></span>
+
+<span class="s2">markup:</span>
+<span class="s2">    title: &quot;&quot;</span>
+<span class="s2">    body: &quot;&quot;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="c1"># Initialize a loader, and load our config</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">YamlLoader</span><span class="p">()</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">PTG_CONFIG</span><span class="p">)</span>
+
+    <span class="c1"># Create a test window</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">ptg</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="o">+</span> <span class="s2">&quot;[title]This is our title&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="o">+</span> <span class="p">{</span><span class="s2">&quot;[body]First key&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;First button&quot;</span><span class="p">]}</span>
+        <span class="o">+</span> <span class="p">{</span><span class="s2">&quot;[body]Second key&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Second button&quot;</span><span class="p">]}</span>
+        <span class="o">+</span> <span class="p">{</span><span class="s2">&quot;[body]Third key&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Third button&quot;</span><span class="p">]}</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()]</span>
+    <span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<p>This gives us the following, very bland interface.</p>
+
+<p align="center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/base.png
+    style="width: 80%">
+</p>
+
+<h2 id="adding-markup">Adding markup</h2>
+
+<p>As you could see above, defining markup aliases is quite easy. You cannot and will possibly never be able to define macros in a markup file for two main reasons:</p>
+
+<ul>
+<li>It would be a nightmare to implement in terms of technicalities</li>
+<li>It would be a hotbed for RCE security risks</li>
+</ul>
+
+<p>There is some leeway on both of those however, and that may be revisited in the future.</p>
+
+<p>Anyways, markup aliases. The <code>markup</code> section of your file should be the following format:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">markup</span><span class="p">:</span>
+    <span class="nt">alias-name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">alias-value</span>
+</code></pre></div>
+
+<p>...which would stand for</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">ptg</span><span class="o">.</span><span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;alias-name&quot;</span><span class="p">,</span> <span class="s2">&quot;alias-value&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>You should not include <code>[</code> and <code>]</code> delimiters around either arguments.</p>
+
+<p>As an example, let's add expand our <code>PTG_CONFIG</code> from above:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">config</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+
+<span class="nt">markup</span><span class="p">:</span>
+    <span class="nt">title</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">210 bold</span>
+    <span class="nt">body</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">245 italic</span>
+</code></pre></div>
+
+<p align="center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/markup.png
+    style="width: 80%">
+</p>
+
+<p>Getting there.</p>
+
+<h2 id="customizing-widget-styles-chars">Customizing widget styles &amp; chars</h2>
+
+<p>The markup configuration allows for quite a bit more customization, using the thus-far untouched config section.</p>
+
+<p>The basic syntax goes as follows:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">config</span><span class="p">:</span>
+    <span class="nt">WidgetName</span><span class="p">:</span>
+        <span class="nt">styles</span><span class="p">:</span>
+            <span class="nt">style_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">markup_str</span>
+
+        <span class="nt">chars</span><span class="p">:</span>
+            <span class="nt">char_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">char_str</span>
+</code></pre></div>
+
+<p>As you can see, styles take markup strings. This is because they are converted right into <code><a href="#styles.MarkupFormatter">pytermgui.styles.MarkupFormatter</a></code> objects, which means you can incorporate both <code>{depth}</code> and <code>{item}</code> into them.</p>
+
+<p><strong>Note</strong>: While it is permitted, not including <code>depth</code> nor <code>item</code> into your markup will turn it static, likely causing some headaches.</p>
+
+<p>So for a simple example, let's define some styles &amp; chars:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">config</span><span class="p">:</span>
+    <span class="nt">Window</span><span class="p">:</span>
+        <span class="nt">styles</span><span class="p">:</span>
+            <span class="nt">border</span><span class="p">:</span> <span class="nl">&amp;border-style</span> <span class="s">&quot;[60]{item}&quot;</span>
+            <span class="nt">corner</span><span class="p">:</span> <span class="nv">*border-style</span>
+
+    <span class="nt">Button</span><span class="p">:</span>
+        <span class="nt">styles</span><span class="p">:</span>
+            <span class="nt">label</span><span class="p">:</span> <span class="s">&quot;[@235</span><span class="nv"> </span><span class="s">108</span><span class="nv"> </span><span class="s">bold]{item}&quot;</span>
+
+    <span class="nt">Splitter</span><span class="p">:</span>
+        <span class="nt">chars</span><span class="p">:</span>
+            <span class="nt">separator</span><span class="p">:</span> <span class="s">&quot;</span><span class="nv">   </span><span class="s">&quot;</span>
+
+<span class="nt">markup</span><span class="p">:</span>
+    <span class="nt">title</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">210 bold</span>
+    <span class="nt">body</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">245 italic</span>
+</code></pre></div>
+
+<p><strong>Note</strong>: We used the <code>&amp;</code> and <code>*</code> symbols above. In YAML, <code>&amp;</code> creates a named anchor point, and <code>*</code> allows you to reference it. <a href="https://medium.com/@kinghuang/docker-compose-anchors-aliases-extensions-a1e4105d70bd">Here</a> is a cool article on the subject.</p>
+
+<p align="center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/config_basic.png
+    style="width: 80%">
+</p>
+
 <h1 id="layers-of-the-api">Layers of the API</h1>
 
 <h2 id="low-level">Low level</h2>
@@ -176,15 +325,15 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <span class="n">ptg</span><span class="o">.</span><span class="n">set_alt_buffer</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This terminal will be discarded on &#39;</span><span class="se">\\</span><span class="s2">n&#39; input.&quot;</span><span class="p">)</span>
-<span class="k">while</span> <span class="n">ptg</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">:</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This terminal will be discarded on r&quot;</span><span class="se">\n</span><span class="s1">&quot; input.&#39;</span><span class="p">)</span>
+<span class="k">while</span> <span class="n">ptg</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span> <span class="o">!=</span> <span class="sa">r</span><span class="s2">&quot;\n&quot;</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wrong key.&quot;</span><span class="p">)</span>
 
 <span class="n">ptg</span><span class="o">.</span><span class="n">unset_alt_buffer</span><span class="p">()</span>
 </code></pre></div>
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/low.png
     style="width: 80%">
 </p>
 
@@ -194,14 +343,14 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 
-<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;This is some </span><span class="se">\\</span><span class="s2">033[1mlong</span><span class="se">\\</span><span class="s2">033[0m and </span><span class="se">\\</span><span class="s2">033[38;5;141mstyled</span><span class="se">\\</span><span class="s2">033[0m text.&quot;</span>
+<span class="n">text</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;This is some \033[1mlong\033[0m and \033[38;5;141mstyled\033[0m text.&quot;</span>
 
 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ptg</span><span class="o">.</span><span class="n">break_line</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 </code></pre></div>
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/helper.png
     style="width: 80%">
 </p>
 
@@ -209,7 +358,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <p>Building on all that is the relatively high level <code><a href="pytermgui/widgets.html">pytermgui.widgets</a></code> module. This part uses things from everything defined before it to create a visually appealing interface system. It introduces a lot of its own APIs and abstractions, and leaves all the parts below it free of cross-layer dependencies.</p>
 
-<p>The highest layer of the library is for <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code>. This layer combines parts from everything below. It introduces abstractions on top of the <code><a href="#widget">pytermgui.widget</a></code> system, and creates its own featureset.  </p>
+<p>The highest layer of the library is for <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code>. This layer combines parts from everything below. It introduces abstractions on top of the <code><a href="#widget">pytermgui.widget</a></code> system, and creates its own featureset. </p>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 <span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
@@ -224,7 +373,7 @@ of the library you use. I will provide an example of usage for each.</p>
 </code></pre></div>
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/high.png
     style="width: 80%">
 </p>
 </div>

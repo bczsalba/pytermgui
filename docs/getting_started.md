@@ -74,8 +74,153 @@ with ptg.markup as mprint:
     mprint("This is [my-tag]my-tag!")
 ```
 
-# Layers of the API
+# How to: Configure your Application using inline YAML
 
+## Why you should bother
+
+While the programmatic interface for the style system is *alright*, it's a bit clunky to use for serious customization. In order to improve your experience, you can use a YAML file with your configuration in its `config` section. Additionally, you can define markup in a nicer way as well.
+
+**Note:** You will need to install `PyYAML` in order to use the YAML loader class.
+
+## Base application
+
+For the purposes of this section, this is the application we will use:
+
+```python3
+import sys
+import pytermgui as ptg
+
+# Define empty config as the base
+# 
+# Note that we define markup tags as empty.
+# markup tags **need** to be defined for program
+# execution.
+PTG_CONFIG = """\
+config: {}
+
+markup:
+    title: ""
+    body: ""
+"""
+
+with ptg.WindowManager() as manager:
+    # Initialize a loader, and load our config
+    loader = ptg.YamlLoader()
+    loader.load(PTG_CONFIG)
+
+    # Create a test window
+    manager.add(
+        ptg.Window()
+        + "[title]This is our title"
+        + ""
+        + {"[body]First key": ["First button"]}
+        + {"[body]Second key": ["Second button"]}
+        + {"[body]Third key": ["Third button"]}
+        + ""
+        + ["Exit", lambda *_: sys.exit()]
+    )
+
+    manager.run()
+```
+
+This gives us the following, very bland interface.
+
+<p align="center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/base.png
+    style="width: 80%">
+</p>
+
+## Adding markup
+
+As you could see above, defining markup aliases is quite easy. You cannot and will possibly never be able to define macros in a markup file for two main reasons:
+- It would be a nightmare to implement in terms of technicalities
+- It would be a hotbed for RCE security risks
+
+There is some leeway on both of those however, and that may be revisited in the future.
+
+Anyways, markup aliases. The `markup` section of your file should be the following format:
+
+```yaml
+markup:
+    alias-name: alias-value
+```
+
+...which would stand for
+
+```python3
+ptg.markup.alias("alias-name", "alias-value")
+```
+
+You should not include `[` and `]` delimiters around either arguments.
+
+As an example, let's add expand our `PTG_CONFIG` from above:
+
+```yaml
+config: {}
+
+markup:
+    title: 210 bold
+    body: 245 italic
+```
+
+<p align="center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/markup.png
+    style="width: 80%">
+</p>
+
+Getting there.
+
+## Customizing widget styles & chars
+
+The markup configuration allows for quite a bit more customization, using the thus-far untouched config section.
+
+The basic syntax goes as follows:
+
+```yaml
+config:
+    WidgetName:
+        styles:
+            style_key: markup_str
+
+        chars:
+            char_key: char_str
+```
+
+As you can see, styles take markup strings. This is because they are converted right into `pytermgui.styles.MarkupFormatter` objects, which means you can incorporate both `{depth}` and `{item}` into them.
+
+**Note**: While it is permitted, not including `depth` nor `item` into your markup will turn it static, likely causing some headaches.
+
+So for a simple example, let's define some styles & chars:
+
+```yaml
+config:
+    Window:
+        styles:
+            border: &border-style "[60]{item}"
+            corner: *border-style
+
+    Button:
+        styles:
+            label: "[@235 108 bold]{item}"
+    
+    Splitter:
+        chars:
+            separator: "   "
+
+markup:
+    title: 210 bold
+    body: 245 italic
+```
+
+**Note**: We used the `&` and `*` symbols above. In YAML, `&` creates a named anchor point, and `*` allows you to reference it. [Here](https://medium.com/@kinghuang/docker-compose-anchors-aliases-extensions-a1e4105d70bd) is a cool article on the subject.
+
+<p align="center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/config_basic.png
+    style="width: 80%">
+</p>
+
+
+# Layers of the API
 
 ## Low level
 
@@ -86,15 +231,15 @@ import pytermgui as ptg
 
 ptg.set_alt_buffer()
 
-print("This terminal will be discarded on '\\n' input.")
-while ptg.getch() != "\\n":
+print('This terminal will be discarded on r"\n" input.')
+while ptg.getch() != r"\n":
     print("Wrong key.")
 
 ptg.unset_alt_buffer()
 ```
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/low.png
     style="width: 80%">
 </p>
 
@@ -106,14 +251,14 @@ On top of that, there is the helper layer, including things like `pytermgui.help
 ```python3
 import pytermgui as ptg
 
-text = "This is some \\033[1mlong\\033[0m and \\033[38;5;141mstyled\\033[0m text."
+text = r"This is some \033[1mlong\033[0m and \033[38;5;141mstyled\033[0m text."
 
 for line in ptg.break_line(text, limit=10):
     print(line)
 ```
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/helper.png
     style="width: 80%">
 </p>
 
@@ -122,7 +267,7 @@ for line in ptg.break_line(text, limit=10):
 
 Building on all that is the relatively high level `pytermgui.widgets` module. This part uses things from everything defined before it to create a visually appealing interface system. It introduces a lot of its own APIs and abstractions, and leaves all the parts below it free of cross-layer dependencies.
 
-The highest layer of the library is for `pytermgui.window_manager`. This layer combines parts from everything below. It introduces abstractions on top of the `pytermgui.widget` system, and creates its own featureset.  
+The highest layer of the library is for `pytermgui.window_manager`. This layer combines parts from everything below. It introduces abstractions on top of the `pytermgui.widget` system, and creates its own featureset. 
 
 ```python3
 import pytermgui as ptg
@@ -138,6 +283,6 @@ with ptg.WindowManager() as manager:
 ```
 
 <p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/high.png
     style="width: 80%">
 </p>
