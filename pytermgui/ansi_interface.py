@@ -66,6 +66,7 @@ __all__ = [
     "inverse",
     "invisible",
     "strikethrough",
+    "overline",
 ]
 
 
@@ -514,6 +515,7 @@ def set_mode(mode: Union[str, int], write: bool = True) -> str:
     - 7 - `inverse`
     - 8 - `invisible`
     - 9 - `strikethrough`
+    - 53 - `overline`
 
     You can use both the digit and text forms, though you should really be
     using one of the specific setters, like `bold` or `italic`."""
@@ -528,6 +530,7 @@ def set_mode(mode: Union[str, int], write: bool = True) -> str:
         "inverse": 7,
         "invisible": 8,
         "strikethrough": 9,
+        "overline": 53,
     }
 
     if not str(mode).isdigit():
@@ -823,3 +826,9 @@ def strikethrough(text: str, reset_style: Optional[bool] = True) -> str:
     """Return text as strikethrough"""
 
     return set_mode("strikethrough", False) + text + (reset() if reset_style else "")
+
+
+def overline(text: str, reset_style: Optional[bool] = True) -> str:
+    """Return text overlined"""
+
+    return set_mode("overline", False) + text + (reset() if reset_style else "")

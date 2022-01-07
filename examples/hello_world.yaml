@@ -76,7 +76,7 @@ widgets:
                   - Label:
                       value: "[#444772]#RRGGBB"
                       parent_align: 2
-                        
+
             - Splitter:
                 widgets:
                   - Label:
@@ -86,7 +86,7 @@ widgets:
                   - Label:
                       value: "[145;69;142]RRR;GGG;BBB"
                       parent_align: 2
-                  
+
             - Splitter:
                 widgets:
                   - Label:
@@ -142,7 +142,7 @@ widgets:
                   - Label:
                       value:  "[210]/fg"
                       parent_align: 2
-                  
+
             - Splitter:
                 widgets:
                   - Label:
@@ -152,3 +152,11 @@ widgets:
                   - Label:
                       value: "[210]/bg"
                       parent_align: 2
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[overline]overline"
+                      parent_align: 0
+
+                  - Label: {}

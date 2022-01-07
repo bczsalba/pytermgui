@@ -100,6 +100,7 @@ STYLE_MAP = {
     "inverse": "7",
     "invisible": "8",
     "strikethrough": "9",
+    "overline": "53",
 }
 
 UNSETTER_MAP = {
@@ -115,6 +116,7 @@ UNSETTER_MAP = {
     "/strikethrough": "29",
     "/fg": "39",
     "/bg": "49",
+    "/overline": "54",
 }
 
 
