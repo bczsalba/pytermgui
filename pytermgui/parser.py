@@ -314,6 +314,26 @@ class MarkupLanguage:
 
         return None
 
+    def __enter__(self) -> Callable[..., None]:
+        """Return a print method that parses markup"""
+
+        def printer(*args, **kwargs) -> None:
+            """Parse all arguments and pass them through to print, along with kwargs"""
+
+            parsed = []
+            for arg in args:
+                parsed.append(self.parse(str(arg)))
+
+            print(*parsed, **kwargs)
+
+        return printer
+
+    def __exit__(self, _, exception: Exception, __) -> None:
+        """Raise any exception that happened in context"""
+
+        if exception is not None:
+            raise exception
+
     def tokenize_markup(self, markup_text: str) -> Iterator[Token]:
         """Tokenize markup text, return an Iterator to save memory"""
 
