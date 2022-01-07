@@ -17,7 +17,7 @@ pip3 install pytermgui
    <a href="https://reddit.com/r/pytermgui">
       <img src="https://img.shields.io/reddit/subreddit-subscribers/pytermgui?style=flat&color=bright-green">
    </a>
-   <a href="bczsalba.github.io/pytermgui/pytermgui.html">
+   <a href="https://bczsalba.github.io/pytermgui/pytermgui.html">
       <img src="https://img.shields.io/badge/documentation-up%20to%20date-brightgreen">
    </a>
  </p>
