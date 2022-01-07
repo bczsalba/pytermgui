@@ -153,7 +153,7 @@ ptg.markup.alias("alias-name", "alias-value")
 
 You should not include `[` and `]` delimiters around either arguments.
 
-As an example, let's add expand our `PTG_CONFIG` from above:
+As an example, let's expand our `PTG_CONFIG` from above:
 
 ```yaml
 config: {}

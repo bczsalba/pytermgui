@@ -47,9 +47,6 @@
                                 <a class="variable" href="#Window.is_bindable">is_bindable</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Window.box">box</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#Window.size_policy">size_policy</a>
                         </li>
                         <li>
@@ -403,7 +400,6 @@ style="max-width: 100%"></p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">box</span> <span class="o">=</span> <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span>
     <span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span>
 
     <span class="n">allow_fullscreen</span> <span class="o">=</span> <span class="kc">False</span>
@@ -561,6 +557,8 @@ style="max-width: 100%"></p>
         <span class="c1"># Set global styles</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-title&quot;</span><span class="p">,</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">)</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-section&quot;</span><span class="p">,</span> <span class="s2">&quot;157&quot;</span><span class="p">)</span>
+
+        <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span><span class="o">.</span><span class="n">set_chars_of</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_sleep</span><span class="p">(</span><span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1016,7 +1014,6 @@ style="max-width: 100%"></p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">box</span> <span class="o">=</span> <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span>
     <span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span>
 
     <span class="n">allow_fullscreen</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1192,15 +1189,6 @@ to store and display various widgets, while allowing some custom functionality.<
 
 
                             </div>
-                            <div id="Window.box" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#Window.box">#&nbsp;&nbsp</a>
-
-        <span class="name">box</span><span class="default_value"> = Box(borders=[&#39;│ &#39;, &#39;═&#39;, &#39; │&#39;, &#39;─&#39;], corners=[&#39;╭&#39;, &#39;╮&#39;, &#39;╯&#39;, &#39;╰&#39;])</span>
-    </div>
-
-    
-
-                            </div>
                             <div id="Window.size_policy" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Window.size_policy">#&nbsp;&nbsp</a>
 
@@ -1292,7 +1280,7 @@ to store and display various widgets, while allowing some custom functionality.<
                             <div id="Window.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Window.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x107304ee0&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x107304ee0&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x107304dc0&gt;, &#39;title&#39;: MarkupFormatter(markup=&#39;[wm-title]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x103e6d310&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x103e6d310&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x103e6d1f0&gt;, &#39;title&#39;: MarkupFormatter(markup=&#39;[wm-title]{item}&#39;, ensure_reset=True, ensure_strip=False)}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -1479,6 +1467,7 @@ to store and display various widgets, while allowing some custom functionality.<
                 <dd id="Window.selectables" class="variable"><a href="widgets/base.html#Container.selectables">selectables</a></dd>
                 <dd id="Window.selectables_length" class="variable"><a href="widgets/base.html#Container.selectables_length">selectables_length</a></dd>
                 <dd id="Window.selected" class="variable"><a href="widgets/base.html#Container.selected">selected</a></dd>
+                <dd id="Window.box" class="variable"><a href="widgets/base.html#Container.box">box</a></dd>
                 <dd id="Window.get_lines" class="function"><a href="widgets/base.html#Container.get_lines">get_lines</a></dd>
                 <dd id="Window.set_widgets" class="function"><a href="widgets/base.html#Container.set_widgets">set_widgets</a></dd>
                 <dd id="Window.serialize" class="function"><a href="widgets/base.html#Container.serialize">serialize</a></dd>
@@ -1556,6 +1545,8 @@ to store and display various widgets, while allowing some custom functionality.<
         <span class="c1"># Set global styles</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-title&quot;</span><span class="p">,</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">)</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-section&quot;</span><span class="p">,</span> <span class="s2">&quot;157&quot;</span><span class="p">)</span>
+
+        <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span><span class="o">.</span><span class="n">set_chars_of</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_sleep</span><span class="p">(</span><span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2029,6 +2020,8 @@ to store and display various widgets, while allowing some custom functionality.<
         <span class="c1"># Set global styles</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-title&quot;</span><span class="p">,</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">)</span>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;wm-section&quot;</span><span class="p">,</span> <span class="s2">&quot;157&quot;</span><span class="p">)</span>
+
+        <span class="n">boxes</span><span class="o">.</span><span class="n">DOUBLE_TOP</span><span class="o">.</span><span class="n">set_chars_of</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
 </pre></div>
 
         </details>
