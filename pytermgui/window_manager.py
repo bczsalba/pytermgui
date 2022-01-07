@@ -197,12 +197,13 @@ class Window(Container):
     is_noresize = False
     """No-resize windows cannot be resized using the mouse"""
 
+    is_dirty = False
+    """Control whether the parent manager needs to print this Window"""
+
     styles = {**Container.styles, **{"title": MarkupFormatter("[wm-title]{item}")}}
 
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
         """Initialize object"""
-
-        self.is_dirty: bool = False
 
         super().__init__(*widgets, **attrs)
 
@@ -333,6 +334,7 @@ class WindowManager(Container):
         # Set global styles
         markup.alias("wm-title", "210 bold")
         markup.alias("wm-section", "157")
+
         boxes.DOUBLE_TOP.set_chars_of(Window)
 
     @staticmethod
