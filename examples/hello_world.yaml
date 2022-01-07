@@ -152,3 +152,11 @@ widgets:
                   - Label:
                       value: "[210]/bg"
                       parent_align: 2
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[overline]overline"
+                      parent_align: 0
+
+                  - Label: {}
