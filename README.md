@@ -17,7 +17,7 @@ pip3 install pytermgui
    <a href="https://reddit.com/r/pytermgui">
       <img src="https://img.shields.io/reddit/subreddit-subscribers/pytermgui?style=flat&color=bright-green">
    </a>
-   <a href="https://bczsalba.github.io/pytermgui/pytermgui.html">
+   <a href="http://ptg.bczsalba.com/pytermgui.html">
       <img src="https://img.shields.io/badge/documentation-up%20to%20date-brightgreen">
    </a>
  </p>
@@ -110,7 +110,7 @@ For more info, check out `ptg -h`.
 Fully documented
 ----------------
 
-The [documentation](https://bczsalba.github.io/pytermgui/pytermgui.html) details every public name in the library, making its usage as easy as possible. For more complete projects, check out [examples](/examples), or some of the projects using PTG.
+The [documentation](http://ptg.bczsalba.com/pytermgui.html) details every public name in the library, making its usage as easy as possible. For more complete projects, check out [examples](/examples), or some of the projects using PTG.
 
 
 Projects using pytermgui
