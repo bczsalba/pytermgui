@@ -31,9 +31,14 @@
 
                     <h2>Contents</h2>
                     <ul>
-  <li><a href="#low-level">Low level</a></li>
-  <li><a href="#helper-level">Helper level</a></li>
-  <li><a href="#high-level">High level</a></li>
+  <li><a href="#getting-started">Getting started</a></li>
+  <li><a href="#how-to-create-your-own-app">How to: Create your own app</a>
+  <ul>
+    <li><a href="#most-primitive-usecase">Most primitive usecase</a></li>
+    <li><a href="#adding-windows-as-variables">Adding windows as variables</a></li>
+    <li><a href="#adding-windows-during-definition">Adding windows during definition</a></li>
+    <li><a href="#useful-methods-to-know-about">Useful methods to know about</a></li>
+  </ul></li>
 </ul>
 
 
@@ -81,76 +86,79 @@ pytermgui    </h1>
 of eachother to achieve the final result. Your usage depends on which part
 of the library you use. I will provide an example of usage for each.</p>
 
-<h2 id="low-level">Low level</h2>
+<h1 id="getting-started">Getting started</h1>
 
-<p>At the base, there is <code><a href="pytermgui/ansi_interface.html">pytermgui.ansi_interface</a></code> and <code><a href="pytermgui/input.html">pytermgui.input</a></code>, handling terminal APIs
-for output and input respectively. This is the lowest-level layer of the
-library.</p>
+<p>Getting started with pytermgui is quite easy. The library allows you to define layouts inline, thus letting you get by without ever having to subclass Widget or WindowManager. However, if you do want that functionality the later sections of this guide will tell you how to.</p>
 
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+<h1 id="how-to-create-your-own-app">How to: Create your own app</h1>
 
-<span class="n">ptg</span><span class="o">.</span><span class="n">set_alt_buffer</span><span class="p">()</span>
+<h2 id="most-primitive-usecase">Most primitive usecase</h2>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This terminal will be discarded on &#39;</span><span class="se">\n</span><span class="s2">&#39; input.&quot;</span><span class="p">)</span>
-<span class="k">while</span> <span class="n">ptg</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wrong key.&quot;</span><span class="p">)</span>
-
-<span class="n">ptg</span><span class="o">.</span><span class="n">unset_alt_buffer</span><span class="p">()</span>
-</code></pre></div>
-
-<p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png
-    style="width: 80%">
-</p>
-
-<h2 id="helper-level">Helper level</h2>
-
-<p>On top of that, there is the helper layer, including things like <code><a href="pytermgui/helpers.html">pytermgui.helpers</a></code>,
-<code><a href="pytermgui/context_managers.html">pytermgui.context_managers</a></code> and the kind. These provide no extra functionality, only
-combine functions defined below them in order to make them more usable.</p>
+<p>To create your own app, it is recommended to use the <code><a href="pytermgui/window_manager.html#WindowManager">pytermgui.window_manager.WindowManager</a></code> context. Technically, all that is needed for the app to run correctly is to call <code><a href="pytermgui/window_manager.html#WindowManager.run">pytermgui.window_manager.WindowManager.run</a></code> with no arguments.</p>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 
-<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;This is some </span><span class="se">\033</span><span class="s2">[1mlong</span><span class="se">\033</span><span class="s2">[0m and </span><span class="se">\033</span><span class="s2">[38;5;141mstyled</span><span class="se">\033</span><span class="s2">[0m text.&quot;</span>
-<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ptg</span><span class="o">.</span><span class="n">break_line</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 
-<p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png
-    style="width: 80%">
-</p>
+<p>This will give you an empty screen you can quit using <code>CTRL_C</code>. That is doesn't really get us anywhere though, does it?</p>
 
-<h2 id="high-level">High level</h2>
+<h2 id="adding-windows-as-variables">Adding windows as variables</h2>
 
-<p>Building on all that is the relatively high level <code><a href="pytermgui/widgets.html">pytermgui.widgets</a></code> module. This
-part uses things from everything defined before it to create a visually
-appealing interface system. It introduces a lot of its own APIs and
-abstractions, and leaves all the parts below it free of cross-layer
-dependencies.</p>
+<p>In order to actually have something going on, you can call <code><a href="pytermgui/widgets.html#WindowManager.add">pytermgui.widgets.WindowManager.add</a></code> with a window of your choice. Adding a window to the manager will bring it to focus.</p>
 
-<p>The highest layer of the library is for <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code>. This layer combines
-parts from everything below. It introduces abstractions on top of the <code><a href="#widget">pytermgui.widget</a></code>
-system, and creates its own featureset.</p>
+<p>Here is a quick example of the most basic usecase:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+        <span class="s2">&quot;[wm-title]My first window!&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()],</span>
+    <span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="adding-windows-during-definition">Adding windows during definition</h2>
+
+<p>You don't need to assign your window to a variable if you aren't going to reference it later. Since all widgets implement <code>__add__</code> and <code>__iadd__</code>, you define them as a sum of other widgets.</p>
+
+<p>For example:</p>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 
 <span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
         <span class="n">ptg</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
-        <span class="o">+</span> <span class="s2">&quot;[141 bold]Title&quot;</span>
-        <span class="o">+</span> <span class="s2">&quot;[grey italic]body text&quot;</span>
-        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
-        <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Button&quot;</span><span class="p">]</span>
+        <span class="o">+</span> <span class="s2">&quot;[wm-title]My first window!&quot;</span><span class="p">,</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()],</span>
     <span class="p">)</span>
 
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 
-<p style="text-align: center">
-    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png
-    style="width: 80%">
-</p>
+<h2 id="useful-methods-to-know-about">Useful methods to know about</h2>
+
+<ul>
+<li><code><a href="pytermgui/widgets.html#Widget.bind">pytermgui.widgets.Widget.bind</a></code>: Bind a keypress to an action. You can also add a description, which you can then use to have a sort of help menu.</li>
+<li><code><a href="pytermgui/parser.html#MarkupLanguage.alias">pytermgui.parser.MarkupLanguage.alias</a></code>: Alias a single word (with no spaces) to some markup.</li>
+<li><code><a href="pytermgui/parser.html#MarkupLanguage.define">pytermgui.parser.MarkupLanguage.define</a></code>: Define a markup macro. See <code><a href="pytermgui/parser.html">pytermgui.parser</a></code> for info on the macro functionality.</li>
+</ul>
+
+<p>Note: For markup functions, it is recommended to use the <code>markup</code> name that is exported by the module.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="n">ptg</span><span class="o">.</span><span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;my-tag&quot;</span><span class="p">,</span> <span class="s2">&quot;blue @141&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">markup</span> <span class="k">as</span> <span class="n">mprint</span><span class="p">:</span>
+    <span class="n">mprint</span><span class="p">(</span><span class="s2">&quot;This is [my-tag]my-tag!&quot;</span><span class="p">)</span>
+</code></pre></div>
 </div>
 
                         <details>
@@ -162,84 +170,7 @@ system, and creates its own featureset.</p>
 <span class="sd">of eachother to achieve the final result. Your usage depends on which part</span>
 <span class="sd">of the library you use. I will provide an example of usage for each.</span>
 
-
-<span class="sd">## Low level</span>
-
-<span class="sd">At the base, there is `pytermgui.ansi_interface` and `pytermgui.input`, handling terminal APIs</span>
-<span class="sd">for output and input respectively. This is the lowest-level layer of the</span>
-<span class="sd">library.</span>
-
-<span class="sd">```python3</span>
-<span class="sd">import pytermgui as ptg</span>
-
-<span class="sd">ptg.set_alt_buffer()</span>
-
-<span class="sd">print(&quot;This terminal will be discarded on &#39;\\n&#39; input.&quot;)</span>
-<span class="sd">while ptg.getch() != &quot;\\n&quot;:</span>
-<span class="sd">    print(&quot;Wrong key.&quot;)</span>
-
-<span class="sd">ptg.unset_alt_buffer()</span>
-<span class="sd">```</span>
-
-<span class="sd">&lt;p style=&quot;text-align: center&quot;&gt;</span>
-<span class="sd">    &lt;img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_low.png</span>
-<span class="sd">    style=&quot;width: 80%&quot;&gt;</span>
-<span class="sd">&lt;/p&gt;</span>
-
-
-<span class="sd">## Helper level</span>
-
-<span class="sd">On top of that, there is the helper layer, including things like `pytermgui.helpers`,</span>
-<span class="sd">`pytermgui.context_managers` and the kind. These provide no extra functionality, only</span>
-<span class="sd">combine functions defined below them in order to make them more usable.</span>
-
-
-<span class="sd">```python3</span>
-<span class="sd">import pytermgui as ptg</span>
-
-<span class="sd">text = &quot;This is some \\033[1mlong\\033[0m and \\033[38;5;141mstyled\\033[0m text.&quot;</span>
-<span class="sd">for line in ptg.break_line(text, limit=10):</span>
-<span class="sd">    print(line)</span>
-<span class="sd">```</span>
-
-<span class="sd">&lt;p style=&quot;text-align: center&quot;&gt;</span>
-<span class="sd">    &lt;img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_helper.png</span>
-<span class="sd">    style=&quot;width: 80%&quot;&gt;</span>
-<span class="sd">&lt;/p&gt;</span>
-
-
-<span class="sd">## High level</span>
-
-<span class="sd">Building on all that is the relatively high level `pytermgui.widgets` module. This</span>
-<span class="sd">part uses things from everything defined before it to create a visually</span>
-<span class="sd">appealing interface system. It introduces a lot of its own APIs and</span>
-<span class="sd">abstractions, and leaves all the parts below it free of cross-layer</span>
-<span class="sd">dependencies.</span>
-
-<span class="sd">The highest layer of the library is for `pytermgui.window_manager`. This layer combines</span>
-<span class="sd">parts from everything below. It introduces abstractions on top of the `pytermgui.widget`</span>
-<span class="sd">system, and creates its own featureset.</span>
-
-
-<span class="sd">```python3</span>
-<span class="sd">import pytermgui as ptg</span>
-
-<span class="sd">with ptg.WindowManager() as manager:</span>
-<span class="sd">    manager.add(</span>
-<span class="sd">        ptg.Window()</span>
-<span class="sd">        + &quot;[141 bold]Title&quot;</span>
-<span class="sd">        + &quot;[grey italic]body text&quot;</span>
-<span class="sd">        + &quot;&quot;</span>
-<span class="sd">        + [&quot;Button&quot;]</span>
-<span class="sd">    )</span>
-
-<span class="sd">    manager.run()</span>
-<span class="sd">```</span>
-
-<span class="sd">&lt;p style=&quot;text-align: center&quot;&gt;</span>
-<span class="sd">    &lt;img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init_high.png</span>
-<span class="sd">    style=&quot;width: 80%&quot;&gt;</span>
-<span class="sd">&lt;/p&gt;</span>
+<span class="sd">.. include:: ../docs/getting_started.md</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># https://github.com/python/mypy/issues/4930</span>
@@ -263,6 +194,9 @@ system, and creates its own featureset.</p>
 <span class="kn">from</span> <span class="nn">.window_manager</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span><span class="p">,</span> <span class="n">keys</span>
 <span class="kn">from</span> <span class="nn">.context_managers</span> <span class="kn">import</span> <span class="n">alt_buffer</span><span class="p">,</span> <span class="n">cursor_at</span><span class="p">,</span> <span class="n">mouse_handler</span>
+
+<span class="c1"># This is needeed for pdoc to parse the include statement above.</span>
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s2">&quot;google&quot;</span>
 
 <span class="c1"># Silence warning if running as standalone module</span>
 <span class="k">if</span> <span class="s2">&quot;-m&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
