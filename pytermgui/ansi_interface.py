@@ -204,9 +204,10 @@ def screen_size() -> tuple[int, int]:
         return (width, height)
 
     except OSError as error:
-        if error.errno != 25:
-            raise
-        return 0, 0
+        if error.errno in (9, 25):
+            return 0, 0
+
+        raise
 
 
 class _Terminal:
