@@ -308,7 +308,7 @@ class FileLoader(ABC):
                 )
             except AttributeError as error:
                 raise ValueError(
-                    f'Invalid data for widget "{name}": {inner}'
+                    f'Could not load "{name}" from data:\n{json.dumps(inner, indent=2)}'
                 ) from error
 
             if box is not None:
