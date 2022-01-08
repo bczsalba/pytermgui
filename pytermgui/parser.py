@@ -430,6 +430,9 @@ class MarkupLanguage:
         for match in RE_ANSI.finditer(ansi):
             code = match.groups()[0]
             start, end = match.span()
+            if code is None:
+                continue
+
             parts = code.split(";")
 
             if start > cursor:
