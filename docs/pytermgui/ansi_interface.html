@@ -202,6 +202,9 @@
             <li>
                     <a class="function" href="#strikethrough">strikethrough</a>
             </li>
+            <li>
+                    <a class="function" href="#overline">overline</a>
+            </li>
     </ul>
 
 
@@ -298,6 +301,7 @@
     <span class="s2">&quot;inverse&quot;</span><span class="p">,</span>
     <span class="s2">&quot;invisible&quot;</span><span class="p">,</span>
     <span class="s2">&quot;strikethrough&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;overline&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -746,6 +750,7 @@
 <span class="sd">    - 7 - `inverse`</span>
 <span class="sd">    - 8 - `invisible`</span>
 <span class="sd">    - 9 - `strikethrough`</span>
+<span class="sd">    - 53 - `overline`</span>
 
 <span class="sd">    You can use both the digit and text forms, though you should really be</span>
 <span class="sd">    using one of the specific setters, like `bold` or `italic`.&quot;&quot;&quot;</span>
@@ -760,6 +765,7 @@
         <span class="s2">&quot;inverse&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
         <span class="s2">&quot;invisible&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
         <span class="s2">&quot;strikethrough&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+        <span class="s2">&quot;overline&quot;</span><span class="p">:</span> <span class="mi">53</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
@@ -1055,6 +1061,14 @@
     <span class="sd">&quot;&quot;&quot;Return text as strikethrough&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;strikethrough&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">overline</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return text overlined</span>
+
+<span class="sd">    Note: This isnt&#39; very widely supported&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;overline&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -2000,6 +2014,7 @@ will recognize, but if that is your objective it is better to use
 <span class="sd">    - 7 - `inverse`</span>
 <span class="sd">    - 8 - `invisible`</span>
 <span class="sd">    - 9 - `strikethrough`</span>
+<span class="sd">    - 53 - `overline`</span>
 
 <span class="sd">    You can use both the digit and text forms, though you should really be</span>
 <span class="sd">    using one of the specific setters, like `bold` or `italic`.&quot;&quot;&quot;</span>
@@ -2014,6 +2029,7 @@ will recognize, but if that is your objective it is better to use
         <span class="s2">&quot;inverse&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
         <span class="s2">&quot;invisible&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
         <span class="s2">&quot;strikethrough&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+        <span class="s2">&quot;overline&quot;</span><span class="p">:</span> <span class="mi">53</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
@@ -2042,6 +2058,7 @@ will recognize, but if that is your objective it is better to use
 <li>7 - <code><a href="#inverse">inverse</a></code></li>
 <li>8 - <code><a href="#invisible">invisible</a></code></li>
 <li>9 - <code><a href="#strikethrough">strikethrough</a></code></li>
+<li>53 - <code><a href="#overline">overline</a></code></li>
 </ul>
 
 <p>You can use both the digit and text forms, though you should really be
@@ -2711,6 +2728,33 @@ method.</p>
         </details>
 
             <div class="docstring"><p>Return text as strikethrough</p>
+</div>
+
+
+                </section>
+                <section id="overline">
+                            <div class="attr function"><a class="headerlink" href="#overline">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">overline</span><span class="signature">(text: str, reset_style: Optional[bool] = True) -&gt; str</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">overline</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return text overlined</span>
+
+<span class="sd">    Note: This isnt&#39; very widely supported&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;overline&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Return text overlined</p>
+
+<p>Note: This isnt' very widely supported</p>
 </div>
 
 

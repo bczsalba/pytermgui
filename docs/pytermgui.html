@@ -39,12 +39,31 @@
     <li><a href="#adding-windows-during-definition">Adding windows during definition</a></li>
     <li><a href="#useful-methods-to-know-about">Useful methods to know about</a></li>
   </ul></li>
-  <li><a href="#how-to-configure-your-application-using-inline-yaml">How to: Configure your Application using inline YAML</a>
+  <li><a href="#how-to-configure-your-application-using-yaml">How to: Configure your Application using <code>YAML</code></a>
   <ul>
     <li><a href="#why-you-should-bother">Why you should bother</a></li>
     <li><a href="#base-application">Base application</a></li>
     <li><a href="#adding-markup">Adding markup</a></li>
     <li><a href="#customizing-widget-styles-chars">Customizing widget styles &amp; chars</a></li>
+  </ul></li>
+  <li><a href="#how-to-define-widgets-in-yaml">How to: Define widgets in YAML</a>
+  <ul>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#loading-a-namespace-using-ptg-f">Loading a namespace using <code>ptg -f</code></a></li>
+    <li><a href="#loading-a-namespace-programatically">Loading a namespace programatically</a></li>
+    <li><a href="#defining-widget-attributes">Defining widget attributes</a></li>
+    <li><a href="#defining-custom-boxes">Defining custom boxes</a></li>
+    <li><a href="#combining-our-knowledge-to-create-an-application">Combining our knowledge to create an application</a>
+    <ul>
+      <li><a href="#namespaceyaml">namespace.yaml</a></li>
+      <li><a href="#runnerpy">runner.py</a></li>
+    </ul></li>
+  </ul></li>
+  <li><a href="#how-to-define-your-own-widget">How to: Define your own Widget</a>
+  <ul>
+    <li><a href="#important-things-to-know">Important things to know</a></li>
+    <li><a href="#everything-a-girl-widget-needs">Everything a <strike>girl</strike> widget needs</a></li>
+    <li><a href="#the-things-you-should-define">The things you should define</a></li>
   </ul></li>
   <li><a href="#layers-of-the-api">Layers of the API</a>
   <ul>
@@ -138,7 +157,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <h2 id="adding-windows-during-definition">Adding windows during definition</h2>
 
-<p>You don't need to assign your window to a variable if you aren't going to reference it later. Since all widgets implement <code>__add__</code> and <code>__iadd__</code>, you define them as a sum of other widgets.</p>
+<p>You don't need to assign your window to a variable if you aren't going to reference it later. Since all widgets implement <code>__add__</code> and <code>__iadd__</code>, you can define them as a sum of other widgets.</p>
 
 <p>For example:</p>
 
@@ -163,7 +182,7 @@ of the library you use. I will provide an example of usage for each.</p>
 <li><code><a href="pytermgui/parser.html#MarkupLanguage.define">pytermgui.parser.MarkupLanguage.define</a></code>: Define a markup macro. See <code><a href="pytermgui/parser.html">pytermgui.parser</a></code> for info on the macro functionality.</li>
 </ul>
 
-<p>Note: For markup functions, it is recommended to use the <code>markup</code> name that is exported by the module.</p>
+<p><strong>Note:</strong> For markup functions, it is recommended to use the <code>markup</code> name that is exported by the module.</p>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 
@@ -173,11 +192,13 @@ of the library you use. I will provide an example of usage for each.</p>
     <span class="n">mprint</span><span class="p">(</span><span class="s2">&quot;This is [my-tag]my-tag!&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<h1 id="how-to-configure-your-application-using-inline-yaml">How to: Configure your Application using inline YAML</h1>
+<h1 id="how-to-configure-your-application-using-yaml">How to: Configure your Application using <code>YAML</code></h1>
 
 <h2 id="why-you-should-bother">Why you should bother</h2>
 
 <p>While the programmatic interface for the style system is <em>alright</em>, it's a bit clunky to use for serious customization. In order to improve your experience, you can use a YAML file with your configuration in its <code>config</code> section. Additionally, you can define markup in a nicer way as well.</p>
+
+<p>For the purposes of this guide, we will use YAML defined inside our Python code. <code><a href="pytermgui/file_loaders.html#FileLoader.load">pytermgui.file_loaders.FileLoader.load</a></code> can take etiher strings or files, so the <code>PTG_CONFIG</code> name below can be trivially modified to refernce a file.</p>
 
 <p><strong>Note:</strong> You will need to install <code>PyYAML</code> in order to use the YAML loader class.</p>
 
@@ -197,8 +218,8 @@ of the library you use. I will provide an example of usage for each.</p>
 <span class="s2">config: </span><span class="si">{}</span><span class="s2"></span>
 
 <span class="s2">markup:</span>
-<span class="s2">    title: &quot;&quot;</span>
-<span class="s2">    body: &quot;&quot;</span>
+<span class="s2">    title: &quot;</span><span class="se">\\</span><span class="s2">&quot;</span>
+<span class="s2">    body: &quot;</span><span class="se">\\</span><span class="s2">&quot;</span>
 <span class="s2">&quot;&quot;&quot;</span>
 
 <span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
@@ -285,7 +306,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <p>As you can see, styles take markup strings. This is because they are converted right into <code><a href="#styles.MarkupFormatter">pytermgui.styles.MarkupFormatter</a></code> objects, which means you can incorporate both <code>{depth}</code> and <code>{item}</code> into them.</p>
 
-<p><strong>Note</strong>: While it is permitted, not including <code>depth</code> nor <code>item</code> into your markup will turn it static, likely causing some headaches.</p>
+<p><strong>Note:</strong> While it is permitted, not including <code>depth</code> nor <code>item</code> into your markup will turn it static, likely causing some headaches.</p>
 
 <p>So for a simple example, let's define some styles &amp; chars:</p>
 
@@ -308,14 +329,319 @@ of the library you use. I will provide an example of usage for each.</p>
     <span class="nt">body</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">245 italic</span>
 </code></pre></div>
 
-<p><strong>Note</strong>: We used the <code>&amp;</code> and <code>*</code> symbols above. In YAML, <code>&amp;</code> creates a named anchor point, and <code>*</code> allows you to reference it. <a href="https://medium.com/@kinghuang/docker-compose-anchors-aliases-extensions-a1e4105d70bd">Here</a> is a cool article on the subject.</p>
+<p><strong>Note:</strong> We used the <code>&amp;</code> and <code>*</code> symbols above. In YAML, <code>&amp;</code> creates a named anchor point, and <code>*</code> allows you to reference it. <a href="https://medium.com/@kinghuang/docker-compose-anchors-aliases-extensions-a1e4105d70bd">Here</a> is a cool article on the subject.</p>
 
 <p align="center">
     <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/config_basic.png
     style="width: 80%">
 </p>
 
+<h1 id="how-to-define-widgets-in-yaml">How to: Define widgets in YAML</h1>
+
+<h2 id="setup">Setup</h2>
+
+<p>The file loader system also has support for defining entire widgets in files, as can be seen by the <a href="https://github.com/bczsalba/pytermgui/blob/master/examples/hello_world.yaml">hello world example</a>.</p>
+
+<p>These files can be interpreted with a CLI flag and require no actual code to "run".</p>
+
+<p>The syntax of the files goes as follows:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">WidgetName</span><span class="p">:</span>
+         <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">WidgetTypeKnownToPTG</span>
+         <span class="nt">artbitrary-attribute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">artbitrary-value</span>
+
+    <span class="c1"># Alternatively, if you don&#39;t need your widget to be named,</span>
+    <span class="c1"># this syntax will automatically assign `type` to the key provided.</span>
+    <span class="p p-Indicator">-</span> <span class="nt">WidgetTypeKnownToPTG</span><span class="p">:</span>
+         <span class="nt">artbitrary-attribute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">artbitrary-value</span>
+</code></pre></div>
+
+<p>Where <code>WidgetTypeKnownToPTG</code> <em>must</em> be a widget subclass either included in the library by default, or registered using the loader's serializer. The second is only possible when you are interpreting it from Python yourself, and not when you use <code>ptg -f</code>.</p>
+
+<p>Registering a widget goes as follows:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">ptg</span> <span class="k">as</span> <span class="nn">pytermgui</span>
+
+<span class="k">class</span> <span class="nc">YourCustomWidget</span><span class="p">(</span><span class="n">ptg</span><span class="o">.</span><span class="n">Widget</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="n">serializer</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">Serializer</span><span class="p">()</span>
+<span class="n">serializer</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">YourCustomWidget</span><span class="p">)</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">YamlLoader</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;your-file.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ptg_file</span><span class="p">:</span>
+    <span class="n">namespace</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+</code></pre></div>
+
+<p>All of the <code>FileLoader</code> subclasses take a <code><a href="pytermgui/serializer.html#Serializer">pytermgui.serializer.Serializer</a></code> instance as their first argument, setting up their own if one was not given. This object is then used to instantiate all of the widgets it encounters, so registering a widget to it will allow the loader to use it.</p>
+
+<p><strong>Note:</strong> Serializers can dump any, even unknown widget types, but can only load <strong>known ones</strong>.</p>
+
+<p>Once all your widgets are registered and load correctly, you can access them by the <code>WidgetName</code> attribute of your namespace.</p>
+
+<h2 id="loading-a-namespace-using-ptg-f">Loading a namespace using <code>ptg -f</code></h2>
+
+<p>The simplest way to use these files is running <code>ptg -f "filename"</code>, where <code>filename</code> points to your markup. As mentioned above, <strong>you can only use PTG native widget types</strong> with this method.</p>
+
+<p>What that CLI tool does is essentially this:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">namespace</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">YamlLoader</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">namespace</span><span class="o">.</span><span class="n">widgets</span><span class="p">:</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="loading-a-namespace-programatically">Loading a namespace programatically</h2>
+
+<p>Loading namespaces manually is more or less defined above, with one extra detail. You can either loop through all defined widgets, or reference them as the key they were defined as in your namespace file.</p>
+
+<p>For example:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span>
+    <span class="nt">MyWidget</span><span class="p">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+
+<p>...where <code>...</code> would be filled with your data, would allow you to use</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">my_widget</span> <span class="o">=</span> <span class="n">namespace</span><span class="o">.</span><span class="n">MyWidget</span>
+</code></pre></div>
+
+<p>...to reference the instance that was created.</p>
+
+<p><strong>Note:</strong> This is the specific instance the loader created. If you plan on using this as a sort of template, be sure to run <code>copy()</code> before modifiying your widget.</p>
+
+<h2 id="defining-widget-attributes">Defining widget attributes</h2>
+
+<p>So, now that you know how to get your namespace file loaded, let's get some information into it.</p>
+
+<p>The syntax goes as follows:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span>
+    <span class="nt">WidgetName</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">WidgetType</span>
+        <span class="nt">widgets</span><span class="p">:</span>
+            <span class="p p-Indicator">-</span> <span class="nt">WidgetType</span><span class="p">:</span>
+                <span class="nt">arbitrary-attribute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">arbitrary-value</span>
+
+        <span class="nt">arbitrary-attribute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">arbitrary-value</span>
+</code></pre></div>
+
+<p>As you can see, any arbitrary attribute can be set in this method. You can also define a <strong>list</strong> of widgets, using the <code>widgets</code> key. The loader only looks for keys <strong>starting with</strong> <code>widgets</code>, so you can separate your widgets into categories or groups.</p>
+
+<p>For example:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span>
+    <span class="nt">MyContainer</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Container</span>
+        <span class="nt">widgets_header</span><span class="p">:</span>
+            <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">This is my header</span>
+            <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
+
+        <span class="nt">widgets_body</span><span class="p">:</span>
+            <span class="p p-Indicator">-</span> <span class="nt">Button</span><span class="p">:</span>
+                <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Press me</span>
+</code></pre></div>
+
+<p>This syntax is the equivalent of putting all three widget definitions under one <code>widgets</code> key.</p>
+
+<h2 id="defining-custom-boxes">Defining custom boxes</h2>
+
+<p>The <code>boxes</code> section allows you to define your own <strong>namespace file local</strong> <code><a href="pytermgui/widgets/boxes.html#Box">pytermgui.widgets.boxes.Box</a></code> classes. <strong>You may only use these within the file they were defined in</strong>.</p>
+
+<p><strong>Note:</strong> The preferred naming convention for boxes is <code>WHATEVER_THIS_IS</code>. Not sure why, but that's how all the native boxes were defined and it stands out enough for clarity.</p>
+
+<p>A basic box definition would go like this:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">boxes</span><span class="p">:</span>
+    <span class="nt">MY_BOX</span><span class="p">:</span> <span class="p p-Indicator">[</span>
+        <span class="s">&quot;0bbb1&quot;</span><span class="p p-Indicator">,</span>
+        <span class="s">&quot;a</span><span class="nv"> </span><span class="s">x</span><span class="nv"> </span><span class="s">c&quot;</span><span class="p p-Indicator">,</span>
+        <span class="s">&quot;2ddd3&quot;</span>
+    <span class="p p-Indicator">]</span>
+</code></pre></div>
+
+<p>In this example, we would get a box with the corner characters </p>
+
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;0&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;1&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;2&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;3&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+
+<p>...and border characters</p>
+
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;a&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;b&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;c&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;d&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+
+<p>For more information on the semantics of boxes, check out <code><a href="pytermgui/widgets/boxes.html#Box">pytermgui.widgets.boxes.Box</a></code>. The characters defined here are directly passed to the <code>Box</code> constructor.</p>
+
+<h2 id="combining-our-knowledge-to-create-an-application">Combining our knowledge to create an application</h2>
+
+<p>Using everything we learnt above, we can define a simple application:</p>
+
+<h3 id="namespaceyaml">namespace.yaml</h3>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">config</span><span class="p">:</span>
+    <span class="nt">Window</span><span class="p">:</span>
+        <span class="nt">styles</span><span class="p">:</span>
+            <span class="nt">border</span><span class="p">:</span> <span class="nl">&amp;w-border-style</span> <span class="s">&quot;[#5A6572]{item}&quot;</span>
+            <span class="nt">corner</span><span class="p">:</span> <span class="nv">*w-border-style</span>
+
+    <span class="nt">Container</span><span class="p">:</span>
+        <span class="nt">styles</span><span class="p">:</span>
+            <span class="nt">border</span><span class="p">:</span> <span class="nl">&amp;c-border-style</span> <span class="s">&quot;[#7D98A1]{item}&quot;</span>
+            <span class="nt">corner</span><span class="p">:</span> <span class="nv">*c-border-style</span>
+
+    <span class="nt">Button</span><span class="p">:</span>
+        <span class="nt">styles</span><span class="p">:</span>
+            <span class="nt">label</span><span class="p">:</span> <span class="s">&quot;[@#1C2220</span><span class="nv"> </span><span class="s">#A9B4C2]{item}&quot;</span>
+            <span class="nt">highlight</span><span class="p">:</span> <span class="s">&quot;[#1C2220</span><span class="nv"> </span><span class="s">@#A9B4C2]{item}&quot;</span>
+
+    <span class="nt">Splitter</span><span class="p">:</span>
+        <span class="nt">chars</span><span class="p">:</span>
+            <span class="nt">separator</span><span class="p">:</span> <span class="s">&quot;</span><span class="nv">   </span><span class="s">&quot;</span>
+
+<span class="nt">boxes</span><span class="p">:</span>
+    <span class="nt">OUTER</span><span class="p">:</span> <span class="p p-Indicator">[</span>
+        <span class="s">&quot;█▀▀▀█&quot;</span><span class="p p-Indicator">,</span>
+        <span class="s">&quot;█</span><span class="nv"> </span><span class="s">x</span><span class="nv"> </span><span class="s">█&quot;</span><span class="p p-Indicator">,</span>
+        <span class="s">&quot;█▄▄▄█&quot;</span><span class="p p-Indicator">,</span>
+    <span class="p p-Indicator">]</span>
+
+<span class="nt">markup</span><span class="p">:</span>
+    <span class="nt">title</span><span class="p">:</span> <span class="s">&quot;#A9B4C2</span><span class="nv"> </span><span class="s">bold&quot;</span>
+    <span class="nt">subtitle</span><span class="p">:</span> <span class="s">&quot;italic</span><span class="nv"> </span><span class="s">dim&quot;</span>
+    <span class="nt">body</span><span class="p">:</span> <span class="s">&quot;245&quot;</span>
+
+<span class="nt">widgets</span><span class="p">:</span>
+    <span class="nt">MainWindow</span><span class="p">:</span>
+      <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Window</span>
+      <span class="nt">box</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">OUTER</span>
+      <span class="nt">width</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">70</span>
+      <span class="nt">widgets</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span>
+            <span class="nt">value</span><span class="p">:</span> <span class="s">&quot;[title]YAML</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">cool!&quot;</span>
+        <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+
+        <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span>
+            <span class="nt">value</span><span class="p">:</span> <span class="s">&quot;[subtitle]Here</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">some</span><span class="nv"> </span><span class="s">facts</span><span class="nv"> </span><span class="s">about</span><span class="nv"> </span><span class="s">it:&quot;</span>
+        <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+
+        <span class="p p-Indicator">-</span> <span class="nt">Splitter</span><span class="p">:</span>
+            <span class="nt">widgets</span><span class="p">:</span>
+                <span class="p p-Indicator">-</span> <span class="nt">Container</span><span class="p">:</span>
+                    <span class="nt">box</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">OUTER</span>
+                    <span class="nt">widgets</span><span class="p">:</span>
+                        <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span>
+                              <span class="nt">value</span><span class="p">:</span> <span class="p p-Indicator">&gt;-</span>
+                                <span class="no">-[body] YAML originally stood for &quot;Yet Another Markup</span>
+                                <span class="no">Language&quot;, but was later modified to mean &quot;YAML Ain&#39;t </span>
+                                <span class="no">Markup&quot;.</span>
+
+                              <span class="nt">parent_align</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+
+                <span class="p p-Indicator">-</span> <span class="nt">Container</span><span class="p">:</span>
+                    <span class="nt">box</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">OUTER</span>
+                    <span class="nt">widgets</span><span class="p">:</span>
+                        <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span>
+                              <span class="nt">value</span><span class="p">:</span> <span class="p p-Indicator">&gt;-</span>
+                                <span class="no">-[body] The language was designed by Clark Evans, Ingy</span>
+                                <span class="no">döt Net and Oren Ben-Kiki.</span>
+
+                              <span class="nt">parent_align</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+
+        <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+        <span class="p p-Indicator">-</span> <span class="nt">Button</span><span class="p">:</span>
+            <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">button-definition</span>
+            <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Get definition</span>
+
+    <span class="nt">PopupWindow</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Window</span>
+        <span class="nt">is_modal</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+        <span class="nt">width</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">50</span>
+
+        <span class="nt">box</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">OUTER</span>
+        <span class="nt">widgets</span><span class="p">:</span>
+            <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&quot;[title]YAML</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">defined</span><span class="nv"> </span><span class="s">as...&quot;</span>
+            <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+
+            <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&quot;[body]...a</span><span class="nv"> </span><span class="s">human-readable</span><span class="nv"> </span><span class="s">data-serialization</span><span class="nv"> </span><span class="s">language.&quot;</span>
+            <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+
+            <span class="p p-Indicator">-</span> <span class="nt">Label</span><span class="p">:</span>
+                <span class="nt">parent_align</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+                <span class="nt">value</span><span class="p">:</span> <span class="s">&quot;[body</span><span class="nv"> </span><span class="s">italic]Press</span><span class="nv"> </span><span class="s">CTRL_W</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">close</span><span class="nv"> </span><span class="s">this</span><span class="nv"> </span><span class="s">window.&quot;</span>
+</code></pre></div>
+
+<h3 id="runnerpy">runner.py</h3>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="n">namespace</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">YamlLoader</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">PTG_NAMESPACE</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">namespace</span><span class="o">.</span><span class="n">MainWindow</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
+
+    <span class="n">popup</span> <span class="o">=</span> <span class="n">namespace</span><span class="o">.</span><span class="n">PopupWindow</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+    <span class="n">popup</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">ptg</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">CTRL_W</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">window</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">window</span><span class="o">.</span><span class="n">close</span><span class="p">())</span>
+
+    <span class="n">button</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="s2">&quot;button-definition&quot;</span><span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">onclick</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">popup</span><span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/config_advanced0.png
+    style="width: 80%">
+</p>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/config_advanced1.png
+    style="width: 80%">
+</p>
+
+<h1 id="how-to-define-your-own-widget">How to: Define your own Widget</h1>
+
+<p>As mentioned above, you <strong>usually</strong> don't have to do this. pytermgui tries to make everything definable inline, but for some functionalities you might need more than what is exposed.</p>
+
+<h2 id="important-things-to-know">Important things to know</h2>
+
+<p>Firstly, the most important aspect of how the library works is the <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code> threading system. As any listening for any IO, let it be keyboard or mouse is blocking, we cannot print while that is happening. This obviously will not do, so we separate the input and output on different threads.</p>
+
+<p>The main thread is input. This thread is completely handled by the library, and the only place the user can influence it is with the <code><a href="pytermgui/widgets/base.html#Widget.bind">pytermgui.widgets.base.Widget.bind</a></code> system.</p>
+
+<p>The secondary handles the output. This is where the user (you) is able to have a say, as most widget code is run here.</p>
+
+<h2 id="everything-a-girl-widget-needs">Everything a <strike>girl</strike> widget needs</h2>
+
+<p>You should <strong>always</strong> subclass <code><a href="pytermgui/widgets/base.html#Widget">pytermgui.widgets.base.Widget</a></code> when creating your own widget. There is a lot of abstractions, implementations and all sort of useful junk that the base class does, and reimplementing it is almost never a good idea. (Though if you manage to reimplement a feature-complete Widget class in a better manner than the library does, PRs are always welcome!)</p>
+
+<h2 id="the-things-you-should-define">The things you should define</h2>
+
+<p>For any output, use the <code>get_lines</code> method. This returns a <code>list[str]</code>, where each item of the list is <strong>exactly as long as the widget is wide</strong>, and the length of the list is equal to the height of your widget. What goes in this list is completely up to you, pytermgui will render it as long as it fits those criteria. If you need to do any blocking or long actions for your UI's contents, it is best to do that in a thread and have the thread update some instance attribute, which can then be displayed here. This method is called <em>a lot</em>, so keep it performant.</p>
+
+<p>For mouse interaction, use <code>handle_mouse</code>. This gets a <code>MouseEvent</code> and <code>MouseTarget</code> as its arguments, and should return <strong>True if widget.select should be run by the caller, False otherwise</strong>. The return value generally stands for whether the given widget could handle the input, but sometimes the above distinction is useful to know about.</p>
+
+<p>For handling keyboard input, use <code>handle_key</code>. This simply gets a <code>str</code> key as its argument, and should return <strong>True if input was handled, False otherwise</strong>. It should also call <code>self.execute_binding(key)</code> before it does any of its own handling, as bindings enjoy priority over normal keyboard actions.</p>
+
+<p>For having a number of suboptions within the widget, define the <code>selectables_length</code> property. This is defined by <code>Container</code> already, so if you subclass any of its children you won't have to worry about it. <code>selectables_length</code> defines how many options can be selected within the widget, and is checked by its parent. Be sure to make it a <code>@property</code>, otherwise you will get errors.</p>
+
+<p>For custom styles &amp; chars, define those attributes in the widget body. There is plenty of examples in the <code><a href="pytermgui/widgets.html">pytermgui.widgets</a></code> submodule on how to do this.</p>
+
 <h1 id="layers-of-the-api">Layers of the API</h1>
+
+<p>The API has a strict layered structure. Modules can only use names defined below them in the structure, as such a <code>Widget</code> has no clue about a <code>WindowManager</code>, unless it has a strictly defined reference to it.</p>
 
 <h2 id="low-level">Low level</h2>
 
