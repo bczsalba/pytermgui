@@ -63,9 +63,7 @@ widgets:
                       value: "/"
                       parent_align: 0
 
-                  - Label:
-                      value: "[32]0-255"
-                      parent_align: 2
+                  - Label: {}
 
             - Splitter:
                 widgets:
@@ -74,7 +72,7 @@ widgets:
                       parent_align: 0
 
                   - Label:
-                      value: "[#444772]#RRGGBB"
+                      value: "[32]0-255"
                       parent_align: 2
 
             - Splitter:
@@ -84,7 +82,7 @@ widgets:
                       parent_align: 0
 
                   - Label:
-                      value: "[145;69;142]RRR;GGG;BBB"
+                      value: "[#444772]#RRGGBB"
                       parent_align: 2
 
             - Splitter:
@@ -93,12 +91,22 @@ widgets:
                       value: "[italic]italic"
                       parent_align: 0
 
-                  - Label: {}
+                  - Label:
+                      value: "[145;69;142]RRR;GGG;BBB"
+                      parent_align: 2
 
             - Splitter:
                 widgets:
                   - Label:
                       value: "[underline]underline"
+                      parent_align: 0
+
+                  - Label: {}
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[blink]blink"
                       parent_align: 0
 
                   - Label:
@@ -108,7 +116,7 @@ widgets:
             - Splitter:
                 widgets:
                   - Label:
-                      value: "[blink]blink"
+                      value: "[blink2]blink2"
                       parent_align: 0
 
                   - Label:
@@ -118,7 +126,7 @@ widgets:
             - Splitter:
                 widgets:
                   - Label:
-                      value: "[blink2]blink2"
+                      value: "[inverse]inverse"
                       parent_align: 0
 
                   - Label:
@@ -128,20 +136,10 @@ widgets:
             - Splitter:
                 widgets:
                   - Label:
-                      value: "[inverse]inverse"
-                      parent_align: 0
-
-                  - Label: {}
-
-            - Splitter:
-                widgets:
-                  - Label:
                       value: "[invisible]invisible"
                       parent_align: 0
 
-                  - Label:
-                      value:  "[210]/fg"
-                      parent_align: 2
+                  - Label: {}
 
             - Splitter:
                 widgets:
@@ -150,7 +148,7 @@ widgets:
                       parent_align: 0
 
                   - Label:
-                      value: "[210]/bg"
+                      value: "[210]/fg"
                       parent_align: 2
 
             - Splitter:
@@ -159,4 +157,6 @@ widgets:
                       value: "[overline]overline"
                       parent_align: 0
 
-                  - Label: {}
+                  - Label:
+                      value:  "[210]/bg"
+                      parent_align: 2
