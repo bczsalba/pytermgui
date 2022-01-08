@@ -10,6 +10,7 @@ See `ptg --help` for more information.
 from __future__ import annotations
 
 import sys
+import platform
 from random import randint
 from itertools import zip_longest
 from abc import ABC, abstractmethod
@@ -17,6 +18,7 @@ from typing import Any, Optional, Type
 from argparse import ArgumentParser, Namespace
 
 from . import (
+    __version__,
     MarkupSyntaxError,
     # prettify_markup,
     MarkupFormatter,
@@ -479,6 +481,13 @@ def main() -> None:
         action="store_true",
     )
 
+    parser.add_argument(
+        "-v",
+        "--version",
+        help="print version information and quit",
+        action="store_true",
+    )
+
     parser.add_argument("-f", "--file", help="interpret YAML file")
     parser.add_argument(
         "--print-only",
@@ -490,6 +499,12 @@ def main() -> None:
 
     if args.size:
         print(f"{terminal.width}x{terminal.height}")
+        return
+
+    if args.version:
+        print(f"PyTermGUI v{__version__}")
+        print(f"Python: {sys.version.split()[0]}")
+        print(f"Platform: {platform.platform()}")
         return
 
     if args.file:
