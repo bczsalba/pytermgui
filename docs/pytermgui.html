@@ -344,17 +344,17 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <p>These files can be interpreted with a CLI flag and require no actual code to "run".</p>
 
-<p>The syntax of the files goes as follows:</p>
+<p>This is how the <code>widgets</code> section of the file should look like:</p>
 
 <div class="codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="nt">WidgetName</span><span class="p">:</span>
-         <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">WidgetTypeKnownToPTG</span>
-         <span class="nt">artbitrary-attribute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">artbitrary-value</span>
+    <span class="nt">WidgetName</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">WidgetTypeKnownToPTG</span>
+        <span class="nt">arbitrary-attribute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">arbitrary-value</span>
 
     <span class="c1"># Alternatively, if you don&#39;t need your widget to be named,</span>
     <span class="c1"># this syntax will automatically assign `type` to the key provided.</span>
-    <span class="p p-Indicator">-</span> <span class="nt">WidgetTypeKnownToPTG</span><span class="p">:</span>
-         <span class="nt">artbitrary-attribute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">artbitrary-value</span>
+    <span class="nt">WidgetTypeKnownToPTG</span><span class="p">:</span>
+        <span class="nt">arbitrary-attribute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">arbitrary-value</span>
 </code></pre></div>
 
 <p>Where <code>WidgetTypeKnownToPTG</code> <em>must</em> be a widget subclass either included in the library by default, or registered using the loader's serializer. The second is only possible when you are interpreting it from Python yourself, and not when you use <code>ptg -f</code>.</p>
@@ -377,13 +377,13 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <p>All of the <code>FileLoader</code> subclasses take a <code><a href="pytermgui/serializer.html#Serializer">pytermgui.serializer.Serializer</a></code> instance as their first argument, setting up their own if one was not given. This object is then used to instantiate all of the widgets it encounters, so registering a widget to it will allow the loader to use it.</p>
 
-<p><strong>Note:</strong> Serializers can dump any, even unknown widget types, but can only load <strong>known ones</strong>.</p>
+<p><strong>Note:</strong> Serializers can dump any, even unknown widget types, but <strong>can only load known ones</strong>.</p>
 
 <p>Once all your widgets are registered and load correctly, you can access them by the <code>WidgetName</code> attribute of your namespace.</p>
 
 <h2 id="loading-a-namespace-using-ptg-f">Loading a namespace using <code>ptg -f</code></h2>
 
-<p>The simplest way to use these files is running <code>ptg -f "filename"</code>, where <code>filename</code> points to your markup. As mentioned above, <strong>you can only use PTG native widget types</strong> with this method.</p>
+<p>The simplest way to use these files is running <code>ptg -f "filename"</code>, where <code>filename</code> points to your namespace file. As mentioned above, <strong>you can only use PTG native widget types</strong> with this method.</p>
 
 <p>What that CLI tool does is essentially this:</p>
 
@@ -401,7 +401,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <h2 id="loading-a-namespace-programatically">Loading a namespace programatically</h2>
 
-<p>Loading namespaces manually is more or less defined above, with one extra detail. You can either loop through all defined widgets, or reference them as the key they were defined as in your namespace file.</p>
+<p>Loading namespaces manually is more or less defined above, with one extra detail. You can either loop through all defined widgets as show previously, or reference them as the key they were defined as in your namespace file.</p>
 
 <p>For example:</p>
 
@@ -417,13 +417,13 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <p>...to reference the instance that was created.</p>
 
-<p><strong>Note:</strong> This is the specific instance the loader created. If you plan on using this as a sort of template, be sure to run <code>copy()</code> before modifiying your widget.</p>
+<p><strong>Note:</strong> This is the specific instance the loader created. If you plan on using this as a sort of template, be sure to run <code>copy()</code> before modifying your widget.</p>
 
 <h2 id="defining-widget-attributes">Defining widget attributes</h2>
 
 <p>So, now that you know how to get your namespace file loaded, let's get some information into it.</p>
 
-<p>The syntax goes as follows:</p>
+<p>The syntax goes like this:</p>
 
 <div class="codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span>
     <span class="nt">WidgetName</span><span class="p">:</span>
@@ -435,7 +435,7 @@ of the library you use. I will provide an example of usage for each.</p>
         <span class="nt">arbitrary-attribute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">arbitrary-value</span>
 </code></pre></div>
 
-<p>As you can see, any arbitrary attribute can be set in this method. You can also define a <strong>list</strong> of widgets, using the <code>widgets</code> key. The loader only looks for keys <strong>starting with</strong> <code>widgets</code>, so you can separate your widgets into categories or groups.</p>
+<p>As you can see, any arbitrary attribute can be set in this method. You can also define a <strong>list</strong> of widgets, using the <code>widgets</code> key. The loader only looks for keys <strong>starting with</strong> <code>widgets</code>, so you can separate your widgets into categories or groups if that tickles your fancy.</p>
 
 <p>For example:</p>
 
@@ -467,7 +467,7 @@ of the library you use. I will provide an example of usage for each.</p>
     <span class="nt">MY_BOX</span><span class="p">:</span> <span class="p p-Indicator">[</span>
         <span class="s">&quot;0bbb1&quot;</span><span class="p p-Indicator">,</span>
         <span class="s">&quot;a</span><span class="nv"> </span><span class="s">x</span><span class="nv"> </span><span class="s">c&quot;</span><span class="p p-Indicator">,</span>
-        <span class="s">&quot;2ddd3&quot;</span>
+        <span class="s">&quot;3ddd2&quot;</span>
     <span class="p p-Indicator">]</span>
 </code></pre></div>
 
@@ -613,15 +613,15 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <h1 id="how-to-define-your-own-widget">How to: Define your own Widget</h1>
 
-<p>As mentioned above, you <strong>usually</strong> don't have to do this. pytermgui tries to make everything definable inline, but for some functionalities you might need more than what is exposed.</p>
+<p>As mentioned above, you <strong>usually</strong> don't have to do this. <code><a href="">pytermgui</a></code> tries to make everything definable inline, but for some functionalities you might need more than what is exposed.</p>
 
 <h2 id="important-things-to-know">Important things to know</h2>
 
-<p>Firstly, the most important aspect of how the library works is the <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code> threading system. As any listening for any IO, let it be keyboard or mouse is blocking, we cannot print while that is happening. This obviously will not do, so we separate the input and output on different threads.</p>
+<p>Firstly, the most important aspect of how the library works is the <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code> threading system. As listening for any IO, let it be keyboard or mouse, is always blocking, we cannot print while that is happening. This obviously will not do, so we separate the input and output to different threads.</p>
 
 <p>The main thread is input. This thread is completely handled by the library, and the only place the user can influence it is with the <code><a href="pytermgui/widgets/base.html#Widget.bind">pytermgui.widgets.base.Widget.bind</a></code> system.</p>
 
-<p>The secondary handles the output. This is where the user (you) is able to have a say, as most widget code is run here.</p>
+<p>The secondary thread handles the output. This is where the users (you) are able to have a say, as most widget code is run here.</p>
 
 <h2 id="everything-a-girl-widget-needs">Everything a <strike>girl</strike> widget needs</h2>
 
@@ -629,7 +629,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <h2 id="the-things-you-should-define">The things you should define</h2>
 
-<p>For any output, use the <code>get_lines</code> method. This returns a <code>list[str]</code>, where each item of the list is <strong>exactly as long as the widget is wide</strong>, and the length of the list is equal to the height of your widget. What goes in this list is completely up to you, pytermgui will render it as long as it fits those criteria. If you need to do any blocking or long actions for your UI's contents, it is best to do that in a thread and have the thread update some instance attribute, which can then be displayed here. This method is called <em>a lot</em>, so keep it performant.</p>
+<p>For any output, use the <code>get_lines</code> method. This returns a <code>list[str]</code>, where each item of the list is <strong>exactly as long as the widget is wide</strong>, and the length of the list is equal to the height of your widget. What goes in this list is completely up to you, pytermgui will render it as long as it fits those criteria. If you need to do any blocking or long actions for your UI's contents, it is best to do that in a thread and have the thread update some instance attribute, which can then be displayed here. This method is called <em>a lot</em> (at least once a frame, usually more), so keep it performant.</p>
 
 <p>For mouse interaction, use <code>handle_mouse</code>. This gets a <code>MouseEvent</code> and <code>MouseTarget</code> as its arguments, and should return <strong>True if widget.select should be run by the caller, False otherwise</strong>. The return value generally stands for whether the given widget could handle the input, but sometimes the above distinction is useful to know about.</p>
 

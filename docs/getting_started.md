@@ -230,18 +230,18 @@ The file loader system also has support for defining entire widgets in files, as
 
 These files can be interpreted with a CLI flag and require no actual code to "run".
 
-The syntax of the files goes as follows:
+This is how the `widgets` section of the file should look like:
 
 ```yaml
 widgets:
-    - WidgetName:
-         type: WidgetTypeKnownToPTG
-         artbitrary-attribute: artbitrary-value
+    WidgetName:
+        type: WidgetTypeKnownToPTG
+        arbitrary-attribute: arbitrary-value
 
     # Alternatively, if you don't need your widget to be named,
     # this syntax will automatically assign `type` to the key provided.
-    - WidgetTypeKnownToPTG:
-         artbitrary-attribute: artbitrary-value
+    WidgetTypeKnownToPTG:
+        arbitrary-attribute: arbitrary-value
 ```
 
 Where `WidgetTypeKnownToPTG` *must* be a widget subclass either included in the library by default, or registered using the loader's serializer. The second is only possible when you are interpreting it from Python yourself, and not when you use `ptg -f`.
@@ -265,13 +265,13 @@ with open("your-file.yaml", "r") as ptg_file:
 
 All of the `FileLoader` subclasses take a `pytermgui.serializer.Serializer` instance as their first argument, setting up their own if one was not given. This object is then used to instantiate all of the widgets it encounters, so registering a widget to it will allow the loader to use it.
 
-**Note:** Serializers can dump any, even unknown widget types, but can only load **known ones**.
+**Note:** Serializers can dump any, even unknown widget types, but **can only load known ones**.
 
 Once all your widgets are registered and load correctly, you can access them by the `WidgetName` attribute of your namespace.
 
 ## Loading a namespace using `ptg -f`
 
-The simplest way to use these files is running `ptg -f "filename"`, where `filename` points to your markup. As mentioned above, **you can only use PTG native widget types** with this method.
+The simplest way to use these files is running `ptg -f "filename"`, where `filename` points to your namespace file. As mentioned above, **you can only use PTG native widget types** with this method.
 
 What that CLI tool does is essentially this:
 
@@ -290,7 +290,7 @@ with ptg.WindowManager() as manager:
 
 ## Loading a namespace programatically
 
-Loading namespaces manually is more or less defined above, with one extra detail. You can either loop through all defined widgets, or reference them as the key they were defined as in your namespace file.
+Loading namespaces manually is more or less defined above, with one extra detail. You can either loop through all defined widgets as show previously, or reference them as the key they were defined as in your namespace file.
 
 For example:
 
@@ -308,13 +308,13 @@ my_widget = namespace.MyWidget
 
 ...to reference the instance that was created.
 
-**Note:** This is the specific instance the loader created. If you plan on using this as a sort of template, be sure to run `copy()` before modifiying your widget.
+**Note:** This is the specific instance the loader created. If you plan on using this as a sort of template, be sure to run `copy()` before modifying your widget.
 
 ## Defining widget attributes
 
 So, now that you know how to get your namespace file loaded, let's get some information into it.
 
-The syntax goes as follows:
+The syntax goes like this:
 
 ```yaml
 widgets:
@@ -327,7 +327,7 @@ widgets:
         arbitrary-attribute: arbitrary-value
 ```
 
-As you can see, any arbitrary attribute can be set in this method. You can also define a **list** of widgets, using the `widgets` key. The loader only looks for keys **starting with** `widgets`, so you can separate your widgets into categories or groups.
+As you can see, any arbitrary attribute can be set in this method. You can also define a **list** of widgets, using the `widgets` key. The loader only looks for keys **starting with** `widgets`, so you can separate your widgets into categories or groups if that tickles your fancy.
 
 For example:
 
@@ -361,7 +361,7 @@ boxes:
     MY_BOX: [
         "0bbb1",
         "a x c",
-        "2ddd3"
+        "3ddd2"
     ]
 ```
 
@@ -511,15 +511,15 @@ with ptg.WindowManager() as manager:
 
 # How to: Define your own Widget
 
-As mentioned above, you **usually** don't have to do this. pytermgui tries to make everything definable inline, but for some functionalities you might need more than what is exposed.
+As mentioned above, you **usually** don't have to do this. `pytermgui` tries to make everything definable inline, but for some functionalities you might need more than what is exposed.
 
 ## Important things to know
 
-Firstly, the most important aspect of how the library works is the `pytermgui.window_manager` threading system. As any listening for any IO, let it be keyboard or mouse is blocking, we cannot print while that is happening. This obviously will not do, so we separate the input and output on different threads.
+Firstly, the most important aspect of how the library works is the `pytermgui.window_manager` threading system. As listening for any IO, let it be keyboard or mouse, is always blocking, we cannot print while that is happening. This obviously will not do, so we separate the input and output to different threads.
 
 The main thread is input. This thread is completely handled by the library, and the only place the user can influence it is with the `pytermgui.widgets.base.Widget.bind` system.
 
-The secondary handles the output. This is where the user (you) is able to have a say, as most widget code is run here.
+The secondary thread handles the output. This is where the users (you) are able to have a say, as most widget code is run here.
 
 ## Everything a ~~girl~~ widget needs
 
@@ -527,7 +527,7 @@ You should **always** subclass `pytermgui.widgets.base.Widget` when creating you
 
 ## The things you should define
 
-For any output, use the `get_lines` method. This returns a `list[str]`, where each item of the list is **exactly as long as the widget is wide**, and the length of the list is equal to the height of your widget. What goes in this list is completely up to you, pytermgui will render it as long as it fits those criteria. If you need to do any blocking or long actions for your UI's contents, it is best to do that in a thread and have the thread update some instance attribute, which can then be displayed here. This method is called *a lot*, so keep it performant.
+For any output, use the `get_lines` method. This returns a `list[str]`, where each item of the list is **exactly as long as the widget is wide**, and the length of the list is equal to the height of your widget. What goes in this list is completely up to you, pytermgui will render it as long as it fits those criteria. If you need to do any blocking or long actions for your UI's contents, it is best to do that in a thread and have the thread update some instance attribute, which can then be displayed here. This method is called *a lot* (at least once a frame, usually more), so keep it performant.
 
 For mouse interaction, use `handle_mouse`. This gets a `MouseEvent` and `MouseTarget` as its arguments, and should return **True if widget.select should be run by the caller, False otherwise**. The return value generally stands for whether the given widget could handle the input, but sometimes the above distinction is useful to know about.
 
