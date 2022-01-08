@@ -829,6 +829,8 @@ def strikethrough(text: str, reset_style: Optional[bool] = True) -> str:
 
 
 def overline(text: str, reset_style: Optional[bool] = True) -> str:
-    """Return text overlined"""
+    """Return text overlined
+
+    Note: This isnt' very widely supported"""
 
     return set_mode("overline", False) + text + (reset() if reset_style else "")
