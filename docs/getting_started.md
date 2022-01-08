@@ -101,8 +101,8 @@ PTG_CONFIG = """\
 config: {}
 
 markup:
-    title: "\\"
-    body: "\\"
+    title: ""
+    body: ""
 """
 
 with ptg.WindowManager() as manager:
