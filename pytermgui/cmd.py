@@ -9,8 +9,10 @@ See `ptg --help` for more information.
 
 from __future__ import annotations
 
+import os
 import sys
 import platform
+import subprocess
 from random import randint
 from itertools import zip_longest
 from abc import ABC, abstractmethod
@@ -505,6 +507,22 @@ def main() -> None:
         print(f"PyTermGUI v{__version__}")
         print(f"Python: {sys.version.split()[0]}")
         print(f"Platform: {platform.platform()}")
+
+        try:
+            # Credit to: https://stackoverflow.com/a/21901260
+            git_hash = (
+                subprocess.check_output(
+                    ["git", "rev-parse", "--short", "HEAD"],
+                    cwd=os.path.dirname(os.path.realpath(__file__)),
+                )
+                .decode("ascii")
+                .strip()
+            )
+            print(f"Git commit: {git_hash}")
+
+        except Exception as error:
+            print(f"Git commit: Could not determine due to {type(error).__name__}.")
+
         return
 
     if args.file:
