@@ -58,7 +58,7 @@ class Button(Widget):
             self.selected_index = 0
             if mouse_target is not None:
                 mouse_target.click(self)
-                return True
+                return False
 
         if mouse_action == MouseAction.RELEASE:
             self.selected_index = None
