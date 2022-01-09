@@ -103,6 +103,10 @@ def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
 
     # Nothing to do.
     if isinstance(data, Widget):
+        # Set all **widget_args
+        for key, value in widget_args.items():
+            setattr(data, key, value)
+
         return data
 
     # Label

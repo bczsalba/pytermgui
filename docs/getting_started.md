@@ -30,7 +30,7 @@ with ptg.WindowManager() as manager:
     window = ptg.Window(
         "[wm-title]My first window!",
         "",
-        ["Exit", lambda *_: sys.exit()],
+        ["Exit", lambda *_: manager.exit()],
     )
     
     manager.add(window)
@@ -51,7 +51,7 @@ with ptg.WindowManager() as manager:
         ptg.Window()
         + "[wm-title]My first window!",
         + "",
-        + ["Exit", lambda *_: sys.exit()],
+        + ["Exit", lambda *_: manager.exit()],
     )
     
     manager.run()
@@ -119,7 +119,7 @@ with ptg.WindowManager() as manager:
         + {"[body]Second key": ["Second button"]}
         + {"[body]Third key": ["Third button"]}
         + ""
-        + ["Exit", lambda *_: sys.exit()]
+        + ["Exit", lambda *_: manager.exit()]
     )
 
     manager.run()
