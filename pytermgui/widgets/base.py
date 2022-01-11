@@ -842,9 +842,6 @@ class Container(Widget):
             widget_lines: list[str] = []
 
             for i, line in enumerate(widget.get_lines()):
-                if len(lines) > self.height:
-                    break
-
                 # Pad horizontally
                 aligned = align(line)
                 new = real_length(aligned)
@@ -981,6 +978,8 @@ class Container(Widget):
     ) -> bool:
         """Handle mouse event on Container's children"""
 
+        # TODO: Rewrite this mess.
+
         def _get_widget(target: MouseTarget) -> Widget | None:
             """Try to get widget from its mouse target"""
 
@@ -992,8 +991,6 @@ class Container(Widget):
 
         action, pos = event
         target = target or self.get_target(pos)
-        if target is None:
-            return False
 
         target_widget = self._drag_target
         if self._drag_target is None or target not in self._drag_target.mouse_targets:
