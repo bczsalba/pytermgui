@@ -16,7 +16,7 @@ from .base import Container, Label, Widget, MouseTarget
 from . import styles
 from ..input import keys
 from ..helpers import real_length
-from ..enums import WidgetAlignment
+from ..enums import WidgetAlignment, SizePolicy
 from ..ansi_interface import foreground, background, reset, MouseAction, MouseEvent
 
 
@@ -134,13 +134,16 @@ class Splitter(Container):
         for widget in self._widgets:
             inner = []
 
-            widget.width = target_width
+            if widget.size_policy is SizePolicy.STATIC:
+                target_width += target_width - widget.width
+            else:
+                widget.width = target_width
 
             aligned: str | None = None
             for line in widget.get_lines():
                 # See `enums.py` for information about this ignore
                 padding, aligned = self._align(
-                    cast(WidgetAlignment, widget.parent_align), target_width, line
+                    cast(WidgetAlignment, widget.parent_align), widget.width, line
                 )
                 inner.append(aligned)
 
