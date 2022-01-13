@@ -104,26 +104,30 @@ class Rect:
         """Set up extra instance attributes"""
 
         self.left = self.start[0]
-        self.right = self.end[0] - 1
+        self.right = self.end[0]
         self.top = self.start[1]
-        self.bottom = self.end[1] + 3
+        self.bottom = self.end[1]
 
         self.values = self.left, self.top, self.right, self.bottom
 
     @classmethod
-    def from_widget(cls, widget: Widget) -> Rect:
+    def from_window(cls, window: Window) -> Rect:
         """Create a Rect from a widget"""
 
-        start = widget.pos
-        end = start[0] + widget.width, start[1] + widget.height
-        return cls(start, end)
+        left, top = window.pos
+        right = left + window.width
+        bottom = top + window.height
+        return cls((left, top), (right - 1, bottom - 3))
 
     @classmethod
     def from_tuple(cls, tpl: tuple[int, int, int, int]) -> Rect:
         """Create a Rect from a tuple of points"""
 
         startx, starty, endx, endy = tpl
-        return cls((startx, starty), (endx, endy))
+        new = cls((startx, starty), (endx, endy))
+        cls.values = tpl
+
+        return new
 
     @property
     def width(self) -> int:
@@ -221,7 +225,7 @@ class Window(Container):
         """Return Rect representing this window"""
 
         # TODO: This probably shouldn't be done every time.
-        return Rect.from_widget(self)
+        return Rect.from_window(self)
 
     @rect.setter
     def rect(self, new: tuple[int, int, int, int]) -> None:
@@ -628,15 +632,14 @@ class WindowManager(Container):
 
             handled = True
 
+        # TODO: Why are all these arbitrary offsets needed?
         elif not window.is_noresize:
             if edge is Edge.RIGHT:
                 window.rect = Rect.from_tuple((left, top, pos[0] + 1, bottom))
                 handled = True
 
             elif edge is Edge.LEFT:
-                window.rect = Rect.from_tuple(
-                    (pos[0], top, right + left - pos[0], bottom)
-                )
+                window.rect = Rect.from_tuple((pos[0] - 1, top, right + 1, bottom))
                 handled = True
 
         try:
