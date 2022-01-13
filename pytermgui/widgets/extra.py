@@ -123,7 +123,7 @@ class Splitter(Container):
         assert isinstance(separator, str)
         separator_length = real_length(separator)
 
-        error = self.width % 2
+        error = self.width % len(self._widgets)
         target_width = self.width // len(self._widgets) - separator_length + 1
 
         vertical_lines = []
@@ -137,7 +137,8 @@ class Splitter(Container):
             if widget.size_policy is SizePolicy.STATIC:
                 target_width += target_width - widget.width
             else:
-                widget.width = target_width
+                widget.width = target_width + error
+                error = 0
 
             aligned: str | None = None
             for line in widget.get_lines():
