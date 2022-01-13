@@ -1002,6 +1002,10 @@ class Container(Widget):
         elif action is MouseAction.RELEASE:
             self._drag_target = None
 
+        if self._drag_target is not None:
+            self._drag_target.handle_mouse(event, target)
+            return True
+
         if target_widget is None:
             for widget in self._widgets:
                 if (
