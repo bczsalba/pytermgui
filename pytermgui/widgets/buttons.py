@@ -88,7 +88,6 @@ class Button(Widget):
         ).onclick = self.onclick
 
         line = self.padding * " " + word
-        self.width = real_length(line)
 
         return [line]
 
