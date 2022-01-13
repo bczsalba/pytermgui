@@ -495,14 +495,14 @@ class WindowManager(Container):
 
             for window in self._windows:
                 if window is target_window or window.rect.contains(pos):
-                    if action is not MouseAction.HOVER and not window.has_focus:
+                    if (
+                        action not in [MouseAction.HOVER, MouseAction.RELEASE]
+                        and not window.has_focus
+                    ):
                         self.focus(window)
 
-                    if (
-                        not window.handle_mouse(cast(MouseEvent, event))
-                        and action in handlers
-                    ):
-                        handlers[action](pos, window)
+                    if action in handlers and not handlers[action](pos, window):
+                        window.handle_mouse(cast(MouseEvent, event))
 
                     self._should_print = True
 
@@ -657,7 +657,10 @@ class WindowManager(Container):
         """Process release of key"""
 
         self._drag_target = None
-        return True
+
+        # This return False so Window can handle the mouse action as well,
+        # as not much is done in this callback.
+        return False
 
     def process_input(self) -> None:
         """Process incoming input"""
