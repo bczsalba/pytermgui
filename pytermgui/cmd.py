@@ -504,10 +504,6 @@ def main() -> None:
         return
 
     if args.version:
-        print(f"PyTermGUI v{__version__}")
-        print(f"Python: {sys.version.split()[0]}")
-        print(f"Platform: {platform.platform()}")
-
         try:
             # Credit to: https://stackoverflow.com/a/21901260
             git_hash = (
@@ -518,10 +514,24 @@ def main() -> None:
                 .decode("ascii")
                 .strip()
             )
-            print(f"Git commit: {git_hash}")
+
+            latest_tag_hash = (
+                subprocess.check_output(
+                    ["git", "rev-parse", "--short", f"v{__version__}"],
+                    cwd=os.path.dirname(os.path.realpath(__file__)),
+                )
+                .decode("ascii")
+                .strip()
+            )
 
         except Exception as error:
-            print(f"Git commit: Could not determine due to {type(error).__name__}.")
+            git_hash = "Could not determine due to {type(error).__name__}."
+            latest_tag_hash = ""
+
+        print(f"PyTermGUI v{__version__}{'+' if latest_tag_hash != git_hash else ''}")
+        print(f"Python: {sys.version.split()[0]}")
+        print(f"Platform: {platform.platform()}")
+        print(f"Git commit: {git_hash}")
 
         return
 
