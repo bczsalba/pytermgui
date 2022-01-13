@@ -123,8 +123,9 @@ class Splitter(Container):
         assert isinstance(separator, str)
         separator_length = real_length(separator)
 
-        error = self.width % len(self._widgets)
-        target_width = self.width // len(self._widgets) - separator_length + 1
+        full_width = self.width - (len(self._widgets) - 1) * separator_length
+        error = full_width % len(self._widgets)
+        target_width = full_width // len(self._widgets)
 
         vertical_lines = []
         total_offset = separator_length - 1
