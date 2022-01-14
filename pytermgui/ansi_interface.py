@@ -104,25 +104,6 @@ DECORATION_MODES: dict[str, int] = {
 Dictionary of decoration modes
 """
 
-MOUSE_EVENTS: dict[str, str] = {
-    "press": "\x1b[?1000",
-    "highlight": "\x1b[?1001",
-    "press_hold": "\x1b[?1002",
-    "hover": "\x1b[?1003",
-}
-"""
-Dictionary of mouse events
-"""
-
-MOUSE_METHODS: dict[str, str] = {
-    "decimal_utf8": "\x1b[?1005",
-    "decimal_xterm": "\x1b[?1006",
-    "decimal_urxvt": "\x1b[?1015",
-}
-"""
-Dictionary of mouse methods
-"""
-
 
 class Color:
     """
@@ -743,46 +724,10 @@ class MouseEvent:
         return self
 
 
-mouse_codes: dict[str, object] = {
-    "decimal_utf8": {
-        "pattern": re.compile(
-            r"\x1b\[M(?P<EventType>(0|2|3[245]|6[45]))\;(?P<X>\d+)\;(?P<Y>\d+)"
-        ),
-        ### TODO ###
-    },
-    "decimal_xterm": {
-        "pattern": re.compile(
-            r"\x1b\[\<(?P<EventType>(0|2|3[245]|6[45]))\;(?P<X>\d+)\;(?P<Y>\d+)(?P<ID>[mM])"
-        ),
-        "0M": MouseAction.LEFT_CLICK,
-        "0m": MouseAction.RELEASE,
-        "2": MouseAction.RIGHT_CLICK,
-        "32": MouseAction.LEFT_DRAG,
-        "34": MouseAction.RIGHT_DRAG,
-        "35": MouseAction.HOVER,
-        "64": MouseAction.SCROLL_UP,
-        "65": MouseAction.SCROLL_DOWN,
-    },
-    "decimal_urxvt": {
-        "pattern": re.compile(
-            r"\x1b\[(?P<EventType>(0|2|3[245]|6[45]))\;(?P<X>\d+)\;(?P<Y>\d+)M"
-        ),
-        "32": MouseAction.LEFT_CLICK,
-        "34": MouseAction.RIGHT_CLICK,
-        "35": MouseAction.RELEASE,
-        "64": MouseAction.LEFT_DRAG,
-        "66": MouseAction.RIGHT_DRAG,
-        "96": MouseAction.SCROLL_UP,
-        "97": MouseAction.SCROLL_DOWN,
-    },
-}
-
-
 def report_mouse(
     event: str, method: Optional[str] = "decimal_xterm", stop: bool = False
 ) -> None:
-    """
-    Start reporting mouse events.
+    """Start reporting mouse events.
 
     Options:
     - `press`
@@ -791,7 +736,7 @@ def report_mouse(
     - `hover`
 
     Methods:
-    - `None`: Limited in coordinates, not recommended.
+    - `None`:          Limited in coordinates, not recommended.
     - `decimal_xterm`: Default, most universal
     - `decimal_urxvt`: Older, less compatible
     - `decimal_utf8`:  Apparently not too stable
@@ -799,41 +744,98 @@ def report_mouse(
     More information <a href='https://stackoverflow.com/a/5970472'>here</a>.
 
     Note:
-        If you need this functionality, you're probably better off using the wrapper `pytermgui.context_managers.mouse_handler`, which allows listening on multiple events, gives a translator method and handles exceptions.
+        If you need this functionality, you're probably better off using the wrapper
+        `pytermgui.context_managers.mouse_handler`, which allows listening on multiple
+        events, gives a translator method and handles exceptions.
     """
-    _ending = "l" if stop else "h"
-    _event = MOUSE_EVENTS.get(event, None)
-    _method = MOUSE_METHODS.get(method, None)
-    if _event:
-        return f"{_event}{_ending}"
+
+    if event == "press":
+        sys.stdout.write("\x1b[?1000")
+
+    elif event == "highlight":
+        sys.stdout.write("\x1b[?1001")
+
+    elif event == "press_hold":
+        sys.stdout.write("\x1b[?1002")
+
+    elif event == "hover":
+        sys.stdout.write("\x1b[?1003")
+
     else:
         raise NotImplementedError(f"Mouse report event {event} is not supported!")
-    if method is None:
+
+    sys.stdout.write("l" if stop else "h")
+
+    if method == "decimal_utf8":
+        sys.stdout.write("\x1b[?1005")
+
+    elif method == "decimal_xterm":
+        sys.stdout.write("\x1b[?1006")
+
+    elif method == "decimal_urxvt":
+        sys.stdout.write("\x1b[?1015")
+
+    elif method is None:
         return
-    elif _method:
-        return f"{_method}{_ending}"
+
     else:
         raise NotImplementedError(f"Mouse report method {method} is not supported!")
 
+    sys.stdout.write("l" if stop else "h")
+    sys.stdout.flush()
 
-def translate_mouse(code: str, method: str) -> Optional[list[Optional[MouseEvent]]]:
-    """
-    Translate the output of produced by setting report_mouse codes into MouseEvent-s.
 
-    This currently only supports `decimal_xterm` and `decimal_urvxt`. `decimal_utf8` is currently WIP. See `report_mouse` for more information.
-    """
-    mapping = mouse_codes.get(method, None)
+def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
+    """Translate the output of produced by setting report_mouse codes into MouseEvent-s.
+
+    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more
+    information."""
+
+    mouse_codes = {
+        "decimal_xterm": {
+            "pattern": re.compile(r"<(\d{1,2})\;(\d{1,3})\;(\d{1,3})(\w)"),
+            "0M": MouseAction.LEFT_CLICK,
+            "0m": MouseAction.RELEASE,
+            "2": MouseAction.RIGHT_CLICK,
+            "32": MouseAction.LEFT_DRAG,
+            "34": MouseAction.RIGHT_DRAG,
+            "35": MouseAction.HOVER,
+            "64": MouseAction.SCROLL_UP,
+            "65": MouseAction.SCROLL_DOWN,
+        },
+        "decimal_urxvt": {
+            "pattern": re.compile(r"(\d{1,2})\;(\d{1,3})\;(\d{1,3})()"),
+            "32": MouseAction.LEFT_CLICK,
+            "34": MouseAction.RIGHT_CLICK,
+            "35": MouseAction.RELEASE,
+            "64": MouseAction.LEFT_DRAG,
+            "66": MouseAction.RIGHT_DRAG,
+            "96": MouseAction.SCROLL_UP,
+            "97": MouseAction.SCROLL_DOWN,
+        },
+    }
+    mapping = mouse_codes[method]
     pattern = mapping["pattern"]
-    events: list[Optional[MouseEvent]] = []
-    for match in pattern.finditer(code):
-        if method == "decimal_xterm":
-            identifier = match.group("ID")
-        else:
-            identifier = ""
-        action: string = f"{match.group('EventType')}{identifier}"
-        pos_x: int = int(match.group("X"))
-        pos_y: int = int(match.group("Y"))
-        events.append(MouseEvent(action, (pos_x, pos_y)))
+    events: list[MouseEvent | None] = []
+    for sequence in code.split("\x1b"):
+        if len(sequence) == 0:
+            continue
+        matches = list(pattern.finditer(sequence))
+        if matches == []:
+            return None
+        for match in matches:
+            identifier, *pos, release_code = match.groups()
+
+            # decimal_xterm uses the last character's
+            # capitalization to signify press/release state
+            if len(release_code) > 0 and identifier == "0":
+                identifier += release_code
+            if identifier in mapping:
+                action = mapping[identifier]
+                assert isinstance(action, MouseAction)
+                events.append(MouseEvent(action, (int(pos[0]), int(pos[1]))))
+                continue
+            events.append(None)
     return events
 
 

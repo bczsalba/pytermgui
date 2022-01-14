@@ -15,8 +15,7 @@ import os
 import sys
 from codecs import getincrementaldecoder
 from select import select
-from typing import (IO, Any, AnyStr, Generator, ItemsView, KeysView, Optional,
-                    Union, ValuesView)
+from typing import (IO, Any, AnyStr, Generator, ItemsView, KeysView, Optional, Union, ValuesView)
 
 
 def _is_ready(file: IO[AnyStr]) -> bool:
