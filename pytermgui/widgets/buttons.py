@@ -4,18 +4,17 @@ Mouse interactable widgets for simple button behaviours.
 
 from __future__ import annotations
 
+from typing import Any, Callable, Optional
+
+from ..ansi_interface import MouseAction, MouseEvent
+from ..helpers import real_length
+from ..parser import markup
+from . import styles as w_styles
+from .base import MouseCallback, MouseTarget, Widget
+
 # Some of these classes need to have more than 7 instance attributes.
 # pylint: disable=too-many-instance-attributes
 
-from typing import Optional, Any, Callable
-
-from .base import Widget, MouseCallback, MouseTarget
-
-from ..parser import markup
-from ..helpers import real_length
-from ..ansi_interface import MouseAction, MouseEvent
-
-from . import styles as w_styles
 
 __all__ = ["Button", "Checkbox", "Toggle"]
 

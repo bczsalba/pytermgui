@@ -1,4 +1,4 @@
-from pytermgui import Label, Container, boxes
+from pytermgui import Container, Label, boxes
 
 art = """\
 [bold 157] ____      [60] _____                  [210]  ____ _   _ ___ [/]

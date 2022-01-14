@@ -1,26 +1,15 @@
 from __future__ import annotations
 
 import sys
-from typing import Any
 from random import randint
+from typing import Any
 
-from pytermgui import (
-    InputField,
-    get_widget,
-    MarkupFormatter,
-    MouseTarget,
-    Container,
-    keys,
-    markup,
-    Widget,
-    real_length,
-    Slider,
-    Label,
-)
-
+from pytermgui import (Container, InputField, Label, MarkupFormatter,
+                       MouseTarget, Slider, Widget, get_widget, keys, markup,
+                       real_length)
 from pytermgui.ansi_interface import MouseAction
-from pytermgui.window_manager import WindowManager, Window
 from pytermgui.cmd import MarkupApplication
+from pytermgui.window_manager import Window, WindowManager
 
 
 def main() -> None:

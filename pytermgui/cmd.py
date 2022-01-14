@@ -10,35 +10,20 @@ See `ptg --help` for more information.
 from __future__ import annotations
 
 import os
-import sys
 import platform
 import subprocess
-from random import randint
-from itertools import zip_longest
+import sys
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Type
 from argparse import ArgumentParser, Namespace
+from itertools import zip_longest
+from random import randint
+from typing import Any, Optional, Type
 
-from . import (
-    __version__,
-    MarkupSyntaxError,
-    # prettify_markup,
-    MarkupFormatter,
-    WindowManager,
-    real_length,
-    YamlLoader,
-    get_widget,
-    InputField,
-    Container,
-    Splitter,
-    terminal,
-    markup,
-    Window,
-    Button,
-    Label,
-    boxes,
-    keys,
-)
+from . import Label  # prettify_markup,
+from . import (Button, Container, InputField, MarkupFormatter,
+               MarkupSyntaxError, Splitter, Window, WindowManager, YamlLoader,
+               __version__, boxes, get_widget, keys, markup, real_length,
+               terminal)
 
 __all__ = ["Application"]
 

@@ -9,21 +9,19 @@ The basic building blocks making up the Widget system.
 from __future__ import annotations
 
 from copy import deepcopy
-from inspect import signature
 from dataclasses import dataclass, field
-from typing import Callable, Optional, Type, Iterator, Any
+from inspect import signature
+from typing import Any, Callable, Iterator, Optional, Type
 
+from ..ansi_interface import MouseAction, MouseEvent, clear, terminal
+from ..context_managers import cursor_at
+from ..enums import CenteringPolicy, SizePolicy, WidgetAlignment
+from ..exceptions import LineLengthError, WidthExceededError
+from ..helpers import break_line, real_length
 from ..input import keys
 from ..parser import markup
-from ..context_managers import cursor_at
-from ..helpers import real_length, break_line
-from ..exceptions import WidthExceededError, LineLengthError
-from ..enums import SizePolicy, CenteringPolicy, WidgetAlignment
-from ..ansi_interface import terminal, clear, MouseEvent, MouseAction
-
 from . import boxes
 from . import styles as w_styles
-
 
 __all__ = ["MouseTarget", "MouseCallback", "Widget", "Container", "Label"]
 

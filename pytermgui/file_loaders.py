@@ -121,16 +121,14 @@ with ptg.WindowManager() as manager:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from abc import abstractmethod, ABC
-from typing import Any, Type, IO
-
 import json
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import IO, Any, Type
 
 from . import widgets
 from .parser import markup
 from .serializer import Serializer
-
 
 YAML_ERROR = None
 

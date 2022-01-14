@@ -45,36 +45,25 @@ style="max-width: 100%">
 
 from __future__ import annotations
 
+import signal
 import sys
 import time
-import signal
-from threading import Thread
-from enum import Enum, auto as _auto
 from dataclasses import dataclass, field
-from typing import Optional, Any, cast
+from enum import Enum
+from enum import auto as _auto
+from threading import Thread
+from typing import Any, Optional, cast
 
-# https://github.com/python/mypy/issues/4930
-from .widgets.base import Container
-
-from .widgets import (
-    MarkupFormatter,
-    Widget,
-    boxes,
-)
-
+from .ansi_interface import MouseAction, MouseEvent, move_cursor, terminal
+from .context_managers import MouseTranslator, alt_buffer, mouse_handler
+from .enums import CenteringPolicy, SizePolicy
+from .exceptions import LineLengthError
+from .helpers import strip_ansi
 from .input import getch
 from .parser import markup
-from .helpers import strip_ansi
-from .exceptions import LineLengthError
-from .enums import CenteringPolicy, SizePolicy
-from .context_managers import alt_buffer, mouse_handler, MouseTranslator
-from .ansi_interface import (
-    terminal,
-    MouseEvent,
-    move_cursor,
-    MouseAction,
-)
-
+from .widgets import MarkupFormatter, Widget, boxes
+# https://github.com/python/mypy/issues/4930
+from .widgets.base import Container
 
 __all__ = ["Window", "WindowManager"]
 

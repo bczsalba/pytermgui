@@ -8,26 +8,15 @@ most things are nicer-packaged combinations to already available methods from
 
 from __future__ import annotations
 
-from os import name
 from contextlib import contextmanager
-from typing import Callable, Generator, Any, Union, List
+from os import name
+from typing import Any, Callable, Generator, List, Union
 
-from .ansi_interface import (
-    is_interactive,
-    save_cursor,
-    restore_cursor,
-    print_to,
-    show_cursor,
-    hide_cursor,
-    set_echo,
-    unset_echo,
-    set_alt_buffer,
-    unset_alt_buffer,
-    cursor_up,
-    report_mouse,
-    translate_mouse,
-    MouseEvent,
-)
+from .ansi_interface import (MouseEvent, cursor_up, hide_cursor,
+                             is_interactive, print_to, report_mouse,
+                             restore_cursor, save_cursor, set_alt_buffer,
+                             set_echo, show_cursor, translate_mouse,
+                             unset_alt_buffer, unset_echo)
 
 # TODO: Move this absolute beast to a types submodule
 MouseTranslator = Callable[[str], Union[List[Union[MouseEvent, None]], None]]

@@ -10,18 +10,17 @@ module will soon see a full overhaul, so the API is likely to change.
 
 from __future__ import annotations
 
-from typing import Optional, Any
-from inspect import signature, getdoc, isclass, ismodule, Signature
+from inspect import Signature, getdoc, isclass, ismodule, signature
+from typing import Any, Optional
 
+from .ansi_interface import foreground, is_interactive, terminal
+from .context_managers import alt_buffer
+from .enums import WidgetAlignment
 from .input import getch
 from .parser import markup
-from .enums import WidgetAlignment
-
-from .context_managers import alt_buffer
-from .widgets.boxes import DOUBLE_BOTTOM
 from .widgets.base import Container, Label
-from .widgets.styles import MarkupFormatter, StyleType, StyleCall
-from .ansi_interface import foreground, terminal, is_interactive
+from .widgets.boxes import DOUBLE_BOTTOM
+from .widgets.styles import MarkupFormatter, StyleCall, StyleType
 
 __all__ = ["inspect", "Inspector"]
 

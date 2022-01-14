@@ -1,5 +1,6 @@
-import requests
 from subprocess import check_output
+
+import requests
 
 
 def get_score(command: str) -> float:

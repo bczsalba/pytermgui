@@ -9,10 +9,10 @@ that represents that "deep" the Widget is within the hierarchy, and
 # pylint: disable=unused-argument
 
 from dataclasses import dataclass
-from typing import Callable, Union, List
+from typing import Callable, List, Union
 
-from ..parser import markup
 from ..helpers import strip_ansi
+from ..parser import markup
 
 __all__ = [
     "MarkupFormatter",

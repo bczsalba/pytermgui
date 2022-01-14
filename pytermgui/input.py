@@ -13,21 +13,10 @@ from __future__ import annotations
 
 import os
 import sys
-
-from typing import (
-    IO,
-    Any,
-    Union,
-    AnyStr,
-    Optional,
-    KeysView,
-    Generator,
-    ItemsView,
-    ValuesView,
-)
-
-from select import select
 from codecs import getincrementaldecoder
+from select import select
+from typing import (IO, Any, AnyStr, Generator, ItemsView, KeysView, Optional,
+                    Union, ValuesView)
 
 
 def _is_ready(file: IO[AnyStr]) -> bool:

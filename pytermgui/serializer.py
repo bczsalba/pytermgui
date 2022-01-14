@@ -6,13 +6,12 @@ uses `Widget.serialize` for each widget.
 from __future__ import annotations
 
 import json
-from typing import Any, Type, IO, Dict
+from typing import IO, Any, Dict, Type
 
 from . import widgets
 from .parser import markup
-
+from .widgets import CharType, styles
 from .widgets.base import Widget
-from .widgets import styles, CharType
 from .window_manager import Window
 
 WidgetDict = Dict[str, Type[Widget]]

@@ -13,22 +13,22 @@ of the library you use. I will provide an example of usage for each.
 
 from __future__ import annotations
 
-from typing import Union, Any, Optional
-from random import shuffle
 import sys
+from random import shuffle
+from typing import Any, Optional, Union
 
+from .ansi_interface import *
+from .context_managers import alt_buffer, cursor_at, mouse_handler
 from .enums import *
-from .parser import *
-from .widgets import *
-from .helpers import *
-from .inspector import *
-from .serializer import *
 from .exceptions import *
 from .file_loaders import *
-from .ansi_interface import *
-from .window_manager import *
+from .helpers import *
 from .input import getch, keys
-from .context_managers import alt_buffer, cursor_at, mouse_handler
+from .inspector import *
+from .parser import *
+from .serializer import *
+from .widgets import *
+from .window_manager import *
 
 # This is needeed for pdoc to parse the include statement above.
 __docformat__ = "google"

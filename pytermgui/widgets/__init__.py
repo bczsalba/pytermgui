@@ -58,14 +58,13 @@ with ptg.alt_buffer():
 
 from __future__ import annotations
 
-from typing import Optional, Union, Type
+from typing import Optional, Type, Union
 
 from . import boxes
-
 from .base import *
+from .buttons import *
 from .extra import *
 from .styles import *
-from .buttons import *
 
 WidgetType = Union[Widget, Type[Widget]]
 

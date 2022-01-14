@@ -18,8 +18,8 @@ from __future__ import annotations
 
 from typing import Tuple
 
-from .extra import Splitter
 from ..helpers import real_length
+from .extra import Splitter
 
 
 class Box:

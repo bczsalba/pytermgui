@@ -12,11 +12,10 @@ The currently supported commands are:
 - kitty @ resize-os-window --height {height}: Set OS window's height
 """
 
+from argparse import ArgumentParser, Namespace
 from subprocess import run
 
-from argparse import ArgumentParser, Namespace
 import pytermgui as ptg
-
 
 CONFIG_YAML = """\
 config:

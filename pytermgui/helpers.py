@@ -3,8 +3,9 @@ Helper methods and functions for pytermgui.
 """
 
 from typing import Iterator
-from .parser import markup, TokenType, RE_ANSI, RE_MARKUP
+
 from .ansi_interface import reset
+from .parser import RE_ANSI, RE_MARKUP, TokenType, markup
 
 __all__ = ["strip_ansi", "strip_markup", "real_length", "get_sequences", "break_line"]
 

@@ -67,15 +67,15 @@ Usage
 from __future__ import annotations
 
 import re
-from random import shuffle
-from dataclasses import dataclass
 from argparse import ArgumentParser
-from enum import Enum, auto as _auto
-from typing import Iterator, Callable, Tuple, List
+from dataclasses import dataclass
+from enum import Enum
+from enum import auto as _auto
+from random import shuffle
+from typing import Callable, Iterator, List, Tuple
 
 from .ansi_interface import foreground
-from .exceptions import MarkupSyntaxError, AnsiSyntaxError
-
+from .exceptions import AnsiSyntaxError, MarkupSyntaxError
 
 __all__ = ["MacroCallable", "MacroCall", "MarkupLanguage", "markup"]
 

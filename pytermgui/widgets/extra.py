@@ -11,14 +11,13 @@ import string
 from itertools import zip_longest
 from typing import Any, Callable, cast
 
-from .base import Container, Label, Widget, MouseTarget
-
-from . import styles
-from ..input import keys
+from ..ansi_interface import (MouseAction, MouseEvent, background, foreground,
+                              reset)
+from ..enums import SizePolicy, WidgetAlignment
 from ..helpers import real_length
-from ..enums import WidgetAlignment, SizePolicy
-from ..ansi_interface import foreground, background, reset, MouseAction, MouseEvent
-
+from ..input import keys
+from . import styles
+from .base import Container, Label, MouseTarget, Widget
 
 __all__ = ["InputField", "Splitter", "ColorPicker", "Slider"]
 
