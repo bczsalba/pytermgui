@@ -34,7 +34,7 @@ class ColorPicker(Container):
         super().__init__(**attrs)
 
         self.grid_cols = grid_cols
-        self.width = self.grid_cols * 4 - 1 + self.sidelength
+        self.static_width = self.grid_cols * 4 - 1 + self.sidelength
 
         self._layer_functions = [foreground, background]
 
@@ -50,7 +50,11 @@ class ColorPicker(Container):
 
         chars = self._get_char("border")
         assert isinstance(chars, list)
+        border_style = self._get_style("border")
+
         left_border, _, right_border, _ = chars
+        left_border = border_style(left_border)
+        right_border = border_style(right_border)
 
         lines = super().get_lines()
         last_line = lines.pop()
