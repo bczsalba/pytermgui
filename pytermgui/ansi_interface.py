@@ -211,7 +211,7 @@ class _Terminal:
             signal.signal(signal.SIGWINCH, self._update_size)
             # Unix
         else:
-            asyncio.run(self._WinSIGWINCH())
+            asyncio.run(self._alt_sigwinch())
             # Windows
 
     def _call_listener(self, event: int, data: Any) -> None:
@@ -221,7 +221,7 @@ class _Terminal:
             for callback in self._listeners[event]:
                 callback(data)
 
-    async def _WinSIGWINCH(self, check_again_in: float = 0.5) -> None:
+    async def _alt_sigwinch(self, check_again_in: float = 0.5) -> None:
         """Asynchronous replacement for `signal`'s *SIGWINCH*"""
 
         while True:
