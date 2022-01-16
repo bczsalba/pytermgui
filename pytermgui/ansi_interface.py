@@ -14,13 +14,11 @@ import sys
 import signal
 import asyncio
 
-from contextlib import contextmanager
 from typing import Optional, Any, Union, Callable, Tuple
 from dataclasses import dataclass, fields
 from enum import Enum, auto as _auto
 from sys import stdout as _stdout
 from string import hexdigits
-from subprocess import run as _run, Popen as _Popen
 from os import name as _name, system
 from shutil import get_terminal_size
 
@@ -292,24 +290,6 @@ class _Terminal:
 
         if flush:
             sys.stdout.flush()
-
-    @contextmanager
-    def NoEcho(self) -> None:
-        if _IS_NT:
-            kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 0)
-            kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
-        else:
-            _ = self._OldStdinMode
-            _[3] = _[3] & ~(termios.ECHO | termios.ICANON)
-            termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, _)
-        try:
-            yield
-        finally:
-            if _IS_NT:
-                kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), self._OldStdinMode)
-                kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), self._OldStdoutMode)
-            else:
-                termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, self._OldStdinMode)
 
 
 terminal = _Terminal()
@@ -750,7 +730,7 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
             continue
 
         matches = list(pattern.finditer(sequence))
-        if not matches:
+        if len(matches) == 0:
             return None
 
         for match in matches:
