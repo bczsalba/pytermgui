@@ -129,10 +129,7 @@ class LauncherApplication(Application):
 
         for app in self.apps:
             button = Button(app.title)
-            button.onclick = lambda *_, button=button: manager.add(
-                button.app.construct_window()
-            )
-            button.app = app
+            button.onclick = lambda *_, app=app,: manager.add(app.construct_window())
             window += button
 
         window += ""
@@ -167,7 +164,7 @@ class GetchApplication(Application):
             {"[wm-section]real_length()": str(real_length(key))},
         ]
 
-        window.forced_width = 40
+        window.static_width = 40
         self._update_widgets(window, items)
 
         if self.standalone:
@@ -294,12 +291,12 @@ class MarkupApplication(Application):
         corners[0] += " [wm-title]tokens[/] "
         corners[1] = " [wm-title]colors[60] " + corners[1]
 
-        guide = Container(forced_width=60).set_char("corner", corners)
+        guide = Container().set_char("corner", corners)
 
         for token, color in zip_longest(tokens, colors, fillvalue=""):
             guide += {token: color}
 
-        custom_tags = Container(forced_width=56)
+        custom_tags = Container()
         for tag, _ in sorted(
             markup.user_tags.items(), key=lambda item: len(item[0] + item[1])
         ):
@@ -310,8 +307,8 @@ class MarkupApplication(Application):
         guide += custom_tags
 
         window = (
-            self._get_base_window(resizable=True)
-            + Container(Label(parent_align=0, id="output_label"), forced_width=60)
+            self._get_base_window(width=65, resizable=True)
+            + Container(Label(parent_align=0, id="output_label"))
             + guide
             + Label(
                 "[247 italic]> Tip: Press CTRL_R to randomize colors", parent_align=0
