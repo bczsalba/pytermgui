@@ -23,10 +23,6 @@ from subprocess import run as _run, Popen as _Popen
 from os import name as _name, system
 from shutil import get_terminal_size
 
-# This wraps `os.get_terminal_size` and adds few functions to
-#  try and get size if `os.get_terminal_size` fails
-#  and if all functions fail it fallbacks to (80, 24)
-
 from .input import getch
 
 _IS_NT = _name == "nt"
