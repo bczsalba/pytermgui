@@ -14,6 +14,7 @@ import sys
 import signal
 import asyncio
 
+from contextlib import contextmanager
 from typing import Optional, Any, Union, Callable, Tuple
 from dataclasses import dataclass, fields
 from enum import Enum, auto as _auto
@@ -26,6 +27,13 @@ from .input import getch
 
 _IS_NT = _name == "nt"
 _SYS_HAS_FRAME = hasattr(sys, "_getframe")
+
+if _IS_NT:
+    import ctypes
+
+    kernel32 = ctypes.windll.kernel32
+else:
+    import termios
 
 __all__ = [
     "Color",
@@ -203,6 +211,18 @@ class _Terminal:
     def __init__(self) -> None:
         """Initialize `_Terminal` class"""
 
+        if _IS_NT:
+            self._original_stdin = ctypes.wintypes.DWORD()
+            self._original_stdout = ctypes.wintypes.DWORD()
+            kernel32.GetConsoleMode(
+                kernel32.GetStdHandle(-10), ctypes.byref(self._original_stdin)
+            )
+            kernel32.GetConsoleMode(
+                kernel32.GetStdHandle(-11), ctypes.byref(self._original_stdout)
+            )
+        else:
+            self._original_stdin = termios.tcgetattr(sys.stdin)
+
         self.origin: tuple[int, int] = (1, 1)
         self.size: tuple[int, int] = self._get_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
@@ -242,10 +262,7 @@ class _Terminal:
         )  # type: ignore
 
     def _update_size(self, *_: Any) -> None:
-        """Resize terminal when SIGWINCH occurs.
-
-        Note:
-            SIGWINCH is not supported on Windows, so this isn't called."""
+        """Resize terminal when SIGWINCH occurs."""
 
         self.size = self._get_size()
         self._call_listener(self.RESIZE, self.size)
@@ -284,12 +301,35 @@ class _Terminal:
         if flush:
             sys.stdout.flush()
 
+    @contextmanager
+    def no_echo(self) -> None:
+        """Context manager which disables Echo mode and restores it after closing"""
+
+        if _IS_NT:
+            # WARNING! EXPERIMENTAL CODE
+            kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 0)
+            kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+        else:
+            tmp = self._original_stdin
+            tmp[3] = tmp[3] & ~(termios.ECHO | termios.ICANON)
+            termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, tmp)
+        try:
+            yield
+        finally:
+            if _IS_NT:
+                kernel32.SetConsoleMode(
+                    kernel32.GetStdHandle(-10), self._original_stdin
+                )
+                kernel32.SetConsoleMode(
+                    kernel32.GetStdHandle(-11), self._original_stdout
+                )
+            else:
+                termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, self._original_stdin)
+
 
 terminal = _Terminal()
 
 # helpers
-# EDIT: removed `_tcup` function since we don't need it anymore.
-# I replaced it with ANSI sequences
 
 
 def is_interactive() -> bool:
