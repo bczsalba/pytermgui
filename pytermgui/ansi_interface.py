@@ -12,17 +12,20 @@ from __future__ import annotations
 import re
 import sys
 import signal
+import asyncio
 
 from typing import Optional, Any, Union, Callable, Tuple
 from dataclasses import dataclass, fields
 from enum import Enum, auto as _auto
 from sys import stdout as _stdout
 from string import hexdigits
-from subprocess import run as _run, Popen as _Popen
-from os import name as _name, get_terminal_size, system
+from os import name as _name, system
+from shutil import get_terminal_size
 
 from .input import getch
 
+_IS_NT = _name == "nt"
+_SYS_HAS_FRAME = hasattr(sys, "_getframe")
 
 __all__ = [
     "Color",
@@ -187,27 +190,8 @@ class Color:
 foreground = Color()
 """`Color` instance to setting foreground colors"""
 
-background = Color(layer=1)
+background = Color(1)
 """`Color` instance to setting background colors"""
-
-
-def screen_size() -> tuple[int, int]:
-    """Get screen size using the os module
-
-    This is technically possible using a method of moving the
-    cursor to an impossible location, and using `report_cursor()`
-    to get where the position was clamped. This however messes
-    with the cursor position and printing gets a bit glitchy."""
-
-    try:
-        width, height = get_terminal_size()
-        return (width, height)
-
-    except OSError as error:
-        if error.errno in (9, 25):
-            return 0, 0
-
-        raise
 
 
 class _Terminal:
@@ -217,15 +201,18 @@ class _Terminal:
     margins = [0, 0, 0, 0]
 
     def __init__(self) -> None:
-        """Initialize object"""
+        """Initialize `_Terminal` class"""
 
         self.origin: tuple[int, int] = (1, 1)
         self.size: tuple[int, int] = self._get_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
-        # TODO: Windows doesn't support SIGWINCH, is there another alternative?
         if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
+            # Unix
+        else:
+            asyncio.run(self._alt_sigwinch())
+            # Windows
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Call event callback is one is found."""
@@ -234,11 +221,25 @@ class _Terminal:
             for callback in self._listeners[event]:
                 callback(data)
 
+    async def _alt_sigwinch(self, check_again_in: float = 0.5) -> None:
+        """Asynchronous replacement for `signal`'s *SIGWINCH*"""
+
+        while True:
+            n_width = get_terminal_size()
+            if n_width != self.size:
+                self._update_size(
+                    28,  # *SIGWINCH* is 28
+                    (sys._getframe(1) if _SYS_HAS_FRAME else None),
+                )
+            await asyncio.sleep(check_again_in)
+
     def _get_size(self) -> tuple[int, int]:
         """Get screen size while substracting the origin position"""
 
         # This always has len() == 2, but mypy can't see that.
-        return tuple(val - org for val, org in zip(screen_size(), self.origin))  # type: ignore
+        return tuple(
+            val - org for val, org in zip(get_terminal_size(), self.origin)
+        )  # type: ignore
 
     def _update_size(self, *_: Any) -> None:
         """Resize terminal when SIGWINCH occurs.
@@ -287,20 +288,8 @@ class _Terminal:
 terminal = _Terminal()
 
 # helpers
-def _tput(command: list[str]) -> None:
-    """Shorthand for tput calls"""
-
-    waited_commands = ["clear", "smcup", "cup"]
-
-    command.insert(0, "tput")
-    str_command = [str(c) for c in command]
-
-    if command[1] in waited_commands:
-        _run(str_command, check=True)
-        return
-
-    # A with statement here would result in `pass`, so is unnecessary.
-    _Popen(str_command)  # pylint: disable=consider-using-with
+# EDIT: removed `_tcup` function since we don't need it anymore.
+# I replaced it with ANSI sequences
 
 
 def is_interactive() -> bool:
@@ -317,15 +306,13 @@ def save_screen() -> None:
 
     Use `restore_screen()` to get them back."""
 
-    # print("\x1b[?47h")
-    _tput(["smcup"])
+    print("\x1b[?47h")
 
 
 def restore_screen() -> None:
     """Restore the contents of the screen saved by `save_screen()`"""
 
-    # print("\x1b[?47l")
-    _tput(["rmcup"])
+    print("\x1b[?47l")
 
 
 def set_alt_buffer() -> None:
@@ -352,7 +339,6 @@ def clear(what: str = "screen") -> None:
     - `line` - clear line and go to beginning
     - `bol` - clear line from cursor backwards
     - `eol` - clear line from cursor forwards
-
     """
 
     commands = {
@@ -371,14 +357,12 @@ def clear(what: str = "screen") -> None:
 def hide_cursor() -> None:
     """Stop printing cursor"""
 
-    # _tput(['civis'])
     print("\x1b[?25l")
 
 
 def show_cursor() -> None:
     """Start printing cursor"""
 
-    # _tput(['cvvis'])
     print("\x1b[?25h")
 
 
@@ -387,14 +371,12 @@ def save_cursor() -> None:
 
     Use `restore_cursor()` to restore it."""
 
-    # _tput(['sc'])
     _stdout.write("\x1b[s")
 
 
 def restore_cursor() -> None:
     """Restore cursor position saved by `save_cursor()`"""
 
-    # _tput(['rc'])
     _stdout.write("\x1b[u")
 
 
@@ -723,7 +705,7 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
             "34": MouseAction.RIGHT_CLICK,
             "35": MouseAction.RELEASE,
             "64": MouseAction.LEFT_DRAG,
-            "66": MouseAction.RIGHT_CLICK,
+            "66": MouseAction.RIGHT_DRAG,
             "96": MouseAction.SCROLL_UP,
             "97": MouseAction.SCROLL_DOWN,
         },
@@ -738,7 +720,7 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
             continue
 
         matches = list(pattern.finditer(sequence))
-        if matches == []:
+        if len(matches) == 0:
             return None
 
         for match in matches:
