@@ -22,6 +22,7 @@ from string import hexdigits
 from subprocess import run as _run, Popen as _Popen
 from os import name as _name, system
 from shutil import get_terminal_size
+
 # This wraps `os.get_terminal_size` and adds few functions to
 #  try and get size if `os.get_terminal_size` fails
 #  and if all functions fail it fallbacks to (80, 24)
@@ -211,18 +212,10 @@ class _Terminal:
         self.size: tuple[int, int] = self._get_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
-        if hasattr(
-            signal,
-            "SIGWINCH"
-        ):
-            signal.signal(
-                signal.SIGWINCH,
-                self._update_size
-            )
+        if hasattr(signal, "SIGWINCH"):
+            signal.signal(signal.SIGWINCH, self._update_size)
         else:
-            asyncio.run(
-                self._WinSIGWINCH()
-            )
+            asyncio.run(self._WinSIGWINCH())
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Call event callback is one is found."""
@@ -231,19 +224,14 @@ class _Terminal:
             for callback in self._listeners[event]:
                 callback(data)
 
-    async def _WinSIGWINCH(
-        self,
-        check_again_in: float = 0.5
-    ) -> None:
+    async def _WinSIGWINCH(self, check_again_in: float = 0.5) -> None:
         """Asynchronous replacement for `signal`'s *SIGWINCH*"""
         while True:
             n_width = get_terminal_size()
             if n_width != self.size:
                 self._update_size(
-                    28, # *SIGWINCH* is 28
-                    (
-                        sys._getframe(1) if _SYS_HAS_FRAME else None
-                    )
+                    28,  # *SIGWINCH* is 28
+                    (sys._getframe(1) if _SYS_HAS_FRAME else None),
                 )
             await asyncio.sleep(check_again_in)
 
@@ -252,11 +240,7 @@ class _Terminal:
 
         # This always has len() == 2, but mypy can't see that.
         return tuple(
-            val - org
-            for val, org in zip(
-                get_terminal_size(),
-                self.origin
-            )
+            val - org for val, org in zip(get_terminal_size(), self.origin)
         )  # type: ignore
 
     def _update_size(self, *_: Any) -> None:
