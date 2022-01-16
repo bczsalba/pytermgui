@@ -313,13 +313,13 @@ def save_screen() -> None:
 
     Use `restore_screen()` to get them back."""
 
-    _stdout.write("\x1b[?47h")
+    print("\x1b[?47h")
 
 
 def restore_screen() -> None:
     """Restore the contents of the screen saved by `save_screen()`"""
 
-    _stdout.write("\x1b[?47l")
+    print("\x1b[?47l")
 
 
 def set_alt_buffer() -> None:
@@ -327,13 +327,13 @@ def set_alt_buffer() -> None:
 
     Note: This buffer is unscrollable."""
 
-    _stdout.write("\x1b[?1049h")
+    print("\x1b[?1049h")
 
 
 def unset_alt_buffer() -> None:
     """Return to main buffer from alt, restoring its original state"""
 
-    _stdout.write("\x1b[?1049l")
+    print("\x1b[?1049l")
 
 
 def clear(what: str = "screen") -> None:
@@ -365,13 +365,13 @@ def clear(what: str = "screen") -> None:
 def hide_cursor() -> None:
     """Stop printing cursor"""
 
-    _stdout.write("\x1b[?25l")
+    print("\x1b[?25l")
 
 
 def show_cursor() -> None:
     """Start printing cursor"""
 
-    _stdout.write("\x1b[?25h")
+    print("\x1b[?25h")
 
 
 def save_cursor() -> None:
@@ -393,7 +393,7 @@ def restore_cursor() -> None:
 def report_cursor() -> tuple[int, int] | None:
     """Get position of cursor"""
 
-    _stdout.write("\x1b[6n")
+    print("\x1b[6n")
     chars = getch()
     posy, posx = chars[2:-1].split(";")
 
