@@ -14,6 +14,7 @@ import sys
 import signal
 import asyncio
 
+from contextlib import contextmanager
 from typing import Optional, Any, Union, Callable, Tuple
 from dataclasses import dataclass, fields
 from enum import Enum, auto as _auto
@@ -75,7 +76,8 @@ __all__ = [
 
 
 class Color:
-    """Class to store various color utilities
+    """
+    Class to store various color utilities
 
     Two instances of this class are provided, `foreground`
     and `background`. The difference between these is the color
@@ -111,15 +113,19 @@ class Color:
         "brightcyan": 14,
         "brightwhite": 15,
     }
-    """16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`
+    """
+    16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`
     will recognize, but if that is your objective it is better to use
-    `pytermgui.parser.MarkupLanguage.alias`."""
+    `pytermgui.parser.MarkupLanguage.alias`.
+    """
 
     def __init__(self, layer: int = 0) -> None:
-        """Initialize object
+        """
+        Initialize object
 
         `layer` can be either 0 or 1. This value determines whether the instance
-        will represent foreground or background colors."""
+        will represent foreground or background colors.
+        """
 
         if layer not in [0, 1]:
             raise NotImplementedError(f"Layer {layer} can only be one of [0, 1].")
@@ -141,7 +147,8 @@ class Color:
         return rgb[0], rgb[1], rgb[2]
 
     def __call__(self, text: str, color: ColorType, reset_color: bool = True) -> str:
-        """Color a piece of text using `color`.
+        """
+        Color a piece of text using `color`.
 
         The color can be one of 4 formats:
             - str colorname:   One of the predifined named colors. See the names dict.
@@ -149,7 +156,8 @@ class Color:
             - str #RRGGBB:     CSS-style HEX string, without alpha.
             - tuple (0-256, 0-256, 0-256): Tuple of integers, representing an RGB color.
 
-        If `reset_color` is set a reset sequence is inserted at the end."""
+        If `reset_color` is set a reset sequence is inserted at the end.
+        """
 
         # convert hex string to tuple[int, int, int]
         if isinstance(color, str) and all(
@@ -191,7 +199,7 @@ class Color:
 foreground = Color()
 """`Color` instance to setting foreground colors"""
 
-background = Color(layer=1)
+background = Color(1)
 """`Color` instance to setting background colors"""
 
 
@@ -202,7 +210,7 @@ class _Terminal:
     margins = [0, 0, 0, 0]
 
     def __init__(self) -> None:
-        """Initialize object"""
+        """Initialize `_Terminal` class"""
 
         self.origin: tuple[int, int] = (1, 1)
         self.size: tuple[int, int] = self._get_size()
@@ -210,8 +218,10 @@ class _Terminal:
 
         if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
+            # Unix
         else:
             asyncio.run(self._WinSIGWINCH())
+            # Windows
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Call event callback is one is found."""
@@ -221,6 +231,7 @@ class _Terminal:
                 callback(data)
 
     async def _WinSIGWINCH(self, check_again_in: float = 0.5) -> None:
+
         """Asynchronous replacement for `signal`'s *SIGWINCH*"""
         while True:
             n_width = get_terminal_size()
@@ -282,24 +293,30 @@ class _Terminal:
         if flush:
             sys.stdout.flush()
 
+    @contextmanager
+    def NoEcho(self) -> None:
+        if _IS_NT:
+            kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 0)
+            kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+        else:
+            _ = self._OldStdinMode
+            _[3] = _[3] & ~(termios.ECHO | termios.ICANON)
+            termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, _)
+        try:
+            yield
+        finally:
+            if _IS_NT:
+                kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), self._OldStdinMode)
+                kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), self._OldStdoutMode)
+            else:
+                termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, self._OldStdinMode)
+
 
 terminal = _Terminal()
 
 # helpers
-def _tput(command: list[str]) -> None:
-    """Shorthand for tput calls"""
-
-    waited_commands = ["clear", "smcup", "cup"]
-
-    command.insert(0, "tput")
-    str_command = [str(c) for c in command]
-
-    if command[1] in waited_commands:
-        _run(str_command, check=True)
-        return
-
-    # A with statement here would result in `pass`, so is unnecessary.
-    _Popen(str_command)  # pylint: disable=consider-using-with
+# EDIT: removed `_tcup` function since we don't need it anymore.
+# I replaced it with ANSI sequences
 
 
 def is_interactive() -> bool:
@@ -316,15 +333,13 @@ def save_screen() -> None:
 
     Use `restore_screen()` to get them back."""
 
-    # print("\x1b[?47h")
-    _tput(["smcup"])
+    _stdout.write("\x1b[?47h")
 
 
 def restore_screen() -> None:
     """Restore the contents of the screen saved by `save_screen()`"""
 
-    # print("\x1b[?47l")
-    _tput(["rmcup"])
+    _stdout.write("\x1b[?47l")
 
 
 def set_alt_buffer() -> None:
@@ -332,13 +347,13 @@ def set_alt_buffer() -> None:
 
     Note: This buffer is unscrollable."""
 
-    print("\x1b[?1049h")
+    _stdout.write("\x1b[?1049h")
 
 
 def unset_alt_buffer() -> None:
     """Return to main buffer from alt, restoring its original state"""
 
-    print("\x1b[?1049l")
+    _stdout.write("\x1b[?1049l")
 
 
 def clear(what: str = "screen") -> None:
@@ -370,37 +385,35 @@ def clear(what: str = "screen") -> None:
 def hide_cursor() -> None:
     """Stop printing cursor"""
 
-    # _tput(['civis'])
-    print("\x1b[?25l")
+    _stdout.write("\x1b[?25l")
 
 
 def show_cursor() -> None:
     """Start printing cursor"""
 
-    # _tput(['cvvis'])
-    print("\x1b[?25h")
+    _stdout.write("\x1b[?25h")
 
 
 def save_cursor() -> None:
-    """Save cursor position.
+    """
+    Save cursor position.
 
-    Use `restore_cursor()` to restore it."""
+    Use `restore_cursor()` to restore it.
+    """
 
-    # _tput(['sc'])
     _stdout.write("\x1b[s")
 
 
 def restore_cursor() -> None:
     """Restore cursor position saved by `save_cursor()`"""
 
-    # _tput(['rc'])
     _stdout.write("\x1b[u")
 
 
 def report_cursor() -> tuple[int, int] | None:
     """Get position of cursor"""
 
-    print("\x1b[6n")
+    _stdout.write("\x1b[6n")
     chars = getch()
     posy, posx = chars[2:-1].split(";")
 
