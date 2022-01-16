@@ -12,6 +12,7 @@ from __future__ import annotations
 import re
 import sys
 import signal
+import asyncio
 
 from typing import Optional, Any, Union, Callable, Tuple
 from dataclasses import dataclass, fields
@@ -19,10 +20,16 @@ from enum import Enum, auto as _auto
 from sys import stdout as _stdout
 from string import hexdigits
 from subprocess import run as _run, Popen as _Popen
-from os import name as _name, get_terminal_size, system
+from os import name as _name, system
+from shutil import get_terminal_size
+# This wraps `os.get_terminal_size` and adds few functions to
+#  try and get size if `os.get_terminal_size` fails
+#  and if all functions fail it fallbacks to (80, 24)
 
 from .input import getch
 
+_IS_NT = _name == "nt"
+_SYS_HAS_FRAME = hasattr(sys, "_getframe")
 
 __all__ = [
     "Color",
@@ -191,25 +198,6 @@ background = Color(layer=1)
 """`Color` instance to setting background colors"""
 
 
-def screen_size() -> tuple[int, int]:
-    """Get screen size using the os module
-
-    This is technically possible using a method of moving the
-    cursor to an impossible location, and using `report_cursor()`
-    to get where the position was clamped. This however messes
-    with the cursor position and printing gets a bit glitchy."""
-
-    try:
-        width, height = get_terminal_size()
-        return (width, height)
-
-    except OSError as error:
-        if error.errno in (9, 25):
-            return 0, 0
-
-        raise
-
-
 class _Terminal:
     """A class to store & access data about a terminal"""
 
@@ -223,9 +211,18 @@ class _Terminal:
         self.size: tuple[int, int] = self._get_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
-        # TODO: Windows doesn't support SIGWINCH, is there another alternative?
-        if hasattr(signal, "SIGWINCH"):
-            signal.signal(signal.SIGWINCH, self._update_size)
+        if hasattr(
+            signal,
+            "SIGWINCH"
+        ):
+            signal.signal(
+                signal.SIGWINCH,
+                self._update_size
+            )
+        else:
+            asyncio.run(
+                self._WinSIGWINCH()
+            )
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Call event callback is one is found."""
@@ -234,11 +231,33 @@ class _Terminal:
             for callback in self._listeners[event]:
                 callback(data)
 
+    async def _WinSIGWINCH(
+        self,
+        check_again_in: float = 0.5
+    ) -> None:
+        """Asynchronous replacement for `signal`'s *SIGWINCH*"""
+        while True:
+            n_width = get_terminal_size()
+            if n_width != self.size:
+                self._update_size(
+                    28, # *SIGWINCH* is 28
+                    (
+                        sys._getframe(1) if _SYS_HAS_FRAME else None
+                    )
+                )
+            await asyncio.sleep(check_again_in)
+
     def _get_size(self) -> tuple[int, int]:
         """Get screen size while substracting the origin position"""
 
         # This always has len() == 2, but mypy can't see that.
-        return tuple(val - org for val, org in zip(screen_size(), self.origin))  # type: ignore
+        return tuple(
+            val - org
+            for val, org in zip(
+                get_terminal_size(),
+                self.origin
+            )
+        )  # type: ignore
 
     def _update_size(self, *_: Any) -> None:
         """Resize terminal when SIGWINCH occurs.
@@ -723,7 +742,7 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
             "34": MouseAction.RIGHT_CLICK,
             "35": MouseAction.RELEASE,
             "64": MouseAction.LEFT_DRAG,
-            "66": MouseAction.RIGHT_CLICK,
+            "66": MouseAction.RIGHT_DRAG,
             "96": MouseAction.SCROLL_UP,
             "97": MouseAction.SCROLL_DOWN,
         },
@@ -738,7 +757,7 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
             continue
 
         matches = list(pattern.finditer(sequence))
-        if matches == []:
+        if not matches:
             return None
 
         for match in matches:
