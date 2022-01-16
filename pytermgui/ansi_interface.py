@@ -229,8 +229,8 @@ class _Terminal:
                 callback(data)
 
     async def _WinSIGWINCH(self, check_again_in: float = 0.5) -> None:
-
         """Asynchronous replacement for `signal`'s *SIGWINCH*"""
+
         while True:
             n_width = get_terminal_size()
             if n_width != self.size:
