@@ -74,8 +74,7 @@ __all__ = [
 
 
 class Color:
-    """
-    Class to store various color utilities
+    """Class to store various color utilities
 
     Two instances of this class are provided, `foreground`
     and `background`. The difference between these is the color
@@ -111,19 +110,15 @@ class Color:
         "brightcyan": 14,
         "brightwhite": 15,
     }
-    """
-    16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`
+    """16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`
     will recognize, but if that is your objective it is better to use
-    `pytermgui.parser.MarkupLanguage.alias`.
-    """
+    `pytermgui.parser.MarkupLanguage.alias`."""
 
     def __init__(self, layer: int = 0) -> None:
-        """
-        Initialize object
+        """Initialize object
 
         `layer` can be either 0 or 1. This value determines whether the instance
-        will represent foreground or background colors.
-        """
+        will represent foreground or background colors."""
 
         if layer not in [0, 1]:
             raise NotImplementedError(f"Layer {layer} can only be one of [0, 1].")
@@ -145,8 +140,7 @@ class Color:
         return rgb[0], rgb[1], rgb[2]
 
     def __call__(self, text: str, color: ColorType, reset_color: bool = True) -> str:
-        """
-        Color a piece of text using `color`.
+        """Color a piece of text using `color`.
 
         The color can be one of 4 formats:
             - str colorname:   One of the predifined named colors. See the names dict.
@@ -154,8 +148,7 @@ class Color:
             - str #RRGGBB:     CSS-style HEX string, without alpha.
             - tuple (0-256, 0-256, 0-256): Tuple of integers, representing an RGB color.
 
-        If `reset_color` is set a reset sequence is inserted at the end.
-        """
+        If `reset_color` is set a reset sequence is inserted at the end."""
 
         # convert hex string to tuple[int, int, int]
         if isinstance(color, str) and all(
@@ -346,7 +339,6 @@ def clear(what: str = "screen") -> None:
     - `line` - clear line and go to beginning
     - `bol` - clear line from cursor backwards
     - `eol` - clear line from cursor forwards
-
     """
 
     commands = {
@@ -375,11 +367,9 @@ def show_cursor() -> None:
 
 
 def save_cursor() -> None:
-    """
-    Save cursor position.
+    """Save cursor position.
 
-    Use `restore_cursor()` to restore it.
-    """
+    Use `restore_cursor()` to restore it."""
 
     _stdout.write("\x1b[s")
 
