@@ -30,7 +30,7 @@ def update_debug_window(
 def main() -> None:
     """Main method"""
 
-    with open("environment.yaml", "r") as file:
+    with open("tests/environment.yaml", "r") as file:
         namespace = ptg.YamlLoader().load(file)
 
     with ptg.WindowManager() as manager:
