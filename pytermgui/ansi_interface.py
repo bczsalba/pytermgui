@@ -30,6 +30,7 @@ _SYS_HAS_FRAME = hasattr(sys, "_getframe")
 
 if _IS_NT:
     import ctypes
+    import ctypes.wintypes
 
     kernel32 = ctypes.windll.kernel32
 else:
