@@ -282,18 +282,15 @@ class Widget:
     static_width = property(None, static_width)  # type: ignore
 
     def contains(self, pos: tuple[int, int]) -> bool:
-        """Determine whether widget contains `pos`.
+        """Determines whether widget contains `pos`.
 
-        Arguments
-        ---------
+        Arguments:
+            pos: Position to compare.
 
-        pos: Position to be determined
+        Returns:
+            Boolean describing whether the position is inside
+              this widget.
 
-
-        Returns
-        -------
-
-        bool: Whether widget contains position
         """
 
         rect = self.pos, (
@@ -329,29 +326,27 @@ class Widget:
 
         return None
 
-    def handle_mouse(
-        self, event: MouseEvent, target: MouseTarget | None = None
-    ) -> bool:
-        """Handle a mouse event, return success
+    def handle_mouse(self, event: MouseEvent) -> bool:
+        """Handles a mouse event, returning its success.
 
-        The default implementation handles LEFT_CLICK only."""
+        Args:
+            event: Object containing mouse event to handle.
 
-        action, pos = event
-        target = target or self.get_target(pos)
-
-        if action is MouseAction.LEFT_CLICK:
-            if target is None:
-                return False
-
-            target.click(self)
-            return True
+        Returns:
+            Boolean describing whether the mouse input was handled."""
 
         return False
 
     def handle_key(self, key: str) -> bool:
-        """Handle a keystroke, return success
+        """Handles a mouse event, returning its success.
 
-        The default implementation here does nothing."""
+        Args:
+            key: String representation of input string.
+              The `pytermgui.input.keys` object can be
+              used to retrieve special keys.
+
+        Returns:
+            Boolean describing whether the key was handled."""
 
         return False and hasattr(self, key)
 
