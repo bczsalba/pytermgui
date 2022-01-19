@@ -490,27 +490,29 @@ class WindowManager(Container):
             if event is None:
                 continue
 
-            # Mypy sees `event` as a tuple[MouseAction, tuple[int, int]] for some reason.
-            action, pos = cast(MouseEvent, event)
+            self._should_print = True
 
             for window in self._windows:
-                if window is target_window or window.rect.contains(pos):
-                    if (
-                        action not in [MouseAction.HOVER, MouseAction.RELEASE]
-                        and not window.has_focus
-                    ):
-                        self.focus(window)
+                contains_pos = window.contains(event.position)
 
-                    if action in handlers and not handlers[action](pos, window):
-                        window.handle_mouse(cast(MouseEvent, event))
+                if contains_pos:
+                    self.focus(window)
 
-                    self._should_print = True
-
-                    self.execute_binding((action, pos))
+                if event.action in handlers and handlers[event.action](
+                    event.position, window
+                ):
                     break
 
+                if not contains_pos:
+                    continue
+
+                if window.handle_mouse(event):
+                    break
+
+                self.execute_binding(tuple(event))
+
                 # Break on modal window
-                if window.is_modal:
+                if window.is_modal or contains_pos:
                     break
 
             # Unset drag_target if no windows received the input

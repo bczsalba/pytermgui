@@ -281,6 +281,30 @@ class Widget:
     # Set static_width to a setter only property
     static_width = property(None, static_width)  # type: ignore
 
+    def contains(self, pos: tuple[int, int]) -> bool:
+        """Determine whether widget contains `pos`.
+
+        Arguments
+        ---------
+
+        pos: Position to be determined
+
+
+        Returns
+        -------
+
+        bool: Whether widget contains position
+        """
+
+        rect = self.pos, (
+            self.pos[0] + self.width,
+            self.pos[1] + self.height,
+        )
+
+        (left, top), (right, bottom) = rect
+
+        return left <= pos[0] < right and top <= pos[1] < bottom
+
     def define_mouse_target(
         self, left: int, right: int, height: int, top: int = 0
     ) -> MouseTarget:
@@ -973,55 +997,29 @@ class Container(Widget):
 
         return self
 
-    def handle_mouse(
-        self, event: MouseEvent, target: MouseTarget | None = None
-    ) -> bool:
+    def handle_mouse(self, event: MouseEvent) -> bool:
         """Handle mouse event on Container's children"""
 
-        # TODO: Rewrite this mess.
-
-        def _get_widget(target: MouseTarget) -> Widget | None:
-            """Try to get widget from its mouse target"""
-
-            for widget in self._widgets:
-                if target in widget.mouse_targets:
-                    return widget
-
-            return None
-
-        action, pos = event
-        target = target or self.get_target(pos)
-
-        target_widget = self._drag_target
-        if self._drag_target is None or target not in self._drag_target.mouse_targets:
-            target_widget = _get_widget(target)
-
-        if action is MouseAction.LEFT_CLICK:
-            self._drag_target = target_widget
-
-        elif action is MouseAction.RELEASE:
+        if event.action is MouseAction.RELEASE:
             self._drag_target = None
 
         if self._drag_target is not None:
-            self._drag_target.handle_mouse(event, target)
-            return True
+            return self._drag_target.handle_mouse(event)
 
-        if target_widget is None:
-            for widget in self._widgets:
-                if (
-                    widget.pos[0] <= pos[0] < widget.pos[0] + widget.width
-                    and widget.pos[1] <= pos[1] < widget.pos[1] + widget.height
-                ):
-                    target_widget = widget
+        selectables_index = 0
+        for widget in self._widgets:
+            if widget.contains(event.position):
+                if event.action is MouseAction.LEFT_CLICK:
+                    self._drag_target = widget
+
+                if widget.handle_mouse(event):
+                    self.selected_index = selectables_index
                     break
-            else:
-                return False
 
-        handled = target_widget.handle_mouse(event, target)
-        if handled and target is not None:
-            self.select(self.mouse_targets.index(target))
+            if widget.is_selectable:
+                selectables_index += 1
 
-        return handled
+        return widget.handle_mouse(event)
 
     def handle_key(self, key: str) -> bool:
         """Handle a keypress, return success"""
