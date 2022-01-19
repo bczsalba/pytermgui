@@ -52,19 +52,19 @@ class Button(Widget):
         """Handle a mouse event"""
 
         mouse_action, position = event
-        mouse_target = target or self.get_target(position)
 
         if mouse_action == MouseAction.LEFT_CLICK:
             self.selected_index = 0
-            if mouse_target is not None:
-                mouse_target.click(self)
-                return False
+            if self.onclick is not None:
+                self.onclick(self)
+
+            return True
 
         if mouse_action == MouseAction.RELEASE:
             self.selected_index = None
-            return False
+            return True
 
-        return super().handle_mouse(event, mouse_target)
+        return super().handle_mouse(event)
 
     def get_lines(self) -> list[str]:
         """Get object lines"""
