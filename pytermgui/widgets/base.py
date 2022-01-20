@@ -208,9 +208,11 @@ class Widget:
             setattr(self, attr, value)
 
     def __repr__(self) -> str:
-        """Show representation of object.
+        """Return repr string of this widget.
 
-        By default this is the `debug()` method."""
+        Returns:
+            Whatever this widget's `debug` method gives.
+        """
 
         return self.debug()
 
@@ -221,19 +223,40 @@ class Widget:
 
     @property
     def bindings(self) -> dict[str | Type[MouseEvent], tuple[BoundCallback, str]]:
-        """Return copy of the bindings dictionary"""
+        """Gets a copy of the bindings internal dictionary.
+
+        Returns:
+            A copy of the internal bindings dictionary, such as:
+
+            ```
+            {
+                "*": (star_callback, "This is a callback activated when '*' is pressed.")
+            }
+            ```
+        """
 
         return self._bindings.copy()
 
     @property
     def id(self) -> Optional[str]:  # pylint: disable=invalid-name
-        """Getter for id property"""
+        """Gets this widget's id property
+
+        Returns:
+            The id string if one is present, None otherwise.
+        """
 
         return self._id
 
     @id.setter
     def id(self, value: str) -> None:  # pylint: disable=invalid-name
-        """Register widget to idmanager"""
+        """Registers a widget to the Widget._id_manager.
+
+        If this widget already had an id, the old value is deregistered
+        before the new one is assigned.
+
+        Args:
+            value: The new id this widget will be registered as.
+        """
 
         if self._id == value:
             return
@@ -250,30 +273,45 @@ class Widget:
 
     @property
     def selectables_length(self) -> int:
-        """Return count of selectables within this widget
+        """Gets how many selectables this widget contains.
 
-        Override this for custom `Widget` children that have
-        selectable items."""
+        Returns:
+            An integer describing the amount of selectables in this widget.
+        """
 
         return self._selectables_length
 
     @property
     def selectables(self) -> list[tuple[Widget, int]]:
-        """Get a list of all selectable objects within this widget"""
+        """Gets a list of all selectables within this widget
+
+        Returns:
+            A list of tuples. In the default implementation this will be
+            a list of one tuple, containing a reference to `self`, as well
+            as the lowest index, 0.
+        """
 
         return [(self, 0)]
 
     @property
     def is_selectable(self) -> bool:
-        """Determine if this widget has any selectables.
+        """Determines whether this widget has any selectables.
 
-        Shorthand for `Widget.selectables_length != 0`"""
+        Returns:
+            A boolean, representing `self.selectables_length != 0`.
+        """
 
         return self.selectables_length != 0
 
     def static_width(self, value: int) -> None:
-        """Write-only setter for width that also changes
-        `size_policy` to `STATIC`"""
+        """Sets this widget's width, and turns it static
+
+        This method is just a shorter way of setting a new width, as well
+        as changing the size_policy to `pytermgui.enums.SizePolicy.STATIC`.
+
+        Args:
+            value: The new width
+        """
 
         self.width = value
         self.size_policy = SizePolicy.STATIC
@@ -284,13 +322,12 @@ class Widget:
     def contains(self, pos: tuple[int, int]) -> bool:
         """Determines whether widget contains `pos`.
 
-        Arguments:
+        Args:
             pos: Position to compare.
 
         Returns:
             Boolean describing whether the position is inside
               this widget.
-
         """
 
         rect = self.pos, (
@@ -333,7 +370,7 @@ class Widget:
             event: Object containing mouse event to handle.
 
         Returns:
-            Boolean describing whether the mouse input was handled."""
+            A boolean describing whether the mouse input was handled."""
 
         return False
 
@@ -346,12 +383,34 @@ class Widget:
               used to retrieve special keys.
 
         Returns:
-            Boolean describing whether the key was handled."""
+            A boolean describing whether the key was handled.
+        """
 
         return False and hasattr(self, key)
 
     def serialize(self) -> dict[str, Any]:
-        """Serialize object using its `serialized` fields"""
+        """Serializes a widget.
+
+        The fields looked at are defined `Widget.serialized`. Note that
+        this method is not very commonly used at the moment, so it might
+        not have full functionality in non-nuclear widgets.
+
+        Returns:
+            Dictionary of widget attributes. The dictionary will always
+            have a `type` field. Any styles are converted into markup
+            strings during serialization, so they can be loaded again in
+            their original form.
+
+            Example return:
+            ```
+                {
+                    "type": "Label",
+                    "value": "[210 bold]I am a title",
+                    "parent_align": 0,
+                    ...
+                }
+            ```
+        """
 
         fields = self._serialized_fields
 
@@ -393,23 +452,41 @@ class Widget:
         return out
 
     def copy(self) -> Widget:
-        """Create a deepcopy of this Widget"""
+        """Creates a deep copy of this widget"""
 
         return deepcopy(self)
 
     def _get_style(self, key: str) -> w_styles.DepthlessStyleType:
-        """Get style by `key`.
+        """Gets style call from its key.
 
-        Raise `KeyError` if style key is invalid."""
+        Args:
+            key: A key into the widget's styles dictionary.
+
+        Returns:
+            A `pytermgui.styles.StyleCall` object containing the referenced
+            style. StyleCall objects should only be used internally inside a
+            widget.
+
+        Raises:
+            KeyError: Style key is invalid.
+        """
 
         style_method = self.styles[key]
 
         return w_styles.StyleCall(self, style_method)
 
     def _get_char(self, key: str) -> w_styles.CharType:
-        """Get style by `char`.
+        """Gets character from its key.
 
-        Raise `KeyError` if char key is invalid."""
+        Args:
+            key: A key into the widget's chars dictionary.
+
+        Returns:
+            Either a `list[str]` or a simple `str`, depending on the character.
+
+        Raises:
+            KeyError: Style key is invalid.
+        """
 
         chars = self.chars[key]
         if isinstance(chars, str):
@@ -418,20 +495,47 @@ class Widget:
         return chars.copy()
 
     def get_lines(self) -> list[str]:
-        """Get lines representing object
+        """Gets lines representing this widget.
 
-        These lines should be equal in length to the width of the `Widget`. Their
-        content does not matter otherwise."""
+        These lines have to be equal to the widget in length. All
+        widgets must provide this method. Make sure to keep it performant,
+        as it will be called very often, often multiple times per WindowManager frame.
+
+        Any longer actions should be done outside of this method, and only their
+        result should be looked up here.
+
+        Returns:
+            Nothing by default.
+
+        Raises:
+            NotImplementedError: As this method is required for **all** widgets, not
+                having it defined will raise NotImplementedError.
+        """
 
         raise NotImplementedError(f"get_lines() is not defined for type {type(self)}.")
 
     def bind(
         self, key: str, action: BoundCallback, description: Optional[str] = None
     ) -> None:
-        """Bind `action` to be called when `key` is pressed.
+        """Binds an action to a keypress.
 
-        Note: This function is only called by implementations above this layer. To
-        use this functionality use `WindowManager` or write your own custom manager."""
+        This function is only called by implementations above this layer. To use this
+        functionality use `pytermgui.window_manager.WindowManager`, or write your own
+        custom layer.
+
+        Special keys:
+        - keys.ANY_KEY: Any and all keypresses execute this binding.
+        - keys.MouseAction: Any and all mouse inputs execute this binding.
+
+        Args:
+            key: The key that the action will be bound to.
+            action: The action executed when the key is pressed.
+            description: An optional description for this binding. It is not really
+                used anywhere, but you can provide a helper menu and display them.
+
+        Raises:
+            TypeError: This widget is not bindable, i.e. widget.is_bindable == False.
+        """
 
         if not self.is_bindable:
             raise TypeError(f"Widget of type {type(self)} does not accept bindings.")
@@ -442,10 +546,19 @@ class Widget:
         self._bindings[key] = (action, description)
 
     def execute_binding(self, key: Any) -> bool:
-        """Execute a binding if one is found
+        """Executes a binding belonging to key, when present.
 
-        True:  Binding was found & executed
-        False: Binding was not found"""
+        Use this method inside custom widget `handle_keys` methods, or to run a callback
+        without its corresponding key having been pressed.
+
+        Args:
+            key: Usually a string, indexing into the `_bindings` dictionary. These are the
+              same strings as defined in `Widget.bind`.
+
+        Returns:
+            True if the binding was found, False otherwise. Bindings will always be
+              executed if they are found.
+        """
 
         # Execute special binding
         if keys.ANY_KEY in self._bindings:
@@ -461,7 +574,14 @@ class Widget:
         return False
 
     def select(self, index: int | None = None) -> None:
-        """Select a part of this Widget"""
+        """Selects a part of this Widget.
+
+        Args:
+            index: The index to select.
+
+        Raises:
+            TypeError: This widget has no selectables, i.e. widget.is_selectable == False.
+        """
 
         if not self.is_selectable:
             raise TypeError(f"Object of type {type(self)} has no selectables.")
@@ -470,23 +590,29 @@ class Widget:
             index = min(max(0, index), self.selectables_length - 1)
         self.selected_index = index
 
-    def show_targets(self, color: Optional[int] = None) -> None:
-        """Show all mouse targets of this Widget
-
-        Note: This is only meant to be a debug method."""
-
-        for target in self.mouse_targets:
-            target.show(color)
-
     def print(self) -> None:
-        """Print object within a Container
+        """Prints this widget"""
 
-        Overwrite this for Container-like widgets."""
-
-        Container(self).print()
+        for line in self.get_lines:
+            print(line)
 
     def debug(self) -> str:
-        """Print identifiable information about this Widget"""
+        """Returns identifiable information about this widget.
+
+        This method is used to easily differentiate between widgets. By default, all widget's
+        __repr__ method is an alias to this. The signature of each widget is used to generate
+        the return value.
+
+        Returns:
+            A string almost exactly matching the line of code that could have defined the widget.
+
+            Example return:
+
+            ```
+            Container(Label(value="This is a label", padding=0), Button(label="This is a button", padding=0), **attrs)
+            ```
+
+        """
 
         constructor = "("
         for name in signature(getattr(self, "__init__")).parameters:
@@ -567,7 +693,13 @@ class Container(Widget):
 
     @property
     def sidelength(self) -> int:
-        """Returns `real_length` of left+right borders"""
+        """Gets the length of left and right borders combined.
+
+        Returns:
+            An integer equal to the `pytermgui.helpers.real_length` of the concatenation of
+                the left and right borders of this widget, both with their respective styles
+                applied.
+        """
 
         chars = self._get_char("border")
         style = self._get_style("border")
@@ -579,19 +711,28 @@ class Container(Widget):
 
     @property
     def selectables(self) -> list[tuple[Widget, int]]:
-        """Get all selectable widgets and their inner indices
+        """Gets all selectable widgets and their inner indices.
 
-        The output format is as follows:
+        This is used in order to have a constant reference to all selectable indices within this
+        widget.
 
-        ```python3
-        outer_container.selectables = [
-            (container_widget, 0)
-            (container_widget, 1)
-            (container_widget, 2)
-        ]
-        ```
+        Returns:
+            A list of tuples containing a widget and an integer each. For each widget that is
+            withing this one, it is added to this list as many times as it has selectables. Each
+            of the integers correspond to a selectable_index within the widget.
 
-        This is so there is a constant way to reference inner objects.
+            For example, a Container with a Button, InputField and an inner Container containing
+            3 selectables might return something like this:
+
+            ```
+            [
+                (Button(...), 0),
+                (InputField(...), 0),
+                (Container(...), 0),
+                (Container(...), 1),
+                (Container(...), 2),
+            ]
+            ```
         """
 
         _selectables: list[tuple[Widget, int]] = []
@@ -606,13 +747,22 @@ class Container(Widget):
 
     @property
     def selectables_length(self) -> int:
-        """Get count of selectable subparts"""
+        """Gets the length of the selectables list.
+
+        Returns:
+            An integer equal to the length of `self.selectables`.
+        """
 
         return len(self.selectables)
 
     @property
     def selected(self) -> Optional[Widget]:
-        """Return currently selected object"""
+        """Returns the currently selected object
+
+        Returns:
+            The currently selected widget if selected_index is not None,
+            otherwise None.
+        """
 
         # TODO: Add deeper selection
 
@@ -626,20 +776,22 @@ class Container(Widget):
 
     @property
     def box(self) -> boxes.Box:
-        """Return current box setting"""
+        """Returns current box setting
+
+        Returns:
+            The currently set box instance.
+        """
 
         return self._box
 
     @box.setter
     def box(self, new: str | boxes.Box) -> None:
-        """Apply new box
+        """Applies a new box.
 
-        `new` can either be a reference to a Box instance,
-        or a string with a box name within the boxes module.
-
-        The `file_loader` system circumvents this by allowing
-        the `Serializer` to create references to registered `Box`
-        instances from strings."""
+        Args:
+            new: Either a `pytermgui.boxes.Box` instance or a string
+                analogous to one of the default box names.
+        """
 
         if isinstance(new, str):
             from_module = vars(boxes).get(new)
@@ -653,45 +805,95 @@ class Container(Widget):
         new.set_chars_of(self)
 
     def __iadd__(self, other: object) -> Container:
-        """Call self._add_widget(other) and return self"""
+        """Adds a new widget, then returns self.
+
+        Args:
+            other: Any widget instance, or data structure that can be turned
+            into a widget by `Widget.from_data`.
+
+        Returns:
+            A reference to self.
+        """
 
         self._add_widget(other)
         return self
 
     def __add__(self, other: object) -> Container:
-        """Call self._add_widget(other)"""
+        """Adds a new widget, then returns self.
+
+        This method is analogous to `Container.__iadd__`.
+
+        Args:
+            other: Any widget instance, or data structure that can be turned
+            into a widget by `Widget.from_data`.
+
+        Returns:
+            A reference to self.
+        """
 
         self.__iadd__(other)
         return self
 
     def __iter__(self) -> Iterator[Widget]:
-        """Iterate through self._widgets"""
+        """Gets an iterator of self._widgets.
+
+        Yields:
+            The next widget.
+        """
 
         for widget in self._widgets:
             yield widget
 
     def __len__(self) -> int:
-        """Get length of widgets"""
+        """Gets the length of the widgets list.
+
+        Returns:
+            An integer describing len(self._widgets).
+        """
 
         return len(self._widgets)
 
     def __getitem__(self, sli: int | slice) -> Widget | list[Widget]:
-        """Index into self._widgets"""
+        """Gets an item from self._widgets.
+
+        Args:
+            sli: Slice of the list.
+
+        Returns:
+            The slice in the list.
+        """
 
         return self._widgets[sli]
 
     def __setitem__(self, index: int, value: Any) -> None:
-        """Set item in self._widgets"""
+        """Sets an item in self._widgets.
+
+        Args:
+            index: The index to be set.
+            value: The new widget at this index.
+        """
 
         self._widgets[index] = value
 
     def __contains__(self, other: object) -> bool:
-        """Determine if Container contains `other`"""
+        """Determines if self._widgets contains other widget.
+
+        Args:
+            other: Any widget-like.
+
+        Returns:
+            A boolean describing whether `other` is in `self.widgets`
+        """
 
         return other in self._widgets
 
     def _add_widget(self, other: object, run_get_lines: bool = True) -> None:
-        """Add `other` to self._widgets, convert using `auto` if necessary"""
+        """Adds other to this widget.
+
+        Args:
+            other: Any widget-like object.
+            run_get_lines: Boolean controlling whether the self.get_lines is ran.
+        """
 
         if not isinstance(other, Widget):
             to_widget = Widget.from_data(other)
@@ -720,7 +922,17 @@ class Container(Widget):
     def _get_aligners(
         self, widget: Widget, borders: tuple[str, str]
     ) -> tuple[Callable[[str], str], int]:
-        """Get method to align a widget, along with a position offset"""
+        """Gets an aligning method and position offset.
+
+        Args:
+            widget: The widget to align.
+            borders: The left and right borders to put the widget within.
+
+        Returns:
+            A tuple of a method that, when called with a line, will return that line
+            centered using the passed in widget's parent_align and width, as well as
+            the horizontal offset resulting from the widget being aligned.
+        """
 
         left, right = borders
         char = self._get_style("fill")(" ")
@@ -756,7 +968,13 @@ class Container(Widget):
         return _align_left, real_length(left)
 
     def _update_width(self, widget: Widget) -> None:
-        """Update widths of both `widget` and self"""
+        """Updates the width of widget or self.
+
+        This method respects widget.size_policy.
+
+        Args:
+            widget: The widget to update/base updates on.
+        """
 
         available = (
             self.width - self.sidelength - (0 if isinstance(widget, Container) else 1)
@@ -781,15 +999,14 @@ class Container(Widget):
             widget.width = available
 
     def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
-        """Get lines of all widgets
+        """Gets all lines by spacing out inner widgets.
 
-        This method essentially works by going through all widgets, resizing them appropriately
-        and collecting their `get_lines()` returns into a list, with each line aligned according
-        to the widget's alignment policy. After all widget's are collected lines containing the
-        uppper and lower border are inserted/appended to the list, and padding is added to bring
-        the Container to the appropriate height.
+        This method reflects & applies both width settings, as well as
+        the `parent_align` field.
 
-        Note about pylint: Having less locals in this method would ruin readability."""
+        Returns:
+            A list of all lines that represent this Container.
+        """
 
         def _apply_style(
             style: w_styles.DepthlessStyleType, target: list[str]
@@ -903,14 +1120,24 @@ class Container(Widget):
         return lines
 
     def set_widgets(self, new: list[Widget]) -> None:
-        """Set self._widgets to a new list"""
+        """Sets new list in place of self._widgets.
+
+        Args:
+            new: The new widget list.
+        """
 
         self._widgets = []
         for widget in new:
             self._add_widget(widget)
 
     def serialize(self) -> dict[str, Any]:
-        """Serialize object using its `serialized` fields"""
+        """Serializes this Container, adding in serializations of all widgets.
+
+        See `pytermgui.widgets.base.Widget.serialize` for more info.
+
+        Returns:
+            The dictionary containing all serialized data.
+        """
 
         out = super().serialize()
         out["_widgets"] = []
@@ -920,18 +1147,39 @@ class Container(Widget):
 
         return out
 
-    def pop(self, index: int) -> Widget:
-        """Pop widget from self._widgets"""
+    def pop(self, index: int = -1) -> Widget:
+        """Pops widget from self._widgets.
+
+        Analogous to self._widgets.pop(index).
+
+        Args:
+            index: The index to operate on.
+
+        Returns:
+            The widget that was popped off the list.
+        """
 
         return self._widgets.pop(index)
 
     def remove(self, other: Widget) -> None:
-        """Remove widget from self._widgets"""
+        """Remove widget from self._widgets
+
+        Analogous to self._widgets.remove(other).
+
+        Args:
+            widget: The widget to remove.
+        """
 
         return self._widgets.remove(other)
 
     def set_recursive_depth(self, value: int) -> None:
-        """Set depth for all children, recursively"""
+        """Set depth for this Container and all its children.
+
+        All inner widgets will receive value+1 as their new depth.
+
+        Args:
+            value: The new depth to use as the base depth.
+        """
 
         self.depth = value
         for widget in self._widgets:
@@ -941,7 +1189,14 @@ class Container(Widget):
                 widget.depth = value
 
     def select(self, index: int | None = None) -> None:
-        """Select inner subobject"""
+        """Selects inner subwidget.
+
+        Args:
+            index: The index to select.
+
+        Raises:
+            IndexError: The index provided was beyond len(self.selectables).
+        """
 
         # Unselect all sub-elements
         for other in self._widgets:
@@ -960,10 +1215,16 @@ class Container(Widget):
     def center(
         self, where: CenteringPolicy | None = None, store: bool = True
     ) -> Container:
-        """Center object on given axis, optionally store choice
+        """Centers this object to the given axis.
 
-        If `store` is set the policy is stored for the object and is
-        re-applied when `center()` is called without arguments."""
+        Args:
+            where: A CenteringPolicy describing the place to center to
+            store: When set, this centering will be reapplied during every
+                print, as well as when calling this method with no arguments.
+
+        Returns:
+            This Container.
+        """
 
         # Refresh in case changes happened
         self.get_lines()
@@ -993,7 +1254,14 @@ class Container(Widget):
         return self
 
     def handle_mouse(self, event: MouseEvent) -> bool:
-        """Handle mouse event on Container's children"""
+        """Applies a mouse event on all children.
+
+        Args:
+            event: The event to handle
+
+        Returns:
+            A boolean showing whether the event was handled.
+        """
 
         if event.action is MouseAction.RELEASE:
             self._drag_target = None
@@ -1006,18 +1274,25 @@ class Container(Widget):
             if widget.contains(event.position):
                 if event.action is MouseAction.LEFT_CLICK:
                     self._drag_target = widget
+                    self.select(selectables_index)
 
                 if widget.handle_mouse(event):
-                    self.selected_index = selectables_index
                     break
 
             if widget.is_selectable:
                 selectables_index += 1
 
-        return widget.handle_mouse(event)
+        return False
 
     def handle_key(self, key: str) -> bool:
-        """Handle a keypress, return success"""
+        """Handles a keypress, returns its success.
+
+        Args:
+            key: A key str.
+
+        Returns:
+            A boolean showing whether the key was handled.
+        """
 
         def _is_nav(key: str) -> bool:
             """Determine if a key is in the navigation sets"""
@@ -1064,24 +1339,18 @@ class Container(Widget):
         return False
 
     def wipe(self) -> None:
-        """Wipe characters occupied by the object"""
+        """Wipes the characters occupied by the object"""
 
         with cursor_at(self.pos) as print_here:
             for line in self.get_lines():
                 print_here(real_length(line) * " ")
 
-    def show_targets(self, color: Optional[int] = None) -> None:
-        """Show all mouse targets of this Widget
-
-        Note: This is meant to be debug only method."""
-
-        super().show_targets(color)
-
-        for widget in self._widgets:
-            widget.show_targets(color)
-
     def print(self) -> None:
-        """Print object to stdout"""
+        """Prints this Container.
+
+        If the screen size has changed since last `print` call, the object
+        will be centered based on its `_centered_axis`.
+        """
 
         if not terminal.size == self._prev_screen:
             clear()
@@ -1099,7 +1368,12 @@ class Container(Widget):
         self._has_printed = True
 
     def debug(self) -> str:
-        """Return debug information about this object widgets"""
+        """Returns a string with identifiable information on this widget.
+
+        Returns:
+            A str in the form of a class construction. This string is in a form that
+            __could have been__ used to create this Container.
+        """
 
         out = "Container("
         for widget in self._widgets:
@@ -1149,7 +1423,7 @@ class Label(Widget):
         self.width = real_length(value) + self.padding
 
     def get_lines(self) -> list[str]:
-        """Get lines representing `Label`, breaking lines as necessary"""
+        """Get lines representing this Label, breaking lines as necessary"""
 
         value_style = self._get_style("value")
         line_gen = break_line(value_style(self.padding * " " + self.value), self.width)
