@@ -12,6 +12,7 @@ from __future__ import annotations
 import re
 import sys
 import signal
+import inspect
 import asyncio
 
 from typing import Optional, Any, Union, Callable, Tuple
@@ -207,12 +208,13 @@ class _Terminal:
         self.size: tuple[int, int] = self._get_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
+        # Unix systems
         if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
-            # Unix
+
+        # Windows
         else:
             asyncio.run(self._alt_sigwinch())
-            # Windows
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Call event callback is one is found."""
@@ -226,11 +228,14 @@ class _Terminal:
 
         while True:
             n_width = get_terminal_size()
+
+            frame = None
+            if _SYS_HAS_FRAME:
+                frame = inspect.currentframe().f_back
+
             if n_width != self.size:
-                self._update_size(
-                    28,  # *SIGWINCH* is 28
-                    (sys._getframe(1) if _SYS_HAS_FRAME else None),
-                )
+                self._update_size(28, frame)
+
             await asyncio.sleep(check_again_in)
 
     def _get_size(self) -> tuple[int, int]:
