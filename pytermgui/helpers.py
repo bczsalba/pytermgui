@@ -2,7 +2,10 @@
 Helper methods and functions for pytermgui.
 """
 
-from typing import Iterator
+from sys import modules
+from types import ModuleType
+from typing import Any, Iterator, Optional
+
 from .parser import markup, TokenType, RE_ANSI, RE_MARKUP
 from .ansi_interface import reset
 
@@ -151,3 +154,27 @@ def break_line(  # pylint: disable=too-many-branches
     current = current.rstrip()
     if _should_yield():
         yield current + reset()
+
+def export(target: Any) -> Any:
+    """
+    Exports object to `__all__`
+
+    Args:
+        target (Any): [description]
+
+    Returns:
+        Any: [description]
+    """
+
+    mod: ModuleType = modules[target.__module__]
+    exports = getattr(mod, '__all__', None)
+
+    if not exports:
+        exports = []
+        setattr(mod, '__all__', exports)
+    elif not isinstance(exports, list):
+        setattr(mod, '__all__', list(exports))
+    target_name = target.__name__
+    if target_name not in exports:
+        exports.append(target_name)
+    return target

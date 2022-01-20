@@ -56,11 +56,7 @@ from typing import Optional, Any, cast
 # https://github.com/python/mypy/issues/4930
 from .widgets.base import Container
 
-from .widgets import (
-    MarkupFormatter,
-    Widget,
-    boxes,
-)
+from .widgets import MarkupFormatter, Widget, boxes
 
 from .input import getch
 from .parser import markup
@@ -68,12 +64,7 @@ from .helpers import strip_ansi
 from .exceptions import LineLengthError
 from .enums import CenteringPolicy, SizePolicy
 from .context_managers import alt_buffer, mouse_handler, MouseTranslator
-from .ansi_interface import (
-    terminal,
-    MouseEvent,
-    move_cursor,
-    MouseAction,
-)
+from .ansi_interface import terminal, MouseEvent, move_cursor, MouseAction
 
 
 __all__ = ["Window", "WindowManager"]

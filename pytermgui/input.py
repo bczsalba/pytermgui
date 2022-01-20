@@ -27,7 +27,6 @@ from typing import (
 )
 
 from select import select
-from codecs import getincrementaldecoder
 
 
 def _is_ready(file: IO[AnyStr]) -> bool:
@@ -35,88 +34,6 @@ def _is_ready(file: IO[AnyStr]) -> bool:
 
     result = select([file], [], [], 0.0)
     return len(result[0]) > 0
-
-
-class _GetchUnix:
-    """Getch implementation for UNIX systems"""
-
-    def __init__(self) -> None:
-        """Initialize object"""
-
-        if sys.stdin.encoding is not None:
-            self.decode = getincrementaldecoder(sys.stdin.encoding)().decode
-        else:
-            self.decode = lambda item: item
-
-    def _read(self, num: int) -> str:
-        """Read `num` characters from sys.stdin"""
-
-        buff = ""
-        while len(buff) < num:
-            char = os.read(sys.stdin.fileno(), 1)
-            try:
-                buff += self.decode(char)
-            except UnicodeDecodeError:
-                buff += str(char)
-
-        return buff
-
-    def get_chars(self) -> Generator[str, None, None]:
-        """Yield characters while there are some available"""
-
-        descriptor = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(descriptor)
-        tty.setcbreak(descriptor)
-
-        try:
-            yield self._read(1)
-
-            while _is_ready(sys.stdin):
-                yield self._read(1)
-
-        finally:
-            # reset terminal state, set echo on
-            termios.tcsetattr(descriptor, termios.TCSADRAIN, old_settings)
-
-    def __call__(self) -> str:
-        """Return all characters that can be read"""
-
-        buff = "".join(self.get_chars())
-        return buff
-
-
-class _GetchWindows:
-    """Getch implementation for Windows"""
-
-    @staticmethod
-    def _ensure_str(string: AnyStr) -> str:
-        """Ensure return value is always a `str` and not `bytes`"""
-
-        if isinstance(string, bytes):
-            return string.decode("utf-8")
-
-        return string
-
-    def get_chars(self) -> str:
-        """Read `num` characters from sys.stdin"""
-
-        char = msvcrt.getch()
-        if char == b"\xe0":
-            char = "\x1b"
-
-        buff = self._ensure_str(char)
-
-        while msvcrt.kbhit():
-            char = msvcrt.getch()
-            buff += self._ensure_str(char)
-
-        return buff
-
-    def __call__(self) -> str:
-        """Return all characters that can be read"""
-
-        buff = self.get_chars()
-        return buff
 
 
 class _Keys:

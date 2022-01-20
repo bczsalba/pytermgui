@@ -2,7 +2,6 @@
 Various functions to interface with the terminal, using ANSI sequences.
 
 Credits:
-
 - https://wiki.bash-hackers.org/scripting/terminalcodes
 - https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 """
@@ -16,25 +15,22 @@ import asyncio
 
 from contextlib import contextmanager
 from typing import Optional, Any, Union, Callable, Tuple
+from types import FrameType
 from dataclasses import dataclass, fields
-from enum import Enum, auto as _auto
-from sys import stdout as _stdout
+from enum import Enum, auto
+from sys import stdout, stdin
 from string import hexdigits
-from os import name as _name, system
+from os import name
 from shutil import get_terminal_size
 
 from .input import getch
 
-_IS_NT = _name == "nt"
 _SYS_HAS_FRAME = hasattr(sys, "_getframe")
 
-if _IS_NT:
-    import ctypes
-    import ctypes.wintypes
-
-    kernel32 = ctypes.windll.kernel32
-else:
-    import termios
+try:
+    from ._win import echo_off, echo_on
+except ImportError:
+    from ._linux import echo_off, echo_on
 
 __all__ = [
     "Color",
@@ -61,8 +57,8 @@ __all__ = [
     "cursor_prev_line",
     "cursor_column",
     "cursor_home",
-    "set_echo",
-    "unset_echo",
+    "echo_on",
+    "echo_off",
     "set_mode",
     "MouseAction",
     "MouseEvent",
@@ -82,8 +78,9 @@ __all__ = [
 ]
 
 
-class Color:
-    """Class to store various color utilities
+class Color(object):
+    """
+    Class to store various color utilities
 
     Two instances of this class are provided, `foreground`
     and `background`. The difference between these is the color
@@ -94,14 +91,14 @@ class Color:
 
     - `int`: 0-256 terminal colors
     - `str`: Name of one of the registered named colors. See `Color.names`.
-    - `#rrggbb`: RGB hex string. Note: alpha values are not supported.
-    - `tuple[int, int]`: Tuple of RGB colors, each 0-256.
+    - `#?RRGGBB` | `#?RGB`: RGB hex string. Note: alpha values are not supported.
+    - `tuple[int, int, int]`: RGB color
     """
 
     ColorType = Union[int, str, Tuple[int, int, int]]
     """A simple type to represent color patterns. See `Color` for more info."""
 
-    names = {
+    names: dict[str, int] = {
         "black": 0,
         "red": 1,
         "green": 2,
@@ -119,7 +116,8 @@ class Color:
         "brightcyan": 14,
         "brightwhite": 15,
     }
-    """16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`
+    """
+    16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`
     will recognize, but if that is your objective it is better to use
     `pytermgui.parser.MarkupLanguage.alias`."""
 
@@ -212,28 +210,14 @@ class _Terminal:
     def __init__(self) -> None:
         """Initialize `_Terminal` class"""
 
-        if _IS_NT:
-            self._original_stdin = ctypes.wintypes.DWORD()
-            self._original_stdout = ctypes.wintypes.DWORD()
-            kernel32.GetConsoleMode(
-                kernel32.GetStdHandle(-10), ctypes.byref(self._original_stdin)
-            )
-            kernel32.GetConsoleMode(
-                kernel32.GetStdHandle(-11), ctypes.byref(self._original_stdout)
-            )
-        else:
-            self._original_stdin = termios.tcgetattr(sys.stdin)
-
         self.origin: tuple[int, int] = (1, 1)
         self.size: tuple[int, int] = self._get_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
         if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
-            # Unix
         else:
             asyncio.run(self._alt_sigwinch())
-            # Windows
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Call event callback is one is found."""
@@ -250,7 +234,8 @@ class _Terminal:
             if n_width != self.size:
                 self._update_size(
                     28,  # *SIGWINCH* is 28
-                    (sys._getframe(1) if _SYS_HAS_FRAME else None),
+                    (
+                        sys._getframe(1) if _SYS_HAS_FRAME else None),
                 )
             await asyncio.sleep(check_again_in)
 
@@ -262,11 +247,12 @@ class _Terminal:
             val - org for val, org in zip(get_terminal_size(), self.origin)
         )  # type: ignore
 
-    def _update_size(self, *_: Any) -> None:
+    def _update_size(self, signum: int, frame: FrameType) -> None:
         """Resize terminal when SIGWINCH occurs."""
 
         self.size = self._get_size()
         self._call_listener(self.RESIZE, self.size)
+        return signum, frame
 
     @property
     def width(self) -> int:
@@ -301,31 +287,6 @@ class _Terminal:
 
         if flush:
             sys.stdout.flush()
-
-    @contextmanager
-    def no_echo(self) -> None:
-        """Context manager which disables Echo mode and restores it after closing"""
-
-        if _IS_NT:
-            # WARNING! EXPERIMENTAL CODE
-            kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 0)
-            kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
-        else:
-            tmp = self._original_stdin
-            tmp[3] = tmp[3] & ~(termios.ECHO | termios.ICANON)
-            termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, tmp)
-        try:
-            yield
-        finally:
-            if _IS_NT:
-                kernel32.SetConsoleMode(
-                    kernel32.GetStdHandle(-10), self._original_stdin
-                )
-                kernel32.SetConsoleMode(
-                    kernel32.GetStdHandle(-11), self._original_stdout
-                )
-            else:
-                termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, self._original_stdin)
 
 
 terminal = _Terminal()
@@ -391,7 +352,7 @@ def clear(what: str = "screen") -> None:
         "line": "\x1b[2K",
     }
 
-    _stdout.write(commands[what])
+    stdout.write(commands[what])
 
 
 # cursor commands
@@ -412,13 +373,13 @@ def save_cursor() -> None:
 
     Use `restore_cursor()` to restore it."""
 
-    _stdout.write("\x1b[s")
+    stdout.write("\x1b[s")
 
 
 def restore_cursor() -> None:
     """Restore cursor position saved by `save_cursor()`"""
 
-    _stdout.write("\x1b[u")
+    stdout.write("\x1b[u")
 
 
 def report_cursor() -> tuple[int, int] | None:
@@ -442,7 +403,7 @@ def move_cursor(pos: tuple[int, int]) -> None:
         can do it manually with `sys.stdout.flush()`."""
 
     posx, posy = pos
-    _stdout.write(f"\x1b[{posy};{posx}H")
+    stdout.write(f"\x1b[{posy};{posx}H")
 
 
 def cursor_up(num: int = 1) -> None:
@@ -452,7 +413,7 @@ def cursor_up(num: int = 1) -> None:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`."""
 
-    _stdout.write(f"\x1b[{num}A")
+    stdout.write(f"\x1b[{num}A")
 
 
 def cursor_down(num: int = 1) -> None:
@@ -462,7 +423,7 @@ def cursor_down(num: int = 1) -> None:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`."""
 
-    _stdout.write(f"\x1b[{num}B")
+    stdout.write(f"\x1b[{num}B")
 
 
 def cursor_right(num: int = 1) -> None:
@@ -472,7 +433,7 @@ def cursor_right(num: int = 1) -> None:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`."""
 
-    _stdout.write(f"\x1b[{num}C")
+    stdout.write(f"\x1b[{num}C")
 
 
 def cursor_left(num: int = 1) -> None:
@@ -482,7 +443,7 @@ def cursor_left(num: int = 1) -> None:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`."""
 
-    _stdout.write(f"\x1b[{num}D")
+    stdout.write(f"\x1b[{num}D")
 
 
 def cursor_next_line(num: int = 1) -> None:
@@ -492,7 +453,7 @@ def cursor_next_line(num: int = 1) -> None:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`."""
 
-    _stdout.write(f"\x1b[{num}E")
+    stdout.write(f"\x1b[{num}E")
 
 
 def cursor_prev_line(num: int = 1) -> None:
@@ -502,7 +463,7 @@ def cursor_prev_line(num: int = 1) -> None:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`."""
 
-    _stdout.write(f"\x1b[{num}F")
+    stdout.write(f"\x1b[{num}F")
 
 
 def cursor_column(num: int = 0) -> None:
@@ -512,7 +473,7 @@ def cursor_column(num: int = 0) -> None:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`."""
 
-    _stdout.write(f"\x1b[{num}G")
+    stdout.write(f"\x1b[{num}G")
 
 
 def cursor_home() -> None:
@@ -522,7 +483,7 @@ def cursor_home() -> None:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`."""
 
-    _stdout.write("\x1b[H")
+    stdout.write("\x1b[H")
 
 
 def set_mode(mode: Union[str, int], write: bool = True) -> str:
@@ -561,60 +522,38 @@ def set_mode(mode: Union[str, int], write: bool = True) -> str:
 
     code = f"\x1b[{mode}m"
     if write:
-        _stdout.write(code)
+        stdout.write(code)
 
     return code
-
-
-def set_echo() -> None:
-    """Start echoing user input
-
-    Note: This is only available on POSIX"""
-
-    if not _name == "posix":
-        return
-
-    system("stty echo")
-
-
-def unset_echo() -> None:
-    """Stop echoing user input
-
-    Note: This is only available on POSIX"""
-
-    if not _name == "posix":
-        return
-
-    system("stty -echo")
 
 
 class MouseAction(Enum):
     """An enumeration of all the polled mouse actions"""
 
-    LEFT_CLICK = _auto()
+    LEFT_CLICK = auto()
     """Start of a left button action sequence"""
 
-    LEFT_DRAG = _auto()
+    LEFT_DRAG = auto()
     """Mouse moved while left button was held down"""
 
-    RIGHT_CLICK = _auto()
+    RIGHT_CLICK = auto()
     """Start of a right button action sequence"""
 
-    RIGHT_DRAG = _auto()
+    RIGHT_DRAG = auto()
     """Mouse moved while right button was held down"""
 
-    SCROLL_UP = _auto()
+    SCROLL_UP = auto()
     """Mouse wheel or touchpad scroll upwards"""
 
-    SCROLL_DOWN = _auto()
+    SCROLL_DOWN = auto()
     """Mouse wheel or touchpad scroll downwards"""
 
-    HOVER = _auto()
+    HOVER = auto()
     """Mouse moved without clicking
 
     Note: This only gets registered when hover events are listened to"""
 
-    RELEASE = _auto()
+    RELEASE = auto()
     """Mouse button released; end of any and all mouse action sequences"""
 
 
@@ -687,30 +626,30 @@ def report_mouse(
     """
 
     if event == "press":
-        _stdout.write("\x1b[?1000")
+        stdout.write("\x1b[?1000")
 
     elif event == "highlight":
-        _stdout.write("\x1b[?1001")
+        stdout.write("\x1b[?1001")
 
     elif event == "press_hold":
-        _stdout.write("\x1b[?1002")
+        stdout.write("\x1b[?1002")
 
     elif event == "hover":
-        _stdout.write("\x1b[?1003")
+        stdout.write("\x1b[?1003")
 
     else:
         raise NotImplementedError(f"Mouse report event {event} is not supported!")
 
-    _stdout.write("l" if stop else "h")
+    stdout.write("l" if stop else "h")
 
     if method == "decimal_utf8":
-        _stdout.write("\x1b[?1005")
+        stdout.write("\x1b[?1005")
 
     elif method == "decimal_xterm":
-        _stdout.write("\x1b[?1006")
+        stdout.write("\x1b[?1006")
 
     elif method == "decimal_urxvt":
-        _stdout.write("\x1b[?1015")
+        stdout.write("\x1b[?1015")
 
     elif method is None:
         return
@@ -718,8 +657,8 @@ def report_mouse(
     else:
         raise NotImplementedError(f"Mouse report method {method} is not supported!")
 
-    _stdout.write("l" if stop else "h")
-    _stdout.flush()
+    stdout.write("l" if stop else "h")
+    stdout.flush()
 
 
 def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
