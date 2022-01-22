@@ -204,10 +204,22 @@ class Window(Container):
     is_dirty = False
     """Control whether the parent manager needs to print this Window"""
 
+    min_width: int | None = None
+    """Minimum width of the window.
+
+    If set to none, _auto_min_width will be calculated based on the maximum width of inner widgets.
+    This is accurate enough for general use, but tends to lean to the safer side, i.e. it often
+    overshoots the 'real' minimum width possible.
+
+    If you find this to be the case, **AND** you can ensure that your window will not break, you
+    may set this value manually."""
+
     styles = {**Container.styles, **{"title": MarkupFormatter("[wm-title]{item}")}}
 
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
         """Initialize object"""
+
+        self._auto_min_width = 0
 
         super().__init__(*widgets, **attrs)
 
@@ -232,6 +244,11 @@ class Window(Container):
         """Set new rect"""
 
         left, top, right, _ = new.values
+        minimum = self.min_width or self._auto_min_width
+
+        if right - left < minimum:
+            return
+
         self.pos = (left, top)
         self.width = right - left
 
@@ -240,6 +257,18 @@ class Window(Container):
 
         self._add_widget(other)
         return self
+
+    def _add_widget(self, other: object) -> None:
+        """Adds a widget to the window.
+
+        Args:
+            other: The widget-like to add.
+        """
+
+        super()._add_widget(other)
+
+        if self.min_width is None and len(self._widgets) > 0:
+            self._auto_min_width = max(widget.width for widget in self._widgets)
 
     def set_title(self, title: str, position: int = 0, pad: bool = True) -> None:
         """Set window title"""
