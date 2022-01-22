@@ -689,6 +689,7 @@ class Container(Widget):
     }
 
     serialized = Widget.serialized + ["_centered_axis"]
+    vertical_align = VerticalAlignment.MIDDLE
     allow_fullscreen = True
 
     # TODO: Add `WidgetConvertible`? type instead of Any
@@ -1023,7 +1024,52 @@ class Container(Widget):
 
             widget.width = available
 
-    def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
+    def _apply_vertalign(
+        self, lines: list[str], diff: int, padder: str
+    ) -> tuple[int, list[str]]:
+        """Insert padder line into lines diff times, depending on self.vertical_align.
+
+        Args:
+            lines: The list of lines to align.
+            diff: The available height.
+            padder: The line to use to pad.
+
+        Returns:
+            A tuple containing the vertical offset as well as the padded list of lines.
+
+        Raises:
+            NotImplementedError: The given vertical alignment is not implemented.
+        """
+
+        if self.vertical_align == VerticalAlignment.BOTTOM:
+            for _ in range(diff):
+                lines.insert(0, padder)
+
+            return diff, lines
+
+        if self.vertical_align == VerticalAlignment.TOP:
+            for _ in range(diff):
+                lines.append(padder)
+
+            return 0, lines
+
+        if self.vertical_align == VerticalAlignment.MIDDLE:
+            top, extra = divmod(diff, 2)
+            bottom = top + extra
+
+            for _ in range(top):
+                lines.insert(0, padder)
+
+            for _ in range(bottom):
+                lines.append(padder)
+
+            return top, lines
+
+        raise NotImplementedError(
+            f"Vertical alignment {self.vertical_align} is not implemented for {type(self)}."
+        )
+
+    def get_lines(self) -> list[str]:
         """Gets all lines by spacing out inner widgets.
 
         This method reflects & applies both width settings, as well as
@@ -1033,115 +1079,67 @@ class Container(Widget):
             A list of all lines that represent this Container.
         """
 
-        def _apply_style(
-            style: w_styles.DepthlessStyleType, target: list[str]
-        ) -> list[str]:
-            """Apply style to target list elements"""
-
-            for i, char in enumerate(target):
-                target[i] = style(char)
-
-            return target
-
-        # Get chars & styles
-        corner_style = self._get_style("corner")
-        border_style = self._get_style("border")
-
-        border_char = self._get_char("border")
-        assert isinstance(border_char, list)
-        corner_char = self._get_char("corner")
-        assert isinstance(corner_char, list)
-
-        left, top, right, bottom = _apply_style(border_style, border_char)
-        t_left, t_right, b_right, b_left = _apply_style(corner_style, corner_char)
-
         def _get_border(left: str, char: str, right: str) -> str:
-            """Get a line for the top/bottom border"""
+            """Gets a top or bottom border.
+
+            Args:
+                left: Left corner character.
+                char: Border character filling between left & right.
+                right: Right corner character.
+
+            Returns:
+                The border line.
+            """
 
             offset = real_length(left + right)
             return left + char * (self.width - offset) + right
 
-        # Set up lines list
-        lines: list[str] = []
-        self.mouse_targets = []
+        lines = []
 
-        # Set root widget full screen if possible
-        if (
-            self._has_printed
-            and self.parent is None
-            and self.allow_fullscreen
-            and self.size_policy is SizePolicy.FILL
-        ):
-            self.pos = terminal.origin
-            self.width, self.height = terminal.size
+        style = self._get_style("border")
+        borders = [style(char) for char in self._get_char("border")]
 
-        align, offset = self._get_aligners(self, (left, right))
+        style = self._get_style("corner")
+        corners = [style(char) for char in self._get_char("corner")]
 
-        # Go through widgets
+        has_top_bottom = (real_length(borders[1]) > 0, real_length(borders[3]) > 0)
+
+        baseline = 0
+        align = lambda item: item
+
         for widget in self._widgets:
-            if self.width == 0:
-                self.width = widget.width
+            align, offset = self._get_aligners(widget, (borders[0], borders[2]))
 
-            align, offset = self._get_aligners(widget, (left, right))
-
-            # Apply width policies
             self._update_width(widget)
-
-            # TODO: This is ugly, and should be avoided.
-            # For now, only Container has a top offset, but this should be
-            # opened up as some kind of API for custom widgets.
-            if type(widget).__name__ == "Container":
-                container_vertical_offset = 1
-            else:
-                container_vertical_offset = 0
 
             widget.pos = (
                 self.pos[0] + offset,
-                self.pos[1] + len(lines) + container_vertical_offset,
+                self.pos[1] + len(lines) + (1 if has_top_bottom[0] else 0),
             )
 
-            widget_lines: list[str] = []
+            widget_lines = []
+            for line in widget.get_lines():
+                widget_lines.append(align(line))
 
-            for i, line in enumerate(widget.get_lines()):
-                # Pad horizontally
-                aligned = align(line)
-                new = real_length(aligned)
+            lines.extend(widget_lines)
 
-                # Assert well formed lines
-                if not new == self.width:
-                    raise LineLengthError(
-                        f"Widget {widget} returned a line of invalid length"
-                        + f" at index {i}: ({new} != {self.width}): {aligned}"
-                    )
+        vertical_offset, lines = self._apply_vertalign(
+            lines, self.height - len(lines) - sum(has_top_bottom), align("")
+        )
 
-                widget_lines.append(aligned)
+        for widget in self._widgets:
+            widget.pos = (widget.pos[0], widget.pos[1] + vertical_offset)
 
-            # Add to lines
-            lines += widget_lines
+            # TODO: This is wasteful.
+            widget.get_lines()
 
-            self.mouse_targets += widget.mouse_targets
+        if has_top_bottom[0]:
+            lines.insert(0, _get_border(corners[0], borders[1], corners[1]))
 
-        capping_lines = 0
-
-        # Add capping lines
-        if real_length(top):
-            capping_lines += 1
-            lines.insert(0, _get_border(t_left, top, t_right))
-
-        if real_length(bottom):
-            capping_lines += 1
-            lines.append(_get_border(b_left, bottom, b_right))
-
-        # Update height
-        for _ in range(self.height - len(lines) - capping_lines):
-            lines.insert(-1, align(""))
-
-        for target in self.mouse_targets:
-            target.adjust()
+        if has_top_bottom[1]:
+            lines.append(_get_border(corners[3], borders[3], corners[2]))
 
         self.height = len(lines)
-
-        # Return
         return lines
 
     def set_widgets(self, new: list[Widget]) -> None:
