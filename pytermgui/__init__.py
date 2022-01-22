@@ -140,8 +140,8 @@ def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
         rows: list[Splitter] = []
 
         for key, value in data.items():
-            left = auto(key, parent_align=WidgetAlignment.LEFT)
-            right = auto(value, parent_align=WidgetAlignment.RIGHT)
+            left = auto(key, parent_align=HorizontalAlignment.LEFT)
+            right = auto(value, parent_align=HorizontalAlignment.RIGHT)
 
             rows.append(Splitter(left, right, **widget_args))
 

@@ -15,7 +15,7 @@ from inspect import signature, getdoc, isclass, ismodule, Signature
 
 from .input import getch
 from .parser import markup
-from .enums import WidgetAlignment
+from .enums import HorizontalAlignment
 
 from .context_managers import alt_buffer
 from .widgets.boxes import DOUBLE_BOTTOM
@@ -258,7 +258,7 @@ class Inspector(Container):
         definition = Label(
             self._get_definition(target),
             padding=_padding,
-            parent_align=WidgetAlignment.LEFT,
+            parent_align=HorizontalAlignment.LEFT,
         )
         definition.set_style("value", lambda _, item: item)
 
@@ -266,7 +266,7 @@ class Inspector(Container):
         self._add_widget(definition)
 
         for line in self._get_docstring(target):
-            doc = Label(line, padding=_padding + 4, parent_align=WidgetAlignment.LEFT)
+            doc = Label(line, padding=_padding + 4, parent_align=HorizontalAlignment.LEFT)
             doc.set_style("value", lambda _, item: item)
             self._add_widget(doc)
 

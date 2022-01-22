@@ -21,7 +21,13 @@ from enum import IntEnum, auto as _auto
 
 defaults: dict[IntEnum, Type[IntEnum]] = {}
 
-__all__ = ["SizePolicy", "WidgetAlignment"]
+__all__ = [
+    "SizePolicy",
+    "CenteringPolicy",
+    "SizePolicy",
+    "HorizontalAlignment",
+    "VerticalAlignment",
+]
 
 
 class DefaultEnum(IntEnum):
@@ -55,7 +61,7 @@ class CenteringPolicy(DefaultEnum):
     HORIZONTAL = _auto()
 
 
-class WidgetAlignment(DefaultEnum):
+class HorizontalAlignment(DefaultEnum):
     """Policies to align widgets by
 
     These are applied by the parent object, and are
@@ -66,6 +72,15 @@ class WidgetAlignment(DefaultEnum):
     RIGHT = 2
 
 
+class VerticalAlignment(DefaultEnum):
+    """Vertical alignment options for widgets."""
+
+    TOP = 0
+    MIDDLE = 1
+    BOTTOM = 2
+
+
 defaults[SizePolicy] = SizePolicy.FILL
 defaults[CenteringPolicy] = CenteringPolicy.ALL
-defaults[WidgetAlignment] = WidgetAlignment.CENTER
+defaults[HorizontalAlignment] = HorizontalAlignment.CENTER
+defaults[VerticalAlignment] = VerticalAlignment.MIDDLE

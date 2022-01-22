@@ -16,7 +16,7 @@ from .base import Container, Label, Widget, MouseTarget
 from . import styles
 from ..input import keys
 from ..helpers import real_length
-from ..enums import WidgetAlignment, SizePolicy
+from ..enums import HorizontalAlignment, SizePolicy
 from ..ansi_interface import foreground, background, reset, MouseAction, MouseEvent
 
 
@@ -93,10 +93,10 @@ class Splitter(Container):
         "next": {keys.RIGHT, "l", keys.CTRL_F},
     }
 
-    parent_align = WidgetAlignment.RIGHT
+    parent_align = HorizontalAlignment.RIGHT
 
     def _align(
-        self, alignment: WidgetAlignment, target_width: int, line: str
+        self, alignment: HorizontalAlignment, target_width: int, line: str
     ) -> tuple[int, str]:
         """Align a line
 
@@ -108,11 +108,11 @@ class Splitter(Container):
         char = fill_style(" ")
         line = fill_style(line)
 
-        if alignment == WidgetAlignment.CENTER:
+        if alignment == HorizontalAlignment.CENTER:
             padding, offset = divmod(available, 2)
             return padding, padding * char + line + (padding + offset) * char
 
-        if alignment == WidgetAlignment.RIGHT:
+        if alignment == HorizontalAlignment.RIGHT:
             return available, available * char + line
 
         return 0, line + available * char
@@ -149,7 +149,7 @@ class Splitter(Container):
             for line in widget.get_lines():
                 # See `enums.py` for information about this ignore
                 padding, aligned = self._align(
-                    cast(WidgetAlignment, widget.parent_align), widget.width, line
+                    cast(HorizontalAlignment, widget.parent_align), widget.width, line
                 )
                 inner.append(aligned)
 
@@ -236,7 +236,7 @@ class InputField(Label):
 
         super().__init__(prompt + value, **attrs)
 
-        self.parent_align = WidgetAlignment.LEFT
+        self.parent_align = HorizontalAlignment.LEFT
 
         self.value = value
         self.prompt = prompt

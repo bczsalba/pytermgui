@@ -18,8 +18,8 @@ from ..parser import markup
 from ..context_managers import cursor_at
 from ..helpers import real_length, break_line
 from ..exceptions import WidthExceededError, LineLengthError
-from ..enums import SizePolicy, CenteringPolicy, WidgetAlignment
 from ..ansi_interface import terminal, clear, MouseEvent, MouseAction
+from ..enums import SizePolicy, CenteringPolicy, HorizontalAlignment, VerticalAlignment
 
 from . import boxes
 from . import styles as w_styles
@@ -200,8 +200,8 @@ class Widget:
     size_policy = SizePolicy.get_default()
     """`pytermgui.enums.SizePolicy` to set widget's width according to"""
 
-    parent_align = WidgetAlignment.get_default()
-    """`pytermgui.enums.WidgetAlignment` to align widget by"""
+    parent_align = HorizontalAlignment.get_default()
+    """`pytermgui.enums.HorizontalAlignment` to align widget by"""
 
     def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
@@ -981,12 +981,12 @@ class Container(Widget):
             padding = self.width - real_length(left + right) - real_length(text)
             return left + padding * char + text + right
 
-        if widget.parent_align == WidgetAlignment.CENTER:
+        if widget.parent_align == HorizontalAlignment.CENTER:
             total = self.width - real_length(left + right) - widget.width
             padding, offset = divmod(total, 2)
             return _align_center, real_length(left) + padding + offset
 
-        if widget.parent_align == WidgetAlignment.RIGHT:
+        if widget.parent_align == HorizontalAlignment.RIGHT:
             return _align_right, self.width - real_length(left) - widget.width
 
         # Default to left-aligned
