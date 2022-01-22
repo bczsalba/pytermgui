@@ -34,7 +34,20 @@ BoundCallback = Callable[..., Any]
 def _set_obj_or_cls_style(
     obj_or_cls: Type[Widget] | Widget, key: str, value: w_styles.StyleType
 ) -> Type[Widget] | Widget:
-    """Set a style of an object or class"""
+    """Sets a style for an object or class
+
+    Args:
+        obj_or_cls: The Widget instance or type to update.
+        key: The style key.
+        value: The new style.
+
+    Returns:
+        Type[Widget] | Widget: The updated class.
+
+    Raises:
+        KeyError: The style key provided is invalid.
+        ValueError: The style value is not callable.
+    """
 
     if not key in obj_or_cls.styles.keys():
         raise KeyError(f"Style {key} is not valid for {obj_or_cls}!")
@@ -50,7 +63,19 @@ def _set_obj_or_cls_style(
 def _set_obj_or_cls_char(
     obj_or_cls: Type[Widget] | Widget, key: str, value: w_styles.CharType
 ) -> Type[Widget] | Widget:
-    """Set a char of an object or class"""
+    """Sets a char for an object or class
+
+    Args:
+        obj_or_cls: The Widget instance or type to update.
+        key: The char key.
+        value: The new char.
+
+    Returns:
+        Type[Widget] | Widget: The updated class.
+
+    Raises:
+        KeyError: The char key provided is invalid.
+    """
 
     if not key in obj_or_cls.chars.keys():
         raise KeyError(f"Char {key} is not valid for {obj_or_cls}!")
