@@ -765,10 +765,7 @@ class WindowManager(Container):
                 window.height = terminal.height + 3
 
             if window.has_focus or window.is_noblur:
-                try:
-                    window.print()
-                except LineLengthError:
-                    pass
+                window.print()
                 continue
 
             lines = _get_lines(window)
