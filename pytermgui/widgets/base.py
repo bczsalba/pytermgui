@@ -1356,7 +1356,7 @@ class Container(Widget):
 
         if key == keys.ENTER and self.selected is not None:
             if self.selected.selected_index is not None:
-                self.selected.mouse_targets[self.selected.selected_index].click(self)
+                self.selected.handle_key(key)
                 return True
 
         return False

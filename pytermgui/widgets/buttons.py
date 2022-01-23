@@ -11,6 +11,7 @@ from typing import Optional, Any, Callable
 
 from .base import Widget, MouseCallback, MouseTarget
 
+from ..input import keys
 from ..parser import markup
 from ..helpers import real_length
 from ..ansi_interface import MouseAction, MouseEvent
@@ -66,10 +67,18 @@ class Button(Widget):
 
         return super().handle_mouse(event)
 
+    def handle_key(self, key: str) -> bool:
+        """Handles a keypress"""
+
+        if key == keys.RETURN:
+            self.onclick(self)
+            return True
+
+        return False
+
     def get_lines(self) -> list[str]:
         """Get object lines"""
 
-        self.mouse_targets = []
         label_style = self._get_style("label")
         delimiters = self._get_char("delimiter")
         highlight_style = self._get_style("highlight")
@@ -83,11 +92,8 @@ class Button(Widget):
         else:
             word = highlight_style(word)
 
-        self.define_mouse_target(
-            left=self.padding, right=-self.padding, height=1
-        ).onclick = self.onclick
-
         line = self.padding * " " + word
+        self.width = real_length(line)
 
         return [line]
 
