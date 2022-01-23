@@ -1287,6 +1287,12 @@ class Container(Widget):
         """
 
         if event.action is MouseAction.RELEASE:
+            # Force RELEASE event to be sent
+            if self._drag_target is not None:
+                self._drag_target.handle_mouse(
+                    MouseEvent(MouseAction.RELEASE, event.position)
+                )
+
             self._drag_target = None
 
         if self._drag_target is not None:
@@ -1295,15 +1301,20 @@ class Container(Widget):
         selectables_index = 0
         for widget in self._widgets:
             if widget.contains(event.position):
+                handled = widget.handle_mouse(event)
+                if widget.selected_index is not None:
+                    selectables_index += widget.selected_index
+
                 if event.action is MouseAction.LEFT_CLICK:
                     self._drag_target = widget
-                    self.select(selectables_index)
 
-                if widget.handle_mouse(event):
-                    break
+                    if handled:
+                        self.select(selectables_index)
+
+                return handled
 
             if widget.is_selectable:
-                selectables_index += 1
+                selectables_index += widget.selectables_length
 
         return False
 
