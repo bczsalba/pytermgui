@@ -494,16 +494,6 @@ class WindowManager(Container):
     def process_mouse(self, key: str) -> None:
         """Process (potential) mouse input"""
 
-        def _get_target() -> Window | None:
-            """Get current drag target window"""
-
-            if self._drag_target is None:
-                return None
-
-            win = self._drag_target[0]
-            assert isinstance(win, Window) or win is None
-            return win
-
         handlers = {
             MouseAction.LEFT_CLICK: self._click,
             MouseAction.LEFT_DRAG: self._drag,
@@ -517,8 +507,6 @@ class WindowManager(Container):
             return
 
         for event in event_list:
-            target_window = _get_target()
-
             # Ignore null-events
             if event is None:
                 continue
