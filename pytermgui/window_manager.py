@@ -114,10 +114,14 @@ class Rect:
     def from_window(cls, window: Window) -> Rect:
         """Create a Rect from a widget"""
 
-        left, top = window.pos
-        right = left + window.width
-        bottom = top + window.height
-        return cls((left, top), (right - 1, bottom - 3))
+        rect = window.pos, (
+            window.pos[0] + window.width,
+            window.pos[1] + window.height,
+        )
+
+        (left, top), (right, bottom) = rect
+
+        return cls((left, top), (right - 1, bottom))
 
     @classmethod
     def from_tuple(cls, tpl: tuple[int, int, int, int]) -> Rect:
@@ -154,7 +158,7 @@ class Rect:
     def contains(self, pos: tuple[int, int]) -> bool:
         """Determine if position is contained within this area"""
 
-        return self.left <= pos[0] <= self.right and self.top <= pos[1] <= self.bottom
+        return self.left <= pos[0] < self.right and self.top <= pos[1] < self.bottom
 
     def show(self) -> None:
         """Draw rect on screen"""
@@ -603,16 +607,16 @@ class WindowManager(Container):
 
         left, top, right, bottom = window.rect.values
 
-        if pos[1] == top and left <= pos[0] <= right:
+        if pos[1] == top and left <= pos[0] < right:
             self._drag_target = (window, Edge.TOP)
 
-        elif pos[1] == bottom and left <= pos[0] <= right:
+        elif pos[1] == bottom and left <= pos[0] < right:
             self._drag_target = (window, Edge.BOTTOM)
 
-        elif pos[0] == left and top <= pos[1] <= bottom:
+        elif pos[0] == left and top <= pos[1] < bottom:
             self._drag_target = (window, Edge.LEFT)
 
-        elif pos[0] == right and top <= pos[1] <= bottom:
+        elif pos[0] == right and top <= pos[1] < bottom:
             self._drag_target = (window, Edge.RIGHT)
 
         else:
