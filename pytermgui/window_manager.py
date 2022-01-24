@@ -665,11 +665,6 @@ class WindowManager(Container):
                 window.rect = Rect.from_tuple((pos[0] - 1, top, right + 1, bottom))
                 handled = True
 
-        try:
-            window.get_lines()
-        except LineLengthError:
-            window.rect = Rect.from_tuple((left, top, right, bottom))
-
         # Wipe window from cache
         if id(window) in self._window_cache:
             del self._window_cache[id(window)]
