@@ -287,6 +287,14 @@ class WindowManager(Container):
     framerate = 120
     """Target framerate for rendering. Higher number means more resource usage."""
 
+    focusing_actions: list[MouseAction] = [
+        MouseAction.LEFT_CLICK,
+        MouseAction.LEFT_DRAG,
+        MouseAction.RIGHT_CLICK,
+        MouseAction.RIGHT_DRAG,
+    ]
+    """A list of MouseAction-s that, when executed over a non-focused window will focus it."""
+
     def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
 
@@ -457,7 +465,7 @@ class WindowManager(Container):
             for window in self._windows:
                 contains_pos = window.contains(event.position)
 
-                if contains_pos:
+                if contains_pos and event.action in self.focusing_actions:
                     self.focus(window)
 
                 if event.action in handlers and handlers[event.action](
