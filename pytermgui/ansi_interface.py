@@ -26,7 +26,6 @@ from shutil import get_terminal_size
 from .input import getch
 
 _IS_NT = _name == "nt"
-_SYS_HAS_FRAME = hasattr(sys, "_getframe")
 
 __all__ = [
     "Color",
@@ -230,11 +229,8 @@ class _Terminal:
             n_width = get_terminal_size()
 
             frame = None
-            if _SYS_HAS_FRAME:
-                frame = inspect.currentframe().f_back
-
             if n_width != self.size:
-                self._update_size(28, frame)
+                self._update_size(28, inspect.currentframe().f_back)
 
             await asyncio.sleep(check_again_in)
 
