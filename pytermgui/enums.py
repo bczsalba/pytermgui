@@ -62,7 +62,7 @@ class CenteringPolicy(DefaultEnum):
 
 
 class HorizontalAlignment(DefaultEnum):
-    """Policies to align widgets by
+    """Policies to align widgets by.
 
     These are applied by the parent object, and are
     relative to them."""
@@ -93,8 +93,21 @@ class VerticalAlignment(DefaultEnum):
     """Align widgets to the bottom"""
 
 
+class Overflow(DefaultEnum):
+    """Overflow policies implemented by Container."""
+
+    HIDE = _auto()
+    """Stop gathering lines once there is no room left"""
+
+    SCROLL = _auto()
+    """Allow scrolling when there is too many lines"""
+
+    RESIZE = auto()
+    """Resize parent to fit with the new lines"""
+
 
 defaults[SizePolicy] = SizePolicy.FILL
 defaults[CenteringPolicy] = CenteringPolicy.ALL
 defaults[HorizontalAlignment] = HorizontalAlignment.CENTER
 defaults[VerticalAlignment] = VerticalAlignment.CENTER
+defaults[Overflow] = Overflow.SCROLL
