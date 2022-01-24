@@ -124,7 +124,6 @@ class Splitter(Container):
 
         # An error will be raised if `separator` is not the correct type (str).
         separator = self._get_style("separator")(self._get_char("separator"))  # type: ignore
-        assert isinstance(separator, str)
         separator_length = real_length(separator)
 
         full_width = self.width - (len(self._widgets) - 1) * separator_length
@@ -139,15 +138,17 @@ class Splitter(Container):
 
             if widget.size_policy is SizePolicy.STATIC:
                 target_width += target_width - widget.width
+                width = target_width
             else:
                 widget.width = target_width + error
+                width = widget.width
                 error = 0
 
             aligned: str | None = None
             for line in widget.get_lines():
                 # See `enums.py` for information about this ignore
                 padding, aligned = self._align(
-                    cast(HorizontalAlignment, widget.parent_align), target_width, line
+                    cast(HorizontalAlignment, widget.parent_align), width, line
                 )
                 inner.append(aligned)
 
