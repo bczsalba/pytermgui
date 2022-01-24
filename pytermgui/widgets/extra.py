@@ -132,9 +132,7 @@ class Splitter(Container):
         target_width = full_width // len(self._widgets)
 
         vertical_lines = []
-        total_offset = separator_length - 1
-
-        self.mouse_targets = []
+        total_offset = 0
 
         for widget in self._widgets:
             inner = []
@@ -154,22 +152,18 @@ class Splitter(Container):
                 inner.append(aligned)
 
             widget.pos = (
-                self.pos[0] + padding + total_offset + error,
+                self.pos[0] + padding + total_offset,
                 self.pos[1] + (1 if type(widget).__name__ == "Container" else 0),
             )
 
             if aligned is not None:
-                total_offset += widget.width + separator_length
+                total_offset += real_length(inner[-1]) + separator_length
 
             vertical_lines.append(inner)
-            self.mouse_targets += widget.mouse_targets
 
         lines = []
         for horizontal in zip_longest(*vertical_lines, fillvalue=" " * target_width):
             lines.append((reset() + separator).join(horizontal))
-
-        for target in self.mouse_targets:
-            target.adjust()
 
         return lines
 
@@ -316,23 +310,19 @@ class InputField(Label):
 
         return True
 
-    def handle_mouse(
-        self, event: MouseEvent, target: MouseTarget | None = None
-    ) -> bool:
+    def handle_mouse(self, event: MouseEvent) -> bool:
         """Handle mouse events"""
 
-        action, pos = event
-
         # Ignore mouse release events
-        if action is MouseAction.RELEASE:
+        if event.action is MouseAction.RELEASE:
             return True
 
         # Set cursor to mouse location
-        if action is MouseAction.LEFT_CLICK:
-            self.cursor = pos[0] - self.pos[0]
+        if event.action is MouseAction.LEFT_CLICK:
+            self.cursor = event.position[0] - self.pos[0]
             return True
 
-        return super().handle_mouse(event, target)
+        return super().handle_mouse(event)
 
     def get_lines(self) -> list[str]:
         """Get lines of object"""
@@ -378,10 +368,6 @@ class InputField(Label):
         # Set old value
         self.value = old
         self.width -= 2
-
-        # Reset & set mouse targets
-        self.mouse_targets = []
-        self.define_mouse_target(0, -1, height=self.height)
 
         return [
             line + fill_style((self.width - real_length(line) + 1) * " ")
@@ -453,22 +439,18 @@ class Slider(Widget):
 
         return self._display_value / self._available
 
-    def handle_mouse(
-        self, event: MouseEvent, target: MouseTarget | None = None
-    ) -> bool:
+    def handle_mouse(self, event: MouseEvent) -> bool:
         """Change slider position"""
-
-        action, pos = event
 
         # Disallow changing state when Slider is locked
         if not self.locked:
-            if action is MouseAction.RELEASE:
+            if event.action is MouseAction.RELEASE:
                 self.selected_index = None
                 return True
 
-            if action in [MouseAction.LEFT_DRAG, MouseAction.LEFT_CLICK]:
+            if event.action in [MouseAction.LEFT_DRAG, MouseAction.LEFT_CLICK]:
                 self._display_value = max(
-                    0, min(pos[0] - self.pos[0] + 1, self._available)
+                    0, min(event.position[0] - self.pos[0] + 1, self._available)
                 )
                 self.selected_index = 0
 
@@ -477,7 +459,7 @@ class Slider(Widget):
 
                 return True
 
-        return super().handle_mouse(event, target)
+        return super().handle_mouse(event)
 
     def handle_key(self, key: str) -> bool:
         """Change slider position with keys"""
@@ -532,10 +514,6 @@ class Slider(Widget):
         # Construct left side
         left = (self._display_value - real_length(cursor_char) + 1) * fill_char
         left = self._get_style("filled")(left) + cursor_char
-
-        # Define mouse target
-        self.mouse_targets = []
-        self.define_mouse_target(-1, 0, height=1)
 
         # Get counter string
         counter = ""
