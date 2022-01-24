@@ -68,19 +68,33 @@ class HorizontalAlignment(DefaultEnum):
     relative to them."""
 
     LEFT = 0
+    """Align widget to the left edge"""
+
     CENTER = 1
+    """Center widget in the available width"""
+
     RIGHT = 2
+    """Align widget to the right edge"""
 
 
 class VerticalAlignment(DefaultEnum):
     """Vertical alignment options for widgets."""
 
     TOP = 0
-    MIDDLE = 1
+    """Align widgets to the top"""
+
+    CENTER = 1
+    """Align widgets in the center, with equal* padding on the top and bottom
+
+    Note: When the available height is not divisible by 2, the extra line of padding
+    is added to the bottom."""
+
     BOTTOM = 2
+    """Align widgets to the bottom"""
+
 
 
 defaults[SizePolicy] = SizePolicy.FILL
 defaults[CenteringPolicy] = CenteringPolicy.ALL
 defaults[HorizontalAlignment] = HorizontalAlignment.CENTER
-defaults[VerticalAlignment] = VerticalAlignment.MIDDLE
+defaults[VerticalAlignment] = VerticalAlignment.CENTER

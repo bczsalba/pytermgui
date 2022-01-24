@@ -583,7 +583,7 @@ class Container(Widget):
     }
 
     serialized = Widget.serialized + ["_centered_axis"]
-    vertical_align = VerticalAlignment.MIDDLE
+    vertical_align = VerticalAlignment.CENTER
     allow_fullscreen = True
 
     # TODO: Add `WidgetConvertible`? type instead of Any
@@ -947,7 +947,7 @@ class Container(Widget):
 
             return 0, lines
 
-        if self.vertical_align == VerticalAlignment.MIDDLE:
+        if self.vertical_align == VerticalAlignment.CENTER:
             top, extra = divmod(diff, 2)
             bottom = top + extra
 
