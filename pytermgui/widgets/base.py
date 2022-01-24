@@ -25,9 +25,8 @@ from . import boxes
 from . import styles as w_styles
 
 
-__all__ = ["MouseTarget", "MouseCallback", "Widget", "Container", "Label"]
+__all__ = ["Widget", "Container", "Label"]
 
-MouseCallback = Callable[["MouseTarget", "Widget"], Any]
 BoundCallback = Callable[..., Any]
 
 
@@ -85,85 +84,6 @@ def _set_obj_or_cls_char(
     return obj_or_cls
 
 
-@dataclass
-class MouseTarget:
-    """A target for mouse events."""
-
-    parent: Widget
-    """Parent of this target. Used for getting current position in `adjust`."""
-
-    left: int
-    """Left offset from parent widget"""
-
-    right: int
-    """Right offset from parent widget"""
-
-    height: int
-    """Total height"""
-
-    top: int = 0
-    """Top offset from parent widget"""
-
-    _start: tuple[int, int] = field(init=False)
-    _end: tuple[int, int] = field(init=False)
-
-    onclick: Optional[MouseCallback] = None
-    """Callback function for click events"""
-
-    @property
-    def start(self) -> tuple[int, int]:
-        """Get start position"""
-
-        return self._start
-
-    @property
-    def end(self) -> tuple[int, int]:
-        """Get end position"""
-
-        return self._end
-
-    def adjust(self) -> None:
-        """Adjust position to align with `parent`
-
-        This should be called every time the parent's position might have changed."""
-
-        pos = self.parent.pos
-        self._start = (pos[0] + self.left - 1, pos[1] + 1 + self.top)
-        self._end = (
-            pos[0] + self.parent.width - 1 - self.right,
-            pos[1] + self.top + self.height,
-        )
-
-    def contains(self, pos: tuple[int, int]) -> bool:
-        """Check if `pos` is contained within the target area"""
-
-        start = self._start
-        end = self._end
-
-        return start[0] <= pos[0] <= end[0] and start[1] <= pos[1] <= end[1]
-
-    def click(self, caller: Widget) -> None:
-        """Execute callback with self, caller as the argument"""
-
-        if self.onclick is None:
-            return
-
-        self.onclick(self, caller)
-
-    def show(self, color: Optional[int] = None) -> None:
-        """Show target on screen with given color
-
-        Note: This is only meant to be a debug function."""
-
-        if color is None:
-            color = 210
-
-        for y_pos in range(self._start[1], self._end[1] + 1):
-            with cursor_at((self._start[0], y_pos)) as print_here:
-                length = self._end[0] - self._start[0]
-                print_here(markup.parse(f"[@{color}]" + " " * length))
-
-
 class Widget:
     """The base of the Widget system"""
 
@@ -217,8 +137,6 @@ class Widget:
 
         self.styles = type(self).styles.copy()
         self.chars = type(self).chars.copy()
-
-        self.mouse_targets: list[MouseTarget] = []
 
         self.parent: Widget | None = None
         self.selected_index: int | None = None
@@ -363,30 +281,6 @@ class Widget:
         (left, top), (right, bottom) = rect
 
         return left <= pos[0] < right and top <= pos[1] < bottom
-
-    def define_mouse_target(
-        self, left: int, right: int, height: int, top: int = 0
-    ) -> MouseTarget:
-        """Define a mouse target, return it for method assignments
-
-        Note: Only use this within a `Widget`, preferably within its
-        `get_lines()` method."""
-
-        target = MouseTarget(self, left, right, height, top)
-
-        target.adjust()
-        self.mouse_targets.insert(0, target)
-
-        return target
-
-    def get_target(self, pos: tuple[int, int]) -> Optional[MouseTarget]:
-        """Get MouseTarget for a position"""
-
-        for target in self.mouse_targets:
-            if target.contains(pos):
-                return target
-
-        return None
 
     def handle_mouse(self, event: MouseEvent) -> bool:
         """Handles a mouse event, returning its success.

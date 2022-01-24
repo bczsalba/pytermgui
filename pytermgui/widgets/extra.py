@@ -11,7 +11,7 @@ import string
 from itertools import zip_longest
 from typing import Any, Callable, cast
 
-from .base import Container, Label, Widget, MouseTarget
+from .base import Container, Label, Widget
 
 from . import styles
 from ..input import keys

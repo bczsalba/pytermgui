@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Optional, Any, Callable
 
-from .base import Widget, MouseCallback, MouseTarget
+from .base import Widget
 
 from ..input import keys
 from ..parser import markup
@@ -34,7 +34,7 @@ class Button(Widget):
     def __init__(
         self,
         label: str = "Button",
-        onclick: Optional[MouseCallback] = None,
+        onclick: Optional[Callable[[Button], Any]] = None,
         padding: int = 0,
         **attrs: Any,
     ) -> None:
@@ -47,9 +47,7 @@ class Button(Widget):
         self.padding = padding
         self._selectables_length = 1
 
-    def handle_mouse(
-        self, event: MouseEvent, target: MouseTarget | None = None
-    ) -> bool:
+    def handle_mouse(self, event: MouseEvent) -> bool:
         """Handle a mouse event"""
 
         mouse_action, position = event
