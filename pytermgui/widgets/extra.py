@@ -149,7 +149,7 @@ class Splitter(Container):
             for line in widget.get_lines():
                 # See `enums.py` for information about this ignore
                 padding, aligned = self._align(
-                    cast(HorizontalAlignment, widget.parent_align), widget.width, line
+                    cast(HorizontalAlignment, widget.parent_align), target_width, line
                 )
                 inner.append(aligned)
 
@@ -159,7 +159,7 @@ class Splitter(Container):
             )
 
             if aligned is not None:
-                total_offset += real_length(aligned) + separator_length
+                total_offset += widget.width + separator_length
 
             vertical_lines.append(inner)
             self.mouse_targets += widget.mouse_targets
