@@ -96,18 +96,21 @@ class VerticalAlignment(DefaultEnum):
 class Overflow(DefaultEnum):
     """Overflow policies implemented by Container."""
 
-    HIDE = _auto()
+    HIDE = 0
     """Stop gathering lines once there is no room left"""
 
-    SCROLL = _auto()
+    SCROLL = 1
     """Allow scrolling when there is too many lines"""
 
-    RESIZE = _auto()
+    RESIZE = 2
     """Resize parent to fit with the new lines"""
+
+    AUTO = 9999
+    """NotImplemented"""
 
 
 defaults[SizePolicy] = SizePolicy.FILL
 defaults[CenteringPolicy] = CenteringPolicy.ALL
 defaults[HorizontalAlignment] = HorizontalAlignment.CENTER
 defaults[VerticalAlignment] = VerticalAlignment.CENTER
-defaults[Overflow] = Overflow.SCROLL
+defaults[Overflow] = Overflow.RESIZE

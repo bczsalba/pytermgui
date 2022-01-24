@@ -10,7 +10,13 @@ from typing import Any, Callable, Iterator, cast
 
 from ..ansi_interface import MouseAction, MouseEvent, clear, reset, terminal
 from ..context_managers import cursor_at
-from ..enums import CenteringPolicy, HorizontalAlignment, SizePolicy, VerticalAlignment
+from ..enums import (
+    CenteringPolicy,
+    HorizontalAlignment,
+    SizePolicy,
+    VerticalAlignment,
+    Overflow,
+)
 from ..exceptions import WidthExceededError
 from ..helpers import real_length
 from ..input import keys
@@ -42,6 +48,8 @@ class Container(Widget):
     vertical_align = VerticalAlignment.CENTER
     allow_fullscreen = True
 
+    overflow = Overflow.get_default()
+
     # TODO: Add `WidgetConvertible`? type instead of Any
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
         """Initialize Container data"""
@@ -55,6 +63,7 @@ class Container(Widget):
         self._widgets: list[Widget] = []
         self._centered_axis: CenteringPolicy | None = None
 
+        self._scroll_offset = 0
         self._prev_screen: tuple[int, int] = (0, 0)
         self._has_printed = False
 
@@ -456,6 +465,11 @@ class Container(Widget):
 
         align = lambda item: item
 
+        length = 0
+        overflow = self.overflow
+        # if overflow == Overflow.SCROLL:
+        #     self.width -= self._scrollbar.width
+
         for widget in self._widgets:
             align, offset = self._get_aligners(widget, (borders[0], borders[2]))
 
@@ -468,9 +482,39 @@ class Container(Widget):
 
             widget_lines = []
             for line in widget.get_lines():
+                if length >= self.height - sum(has_top_bottom):
+                    if overflow is Overflow.HIDE:
+                        break
+
+                    if overflow == Overflow.AUTO:
+                        overflow = Overflow.SCROLL
+
                 widget_lines.append(align(line))
+                length += 1
 
             lines.extend(widget_lines)
+
+        if overflow == Overflow.SCROLL:
+            # TODO: Figure out a visual scrollbar
+            #     self.width += self._scrollbar.width
+
+            #     length = len(borders[2])
+            #     start = self._scrollbar.position
+            #     height = self.height - sum(has_top_bottom)
+
+            #     self._scrollbar.height = height
+            #     scrollbar = self._scrollbar.get_lines()
+            #
+            # new_lines = []
+            # for i, line in enumerate(lines[start : start + height]):
+            #     offset = len(line) - length
+            #     new_lines.append(line[:offset] + scrollbar[i] + line[offset:])
+
+            # lines = new_lines
+
+            height = self.height - sum(has_top_bottom)
+            self._scroll_offset = max(0, min(self._scroll_offset, length - height))
+            lines = lines[self._scroll_offset : self._scroll_offset + height]
 
         vertical_offset, lines = self._apply_vertalign(
             lines, self.height - len(lines) - sum(has_top_bottom), align("")
@@ -648,6 +692,10 @@ class Container(Widget):
             return self._drag_target.handle_mouse(event)
 
         selectables_index = 0
+        scrolled_pos = list(event.position)
+        scrolled_pos[1] += self._scroll_offset
+        event.position = tuple(scrolled_pos)
+
         for widget in self._widgets:
             if widget.contains(event.position):
                 handled = widget.handle_mouse(event)
@@ -664,6 +712,15 @@ class Container(Widget):
 
             if widget.is_selectable:
                 selectables_index += widget.selectables_length
+
+        if self.overflow == Overflow.SCROLL:
+            if event.action is MouseAction.SCROLL_UP:
+                self._scroll_offset = max(0, self._scroll_offset - 1)
+                return True
+
+            if event.action is MouseAction.SCROLL_DOWN:
+                self._scroll_offset = self._scroll_offset + 1
+                return True
 
         return False
 
