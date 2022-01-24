@@ -88,95 +88,6 @@ class Edge(Enum):
     BOTTOM = _auto()
 
 
-@dataclass
-class Rect:
-    """A class representing a screen region"""
-
-    start: tuple[int, int]
-    end: tuple[int, int]
-
-    left: int = field(init=False)
-    right: int = field(init=False)
-    top: int = field(init=False)
-    bottom: int = field(init=False)
-
-    def __post_init__(self) -> None:
-        """Set up extra instance attributes"""
-
-        self.left = self.start[0]
-        self.right = self.end[0]
-        self.top = self.start[1]
-        self.bottom = self.end[1]
-
-        self.values = self.left, self.top, self.right, self.bottom
-
-    @classmethod
-    def from_window(cls, window: Window) -> Rect:
-        """Create a Rect from a widget"""
-
-        rect = window.pos, (
-            window.pos[0] + window.width,
-            window.pos[1] + window.height,
-        )
-
-        (left, top), (right, bottom) = rect
-
-        return cls((left, top), (right - 1, bottom))
-
-    @classmethod
-    def from_tuple(cls, tpl: tuple[int, int, int, int]) -> Rect:
-        """Create a Rect from a tuple of points"""
-
-        startx, starty, endx, endy = tpl
-        new = cls((startx, starty), (endx, endy))
-        cls.values = tpl
-
-        return new
-
-    @property
-    def width(self) -> int:
-        """Calculate width of rect"""
-
-        return self.end[0] - self.start[0]
-
-    @property
-    def height(self) -> int:
-        """Calculate height of rect"""
-
-        return self.end[1] - self.start[1]
-
-    def collides_with(self, other: Rect) -> bool:
-        """Calculate collision with other Rect object"""
-
-        return (
-            self.left < other.right
-            and self.right > other.left
-            and self.top > other.bottom
-            and self.bottom < other.top
-        )
-
-    def contains(self, pos: tuple[int, int]) -> bool:
-        """Determine if position is contained within this area"""
-
-        return self.left <= pos[0] < self.right and self.top <= pos[1] < self.bottom
-
-    def show(self) -> None:
-        """Draw rect on screen"""
-
-        root = Container(width=self.right - self.left)
-        root += self.debug()
-        root.forced_width = self.right - self.left
-        root.forced_height = self.top - self.bottom
-        root.pos = self.start
-
-        root.print()
-
-    def debug(self) -> str:
-        """Show identifiable debug information"""
-
-        return str(Widget.debug(cast(Widget, self)))
-
-
 class Window(Container):
     """A class representing a window
 
@@ -237,17 +148,29 @@ class Window(Container):
             self.set_title(self.title)
 
     @property
-    def rect(self) -> Rect:
-        """Return Rect representing this window"""
+    def rect(self) -> tuple[int, int, int, int]:
+        """Returns the tuple of positions that define this window.
 
-        # TODO: This probably shouldn't be done every time.
-        return Rect.from_window(self)
+        Returns:
+            A tuple of integers, in the order (left, top, right, bottom).
+        """
+
+        left, top = self.pos
+        return (left, top, left + self.width, top + self.height)
 
     @rect.setter
     def rect(self, new: tuple[int, int, int, int]) -> None:
-        """Set new rect"""
+        """Sets new position, width and height of this window.
 
-        left, top, right, _ = new.values
+        This method also checks for the minimum width this window can be, and
+        if the new width doesn't comply with that setting the changes are thrown
+        away.
+
+        Args:
+            new: A tuple of integers in the order (left, top, right, bottom).
+        """
+
+        left, top, right, bottom = new
         minimum = self.min_width or self._auto_min_width
 
         if right - left < minimum:
@@ -255,6 +178,7 @@ class Window(Container):
 
         self.pos = (left, top)
         self.width = right - left
+        self.height = bottom - top
 
     def __iadd__(self, other: object) -> Window:
         """Call self._add_widget(other) and return self"""
@@ -593,18 +517,18 @@ class WindowManager(Container):
     def _click(self, pos: tuple[int, int], window: Window) -> bool:
         """Process clicking a window"""
 
-        left, top, right, bottom = window.rect.values
+        left, top, right, bottom = window.rect
 
         if pos[1] == top and left <= pos[0] < right:
             self._drag_target = (window, Edge.TOP)
 
-        elif pos[1] == bottom and left <= pos[0] < right:
+        elif pos[1] == bottom - 1 and left <= pos[0] < right:
             self._drag_target = (window, Edge.BOTTOM)
 
         elif pos[0] == left and top <= pos[1] < bottom:
             self._drag_target = (window, Edge.LEFT)
 
-        elif pos[0] == right and top <= pos[1] < bottom:
+        elif pos[0] == right - 1 and top <= pos[1] < bottom:
             self._drag_target = (window, Edge.RIGHT)
 
         else:
@@ -646,7 +570,7 @@ class WindowManager(Container):
         if window is not target_window:
             return False
 
-        left, top, right, bottom = window.rect.values
+        left, top, right, bottom = window.rect
         if not window.is_static and edge is Edge.TOP:
             window.pos = (
                 _clamp_pos(0),
@@ -658,11 +582,15 @@ class WindowManager(Container):
         # TODO: Why are all these arbitrary offsets needed?
         elif not window.is_noresize:
             if edge is Edge.RIGHT:
-                window.rect = Rect.from_tuple((left, top, pos[0] + 1, bottom))
+                window.rect = (left, top, pos[0] + 1, bottom)
                 handled = True
 
             elif edge is Edge.LEFT:
-                window.rect = Rect.from_tuple((pos[0] - 1, top, right + 1, bottom))
+                window.rect = (pos[0], top, right, bottom)
+                handled = True
+
+            elif edge is Edge.BOTTOM:
+                window.rect = (left, top, right, pos[1] + 1)
                 handled = True
 
         # Wipe window from cache
