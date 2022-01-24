@@ -50,11 +50,10 @@ import time
 import signal
 from threading import Thread
 from enum import Enum, auto as _auto
-from dataclasses import dataclass, field
-from typing import Optional, Any, cast
+from typing import Optional, Any
 
 # https://github.com/python/mypy/issues/4930
-from .widgets.base import Container
+from .widgets.layouts import Container
 
 from .widgets import (
     MarkupFormatter,
@@ -65,7 +64,6 @@ from .widgets import (
 from .input import getch
 from .parser import markup
 from .helpers import strip_ansi
-from .exceptions import LineLengthError
 from .enums import CenteringPolicy, SizePolicy
 from .context_managers import alt_buffer, mouse_handler, MouseTranslator
 from .ansi_interface import (
@@ -186,14 +184,15 @@ class Window(Container):
         self._add_widget(other)
         return self
 
-    def _add_widget(self, other: object) -> None:
+    def _add_widget(self, other: object, run_get_lines: bool = True) -> None:
         """Adds a widget to the window.
 
         Args:
             other: The widget-like to add.
+            run_get_lines: Whether self.get_lines should be ran after adding.
         """
 
-        super()._add_widget(other)
+        super()._add_widget(other, run_get_lines)
 
         if self.min_width is None and len(self._widgets) > 0:
             self._auto_min_width = max(widget.width for widget in self._widgets)

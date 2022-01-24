@@ -102,7 +102,7 @@ class Overflow(DefaultEnum):
     SCROLL = _auto()
     """Allow scrolling when there is too many lines"""
 
-    RESIZE = auto()
+    RESIZE = _auto()
     """Resize parent to fit with the new lines"""
 
 

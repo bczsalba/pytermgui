@@ -19,7 +19,7 @@ from .enums import HorizontalAlignment
 
 from .context_managers import alt_buffer
 from .widgets.boxes import DOUBLE_BOTTOM
-from .widgets.base import Container, Label
+from .widgets import Container, Label
 from .widgets.styles import MarkupFormatter, StyleType, StyleCall
 from .ansi_interface import foreground, terminal, is_interactive
 
@@ -266,7 +266,9 @@ class Inspector(Container):
         self._add_widget(definition)
 
         for line in self._get_docstring(target):
-            doc = Label(line, padding=_padding + 4, parent_align=HorizontalAlignment.LEFT)
+            doc = Label(
+                line, padding=_padding + 4, parent_align=HorizontalAlignment.LEFT
+            )
             doc.set_style("value", lambda _, item: item)
             self._add_widget(doc)
 

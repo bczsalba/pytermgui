@@ -63,9 +63,9 @@ from typing import Optional, Union, Type
 from . import boxes
 
 from .base import *
-from .extra import *
 from .styles import *
-from .buttons import *
+from .layouts import *
+from .interactive import *
 
 WidgetType = Union[Widget, Type[Widget]]
 

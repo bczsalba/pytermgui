@@ -1,177 +1,172 @@
-"""
-Some extra Widgets that rely on and compliment the ones in `widgets/base`.
-"""
+"""The module housing the various interactive Widget types."""
 
-# These classes will have to have more than 7 attributes mostly.
+# These widgets have more than the 7 allowed instance attributes.
 # pylint: disable=too-many-instance-attributes
 
 from __future__ import annotations
 
 import string
-from itertools import zip_longest
-from typing import Any, Callable, cast
+from typing import Any, Callable, Optional
 
-from .base import Container, Label, Widget
-
-from . import styles
-from ..input import keys
+from ..ansi_interface import MouseAction, MouseEvent
+from ..enums import HorizontalAlignment
 from ..helpers import real_length
-from ..enums import HorizontalAlignment, SizePolicy
-from ..ansi_interface import foreground, background, reset, MouseAction, MouseEvent
+from ..input import keys
+from ..parser import markup
+from . import styles as w_styles
+from .base import Label, Widget
 
 
-__all__ = ["InputField", "Splitter", "ColorPicker", "Slider"]
+class Button(Widget):
+    """A simple Widget representing a mouse-clickable button"""
 
+    chars: dict[str, w_styles.CharType] = {"delimiter": ["  ", "  "]}
 
-class ColorPicker(Container):
-    """A Container that shows the 256 color table"""
+    styles: dict[str, w_styles.StyleType] = {
+        "label": w_styles.CLICKABLE,
+        "highlight": w_styles.CLICKED,
+    }
 
-    serialized = Widget.serialized + ["grid_cols"]
-
-    def __init__(self, grid_cols: int = 8, **attrs: Any) -> None:
-        """Initialize object, set width"""
+    def __init__(
+        self,
+        label: str = "Button",
+        onclick: Optional[Callable[[Button], Any]] = None,
+        padding: int = 0,
+        **attrs: Any,
+    ) -> None:
+        """Initialize object"""
 
         super().__init__(**attrs)
 
-        self.grid_cols = grid_cols
-        self.static_width = self.grid_cols * 4 - 1 + self.sidelength
+        self.label = label
+        self.onclick = onclick
+        self.padding = padding
+        self._selectables_length = 1
 
-        self._layer_functions = [foreground, background]
+    def handle_mouse(self, event: MouseEvent) -> bool:
+        """Handle a mouse event"""
 
-        self.layer = 0
+        if event.action == MouseAction.LEFT_CLICK:
+            self.selected_index = 0
+            if self.onclick is not None:
+                self.onclick(self)
 
-    def toggle_layer(self, *_: Any) -> None:
-        """Toggle foreground/background"""
+            return True
 
-        self.layer = 1 if self.layer == 0 else 0
+        if event.action == MouseAction.RELEASE:
+            self.selected_index = None
+            return True
+
+        return super().handle_mouse(event)
+
+    def handle_key(self, key: str) -> bool:
+        """Handles a keypress"""
+
+        if key == keys.RETURN:
+            self.onclick(self)
+            return True
+
+        return False
 
     def get_lines(self) -> list[str]:
-        """Get color table lines"""
+        """Get object lines"""
 
-        chars = self._get_char("border")
-        assert isinstance(chars, list)
-        border_style = self._get_style("border")
+        label_style = self._get_style("label")
+        delimiters = self._get_char("delimiter")
+        highlight_style = self._get_style("highlight")
 
-        left_border, _, right_border, _ = chars
-        left_border = border_style(left_border)
-        right_border = border_style(right_border)
+        assert isinstance(delimiters, list) and len(delimiters) == 2
+        left, right = delimiters
 
-        lines = super().get_lines()
-        last_line = lines.pop()
+        word = markup.parse(left + self.label + right)
+        if self.selected_index is None:
+            word = label_style(word)
+        else:
+            word = highlight_style(word)
 
-        for line in range(256 // self.grid_cols):
-            buff = left_border
+        line = self.padding * " " + word
+        self.width = real_length(line)
 
-            for num in range(self.grid_cols):
-                col = str(line * self.grid_cols + num)
-                if col == "0":
-                    buff += "    "
-                    continue
-
-                buff += self._layer_functions[self.layer](f"{col:>3}", col) + " "
-
-            buff = buff[:-1]
-            lines.append(buff + "" + right_border)
-
-        lines.append(last_line)
-
-        return lines
-
-    def debug(self) -> str:
-        """Show identifiable information on widget"""
-
-        return Widget.debug(self)
+        return [line]
 
 
-class Splitter(Container):
-    """A Container-like object that allows stacking Widgets horizontally"""
+# TODO: Rewrite this to also have a label
+class Checkbox(Button):
+    """A simple checkbox"""
 
-    chars: dict[str, list[str] | str] = {"separator": " | "}
-    styles = {"separator": styles.MARKUP, "fill": styles.BACKGROUND}
-    keys = {
-        "previous": {keys.LEFT, "h", keys.CTRL_B},
-        "next": {keys.RIGHT, "l", keys.CTRL_F},
+    chars = {
+        **Button.chars,
+        **{"delimiter": ["[", "]"], "checked": "X", "unchecked": " "},
     }
 
-    parent_align = HorizontalAlignment.RIGHT
+    def __init__(
+        self,
+        callback: Callable[[Any], Any] | None = None,
+        checked: bool = False,
+        **attrs: Any,
+    ) -> None:
+        """Initialize object"""
 
-    def _align(
-        self, alignment: HorizontalAlignment, target_width: int, line: str
-    ) -> tuple[int, str]:
-        """Align a line
+        unchecked = self._get_char("unchecked")
+        assert isinstance(unchecked, str)
 
-        r/wordavalanches"""
+        super().__init__(unchecked, onclick=self.toggle, **attrs)
 
-        available = target_width - real_length(line)
-        fill_style = self._get_style("fill")
+        self.callback = None
+        self.checked = False
+        if self.checked != checked:
+            self.toggle(run_callback=False)
 
-        char = fill_style(" ")
-        line = fill_style(line)
+        self.callback = callback
 
-        if alignment == HorizontalAlignment.CENTER:
-            padding, offset = divmod(available, 2)
-            return padding, padding * char + line + (padding + offset) * char
+    def _run_callback(self) -> None:
+        """Run the checkbox callback with the new checked flag as its argument"""
 
-        if alignment == HorizontalAlignment.RIGHT:
-            return available, available * char + line
+        if self.callback is not None:
+            self.callback(self.checked)
 
-        return 0, line + available * char
+    def toggle(self, *_: Any, run_callback: bool = True) -> None:
+        """Toggle state"""
 
-    def get_lines(self) -> list[str]:
-        """Join all widgets horizontally
+        chars = self._get_char("checked"), self._get_char("unchecked")
+        assert isinstance(chars[0], str) and isinstance(chars[1], str)
 
-        Note: This currently has some issues."""
+        self.checked ^= True
+        if self.checked:
+            self.label = chars[0]
+        else:
+            self.label = chars[1]
 
-        # An error will be raised if `separator` is not the correct type (str).
-        separator = self._get_style("separator")(self._get_char("separator"))  # type: ignore
-        separator_length = real_length(separator)
+        self.get_lines()
 
-        full_width = self.width - (len(self._widgets) - 1) * separator_length
-        error = full_width % len(self._widgets)
-        target_width = full_width // len(self._widgets)
+        if run_callback:
+            self._run_callback()
 
-        vertical_lines = []
-        total_offset = 0
 
-        for widget in self._widgets:
-            inner = []
+class Toggle(Checkbox):
+    """A specialized checkbox showing either of two states"""
 
-            if widget.size_policy is SizePolicy.STATIC:
-                target_width += target_width - widget.width
-                width = target_width
-            else:
-                widget.width = target_width + error
-                width = widget.width
-                error = 0
+    chars = {**Checkbox.chars, **{"delimiter": [" ", " "], "checked": "choose"}}
 
-            aligned: str | None = None
-            for line in widget.get_lines():
-                # See `enums.py` for information about this ignore
-                padding, aligned = self._align(
-                    cast(HorizontalAlignment, widget.parent_align), width, line
-                )
-                inner.append(aligned)
+    def __init__(
+        self,
+        states: tuple[str, str],
+        callback: Callable[[str], Any] | None = None,
+        **attrs: Any,
+    ) -> None:
+        """Initialize object"""
 
-            widget.pos = (
-                self.pos[0] + padding + total_offset,
-                self.pos[1] + (1 if type(widget).__name__ == "Container" else 0),
-            )
+        self.set_char("checked", states[0])
+        self.set_char("unchecked", states[1])
 
-            if aligned is not None:
-                total_offset += real_length(inner[-1]) + separator_length
+        super().__init__(callback, **attrs)
+        self.toggle(run_callback=False)
 
-            vertical_lines.append(inner)
+    def _run_callback(self) -> None:
+        """Run the toggle callback with the label as its argument"""
 
-        lines = []
-        for horizontal in zip_longest(*vertical_lines, fillvalue=" " * target_width):
-            lines.append((reset() + separator).join(horizontal))
-
-        return lines
-
-    def debug(self) -> str:
-        """Return identifiable information"""
-
-        return super().debug().replace("Container", "Splitter", 1)
+        if self.callback is not None:
+            self.callback(self.label)
 
 
 class InputField(Label):
@@ -213,9 +208,9 @@ class InputField(Label):
     """
 
     styles = {
-        "value": styles.FOREGROUND,
-        "cursor": styles.MarkupFormatter("[inverse]{item}"),
-        "fill": styles.MarkupFormatter("[@243]{item}"),
+        "value": w_styles.FOREGROUND,
+        "cursor": w_styles.MarkupFormatter("[inverse]{item}"),
+        "fill": w_styles.MarkupFormatter("[@243]{item}"),
     }
 
     is_bindable = True
@@ -394,10 +389,10 @@ class Slider(Widget):
     chars = {"endpoint": "", "cursor": "█", "fill": "█", "rail": "─"}
 
     styles = {
-        "filled": styles.CLICKABLE,
-        "unfilled": styles.FOREGROUND,
-        "cursor": styles.CLICKABLE,
-        "highlight": styles.CLICKED,
+        "filled": w_styles.CLICKABLE,
+        "unfilled": w_styles.FOREGROUND,
+        "cursor": w_styles.CLICKABLE,
+        "highlight": w_styles.CLICKED,
     }
 
     keys = {

@@ -18,7 +18,6 @@ from __future__ import annotations
 
 from typing import Tuple
 
-from .extra import Splitter
 from ..helpers import real_length
 
 
@@ -152,12 +151,8 @@ class Box:
     def set_chars_of(self, cls_or_obj: object) -> object:
         """Set border & corner chars of cls_or_obj to self values"""
 
-        if isinstance(cls_or_obj, Splitter):
-            cls_or_obj.set_char("separator", " " + self.borders[0])
-
-        else:
-            cls_or_obj.set_char("border", self.borders)
-            cls_or_obj.set_char("corner", self.corners)
+        cls_or_obj.set_char("border", self.borders)
+        cls_or_obj.set_char("corner", self.corners)
 
         return cls_or_obj
 
