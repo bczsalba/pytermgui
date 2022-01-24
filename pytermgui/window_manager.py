@@ -198,6 +198,23 @@ class Window(Container):
         if self.min_width is None and len(self._widgets) > 0:
             self._auto_min_width = max(widget.width for widget in self._widgets)
 
+    def contains(self, pos: tuple[int, int]) -> bool:
+        """Determines whether widget contains `pos`.
+
+        This method uses window.rect to get the positions.
+
+        Args:
+            pos: Position to compare.
+
+        Returns:
+            Boolean describing whether the position is inside
+              this widget.
+        """
+
+        left, top, right, bottom = self.rect
+
+        return left <= pos[0] < right and top <= pos[1] < bottom
+
     def set_title(self, title: str, position: int = 0, pad: bool = True) -> None:
         """Set window title"""
 
