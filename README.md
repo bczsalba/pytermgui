@@ -9,10 +9,10 @@ pip3 install pytermgui
 
 <p align=center>
    <a href="https://pypi.org/project/pytermgui">
-      <img alt="PyPi project" src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/version.svg">
+      <img alt="PyPi project" src="https://img.shields.io/pypi/v/pytermgui?color=brightgreen">
    </a>
     <a href="https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py">
-      <img alt="Pylint quality" src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/quality.svg">
+      <img alt="Code quality" src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/quality.svg">
    </a>
    <a href="https://reddit.com/r/pytermgui">
       <img src="https://img.shields.io/reddit/subreddit-subscribers/pytermgui?style=flat&color=bright-green">

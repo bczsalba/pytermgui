@@ -48,7 +48,7 @@ def write_quality_badge(command: str, output_file: str) -> None:
     """Write badge for code quality"""
 
     score = get_score("make lint")
-    link = create_link("pylint quality", score)
+    link = create_link("code quality", score)
 
     with open(output_file, "wb") as output:
         data = requests.get(link).content
