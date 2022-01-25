@@ -63,11 +63,12 @@ from .widgets import (
 
 from .input import getch
 from .parser import markup
-from .helpers import strip_ansi
+from .helpers import strip_ansi, real_length
 from .enums import CenteringPolicy, SizePolicy, Overflow
-from .context_managers import alt_buffer, mouse_handler, MouseTranslator
+from .context_managers import alt_buffer, mouse_handler, MouseTranslator, cursor_at
 from .ansi_interface import (
     terminal,
+    background,
     MouseEvent,
     move_cursor,
     MouseAction,
@@ -720,12 +721,33 @@ class WindowManager(Container):
         sys.stdout.flush()
         self._should_print = False
 
-    def show_targets(self, color: int | None = None) -> None:
-        """Show all windows' targets"""
+    def show_targets(self) -> None:
+        """Shows all windows' positions."""
+
+        def _show_positions(widget, color_base: int = 60) -> None:
+            """Show positions of widget."""
+
+            if isinstance(widget, Container):
+                for i, subwidget in enumerate(widget):
+                    _show_positions(subwidget, color_base + i)
+
+                return
+
+            if not widget.is_selectable:
+                return
+
+            with cursor_at(widget.pos) as pprint:
+                debug = widget.debug()
+                buff = background(" ", color_base, reset_color=False)
+
+                for i in range(min(widget.width, real_length(debug)) - 1):
+                    buff += debug[i]
+
+                pprint(buff)
 
         self.pause()
-        for window in self._windows:
-            window.show_targets(color)
+        for widget in self._windows:
+            _show_positions(widget)
 
         getch()
         self.unpause()
