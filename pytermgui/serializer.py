@@ -41,6 +41,8 @@ class Serializer:
         self.known_boxes = vars(widgets.boxes)
         self.register(Window)
 
+        self.bound_methods: dict[str, Callable[..., Any]] = {}
+
     @staticmethod
     def get_widgets() -> WidgetDict:
         """Get all widgets from the module"""
@@ -78,6 +80,21 @@ class Serializer:
             raise TypeError("Registered object must be a type.")
 
         self.known_widgets[cls.__name__] = cls
+
+    def bind(self, name: str, method: Callable[..., Any]) -> None:
+        """Binds a name to a method.
+
+        These method callables are substituted into all fields that follow
+        the `method:<method_name>` syntax. If `method_name` is not bound,
+        an exception will be raised during loading.
+
+        Args:
+            name: The name of the method, as referenced in the loaded
+                files.
+            method: The callable to bind.
+        """
+
+        self.bound_methods[name] = method
 
     def from_dict(  # pylint: disable=too-many-locals
         self, data: dict[str, Any], widget_type: str | None = None
@@ -127,6 +144,14 @@ class Serializer:
                     obj += new  # type: ignore
 
                 continue
+
+            if value.startswith("method:"):
+                name = value[7:]
+
+                if name not in self.bound_methods:
+                    raise KeyError(f'Reference to unbound method: "{name}".')
+
+                value = self.bound_methods[name]
 
             if key == "chars":
                 chars: dict[str, CharType] = {}

@@ -268,6 +268,17 @@ class FileLoader(ABC):
 
         self.serializer.register(cls)
 
+    def bind(self, name: str, method: Callable[..., Any]) -> None:
+        """Binds a name to a method.
+
+        Args:
+            name: The name of the method, as referenced in the loaded
+                files.
+            method: The callable to bind.
+        """
+
+        self.serializer.bind(name, method)
+
     def load_str(self, data: str) -> WidgetNamespace:
         """Create a `WidgetNamespace` from string data
 
