@@ -91,6 +91,24 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="class" href="#Overflow">Overflow</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#Overflow.HIDE">HIDE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Overflow.SCROLL">SCROLL</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Overflow.RESIZE">RESIZE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#Overflow.AUTO">AUTO</a>
+                        </li>
+                </ul>
+
+            </li>
     </ul>
 
 
@@ -146,6 +164,7 @@ the globally set default value.</p>
     <span class="s2">&quot;SizePolicy&quot;</span><span class="p">,</span>
     <span class="s2">&quot;HorizontalAlignment&quot;</span><span class="p">,</span>
     <span class="s2">&quot;VerticalAlignment&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Overflow&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -611,6 +630,123 @@ relative to them.</p>
                 <dd id="VerticalAlignment.imag" class="variable">imag</dd>
                 <dd id="VerticalAlignment.numerator" class="variable">numerator</dd>
                 <dd id="VerticalAlignment.denominator" class="variable">denominator</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="Overflow">
+                                <div class="attr class">
+        <a class="headerlink" href="#Overflow">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">Overflow</span><wbr>(<span class="base"><a href="#DefaultEnum">DefaultEnum</a></span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Overflow</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overflow policies implemented by Container.&quot;&quot;&quot;</span>
+
+    <span class="n">HIDE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Stop gathering lines once there is no room left.&quot;&quot;&quot;</span>
+
+    <span class="n">SCROLL</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;Allow scrolling when there is too many lines.&quot;&quot;&quot;</span>
+
+    <span class="n">RESIZE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;Resize parent to fit with the new lines.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        When applied to a window, this prevents resizing its height</span>
+<span class="sd">        using the bottom border.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: Implement Overflow.AUTO</span>
+    <span class="n">AUTO</span> <span class="o">=</span> <span class="mi">9999</span>
+    <span class="sd">&quot;&quot;&quot;NotImplemented&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Overflow policies implemented by Container.</p>
+</div>
+
+
+                            <div id="Overflow.HIDE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Overflow.HIDE">#&nbsp;&nbsp</a>
+
+        <span class="name">HIDE</span><span class="default_value"> = &lt;<a href="#Overflow.HIDE">Overflow.HIDE</a>: 0&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Stop gathering lines once there is no room left.</p>
+</div>
+
+
+                            </div>
+                            <div id="Overflow.SCROLL" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Overflow.SCROLL">#&nbsp;&nbsp</a>
+
+        <span class="name">SCROLL</span><span class="default_value"> = &lt;<a href="#Overflow.SCROLL">Overflow.SCROLL</a>: 1&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Allow scrolling when there is too many lines.</p>
+</div>
+
+
+                            </div>
+                            <div id="Overflow.RESIZE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Overflow.RESIZE">#&nbsp;&nbsp</a>
+
+        <span class="name">RESIZE</span><span class="default_value"> = &lt;<a href="#Overflow.RESIZE">Overflow.RESIZE</a>: 2&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Resize parent to fit with the new lines.</p>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>When applied to a window, this prevents resizing its height
+  using the bottom border.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="Overflow.AUTO" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Overflow.AUTO">#&nbsp;&nbsp</a>
+
+        <span class="name">AUTO</span><span class="default_value"> = &lt;<a href="#Overflow.AUTO">Overflow.AUTO</a>: 9999&gt;</span>
+    </div>
+
+            <div class="docstring"><p>NotImplemented</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#DefaultEnum">DefaultEnum</a></dt>
+                                <dd id="Overflow.get_default" class="function"><a href="#DefaultEnum.get_default">get_default</a></dd>
+
+            </div>
+            <div><dt>enum.Enum</dt>
+                                <dd id="Overflow.name" class="variable">name</dd>
+                <dd id="Overflow.value" class="variable">value</dd>
+
+            </div>
+            <div><dt>builtins.int</dt>
+                                <dd id="Overflow.conjugate" class="function">conjugate</dd>
+                <dd id="Overflow.bit_length" class="function">bit_length</dd>
+                <dd id="Overflow.to_bytes" class="function">to_bytes</dd>
+                <dd id="Overflow.from_bytes" class="function">from_bytes</dd>
+                <dd id="Overflow.as_integer_ratio" class="function">as_integer_ratio</dd>
+                <dd id="Overflow.real" class="variable">real</dd>
+                <dd id="Overflow.imag" class="variable">imag</dd>
+                <dd id="Overflow.numerator" class="variable">numerator</dd>
+                <dd id="Overflow.denominator" class="variable">denominator</dd>
 
             </div>
                                 </dl>

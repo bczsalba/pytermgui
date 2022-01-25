@@ -58,6 +58,7 @@ def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
         The widget or list of widgets created, or None if the passed structure could
         not be converted.
 
+    <br>
     <details style="text-align: left">
         <summary style="all: revert; cursor: pointer">Data structures:</summary>
 

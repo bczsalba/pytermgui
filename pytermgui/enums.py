@@ -27,6 +27,7 @@ __all__ = [
     "SizePolicy",
     "HorizontalAlignment",
     "VerticalAlignment",
+    "Overflow",
 ]
 
 
