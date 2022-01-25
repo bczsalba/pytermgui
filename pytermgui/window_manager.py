@@ -185,7 +185,7 @@ class Window(Container):
         self._add_widget(other)
         return self
 
-    def _add_widget(self, other: object, run_get_lines: bool = True) -> None:
+    def _add_widget(self, other: object, run_get_lines: bool = True) -> Widget:
         """Adds a widget to the window.
 
         Args:
@@ -193,10 +193,14 @@ class Window(Container):
             run_get_lines: Whether self.get_lines should be ran after adding.
         """
 
-        super()._add_widget(other, run_get_lines)
+        added = super()._add_widget(other, run_get_lines)
 
         if self.min_width is None and len(self._widgets) > 0:
             self._auto_min_width = max(widget.width for widget in self._widgets)
+
+        self.height += added.height
+
+        return added
 
     def contains(self, pos: tuple[int, int]) -> bool:
         """Determines whether widget contains `pos`.

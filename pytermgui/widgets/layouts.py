@@ -272,12 +272,16 @@ class Container(Widget):
 
         return other in self._widgets
 
-    def _add_widget(self, other: object, run_get_lines: bool = True) -> None:
+    def _add_widget(self, other: object, run_get_lines: bool = True) -> Widget:
         """Adds other to this widget.
 
         Args:
             other: Any widget-like object.
             run_get_lines: Boolean controlling whether the self.get_lines is ran.
+
+        Returns:
+            The added widget. This is useful when data conversion took place in this
+            function, e.g. a string was converted to a Label.
         """
 
         if not isinstance(other, Widget):
@@ -303,6 +307,8 @@ class Container(Widget):
 
         if run_get_lines:
             self.get_lines()
+
+        return other
 
     def _get_aligners(
         self, widget: Widget, borders: tuple[str, str]
