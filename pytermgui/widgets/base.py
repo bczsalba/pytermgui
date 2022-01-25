@@ -140,7 +140,7 @@ class Widget:
         self._id: Optional[str] = None
         self._serialized_fields = type(self).serialized
         self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
-        self._relative_width = None
+        self._relative_width: float | None = None
 
         for attr, value in attrs.items():
             setattr(self, attr, value)
@@ -241,34 +241,28 @@ class Widget:
 
         return self.selectables_length != 0
 
-    def static_width(self, value: int) -> None:
-        """Sets this widget's width, and turns it static
-
-        This method is just a shorter way of setting a new width, as well
-        as changing the size_policy to `pytermgui.enums.SizePolicy.STATIC`.
+    @property
+    def static_width(self) -> int:
+        """Allows for a shorter way of setting a width, and SizePolicy.STATIC.
 
         Args:
-            value: The new width
+            value: The new width integer.
+
+        Returns:
+            None, as this is setter only.
         """
+
+        return None  # type: ignore
+
+    @static_width.setter
+    def static_width(self, value: int) -> None:
+        """See the static_width getter."""
 
         self.width = value
         self.size_policy = SizePolicy.STATIC
 
-    # Set static_width to a setter only property
-    static_width = property(None, static_width)  # type: ignore
-
     @property
     def relative_width(self) -> float | None:
-        """Returns the current relative_width value.
-
-        Returns:
-            The current relative_width setting.
-        """
-
-        return self._relative_width
-
-    @relative_width.setter
-    def relative_width(self, value: float) -> None:
         """Sets this widget's relative width, and changes size_policy to RELATIVE.
 
         The value is clamped to 1.0.
@@ -278,7 +272,16 @@ class Widget:
 
         Args:
             value: The multiplier to apply to the parent's width.
+
+        Returns:
+            The current relative_width.
         """
+
+        return self._relative_width
+
+    @relative_width.setter
+    def relative_width(self, value: float) -> None:
+        """See the relative_width getter."""
 
         self.size_policy = SizePolicy.RELATIVE
         self._relative_width = min(1.0, value)

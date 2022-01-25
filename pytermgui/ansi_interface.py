@@ -225,8 +225,7 @@ class Terminal:
     """
 
     margins = [0, 0, 0, 0]
-    """Not quite sure what this does at the moment, but it is here
-    for a good reason. Will update this docstring when I figure it out."""
+    """Not quite sure what this does at the moment."""
 
     def __init__(self) -> None:
         """Initialize `_Terminal` class."""
@@ -269,8 +268,9 @@ class Terminal:
         while True:
             n_width = get_terminal_size()
 
+            frame = inspect.currentframe()
             if n_width != self.size:
-                self._update_size(28, inspect.currentframe().f_back)
+                self._update_size(28, frame.f_back if frame is not None else None)
 
             await asyncio.sleep(interval)
 

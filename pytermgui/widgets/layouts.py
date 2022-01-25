@@ -365,6 +365,11 @@ class Container(Widget):
 
         Args:
             widget: The widget to update/base updates on.
+
+        Raises:
+            ValueError: Widget has SizePolicy.RELATIVE, but relative_width is None.
+            WidthExceededError: Widget and self both have static widths, and widget's
+                is larger than what is available.
         """
 
         available = (
@@ -376,6 +381,9 @@ class Container(Widget):
             return
 
         if widget.size_policy == SizePolicy.RELATIVE:
+            if widget.relative_width is None:
+                raise ValueError(f'Widget "{widget}"\'s relative width cannot be None.')
+
             widget.width = int(widget.relative_width * available)
             return
 
@@ -459,7 +467,7 @@ class Container(Widget):
             offset = real_length(left + right)
             return left + char * (self.width - offset) + right
 
-        lines = []
+        lines: list[str] = []
 
         style = self._get_style("border")
         borders = [style(char) for char in self._get_char("border")]
@@ -701,7 +709,7 @@ class Container(Widget):
         selectables_index = 0
         scrolled_pos = list(event.position)
         scrolled_pos[1] += self._scroll_offset
-        event.position = tuple(scrolled_pos)
+        event.position = (scrolled_pos[0], scrolled_pos[1])
 
         for widget in self._widgets:
             if widget.contains(event.position):
