@@ -145,7 +145,7 @@ class Serializer:
 
                 continue
 
-            if value.startswith("method:"):
+            if isinstance(value, str) and value.startswith("method:"):
                 name = value[7:]
 
                 if name not in self.bound_methods:
