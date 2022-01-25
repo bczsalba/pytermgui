@@ -102,7 +102,16 @@ most things are nicer-packaged combinations to already available methods from
 
 <span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">cursor_at</span><span class="p">(</span><span class="n">pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Get callable to print at `pos`, incrementing `y` on every print&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Gets callable to print at `pos`, incrementing `y` on every print.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pos: The position to start printing at. Follows the order (columns, rows).</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        A callable printing function. This function forwards all arguments to `print`,</span>
+<span class="sd">        but positions the cursor before doing so. After every call, the y position is</span>
+<span class="sd">        incremented.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">posx</span><span class="p">,</span> <span class="n">posy</span> <span class="o">=</span> <span class="n">pos</span>
@@ -125,9 +134,14 @@ most things are nicer-packaged combinations to already available methods from
 
 <span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">alt_buffer</span><span class="p">(</span><span class="n">echo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Create non-scrollable alt-buffer</span>
+    <span class="sd">&quot;&quot;&quot;Creates non-scrollable alt-buffer.</span>
 
-<span class="sd">    This is useful for retrieving original terminal state after program end.&quot;&quot;&quot;</span>
+<span class="sd">    This is useful for retrieving original terminal state after program end.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        echo: Whether `unset_echo` should be called on startup.</span>
+<span class="sd">        cursor: Whether `hide_cursor` should be called on startup.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">set_alt_buffer</span><span class="p">()</span>
@@ -158,12 +172,15 @@ most things are nicer-packaged combinations to already available methods from
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">MouseTranslator</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Return a mouse handler function</span>
 
-<span class="sd">    Note: This method only supports `decimal_urxvt` and `decimal_xterm`, as they are the most</span>
-<span class="sd">    universal.</span>
-
 <span class="sd">    See `help(report_mouse)` for help about all of the methods.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        events: A list of `pytermgui.ansi_interface.report_mouse` events.</span>
+<span class="sd">        method: The method to use for reporting. Only `decimal_urxvt` and</span>
+<span class="sd">            `decimal_xterm` are currently supported.</span>
+
 <span class="sd">    Example use:</span>
+
 <span class="sd">    ```python3</span>
 <span class="sd">    import pytermgui as ptg</span>
 
@@ -178,6 +195,7 @@ most things are nicer-packaged combinations to already available methods from
 <span class="sd">    &#39;pytermgui.ansi_interface.MouseAction.LEFT_CLICK&#39;</span>
 <span class="sd">    (33, 55)</span>
 <span class="sd">    ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
@@ -210,7 +228,16 @@ most things are nicer-packaged combinations to already available methods from
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">cursor_at</span><span class="p">(</span><span class="n">pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Get callable to print at `pos`, incrementing `y` on every print&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Gets callable to print at `pos`, incrementing `y` on every print.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pos: The position to start printing at. Follows the order (columns, rows).</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        A callable printing function. This function forwards all arguments to `print`,</span>
+<span class="sd">        but positions the cursor before doing so. After every call, the y position is</span>
+<span class="sd">        incremented.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">posx</span><span class="p">,</span> <span class="n">posy</span> <span class="o">=</span> <span class="n">pos</span>
@@ -233,7 +260,21 @@ most things are nicer-packaged combinations to already available methods from
 
         </details>
 
-            <div class="docstring"><p>Get callable to print at <code>pos</code>, incrementing <code>y</code> on every print</p>
+            <div class="docstring"><p>Gets callable to print at <code>pos</code>, incrementing <code>y</code> on every print.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>pos:</strong>  The position to start printing at. Follows the order (columns, rows).</li>
+</ul>
+
+<h6 id="yields">Yields</h6>
+
+<blockquote>
+  <p>A callable printing function. This function forwards all arguments to <code>print</code>,
+  but positions the cursor before doing so. After every call, the y position is
+  incremented.</p>
+</blockquote>
 </div>
 
 
@@ -254,9 +295,14 @@ most things are nicer-packaged combinations to already available methods from
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">alt_buffer</span><span class="p">(</span><span class="n">echo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Create non-scrollable alt-buffer</span>
+    <span class="sd">&quot;&quot;&quot;Creates non-scrollable alt-buffer.</span>
 
-<span class="sd">    This is useful for retrieving original terminal state after program end.&quot;&quot;&quot;</span>
+<span class="sd">    This is useful for retrieving original terminal state after program end.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        echo: Whether `unset_echo` should be called on startup.</span>
+<span class="sd">        cursor: Whether `hide_cursor` should be called on startup.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">set_alt_buffer</span><span class="p">()</span>
@@ -283,9 +329,16 @@ most things are nicer-packaged combinations to already available methods from
 
         </details>
 
-            <div class="docstring"><p>Create non-scrollable alt-buffer</p>
+            <div class="docstring"><p>Creates non-scrollable alt-buffer.</p>
 
 <p>This is useful for retrieving original terminal state after program end.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>echo:</strong>  Whether <code>unset_echo</code> should be called on startup.</li>
+<li><strong>cursor:</strong>  Whether <code>hide_cursor</code> should be called on startup.</li>
+</ul>
 </div>
 
 
@@ -310,12 +363,15 @@ most things are nicer-packaged combinations to already available methods from
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">MouseTranslator</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Return a mouse handler function</span>
 
-<span class="sd">    Note: This method only supports `decimal_urxvt` and `decimal_xterm`, as they are the most</span>
-<span class="sd">    universal.</span>
-
 <span class="sd">    See `help(report_mouse)` for help about all of the methods.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        events: A list of `pytermgui.ansi_interface.report_mouse` events.</span>
+<span class="sd">        method: The method to use for reporting. Only `decimal_urxvt` and</span>
+<span class="sd">            `decimal_xterm` are currently supported.</span>
+
 <span class="sd">    Example use:</span>
+
 <span class="sd">    ```python3</span>
 <span class="sd">    import pytermgui as ptg</span>
 
@@ -330,6 +386,7 @@ most things are nicer-packaged combinations to already available methods from
 <span class="sd">    &#39;pytermgui.ansi_interface.MouseAction.LEFT_CLICK&#39;</span>
 <span class="sd">    (33, 55)</span>
 <span class="sd">    ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
@@ -348,10 +405,15 @@ most things are nicer-packaged combinations to already available methods from
 
             <div class="docstring"><p>Return a mouse handler function</p>
 
-<p>Note: This method only supports <code>decimal_urxvt</code> and <code>decimal_xterm</code>, as they are the most
-universal.</p>
-
 <p>See <code>help(report_mouse)</code> for help about all of the methods.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>events:</strong>  A list of <code><a href="ansi_interface.html#report_mouse">pytermgui.ansi_interface.report_mouse</a></code> events.</li>
+<li><strong>method:</strong>  The method to use for reporting. Only <code>decimal_urxvt</code> and
+<code>decimal_xterm</code> are currently supported.</li>
+</ul>
 
 <p>Example use:</p>
 

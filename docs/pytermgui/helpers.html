@@ -79,25 +79,56 @@
 
 
 <span class="k">def</span> <span class="nf">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Remove ANSI sequences from `text`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Removes ANSI sequences from text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: A string or bytes object containing 0 or more ANSI sequences.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The text without any ANSI sequences.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">RE_ANSI</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">strip_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Remove markup tags from `text`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Removes markup tags from text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: A string or bytes object containing 0 or more markup tags.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The text without any markup tags.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">RE_MARKUP</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">real_length</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Convenience wrapper for `len(strip_ansi(text))`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Gets the display-length of text.</span>
+
+<span class="sd">    This length means no ANSI sequences are counted. This method is a convenience wrapper</span>
+<span class="sd">    for `len(strip_ansi(text))`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The text to calculate the length of.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The display-length of text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">get_sequences</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Extract ANSI sequences from `text`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Extracts ANSI sequences from text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The text to operate on.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        All sequences found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">sequences</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">markup</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -126,15 +157,24 @@
 <span class="k">def</span> <span class="nf">break_line</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
     <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">char</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Break a line into a `list[str]` with maximum `limit` length per line</span>
+    <span class="sd">&quot;&quot;&quot;Breaks a line into a `list[str]` with maximum `limit` length per line.</span>
 
 <span class="sd">    ANSI sequences are not counted into the length, and styling stays consistent</span>
 <span class="sd">    even between lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        line: The line to break up.</span>
+<span class="sd">        limit: The maximum width of a line, counting with `real_length`.</span>
+<span class="sd">        char: The character that separates words. Defaults to a space.</span>
+
 <span class="sd">    Note:</span>
 <span class="sd">        This function currently does NOT handle literal newlines (&quot;\\n&quot;), instead</span>
 <span class="sd">        chosing to throw them away. You can get around this by splitting your text</span>
-<span class="sd">        by newlines prior to handing it to `break_line`.&quot;&quot;&quot;</span>
+<span class="sd">        by newlines prior to handing it to `break_line`.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        Lines of maximum limit real_length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># TODO: Refactor this method &amp; handle newlines, avoid pylint disables.</span>
 
@@ -236,14 +276,33 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Remove ANSI sequences from `text`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Removes ANSI sequences from text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: A string or bytes object containing 0 or more ANSI sequences.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The text without any ANSI sequences.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">RE_ANSI</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Remove ANSI sequences from <code>text</code></p>
+            <div class="docstring"><p>Removes ANSI sequences from text.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>text:</strong>  A string or bytes object containing 0 or more ANSI sequences.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The text without any ANSI sequences.</p>
+</blockquote>
 </div>
 
 
@@ -259,14 +318,33 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">strip_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Remove markup tags from `text`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Removes markup tags from text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: A string or bytes object containing 0 or more markup tags.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The text without any markup tags.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">RE_MARKUP</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Remove markup tags from <code>text</code></p>
+            <div class="docstring"><p>Removes markup tags from text.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>text:</strong>  A string or bytes object containing 0 or more markup tags.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The text without any markup tags.</p>
+</blockquote>
 </div>
 
 
@@ -282,14 +360,39 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">real_length</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Convenience wrapper for `len(strip_ansi(text))`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Gets the display-length of text.</span>
+
+<span class="sd">    This length means no ANSI sequences are counted. This method is a convenience wrapper</span>
+<span class="sd">    for `len(strip_ansi(text))`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The text to calculate the length of.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The display-length of text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Convenience wrapper for <code>len(strip_ansi(text))</code></p>
+            <div class="docstring"><p>Gets the display-length of text.</p>
+
+<p>This length means no ANSI sequences are counted. This method is a convenience wrapper
+for <code>len(strip_ansi(text))</code>.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>text:</strong>  The text to calculate the length of.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The display-length of text.</p>
+</blockquote>
 </div>
 
 
@@ -305,7 +408,14 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_sequences</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Extract ANSI sequences from `text`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Extracts ANSI sequences from text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The text to operate on.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        All sequences found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">sequences</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">markup</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -333,7 +443,19 @@
 
         </details>
 
-            <div class="docstring"><p>Extract ANSI sequences from <code>text</code></p>
+            <div class="docstring"><p>Extracts ANSI sequences from text.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>text:</strong>  The text to operate on.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>All sequences found.</p>
+</blockquote>
 </div>
 
 
@@ -351,15 +473,24 @@
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">break_line</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
     <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">char</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Break a line into a `list[str]` with maximum `limit` length per line</span>
+    <span class="sd">&quot;&quot;&quot;Breaks a line into a `list[str]` with maximum `limit` length per line.</span>
 
 <span class="sd">    ANSI sequences are not counted into the length, and styling stays consistent</span>
 <span class="sd">    even between lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        line: The line to break up.</span>
+<span class="sd">        limit: The maximum width of a line, counting with `real_length`.</span>
+<span class="sd">        char: The character that separates words. Defaults to a space.</span>
+
 <span class="sd">    Note:</span>
 <span class="sd">        This function currently does NOT handle literal newlines (&quot;\\n&quot;), instead</span>
 <span class="sd">        chosing to throw them away. You can get around this by splitting your text</span>
-<span class="sd">        by newlines prior to handing it to `break_line`.&quot;&quot;&quot;</span>
+<span class="sd">        by newlines prior to handing it to `break_line`.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        Lines of maximum limit real_length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># TODO: Refactor this method &amp; handle newlines, avoid pylint disables.</span>
 
@@ -449,15 +580,32 @@
 
         </details>
 
-            <div class="docstring"><p>Break a line into a <code>list[str]</code> with maximum <code>limit</code> length per line</p>
+            <div class="docstring"><p>Breaks a line into a <code>list[str]</code> with maximum <code>limit</code> length per line.</p>
 
 <p>ANSI sequences are not counted into the length, and styling stays consistent
 even between lines.</p>
 
-<p>Note:
-    This function currently does NOT handle literal newlines ("\n"), instead
-    chosing to throw them away. You can get around this by splitting your text
-    by newlines prior to handing it to <code><a href="#break_line">break_line</a></code>.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>line:</strong>  The line to break up.</li>
+<li><strong>limit:</strong>  The maximum width of a line, counting with <code><a href="#real_length">real_length</a></code>.</li>
+<li><strong>char:</strong>  The character that separates words. Defaults to a space.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This function currently does NOT handle literal newlines ("\n"), instead
+  chosing to throw them away. You can get around this by splitting your text
+  by newlines prior to handing it to <code><a href="#break_line">break_line</a></code>.</p>
+</blockquote>
+
+<h6 id="yields">Yields</h6>
+
+<blockquote>
+  <p>Lines of maximum limit real_length.</p>
+</blockquote>
 </div>
 
 

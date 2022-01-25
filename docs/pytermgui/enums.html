@@ -47,16 +47,46 @@
 
             </li>
             <li>
-                    <a class="class" href="#WidgetAlignment">WidgetAlignment</a>
+                    <a class="class" href="#CenteringPolicy">CenteringPolicy</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#WidgetAlignment.LEFT">LEFT</a>
+                                <a class="variable" href="#CenteringPolicy.ALL">ALL</a>
                         </li>
                         <li>
-                                <a class="variable" href="#WidgetAlignment.CENTER">CENTER</a>
+                                <a class="variable" href="#CenteringPolicy.VERTICAL">VERTICAL</a>
                         </li>
                         <li>
-                                <a class="variable" href="#WidgetAlignment.RIGHT">RIGHT</a>
+                                <a class="variable" href="#CenteringPolicy.HORIZONTAL">HORIZONTAL</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#HorizontalAlignment">HorizontalAlignment</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#HorizontalAlignment.LEFT">LEFT</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HorizontalAlignment.CENTER">CENTER</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#HorizontalAlignment.RIGHT">RIGHT</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#VerticalAlignment">VerticalAlignment</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#VerticalAlignment.TOP">TOP</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#VerticalAlignment.CENTER">CENTER</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#VerticalAlignment.BOTTOM">BOTTOM</a>
                         </li>
                 </ul>
 
@@ -110,11 +140,17 @@ the globally set default value.</p>
 
 <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">IntEnum</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">IntEnum</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SizePolicy&quot;</span><span class="p">,</span> <span class="s2">&quot;WidgetAlignment&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;SizePolicy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CenteringPolicy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SizePolicy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HorizontalAlignment&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;VerticalAlignment&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 
 
 <span class="k">class</span> <span class="nc">DefaultEnum</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An Enum class that can return its default value&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;An Enum class that can return its default value.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntEnum</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -124,40 +160,88 @@ the globally set default value.</p>
 
 
 <span class="k">class</span> <span class="nc">SizePolicy</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Values according to which Widget sizes are assigned&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Values according to which Widget sizes are assigned.&quot;&quot;&quot;</span>
 
-    <span class="n">FILL</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Inner widget will take up as much width as possible&quot;&quot;&quot;</span>
+    <span class="n">FILL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Inner widget will take up as much width as possible.&quot;&quot;&quot;</span>
 
-    <span class="n">STATIC</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Inner widget will take up an exact amount of width&quot;&quot;&quot;</span>
+    <span class="n">STATIC</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;Inner widget will take up an exact amount of width.&quot;&quot;&quot;</span>
 
-    <span class="n">RELATIVE</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>  <span class="c1"># TODO: Implement this</span>
-    <span class="sd">&quot;&quot;&quot;Not implemented: Inner widget will take up a percentage of the available width&quot;&quot;&quot;</span>
+    <span class="n">RELATIVE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;Inner widget will take up widget.relative_width * available</span>
+<span class="sd">    space.&quot;&quot;&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">CenteringPolicy</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Policies to center `Container` according to&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Policies to center `Container` according to.&quot;&quot;&quot;</span>
 
     <span class="n">ALL</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
     <span class="n">HORIZONTAL</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
 
 
-<span class="k">class</span> <span class="nc">WidgetAlignment</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Policies to align widgets by</span>
+<span class="k">class</span> <span class="nc">HorizontalAlignment</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Policies to align widgets by.</span>
 
 <span class="sd">    These are applied by the parent object, and are</span>
 <span class="sd">    relative to them.&quot;&quot;&quot;</span>
 
     <span class="n">LEFT</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Align widget to the left edge.&quot;&quot;&quot;</span>
+
     <span class="n">CENTER</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;Center widget in the available width.&quot;&quot;&quot;</span>
+
     <span class="n">RIGHT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;Align widget to the right edge.&quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">VerticalAlignment</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Vertical alignment options for widgets.&quot;&quot;&quot;</span>
+
+    <span class="n">TOP</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Align widgets to the top&quot;&quot;&quot;</span>
+
+    <span class="n">CENTER</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;Align widgets in the center, with equal* padding on the top and bottom.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        When the available height is not divisible by 2, the extra line of padding</span>
+<span class="sd">        is added to the bottom.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">BOTTOM</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;Align widgets to the bottom.&quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">Overflow</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overflow policies implemented by Container.&quot;&quot;&quot;</span>
+
+    <span class="n">HIDE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Stop gathering lines once there is no room left.&quot;&quot;&quot;</span>
+
+    <span class="n">SCROLL</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;Allow scrolling when there is too many lines.&quot;&quot;&quot;</span>
+
+    <span class="n">RESIZE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;Resize parent to fit with the new lines.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        When applied to a window, this prevents resizing its height</span>
+<span class="sd">        using the bottom border.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: Implement Overflow.AUTO</span>
+    <span class="n">AUTO</span> <span class="o">=</span> <span class="mi">9999</span>
+    <span class="sd">&quot;&quot;&quot;NotImplemented&quot;&quot;&quot;</span>
 
 
 <span class="n">defaults</span><span class="p">[</span><span class="n">SizePolicy</span><span class="p">]</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">FILL</span>
 <span class="n">defaults</span><span class="p">[</span><span class="n">CenteringPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="n">CenteringPolicy</span><span class="o">.</span><span class="n">ALL</span>
-<span class="n">defaults</span><span class="p">[</span><span class="n">WidgetAlignment</span><span class="p">]</span> <span class="o">=</span> <span class="n">WidgetAlignment</span><span class="o">.</span><span class="n">CENTER</span>
+<span class="n">defaults</span><span class="p">[</span><span class="n">HorizontalAlignment</span><span class="p">]</span> <span class="o">=</span> <span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">CENTER</span>
+<span class="n">defaults</span><span class="p">[</span><span class="n">VerticalAlignment</span><span class="p">]</span> <span class="o">=</span> <span class="n">VerticalAlignment</span><span class="o">.</span><span class="n">CENTER</span>
+<span class="n">defaults</span><span class="p">[</span><span class="n">Overflow</span><span class="p">]</span> <span class="o">=</span> <span class="n">Overflow</span><span class="o">.</span><span class="n">RESIZE</span>
 </pre></div>
 
         </details>
@@ -175,31 +259,32 @@ the globally set default value.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SizePolicy</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Values according to which Widget sizes are assigned&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Values according to which Widget sizes are assigned.&quot;&quot;&quot;</span>
 
-    <span class="n">FILL</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Inner widget will take up as much width as possible&quot;&quot;&quot;</span>
+    <span class="n">FILL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Inner widget will take up as much width as possible.&quot;&quot;&quot;</span>
 
-    <span class="n">STATIC</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Inner widget will take up an exact amount of width&quot;&quot;&quot;</span>
+    <span class="n">STATIC</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;Inner widget will take up an exact amount of width.&quot;&quot;&quot;</span>
 
-    <span class="n">RELATIVE</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>  <span class="c1"># TODO: Implement this</span>
-    <span class="sd">&quot;&quot;&quot;Not implemented: Inner widget will take up a percentage of the available width&quot;&quot;&quot;</span>
+    <span class="n">RELATIVE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;Inner widget will take up widget.relative_width * available</span>
+<span class="sd">    space.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Values according to which Widget sizes are assigned</p>
+            <div class="docstring"><p>Values according to which Widget sizes are assigned.</p>
 </div>
 
 
                             <div id="SizePolicy.FILL" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#SizePolicy.FILL">#&nbsp;&nbsp</a>
 
-        <span class="name">FILL</span><span class="default_value"> = &lt;<a href="#SizePolicy.FILL">SizePolicy.FILL</a>: 1&gt;</span>
+        <span class="name">FILL</span><span class="default_value"> = &lt;<a href="#SizePolicy.FILL">SizePolicy.FILL</a>: 0&gt;</span>
     </div>
 
-            <div class="docstring"><p>Inner widget will take up as much width as possible</p>
+            <div class="docstring"><p>Inner widget will take up as much width as possible.</p>
 </div>
 
 
@@ -207,10 +292,10 @@ the globally set default value.</p>
                             <div id="SizePolicy.STATIC" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#SizePolicy.STATIC">#&nbsp;&nbsp</a>
 
-        <span class="name">STATIC</span><span class="default_value"> = &lt;<a href="#SizePolicy.STATIC">SizePolicy.STATIC</a>: 2&gt;</span>
+        <span class="name">STATIC</span><span class="default_value"> = &lt;<a href="#SizePolicy.STATIC">SizePolicy.STATIC</a>: 1&gt;</span>
     </div>
 
-            <div class="docstring"><p>Inner widget will take up an exact amount of width</p>
+            <div class="docstring"><p>Inner widget will take up an exact amount of width.</p>
 </div>
 
 
@@ -218,10 +303,11 @@ the globally set default value.</p>
                             <div id="SizePolicy.RELATIVE" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#SizePolicy.RELATIVE">#&nbsp;&nbsp</a>
 
-        <span class="name">RELATIVE</span><span class="default_value"> = &lt;<a href="#SizePolicy.RELATIVE">SizePolicy.RELATIVE</a>: 3&gt;</span>
+        <span class="name">RELATIVE</span><span class="default_value"> = &lt;<a href="#SizePolicy.RELATIVE">SizePolicy.RELATIVE</a>: 2&gt;</span>
     </div>
 
-            <div class="docstring"><p>Not implemented: Inner widget will take up a percentage of the available width</p>
+            <div class="docstring"><p>Inner widget will take up widget.relative_width * available
+space.</p>
 </div>
 
 
@@ -253,59 +339,53 @@ the globally set default value.</p>
                                 </dl>
                             </div>
                 </section>
-                <section id="WidgetAlignment">
+                <section id="CenteringPolicy">
                                 <div class="attr class">
-        <a class="headerlink" href="#WidgetAlignment">#&nbsp;&nbsp</a>
+        <a class="headerlink" href="#CenteringPolicy">#&nbsp;&nbsp</a>
 
         
         <span class="def">class</span>
-        <span class="name">WidgetAlignment</span><wbr>(<span class="base"><a href="#DefaultEnum">DefaultEnum</a></span>):
+        <span class="name">CenteringPolicy</span><wbr>(<span class="base"><a href="#DefaultEnum">DefaultEnum</a></span>):
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">WidgetAlignment</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Policies to align widgets by</span>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CenteringPolicy</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Policies to center `Container` according to.&quot;&quot;&quot;</span>
 
-<span class="sd">    These are applied by the parent object, and are</span>
-<span class="sd">    relative to them.&quot;&quot;&quot;</span>
-
-    <span class="n">LEFT</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">CENTER</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">RIGHT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">ALL</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
+    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
+    <span class="n">HORIZONTAL</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Policies to align widgets by</p>
-
-<p>These are applied by the parent object, and are
-relative to them.</p>
+            <div class="docstring"><p>Policies to center <code>Container</code> according to.</p>
 </div>
 
 
-                            <div id="WidgetAlignment.LEFT" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#WidgetAlignment.LEFT">#&nbsp;&nbsp</a>
+                            <div id="CenteringPolicy.ALL" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CenteringPolicy.ALL">#&nbsp;&nbsp</a>
 
-        <span class="name">LEFT</span><span class="default_value"> = &lt;<a href="#WidgetAlignment.LEFT">WidgetAlignment.LEFT</a>: 0&gt;</span>
+        <span class="name">ALL</span><span class="default_value"> = &lt;<a href="#CenteringPolicy.ALL">CenteringPolicy.ALL</a>: 1&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="WidgetAlignment.CENTER" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#WidgetAlignment.CENTER">#&nbsp;&nbsp</a>
+                            <div id="CenteringPolicy.VERTICAL" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CenteringPolicy.VERTICAL">#&nbsp;&nbsp</a>
 
-        <span class="name">CENTER</span><span class="default_value"> = &lt;<a href="#WidgetAlignment.CENTER">WidgetAlignment.CENTER</a>: 1&gt;</span>
+        <span class="name">VERTICAL</span><span class="default_value"> = &lt;<a href="#CenteringPolicy.VERTICAL">CenteringPolicy.VERTICAL</a>: 2&gt;</span>
     </div>
 
     
 
                             </div>
-                            <div id="WidgetAlignment.RIGHT" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#WidgetAlignment.RIGHT">#&nbsp;&nbsp</a>
+                            <div id="CenteringPolicy.HORIZONTAL" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#CenteringPolicy.HORIZONTAL">#&nbsp;&nbsp</a>
 
-        <span class="name">RIGHT</span><span class="default_value"> = &lt;<a href="#WidgetAlignment.RIGHT">WidgetAlignment.RIGHT</a>: 2&gt;</span>
+        <span class="name">HORIZONTAL</span><span class="default_value"> = &lt;<a href="#CenteringPolicy.HORIZONTAL">CenteringPolicy.HORIZONTAL</a>: 3&gt;</span>
     </div>
 
     
@@ -315,24 +395,222 @@ relative to them.</p>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="#DefaultEnum">DefaultEnum</a></dt>
-                                <dd id="WidgetAlignment.get_default" class="function"><a href="#DefaultEnum.get_default">get_default</a></dd>
+                                <dd id="CenteringPolicy.get_default" class="function"><a href="#DefaultEnum.get_default">get_default</a></dd>
 
             </div>
             <div><dt>enum.Enum</dt>
-                                <dd id="WidgetAlignment.name" class="variable">name</dd>
-                <dd id="WidgetAlignment.value" class="variable">value</dd>
+                                <dd id="CenteringPolicy.name" class="variable">name</dd>
+                <dd id="CenteringPolicy.value" class="variable">value</dd>
 
             </div>
             <div><dt>builtins.int</dt>
-                                <dd id="WidgetAlignment.conjugate" class="function">conjugate</dd>
-                <dd id="WidgetAlignment.bit_length" class="function">bit_length</dd>
-                <dd id="WidgetAlignment.to_bytes" class="function">to_bytes</dd>
-                <dd id="WidgetAlignment.from_bytes" class="function">from_bytes</dd>
-                <dd id="WidgetAlignment.as_integer_ratio" class="function">as_integer_ratio</dd>
-                <dd id="WidgetAlignment.real" class="variable">real</dd>
-                <dd id="WidgetAlignment.imag" class="variable">imag</dd>
-                <dd id="WidgetAlignment.numerator" class="variable">numerator</dd>
-                <dd id="WidgetAlignment.denominator" class="variable">denominator</dd>
+                                <dd id="CenteringPolicy.conjugate" class="function">conjugate</dd>
+                <dd id="CenteringPolicy.bit_length" class="function">bit_length</dd>
+                <dd id="CenteringPolicy.to_bytes" class="function">to_bytes</dd>
+                <dd id="CenteringPolicy.from_bytes" class="function">from_bytes</dd>
+                <dd id="CenteringPolicy.as_integer_ratio" class="function">as_integer_ratio</dd>
+                <dd id="CenteringPolicy.real" class="variable">real</dd>
+                <dd id="CenteringPolicy.imag" class="variable">imag</dd>
+                <dd id="CenteringPolicy.numerator" class="variable">numerator</dd>
+                <dd id="CenteringPolicy.denominator" class="variable">denominator</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="HorizontalAlignment">
+                                <div class="attr class">
+        <a class="headerlink" href="#HorizontalAlignment">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">HorizontalAlignment</span><wbr>(<span class="base"><a href="#DefaultEnum">DefaultEnum</a></span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">HorizontalAlignment</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Policies to align widgets by.</span>
+
+<span class="sd">    These are applied by the parent object, and are</span>
+<span class="sd">    relative to them.&quot;&quot;&quot;</span>
+
+    <span class="n">LEFT</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Align widget to the left edge.&quot;&quot;&quot;</span>
+
+    <span class="n">CENTER</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;Center widget in the available width.&quot;&quot;&quot;</span>
+
+    <span class="n">RIGHT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;Align widget to the right edge.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Policies to align widgets by.</p>
+
+<p>These are applied by the parent object, and are
+relative to them.</p>
+</div>
+
+
+                            <div id="HorizontalAlignment.LEFT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HorizontalAlignment.LEFT">#&nbsp;&nbsp</a>
+
+        <span class="name">LEFT</span><span class="default_value"> = &lt;<a href="#HorizontalAlignment.LEFT">HorizontalAlignment.LEFT</a>: 0&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Align widget to the left edge.</p>
+</div>
+
+
+                            </div>
+                            <div id="HorizontalAlignment.CENTER" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HorizontalAlignment.CENTER">#&nbsp;&nbsp</a>
+
+        <span class="name">CENTER</span><span class="default_value"> = &lt;<a href="#HorizontalAlignment.CENTER">HorizontalAlignment.CENTER</a>: 1&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Center widget in the available width.</p>
+</div>
+
+
+                            </div>
+                            <div id="HorizontalAlignment.RIGHT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#HorizontalAlignment.RIGHT">#&nbsp;&nbsp</a>
+
+        <span class="name">RIGHT</span><span class="default_value"> = &lt;<a href="#HorizontalAlignment.RIGHT">HorizontalAlignment.RIGHT</a>: 2&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Align widget to the right edge.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#DefaultEnum">DefaultEnum</a></dt>
+                                <dd id="HorizontalAlignment.get_default" class="function"><a href="#DefaultEnum.get_default">get_default</a></dd>
+
+            </div>
+            <div><dt>enum.Enum</dt>
+                                <dd id="HorizontalAlignment.name" class="variable">name</dd>
+                <dd id="HorizontalAlignment.value" class="variable">value</dd>
+
+            </div>
+            <div><dt>builtins.int</dt>
+                                <dd id="HorizontalAlignment.conjugate" class="function">conjugate</dd>
+                <dd id="HorizontalAlignment.bit_length" class="function">bit_length</dd>
+                <dd id="HorizontalAlignment.to_bytes" class="function">to_bytes</dd>
+                <dd id="HorizontalAlignment.from_bytes" class="function">from_bytes</dd>
+                <dd id="HorizontalAlignment.as_integer_ratio" class="function">as_integer_ratio</dd>
+                <dd id="HorizontalAlignment.real" class="variable">real</dd>
+                <dd id="HorizontalAlignment.imag" class="variable">imag</dd>
+                <dd id="HorizontalAlignment.numerator" class="variable">numerator</dd>
+                <dd id="HorizontalAlignment.denominator" class="variable">denominator</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="VerticalAlignment">
+                                <div class="attr class">
+        <a class="headerlink" href="#VerticalAlignment">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">VerticalAlignment</span><wbr>(<span class="base"><a href="#DefaultEnum">DefaultEnum</a></span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">VerticalAlignment</span><span class="p">(</span><span class="n">DefaultEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Vertical alignment options for widgets.&quot;&quot;&quot;</span>
+
+    <span class="n">TOP</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Align widgets to the top&quot;&quot;&quot;</span>
+
+    <span class="n">CENTER</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;Align widgets in the center, with equal* padding on the top and bottom.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        When the available height is not divisible by 2, the extra line of padding</span>
+<span class="sd">        is added to the bottom.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">BOTTOM</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;Align widgets to the bottom.&quot;&quot;&quot;</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Vertical alignment options for widgets.</p>
+</div>
+
+
+                            <div id="VerticalAlignment.TOP" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#VerticalAlignment.TOP">#&nbsp;&nbsp</a>
+
+        <span class="name">TOP</span><span class="default_value"> = &lt;<a href="#VerticalAlignment.TOP">VerticalAlignment.TOP</a>: 0&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Align widgets to the top</p>
+</div>
+
+
+                            </div>
+                            <div id="VerticalAlignment.CENTER" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#VerticalAlignment.CENTER">#&nbsp;&nbsp</a>
+
+        <span class="name">CENTER</span><span class="default_value"> = &lt;<a href="#VerticalAlignment.CENTER">VerticalAlignment.CENTER</a>: 1&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Align widgets in the center, with equal* padding on the top and bottom.</p>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>When the available height is not divisible by 2, the extra line of padding
+  is added to the bottom.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="VerticalAlignment.BOTTOM" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#VerticalAlignment.BOTTOM">#&nbsp;&nbsp</a>
+
+        <span class="name">BOTTOM</span><span class="default_value"> = &lt;<a href="#VerticalAlignment.BOTTOM">VerticalAlignment.BOTTOM</a>: 2&gt;</span>
+    </div>
+
+            <div class="docstring"><p>Align widgets to the bottom.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#DefaultEnum">DefaultEnum</a></dt>
+                                <dd id="VerticalAlignment.get_default" class="function"><a href="#DefaultEnum.get_default">get_default</a></dd>
+
+            </div>
+            <div><dt>enum.Enum</dt>
+                                <dd id="VerticalAlignment.name" class="variable">name</dd>
+                <dd id="VerticalAlignment.value" class="variable">value</dd>
+
+            </div>
+            <div><dt>builtins.int</dt>
+                                <dd id="VerticalAlignment.conjugate" class="function">conjugate</dd>
+                <dd id="VerticalAlignment.bit_length" class="function">bit_length</dd>
+                <dd id="VerticalAlignment.to_bytes" class="function">to_bytes</dd>
+                <dd id="VerticalAlignment.from_bytes" class="function">from_bytes</dd>
+                <dd id="VerticalAlignment.as_integer_ratio" class="function">as_integer_ratio</dd>
+                <dd id="VerticalAlignment.real" class="variable">real</dd>
+                <dd id="VerticalAlignment.imag" class="variable">imag</dd>
+                <dd id="VerticalAlignment.numerator" class="variable">numerator</dd>
+                <dd id="VerticalAlignment.denominator" class="variable">denominator</dd>
 
             </div>
                                 </dl>

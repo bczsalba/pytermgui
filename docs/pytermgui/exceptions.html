@@ -93,16 +93,16 @@
 
 
 <span class="k">class</span> <span class="nc">WidthExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when an element&#39;s width is larger than the screen&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when an element&#39;s width is larger than the screen.&quot;&quot;&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">LineLengthError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when a widget line is not the expected length&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when a widget line is not the expected length.&quot;&quot;&quot;</span>
 
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">ParserSyntaxError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parent exception for unparsable strings</span>
+    <span class="sd">&quot;&quot;&quot;Parent exception for unparsable strings.</span>
 
 <span class="sd">    This exception takes some basic parameters, and formats</span>
 <span class="sd">    a message depending on the _delimiters value. This has to</span>
@@ -116,7 +116,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create message from tag, context and cause&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Create message from tag, context and cause.&quot;&quot;&quot;</span>
 
         <span class="n">escaped_context</span> <span class="o">=</span> <span class="n">ascii</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
         <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delimiters</span>
@@ -131,19 +131,19 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">char</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">char</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Show message&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Show message.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
 
 
 <span class="k">class</span> <span class="nc">MarkupSyntaxError</span><span class="p">(</span><span class="n">ParserSyntaxError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when parsed markup text contains an error&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when parsed markup text contains an error.&quot;&quot;&quot;</span>
 
     <span class="n">_delimiters</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">AnsiSyntaxError</span><span class="p">(</span><span class="n">ParserSyntaxError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when parsed ANSI text contains an error&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when parsed ANSI text contains an error.&quot;&quot;&quot;</span>
 
     <span class="n">_delimiters</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">x1b[&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">)</span>
 </pre></div>
@@ -163,12 +163,12 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">WidthExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when an element&#39;s width is larger than the screen&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when an element&#39;s width is larger than the screen.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Raised when an element's width is larger than the screen</p>
+            <div class="docstring"><p>Raised when an element's width is larger than the screen.</p>
 </div>
 
 
@@ -199,12 +199,12 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">LineLengthError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when a widget line is not the expected length&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when a widget line is not the expected length.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Raised when a widget line is not the expected length</p>
+            <div class="docstring"><p>Raised when a widget line is not the expected length.</p>
 </div>
 
 
@@ -235,14 +235,14 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AnsiSyntaxError</span><span class="p">(</span><span class="n">ParserSyntaxError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when parsed ANSI text contains an error&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when parsed ANSI text contains an error.&quot;&quot;&quot;</span>
 
     <span class="n">_delimiters</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">x1b[&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Raised when parsed ANSI text contains an error</p>
+            <div class="docstring"><p>Raised when parsed ANSI text contains an error.</p>
 </div>
 
 
@@ -275,14 +275,14 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MarkupSyntaxError</span><span class="p">(</span><span class="n">ParserSyntaxError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when parsed markup text contains an error&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when parsed markup text contains an error.&quot;&quot;&quot;</span>
 
     <span class="n">_delimiters</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Raised when parsed markup text contains an error</p>
+            <div class="docstring"><p>Raised when parsed markup text contains an error.</p>
 </div>
 
 

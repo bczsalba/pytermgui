@@ -121,7 +121,14 @@ of the interesting parts of pytermgui.</p>
 
 
 <span class="k">def</span> <span class="nf">_get_key_name</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Get canonical name of a key&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Gets canonical name of a key.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        key: The key in question.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The canonical-ish name of the key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">keys</span><span class="o">.</span><span class="n">get_name</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -131,20 +138,25 @@ of the interesting parts of pytermgui.</p>
 
 
 <span class="k">class</span> <span class="nc">Application</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A class representing an application&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A class representing an application.&quot;&quot;&quot;</span>
 
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">standalone</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">:</span> <span class="n">WindowManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initializes Application.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            manager: The WindowManager instance this application</span>
+<span class="sd">                belongs to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_update_widgets</span><span class="p">(</span><span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update window widgets, using auto() method for each&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update window widgets, using auto() method for each.&quot;&quot;&quot;</span>
 
         <span class="n">window</span><span class="o">.</span><span class="n">set_widgets</span><span class="p">([])</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
@@ -152,25 +164,29 @@ of the interesting parts of pytermgui.</p>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Print output information on Application finish</span>
+        <span class="sd">&quot;&quot;&quot;Prints output information on Application finish.</span>
 
 <span class="sd">        This is called by the main method after self.manager exits.</span>
 
 <span class="sd">        In order to support `standalone` mode, the Application should</span>
 <span class="sd">        call `_request_exit()` once it is done with its duty. This method</span>
-<span class="sd">        is called directly after.&quot;&quot;&quot;</span>
+<span class="sd">        is called directly after.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window: The window object calling this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">construct_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Construct an application window&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Constructs an application window.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_request_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Send a request to the manager parent to stop execution&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Send a request to the manager parent to stop execution.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_get_base_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get window with basic &amp; universal settings applied&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get window with basic &amp; universal settings applied.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="s2">&quot;title&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
             <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; [bold wm-title]&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
@@ -179,13 +195,19 @@ of the interesting parts of pytermgui.</p>
 
 
 <span class="k">class</span> <span class="nc">LauncherApplication</span><span class="p">(</span><span class="n">Application</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Application that launches other apps&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Application that launches other apps.&quot;&quot;&quot;</span>
 
     <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Launcher&quot;</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Launch other apps&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">:</span> <span class="n">WindowManager</span><span class="p">,</span> <span class="n">apps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Application</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initialize LauncherApplication.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            manager: The WindowManager instance this application</span>
+<span class="sd">                belongs to.</span>
+<span class="sd">            apps: A list of Application type objects that this window will contain.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
 
@@ -196,20 +218,17 @@ of the interesting parts of pytermgui.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">apps</span> <span class="o">=</span> <span class="n">instantiated_apps</span>
 
     <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Do nothing on finish&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Do nothing on finish.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">construct_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Construct an application window&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Constructs an application window.&quot;&quot;&quot;</span>
 
         <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_base_window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">is_noblur</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
         <span class="n">manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span>
 
         <span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">apps</span><span class="p">:</span>
             <span class="n">button</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
-            <span class="n">button</span><span class="o">.</span><span class="n">onclick</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">button</span><span class="o">=</span><span class="n">button</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-                <span class="n">button</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">construct_window</span><span class="p">()</span>
-            <span class="p">)</span>
-            <span class="n">button</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">onclick</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,:</span> <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">construct_window</span><span class="p">())</span>
             <span class="n">window</span> <span class="o">+=</span> <span class="n">button</span>
 
         <span class="n">window</span> <span class="o">+=</span> <span class="s2">&quot;&quot;</span>
@@ -220,13 +239,13 @@ of the interesting parts of pytermgui.</p>
 
 
 <span class="k">class</span> <span class="nc">GetchApplication</span><span class="p">(</span><span class="n">Application</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Application for the getch() utility&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Application for the getch() utility.&quot;&quot;&quot;</span>
 
     <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Getch&quot;</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;See your keypresses&quot;</span>
 
     <span class="k">def</span> <span class="nf">_key_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Edit `window` state if `key` is pressed&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Edits `window` state if `key` is pressed.&quot;&quot;&quot;</span>
 
         <span class="c1"># Don&#39;t display mouse codes</span>
         <span class="k">if</span> <span class="p">(</span>
@@ -244,7 +263,7 @@ of the interesting parts of pytermgui.</p>
             <span class="p">{</span><span class="s2">&quot;[wm-section]real_length()&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">real_length</span><span class="p">(</span><span class="n">key</span><span class="p">))},</span>
         <span class="p">]</span>
 
-        <span class="n">window</span><span class="o">.</span><span class="n">forced_width</span> <span class="o">=</span> <span class="mi">40</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">static_width</span> <span class="o">=</span> <span class="mi">40</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_widgets</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">standalone</span><span class="p">:</span>
@@ -256,13 +275,13 @@ of the interesting parts of pytermgui.</p>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Dump getch() output to stdout on finish&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Dumps getch() output to stdout on finish.&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">window</span><span class="o">.</span><span class="n">get_lines</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">construct_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Construct an application window&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Constructs an application window.&quot;&quot;&quot;</span>
 
         <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_base_window</span><span class="p">(</span><span class="n">is_modal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;[wm-title]Press any key...&quot;</span>
         <span class="n">window</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span>
@@ -282,7 +301,7 @@ of the interesting parts of pytermgui.</p>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_tokens</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get all tokens using the parser&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets all tokens using the parser.&quot;&quot;&quot;</span>
 
         <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">markup</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
@@ -292,7 +311,7 @@ of the interesting parts of pytermgui.</p>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_update_value</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">InputField</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update output value</span>
+        <span class="sd">&quot;&quot;&quot;Updates output value.</span>
 
 <span class="sd">        This shows parsed markup if parsing succeeded, SyntaxError otherwise.&quot;&quot;&quot;</span>
 
@@ -304,7 +323,7 @@ of the interesting parts of pytermgui.</p>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_style_wrapper</span><span class="p">(</span><span class="n">_</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Catch MarkupSyntaxError&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Catches MarkupSyntaxError.&quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># TODO: Reintroduce prettify_markup</span>
@@ -318,7 +337,7 @@ of the interesting parts of pytermgui.</p>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_define_colors</span><span class="p">(</span><span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Re-generate colors for guide&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Re-generates colors for guide.&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">_random_hex</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Return a random hex number&quot;&quot;&quot;</span>
@@ -331,7 +350,7 @@ of the interesting parts of pytermgui.</p>
         <span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;demo-rgb&quot;</span><span class="p">,</span> <span class="n">_random_hex</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Dump output markup to stdout on finish&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Dumps output markup to stdout on finish.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -342,10 +361,10 @@ of the interesting parts of pytermgui.</p>
         <span class="nb">print</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">output_label</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">construct_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Construct an application window&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Constructs an application window.&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="sd">&quot;&quot;&quot;Dump lines of window and exit program&quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;Dumps lines of window and exits program.&quot;&quot;&quot;</span>
 
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;dump&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
                 <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()))</span>
@@ -371,12 +390,12 @@ of the interesting parts of pytermgui.</p>
         <span class="n">corners</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot; [wm-title]tokens[/] &quot;</span>
         <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; [wm-title]colors[60] &quot;</span> <span class="o">+</span> <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="n">guide</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">forced_width</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span><span class="o">.</span><span class="n">set_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">,</span> <span class="n">corners</span><span class="p">)</span>
+        <span class="n">guide</span> <span class="o">=</span> <span class="n">Container</span><span class="p">()</span><span class="o">.</span><span class="n">set_char</span><span class="p">(</span><span class="s2">&quot;corner&quot;</span><span class="p">,</span> <span class="n">corners</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">token</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">zip_longest</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">fillvalue</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
             <span class="n">guide</span> <span class="o">+=</span> <span class="p">{</span><span class="n">token</span><span class="p">:</span> <span class="n">color</span><span class="p">}</span>
 
-        <span class="n">custom_tags</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">forced_width</span><span class="o">=</span><span class="mi">56</span><span class="p">)</span>
+        <span class="n">custom_tags</span> <span class="o">=</span> <span class="n">Container</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span>
             <span class="n">markup</span><span class="o">.</span><span class="n">user_tags</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="p">):</span>
@@ -387,8 +406,8 @@ of the interesting parts of pytermgui.</p>
         <span class="n">guide</span> <span class="o">+=</span> <span class="n">custom_tags</span>
 
         <span class="n">window</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_get_base_window</span><span class="p">(</span><span class="n">resizable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="o">+</span> <span class="n">Container</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">parent_align</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;output_label&quot;</span><span class="p">),</span> <span class="n">forced_width</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_base_window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span> <span class="n">resizable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">Container</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">parent_align</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;output_label&quot;</span><span class="p">))</span>
             <span class="o">+</span> <span class="n">guide</span>
             <span class="o">+</span> <span class="n">Label</span><span class="p">(</span>
                 <span class="s2">&quot;[247 italic]&gt; Tip: Press CTRL_R to randomize colors&quot;</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="mi">0</span>
@@ -468,7 +487,7 @@ of the interesting parts of pytermgui.</p>
 
 
 <span class="k">def</span> <span class="nf">run_wm</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Run WindowManager using args&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Runs WindowManager using args.&quot;&quot;&quot;</span>
 
     <span class="c1"># This is used for finding Application from arguments</span>
     <span class="n">app_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;getch&quot;</span><span class="p">:</span> <span class="n">GetchApplication</span><span class="p">,</span> <span class="s2">&quot;markapp&quot;</span><span class="p">:</span> <span class="n">MarkupApplication</span><span class="p">}</span>
@@ -531,7 +550,7 @@ of the interesting parts of pytermgui.</p>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Main method&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Main method.&quot;&quot;&quot;</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Command line interface &amp; demo for some utilities related to TUI development.&quot;</span>
@@ -581,10 +600,6 @@ of the interesting parts of pytermgui.</p>
         <span class="k">return</span>
 
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PyTermGUI v</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Python: </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Platform: </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Credit to: https://stackoverflow.com/a/21901260</span>
             <span class="n">git_hash</span> <span class="o">=</span> <span class="p">(</span>
@@ -595,10 +610,24 @@ of the interesting parts of pytermgui.</p>
                 <span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Git commit: </span><span class="si">{</span><span class="n">git_hash</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">latest_tag_hash</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;rev-parse&quot;</span><span class="p">,</span> <span class="s2">&quot;--short&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;v</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
+                    <span class="n">cwd</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Git commit: Could not determine due to </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">git_hash</span> <span class="o">=</span> <span class="s2">&quot;Could not determine due to {type(error).__name__}.&quot;</span>
+            <span class="n">latest_tag_hash</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PyTermGUI v</span><span class="si">{</span><span class="n">__version__</span><span class="si">}{</span><span class="s1">&#39;+&#39;</span> <span class="k">if</span> <span class="n">latest_tag_hash</span> <span class="o">!=</span> <span class="n">git_hash</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Python: </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Platform: </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Git commit: </span><span class="si">{</span><span class="n">git_hash</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span>
 
@@ -647,20 +676,25 @@ of the interesting parts of pytermgui.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Application</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A class representing an application&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A class representing an application.&quot;&quot;&quot;</span>
 
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">standalone</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">:</span> <span class="n">WindowManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initializes Application.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            manager: The WindowManager instance this application</span>
+<span class="sd">                belongs to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_update_widgets</span><span class="p">(</span><span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update window widgets, using auto() method for each&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update window widgets, using auto() method for each.&quot;&quot;&quot;</span>
 
         <span class="n">window</span><span class="o">.</span><span class="n">set_widgets</span><span class="p">([])</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
@@ -668,25 +702,29 @@ of the interesting parts of pytermgui.</p>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Print output information on Application finish</span>
+        <span class="sd">&quot;&quot;&quot;Prints output information on Application finish.</span>
 
 <span class="sd">        This is called by the main method after self.manager exits.</span>
 
 <span class="sd">        In order to support `standalone` mode, the Application should</span>
 <span class="sd">        call `_request_exit()` once it is done with its duty. This method</span>
-<span class="sd">        is called directly after.&quot;&quot;&quot;</span>
+<span class="sd">        is called directly after.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window: The window object calling this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">construct_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Construct an application window&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Constructs an application window.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_request_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Send a request to the manager parent to stop execution&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Send a request to the manager parent to stop execution.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_get_base_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get window with basic &amp; universal settings applied&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get window with basic &amp; universal settings applied.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="s2">&quot;title&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
             <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; [bold wm-title]&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
@@ -696,7 +734,7 @@ of the interesting parts of pytermgui.</p>
 
         </details>
 
-            <div class="docstring"><p>A class representing an application</p>
+            <div class="docstring"><p>A class representing an application.</p>
 </div>
 
 
@@ -710,14 +748,26 @@ of the interesting parts of pytermgui.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">:</span> <span class="n">WindowManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initializes Application.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            manager: The WindowManager instance this application</span>
+<span class="sd">                belongs to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Initialize object</p>
+            <div class="docstring"><p>Initializes Application.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>manager:</strong>  The WindowManager instance this application
+belongs to.</li>
+</ul>
 </div>
 
 
@@ -744,24 +794,34 @@ of the interesting parts of pytermgui.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Print output information on Application finish</span>
+        <span class="sd">&quot;&quot;&quot;Prints output information on Application finish.</span>
 
 <span class="sd">        This is called by the main method after self.manager exits.</span>
 
 <span class="sd">        In order to support `standalone` mode, the Application should</span>
 <span class="sd">        call `_request_exit()` once it is done with its duty. This method</span>
-<span class="sd">        is called directly after.&quot;&quot;&quot;</span>
+<span class="sd">        is called directly after.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window: The window object calling this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Print output information on Application finish</p>
+            <div class="docstring"><p>Prints output information on Application finish.</p>
 
 <p>This is called by the main method after self.manager exits.</p>
 
 <p>In order to support <code><a href="#Application.standalone">standalone</a></code> mode, the Application should
 call <code>_request_exit()</code> once it is done with its duty. This method
 is called directly after.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>window:</strong>  The window object calling this method.</li>
+</ul>
 </div>
 
 
@@ -779,12 +839,12 @@ is called directly after.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">construct_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Construct an application window&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Constructs an application window.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Construct an application window</p>
+            <div class="docstring"><p>Constructs an application window.</p>
 </div>
 
 

@@ -247,17 +247,20 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span> <span class="k">as</span> <span class="n">_auto</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">stdout</span> <span class="k">as</span> <span class="n">_stdout</span>
 <span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">hexdigits</span>
-<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">_run</span><span class="p">,</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">name</span> <span class="k">as</span> <span class="n">_name</span><span class="p">,</span> <span class="n">get_terminal_size</span><span class="p">,</span> <span class="n">system</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">name</span> <span class="k">as</span> <span class="n">_name</span><span class="p">,</span> <span class="n">system</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">get_terminal_size</span>
 
 <span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span>
 
+<span class="n">_IS_NT</span> <span class="o">=</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;Color&quot;</span><span class="p">,</span>
@@ -319,6 +322,20 @@
 <span class="sd">    - `str`: Name of one of the registered named colors. See `Color.names`.</span>
 <span class="sd">    - `#rrggbb`: RGB hex string. Note: alpha values are not supported.</span>
 <span class="sd">    - `tuple[int, int]`: Tuple of RGB colors, each 0-256.</span>
+
+<span class="sd">    When calling an instance of the class, the following args are set:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The string that will be colored.</span>
+<span class="sd">        color: The color specifier.</span>
+<span class="sd">        reset_color: A boolean that determines whether the returned value should</span>
+<span class="sd">            end with a reset code. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The colored string.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: Unrecognized color specifier was passed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">ColorType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
@@ -347,10 +364,15 @@
 <span class="sd">    `pytermgui.parser.MarkupLanguage.alias`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Initialize object</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Color object.</span>
 
-<span class="sd">        `layer` can be either 0 or 1. This value determines whether the instance</span>
-<span class="sd">        will represent foreground or background colors.&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            layer: One of [0, 1]. Objects instantiated with 0 will represent foreground</span>
+<span class="sd">                colors, while objects instantiated with 1 will display background ones.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: Invalid layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">layer</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer </span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s2"> can only be one of [0, 1].&quot;</span><span class="p">)</span>
@@ -359,7 +381,16 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">translate_hex</span><span class="p">(</span><span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Translate hex string of format #RRGGBB into an RGB tuple of integers&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Translates a hex string of format #RRGGBB into an RGB tuple of integers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            color: The hexadecimal string to convert. Must follow the format #RRGGBB, where</span>
+<span class="sd">                capitalization is optional.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple of integers, 0-255 each, standing for red, green and blue values in that</span>
+<span class="sd">            order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">color</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
@@ -372,15 +403,7 @@
         <span class="k">return</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">ColorType</span><span class="p">,</span> <span class="n">reset_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Color a piece of text using `color`.</span>
-
-<span class="sd">        The color can be one of 4 formats:</span>
-<span class="sd">            - str colorname:   One of the predifined named colors. See the names dict.</span>
-<span class="sd">            - int 0-256:       One of the 256 terminal colors.</span>
-<span class="sd">            - str #RRGGBB:     CSS-style HEX string, without alpha.</span>
-<span class="sd">            - tuple (0-256, 0-256, 0-256): Tuple of integers, representing an RGB color.</span>
-
-<span class="sd">        If `reset_color` is set a reset sequence is inserted at the end.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Colors a piece of text. See help(Color) for more info.&quot;&quot;&quot;</span>
 
         <span class="c1"># convert hex string to tuple[int, int, int]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
@@ -420,87 +443,108 @@
 
 
 <span class="n">foreground</span> <span class="o">=</span> <span class="n">Color</span><span class="p">()</span>
-<span class="sd">&quot;&quot;&quot;`Color` instance to setting foreground colors&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;`Color` instance for setting foreground colors.&quot;&quot;&quot;</span>
 
-<span class="n">background</span> <span class="o">=</span> <span class="n">Color</span><span class="p">(</span><span class="n">layer</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="sd">&quot;&quot;&quot;`Color` instance to setting background colors&quot;&quot;&quot;</span>
-
-
-<span class="k">def</span> <span class="nf">screen_size</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Get screen size using the os module</span>
-
-<span class="sd">    This is technically possible using a method of moving the</span>
-<span class="sd">    cursor to an impossible location, and using `report_cursor()`</span>
-<span class="sd">    to get where the position was clamped. This however messes</span>
-<span class="sd">    with the cursor position and printing gets a bit glitchy.&quot;&quot;&quot;</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">get_terminal_size</span><span class="p">()</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
-
-    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">error</span><span class="o">.</span><span class="n">errno</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">25</span><span class="p">):</span>
-            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-
-        <span class="k">raise</span>
+<span class="n">background</span> <span class="o">=</span> <span class="n">Color</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;`Color` instance for setting background colors.&quot;&quot;&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">_Terminal</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A class to store &amp; access data about a terminal&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">Terminal</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A class to store &amp; access data about a terminal.&quot;&quot;&quot;</span>
 
     <span class="n">RESIZE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Event sent out when the terminal has been resized.</span>
+
+<span class="sd">    Arguments passed:</span>
+<span class="sd">    - New size: tuple[int, int]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">margins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;Not quite sure what this does at the moment, but it is here</span>
+<span class="sd">    for a good reason. Will update this docstring when I figure it out.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initialize `_Terminal` class.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="c1"># TODO: Windows doesn&#39;t support SIGWINCH, is there another alternative?</span>
+        <span class="c1"># Unix systems</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="s2">&quot;SIGWINCH&quot;</span><span class="p">):</span>
             <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGWINCH</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_size</span><span class="p">)</span>
 
+        <span class="c1"># Windows</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_alt_sigwinch</span><span class="p">())</span>
+
     <span class="k">def</span> <span class="nf">_call_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Call event callback is one is found.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Calls callbacks for event.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event: A terminal event.</span>
+<span class="sd">            data: Arbitrary data passed to the callback.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]:</span>
                 <span class="n">callback</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_alt_sigwinch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Platform-ambigous SIGWINCH implementation.</span>
+
+<span class="sd">        This works asynchronously, inkeeping with the official</span>
+<span class="sd">        implementation, and calls the same handler as `signal`&#39;s</span>
+<span class="sd">        would.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            interval: How often updates should be checked for.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">n_width</span> <span class="o">=</span> <span class="n">get_terminal_size</span><span class="p">()</span>
+
+            <span class="n">frame</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">n_width</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_update_size</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span><span class="p">)</span>
+
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_get_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get screen size while substracting the origin position&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets the screen size with origin substracted.&quot;&quot;&quot;</span>
 
         <span class="c1"># This always has len() == 2, but mypy can&#39;t see that.</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">val</span> <span class="o">-</span> <span class="n">org</span> <span class="k">for</span> <span class="n">val</span><span class="p">,</span> <span class="n">org</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">screen_size</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">val</span> <span class="o">-</span> <span class="n">org</span> <span class="k">for</span> <span class="n">val</span><span class="p">,</span> <span class="n">org</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">get_terminal_size</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="nf">_update_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Resize terminal when SIGWINCH occurs.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            SIGWINCH is not supported on Windows, so this isn&#39;t called.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Resize terminal when SIGWINCH occurs, and call listeners.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_call_listener</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get width of terminal&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets the current width of the terminal.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get height of terminal&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets the current height of the terminal.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Subscribe a callback function to an event</span>
+        <span class="sd">&quot;&quot;&quot;Subcribes a callback to be called when event occurs.</span>
 
-<span class="sd">        The callback takes an event-specific argument payload:</span>
-<span class="sd">            RESIZE: tuple[int, int] - New screen size&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            event: The terminal event that calls callback.</span>
+<span class="sd">            callback: The callable to be called. The signature of this</span>
+<span class="sd">                callable is dependent on the event. See the documentation</span>
+<span class="sd">                of the specific event for more information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -508,7 +552,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flush</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Fill entire terminal with a color&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Fills the entire terminal with the given color.</span>
+
+<span class="sd">        This is more of a debug function than anything, as performance is not the</span>
+<span class="sd">        greatest.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            color: An integer for the color to fill in. Must be in the 0-255 xterm</span>
+<span class="sd">                color range.</span>
+<span class="sd">            flush: Whether stdout should be flushed. Defaults to True, but setting</span>
+<span class="sd">                it False can be beneficial for performance, as long as you flush in</span>
+<span class="sd">                some other place.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">height</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">):</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
@@ -519,75 +574,66 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
 
-<span class="n">terminal</span> <span class="o">=</span> <span class="n">_Terminal</span><span class="p">()</span>
+<span class="n">terminal</span> <span class="o">=</span> <span class="n">Terminal</span><span class="p">()</span>
 
 <span class="c1"># helpers</span>
-<span class="k">def</span> <span class="nf">_tput</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Shorthand for tput calls&quot;&quot;&quot;</span>
-
-    <span class="n">waited_commands</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;clear&quot;</span><span class="p">,</span> <span class="s2">&quot;smcup&quot;</span><span class="p">,</span> <span class="s2">&quot;cup&quot;</span><span class="p">]</span>
-
-    <span class="n">command</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;tput&quot;</span><span class="p">)</span>
-    <span class="n">str_command</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">command</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">waited_commands</span><span class="p">:</span>
-        <span class="n">_run</span><span class="p">(</span><span class="n">str_command</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span>
-
-    <span class="c1"># A with statement here would result in `pass`, so is unnecessary.</span>
-    <span class="n">_Popen</span><span class="p">(</span><span class="n">str_command</span><span class="p">)</span>  <span class="c1"># pylint: disable=consider-using-with</span>
+<span class="c1"># EDIT: removed `_tcup` function since we don&#39;t need it anymore.</span>
+<span class="c1"># I replaced it with ANSI sequences</span>
 
 
 <span class="k">def</span> <span class="nf">is_interactive</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Determine whether shell is interactive.</span>
+    <span class="sd">&quot;&quot;&quot;Determines whether shell is interactive.</span>
 
-<span class="sd">    A shell is interactive if it is run from `python3` or `python3 -i`.&quot;&quot;&quot;</span>
+<span class="sd">    A shell is interactive if it is run from `python3` or `python3 -i`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">)</span>
 
 
 <span class="c1"># screen commands</span>
 <span class="k">def</span> <span class="nf">save_screen</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Save the contents of the screen, wipe.</span>
+    <span class="sd">&quot;&quot;&quot;Saves the contents of the screen, and wipes it.</span>
 
-<span class="sd">    Use `restore_screen()` to get them back.&quot;&quot;&quot;</span>
+<span class="sd">    Use `restore_screen()` to get them back.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># print(&quot;\x1b[?47h&quot;)</span>
-    <span class="n">_tput</span><span class="p">([</span><span class="s2">&quot;smcup&quot;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?47h&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">restore_screen</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Restore the contents of the screen saved by `save_screen()`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Restores the contents of the screen saved by `save_screen()`.&quot;&quot;&quot;</span>
 
-    <span class="c1"># print(&quot;\x1b[?47l&quot;)</span>
-    <span class="n">_tput</span><span class="p">([</span><span class="s2">&quot;rmcup&quot;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?47l&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">set_alt_buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start alternate buffer</span>
+    <span class="sd">&quot;&quot;&quot;Starts an alternate buffer.</span>
 
-<span class="sd">    Note: This buffer is unscrollable.&quot;&quot;&quot;</span>
+<span class="sd">    Note that this buffer is unscrollable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?1049h&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">unset_alt_buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return to main buffer from alt, restoring its original state&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns to main buffer, restoring its original state.&quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?1049l&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="n">what</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;screen&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Clear specified region</span>
+    <span class="sd">&quot;&quot;&quot;Clears the specified screen region.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        what: The specifier defining the screen area.</span>
 
 <span class="sd">    Available options:</span>
-<span class="sd">    - `screen` - clear whole screen and go to origin</span>
-<span class="sd">    - `bos` - clear screen from cursor backwards</span>
-<span class="sd">    - `eos` - clear screen from cursor forwards</span>
-<span class="sd">    - `line` - clear line and go to beginning</span>
-<span class="sd">    - `bol` - clear line from cursor backwards</span>
-<span class="sd">    - `eol` - clear line from cursor forwards</span>
-
+<span class="sd">    * screen: clear whole screen and go to origin</span>
+<span class="sd">    * bos: clear screen from cursor backwards</span>
+<span class="sd">    * eos: clear screen from cursor forwards</span>
+<span class="sd">    * line: clear line and go to beginning</span>
+<span class="sd">    * bol: clear line from cursor backwards</span>
+<span class="sd">    * eol: clear line from cursor forwards</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">commands</span> <span class="o">=</span> <span class="p">{</span>
@@ -604,37 +650,43 @@
 
 <span class="c1"># cursor commands</span>
 <span class="k">def</span> <span class="nf">hide_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Stop printing cursor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Stops printing the cursor.&quot;&quot;&quot;</span>
 
-    <span class="c1"># _tput([&#39;civis&#39;])</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?25l&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">show_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start printing cursor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Starts printing the cursor.&quot;&quot;&quot;</span>
 
-    <span class="c1"># _tput([&#39;cvvis&#39;])</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?25h&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">save_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Save cursor position.</span>
+    <span class="sd">&quot;&quot;&quot;Saves the current cursor position.</span>
 
-<span class="sd">    Use `restore_cursor()` to restore it.&quot;&quot;&quot;</span>
+<span class="sd">    Use `restore_cursor()` to restore it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># _tput([&#39;sc&#39;])</span>
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[s&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">restore_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Restore cursor position saved by `save_cursor()`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Restore cursor position as saved by `save_cursor`.&quot;&quot;&quot;</span>
 
-    <span class="c1"># _tput([&#39;rc&#39;])</span>
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[u&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">report_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Get position of cursor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Gets position of cursor.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple of integers, (columns, rows), describing the</span>
+<span class="sd">        current (printing) cursor&#39;s position. Returns None if</span>
+<span class="sd">        this could not be determined.</span>
+
+<span class="sd">        Note that this position is **not** the mouse position. See</span>
+<span class="sd">        `report_mouse` if that is what you are interested in.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[6n&quot;</span><span class="p">)</span>
     <span class="n">chars</span> <span class="o">=</span> <span class="n">getch</span><span class="p">()</span>
@@ -647,113 +699,156 @@
 
 
 <span class="k">def</span> <span class="nf">move_cursor</span><span class="p">(</span><span class="n">pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to `pos`.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor.</span>
 
-<span class="sd">    Note:</span>
-<span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        pos: Tuple of (columns, rows) that the cursor will be moved to.</span>
+
+<span class="sd">    This does not flush the terminal for performance reasons. You</span>
+<span class="sd">    can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">posx</span><span class="p">,</span> <span class="n">posy</span> <span class="o">=</span> <span class="n">pos</span>
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">posy</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">posx</span><span class="si">}</span><span class="s2">H&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cursor_up</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor up by `num` lines.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor up by `num` lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        num: How many lines the cursor should move by. Must be positive,</span>
+<span class="sd">            to move in the opposite direction use `cursor_down`.</span>
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">A&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cursor_down</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor down by `num` lines.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor up by `num` lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        num: How many lines the cursor should move by. Must be positive,</span>
+<span class="sd">            to move in the opposite direction use `cursor_up`.</span>
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">B&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cursor_right</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor left by `num` cols.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor right by `num` lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        num: How many characters the cursor should move by. Must be positive,</span>
+<span class="sd">            to move in the opposite direction use `cursor_left`.</span>
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">C&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cursor_left</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor left by `num` cols.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor left by `num` lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        num: How many characters the cursor should move by. Must be positive,</span>
+<span class="sd">            to move in the opposite direction use `cursor_right`.</span>
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">D&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cursor_next_line</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to beginning of `num`-th line down.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor to the beginning of the `num`-th line downwards.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num: The amount the cursor should move by. Must be positive, to move</span>
+<span class="sd">            in the opposite direction use `cursor_prev_line`.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">E&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cursor_prev_line</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to beginning of `num`-th line down.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor to the beginning of the `num`-th line upwards.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num: The amount the cursor should move by. Must be positive, to move</span>
+<span class="sd">            in the opposite direction use `cursor_next_line`.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">F&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cursor_column</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to `num`-th column in the current line.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor to the `num`-th character of the current line.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num: The new cursor position.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">G&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">cursor_home</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to `terminal.origin`.</span>
+    <span class="sd">&quot;&quot;&quot;Moves cursor to `terminal.origin`.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[H&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">set_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Set terminal display mode</span>
+    <span class="sd">&quot;&quot;&quot;Sets terminal display mode.</span>
 
-<span class="sd">    Available options:</span>
-<span class="sd">    - 0 - `reset`</span>
-<span class="sd">    - 1 - `bold`</span>
-<span class="sd">    - 2 - `dim`</span>
-<span class="sd">    - 3 - `italic`</span>
-<span class="sd">    - 4 - `underline`</span>
-<span class="sd">    - 5 - `blink`</span>
-<span class="sd">    - 7 - `inverse`</span>
-<span class="sd">    - 8 - `invisible`</span>
-<span class="sd">    - 9 - `strikethrough`</span>
-<span class="sd">    - 53 - `overline`</span>
+<span class="sd">    This is better left internal. To use these modes, you can call their</span>
+<span class="sd">    specific functions, such as `bold(&quot;text&quot;)` or `italic(&quot;text&quot;)`.</span>
 
-<span class="sd">    You can use both the digit and text forms, though you should really be</span>
-<span class="sd">    using one of the specific setters, like `bold` or `italic`.&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        mode: One of the available modes. Strings and integers both work.</span>
+<span class="sd">        write: Boolean that determines whether the output should be written</span>
+<span class="sd">            to stdout.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A string that sets the given mode.</span>
+
+<span class="sd">    Available modes:</span>
+<span class="sd">        - 0: reset</span>
+<span class="sd">        - 1: bold</span>
+<span class="sd">        - 2: dim</span>
+<span class="sd">        - 3: italic</span>
+<span class="sd">        - 4: underline</span>
+<span class="sd">        - 5: blink</span>
+<span class="sd">        - 7: inverse</span>
+<span class="sd">        - 8: invisible</span>
+<span class="sd">        - 9: strikethrough</span>
+<span class="sd">        - 53: overline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;reset&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -779,9 +874,11 @@
 
 
 <span class="k">def</span> <span class="nf">set_echo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start echoing user input</span>
+    <span class="sd">&quot;&quot;&quot;Starts echoing of user input.</span>
 
-<span class="sd">    Note: This is only available on POSIX&quot;&quot;&quot;</span>
+<span class="sd">    Note:</span>
+<span class="sd">        This is currently only available on POSIX.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
         <span class="k">return</span>
@@ -790,9 +887,11 @@
 
 
 <span class="k">def</span> <span class="nf">unset_echo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Stop echoing user input</span>
+    <span class="sd">&quot;&quot;&quot;Stops echoing of user input.</span>
 
-<span class="sd">    Note: This is only available on POSIX&quot;&quot;&quot;</span>
+<span class="sd">    Note:</span>
+<span class="sd">        This is currently only available on POSIX.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
         <span class="k">return</span>
@@ -804,30 +903,31 @@
     <span class="sd">&quot;&quot;&quot;An enumeration of all the polled mouse actions&quot;&quot;&quot;</span>
 
     <span class="n">LEFT_CLICK</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Start of a left button action sequence&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Start of a left button action sequence.&quot;&quot;&quot;</span>
 
     <span class="n">LEFT_DRAG</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse moved while left button was held down&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse moved while left button was held down.&quot;&quot;&quot;</span>
 
     <span class="n">RIGHT_CLICK</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Start of a right button action sequence&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Start of a right button action sequence.&quot;&quot;&quot;</span>
 
     <span class="n">RIGHT_DRAG</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse moved while right button was held down&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse moved while right button was held down.&quot;&quot;&quot;</span>
 
     <span class="n">SCROLL_UP</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse wheel or touchpad scroll upwards&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse wheel or touchpad scroll upwards.&quot;&quot;&quot;</span>
 
     <span class="n">SCROLL_DOWN</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse wheel or touchpad scroll downwards&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse wheel or touchpad scroll downwards.&quot;&quot;&quot;</span>
 
     <span class="n">HOVER</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse moved without clicking</span>
+    <span class="sd">&quot;&quot;&quot;Mouse moved without clicking.</span>
 
-<span class="sd">    Note: This only gets registered when hover events are listened to&quot;&quot;&quot;</span>
+<span class="sd">    Note:</span>
+<span class="sd">        This only gets registered when hover events are listened to.&quot;&quot;&quot;</span>
 
     <span class="n">RELEASE</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse button released; end of any and all mouse action sequences&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse button released; end of any and all mouse action sequences.&quot;&quot;&quot;</span>
 
 
 <span class="nd">@dataclass</span>
@@ -876,26 +976,38 @@
 <span class="k">def</span> <span class="nf">report_mouse</span><span class="p">(</span>
     <span class="n">event</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;decimal_xterm&quot;</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start reporting mouse events.</span>
+    <span class="sd">&quot;&quot;&quot;Starts reporting of mouse events.</span>
 
-<span class="sd">    Options:</span>
-<span class="sd">    - `press`</span>
-<span class="sd">    - `highlight`</span>
-<span class="sd">    - `press_hold`</span>
-<span class="sd">    - `hover`</span>
+<span class="sd">    You can specify multiple events to report on.</span>
 
-<span class="sd">    Methods:</span>
-<span class="sd">    - `None`:          Limited in coordinates, not recommended.</span>
-<span class="sd">    - `decimal_xterm`: Default, most universal</span>
-<span class="sd">    - `decimal_urxvt`: Older, less compatible</span>
-<span class="sd">    - `decimal_utf8`:  Apparently not too stable</span>
+<span class="sd">    Args:</span>
+<span class="sd">        event: The type of event to report on. See below for options.</span>
+<span class="sd">        method: The method of reporting to use. See below for options.</span>
+<span class="sd">        stop: If set to True, the stopping code is written to stdout.</span>
 
-<span class="sd">    More information &lt;a href=&#39;https://stackoverflow.com/a/5970472&#39;&gt;here&lt;/a&gt;.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: The given event is not supported.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        If you need this functionality, you&#39;re probably better off using the wrapper</span>
 <span class="sd">        `pytermgui.context_managers.mouse_handler`, which allows listening on multiple</span>
 <span class="sd">        events, gives a translator method and handles exceptions.</span>
+
+<span class="sd">    Possible events:</span>
+<span class="sd">        - **press**: Report when the mouse is clicked, left or right button.</span>
+<span class="sd">        - **highlight**: Report highlighting.</span>
+<span class="sd">        - **press_hold**: Report with a left or right click, as well as both</span>
+<span class="sd">            left &amp; right drag and release.</span>
+<span class="sd">        - **hover**: Report even when no active action is done, only the mouse</span>
+<span class="sd">          is moved.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        - **None**: Non-decimal xterm method. Limited in coordinates.</span>
+<span class="sd">        - **decimal_xterm**: The default setting. Most universally supported.</span>
+<span class="sd">        - **decimal_urxvt**: Older, less compatible, but useful on some systems.</span>
+<span class="sd">        - **decimal_utf8**:  Apparently not too stable.</span>
+
+<span class="sd">    More information &lt;a href=&#39;https://stackoverflow.com/a/5970472&#39;&gt;here&lt;/a&gt;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;press&quot;</span><span class="p">:</span>
@@ -935,10 +1047,18 @@
 
 
 <span class="k">def</span> <span class="nf">translate_mouse</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">MouseEvent</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Translate the output of produced by setting report_mouse codes into MouseEvent-s.</span>
+    <span class="sd">&quot;&quot;&quot;Translates the output of produced by setting `report_mouse` into MouseEvents.</span>
 
-<span class="sd">    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more</span>
-<span class="sd">    information.&quot;&quot;&quot;</span>
+<span class="sd">    This method currently only supports `decimal_xterm` and `decimal_urxvt`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        code: The string of mouse code(s) to translate.</span>
+<span class="sd">        method: The reporting method to translate. One of [`decimal_xterm`, `decimal_urxvt`].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of optional mouse events obtained from the code argument. If the code was malformed,</span>
+<span class="sd">        and no codes could be determined None is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">mouse_codes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;decimal_xterm&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -958,7 +1078,7 @@
             <span class="s2">&quot;34&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">RIGHT_CLICK</span><span class="p">,</span>
             <span class="s2">&quot;35&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">RELEASE</span><span class="p">,</span>
             <span class="s2">&quot;64&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">LEFT_DRAG</span><span class="p">,</span>
-            <span class="s2">&quot;66&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">RIGHT_CLICK</span><span class="p">,</span>
+            <span class="s2">&quot;66&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">RIGHT_DRAG</span><span class="p">,</span>
             <span class="s2">&quot;96&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_UP</span><span class="p">,</span>
             <span class="s2">&quot;97&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_DOWN</span><span class="p">,</span>
         <span class="p">},</span>
@@ -973,7 +1093,7 @@
             <span class="k">continue</span>
 
         <span class="n">matches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">sequence</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">matches</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
@@ -998,75 +1118,130 @@
 
 <span class="c1"># shorthand functions</span>
 <span class="k">def</span> <span class="nf">print_to</span><span class="p">(</span><span class="n">pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Print text to given `pos`.</span>
+    <span class="sd">&quot;&quot;&quot;Prints text to given `pos`.</span>
 
-<span class="sd">    This passes through all arguments (except for `pos`) to the `print`</span>
-<span class="sd">    method.&quot;&quot;&quot;</span>
+<span class="sd">    Note:</span>
+<span class="sd">        This method passes through all arguments (except for `pos`) to the `print`</span>
+<span class="sd">        method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">move_cursor</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">reset</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Reset printing mode&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Resets printing mode.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset</span>
+<span class="sd">            character should be appended to the end of the</span>
+<span class="sd">            string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">bold</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text in bold&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text in bold.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text in dim&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text in dim.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;dim&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">italic</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text in italic&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text in italic.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;italic&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">underline</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text underlined&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text underlined.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;underline&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">blink</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text blinking&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text blinking.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;blink&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text inverse-colored&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text inverse-colored.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;inverse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">invisible</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text as invisible</span>
+    <span class="sd">&quot;&quot;&quot;Returns text as invisible.</span>
 
-<span class="sd">    Note: This isn&#39;t very widely supported&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This isn&#39;t very widely supported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;invisible&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">strikethrough</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text as strikethrough&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return text as strikethrough.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;strikethrough&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">overline</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text overlined</span>
+    <span class="sd">&quot;&quot;&quot;Return text overlined.</span>
 
-<span class="sd">    Note: This isnt&#39; very widely supported&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This isnt&#39; very widely supported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;overline&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1099,6 +1274,20 @@
 <span class="sd">    - `str`: Name of one of the registered named colors. See `Color.names`.</span>
 <span class="sd">    - `#rrggbb`: RGB hex string. Note: alpha values are not supported.</span>
 <span class="sd">    - `tuple[int, int]`: Tuple of RGB colors, each 0-256.</span>
+
+<span class="sd">    When calling an instance of the class, the following args are set:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The string that will be colored.</span>
+<span class="sd">        color: The color specifier.</span>
+<span class="sd">        reset_color: A boolean that determines whether the returned value should</span>
+<span class="sd">            end with a reset code. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The colored string.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: Unrecognized color specifier was passed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">ColorType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
@@ -1127,10 +1316,15 @@
 <span class="sd">    `pytermgui.parser.MarkupLanguage.alias`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Initialize object</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Color object.</span>
 
-<span class="sd">        `layer` can be either 0 or 1. This value determines whether the instance</span>
-<span class="sd">        will represent foreground or background colors.&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            layer: One of [0, 1]. Objects instantiated with 0 will represent foreground</span>
+<span class="sd">                colors, while objects instantiated with 1 will display background ones.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: Invalid layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">layer</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer </span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s2"> can only be one of [0, 1].&quot;</span><span class="p">)</span>
@@ -1139,7 +1333,16 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">translate_hex</span><span class="p">(</span><span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Translate hex string of format #RRGGBB into an RGB tuple of integers&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Translates a hex string of format #RRGGBB into an RGB tuple of integers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            color: The hexadecimal string to convert. Must follow the format #RRGGBB, where</span>
+<span class="sd">                capitalization is optional.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple of integers, 0-255 each, standing for red, green and blue values in that</span>
+<span class="sd">            order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">color</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
@@ -1152,15 +1355,7 @@
         <span class="k">return</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">ColorType</span><span class="p">,</span> <span class="n">reset_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Color a piece of text using `color`.</span>
-
-<span class="sd">        The color can be one of 4 formats:</span>
-<span class="sd">            - str colorname:   One of the predifined named colors. See the names dict.</span>
-<span class="sd">            - int 0-256:       One of the 256 terminal colors.</span>
-<span class="sd">            - str #RRGGBB:     CSS-style HEX string, without alpha.</span>
-<span class="sd">            - tuple (0-256, 0-256, 0-256): Tuple of integers, representing an RGB color.</span>
-
-<span class="sd">        If `reset_color` is set a reset sequence is inserted at the end.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Colors a piece of text. See help(Color) for more info.&quot;&quot;&quot;</span>
 
         <span class="c1"># convert hex string to tuple[int, int, int]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
@@ -1216,6 +1411,29 @@ data type representing a color. The following patterns are supported:</p>
 <li><code>#rrggbb</code>: RGB hex string. Note: alpha values are not supported.</li>
 <li><code>tuple[int, int]</code>: Tuple of RGB colors, each 0-256.</li>
 </ul>
+
+<p>When calling an instance of the class, the following args are set:</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>text:</strong>  The string that will be colored.</li>
+<li><strong>color:</strong>  The color specifier.</li>
+<li><strong>reset_color:</strong>  A boolean that determines whether the returned value should
+end with a reset code. Defaults to True.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The colored string.</p>
+</blockquote>
+
+<h6 id="raises">Raises</h6>
+
+<ul>
+<li><strong>NotImplementedError:</strong>  Unrecognized color specifier was passed.</li>
+</ul>
 </div>
 
 
@@ -1229,10 +1447,15 @@ data type representing a color. The following patterns are supported:</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Initialize object</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Color object.</span>
 
-<span class="sd">        `layer` can be either 0 or 1. This value determines whether the instance</span>
-<span class="sd">        will represent foreground or background colors.&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            layer: One of [0, 1]. Objects instantiated with 0 will represent foreground</span>
+<span class="sd">                colors, while objects instantiated with 1 will display background ones.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: Invalid layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">layer</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer </span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s2"> can only be one of [0, 1].&quot;</span><span class="p">)</span>
@@ -1242,10 +1465,20 @@ data type representing a color. The following patterns are supported:</p>
 
         </details>
 
-            <div class="docstring"><p>Initialize object</p>
+            <div class="docstring"><p>Initialize Color object.</p>
 
-<p><code>layer</code> can be either 0 or 1. This value determines whether the instance
-will represent foreground or background colors.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>layer:</strong>  One of [0, 1]. Objects instantiated with 0 will represent foreground
+colors, while objects instantiated with 1 will display background ones.</li>
+</ul>
+
+<h6 id="raises">Raises</h6>
+
+<ul>
+<li><strong>NotImplementedError:</strong>  Invalid layer.</li>
+</ul>
 </div>
 
 
@@ -1287,7 +1520,16 @@ will recognize, but if that is your objective it is better to use
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">translate_hex</span><span class="p">(</span><span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Translate hex string of format #RRGGBB into an RGB tuple of integers&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Translates a hex string of format #RRGGBB into an RGB tuple of integers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            color: The hexadecimal string to convert. Must follow the format #RRGGBB, where</span>
+<span class="sd">                capitalization is optional.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple of integers, 0-255 each, standing for red, green and blue values in that</span>
+<span class="sd">            order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">color</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
@@ -1302,7 +1544,21 @@ will recognize, but if that is your objective it is better to use
 
         </details>
 
-            <div class="docstring"><p>Translate hex string of format #RRGGBB into an RGB tuple of integers</p>
+            <div class="docstring"><p>Translates a hex string of format #RRGGBB into an RGB tuple of integers.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>color:</strong>  The hexadecimal string to convert. Must follow the format #RRGGBB, where
+capitalization is optional.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A tuple of integers, 0-255 each, standing for red, green and blue values in that
+  order.</p>
+</blockquote>
 </div>
 
 
@@ -1314,7 +1570,7 @@ will recognize, but if that is your objective it is better to use
         <span class="name">foreground</span><span class="default_value"> = &lt;<a href="#Color">pytermgui.ansi_interface.Color</a> object&gt;</span>
     </div>
 
-            <div class="docstring"><p><code><a href="#Color">Color</a></code> instance to setting foreground colors</p>
+            <div class="docstring"><p><code><a href="#Color">Color</a></code> instance for setting foreground colors.</p>
 </div>
 
 
@@ -1325,7 +1581,7 @@ will recognize, but if that is your objective it is better to use
         <span class="name">background</span><span class="default_value"> = &lt;<a href="#Color">pytermgui.ansi_interface.Color</a> object&gt;</span>
     </div>
 
-            <div class="docstring"><p><code><a href="#Color">Color</a></code> instance to setting background colors</p>
+            <div class="docstring"><p><code><a href="#Color">Color</a></code> instance for setting background colors.</p>
 </div>
 
 
@@ -1333,7 +1589,7 @@ will recognize, but if that is your objective it is better to use
                 <section id="terminal">
                                 <div class="attr variable"><a class="headerlink" href="#terminal">#&nbsp;&nbsp</a>
 
-        <span class="name">terminal</span><span class="default_value"> = &lt;<a href="#_Terminal">pytermgui.ansi_interface._Terminal</a> object&gt;</span>
+        <span class="name">terminal</span><span class="default_value"> = &lt;<a href="#Terminal">pytermgui.ansi_interface.Terminal</a> object&gt;</span>
     </div>
 
     
@@ -1350,16 +1606,17 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">is_interactive</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Determine whether shell is interactive.</span>
+    <span class="sd">&quot;&quot;&quot;Determines whether shell is interactive.</span>
 
-<span class="sd">    A shell is interactive if it is run from `python3` or `python3 -i`.&quot;&quot;&quot;</span>
+<span class="sd">    A shell is interactive if it is run from `python3` or `python3 -i`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Determine whether shell is interactive.</p>
+            <div class="docstring"><p>Determines whether shell is interactive.</p>
 
 <p>A shell is interactive if it is run from <code>python3</code> or <code>python3 -i</code>.</p>
 </div>
@@ -1377,17 +1634,17 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_screen</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Save the contents of the screen, wipe.</span>
+    <span class="sd">&quot;&quot;&quot;Saves the contents of the screen, and wipes it.</span>
 
-<span class="sd">    Use `restore_screen()` to get them back.&quot;&quot;&quot;</span>
+<span class="sd">    Use `restore_screen()` to get them back.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># print(&quot;\x1b[?47h&quot;)</span>
-    <span class="n">_tput</span><span class="p">([</span><span class="s2">&quot;smcup&quot;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?47h&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Save the contents of the screen, wipe.</p>
+            <div class="docstring"><p>Saves the contents of the screen, and wipes it.</p>
 
 <p>Use <code><a href="#restore_screen">restore_screen()</a></code> to get them back.</p>
 </div>
@@ -1405,15 +1662,14 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">restore_screen</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Restore the contents of the screen saved by `save_screen()`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Restores the contents of the screen saved by `save_screen()`.&quot;&quot;&quot;</span>
 
-    <span class="c1"># print(&quot;\x1b[?47l&quot;)</span>
-    <span class="n">_tput</span><span class="p">([</span><span class="s2">&quot;rmcup&quot;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?47l&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Restore the contents of the screen saved by <code><a href="#save_screen">save_screen()</a></code></p>
+            <div class="docstring"><p>Restores the contents of the screen saved by <code><a href="#save_screen">save_screen()</a></code>.</p>
 </div>
 
 
@@ -1429,18 +1685,19 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_alt_buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start alternate buffer</span>
+    <span class="sd">&quot;&quot;&quot;Starts an alternate buffer.</span>
 
-<span class="sd">    Note: This buffer is unscrollable.&quot;&quot;&quot;</span>
+<span class="sd">    Note that this buffer is unscrollable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?1049h&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Start alternate buffer</p>
+            <div class="docstring"><p>Starts an alternate buffer.</p>
 
-<p>Note: This buffer is unscrollable.</p>
+<p>Note that this buffer is unscrollable.</p>
 </div>
 
 
@@ -1456,14 +1713,14 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">unset_alt_buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return to main buffer from alt, restoring its original state&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns to main buffer, restoring its original state.&quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?1049l&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return to main buffer from alt, restoring its original state</p>
+            <div class="docstring"><p>Returns to main buffer, restoring its original state.</p>
 </div>
 
 
@@ -1479,16 +1736,18 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="n">what</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;screen&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Clear specified region</span>
+    <span class="sd">&quot;&quot;&quot;Clears the specified screen region.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        what: The specifier defining the screen area.</span>
 
 <span class="sd">    Available options:</span>
-<span class="sd">    - `screen` - clear whole screen and go to origin</span>
-<span class="sd">    - `bos` - clear screen from cursor backwards</span>
-<span class="sd">    - `eos` - clear screen from cursor forwards</span>
-<span class="sd">    - `line` - clear line and go to beginning</span>
-<span class="sd">    - `bol` - clear line from cursor backwards</span>
-<span class="sd">    - `eol` - clear line from cursor forwards</span>
-
+<span class="sd">    * screen: clear whole screen and go to origin</span>
+<span class="sd">    * bos: clear screen from cursor backwards</span>
+<span class="sd">    * eos: clear screen from cursor forwards</span>
+<span class="sd">    * line: clear line and go to beginning</span>
+<span class="sd">    * bol: clear line from cursor backwards</span>
+<span class="sd">    * eol: clear line from cursor forwards</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">commands</span> <span class="o">=</span> <span class="p">{</span>
@@ -1505,17 +1764,23 @@ will recognize, but if that is your objective it is better to use
 
         </details>
 
-            <div class="docstring"><p>Clear specified region</p>
+            <div class="docstring"><p>Clears the specified screen region.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>what:</strong>  The specifier defining the screen area.</li>
+</ul>
 
 <p>Available options:</p>
 
 <ul>
-<li><code>screen</code> - clear whole screen and go to origin</li>
-<li><code>bos</code> - clear screen from cursor backwards</li>
-<li><code>eos</code> - clear screen from cursor forwards</li>
-<li><code>line</code> - clear line and go to beginning</li>
-<li><code>bol</code> - clear line from cursor backwards</li>
-<li><code>eol</code> - clear line from cursor forwards</li>
+<li>screen: clear whole screen and go to origin</li>
+<li>bos: clear screen from cursor backwards</li>
+<li>eos: clear screen from cursor forwards</li>
+<li>line: clear line and go to beginning</li>
+<li>bol: clear line from cursor backwards</li>
+<li>eol: clear line from cursor forwards</li>
 </ul>
 </div>
 
@@ -1532,15 +1797,14 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">hide_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Stop printing cursor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Stops printing the cursor.&quot;&quot;&quot;</span>
 
-    <span class="c1"># _tput([&#39;civis&#39;])</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?25l&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Stop printing cursor</p>
+            <div class="docstring"><p>Stops printing the cursor.</p>
 </div>
 
 
@@ -1556,15 +1820,14 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">show_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start printing cursor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Starts printing the cursor.&quot;&quot;&quot;</span>
 
-    <span class="c1"># _tput([&#39;cvvis&#39;])</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?25h&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Start printing cursor</p>
+            <div class="docstring"><p>Starts printing the cursor.</p>
 </div>
 
 
@@ -1580,17 +1843,17 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Save cursor position.</span>
+    <span class="sd">&quot;&quot;&quot;Saves the current cursor position.</span>
 
-<span class="sd">    Use `restore_cursor()` to restore it.&quot;&quot;&quot;</span>
+<span class="sd">    Use `restore_cursor()` to restore it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># _tput([&#39;sc&#39;])</span>
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[s&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Save cursor position.</p>
+            <div class="docstring"><p>Saves the current cursor position.</p>
 
 <p>Use <code><a href="#restore_cursor">restore_cursor()</a></code> to restore it.</p>
 </div>
@@ -1608,15 +1871,14 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">restore_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Restore cursor position saved by `save_cursor()`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Restore cursor position as saved by `save_cursor`.&quot;&quot;&quot;</span>
 
-    <span class="c1"># _tput([&#39;rc&#39;])</span>
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[u&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Restore cursor position saved by <code><a href="#save_cursor">save_cursor()</a></code></p>
+            <div class="docstring"><p>Restore cursor position as saved by <code><a href="#save_cursor">save_cursor</a></code>.</p>
 </div>
 
 
@@ -1632,7 +1894,16 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">report_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Get position of cursor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Gets position of cursor.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple of integers, (columns, rows), describing the</span>
+<span class="sd">        current (printing) cursor&#39;s position. Returns None if</span>
+<span class="sd">        this could not be determined.</span>
+
+<span class="sd">        Note that this position is **not** the mouse position. See</span>
+<span class="sd">        `report_mouse` if that is what you are interested in.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[6n&quot;</span><span class="p">)</span>
     <span class="n">chars</span> <span class="o">=</span> <span class="n">getch</span><span class="p">()</span>
@@ -1646,7 +1917,18 @@ will recognize, but if that is your objective it is better to use
 
         </details>
 
-            <div class="docstring"><p>Get position of cursor</p>
+            <div class="docstring"><p>Gets position of cursor.</p>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A tuple of integers, (columns, rows), describing the
+  current (printing) cursor's position. Returns None if
+  this could not be determined.</p>
+  
+  <p>Note that this position is <strong>not</strong> the mouse position. See
+  <code><a href="#report_mouse">report_mouse</a></code> if that is what you are interested in.</p>
+</blockquote>
 </div>
 
 
@@ -1662,11 +1944,14 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">move_cursor</span><span class="p">(</span><span class="n">pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to `pos`.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor.</span>
 
-<span class="sd">    Note:</span>
-<span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        pos: Tuple of (columns, rows) that the cursor will be moved to.</span>
+
+<span class="sd">    This does not flush the terminal for performance reasons. You</span>
+<span class="sd">    can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">posx</span><span class="p">,</span> <span class="n">posy</span> <span class="o">=</span> <span class="n">pos</span>
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">posy</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">posx</span><span class="si">}</span><span class="s2">H&quot;</span><span class="p">)</span>
@@ -1674,11 +1959,16 @@ will recognize, but if that is your objective it is better to use
 
         </details>
 
-            <div class="docstring"><p>Move cursor to <code>pos</code>.</p>
+            <div class="docstring"><p>Moves the cursor.</p>
 
-<p>Note:
-    This does not flush the terminal for performance reasons. You
-    can do it manually with <code>sys.stdout.flush()</code>.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>pos:</strong>  Tuple of (columns, rows) that the cursor will be moved to.</li>
+</ul>
+
+<p>This does not flush the terminal for performance reasons. You
+can do it manually with <code>sys.stdout.flush()</code>.</p>
 </div>
 
 
@@ -1694,22 +1984,36 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cursor_up</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor up by `num` lines.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor up by `num` lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        num: How many lines the cursor should move by. Must be positive,</span>
+<span class="sd">            to move in the opposite direction use `cursor_down`.</span>
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">A&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Move cursor up by <code>num</code> lines.</p>
+            <div class="docstring"><p>Moves the cursor up by <code>num</code> lines.</p>
 
-<p>Note:
-    This does not flush the terminal for performance reasons. You
-    can do it manually with <code>sys.stdout.flush()</code>.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>num:</strong>  How many lines the cursor should move by. Must be positive,
+to move in the opposite direction use <code><a href="#cursor_down">cursor_down</a></code>.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This does not flush the terminal for performance reasons. You
+  can do it manually with <code>sys.stdout.flush()</code>.</p>
+</blockquote>
 </div>
 
 
@@ -1725,22 +2029,36 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cursor_down</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor down by `num` lines.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor up by `num` lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        num: How many lines the cursor should move by. Must be positive,</span>
+<span class="sd">            to move in the opposite direction use `cursor_up`.</span>
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">B&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Move cursor down by <code>num</code> lines.</p>
+            <div class="docstring"><p>Moves the cursor up by <code>num</code> lines.</p>
 
-<p>Note:
-    This does not flush the terminal for performance reasons. You
-    can do it manually with <code>sys.stdout.flush()</code>.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>num:</strong>  How many lines the cursor should move by. Must be positive,
+to move in the opposite direction use <code><a href="#cursor_up">cursor_up</a></code>.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This does not flush the terminal for performance reasons. You
+  can do it manually with <code>sys.stdout.flush()</code>.</p>
+</blockquote>
 </div>
 
 
@@ -1756,22 +2074,36 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cursor_right</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor left by `num` cols.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor right by `num` lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        num: How many characters the cursor should move by. Must be positive,</span>
+<span class="sd">            to move in the opposite direction use `cursor_left`.</span>
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">C&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Move cursor left by <code>num</code> cols.</p>
+            <div class="docstring"><p>Moves the cursor right by <code>num</code> lines.</p>
 
-<p>Note:
-    This does not flush the terminal for performance reasons. You
-    can do it manually with <code>sys.stdout.flush()</code>.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>num:</strong>  How many characters the cursor should move by. Must be positive,
+to move in the opposite direction use <code><a href="#cursor_left">cursor_left</a></code>.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This does not flush the terminal for performance reasons. You
+  can do it manually with <code>sys.stdout.flush()</code>.</p>
+</blockquote>
 </div>
 
 
@@ -1787,22 +2119,36 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cursor_left</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor left by `num` cols.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor left by `num` lines.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        num: How many characters the cursor should move by. Must be positive,</span>
+<span class="sd">            to move in the opposite direction use `cursor_right`.</span>
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">D&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Move cursor left by <code>num</code> cols.</p>
+            <div class="docstring"><p>Moves the cursor left by <code>num</code> lines.</p>
 
-<p>Note:
-    This does not flush the terminal for performance reasons. You
-    can do it manually with <code>sys.stdout.flush()</code>.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>num:</strong>  How many characters the cursor should move by. Must be positive,
+to move in the opposite direction use <code><a href="#cursor_right">cursor_right</a></code>.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This does not flush the terminal for performance reasons. You
+  can do it manually with <code>sys.stdout.flush()</code>.</p>
+</blockquote>
 </div>
 
 
@@ -1818,22 +2164,37 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cursor_next_line</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to beginning of `num`-th line down.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor to the beginning of the `num`-th line downwards.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num: The amount the cursor should move by. Must be positive, to move</span>
+<span class="sd">            in the opposite direction use `cursor_prev_line`.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">E&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Move cursor to beginning of <code>num</code>-th line down.</p>
+            <div class="docstring"><p>Moves the cursor to the beginning of the <code>num</code>-th line downwards.</p>
 
-<p>Note:
-    This does not flush the terminal for performance reasons. You
-    can do it manually with <code>sys.stdout.flush()</code>.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>num:</strong>  The amount the cursor should move by. Must be positive, to move
+in the opposite direction use <code><a href="#cursor_prev_line">cursor_prev_line</a></code>.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This does not flush the terminal for performance reasons. You
+  can do it manually with <code>sys.stdout.flush()</code>.</p>
+</blockquote>
 </div>
 
 
@@ -1849,22 +2210,37 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cursor_prev_line</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to beginning of `num`-th line down.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor to the beginning of the `num`-th line upwards.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num: The amount the cursor should move by. Must be positive, to move</span>
+<span class="sd">            in the opposite direction use `cursor_next_line`.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">F&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Move cursor to beginning of <code>num</code>-th line down.</p>
+            <div class="docstring"><p>Moves the cursor to the beginning of the <code>num</code>-th line upwards.</p>
 
-<p>Note:
-    This does not flush the terminal for performance reasons. You
-    can do it manually with <code>sys.stdout.flush()</code>.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>num:</strong>  The amount the cursor should move by. Must be positive, to move
+in the opposite direction use <code><a href="#cursor_next_line">cursor_next_line</a></code>.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This does not flush the terminal for performance reasons. You
+  can do it manually with <code>sys.stdout.flush()</code>.</p>
+</blockquote>
 </div>
 
 
@@ -1880,22 +2256,35 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cursor_column</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to `num`-th column in the current line.</span>
+    <span class="sd">&quot;&quot;&quot;Moves the cursor to the `num`-th character of the current line.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num: The new cursor position.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">G&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Move cursor to <code>num</code>-th column in the current line.</p>
+            <div class="docstring"><p>Moves the cursor to the <code>num</code>-th character of the current line.</p>
 
-<p>Note:
-    This does not flush the terminal for performance reasons. You
-    can do it manually with <code>sys.stdout.flush()</code>.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>num:</strong>  The new cursor position.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This does not flush the terminal for performance reasons. You
+  can do it manually with <code>sys.stdout.flush()</code>.</p>
+</blockquote>
 </div>
 
 
@@ -1911,22 +2300,26 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cursor_home</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Move cursor to `terminal.origin`.</span>
+    <span class="sd">&quot;&quot;&quot;Moves cursor to `terminal.origin`.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
-<span class="sd">        can do it manually with `sys.stdout.flush()`.&quot;&quot;&quot;</span>
+<span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[H&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Move cursor to <code>terminal.origin</code>.</p>
+            <div class="docstring"><p>Moves cursor to <code>terminal.origin</code>.</p>
 
-<p>Note:
-    This does not flush the terminal for performance reasons. You
-    can do it manually with <code>sys.stdout.flush()</code>.</p>
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This does not flush the terminal for performance reasons. You
+  can do it manually with <code>sys.stdout.flush()</code>.</p>
+</blockquote>
 </div>
 
 
@@ -1942,9 +2335,11 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_echo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start echoing user input</span>
+    <span class="sd">&quot;&quot;&quot;Starts echoing of user input.</span>
 
-<span class="sd">    Note: This is only available on POSIX&quot;&quot;&quot;</span>
+<span class="sd">    Note:</span>
+<span class="sd">        This is currently only available on POSIX.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
         <span class="k">return</span>
@@ -1954,9 +2349,13 @@ will recognize, but if that is your objective it is better to use
 
         </details>
 
-            <div class="docstring"><p>Start echoing user input</p>
+            <div class="docstring"><p>Starts echoing of user input.</p>
 
-<p>Note: This is only available on POSIX</p>
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This is currently only available on POSIX.</p>
+</blockquote>
 </div>
 
 
@@ -1972,9 +2371,11 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">unset_echo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Stop echoing user input</span>
+    <span class="sd">&quot;&quot;&quot;Stops echoing of user input.</span>
 
-<span class="sd">    Note: This is only available on POSIX&quot;&quot;&quot;</span>
+<span class="sd">    Note:</span>
+<span class="sd">        This is currently only available on POSIX.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
         <span class="k">return</span>
@@ -1984,9 +2385,13 @@ will recognize, but if that is your objective it is better to use
 
         </details>
 
-            <div class="docstring"><p>Stop echoing user input</p>
+            <div class="docstring"><p>Stops echoing of user input.</p>
 
-<p>Note: This is only available on POSIX</p>
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This is currently only available on POSIX.</p>
+</blockquote>
 </div>
 
 
@@ -2002,22 +2407,31 @@ will recognize, but if that is your objective it is better to use
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Set terminal display mode</span>
+    <span class="sd">&quot;&quot;&quot;Sets terminal display mode.</span>
 
-<span class="sd">    Available options:</span>
-<span class="sd">    - 0 - `reset`</span>
-<span class="sd">    - 1 - `bold`</span>
-<span class="sd">    - 2 - `dim`</span>
-<span class="sd">    - 3 - `italic`</span>
-<span class="sd">    - 4 - `underline`</span>
-<span class="sd">    - 5 - `blink`</span>
-<span class="sd">    - 7 - `inverse`</span>
-<span class="sd">    - 8 - `invisible`</span>
-<span class="sd">    - 9 - `strikethrough`</span>
-<span class="sd">    - 53 - `overline`</span>
+<span class="sd">    This is better left internal. To use these modes, you can call their</span>
+<span class="sd">    specific functions, such as `bold(&quot;text&quot;)` or `italic(&quot;text&quot;)`.</span>
 
-<span class="sd">    You can use both the digit and text forms, though you should really be</span>
-<span class="sd">    using one of the specific setters, like `bold` or `italic`.&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        mode: One of the available modes. Strings and integers both work.</span>
+<span class="sd">        write: Boolean that determines whether the output should be written</span>
+<span class="sd">            to stdout.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A string that sets the given mode.</span>
+
+<span class="sd">    Available modes:</span>
+<span class="sd">        - 0: reset</span>
+<span class="sd">        - 1: bold</span>
+<span class="sd">        - 2: dim</span>
+<span class="sd">        - 3: italic</span>
+<span class="sd">        - 4: underline</span>
+<span class="sd">        - 5: blink</span>
+<span class="sd">        - 7: inverse</span>
+<span class="sd">        - 8: invisible</span>
+<span class="sd">        - 9: strikethrough</span>
+<span class="sd">        - 53: overline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;reset&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -2044,25 +2458,41 @@ will recognize, but if that is your objective it is better to use
 
         </details>
 
-            <div class="docstring"><p>Set terminal display mode</p>
+            <div class="docstring"><p>Sets terminal display mode.</p>
 
-<p>Available options:</p>
+<p>This is better left internal. To use these modes, you can call their
+specific functions, such as <code>bold("text")</code> or <code>italic("text")</code>.</p>
+
+<h6 id="args">Args</h6>
 
 <ul>
-<li>0 - <code><a href="#reset">reset</a></code></li>
-<li>1 - <code><a href="#bold">bold</a></code></li>
-<li>2 - <code><a href="#dim">dim</a></code></li>
-<li>3 - <code><a href="#italic">italic</a></code></li>
-<li>4 - <code><a href="#underline">underline</a></code></li>
-<li>5 - <code><a href="#blink">blink</a></code></li>
-<li>7 - <code><a href="#inverse">inverse</a></code></li>
-<li>8 - <code><a href="#invisible">invisible</a></code></li>
-<li>9 - <code><a href="#strikethrough">strikethrough</a></code></li>
-<li>53 - <code><a href="#overline">overline</a></code></li>
+<li><strong>mode:</strong>  One of the available modes. Strings and integers both work.</li>
+<li><strong>write:</strong>  Boolean that determines whether the output should be written
+to stdout.</li>
 </ul>
 
-<p>You can use both the digit and text forms, though you should really be
-using one of the specific setters, like <code><a href="#bold">bold</a></code> or <code><a href="#italic">italic</a></code>.</p>
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A string that sets the given mode.</p>
+</blockquote>
+
+<h6 id="available-modes">Available modes</h6>
+
+<blockquote>
+  <ul>
+  <li>0: reset</li>
+  <li>1: bold</li>
+  <li>2: dim</li>
+  <li>3: italic</li>
+  <li>4: underline</li>
+  <li>5: blink</li>
+  <li>7: inverse</li>
+  <li>8: invisible</li>
+  <li>9: strikethrough</li>
+  <li>53: overline</li>
+  </ul>
+</blockquote>
 </div>
 
 
@@ -2082,30 +2512,31 @@ using one of the specific setters, like <code><a href="#bold">bold</a></code> or
     <span class="sd">&quot;&quot;&quot;An enumeration of all the polled mouse actions&quot;&quot;&quot;</span>
 
     <span class="n">LEFT_CLICK</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Start of a left button action sequence&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Start of a left button action sequence.&quot;&quot;&quot;</span>
 
     <span class="n">LEFT_DRAG</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse moved while left button was held down&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse moved while left button was held down.&quot;&quot;&quot;</span>
 
     <span class="n">RIGHT_CLICK</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Start of a right button action sequence&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Start of a right button action sequence.&quot;&quot;&quot;</span>
 
     <span class="n">RIGHT_DRAG</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse moved while right button was held down&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse moved while right button was held down.&quot;&quot;&quot;</span>
 
     <span class="n">SCROLL_UP</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse wheel or touchpad scroll upwards&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse wheel or touchpad scroll upwards.&quot;&quot;&quot;</span>
 
     <span class="n">SCROLL_DOWN</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse wheel or touchpad scroll downwards&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse wheel or touchpad scroll downwards.&quot;&quot;&quot;</span>
 
     <span class="n">HOVER</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse moved without clicking</span>
+    <span class="sd">&quot;&quot;&quot;Mouse moved without clicking.</span>
 
-<span class="sd">    Note: This only gets registered when hover events are listened to&quot;&quot;&quot;</span>
+<span class="sd">    Note:</span>
+<span class="sd">        This only gets registered when hover events are listened to.&quot;&quot;&quot;</span>
 
     <span class="n">RELEASE</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Mouse button released; end of any and all mouse action sequences&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Mouse button released; end of any and all mouse action sequences.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
@@ -2120,7 +2551,7 @@ using one of the specific setters, like <code><a href="#bold">bold</a></code> or
         <span class="name">LEFT_CLICK</span><span class="default_value"> = &lt;<a href="#MouseAction.LEFT_CLICK">MouseAction.LEFT_CLICK</a>: 1&gt;</span>
     </div>
 
-            <div class="docstring"><p>Start of a left button action sequence</p>
+            <div class="docstring"><p>Start of a left button action sequence.</p>
 </div>
 
 
@@ -2131,7 +2562,7 @@ using one of the specific setters, like <code><a href="#bold">bold</a></code> or
         <span class="name">LEFT_DRAG</span><span class="default_value"> = &lt;<a href="#MouseAction.LEFT_DRAG">MouseAction.LEFT_DRAG</a>: 2&gt;</span>
     </div>
 
-            <div class="docstring"><p>Mouse moved while left button was held down</p>
+            <div class="docstring"><p>Mouse moved while left button was held down.</p>
 </div>
 
 
@@ -2142,7 +2573,7 @@ using one of the specific setters, like <code><a href="#bold">bold</a></code> or
         <span class="name">RIGHT_CLICK</span><span class="default_value"> = &lt;<a href="#MouseAction.RIGHT_CLICK">MouseAction.RIGHT_CLICK</a>: 3&gt;</span>
     </div>
 
-            <div class="docstring"><p>Start of a right button action sequence</p>
+            <div class="docstring"><p>Start of a right button action sequence.</p>
 </div>
 
 
@@ -2153,7 +2584,7 @@ using one of the specific setters, like <code><a href="#bold">bold</a></code> or
         <span class="name">RIGHT_DRAG</span><span class="default_value"> = &lt;<a href="#MouseAction.RIGHT_DRAG">MouseAction.RIGHT_DRAG</a>: 4&gt;</span>
     </div>
 
-            <div class="docstring"><p>Mouse moved while right button was held down</p>
+            <div class="docstring"><p>Mouse moved while right button was held down.</p>
 </div>
 
 
@@ -2164,7 +2595,7 @@ using one of the specific setters, like <code><a href="#bold">bold</a></code> or
         <span class="name">SCROLL_UP</span><span class="default_value"> = &lt;<a href="#MouseAction.SCROLL_UP">MouseAction.SCROLL_UP</a>: 5&gt;</span>
     </div>
 
-            <div class="docstring"><p>Mouse wheel or touchpad scroll upwards</p>
+            <div class="docstring"><p>Mouse wheel or touchpad scroll upwards.</p>
 </div>
 
 
@@ -2175,7 +2606,7 @@ using one of the specific setters, like <code><a href="#bold">bold</a></code> or
         <span class="name">SCROLL_DOWN</span><span class="default_value"> = &lt;<a href="#MouseAction.SCROLL_DOWN">MouseAction.SCROLL_DOWN</a>: 6&gt;</span>
     </div>
 
-            <div class="docstring"><p>Mouse wheel or touchpad scroll downwards</p>
+            <div class="docstring"><p>Mouse wheel or touchpad scroll downwards.</p>
 </div>
 
 
@@ -2186,9 +2617,13 @@ using one of the specific setters, like <code><a href="#bold">bold</a></code> or
         <span class="name">HOVER</span><span class="default_value"> = &lt;<a href="#MouseAction.HOVER">MouseAction.HOVER</a>: 7&gt;</span>
     </div>
 
-            <div class="docstring"><p>Mouse moved without clicking</p>
+            <div class="docstring"><p>Mouse moved without clicking.</p>
 
-<p>Note: This only gets registered when hover events are listened to</p>
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This only gets registered when hover events are listened to.</p>
+</blockquote>
 </div>
 
 
@@ -2199,7 +2634,7 @@ using one of the specific setters, like <code><a href="#bold">bold</a></code> or
         <span class="name">RELEASE</span><span class="default_value"> = &lt;<a href="#MouseAction.RELEASE">MouseAction.RELEASE</a>: 8&gt;</span>
     </div>
 
-            <div class="docstring"><p>Mouse button released; end of any and all mouse action sequences</p>
+            <div class="docstring"><p>Mouse button released; end of any and all mouse action sequences.</p>
 </div>
 
 
@@ -2319,26 +2754,38 @@ such as:</p>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">report_mouse</span><span class="p">(</span>
     <span class="n">event</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;decimal_xterm&quot;</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Start reporting mouse events.</span>
+    <span class="sd">&quot;&quot;&quot;Starts reporting of mouse events.</span>
 
-<span class="sd">    Options:</span>
-<span class="sd">    - `press`</span>
-<span class="sd">    - `highlight`</span>
-<span class="sd">    - `press_hold`</span>
-<span class="sd">    - `hover`</span>
+<span class="sd">    You can specify multiple events to report on.</span>
 
-<span class="sd">    Methods:</span>
-<span class="sd">    - `None`:          Limited in coordinates, not recommended.</span>
-<span class="sd">    - `decimal_xterm`: Default, most universal</span>
-<span class="sd">    - `decimal_urxvt`: Older, less compatible</span>
-<span class="sd">    - `decimal_utf8`:  Apparently not too stable</span>
+<span class="sd">    Args:</span>
+<span class="sd">        event: The type of event to report on. See below for options.</span>
+<span class="sd">        method: The method of reporting to use. See below for options.</span>
+<span class="sd">        stop: If set to True, the stopping code is written to stdout.</span>
 
-<span class="sd">    More information &lt;a href=&#39;https://stackoverflow.com/a/5970472&#39;&gt;here&lt;/a&gt;.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: The given event is not supported.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        If you need this functionality, you&#39;re probably better off using the wrapper</span>
 <span class="sd">        `pytermgui.context_managers.mouse_handler`, which allows listening on multiple</span>
 <span class="sd">        events, gives a translator method and handles exceptions.</span>
+
+<span class="sd">    Possible events:</span>
+<span class="sd">        - **press**: Report when the mouse is clicked, left or right button.</span>
+<span class="sd">        - **highlight**: Report highlighting.</span>
+<span class="sd">        - **press_hold**: Report with a left or right click, as well as both</span>
+<span class="sd">            left &amp; right drag and release.</span>
+<span class="sd">        - **hover**: Report even when no active action is done, only the mouse</span>
+<span class="sd">          is moved.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        - **None**: Non-decimal xterm method. Limited in coordinates.</span>
+<span class="sd">        - **decimal_xterm**: The default setting. Most universally supported.</span>
+<span class="sd">        - **decimal_urxvt**: Older, less compatible, but useful on some systems.</span>
+<span class="sd">        - **decimal_utf8**:  Apparently not too stable.</span>
+
+<span class="sd">    More information &lt;a href=&#39;https://stackoverflow.com/a/5970472&#39;&gt;here&lt;/a&gt;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;press&quot;</span><span class="p">:</span>
@@ -2379,32 +2826,57 @@ such as:</p>
 
         </details>
 
-            <div class="docstring"><p>Start reporting mouse events.</p>
+            <div class="docstring"><p>Starts reporting of mouse events.</p>
 
-<p>Options:</p>
+<p>You can specify multiple events to report on.</p>
 
-<ul>
-<li><code>press</code></li>
-<li><code>highlight</code></li>
-<li><code>press_hold</code></li>
-<li><code>hover</code></li>
-</ul>
-
-<p>Methods:</p>
+<h6 id="args">Args</h6>
 
 <ul>
-<li><code>None</code>:          Limited in coordinates, not recommended.</li>
-<li><code>decimal_xterm</code>: Default, most universal</li>
-<li><code>decimal_urxvt</code>: Older, less compatible</li>
-<li><code>decimal_utf8</code>:  Apparently not too stable</li>
+<li><strong>event:</strong>  The type of event to report on. See below for options.</li>
+<li><strong>method:</strong>  The method of reporting to use. See below for options.</li>
+<li><strong>stop:</strong>  If set to True, the stopping code is written to stdout.</li>
 </ul>
+
+<h6 id="raises">Raises</h6>
+
+<ul>
+<li><strong>NotImplementedError:</strong>  The given event is not supported.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>If you need this functionality, you're probably better off using the wrapper
+  <code><a href="context_managers.html#mouse_handler">pytermgui.context_managers.mouse_handler</a></code>, which allows listening on multiple
+  events, gives a translator method and handles exceptions.</p>
+</blockquote>
+
+<h6 id="possible-events">Possible events</h6>
+
+<blockquote>
+  <ul>
+  <li><strong>press</strong>: Report when the mouse is clicked, left or right button.</li>
+  <li><strong>highlight</strong>: Report highlighting.</li>
+  <li><strong>press_hold</strong>: Report with a left or right click, as well as both
+  left &amp; right drag and release.</li>
+  <li><strong>hover</strong>: Report even when no active action is done, only the mouse
+  is moved.</li>
+  </ul>
+</blockquote>
+
+<h6 id="methods">Methods</h6>
+
+<blockquote>
+  <ul>
+  <li><strong>None</strong>: Non-decimal xterm method. Limited in coordinates.</li>
+  <li><strong>decimal_xterm</strong>: The default setting. Most universally supported.</li>
+  <li><strong>decimal_urxvt</strong>: Older, less compatible, but useful on some systems.</li>
+  <li><strong>decimal_utf8</strong>:  Apparently not too stable.</li>
+  </ul>
+</blockquote>
 
 <p>More information <a href='https://stackoverflow.com/a/5970472'>here</a>.</p>
-
-<p>Note:
-    If you need this functionality, you're probably better off using the wrapper
-    <code><a href="context_managers.html#mouse_handler">pytermgui.context_managers.mouse_handler</a></code>, which allows listening on multiple
-    events, gives a translator method and handles exceptions.</p>
 </div>
 
 
@@ -2420,10 +2892,18 @@ such as:</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">translate_mouse</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">MouseEvent</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Translate the output of produced by setting report_mouse codes into MouseEvent-s.</span>
+    <span class="sd">&quot;&quot;&quot;Translates the output of produced by setting `report_mouse` into MouseEvents.</span>
 
-<span class="sd">    This currently only supports `decimal_xterm` and `decimal_urvxt`. See `report_mouse` for more</span>
-<span class="sd">    information.&quot;&quot;&quot;</span>
+<span class="sd">    This method currently only supports `decimal_xterm` and `decimal_urxvt`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        code: The string of mouse code(s) to translate.</span>
+<span class="sd">        method: The reporting method to translate. One of [`decimal_xterm`, `decimal_urxvt`].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of optional mouse events obtained from the code argument. If the code was malformed,</span>
+<span class="sd">        and no codes could be determined None is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">mouse_codes</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;decimal_xterm&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -2443,7 +2923,7 @@ such as:</p>
             <span class="s2">&quot;34&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">RIGHT_CLICK</span><span class="p">,</span>
             <span class="s2">&quot;35&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">RELEASE</span><span class="p">,</span>
             <span class="s2">&quot;64&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">LEFT_DRAG</span><span class="p">,</span>
-            <span class="s2">&quot;66&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">RIGHT_CLICK</span><span class="p">,</span>
+            <span class="s2">&quot;66&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">RIGHT_DRAG</span><span class="p">,</span>
             <span class="s2">&quot;96&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_UP</span><span class="p">,</span>
             <span class="s2">&quot;97&quot;</span><span class="p">:</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_DOWN</span><span class="p">,</span>
         <span class="p">},</span>
@@ -2458,7 +2938,7 @@ such as:</p>
             <span class="k">continue</span>
 
         <span class="n">matches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">sequence</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">matches</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
@@ -2483,10 +2963,23 @@ such as:</p>
 
         </details>
 
-            <div class="docstring"><p>Translate the output of produced by setting report_mouse codes into MouseEvent-s.</p>
+            <div class="docstring"><p>Translates the output of produced by setting <code><a href="#report_mouse">report_mouse</a></code> into MouseEvents.</p>
 
-<p>This currently only supports <code>decimal_xterm</code> and <code>decimal_urvxt</code>. See <code><a href="#report_mouse">report_mouse</a></code> for more
-information.</p>
+<p>This method currently only supports <code>decimal_xterm</code> and <code>decimal_urxvt</code>.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>code:</strong>  The string of mouse code(s) to translate.</li>
+<li><strong>method:</strong>  The reporting method to translate. One of [<code>decimal_xterm</code>, <code>decimal_urxvt</code>].</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A list of optional mouse events obtained from the code argument. If the code was malformed,
+  and no codes could be determined None is returned.</p>
+</blockquote>
 </div>
 
 
@@ -2502,10 +2995,12 @@ information.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">print_to</span><span class="p">(</span><span class="n">pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Print text to given `pos`.</span>
+    <span class="sd">&quot;&quot;&quot;Prints text to given `pos`.</span>
 
-<span class="sd">    This passes through all arguments (except for `pos`) to the `print`</span>
-<span class="sd">    method.&quot;&quot;&quot;</span>
+<span class="sd">    Note:</span>
+<span class="sd">        This method passes through all arguments (except for `pos`) to the `print`</span>
+<span class="sd">        method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">move_cursor</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -2513,10 +3008,14 @@ information.</p>
 
         </details>
 
-            <div class="docstring"><p>Print text to given <code>pos</code>.</p>
+            <div class="docstring"><p>Prints text to given <code>pos</code>.</p>
 
-<p>This passes through all arguments (except for <code>pos</code>) to the <code>print</code>
-method.</p>
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This method passes through all arguments (except for <code>pos</code>) to the <code>print</code>
+  method.</p>
+</blockquote>
 </div>
 
 
@@ -2532,14 +3031,28 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">reset</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Reset printing mode&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Resets printing mode.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset</span>
+<span class="sd">            character should be appended to the end of the</span>
+<span class="sd">            string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Reset printing mode</p>
+            <div class="docstring"><p>Resets printing mode.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset
+character should be appended to the end of the
+string.</li>
+</ul>
 </div>
 
 
@@ -2555,14 +3068,26 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bold</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text in bold&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text in bold.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return text in bold</p>
+            <div class="docstring"><p>Returns text in bold.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset character should
+be appended to the end of the string.</li>
+</ul>
 </div>
 
 
@@ -2578,14 +3103,26 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text in dim&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text in dim.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;dim&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return text in dim</p>
+            <div class="docstring"><p>Returns text in dim.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset character should
+be appended to the end of the string.</li>
+</ul>
 </div>
 
 
@@ -2601,14 +3138,26 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">italic</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text in italic&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text in italic.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;italic&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return text in italic</p>
+            <div class="docstring"><p>Returns text in italic.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset character should
+be appended to the end of the string.</li>
+</ul>
 </div>
 
 
@@ -2624,14 +3173,26 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">underline</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text underlined&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text underlined.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;underline&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return text underlined</p>
+            <div class="docstring"><p>Returns text underlined.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset character should
+be appended to the end of the string.</li>
+</ul>
 </div>
 
 
@@ -2647,14 +3208,26 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">blink</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text blinking&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text blinking.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;blink&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return text blinking</p>
+            <div class="docstring"><p>Returns text blinking.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset character should
+be appended to the end of the string.</li>
+</ul>
 </div>
 
 
@@ -2670,14 +3243,26 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text inverse-colored&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns text inverse-colored.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;inverse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return text inverse-colored</p>
+            <div class="docstring"><p>Returns text inverse-colored.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset character should
+be appended to the end of the string.</li>
+</ul>
 </div>
 
 
@@ -2693,18 +3278,35 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">invisible</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text as invisible</span>
+    <span class="sd">&quot;&quot;&quot;Returns text as invisible.</span>
 
-<span class="sd">    Note: This isn&#39;t very widely supported&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This isn&#39;t very widely supported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;invisible&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return text as invisible</p>
+            <div class="docstring"><p>Returns text as invisible.</p>
 
-<p>Note: This isn't very widely supported</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset character should
+be appended to the end of the string.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This isn't very widely supported.</p>
+</blockquote>
 </div>
 
 
@@ -2720,14 +3322,26 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">strikethrough</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text as strikethrough&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return text as strikethrough.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;strikethrough&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return text as strikethrough</p>
+            <div class="docstring"><p>Return text as strikethrough.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset character should
+be appended to the end of the string.</li>
+</ul>
 </div>
 
 
@@ -2743,18 +3357,35 @@ method.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">overline</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reset_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return text overlined</span>
+    <span class="sd">&quot;&quot;&quot;Return text overlined.</span>
 
-<span class="sd">    Note: This isnt&#39; very widely supported&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        reset_style: Boolean that determines whether a reset character should</span>
+<span class="sd">            be appended to the end of the string.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This isnt&#39; very widely supported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">set_mode</span><span class="p">(</span><span class="s2">&quot;overline&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="p">(</span><span class="n">reset</span><span class="p">()</span> <span class="k">if</span> <span class="n">reset_style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return text overlined</p>
+            <div class="docstring"><p>Return text overlined.</p>
 
-<p>Note: This isnt' very widely supported</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>reset_style:</strong>  Boolean that determines whether a reset character should
+be appended to the end of the string.</li>
+</ul>
+
+<h6 id="note">Note</h6>
+
+<blockquote>
+  <p>This isnt' very widely supported.</p>
+</blockquote>
 </div>
 
 

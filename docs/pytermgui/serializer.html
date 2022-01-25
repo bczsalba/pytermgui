@@ -53,6 +53,9 @@
                                 <a class="function" href="#Serializer.register">register</a>
                         </li>
                         <li>
+                                <a class="function" href="#Serializer.bind">bind</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Serializer.from_dict">from_dict</a>
                         </li>
                         <li>
@@ -123,15 +126,17 @@ uses <code>Widget.serialize</code> for each widget.</p>
 <span class="sd">    all widgets use `markup_style` for their affected styles.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set up known widgets&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Sets up known widgets.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_widgets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_widgets</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">known_boxes</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_widgets</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">WidgetDict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get all widgets from the module&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets all widgets from the module.&quot;&quot;&quot;</span>
 
         <span class="n">known</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">widgets</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -145,32 +150,72 @@ uses <code>Widget.serialize</code> for each widget.</p>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">dump_to_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Dump widget to a dict</span>
+        <span class="sd">&quot;&quot;&quot;Dump widget to a dict.</span>
 
-<span class="sd">        Note: This is an alias for `obj.serialize`&quot;&quot;&quot;</span>
+<span class="sd">        This is an alias for `obj.serialize`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: The widget to dump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `obj.serialize()`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">register_box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">box</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Register a new Box type&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Registers a new Box type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name of the box.</span>
+<span class="sd">            box: The box instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_boxes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">box</span>
 
     <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Widget</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Make object aware of a custom widget class, so</span>
+        <span class="sd">&quot;&quot;&quot;Makes object aware of a custom widget class, so</span>
 <span class="sd">        it can be serialized.</span>
 
-<span class="sd">        Make sure to pass a type here, not an instance.&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            cls: The widget type to register.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: The object is not a type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Registered object must be a type.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_widgets</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
 
+    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Binds a name to a method.</span>
+
+<span class="sd">        These method callables are substituted into all fields that follow</span>
+<span class="sd">        the `method:&lt;method_name&gt;` syntax. If `method_name` is not bound,</span>
+<span class="sd">        an exception will be raised during loading.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name of the method, as referenced in the loaded</span>
+<span class="sd">                files.</span>
+<span class="sd">            method: The callable to bind.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Load a widget from a dictionary&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Loads a widget from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: The data to load from.</span>
+<span class="sd">            widget_type: Substitute for when data has no `type` field.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A widget from the given data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">_apply_markup</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">CharType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CharType</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Apply markup style to obj&#39;s key&quot;&quot;&quot;</span>
@@ -216,6 +261,14 @@ uses <code>Widget.serialize</code> for each widget.</p>
 
                 <span class="k">continue</span>
 
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;method:&quot;</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">7</span><span class="p">:]</span>
+
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Reference to unbound method: &quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;.&#39;</span><span class="p">)</span>
+
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
             <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;chars&quot;</span><span class="p">:</span>
                 <span class="n">chars</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CharType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -241,12 +294,25 @@ uses <code>Widget.serialize</code> for each widget.</p>
         <span class="k">return</span> <span class="n">obj</span>
 
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Load widget from a file object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Loads widget from a file object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file: An IO object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The loaded widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">json_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Dump widget to a file object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Dumps widget to a file object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: The widget to dump.</span>
+<span class="sd">            file: The file object it gets written to.</span>
+<span class="sd">            **json_args: Arguments passed to `json.dump`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_to_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;separators&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_args</span><span class="p">:</span>
@@ -299,15 +365,17 @@ uses <code>Widget.serialize</code> for each widget.</p>
 <span class="sd">    all widgets use `markup_style` for their affected styles.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set up known widgets&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Sets up known widgets.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_widgets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_widgets</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">known_boxes</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_widgets</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">WidgetDict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get all widgets from the module&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets all widgets from the module.&quot;&quot;&quot;</span>
 
         <span class="n">known</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">widgets</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -321,32 +389,72 @@ uses <code>Widget.serialize</code> for each widget.</p>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">dump_to_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Dump widget to a dict</span>
+        <span class="sd">&quot;&quot;&quot;Dump widget to a dict.</span>
 
-<span class="sd">        Note: This is an alias for `obj.serialize`&quot;&quot;&quot;</span>
+<span class="sd">        This is an alias for `obj.serialize`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: The widget to dump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `obj.serialize()`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">register_box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">box</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Register a new Box type&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Registers a new Box type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name of the box.</span>
+<span class="sd">            box: The box instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_boxes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">box</span>
 
     <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Widget</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Make object aware of a custom widget class, so</span>
+        <span class="sd">&quot;&quot;&quot;Makes object aware of a custom widget class, so</span>
 <span class="sd">        it can be serialized.</span>
 
-<span class="sd">        Make sure to pass a type here, not an instance.&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            cls: The widget type to register.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: The object is not a type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Registered object must be a type.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_widgets</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
 
+    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Binds a name to a method.</span>
+
+<span class="sd">        These method callables are substituted into all fields that follow</span>
+<span class="sd">        the `method:&lt;method_name&gt;` syntax. If `method_name` is not bound,</span>
+<span class="sd">        an exception will be raised during loading.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name of the method, as referenced in the loaded</span>
+<span class="sd">                files.</span>
+<span class="sd">            method: The callable to bind.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Load a widget from a dictionary&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Loads a widget from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: The data to load from.</span>
+<span class="sd">            widget_type: Substitute for when data has no `type` field.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A widget from the given data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">_apply_markup</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">CharType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CharType</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Apply markup style to obj&#39;s key&quot;&quot;&quot;</span>
@@ -392,6 +500,14 @@ uses <code>Widget.serialize</code> for each widget.</p>
 
                 <span class="k">continue</span>
 
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;method:&quot;</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">7</span><span class="p">:]</span>
+
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Reference to unbound method: &quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;.&#39;</span><span class="p">)</span>
+
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
             <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;chars&quot;</span><span class="p">:</span>
                 <span class="n">chars</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CharType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -417,12 +533,25 @@ uses <code>Widget.serialize</code> for each widget.</p>
         <span class="k">return</span> <span class="n">obj</span>
 
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Load widget from a file object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Loads widget from a file object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file: An IO object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The loaded widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">json_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Dump widget to a file object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Dumps widget to a file object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: The widget to dump.</span>
+<span class="sd">            file: The file object it gets written to.</span>
+<span class="sd">            **json_args: Arguments passed to `json.dump`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_to_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;separators&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_args</span><span class="p">:</span>
@@ -461,16 +590,18 @@ all widgets use <code>markup_style</code> for their affected styles.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set up known widgets&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Sets up known widgets.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_widgets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_widgets</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">known_boxes</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Set up known widgets</p>
+            <div class="docstring"><p>Sets up known widgets.</p>
 </div>
 
 
@@ -488,7 +619,7 @@ all widgets use <code>markup_style</code> for their affected styles.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_widgets</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">WidgetDict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get all widgets from the module&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets all widgets from the module.&quot;&quot;&quot;</span>
 
         <span class="n">known</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">widgets</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -503,7 +634,7 @@ all widgets use <code>markup_style</code> for their affected styles.</p>
 
         </details>
 
-            <div class="docstring"><p>Get all widgets from the module</p>
+            <div class="docstring"><p>Gets all widgets from the module.</p>
 </div>
 
 
@@ -521,18 +652,37 @@ all widgets use <code>markup_style</code> for their affected styles.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">dump_to_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Dump widget to a dict</span>
+        <span class="sd">&quot;&quot;&quot;Dump widget to a dict.</span>
 
-<span class="sd">        Note: This is an alias for `obj.serialize`&quot;&quot;&quot;</span>
+<span class="sd">        This is an alias for `obj.serialize`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: The widget to dump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `obj.serialize()`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Dump widget to a dict</p>
+            <div class="docstring"><p>Dump widget to a dict.</p>
 
-<p>Note: This is an alias for <code>obj.serialize</code></p>
+<p>This is an alias for <code>obj.serialize</code>.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>obj:</strong>  The widget to dump.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p><code>obj.serialize()</code>.</p>
+</blockquote>
 </div>
 
 
@@ -548,14 +698,26 @@ all widgets use <code>markup_style</code> for their affected styles.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">register_box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">box</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Register a new Box type&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Registers a new Box type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name of the box.</span>
+<span class="sd">            box: The box instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">known_boxes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">box</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Register a new Box type</p>
+            <div class="docstring"><p>Registers a new Box type.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>name:</strong>  The name of the box.</li>
+<li><strong>box:</strong>  The box instance.</li>
+</ul>
 </div>
 
 
@@ -571,10 +733,15 @@ all widgets use <code>markup_style</code> for their affected styles.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Widget</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Make object aware of a custom widget class, so</span>
+        <span class="sd">&quot;&quot;&quot;Makes object aware of a custom widget class, so</span>
 <span class="sd">        it can be serialized.</span>
 
-<span class="sd">        Make sure to pass a type here, not an instance.&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            cls: The widget type to register.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: The object is not a type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Registered object must be a type.&quot;</span><span class="p">)</span>
@@ -584,10 +751,65 @@ all widgets use <code>markup_style</code> for their affected styles.</p>
 
         </details>
 
-            <div class="docstring"><p>Make object aware of a custom widget class, so
+            <div class="docstring"><p>Makes object aware of a custom widget class, so
 it can be serialized.</p>
 
-<p>Make sure to pass a type here, not an instance.</p>
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>cls:</strong>  The widget type to register.</li>
+</ul>
+
+<h6 id="raises">Raises</h6>
+
+<ul>
+<li><strong>TypeError:</strong>  The object is not a type.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="Serializer.bind" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Serializer.bind">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">bind</span><span class="signature">(self, name: str, method: &#39;Callable[..., Any]&#39;) -&gt; None</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Binds a name to a method.</span>
+
+<span class="sd">        These method callables are substituted into all fields that follow</span>
+<span class="sd">        the `method:&lt;method_name&gt;` syntax. If `method_name` is not bound,</span>
+<span class="sd">        an exception will be raised during loading.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name of the method, as referenced in the loaded</span>
+<span class="sd">                files.</span>
+<span class="sd">            method: The callable to bind.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Binds a name to a method.</p>
+
+<p>These method callables are substituted into all fields that follow
+the <code>method:&lt;method_name&gt;</code> syntax. If <code>method_name</code> is not bound,
+an exception will be raised during loading.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>name:</strong>  The name of the method, as referenced in the loaded
+files.</li>
+<li><strong>method:</strong>  The callable to bind.</li>
+</ul>
 </div>
 
 
@@ -609,7 +831,15 @@ it can be serialized.</p>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">widget_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Load a widget from a dictionary&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Loads a widget from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: The data to load from.</span>
+<span class="sd">            widget_type: Substitute for when data has no `type` field.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A widget from the given data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">_apply_markup</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">CharType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CharType</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Apply markup style to obj&#39;s key&quot;&quot;&quot;</span>
@@ -655,6 +885,14 @@ it can be serialized.</p>
 
                 <span class="k">continue</span>
 
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;method:&quot;</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">7</span><span class="p">:]</span>
+
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Reference to unbound method: &quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;.&#39;</span><span class="p">)</span>
+
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_methods</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
             <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;chars&quot;</span><span class="p">:</span>
                 <span class="n">chars</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CharType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -682,7 +920,20 @@ it can be serialized.</p>
 
         </details>
 
-            <div class="docstring"><p>Load a widget from a dictionary</p>
+            <div class="docstring"><p>Loads a widget from a dictionary.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>data:</strong>  The data to load from.</li>
+<li><strong>widget_type:</strong>  Substitute for when data has no <code>type</code> field.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A widget from the given data.</p>
+</blockquote>
 </div>
 
 
@@ -698,14 +949,33 @@ it can be serialized.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Load widget from a file object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Loads widget from a file object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file: An IO object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The loaded widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Load widget from a file object</p>
+            <div class="docstring"><p>Loads widget from a file object.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>file:</strong>  An IO object.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The loaded widget.</p>
+</blockquote>
 </div>
 
 
@@ -726,7 +996,13 @@ it can be serialized.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">json_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Dump widget to a file object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Dumps widget to a file object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: The widget to dump.</span>
+<span class="sd">            file: The file object it gets written to.</span>
+<span class="sd">            **json_args: Arguments passed to `json.dump`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_to_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;separators&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">json_args</span><span class="p">:</span>
@@ -740,7 +1016,15 @@ it can be serialized.</p>
 
         </details>
 
-            <div class="docstring"><p>Dump widget to a file object</p>
+            <div class="docstring"><p>Dumps widget to a file object.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>obj:</strong>  The widget to dump.</li>
+<li><strong>file:</strong>  The file object it gets written to.</li>
+<li><strong>**json_args:</strong>  Arguments passed to <code>json.dump</code>.</li>
+</ul>
 </div>
 
 

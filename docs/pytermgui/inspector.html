@@ -88,11 +88,11 @@ module will soon see a full overhaul, so the API is likely to change.</p>
 
 <span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span>
 <span class="kn">from</span> <span class="nn">.parser</span> <span class="kn">import</span> <span class="n">markup</span>
-<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">WidgetAlignment</span>
+<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">HorizontalAlignment</span>
 
 <span class="kn">from</span> <span class="nn">.context_managers</span> <span class="kn">import</span> <span class="n">alt_buffer</span>
 <span class="kn">from</span> <span class="nn">.widgets.boxes</span> <span class="kn">import</span> <span class="n">DOUBLE_BOTTOM</span>
-<span class="kn">from</span> <span class="nn">.widgets.base</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Label</span>
+<span class="kn">from</span> <span class="nn">.widgets</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Label</span>
 <span class="kn">from</span> <span class="nn">.widgets.styles</span> <span class="kn">import</span> <span class="n">MarkupFormatter</span><span class="p">,</span> <span class="n">StyleType</span><span class="p">,</span> <span class="n">StyleCall</span>
 <span class="kn">from</span> <span class="nn">.ansi_interface</span> <span class="kn">import</span> <span class="n">foreground</span><span class="p">,</span> <span class="n">terminal</span><span class="p">,</span> <span class="n">is_interactive</span>
 
@@ -331,7 +331,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
         <span class="n">definition</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_definition</span><span class="p">(</span><span class="n">target</span><span class="p">),</span>
             <span class="n">padding</span><span class="o">=</span><span class="n">_padding</span><span class="p">,</span>
-            <span class="n">parent_align</span><span class="o">=</span><span class="n">WidgetAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>
+            <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">definition</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">)</span>
 
@@ -339,7 +339,9 @@ module will soon see a full overhaul, so the API is likely to change.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">definition</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_docstring</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">_padding</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">WidgetAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span>
+                <span class="n">line</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">_padding</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span>
+            <span class="p">)</span>
             <span class="n">doc</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
 
@@ -508,7 +510,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
 
         
         <span class="def">class</span>
-        <span class="name">Inspector</span><wbr>(<span class="base"><a href="widgets/base.html#Container">pytermgui.widgets.base.Container</a></span>):
+        <span class="name">Inspector</span><wbr>(<span class="base"><a href="widgets/layouts.html#Container">pytermgui.widgets.layouts.Container</a></span>):
     </div>
 
                 <details>
@@ -641,7 +643,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
         <span class="n">definition</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_definition</span><span class="p">(</span><span class="n">target</span><span class="p">),</span>
             <span class="n">padding</span><span class="o">=</span><span class="n">_padding</span><span class="p">,</span>
-            <span class="n">parent_align</span><span class="o">=</span><span class="n">WidgetAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>
+            <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">definition</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">)</span>
 
@@ -649,7 +651,9 @@ module will soon see a full overhaul, so the API is likely to change.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">definition</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_docstring</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">_padding</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">WidgetAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span>
+                <span class="n">line</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">_padding</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span>
+            <span class="p">)</span>
             <span class="n">doc</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
 
@@ -727,7 +731,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
                             <div id="Inspector.styles" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Inspector.styles">#&nbsp;&nbsp</a>
 
-        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x103abdee0&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x103abdee0&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x103abddc0&gt;, &#39;builtin&#39;: MarkupFormatter(markup=&#39;[208]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;declaration&#39;: MarkupFormatter(markup=&#39;[9 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;name&#39;: MarkupFormatter(markup=&#39;[114]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;string&#39;: &lt;function Inspector.&lt;lambda&gt; at 0x103ad4dc0&gt;}</span>
+        <span class="name">styles</span><span class="annotation">: dict[str, typing.Callable[[int, str], str]]</span><span class="default_value"> = {&#39;border&#39;: &lt;function &lt;lambda&gt; at 0x1059314c0&gt;, &#39;corner&#39;: &lt;function &lt;lambda&gt; at 0x1059314c0&gt;, &#39;fill&#39;: &lt;function &lt;lambda&gt; at 0x1059313a0&gt;, &#39;builtin&#39;: MarkupFormatter(markup=&#39;[208]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;declaration&#39;: MarkupFormatter(markup=&#39;[9 bold]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;name&#39;: MarkupFormatter(markup=&#39;[114]{item}&#39;, ensure_reset=True, ensure_strip=False), &#39;string&#39;: &lt;function Inspector.&lt;lambda&gt; at 0x1059483a0&gt;}</span>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
@@ -747,7 +751,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
     show_dunder: bool = False,
     show_private: bool = False,
     _padding: int = 0
-) -&gt; <a href="widgets/base.html#Container">pytermgui.widgets.base.Container</a></span>:
+) -&gt; <a href="widgets/layouts.html#Container">pytermgui.widgets.layouts.Container</a></span>:
     </div>
 
                 <details>
@@ -771,7 +775,7 @@ module will soon see a full overhaul, so the API is likely to change.</p>
         <span class="n">definition</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_definition</span><span class="p">(</span><span class="n">target</span><span class="p">),</span>
             <span class="n">padding</span><span class="o">=</span><span class="n">_padding</span><span class="p">,</span>
-            <span class="n">parent_align</span><span class="o">=</span><span class="n">WidgetAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>
+            <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">definition</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">)</span>
 
@@ -779,7 +783,9 @@ module will soon see a full overhaul, so the API is likely to change.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">definition</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_docstring</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">_padding</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">WidgetAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span>
+                <span class="n">line</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">_padding</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span>
+            <span class="p">)</span>
             <span class="n">doc</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
 
@@ -834,30 +840,31 @@ module will soon see a full overhaul, so the API is likely to change.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt><a href="widgets/base.html#Container">pytermgui.widgets.base.Container</a></dt>
-                                <dd id="Inspector.chars" class="variable"><a href="widgets/base.html#Container.chars">chars</a></dd>
-                <dd id="Inspector.keys" class="variable"><a href="widgets/base.html#Container.keys">keys</a></dd>
-                <dd id="Inspector.serialized" class="variable"><a href="widgets/base.html#Container.serialized">serialized</a></dd>
-                <dd id="Inspector.allow_fullscreen" class="variable"><a href="widgets/base.html#Container.allow_fullscreen">allow_fullscreen</a></dd>
-                <dd id="Inspector.sidelength" class="variable"><a href="widgets/base.html#Container.sidelength">sidelength</a></dd>
-                <dd id="Inspector.selectables" class="variable"><a href="widgets/base.html#Container.selectables">selectables</a></dd>
-                <dd id="Inspector.selectables_length" class="variable"><a href="widgets/base.html#Container.selectables_length">selectables_length</a></dd>
-                <dd id="Inspector.selected" class="variable"><a href="widgets/base.html#Container.selected">selected</a></dd>
-                <dd id="Inspector.box" class="variable"><a href="widgets/base.html#Container.box">box</a></dd>
-                <dd id="Inspector.get_lines" class="function"><a href="widgets/base.html#Container.get_lines">get_lines</a></dd>
-                <dd id="Inspector.set_widgets" class="function"><a href="widgets/base.html#Container.set_widgets">set_widgets</a></dd>
-                <dd id="Inspector.serialize" class="function"><a href="widgets/base.html#Container.serialize">serialize</a></dd>
-                <dd id="Inspector.pop" class="function"><a href="widgets/base.html#Container.pop">pop</a></dd>
-                <dd id="Inspector.remove" class="function"><a href="widgets/base.html#Container.remove">remove</a></dd>
-                <dd id="Inspector.set_recursive_depth" class="function"><a href="widgets/base.html#Container.set_recursive_depth">set_recursive_depth</a></dd>
-                <dd id="Inspector.select" class="function"><a href="widgets/base.html#Container.select">select</a></dd>
-                <dd id="Inspector.center" class="function"><a href="widgets/base.html#Container.center">center</a></dd>
-                <dd id="Inspector.handle_mouse" class="function"><a href="widgets/base.html#Container.handle_mouse">handle_mouse</a></dd>
-                <dd id="Inspector.handle_key" class="function"><a href="widgets/base.html#Container.handle_key">handle_key</a></dd>
-                <dd id="Inspector.wipe" class="function"><a href="widgets/base.html#Container.wipe">wipe</a></dd>
-                <dd id="Inspector.show_targets" class="function"><a href="widgets/base.html#Container.show_targets">show_targets</a></dd>
-                <dd id="Inspector.print" class="function"><a href="widgets/base.html#Container.print">print</a></dd>
-                <dd id="Inspector.debug" class="function"><a href="widgets/base.html#Container.debug">debug</a></dd>
+                                    <div><dt><a href="widgets/layouts.html#Container">pytermgui.widgets.layouts.Container</a></dt>
+                                <dd id="Inspector.chars" class="variable"><a href="widgets/layouts.html#Container.chars">chars</a></dd>
+                <dd id="Inspector.keys" class="variable"><a href="widgets/layouts.html#Container.keys">keys</a></dd>
+                <dd id="Inspector.serialized" class="variable"><a href="widgets/layouts.html#Container.serialized">serialized</a></dd>
+                <dd id="Inspector.vertical_align" class="variable"><a href="widgets/layouts.html#Container.vertical_align">vertical_align</a></dd>
+                <dd id="Inspector.allow_fullscreen" class="variable"><a href="widgets/layouts.html#Container.allow_fullscreen">allow_fullscreen</a></dd>
+                <dd id="Inspector.overflow" class="variable"><a href="widgets/layouts.html#Container.overflow">overflow</a></dd>
+                <dd id="Inspector.sidelength" class="variable"><a href="widgets/layouts.html#Container.sidelength">sidelength</a></dd>
+                <dd id="Inspector.selectables" class="variable"><a href="widgets/layouts.html#Container.selectables">selectables</a></dd>
+                <dd id="Inspector.selectables_length" class="variable"><a href="widgets/layouts.html#Container.selectables_length">selectables_length</a></dd>
+                <dd id="Inspector.selected" class="variable"><a href="widgets/layouts.html#Container.selected">selected</a></dd>
+                <dd id="Inspector.box" class="variable"><a href="widgets/layouts.html#Container.box">box</a></dd>
+                <dd id="Inspector.get_lines" class="function"><a href="widgets/layouts.html#Container.get_lines">get_lines</a></dd>
+                <dd id="Inspector.set_widgets" class="function"><a href="widgets/layouts.html#Container.set_widgets">set_widgets</a></dd>
+                <dd id="Inspector.serialize" class="function"><a href="widgets/layouts.html#Container.serialize">serialize</a></dd>
+                <dd id="Inspector.pop" class="function"><a href="widgets/layouts.html#Container.pop">pop</a></dd>
+                <dd id="Inspector.remove" class="function"><a href="widgets/layouts.html#Container.remove">remove</a></dd>
+                <dd id="Inspector.set_recursive_depth" class="function"><a href="widgets/layouts.html#Container.set_recursive_depth">set_recursive_depth</a></dd>
+                <dd id="Inspector.select" class="function"><a href="widgets/layouts.html#Container.select">select</a></dd>
+                <dd id="Inspector.center" class="function"><a href="widgets/layouts.html#Container.center">center</a></dd>
+                <dd id="Inspector.handle_mouse" class="function"><a href="widgets/layouts.html#Container.handle_mouse">handle_mouse</a></dd>
+                <dd id="Inspector.handle_key" class="function"><a href="widgets/layouts.html#Container.handle_key">handle_key</a></dd>
+                <dd id="Inspector.wipe" class="function"><a href="widgets/layouts.html#Container.wipe">wipe</a></dd>
+                <dd id="Inspector.print" class="function"><a href="widgets/layouts.html#Container.print">print</a></dd>
+                <dd id="Inspector.debug" class="function"><a href="widgets/layouts.html#Container.debug">debug</a></dd>
 
             </div>
             <div><dt><a href="widgets/base.html#Widget">pytermgui.widgets.base.Widget</a></dt>
@@ -870,8 +877,8 @@ module will soon see a full overhaul, so the API is likely to change.</p>
                 <dd id="Inspector.id" class="variable"><a href="widgets/base.html#Widget.id">id</a></dd>
                 <dd id="Inspector.is_selectable" class="variable"><a href="widgets/base.html#Widget.is_selectable">is_selectable</a></dd>
                 <dd id="Inspector.static_width" class="variable"><a href="widgets/base.html#Widget.static_width">static_width</a></dd>
-                <dd id="Inspector.define_mouse_target" class="function"><a href="widgets/base.html#Widget.define_mouse_target">define_mouse_target</a></dd>
-                <dd id="Inspector.get_target" class="function"><a href="widgets/base.html#Widget.get_target">get_target</a></dd>
+                <dd id="Inspector.relative_width" class="variable"><a href="widgets/base.html#Widget.relative_width">relative_width</a></dd>
+                <dd id="Inspector.contains" class="function"><a href="widgets/base.html#Widget.contains">contains</a></dd>
                 <dd id="Inspector.copy" class="function"><a href="widgets/base.html#Widget.copy">copy</a></dd>
                 <dd id="Inspector.bind" class="function"><a href="widgets/base.html#Widget.bind">bind</a></dd>
                 <dd id="Inspector.execute_binding" class="function"><a href="widgets/base.html#Widget.execute_binding">execute_binding</a></dd>

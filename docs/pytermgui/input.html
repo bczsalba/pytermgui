@@ -32,6 +32,27 @@
                     <h2>API Documentation</h2>
                         <ul class="memberlist">
             <li>
+                    <a class="class" href="#Keys">Keys</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Keys.__init__">Keys</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Keys.get_name">get_name</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Keys.values">values</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Keys.keys">keys</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Keys.items">items</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="variable" href="#keys">keys</a>
             </li>
             <li>
@@ -98,17 +119,25 @@
 
 
 <span class="k">def</span> <span class="nf">_is_ready</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Determine if IO object is reading to read&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Determines if IO object is reading to read.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file: An IO object of any type.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A boolean describing whether the object has unread</span>
+<span class="sd">        content.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">select</span><span class="p">([</span><span class="n">file</span><span class="p">],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mf">0.0</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
 
 <span class="k">class</span> <span class="nc">_GetchUnix</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Getch implementation for UNIX systems&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Getch implementation for UNIX systems.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Initialize object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initializes object.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">encoding</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decode</span> <span class="o">=</span> <span class="n">getincrementaldecoder</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">encoding</span><span class="p">)()</span><span class="o">.</span><span class="n">decode</span>
@@ -116,7 +145,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">decode</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span>
 
     <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Read `num` characters from sys.stdin&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reads characters from sys.stdin.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            num: How many characters should be read.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The characters read.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">buff</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">:</span>
@@ -129,7 +165,11 @@
         <span class="k">return</span> <span class="n">buff</span>
 
     <span class="k">def</span> <span class="nf">get_chars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Yield characters while there are some available&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Yields characters while there are some available.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            Any available characters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">descriptor</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
         <span class="n">old_settings</span> <span class="o">=</span> <span class="n">termios</span><span class="o">.</span><span class="n">tcgetattr</span><span class="p">(</span><span class="n">descriptor</span><span class="p">)</span>
@@ -146,18 +186,25 @@
             <span class="n">termios</span><span class="o">.</span><span class="n">tcsetattr</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">termios</span><span class="o">.</span><span class="n">TCSADRAIN</span><span class="p">,</span> <span class="n">old_settings</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return all characters that can be read&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns all characters that can be read.&quot;&quot;&quot;</span>
 
         <span class="n">buff</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_chars</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">buff</span>
 
 
 <span class="k">class</span> <span class="nc">_GetchWindows</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Getch implementation for Windows&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Getch implementation for Windows.&quot;&quot;&quot;</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_ensure_str</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="n">AnyStr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Ensure return value is always a `str` and not `bytes`&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Ensures return value is always a `str` and not `bytes`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            string: Any string or bytes object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The string argument, converted to `str`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">string</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
@@ -165,7 +212,11 @@
         <span class="k">return</span> <span class="n">string</span>
 
     <span class="k">def</span> <span class="nf">get_chars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Read `num` characters from sys.stdin&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reads characters from sys.stdin.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            All read characters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">char</span> <span class="o">=</span> <span class="n">msvcrt</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">char</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\xe0</span><span class="s2">&quot;</span><span class="p">:</span>
@@ -180,14 +231,18 @@
         <span class="k">return</span> <span class="n">buff</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return all characters that can be read&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns all characters that can be read.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            All readable characters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">buff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_chars</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">buff</span>
 
 
-<span class="k">class</span> <span class="nc">_Keys</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class for easy access to key-codes</span>
+<span class="k">class</span> <span class="nc">Keys</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for easy access to key-codes.</span>
 
 <span class="sd">    The keys for CTRL_{ascii_letter}-s can be generated with</span>
 <span class="sd">    the following code:</span>
@@ -202,7 +257,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform_keys</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">platform</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set up key values&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Keys object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            platform_keys: A dictionary of platform-specific keys.</span>
+<span class="sd">            platform: The platform the program is running on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;SPACE&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
@@ -251,7 +311,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">code</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get attr from self._keys&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets attr from self._keys.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;ANY_KEY&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">attr</span>
@@ -259,7 +319,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get canonical name of a key code&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets canonical name of a key code.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key: The key to get the name of.</span>
+<span class="sd">            default: The return value to substitute if no canonical name could be</span>
+<span class="sd">                found. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The canonical name if one can be found, default otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
@@ -268,25 +337,25 @@
         <span class="k">return</span> <span class="n">default</span>
 
     <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesView</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return values() of self._keys&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns values() of self._keys.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KeysView</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return keys() of self._keys&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns keys() of self._keys.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemsView</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return items() of self._keys&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns items() of self._keys.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
 
 
 <span class="n">_getch</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_GetchWindows</span><span class="p">,</span> <span class="n">_GetchUnix</span><span class="p">]</span>
 
-<span class="n">keys</span><span class="p">:</span> <span class="n">_Keys</span>
-<span class="sd">&quot;&quot;&quot;Instance storing platform specific key codes&quot;&quot;&quot;</span>
+<span class="n">keys</span><span class="p">:</span> <span class="n">Keys</span>
+<span class="sd">&quot;&quot;&quot;Instance storing platform specific key codes.&quot;&quot;&quot;</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">msvcrt</span>
@@ -304,7 +373,7 @@
     <span class="p">}</span>
 
     <span class="n">_getch</span> <span class="o">=</span> <span class="n">_GetchWindows</span><span class="p">()</span>
-    <span class="n">keys</span> <span class="o">=</span> <span class="n">_Keys</span><span class="p">(</span><span class="n">_platform_keys</span><span class="p">,</span> <span class="s2">&quot;nt&quot;</span><span class="p">)</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">Keys</span><span class="p">(</span><span class="n">_platform_keys</span><span class="p">,</span> <span class="s2">&quot;nt&quot;</span><span class="p">)</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
@@ -332,11 +401,17 @@
     <span class="p">}</span>
 
     <span class="n">_getch</span> <span class="o">=</span> <span class="n">_GetchUnix</span><span class="p">()</span>
-    <span class="n">keys</span> <span class="o">=</span> <span class="n">_Keys</span><span class="p">(</span><span class="n">_platform_keys</span><span class="p">,</span> <span class="s2">&quot;posix&quot;</span><span class="p">)</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">Keys</span><span class="p">(</span><span class="n">_platform_keys</span><span class="p">,</span> <span class="s2">&quot;posix&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">getch</span><span class="p">(</span><span class="n">printable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">interrupts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper to call the platform-appropriate character getter&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper to call the platform-appropriate character getter.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        printable: When set, printable versions of the input are returned.</span>
+<span class="sd">        interrupts: If not set, `KeyboardInterrupt` is silenced and `chr(3)`</span>
+<span class="sd">            (`CTRL_C`) is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">_getch</span><span class="p">()</span>
@@ -355,13 +430,349 @@
         </details>
 
             </section>
+                <section id="Keys">
+                                <div class="attr class">
+        <a class="headerlink" href="#Keys">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">Keys</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Keys</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for easy access to key-codes.</span>
+
+<span class="sd">    The keys for CTRL_{ascii_letter}-s can be generated with</span>
+<span class="sd">    the following code:</span>
+
+<span class="sd">    ```python3</span>
+<span class="sd">    for i, letter in enumerate(ascii_lowercase):</span>
+<span class="sd">        key = f&quot;CTRL_{letter.upper()}&quot;</span>
+<span class="sd">        code = chr(i+1).encode(&#39;unicode_escape&#39;).decode(&#39;utf-8&#39;)</span>
+
+<span class="sd">        print(key, code)</span>
+<span class="sd">    ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform_keys</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">platform</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Keys object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            platform_keys: A dictionary of platform-specific keys.</span>
+<span class="sd">            platform: The platform the program is running on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;SPACE&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ESC&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="c1"># The ALT character in key combinations is the same as ESC</span>
+            <span class="s2">&quot;ALT&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TAB&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ENTER&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;RETURN&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_A&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_B&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x02</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_C&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x03</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_D&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x04</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_E&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x05</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_F&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x06</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_G&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x07</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_H&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x08</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_I&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_J&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_K&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x0b</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_L&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x0c</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_M&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_N&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x0e</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_O&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x0f</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_P&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x10</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_Q&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x11</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_R&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x12</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_S&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x13</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_T&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x14</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_U&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x15</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_V&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x16</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_W&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x17</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_X&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x18</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_Y&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x19</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_Z&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x1a</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">platform</span> <span class="o">=</span> <span class="n">platform</span>
+
+        <span class="k">if</span> <span class="n">platform_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">platform_keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">code</span>
+                    <span class="k">continue</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">code</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Gets attr from self._keys.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;ANY_KEY&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">attr</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Gets canonical name of a key code.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key: The key to get the name of.</span>
+<span class="sd">            default: The return value to substitute if no canonical name could be</span>
+<span class="sd">                found. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The canonical name if one can be found, default otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">name</span>
+
+        <span class="k">return</span> <span class="n">default</span>
+
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesView</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns values() of self._keys.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KeysView</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns keys() of self._keys.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemsView</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns items() of self._keys.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Class for easy access to key-codes.</p>
+
+<p>The keys for CTRL_{ascii_letter}-s can be generated with
+the following code:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">letter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ascii_lowercase</span><span class="p">):</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CTRL_</span><span class="si">{</span><span class="n">letter</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;unicode_escape&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+</code></pre></div>
+</div>
+
+
+                            <div id="Keys.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Keys.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">Keys</span><span class="signature">(platform_keys: dict[str, str], platform: str)</span>
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform_keys</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">platform</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Keys object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            platform_keys: A dictionary of platform-specific keys.</span>
+<span class="sd">            platform: The platform the program is running on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;SPACE&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ESC&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="c1"># The ALT character in key combinations is the same as ESC</span>
+            <span class="s2">&quot;ALT&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TAB&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ENTER&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;RETURN&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_A&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_B&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x02</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_C&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x03</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_D&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x04</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_E&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x05</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_F&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x06</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_G&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x07</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_H&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x08</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_I&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_J&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_K&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x0b</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_L&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x0c</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_M&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_N&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x0e</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_O&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x0f</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_P&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x10</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_Q&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x11</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_R&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x12</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_S&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x13</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_T&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x14</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_U&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x15</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_V&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x16</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_W&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x17</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_X&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x18</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_Y&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x19</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CTRL_Z&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\x1a</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">platform</span> <span class="o">=</span> <span class="n">platform</span>
+
+        <span class="k">if</span> <span class="n">platform_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">platform_keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">code</span>
+                    <span class="k">continue</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">code</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Initialize Keys object.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>platform_keys:</strong>  A dictionary of platform-specific keys.</li>
+<li><strong>platform:</strong>  The platform the program is running on.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="Keys.get_name" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Keys.get_name">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">get_name</span><span class="signature">(self, key: str, default: Optional[str] = None) -&gt; Optional[str]</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Gets canonical name of a key code.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key: The key to get the name of.</span>
+<span class="sd">            default: The return value to substitute if no canonical name could be</span>
+<span class="sd">                found. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The canonical name if one can be found, default otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">name</span>
+
+        <span class="k">return</span> <span class="n">default</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Gets canonical name of a key code.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>key:</strong>  The key to get the name of.</li>
+<li><strong>default:</strong>  The return value to substitute if no canonical name could be
+found. Defaults to None.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The canonical name if one can be found, default otherwise.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="Keys.values" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Keys.values">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">values</span><span class="signature">(self) -&gt; ValuesView[str]</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesView</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns values() of self._keys.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Returns values() of self._keys.</p>
+</div>
+
+
+                            </div>
+                            <div id="Keys.keys" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Keys.keys">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">keys</span><span class="signature">(self) -&gt; KeysView[str]</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KeysView</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns keys() of self._keys.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Returns keys() of self._keys.</p>
+</div>
+
+
+                            </div>
+                            <div id="Keys.items" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Keys.items">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">items</span><span class="signature">(self) -&gt; ItemsView[str, str]</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemsView</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns items() of self._keys.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Returns items() of self._keys.</p>
+</div>
+
+
+                            </div>
+                </section>
                 <section id="keys">
                                 <div class="attr variable"><a class="headerlink" href="#keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: <a href="#_Keys">pytermgui.input._Keys</a></span><span class="default_value"> = &lt;<a href="#_Keys">pytermgui.input._Keys</a> object&gt;</span>
+        <span class="name">keys</span><span class="annotation">: <a href="#Keys">pytermgui.input.Keys</a></span><span class="default_value"> = &lt;<a href="#Keys">pytermgui.input.Keys</a> object&gt;</span>
     </div>
 
-            <div class="docstring"><p>Instance storing platform specific key codes</p>
+            <div class="docstring"><p>Instance storing platform specific key codes.</p>
 </div>
 
 
@@ -377,7 +788,13 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getch</span><span class="p">(</span><span class="n">printable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">interrupts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper to call the platform-appropriate character getter&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper to call the platform-appropriate character getter.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        printable: When set, printable versions of the input are returned.</span>
+<span class="sd">        interrupts: If not set, `KeyboardInterrupt` is silenced and `chr(3)`</span>
+<span class="sd">            (`CTRL_C`) is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">_getch</span><span class="p">()</span>
@@ -395,7 +812,15 @@
 
         </details>
 
-            <div class="docstring"><p>Wrapper to call the platform-appropriate character getter</p>
+            <div class="docstring"><p>Wrapper to call the platform-appropriate character getter.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>printable:</strong>  When set, printable versions of the input are returned.</li>
+<li><strong>interrupts:</strong>  If not set, <code>KeyboardInterrupt</code> is silenced and <code>chr(3)</code>
+(<code>CTRL_C</code>) is returned.</li>
+</ul>
 </div>
 
 
