@@ -64,7 +64,7 @@ from .widgets import (
 from .input import getch
 from .parser import markup
 from .helpers import strip_ansi
-from .enums import CenteringPolicy, SizePolicy
+from .enums import CenteringPolicy, SizePolicy, Overflow
 from .context_managers import alt_buffer, mouse_handler, MouseTranslator
 from .ansi_interface import (
     terminal,
@@ -94,6 +94,7 @@ class Window(Container):
     """
 
     is_bindable = True
+    overflow = Overflow.HIDE
     size_policy = SizePolicy.STATIC
 
     allow_fullscreen = False

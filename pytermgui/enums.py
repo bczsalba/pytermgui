@@ -98,13 +98,16 @@ class Overflow(DefaultEnum):
     """Overflow policies implemented by Container."""
 
     HIDE = 0
-    """Stop gathering lines once there is no room left"""
+    """Stop gathering lines once there is no room left."""
 
     SCROLL = 1
-    """Allow scrolling when there is too many lines"""
+    """Allow scrolling when there is too many lines."""
 
     RESIZE = 2
-    """Resize parent to fit with the new lines"""
+    """Resize parent to fit with the new lines.
+
+    Note: When applied to a window, this prevents resizing its height
+    using the bottom border."""
 
     AUTO = 9999
     """NotImplemented"""

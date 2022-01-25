@@ -516,6 +516,9 @@ class Container(Widget):
             self._scroll_offset = max(0, min(self._scroll_offset, length - height))
             lines = lines[self._scroll_offset : self._scroll_offset + height]
 
+        elif overflow == Overflow.RESIZE:
+            self.height = length + sum(has_top_bottom)
+
         vertical_offset, lines = self._apply_vertalign(
             lines, self.height - len(lines) - sum(has_top_bottom), align("")
         )
