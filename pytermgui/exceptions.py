@@ -15,16 +15,16 @@ __all__ = [
 
 
 class WidthExceededError(Exception):
-    """Raised when an element's width is larger than the screen"""
+    """Raised when an element's width is larger than the screen."""
 
 
 class LineLengthError(Exception):
-    """Raised when a widget line is not the expected length"""
+    """Raised when a widget line is not the expected length."""
 
 
 @dataclass
 class ParserSyntaxError(Exception):
-    """Parent exception for unparsable strings
+    """Parent exception for unparsable strings.
 
     This exception takes some basic parameters, and formats
     a message depending on the _delimiters value. This has to
@@ -38,7 +38,7 @@ class ParserSyntaxError(Exception):
 
     @property
     def message(self) -> str:
-        """Create message from tag, context and cause"""
+        """Create message from tag, context and cause."""
 
         escaped_context = ascii(self.context).strip("'")
         start, end = self._delimiters
@@ -53,18 +53,18 @@ class ParserSyntaxError(Exception):
         return self.message.replace(char, "\\" + char)
 
     def __str__(self) -> str:
-        """Show message"""
+        """Show message."""
 
         return self.message
 
 
 class MarkupSyntaxError(ParserSyntaxError):
-    """Raised when parsed markup text contains an error"""
+    """Raised when parsed markup text contains an error."""
 
     _delimiters = ("[", "]")
 
 
 class AnsiSyntaxError(ParserSyntaxError):
-    """Raised when parsed ANSI text contains an error"""
+    """Raised when parsed ANSI text contains an error."""
 
     _delimiters = ("\\x1b[", "m")

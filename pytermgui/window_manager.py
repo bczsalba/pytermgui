@@ -79,7 +79,7 @@ __all__ = ["Window", "WindowManager"]
 
 
 class Edge(Enum):
-    """Enum for window edges"""
+    """Enum for window edges."""
 
     LEFT = _auto()
     TOP = _auto()
@@ -88,7 +88,7 @@ class Edge(Enum):
 
 
 class Window(Container):
-    """A class representing a window
+    """A class representing a window.
 
     Windows are essentially fancy `pytermgui.widgets.Container`-s. They build on top of them
     to store and display various widgets, while allowing some custom functionality.
@@ -99,25 +99,25 @@ class Window(Container):
     size_policy = SizePolicy.STATIC
 
     allow_fullscreen = False
-    """When a window is allowed fullscreen its manager will try to set it so before each frame"""
+    """When a window is allowed fullscreen its manager will try to set it so before each frame."""
 
     title = ""
-    """Title shown in left-top corner"""
+    """Title shown in left-top corner."""
 
     is_static = False
-    """Static windows cannot be moved using the mouse"""
+    """Static windows cannot be moved using the mouse."""
 
     is_modal = False
-    """Modal windows stay on top of every other window and block interactions with other windows"""
+    """Modal windows stay on top of every other window and block interactions with other windows."""
 
     is_noblur = False
-    """No-blur windows will always appear to stay in focus, even if they functionally don't"""
+    """No-blur windows will always appear to stay in focus, even if they functionally don't."""
 
     is_noresize = False
-    """No-resize windows cannot be resized using the mouse"""
+    """No-resize windows cannot be resized using the mouse."""
 
     is_dirty = False
-    """Control whether the parent manager needs to print this Window"""
+    """Control whether the parent manager needs to print this Window."""
 
     min_width: int | None = None
     """Minimum width of the window.
@@ -132,7 +132,12 @@ class Window(Container):
     styles = {**Container.styles, **{"title": MarkupFormatter("[wm-title]{item}")}}
 
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
-        """Initialize object"""
+        """Initializes object.
+
+        Args:
+            widgets: Widgets to add to this window after initilization.
+            attrs: Attributes that are passed to the constructor.
+        """
 
         self._auto_min_width = 0
 
@@ -181,7 +186,7 @@ class Window(Container):
         self.height = bottom - top
 
     def __iadd__(self, other: object) -> Window:
-        """Call self._add_widget(other) and return self"""
+        """Calls self._add_widget(other) and returns self."""
 
         self._add_widget(other)
         return self
@@ -221,7 +226,15 @@ class Window(Container):
         return left <= pos[0] < right and top <= pos[1] < bottom
 
     def set_title(self, title: str, position: int = 0, pad: bool = True) -> None:
-        """Set window title"""
+        """Sets the window's title.
+
+        Args:
+            title: The string to set as the window title.
+            position: An integer indexing into ["left", "top", "right", "bottom"],
+                determining where the title is applied.
+            pad: Whether there should be an extra space before and after the given title.
+                defaults to True.
+        """
 
         self.title = title
 
@@ -242,7 +255,14 @@ class Window(Container):
         self.set_char("corner", corners)
 
     def set_fullscreen(self, value: bool = True) -> Window:
-        """Set window to fullscreen"""
+        """Sets window to fullscreen.
+
+        Args:
+            value: Whether fullscreen should be set or unset.
+
+        Returns:
+            The same window.
+        """
 
         if value:
             self._restore_data = self.pos, (self.width, self.height)
@@ -285,7 +305,7 @@ class Window(Container):
 
 
 class WindowManager(Container):
-    """A class representing a WindowManager"""
+    """A class representing a WindowManager."""
 
     is_bindable = True
 
@@ -301,7 +321,7 @@ class WindowManager(Container):
     """A list of MouseAction-s that, when executed over a non-focused window will focus it."""
 
     def __init__(self, **attrs: Any) -> None:
-        """Initialize object"""
+        """Initialize object."""
 
         super().__init__(**attrs)
 
@@ -330,7 +350,11 @@ class WindowManager(Container):
 
     @staticmethod
     def _sleep(duration: float) -> None:
-        """Accurately sleep some duration"""
+        """Accurately sleeps some duration.
+
+        Args:
+            duration: The amount to sleep.
+        """
 
         # TODO: Implement a better sleep function
 
@@ -338,7 +362,7 @@ class WindowManager(Container):
 
     @property
     def should_print(self) -> bool:
-        """Whether the `WindowManager` has dirty elements
+        """Returns whether the `WindowManager` has dirty elements.
 
         An element being "dirty" means it has changes not yet shown. Windows
         can set themselves to be dirty using the `Window.is_dirty` flag."""
@@ -346,12 +370,12 @@ class WindowManager(Container):
         return self._should_print or any(window.is_dirty for window in self._windows)
 
     def __enter__(self) -> WindowManager:
-        """Start context manager"""
+        """Starts context manager."""
 
         return self
 
     def __exit__(self, _: Any, exception: Exception, __: Any) -> bool:
-        """End context manager"""
+        """Ends context manager."""
 
         if exception is not None:
             raise exception
@@ -399,7 +423,14 @@ class WindowManager(Container):
         Thread(name="WM_DisplayLoop", target=_loop).start()
 
     def execute_binding(self, key: Any) -> bool:
-        """Execute bindings, including mouse ones"""
+        """Execute bindings, including mouse ones.
+
+        Args:
+            key: The binding to execute, if found.
+
+        Returns:
+            Boolean describing success.
+        """
 
         if not isinstance(key, str):
             return super().execute_binding(key)
@@ -429,7 +460,14 @@ class WindowManager(Container):
         return super().execute_binding(key)
 
     def handle_key(self, key: str) -> bool:
-        """Process a keypress"""
+        """Process a keypress.
+
+        Args:
+            key: The key to handle.
+
+        Returns:
+            A boolean describing success.
+        """
 
         # Apply WindowManager bindings
         if self.execute_binding(key):
@@ -446,7 +484,11 @@ class WindowManager(Container):
         return False
 
     def process_mouse(self, key: str) -> None:
-        """Process (potential) mouse input"""
+        """Processes (potential) mouse input.
+
+        Args:
+            key: Input to handle.
+        """
 
         handlers = {
             MouseAction.LEFT_CLICK: self._click,
@@ -495,7 +537,11 @@ class WindowManager(Container):
                 self._drag_target = None
 
     def focus(self, window: Window) -> None:
-        """Set a window to be focused"""
+        """Sets a window to be focused.
+
+        Args:
+            window: The window to focus.
+        """
 
         for other_window in self._windows:
             other_window.has_focus = False
@@ -511,7 +557,14 @@ class WindowManager(Container):
         self.focused = window
 
     def add(self, window: Window) -> WindowManager:
-        """Add a window to this manager"""
+        """Adds a window to this manager.
+
+        Args:
+            window: The window to add.
+
+        Returns:
+            self.
+        """
 
         self._windows.insert(0, window)
         self._should_print = True
@@ -524,7 +577,11 @@ class WindowManager(Container):
         return self
 
     def close(self, window: Window) -> None:
-        """Close a window"""
+        """Closes a window.
+
+        Args:
+            window: The window to close.
+        """
 
         self._windows.remove(window)
 
@@ -532,7 +589,11 @@ class WindowManager(Container):
             self.focus(self._windows[0])
 
     def on_resize(self, size: tuple[int, int]) -> None:
-        """Correctly update window positions & print when terminal gets resized"""
+        """Correctly updates window positions & prints when terminal gets resized.
+
+        Args:
+            size: The new terminal size.
+        """
 
         width, height = size
 
@@ -545,7 +606,7 @@ class WindowManager(Container):
         self._should_print = True
 
     def _click(self, pos: tuple[int, int], window: Window) -> bool:
-        """Process clicking a window"""
+        """Process clicking a window."""
 
         left, top, right, bottom = window.rect
 
@@ -639,7 +700,7 @@ class WindowManager(Container):
         return False
 
     def process_input(self) -> None:
-        """Process incoming input"""
+        """Processes incoming input."""
 
         while self._is_running:
             key = getch()
@@ -651,38 +712,47 @@ class WindowManager(Container):
             self.process_mouse(key)
 
     def stop(self) -> None:
-        """Stop main loop"""
+        """Stops the main loop."""
 
         self._is_running = False
 
     def pause(self) -> None:
-        """Pause main loop"""
+        """Pauses the main loop."""
 
         self._is_paused = True
 
     def unpause(self) -> None:
-        """Pause main loop"""
+        """Pauses the main loop."""
 
         self._is_paused = False
 
     def exit(self) -> None:
-        """Exit program"""
+        """Exits the program."""
 
         self.stop()
         sys.exit()
 
-    def run(self) -> None:
-        """Run main loop"""
+    def run(self, mouse_events: list[str] | None = None) -> None:
+        """Runs the main loop.
+
+        Args:
+            mouse_events: A list of mouse event types to listen to. See
+                `pytermgui.ansi_interface.report_mouse` for more information.
+                Defaults to `["press_hold", "hover"]`.
+        """
+
+        if mouse_events is None:
+            mouse_events = ["press_hold", "hover"]
 
         with alt_buffer(cursor=False, echo=False):
-            with mouse_handler(["press_hold", "hover"], "decimal_xterm") as translate:
+            with mouse_handler(mouse_events, "decimal_xterm") as translate:
                 self.mouse_translator = translate
                 self._start_display_thread()
 
                 self.process_input()
 
     def print(self) -> None:
-        """Print all windows"""
+        """Prints all windows."""
 
         def _get_lines(window: Window) -> list[str]:
             """Get cached or live lines from a Window"""
@@ -755,7 +825,11 @@ class WindowManager(Container):
         self._should_print = True
 
     def alert(self, *content: Any) -> None:
-        """Create a modal window with content"""
+        """Create a modal window with content.
+
+        Args:
+            *content: The content to add to the new window.
+        """
 
         window = Window("[wm-title]Alert!", is_modal=True, width=50)
         for item in content:

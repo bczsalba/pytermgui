@@ -10,25 +10,56 @@ __all__ = ["strip_ansi", "strip_markup", "real_length", "get_sequences", "break_
 
 
 def strip_ansi(text: str) -> str:
-    """Remove ANSI sequences from `text`"""
+    """Removes ANSI sequences from text.
+
+    Args:
+        text: A string or bytes object containing 0 or more ANSI sequences.
+
+    Returns:
+        The text without any ANSI sequences.
+    """
 
     return RE_ANSI.sub("", text)
 
 
 def strip_markup(text: str) -> str:
-    """Remove markup tags from `text`"""
+    """Removes markup tags from text.
+
+    Args:
+        text: A string or bytes object containing 0 or more markup tags.
+
+    Returns:
+        The text without any markup tags.
+    """
 
     return RE_MARKUP.sub("", text)
 
 
 def real_length(text: str) -> int:
-    """Convenience wrapper for `len(strip_ansi(text))`"""
+    """Gets the display-length of text.
+
+    This length means no ANSI sequences are counted. This method is a convenience wrapper
+    for `len(strip_ansi(text))`.
+
+    Args:
+        text: The text to calculate the length of.
+
+    Returns:
+        The display-length of text.
+    """
 
     return len(strip_ansi(text))
 
 
 def get_sequences(text: str) -> str:
-    """Extract ANSI sequences from `text`"""
+    """Extracts ANSI sequences from text.
+
+    Args:
+        text: The text to operate on.
+
+    Returns:
+        All sequences found.
+    """
 
     sequences = ""
     for token in markup.tokenize_ansi(text):
@@ -57,15 +88,24 @@ def get_sequences(text: str) -> str:
 def break_line(  # pylint: disable=too-many-branches
     line: str, limit: int, char: str = " "
 ) -> Iterator[str]:
-    """Break a line into a `list[str]` with maximum `limit` length per line
+    """Breaks a line into a `list[str]` with maximum `limit` length per line.
 
     ANSI sequences are not counted into the length, and styling stays consistent
     even between lines.
 
+    Args:
+        line: The line to break up.
+        limit: The maximum width of a line, counting with `real_length`.
+        char: The character that separates words. Defaults to a space.
+
     Note:
         This function currently does NOT handle literal newlines ("\\n"), instead
         chosing to throw them away. You can get around this by splitting your text
-        by newlines prior to handing it to `break_line`."""
+        by newlines prior to handing it to `break_line`.
+
+    Yields:
+        Lines of maximum limit real_length.
+    """
 
     # TODO: Refactor this method & handle newlines, avoid pylint disables.
 

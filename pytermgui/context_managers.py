@@ -35,7 +35,16 @@ MouseTranslator = Callable[[str], Union[List[Union[MouseEvent, None]], None]]
 
 @contextmanager
 def cursor_at(pos: tuple[int, int]) -> Generator[Callable[..., None], None, None]:
-    """Get callable to print at `pos`, incrementing `y` on every print"""
+    """Gets callable to print at `pos`, incrementing `y` on every print.
+
+    Args:
+        pos: The position to start printing at. Follows the order (columns, rows).
+
+    Yields:
+        A callable printing function. This function forwards all arguments to `print`,
+        but positions the cursor before doing so. After every call, the y position is
+        incremented.
+    """
 
     offset = 0
     posx, posy = pos
@@ -58,9 +67,14 @@ def cursor_at(pos: tuple[int, int]) -> Generator[Callable[..., None], None, None
 
 @contextmanager
 def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None, None]:
-    """Create non-scrollable alt-buffer
+    """Creates non-scrollable alt-buffer.
 
-    This is useful for retrieving original terminal state after program end."""
+    This is useful for retrieving original terminal state after program end.
+
+    Args:
+        echo: Whether `unset_echo` should be called on startup.
+        cursor: Whether `hide_cursor` should be called on startup.
+    """
 
     try:
         set_alt_buffer()
@@ -91,12 +105,15 @@ def mouse_handler(
 ) -> Generator[MouseTranslator | None, None, None]:
     """Return a mouse handler function
 
-    Note: This method only supports `decimal_urxvt` and `decimal_xterm`, as they are the most
-    universal.
-
     See `help(report_mouse)` for help about all of the methods.
 
+    Args:
+        events: A list of `pytermgui.ansi_interface.report_mouse` events.
+        method: The method to use for reporting. Only `decimal_urxvt` and
+            `decimal_xterm` are currently supported.
+
     Example use:
+
     ```python3
     import pytermgui as ptg
 
@@ -111,6 +128,7 @@ def mouse_handler(
     'pytermgui.ansi_interface.MouseAction.LEFT_CLICK'
     (33, 55)
     ```
+
     """
 
     event = None

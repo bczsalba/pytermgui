@@ -31,17 +31,25 @@ from codecs import getincrementaldecoder
 
 
 def _is_ready(file: IO[AnyStr]) -> bool:
-    """Determine if IO object is reading to read"""
+    """Determines if IO object is reading to read.
+
+    Args:
+        file: An IO object of any type.
+
+    Returns:
+        A boolean describing whether the object has unread
+        content.
+    """
 
     result = select([file], [], [], 0.0)
     return len(result[0]) > 0
 
 
 class _GetchUnix:
-    """Getch implementation for UNIX systems"""
+    """Getch implementation for UNIX systems."""
 
     def __init__(self) -> None:
-        """Initialize object"""
+        """Initializes object."""
 
         if sys.stdin.encoding is not None:
             self.decode = getincrementaldecoder(sys.stdin.encoding)().decode
@@ -49,7 +57,14 @@ class _GetchUnix:
             self.decode = lambda item: item
 
     def _read(self, num: int) -> str:
-        """Read `num` characters from sys.stdin"""
+        """Reads characters from sys.stdin.
+
+        Args:
+            num: How many characters should be read.
+
+        Returns:
+            The characters read.
+        """
 
         buff = ""
         while len(buff) < num:
@@ -62,7 +77,11 @@ class _GetchUnix:
         return buff
 
     def get_chars(self) -> Generator[str, None, None]:
-        """Yield characters while there are some available"""
+        """Yields characters while there are some available.
+
+        Yields:
+            Any available characters.
+        """
 
         descriptor = sys.stdin.fileno()
         old_settings = termios.tcgetattr(descriptor)
@@ -79,18 +98,25 @@ class _GetchUnix:
             termios.tcsetattr(descriptor, termios.TCSADRAIN, old_settings)
 
     def __call__(self) -> str:
-        """Return all characters that can be read"""
+        """Returns all characters that can be read."""
 
         buff = "".join(self.get_chars())
         return buff
 
 
 class _GetchWindows:
-    """Getch implementation for Windows"""
+    """Getch implementation for Windows."""
 
     @staticmethod
     def _ensure_str(string: AnyStr) -> str:
-        """Ensure return value is always a `str` and not `bytes`"""
+        """Ensures return value is always a `str` and not `bytes`.
+
+        Args:
+            string: Any string or bytes object.
+
+        Returns:
+            The string argument, converted to `str`.
+        """
 
         if isinstance(string, bytes):
             return string.decode("utf-8")
@@ -98,7 +124,11 @@ class _GetchWindows:
         return string
 
     def get_chars(self) -> str:
-        """Read `num` characters from sys.stdin"""
+        """Reads characters from sys.stdin.
+
+        Returns:
+            All read characters.
+        """
 
         char = msvcrt.getch()
         if char == b"\xe0":
@@ -113,14 +143,18 @@ class _GetchWindows:
         return buff
 
     def __call__(self) -> str:
-        """Return all characters that can be read"""
+        """Returns all characters that can be read.
+
+        Returns:
+            All readable characters.
+        """
 
         buff = self.get_chars()
         return buff
 
 
-class _Keys:
-    """Class for easy access to key-codes
+class Keys:
+    """Class for easy access to key-codes.
 
     The keys for CTRL_{ascii_letter}-s can be generated with
     the following code:
@@ -135,7 +169,12 @@ class _Keys:
     """
 
     def __init__(self, platform_keys: dict[str, str], platform: str) -> None:
-        """Set up key values"""
+        """Initialize Keys object.
+
+        Args:
+            platform_keys: A dictionary of platform-specific keys.
+            platform: The platform the program is running on.
+        """
 
         self._keys = {
             "SPACE": " ",
@@ -184,7 +223,7 @@ class _Keys:
                 self._keys[key] = code
 
     def __getattr__(self, attr: str) -> str:
-        """Get attr from self._keys"""
+        """Gets attr from self._keys."""
 
         if attr == "ANY_KEY":
             return attr
@@ -192,7 +231,16 @@ class _Keys:
         return self._keys[attr]
 
     def get_name(self, key: str, default: Optional[str] = None) -> Optional[str]:
-        """Get canonical name of a key code"""
+        """Gets canonical name of a key code.
+
+        Args:
+            key: The key to get the name of.
+            default: The return value to substitute if no canonical name could be
+                found. Defaults to None.
+
+        Returns:
+            The canonical name if one can be found, default otherwise.
+        """
 
         for name, value in self._keys.items():
             if key == value:
@@ -201,25 +249,25 @@ class _Keys:
         return default
 
     def values(self) -> ValuesView[str]:
-        """Return values() of self._keys"""
+        """Returns values() of self._keys."""
 
         return self._keys.values()
 
     def keys(self) -> KeysView[str]:
-        """Return keys() of self._keys"""
+        """Returns keys() of self._keys."""
 
         return self._keys.keys()
 
     def items(self) -> ItemsView[str, str]:
-        """Return items() of self._keys"""
+        """Returns items() of self._keys."""
 
         return self._keys.items()
 
 
 _getch: Union[_GetchWindows, _GetchUnix]
 
-keys: _Keys
-"""Instance storing platform specific key codes"""
+keys: Keys
+"""Instance storing platform specific key codes."""
 
 try:
     import msvcrt
@@ -237,7 +285,7 @@ try:
     }
 
     _getch = _GetchWindows()
-    keys = _Keys(_platform_keys, "nt")
+    keys = Keys(_platform_keys, "nt")
 
 except ImportError as import_error:
     if not os.name == "posix":
@@ -265,11 +313,17 @@ except ImportError as import_error:
     }
 
     _getch = _GetchUnix()
-    keys = _Keys(_platform_keys, "posix")
+    keys = Keys(_platform_keys, "posix")
 
 
 def getch(printable: bool = False, interrupts: bool = True) -> Any:
-    """Wrapper to call the platform-appropriate character getter"""
+    """Wrapper to call the platform-appropriate character getter.
+
+    Args:
+        printable: When set, printable versions of the input are returned.
+        interrupts: If not set, `KeyboardInterrupt` is silenced and `chr(3)`
+            (`CTRL_C`) is returned.
+    """
 
     try:
         key = _getch()

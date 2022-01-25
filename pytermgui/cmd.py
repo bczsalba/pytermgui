@@ -44,7 +44,14 @@ __all__ = ["Application"]
 
 
 def _get_key_name(key: str) -> str:
-    """Get canonical name of a key"""
+    """Gets canonical name of a key.
+
+    Arguments:
+        key: The key in question.
+
+    Returns:
+        The canonical-ish name of the key.
+    """
 
     name = keys.get_name(key)
     if name is not None:
@@ -54,20 +61,25 @@ def _get_key_name(key: str) -> str:
 
 
 class Application(ABC):
-    """A class representing an application"""
+    """A class representing an application."""
 
     title: str
     description: str
     standalone: bool = False
 
     def __init__(self, manager: WindowManager) -> None:
-        """Initialize object"""
+        """Initializes Application.
+
+        Args:
+            manager: The WindowManager instance this application
+                belongs to.
+        """
 
         self.manager = manager
 
     @staticmethod
     def _update_widgets(window: Window, items: list[Any]) -> None:
-        """Update window widgets, using auto() method for each"""
+        """Update window widgets, using auto() method for each."""
 
         window.set_widgets([])
         for item in items:
@@ -75,25 +87,29 @@ class Application(ABC):
 
     @abstractmethod
     def finish(self, window: Window) -> None:
-        """Print output information on Application finish
+        """Prints output information on Application finish.
 
         This is called by the main method after self.manager exits.
 
         In order to support `standalone` mode, the Application should
         call `_request_exit()` once it is done with its duty. This method
-        is called directly after."""
+        is called directly after.
+
+        Args:
+            window: The window object calling this method.
+        """
 
     @abstractmethod
     def construct_window(self) -> Window:
-        """Construct an application window"""
+        """Constructs an application window."""
 
     def _request_exit(self) -> None:
-        """Send a request to the manager parent to stop execution"""
+        """Send a request to the manager parent to stop execution."""
 
         self.manager.stop()
 
     def _get_base_window(self, **attrs: Any) -> Window:
-        """Get window with basic & universal settings applied"""
+        """Get window with basic & universal settings applied."""
 
         if "title" not in attrs:
             attrs["title"] = " [bold wm-title]" + self.title + " "
@@ -102,13 +118,19 @@ class Application(ABC):
 
 
 class LauncherApplication(Application):
-    """Application that launches other apps"""
+    """Application that launches other apps."""
 
     title = "Launcher"
     description = "Launch other apps"
 
     def __init__(self, manager: WindowManager, apps: list[Type[Application]]) -> None:
-        """Initialize object"""
+        """Initialize LauncherApplication.
+
+        Args:
+            manager: The WindowManager instance this application
+                belongs to.
+            apps: A list of Application type objects that this window will contain.
+        """
 
         super().__init__(manager)
 
@@ -119,10 +141,10 @@ class LauncherApplication(Application):
         self.apps = instantiated_apps
 
     def finish(self, _: Window) -> None:
-        """Do nothing on finish"""
+        """Do nothing on finish."""
 
     def construct_window(self) -> Window:
-        """Construct an application window"""
+        """Constructs an application window."""
 
         window = self._get_base_window(width=30, is_noblur=False) + ""
         manager = self.manager
@@ -140,13 +162,13 @@ class LauncherApplication(Application):
 
 
 class GetchApplication(Application):
-    """Application for the getch() utility"""
+    """Application for the getch() utility."""
 
     title = "Getch"
     description = "See your keypresses"
 
     def _key_callback(self, window: Window, key: str) -> bool:
-        """Edit `window` state if `key` is pressed"""
+        """Edits `window` state if `key` is pressed."""
 
         # Don't display mouse codes
         if (
@@ -176,13 +198,13 @@ class GetchApplication(Application):
         return True
 
     def finish(self, window: Window) -> None:
-        """Dump getch() output to stdout on finish"""
+        """Dumps getch() output to stdout on finish."""
 
         for line in window.get_lines():
             print(line)
 
     def construct_window(self) -> Window:
-        """Construct an application window"""
+        """Constructs an application window."""
 
         window = self._get_base_window(is_modal=True) + "[wm-title]Press any key..."
         window.bind(
@@ -202,7 +224,7 @@ class MarkupApplication(Application):
 
     @staticmethod
     def _get_tokens() -> list[Label]:
-        """Get all tokens using the parser"""
+        """Gets all tokens using the parser."""
 
         tokens: list[Label] = []
         for token in markup.tags:
@@ -212,7 +234,7 @@ class MarkupApplication(Application):
 
     @staticmethod
     def _update_value(output: Label, field: InputField) -> None:
-        """Update output value
+        """Updates output value.
 
         This shows parsed markup if parsing succeeded, SyntaxError otherwise."""
 
@@ -224,7 +246,7 @@ class MarkupApplication(Application):
 
     @staticmethod
     def _style_wrapper(_: int, item: str) -> str:
-        """Catch MarkupSyntaxError"""
+        """Catches MarkupSyntaxError."""
 
         try:
             # TODO: Reintroduce prettify_markup
@@ -238,7 +260,7 @@ class MarkupApplication(Application):
 
     @staticmethod
     def _define_colors(*_: Any) -> None:
-        """Re-generate colors for guide"""
+        """Re-generates colors for guide."""
 
         def _random_hex() -> str:
             """Return a random hex number"""
@@ -251,7 +273,7 @@ class MarkupApplication(Application):
         markup.alias("demo-rgb", _random_hex())
 
     def finish(self, window: Window) -> None:
-        """Dump output markup to stdout on finish"""
+        """Dumps output markup to stdout on finish."""
 
         if window.manager is None:
             return
@@ -262,10 +284,10 @@ class MarkupApplication(Application):
         print(window.output_label.value)
 
     def construct_window(self) -> Window:
-        """Construct an application window"""
+        """Constructs an application window."""
 
         def dump(window: Window) -> None:
-            """Dump lines of window and exit program"""
+            """Dumps lines of window and exits program."""
 
             with open("dump", "w", encoding="utf8") as file:
                 file.write("\n".join(window.get_lines()))
@@ -388,7 +410,7 @@ class MarkupApplication(Application):
 
 
 def run_wm(args: Namespace) -> None:
-    """Run WindowManager using args"""
+    """Runs WindowManager using args."""
 
     # This is used for finding Application from arguments
     app_mapping = {"getch": GetchApplication, "markapp": MarkupApplication}
@@ -451,7 +473,7 @@ def run_wm(args: Namespace) -> None:
 
 
 def main() -> None:
-    """Main method"""
+    """Main method."""
 
     parser = ArgumentParser(
         description="Command line interface & demo for some utilities related to TUI development."

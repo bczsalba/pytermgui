@@ -35,7 +35,7 @@ class Serializer:
     all widgets use `markup_style` for their affected styles."""
 
     def __init__(self) -> None:
-        """Set up known widgets"""
+        """Sets up known widgets."""
 
         self.known_widgets = self.get_widgets()
         self.known_boxes = vars(widgets.boxes)
@@ -45,7 +45,7 @@ class Serializer:
 
     @staticmethod
     def get_widgets() -> WidgetDict:
-        """Get all widgets from the module"""
+        """Gets all widgets from the module."""
 
         known = {}
         for name, item in vars(widgets).items():
@@ -59,22 +59,39 @@ class Serializer:
 
     @staticmethod
     def dump_to_dict(obj: Widget) -> dict[str, Any]:
-        """Dump widget to a dict
+        """Dump widget to a dict.
 
-        Note: This is an alias for `obj.serialize`"""
+        This is an alias for `obj.serialize`.
+
+        Args:
+            obj: The widget to dump.
+
+        Returns:
+            `obj.serialize()`.
+        """
 
         return obj.serialize()
 
     def register_box(self, name: str, box: widgets.boxes.Box) -> None:
-        """Register a new Box type"""
+        """Registers a new Box type.
+
+        Args:
+            name: The name of the box.
+            box: The box instance.
+        """
 
         self.known_boxes[name] = box
 
     def register(self, cls: Type[Widget]) -> None:
-        """Make object aware of a custom widget class, so
+        """Makes object aware of a custom widget class, so
         it can be serialized.
 
-        Make sure to pass a type here, not an instance."""
+        Args:
+            cls: The widget type to register.
+
+        Raises:
+            TypeError: The object is not a type.
+        """
 
         if not isinstance(cls, type):
             raise TypeError("Registered object must be a type.")
@@ -99,7 +116,15 @@ class Serializer:
     def from_dict(  # pylint: disable=too-many-locals
         self, data: dict[str, Any], widget_type: str | None = None
     ) -> Widget:
-        """Load a widget from a dictionary"""
+        """Loads a widget from a dictionary.
+
+        Args:
+            data: The data to load from.
+            widget_type: Substitute for when data has no `type` field.
+
+        Returns:
+            A widget from the given data.
+        """
 
         def _apply_markup(value: CharType) -> CharType:
             """Apply markup style to obj's key"""
@@ -178,12 +203,25 @@ class Serializer:
         return obj
 
     def from_file(self, file: IO[str]) -> Widget:
-        """Load widget from a file object"""
+        """Loads widget from a file object.
+
+        Args:
+            file: An IO object.
+
+        Returns:
+            The loaded widget.
+        """
 
         return self.from_dict(json.load(file))
 
     def to_file(self, obj: Widget, file: IO[str], **json_args: dict[str, Any]) -> None:
-        """Dump widget to a file object"""
+        """Dumps widget to a file object.
+
+        Args:
+            obj: The widget to dump.
+            file: The file object it gets written to.
+            **json_args: Arguments passed to `json.dump`.
+        """
 
         data = self.dump_to_dict(obj)
         if "separators" not in json_args:

@@ -147,7 +147,7 @@ __all__ = ["WidgetNamespace", "FileLoader", "YamlLoader", "JsonLoader"]
 
 @dataclass
 class WidgetNamespace:
-    """Class to hold data on loaded namespace"""
+    """Class to hold data on loaded namespace."""
 
     config: dict[Type[widgets.Widget], dict[str, Any]]
     widgets: dict[str, widgets.Widget]
@@ -155,7 +155,15 @@ class WidgetNamespace:
 
     @classmethod
     def from_config(cls, data: dict[Any, Any], loader: FileLoader) -> WidgetNamespace:
-        """Create a namespace from config data"""
+        """Creates a namespace from config data.
+
+        Args:
+            data: A dictionary of config data.
+            loader: The `FileLoader` instance that should be used.
+
+        Returns:
+            A new WidgetNamespace with the given config.
+        """
 
         namespace = WidgetNamespace({}, {})
         for name, config in data.items():
@@ -185,7 +193,7 @@ class WidgetNamespace:
     def _apply_section(
         widget: Type[widgets.Widget], title: str, section: dict[str, str]
     ) -> None:
-        """Apply configuration section to `widget`"""
+        """Applies configuration section to the widget."""
 
         for key, value in section.items():
             if title == "styles":
@@ -196,12 +204,16 @@ class WidgetNamespace:
             widget.set_char(key, value)
 
     def apply_to(self, widget: widgets.Widget) -> None:
-        """Apply namespace config to `widget`"""
+        """Applies namespace config to the widget.
+
+        Args:
+            widget: The widget in question.
+        """
 
         def _apply_sections(
             data: dict[str, dict[str, str]], widget: widgets.Widget
         ) -> None:
-            """Apply sections from data to widget"""
+            """Applies sections from data to the widget."""
 
             for title, section in data.items():
                 self._apply_section(type(widget), title, section)
@@ -222,14 +234,14 @@ class WidgetNamespace:
                 _apply_sections(inner_section, inner)
 
     def apply_config(self) -> None:
-        """Apply self.config to current namespace"""
+        """Apply self.config to current namespace."""
 
         for widget, settings in self.config.items():
             for title, section in settings.items():
                 self._apply_section(widget, title, section)
 
     def __getattr__(self, attr: str) -> widgets.Widget:
-        """Get widget by name from widget list"""
+        """Get widget by name from widget list."""
 
         if attr in self.widgets:
             return self.widgets[attr]
@@ -251,12 +263,18 @@ class FileLoader(ABC):
 
     @abstractmethod
     def parse(self, data: str) -> dict[Any, Any]:
-        """Parse string into dictionary
+        """Parses string into a dictionary used by `pytermgui.serializer.Serializer`.
 
-        This dictionary follows the structure above."""
+        This dictionary follows the structure defined above.
+        """
 
     def __init__(self, serializer: Serializer | None = None) -> None:
-        """Initialize object"""
+        """Initialize FileLoader.
+
+        Args:
+            serializer: An optional `pytermgui.serializer.Serializer` instance. If not provided, one
+                is instantiated for every FileLoader instance.
+        """
 
         if serializer is None:
             serializer = Serializer()
@@ -264,7 +282,11 @@ class FileLoader(ABC):
         self.serializer = serializer
 
     def register(self, cls: Type[widgets.Widget]) -> None:
-        """Register a widget to the serializer"""
+        """Registers a widget to the serializer.
+
+        Args:
+            cls: The widget type to register.
+        """
 
         self.serializer.register(cls)
 
@@ -280,10 +302,17 @@ class FileLoader(ABC):
         self.serializer.bind(name, method)
 
     def load_str(self, data: str) -> WidgetNamespace:
-        """Create a `WidgetNamespace` from string data
+        """Creates a `WidgetNamespace` from string data.
 
         To parse the data, we use `FileLoader.parse`. To implement custom formats,
-        subclass `FileLoader` with your own `parse` implementation."""
+        subclass `FileLoader` with your own `parse` implementation.
+
+        Args:
+            data: The data to parse.
+
+        Returns:
+            A WidgetNamespace created from the provided data.
+        """
 
         parsed = self.parse(data)
 
@@ -328,10 +357,17 @@ class FileLoader(ABC):
         return namespace
 
     def load(self, data: str | IO) -> WidgetNamespace:
-        """Load data from a string or a file
+        """Loads data from a string or a file.
 
         When an IO object is passed, its data is extracted as a string.
-        This string can then be passed to `load_str`."""
+        This string can then be passed to `load_str`.
+
+        Args:
+            data: Either a string or file stream to load data from.
+
+        Returns:
+            A WidgetNamespace with the data loaded.
+        """
 
         if not isinstance(data, str):
             data = data.read()
@@ -341,19 +377,26 @@ class FileLoader(ABC):
 
 
 class JsonLoader(FileLoader):
-    """JSON specific loader subclass"""
+    """JSON specific loader subclass."""
 
     def parse(self, data: str) -> dict[Any, Any]:
-        """Parse JSON str"""
+        """Parse JSON str.
+
+        Args:
+            data: JSON formatted string.
+
+        Returns:
+            Loadable dictionary.
+        """
 
         return json.loads(data)
 
 
 class YamlLoader(FileLoader):
-    """YAML specific loader subclass"""
+    """YAML specific loader subclass."""
 
     def __init__(self, serializer: Serializer | None = None) -> None:
-        """Initialize object, check for installation of PyYAML"""
+        """Initialize object, check for installation of PyYAML."""
 
         if YAML_ERROR is not None:
             raise RuntimeError(
@@ -363,7 +406,14 @@ class YamlLoader(FileLoader):
         super().__init__()
 
     def parse(self, data: str) -> dict[Any, Any]:
-        """Parse YAML str"""
+        """Parse YAML str.
+
+        Args:
+            data: YAML formatted string.
+
+        Returns:
+            Loadable dictionary.
+        """
 
         assert yaml is not None
         return yaml.safe_load(data)

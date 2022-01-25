@@ -43,11 +43,23 @@ __version__ = "1.1.0"
 
 
 def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
-    """
-    ### Create widgets from specific data patterns
+    """Creates a widget from specific data structures.
 
     This conversion includes various widget classes, as well as some shorthands for
-    more complex objects.
+    more complex objects.  This method is called implicitly whenever a non-widget is
+    attempted to be added to a Widget.
+
+
+    Args:
+        data: The structure to convert. See below for formats.
+        **widget_args: Arguments passed straight to the widget constructor.
+
+    Returns:
+        The widget or list of widgets created, or None if the passed structure could
+        not be converted.
+
+    <details style="text-align: left">
+        <summary style="all: revert; cursor: pointer">Data structures:</summary>
 
     `pytermgui.widgets.base.Label`:
 
@@ -78,9 +90,7 @@ def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
 
     * Created from `list[tuple[str, str], Callable[[str], Any]]`
     * Syntax example: `[("On", "Off"), lambda new_value: ...]`
-
-    This method is called implicitly whenever a non-widget is attempted to be added to
-    a Widget. It returns None in case of a failure
+    </details>
 
     Example:
 
