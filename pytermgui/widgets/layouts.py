@@ -370,7 +370,7 @@ class Container(Widget):
             return
 
         if widget.size_policy == SizePolicy.RELATIVE:
-            widget.width = widget.relative_width * available
+            widget.width = int(widget.relative_width * available)
             return
 
         if widget.width > available:

@@ -140,6 +140,7 @@ class Widget:
         self._id: Optional[str] = None
         self._serialized_fields = type(self).serialized
         self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
+        self._relative_width = None
 
         for attr, value in attrs.items():
             setattr(self, attr, value)
@@ -255,6 +256,32 @@ class Widget:
 
     # Set static_width to a setter only property
     static_width = property(None, static_width)  # type: ignore
+
+    @property
+    def relative_width(self) -> float | None:
+        """Returns the current relative_width value.
+
+        Returns:
+            The current relative_width setting.
+        """
+
+        return self._relative_width
+
+    @relative_width.setter
+    def relative_width(self, value: float) -> None:
+        """Sets this widget's relative width, and changes size_policy to RELATIVE.
+
+        The value is clamped to 1.0.
+
+        If a Container holds a width of 30, and it has a subwidget with a relative
+        width of 0.5, it will be resized to 15.
+
+        Args:
+            value: The multiplier to apply to the parent's width.
+        """
+
+        self.size_policy = SizePolicy.RELATIVE
+        self._relative_width = min(1.0, value)
 
     def contains(self, pos: tuple[int, int]) -> bool:
         """Determines whether widget contains `pos`.
