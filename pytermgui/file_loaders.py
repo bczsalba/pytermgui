@@ -121,9 +121,9 @@ with ptg.WindowManager() as manager:
 
 from __future__ import annotations
 
+from typing import Any, Type, IO, Callable
 from dataclasses import dataclass, field
 from abc import abstractmethod, ABC
-from typing import Any, Type, IO
 
 import json
 

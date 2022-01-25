@@ -620,8 +620,8 @@ of the interesting parts of pytermgui.</p>
                 <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="p">)</span>
 
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-            <span class="n">git_hash</span> <span class="o">=</span> <span class="s2">&quot;Could not determine due to {type(error).__name__}.&quot;</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
+            <span class="n">git_hash</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not determine due to </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="n">latest_tag_hash</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PyTermGUI v</span><span class="si">{</span><span class="n">__version__</span><span class="si">}{</span><span class="s1">&#39;+&#39;</span> <span class="k">if</span> <span class="n">latest_tag_hash</span> <span class="o">!=</span> <span class="n">git_hash</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

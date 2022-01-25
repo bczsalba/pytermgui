@@ -543,8 +543,8 @@ def main() -> None:
                 .strip()
             )
 
-        except Exception as error:
-            git_hash = "Could not determine due to {type(error).__name__}."
+        except Exception as error:  # pylint: disable=broad-except
+            git_hash = f"Could not determine due to {type(error).__name__}."
             latest_tag_hash = ""
 
         print(f"PyTermGUI v{__version__}{'+' if latest_tag_hash != git_hash else ''}")

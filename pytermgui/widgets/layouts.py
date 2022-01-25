@@ -471,7 +471,6 @@ class Container(Widget):
 
         align = lambda item: item
 
-        length = 0
         overflow = self.overflow
         # if overflow == Overflow.SCROLL:
         #     self.width -= self._scrollbar.width
@@ -488,7 +487,7 @@ class Container(Widget):
 
             widget_lines = []
             for line in widget.get_lines():
-                if length >= self.height - sum(has_top_bottom):
+                if len(lines) >= self.height - sum(has_top_bottom):
                     if overflow is Overflow.HIDE:
                         break
 
@@ -496,7 +495,6 @@ class Container(Widget):
                         overflow = Overflow.SCROLL
 
                 widget_lines.append(align(line))
-                length += 1
 
             lines.extend(widget_lines)
 
@@ -519,11 +517,11 @@ class Container(Widget):
             # lines = new_lines
 
             height = self.height - sum(has_top_bottom)
-            self._scroll_offset = max(0, min(self._scroll_offset, length - height))
+            self._scroll_offset = max(0, min(self._scroll_offset, len(lines) - height))
             lines = lines[self._scroll_offset : self._scroll_offset + height]
 
         elif overflow == Overflow.RESIZE:
-            self.height = length + sum(has_top_bottom)
+            self.height = len(lines) + sum(has_top_bottom)
 
         vertical_offset, lines = self._apply_vertalign(
             lines, self.height - len(lines) - sum(has_top_bottom), align("")

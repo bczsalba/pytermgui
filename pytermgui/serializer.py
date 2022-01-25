@@ -6,7 +6,7 @@ uses `Widget.serialize` for each widget.
 from __future__ import annotations
 
 import json
-from typing import Any, Type, IO, Dict
+from typing import Any, Type, IO, Dict, Callable
 
 from . import widgets
 from .parser import markup
@@ -113,7 +113,7 @@ class Serializer:
 
         self.bound_methods[name] = method
 
-    def from_dict(  # pylint: disable=too-many-locals
+    def from_dict(  # pylint: disable=too-many-locals, too-many-branches
         self, data: dict[str, Any], widget_type: str | None = None
     ) -> Widget:
         """Loads a widget from a dictionary.

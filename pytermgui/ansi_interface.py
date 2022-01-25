@@ -269,7 +269,6 @@ class Terminal:
         while True:
             n_width = get_terminal_size()
 
-            frame = None
             if n_width != self.size:
                 self._update_size(28, inspect.currentframe().f_back)
 
@@ -278,10 +277,8 @@ class Terminal:
     def _get_size(self) -> tuple[int, int]:
         """Gets the screen size with origin substracted."""
 
-        # This always has len() == 2, but mypy can't see that.
-        return tuple(
-            val - org for val, org in zip(get_terminal_size(), self.origin)
-        )  # type: ignore
+        size = get_terminal_size()
+        return (size[0] - self.origin[0], size[1] - self.origin[1])
 
     def _update_size(self, *_: Any) -> None:
         """Resize terminal when SIGWINCH occurs, and call listeners."""
@@ -340,10 +337,7 @@ class Terminal:
 
 
 terminal = Terminal()
-
-# helpers
-# EDIT: removed `_tcup` function since we don't need it anymore.
-# I replaced it with ANSI sequences
+"""Terminal instance that should be used pretty much always."""
 
 
 def is_interactive() -> bool:
@@ -372,10 +366,7 @@ def restore_screen() -> None:
 
 
 def set_alt_buffer() -> None:
-    """Starts an alternate buffer.
-
-    Note that this buffer is unscrollable.
-    """
+    """Starts an alternate buffer."""
 
     print("\x1b[?1049h")
 
@@ -539,7 +530,6 @@ def cursor_next_line(num: int = 1) -> None:
     Args:
         num: The amount the cursor should move by. Must be positive, to move
             in the opposite direction use `cursor_prev_line`.
-
     Note:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`.
@@ -554,7 +544,6 @@ def cursor_prev_line(num: int = 1) -> None:
     Args:
         num: The amount the cursor should move by. Must be positive, to move
             in the opposite direction use `cursor_next_line`.
-
     Note:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`.

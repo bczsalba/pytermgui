@@ -420,8 +420,10 @@ class MarkupLanguage:
         if len(markup_text) > cursor:
             yield Token(ttype=TokenType.PLAIN, data=markup_text[cursor:])
 
-    def tokenize_ansi(self, ansi: str) -> Iterator[Token]:
-        """Tokenize ansi text, return an Iterator to save memory"""
+    def tokenize_ansi(  # pylint: disable=too-many-branches
+        self, ansi: str
+    ) -> Iterator[Token]:
+        """Tokenize ansi text, return an Iterator to save memory."""
 
         end = 0
         start = 0

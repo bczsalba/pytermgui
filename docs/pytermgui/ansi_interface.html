@@ -504,7 +504,6 @@
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">n_width</span> <span class="o">=</span> <span class="n">get_terminal_size</span><span class="p">()</span>
 
-            <span class="n">frame</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">n_width</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_update_size</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span><span class="p">)</span>
 
@@ -513,10 +512,8 @@
     <span class="k">def</span> <span class="nf">_get_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Gets the screen size with origin substracted.&quot;&quot;&quot;</span>
 
-        <span class="c1"># This always has len() == 2, but mypy can&#39;t see that.</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="n">val</span> <span class="o">-</span> <span class="n">org</span> <span class="k">for</span> <span class="n">val</span><span class="p">,</span> <span class="n">org</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">get_terminal_size</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
-        <span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">get_terminal_size</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_update_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Resize terminal when SIGWINCH occurs, and call listeners.&quot;&quot;&quot;</span>
@@ -575,10 +572,7 @@
 
 
 <span class="n">terminal</span> <span class="o">=</span> <span class="n">Terminal</span><span class="p">()</span>
-
-<span class="c1"># helpers</span>
-<span class="c1"># EDIT: removed `_tcup` function since we don&#39;t need it anymore.</span>
-<span class="c1"># I replaced it with ANSI sequences</span>
+<span class="sd">&quot;&quot;&quot;Terminal instance that should be used pretty much always.&quot;&quot;&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">is_interactive</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -607,10 +601,7 @@
 
 
 <span class="k">def</span> <span class="nf">set_alt_buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Starts an alternate buffer.</span>
-
-<span class="sd">    Note that this buffer is unscrollable.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Starts an alternate buffer.&quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?1049h&quot;</span><span class="p">)</span>
 
@@ -774,7 +765,6 @@
 <span class="sd">    Args:</span>
 <span class="sd">        num: The amount the cursor should move by. Must be positive, to move</span>
 <span class="sd">            in the opposite direction use `cursor_prev_line`.</span>
-
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
 <span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
@@ -789,7 +779,6 @@
 <span class="sd">    Args:</span>
 <span class="sd">        num: The amount the cursor should move by. Must be positive, to move</span>
 <span class="sd">            in the opposite direction use `cursor_next_line`.</span>
-
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
 <span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
@@ -1592,7 +1581,9 @@ capitalization is optional.</li>
         <span class="name">terminal</span><span class="default_value"> = &lt;<a href="#Terminal">pytermgui.ansi_interface.Terminal</a> object&gt;</span>
     </div>
 
-    
+            <div class="docstring"><p>Terminal instance that should be used pretty much always.</p>
+</div>
+
 
                 </section>
                 <section id="is_interactive">
@@ -1685,10 +1676,7 @@ capitalization is optional.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_alt_buffer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Starts an alternate buffer.</span>
-
-<span class="sd">    Note that this buffer is unscrollable.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Starts an alternate buffer.&quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[?1049h&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1696,8 +1684,6 @@ capitalization is optional.</li>
         </details>
 
             <div class="docstring"><p>Starts an alternate buffer.</p>
-
-<p>Note that this buffer is unscrollable.</p>
 </div>
 
 
@@ -2169,7 +2155,6 @@ to move in the opposite direction use <code><a href="#cursor_right">cursor_right
 <span class="sd">    Args:</span>
 <span class="sd">        num: The amount the cursor should move by. Must be positive, to move</span>
 <span class="sd">            in the opposite direction use `cursor_prev_line`.</span>
-
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
 <span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
@@ -2215,7 +2200,6 @@ in the opposite direction use <code><a href="#cursor_prev_line">cursor_prev_line
 <span class="sd">    Args:</span>
 <span class="sd">        num: The amount the cursor should move by. Must be positive, to move</span>
 <span class="sd">            in the opposite direction use `cursor_next_line`.</span>
-
 <span class="sd">    Note:</span>
 <span class="sd">        This does not flush the terminal for performance reasons. You</span>
 <span class="sd">        can do it manually with `sys.stdout.flush()`.</span>
