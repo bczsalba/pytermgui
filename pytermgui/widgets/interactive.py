@@ -366,8 +366,7 @@ class InputField(Label):
         self.width -= 2
 
         return [
-            line + fill_style((self.width - real_length(line) + 1) * " ")
-            for line in lines
+            line + fill_style((self.width - real_length(line)) * " ") for line in lines
         ]
 
 

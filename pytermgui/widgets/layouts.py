@@ -372,9 +372,7 @@ class Container(Widget):
                 is larger than what is available.
         """
 
-        available = (
-            self.width - self.sidelength - (0 if isinstance(widget, Container) else 1)
-        )
+        available = self.width - self.sidelength
 
         if widget.size_policy == SizePolicy.FILL:
             widget.width = available
