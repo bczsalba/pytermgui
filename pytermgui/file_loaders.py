@@ -8,7 +8,9 @@ It provides a FileLoader base class, which is then subclassed by various filetyp
 specific parsers with their own `parse` method. The job of this method is to take
 the file contents as a string, and create a valid json tree out of it.
 
-You can "run" a ptg yaml file by calling `ptg -f <filename>` in your terminal.
+You can "run" a PTG YAML file by calling `ptg -f <filename>` in your terminal.
+
+**To use any YAML related features, the optional dependency PyYAML is required.**
 
 
 Implementation details
