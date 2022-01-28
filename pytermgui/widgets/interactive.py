@@ -176,17 +176,14 @@ class InputField(Label):
     user data gathered by `pytermgui.input.getch` or other means.
 
     Args:
-    -----
-
-    - value: `str`, The default value of this InputField.
-    - prompt: `str`, Text to display to the left of the field.
-    - expect: `type`, Type object that all input should match. This type
-                      is called on each new key, and if a `ValueError` is
-                      raised the key is discarded. The `value` attribute
-                      is also converted using this type.
+        value: The default value of this InputField.
+        prompt: Text to display to the left of the field.
+        expect: Type object that all input should match. This type
+              is called on each new key, and if a `ValueError` is
+              raised the key is discarded. The `value` attribute
+              is also converted using this type.
 
     Example of usage:
-    -----------------
 
     ```python3
     import pytermgui as ptg
@@ -366,7 +363,8 @@ class InputField(Label):
         self.width -= 2
 
         return [
-            line + fill_style((self.width - real_length(line)) * " ") for line in lines
+            line + fill_style((self.width - real_length(line) - 1) * " ")
+            for line in lines
         ]
 
 
