@@ -1,11 +1,8 @@
 name: Auto Documentation
 
 on:
-  push:
-    paths:
-      - "pytermgui/**" # run workflow only when files in the pytermgui directory changes
-    branches:
-      - master
+ release:
+    types: [published]
 
 jobs:
   generate_docs:
