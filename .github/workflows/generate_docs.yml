@@ -1,11 +1,15 @@
 name: Generate Documentation
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - pytermgui # run workflow only when files in the pytermgui directory changes
     branches:
       - master
+  
+  
+    
 
 jobs:
   generate_docs:
