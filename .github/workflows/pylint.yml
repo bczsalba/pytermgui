@@ -1,9 +1,9 @@
 name: Pylint
 
-on: 
+on:
   push:
     paths:
-      - 'pytermgui/**'
+      - "pytermgui/**"
 
 jobs:
   build:

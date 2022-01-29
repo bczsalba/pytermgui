@@ -1,14 +1,14 @@
-name: Auto-generate Documentation
+name: Force generate Documentation
 
 on:
   workflow_dispatch:
     inputs:
       message:
         description: Commit message
-    
 
 jobs:
   generate_docs:
+    if: ${{ github.repository_owner == 'bczsalba' }} # prevents workflow from running in forked repos
     runs-on: ubuntu-latest
     steps:
       - name: Checkout master branch

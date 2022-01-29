@@ -1,15 +1,11 @@
-name: Auto-generate Documentation
+name: Auto Documentation
 
 on:
-  workflow_dispatch:
   push:
     paths:
-      - pytermgui # run workflow only when files in the pytermgui directory changes
+      - "pytermgui/**" # run workflow only when files in the pytermgui directory changes
     branches:
       - master
-  
-  
-    
 
 jobs:
   generate_docs:
