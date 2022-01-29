@@ -755,7 +755,7 @@ style="max-width: 100%"></p>
                 <span class="p">):</span>
                     <span class="k">break</span>
 
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">window</span><span class="o">.</span><span class="n">is_modal</span><span class="p">:</span>
                     <span class="k">continue</span>
 
                 <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
@@ -2032,7 +2032,7 @@ defaults to True.</li>
                 <span class="p">):</span>
                     <span class="k">break</span>
 
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">window</span><span class="o">.</span><span class="n">is_modal</span><span class="p">:</span>
                     <span class="k">continue</span>
 
                 <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
@@ -2621,7 +2621,7 @@ can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window
                 <span class="p">):</span>
                     <span class="k">break</span>
 
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">window</span><span class="o">.</span><span class="n">is_modal</span><span class="p">:</span>
                     <span class="k">continue</span>
 
                 <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
