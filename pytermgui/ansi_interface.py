@@ -240,11 +240,9 @@ class Terminal:
         self.size: tuple[int, int] = self._get_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
-        # Unix systems
         if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
 
-        # Windows
         else:
             asyncio.run(self._alt_sigwinch())
 
@@ -335,11 +333,10 @@ class Terminal:
 
         for height in range(self.height):
             sys.stdout.write(
-                f"\033[{height};0H" + background(" " * (self.width - 1), color)
+                f"\033[{height};0H"
+                + background(" " * (self.width - 1), color)
+                + ("\n" if flush else "")
             )
-
-        if flush:
-            sys.stdout.flush()
 
 
 terminal = Terminal()
@@ -681,10 +678,7 @@ class MouseAction(Enum):
     """Mouse wheel or touchpad scroll downwards."""
 
     HOVER = _auto()
-    """Mouse moved without clicking.
-
-    Note:
-        This only gets registered when hover events are listened to."""
+    """Mouse moved without clicking."""
 
     RELEASE = _auto()
     """Mouse button released; end of any and all mouse action sequences."""
