@@ -27,14 +27,14 @@ jobs:
 
       - name: Generate documentation
         run: |
-          pdoc -o ./docs pytermgui
+          pdoc -o ./docs pytermgui --logo https://github.com/bczsalba/pytermgui/blob/master/assets/title.png?raw=true --docformat google
 
       - name: Commit changes
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add ./docs/
-          git commit -m "auto documentation update"
+          git commit -m "Auto-update documentation"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
