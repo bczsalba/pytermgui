@@ -520,7 +520,7 @@ class WindowManager(Container):
                 ):
                     break
 
-                if not contains_pos:
+                if not contains_pos and not window.is_modal:
                     continue
 
                 if window.handle_mouse(event):
