@@ -281,7 +281,11 @@ class MarkupApplication(Application):
         window.manager.stop()
 
         # print(prettify_markup(window.output_label.value))
-        print(window.output_label.value)
+
+        # This attribute is currently needed for the Application
+        # window to work. Not great architecturally, but I cannot
+        # figure out something better at the moment.
+        print(window.output_label.value)  # type: ignore
 
     def construct_window(self) -> Window:
         """Constructs an application window."""

@@ -130,14 +130,16 @@ class _GetchWindows:
             All read characters.
         """
 
-        char = msvcrt.getch()
+        # We need to type: ignore these on non-windows machines,
+        # as the library does not exist.
+        char = msvcrt.getch()  # type: ignore
         if char == b"\xe0":
             char = "\x1b"
 
         buff = self._ensure_str(char)
 
-        while msvcrt.kbhit():
-            char = msvcrt.getch()
+        while msvcrt.kbhit():  # type: ignore
+            char = msvcrt.getch()  # type: ignore
             buff += self._ensure_str(char)
 
         return buff

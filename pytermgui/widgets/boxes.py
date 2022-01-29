@@ -18,6 +18,7 @@ from __future__ import annotations
 
 from typing import Tuple
 
+from .base import WidgetType
 from ..helpers import real_length
 
 
@@ -148,8 +149,15 @@ class Box:
         # return top_border, left_border, right_border, bottom_border
         return left_border, top_border, right_border, bottom_border
 
-    def set_chars_of(self, cls_or_obj: object) -> object:
+    def set_chars_of(self, cls_or_obj: WidgetType) -> WidgetType:
         """Set border & corner chars of cls_or_obj to self values"""
+
+        # We cannot import any widgets into here due to cyclic imports,
+        # so we have to "hack" around it.
+        if not hasattr(cls_or_obj, "set_char"):
+            raise NotImplementedError(
+                f"Object of type {cls_or_obj} does not support `set_char`"
+            )
 
         cls_or_obj.set_char("border", self.borders)
         cls_or_obj.set_char("corner", self.corners)

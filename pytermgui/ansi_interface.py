@@ -15,7 +15,7 @@ import signal
 import inspect
 import asyncio
 
-from typing import Optional, Any, Union, Callable, Tuple
+from typing import Optional, Any, Union, Callable, Tuple, Pattern
 from dataclasses import dataclass, fields
 from enum import Enum, auto as _auto
 from sys import stdout as _stdout
@@ -71,6 +71,12 @@ __all__ = [
     "strikethrough",
     "overline",
 ]
+
+
+RE_MOUSE: dict[str, Pattern] = {
+    "decimal_xterm": re.compile(r"<(\d{1,2})\;(\d{1,3})\;(\d{1,3})(\w)"),
+    "decimal_urxvt": re.compile(r"(\d{1,2})\;(\d{1,3})\;(\d{1,3})()"),
+}
 
 
 class Color:
@@ -816,7 +822,6 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
 
     mouse_codes = {
         "decimal_xterm": {
-            "pattern": re.compile(r"<(\d{1,2})\;(\d{1,3})\;(\d{1,3})(\w)"),
             "0M": MouseAction.LEFT_CLICK,
             "0m": MouseAction.RELEASE,
             "2": MouseAction.RIGHT_CLICK,
@@ -827,7 +832,6 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
             "65": MouseAction.SCROLL_DOWN,
         },
         "decimal_urxvt": {
-            "pattern": re.compile(r"(\d{1,2})\;(\d{1,3})\;(\d{1,3})()"),
             "32": MouseAction.LEFT_CLICK,
             "34": MouseAction.RIGHT_CLICK,
             "35": MouseAction.RELEASE,
@@ -839,7 +843,7 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
     }
 
     mapping = mouse_codes[method]
-    pattern = mapping["pattern"]
+    pattern: Pattern = RE_MOUSE[method]
 
     events: list[MouseEvent | None] = []
     for sequence in code.split("\x1b"):

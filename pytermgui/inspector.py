@@ -63,7 +63,7 @@ def inspect(
             current += label.height
 
         if inspector.height < target_height:
-            root.forced_height = inspector.height
+            root.height = inspector.height
 
         else:
             for _ in range(target_height - current):
@@ -74,7 +74,7 @@ def inspect(
         return root
 
     root = Container(width=terminal.width)
-    root.forced_height = target_height
+    root.height = target_height
     root += Label()
 
     if style:

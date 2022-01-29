@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from inspect import signature
-from typing import Callable, Optional, Type, Iterator, Any
+from typing import Callable, Optional, Type, Iterator, Any, Union
 
 from ..input import keys
 from ..parser import markup
@@ -23,6 +23,7 @@ from . import styles as w_styles
 __all__ = ["Widget", "Label"]
 
 BoundCallback = Callable[..., Any]
+WidgetType = Union["Widget", Type["Widget"]]
 
 
 def _set_obj_or_cls_style(
@@ -117,6 +118,11 @@ class Widget:
 
     parent_align = HorizontalAlignment.get_default()
     """`pytermgui.enums.HorizontalAlignment` to align widget by"""
+
+    from_data: Callable[..., Widget | list[Widget] | None]
+
+    # We cannot import boxes here due to cyclic imports.
+    box: Any
 
     def __init__(self, **attrs: Any) -> None:
         """Initialize object"""
@@ -536,7 +542,7 @@ class Widget:
     def print(self) -> None:
         """Prints this widget"""
 
-        for line in self.get_lines:
+        for line in self.get_lines():
             print(line)
 
     def debug(self) -> str:
