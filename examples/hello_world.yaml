@@ -158,5 +158,5 @@ widgets:
                       parent_align: 0
 
                   - Label:
-                      value:  "[210]/bg"
+                      value: "[210]/bg"
                       parent_align: 2
