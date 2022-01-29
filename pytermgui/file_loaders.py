@@ -151,7 +151,12 @@ __all__ = ["WidgetNamespace", "FileLoader", "YamlLoader", "JsonLoader"]
 class WidgetNamespace:
     """Class to hold data on loaded namespace."""
 
-    config: dict[Type[widgets.Widget], dict[str, Any]]
+    # No clue why `widgets` is seen as undefined here,
+    # but not in the code below. It only seems to happen
+    # in certain pylint configs as well.
+    config: dict[
+        Type[widgets.Widget], dict[str, Any]  # pylint: disable=undefined-variable
+    ]
     widgets: dict[str, widgets.Widget]
     boxes: dict[str, widgets.boxes.Box] = field(default_factory=dict)
 

@@ -10,7 +10,7 @@ from .. import styles as w_styles
 from ..base import Widget
 
 
-class Slider(Widget):
+class Slider(Widget):  # pylint: disable=too-many-instance-attributes
     """A Widget to display & configure scalable data
 
     By default, this Widget will act like a slider you might find in a
