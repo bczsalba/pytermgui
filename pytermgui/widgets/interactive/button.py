@@ -1,3 +1,6 @@
+"""This module contains the `Button` class."""
+
+
 from __future__ import annotations
 
 from typing import Any, Callable, Optional
@@ -81,4 +84,3 @@ class Button(Widget):
         self.width = real_length(line)
 
         return [line]
-

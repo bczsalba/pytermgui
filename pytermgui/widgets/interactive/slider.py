@@ -1,7 +1,7 @@
+"""This module contains the `Slider` class."""
+
 from __future__ import annotations
 from typing import Any, Callable
-
-import string
 
 from ...ansi_interface import MouseAction, MouseEvent
 from ...input import keys

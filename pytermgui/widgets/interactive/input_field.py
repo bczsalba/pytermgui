@@ -1,3 +1,5 @@
+"""This module contains the `InputField` class."""
+
 from __future__ import annotations
 from typing import Any
 

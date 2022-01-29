@@ -1,3 +1,5 @@
+"""This module contains the `Toggle` class."""
+
 from __future__ import annotations
 
 from typing import Any, Callable
@@ -29,4 +31,3 @@ class Toggle(Checkbox):
 
         if self.callback is not None:
             self.callback(self.label)
-
