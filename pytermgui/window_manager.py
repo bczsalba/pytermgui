@@ -191,6 +191,12 @@ class Window(Container):
         self._add_widget(other)
         return self
 
+    def __add__(self, other: object) -> Window:
+        """Calls self._add_widget(other) and returns self."""
+
+        self._add_widget(other)
+        return self
+
     def _add_widget(self, other: object, run_get_lines: bool = True) -> Widget:
         """Adds a widget to the window.
 
@@ -515,6 +521,9 @@ class WindowManager(Container):
                 if contains_pos and event.action in self.focusing_actions:
                     self.focus(window)
 
+                if window.handle_mouse(event):
+                    break
+
                 if event.action in handlers and handlers[event.action](
                     event.position, window
                 ):
@@ -522,9 +531,6 @@ class WindowManager(Container):
 
                 if not contains_pos and not window.is_modal:
                     continue
-
-                if window.handle_mouse(event):
-                    break
 
                 self.execute_binding(tuple(event))
 

@@ -74,7 +74,6 @@ class Container(Widget):
             self._add_widget(widget)
 
         self._drag_target: Widget | None = None
-        terminal.subscribe(terminal.RESIZE, lambda *_: self.center(self._centered_axis))
 
     @property
     def sidelength(self) -> int:
@@ -737,7 +736,9 @@ class Container(Widget):
 
         return False
 
-    def handle_key(self, key: str) -> bool:
+    def handle_key(  # pylint: disable=too-many-return-statements
+        self, key: str
+    ) -> bool:
         """Handles a keypress, returns its success.
 
         Args:
@@ -757,11 +758,11 @@ class Container(Widget):
 
         # Only use navigation when there is more than one selectable
         if self.selectables_length >= 1 and _is_nav(key):
-            handled = False
-
             if self.selected_index is None:
                 self.select(0)
                 return True
+
+            handled = False
 
             assert isinstance(self.selected_index, int)
 
@@ -786,8 +787,11 @@ class Container(Widget):
             if handled:
                 return True
 
-        if key == keys.ENTER and self.selected is not None:
-            if self.selected.selected_index is not None:
+        if key == keys.ENTER:
+            if self.selected_index is None:
+                self.select(0)
+
+            if self.selected is not None:
                 self.selected.handle_key(key)
                 return True
 
@@ -893,7 +897,7 @@ class Splitter(Container):
 
             if widget.size_policy is SizePolicy.STATIC:
                 target_width += target_width - widget.width
-                width = target_width
+                width = widget.width
             else:
                 widget.width = target_width + error
                 width = widget.width
