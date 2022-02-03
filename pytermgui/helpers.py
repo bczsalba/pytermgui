@@ -175,14 +175,14 @@ def break_line(  # pylint: disable=too-many-branches
                         cur_len += chr_len
 
                     if _should_yield():
-                        yield current + reset()
+                        yield current.rstrip() + reset()
                     _reset()
 
             continue
 
         # add current if we pass the limit
         if cur_len + new_len + chr_len > limit and _should_yield():
-            yield current + reset()
+            yield current.rstrip() + reset()
             _reset()
 
         current += word + char
@@ -190,4 +190,4 @@ def break_line(  # pylint: disable=too-many-branches
 
     current = current.rstrip()
     if _should_yield():
-        yield current + reset()
+        yield current.rstrip() + reset()
