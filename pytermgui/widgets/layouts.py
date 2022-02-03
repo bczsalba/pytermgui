@@ -788,7 +788,7 @@ class Container(Widget):
                 return True
 
         if key == keys.ENTER:
-            if self.selected_index is None:
+            if self.selected_index is None and self.selectables_length > 0:
                 self.select(0)
 
             if self.selected is not None:
