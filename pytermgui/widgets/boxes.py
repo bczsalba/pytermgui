@@ -206,13 +206,22 @@ EMPTY_HORIZONTAL = Box(
         "│   │",
     ]
 )
-SINGLE = Box(
+ROUNDED = Box(
     [
         "╭───╮",
         "│ x │",
         "╰───╯",
     ]
 )
+
+SINGLE = Box(
+    [
+        "┌───┐",
+        "│ x │",
+        "└───┘",
+    ]
+)
+
 SINGLE_VERTICAL = Box(
     [
         "╔───╗",
