@@ -105,6 +105,9 @@ class InputField(Label):
         if self.execute_binding(key):
             return True
 
+        if key == keys.TAB:
+            return False
+
         if key == keys.BACKSPACE and self.cursor > 0:
             self.value = str(self.value)
             left = self.value[: self.cursor - 1]
@@ -199,14 +202,11 @@ class InputField(Label):
 
         self.value += left + cursor_char + right
 
-        self.width += 2
         lines = super().get_lines()
 
         # Set old value
         self.value = old
-        self.width -= 2
 
         return [
-            line + fill_style((self.width - real_length(line) - 1) * " ")
-            for line in lines
+            line + fill_style((self.width - real_length(line)) * " ") for line in lines
         ]
