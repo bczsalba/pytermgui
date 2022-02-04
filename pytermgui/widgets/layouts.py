@@ -711,8 +711,7 @@ class Container(Widget):
         for widget in self._widgets:
             if widget.contains(event.position):
                 handled = widget.handle_mouse(event)
-                if widget.selected_index is not None:
-                    selectables_index += widget.selected_index
+                selectables_index += widget.selected_index or 0
 
                 if event.action is MouseAction.LEFT_CLICK:
                     self._drag_target = widget
@@ -720,7 +719,10 @@ class Container(Widget):
                     if handled:
                         self.select(selectables_index)
 
-                return handled
+                if handled:
+                    return handled
+
+                break
 
             if widget.is_selectable:
                 selectables_index += widget.selectables_length
