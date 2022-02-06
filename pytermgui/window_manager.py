@@ -299,6 +299,7 @@ class Window(Container):
         """Instruct window manager to close object"""
 
         assert self.manager is not None
+
         self.manager.close(self)
 
     def print(self) -> None:
@@ -593,6 +594,10 @@ class WindowManager(Container):
 
         if window.has_focus and len(self._windows) > 0:
             self.focus(self._windows[0])
+
+        # NOTE: This is supposed to work using `_should_print`, but it doesn't.
+        # Force print
+        self.print()
 
     def on_resize(self, size: tuple[int, int]) -> None:
         """Correctly updates window positions & prints when terminal gets resized.

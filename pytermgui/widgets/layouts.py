@@ -711,6 +711,7 @@ class Container(Widget):
         for widget in self._widgets:
             if widget.contains(event.position):
                 handled = widget.handle_mouse(event)
+                # This avoids too many branches from pylint.
                 selectables_index += widget.selected_index or 0
 
                 if event.action is MouseAction.LEFT_CLICK:
