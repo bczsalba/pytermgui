@@ -274,7 +274,7 @@ class Container(Widget):
             return True
 
         for widget in self._widgets:
-            if other in widget:  # type: ignore
+            if isinstance(widget, Container) and other in widget:
                 return True
 
         return False
