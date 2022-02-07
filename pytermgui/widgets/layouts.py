@@ -42,6 +42,8 @@ class Container(Widget):
     keys = {
         "next": {keys.DOWN, keys.CTRL_N, "j"},
         "previous": {keys.UP, keys.CTRL_P, "k"},
+        "scroll_down": {keys.SHIFT_DOWN, "J"},
+        "scroll_up": {keys.SHIFT_UP, "K"},
     }
 
     serialized = Widget.serialized + ["_centered_axis"]
@@ -785,7 +787,7 @@ class Container(Widget):
 
         return False
 
-    def handle_key(  # pylint: disable=too-many-return-statements
+    def handle_key(  # pylint: disable=too-many-return-statements, too-many-branches
         self, key: str
     ) -> bool:
         """Handles a keypress, returns its success.
@@ -803,6 +805,19 @@ class Container(Widget):
             return key in self.keys["next"] | self.keys["previous"]
 
         if self.selected is not None and self.selected.handle_key(key):
+            return True
+
+        scroll_actions = {
+            **{key: 1 for key in self.keys["scroll_down"]},
+            **{key: -1 for key in self.keys["scroll_up"]},
+        }
+
+        if key in self.keys["scroll_down"] | self.keys["scroll_up"]:
+            for widget in self._widgets:
+                if isinstance(widget, Container) and self.selected in widget:
+                    widget.handle_key(key)
+
+            self.scroll(scroll_actions[key])
             return True
 
         # Only use navigation when there is more than one selectable
