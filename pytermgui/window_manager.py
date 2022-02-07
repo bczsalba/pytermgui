@@ -130,6 +130,7 @@ class Window(Container):
     may set this value manually."""
 
     styles = {**Container.styles, **{"title": MarkupFormatter("[wm-title]{item}")}}
+    chars = Container.chars.copy()
 
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
         """Initializes object.
