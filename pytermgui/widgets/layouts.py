@@ -64,6 +64,7 @@ class Container(Widget):
         self._centered_axis: CenteringPolicy | None = None
 
         self._scroll_offset = 0
+        self._max_scroll = 0
         self._prev_screen: tuple[int, int] = (0, 0)
         self._has_printed = False
 
@@ -269,7 +270,14 @@ class Container(Widget):
             A boolean describing whether `other` is in `self.widgets`
         """
 
-        return other in self._widgets
+        if other in self._widgets:
+            return True
+
+        for widget in self._widgets:
+            if other in widget:  # type: ignore
+                return True
+
+        return False
 
     def _add_widget(self, other: object, run_get_lines: bool = True) -> Widget:
         """Adds other to this widget.
@@ -521,7 +529,9 @@ class Container(Widget):
 
             # lines = new_lines
 
+            self._max_scroll = len(lines) - self.height + sum(has_top_bottom)
             height = self.height - sum(has_top_bottom)
+
             self._scroll_offset = max(0, min(self._scroll_offset, len(lines) - height))
             lines = lines[self._scroll_offset : self._scroll_offset + height]
 
@@ -640,6 +650,42 @@ class Container(Widget):
 
         self.selected_index = index
 
+    def scroll(self, offset: int) -> int:
+        """Scrolls to given offset, returns the new scroll_offset.
+
+        Args:
+            offset: The amount to scroll by. Positive offsets scroll down,
+                negative up.
+
+        Returns:
+            The new scroll offset.
+        """
+
+        self._scroll_offset = min(
+            max(0, self._scroll_offset + offset), self._max_scroll
+        )
+
+        return self._scroll_offset
+
+    def scroll_end(self, end: int) -> int:
+        """Scrolls to either top or bottom end of this object.
+
+        Args:
+            end: The offset to scroll to. 0 goes to the very top, -1 to the
+                very bottom.
+
+        Returns:
+            The new scroll offset.
+        """
+
+        if end == 0:
+            self._scroll_offset = 0
+
+        elif end == -1:
+            self._scroll_offset = self._max_scroll
+
+        return self._scroll_offset
+
     def center(
         self, where: CenteringPolicy | None = None, store: bool = True
     ) -> Container:
@@ -730,11 +776,11 @@ class Container(Widget):
 
         if self.overflow == Overflow.SCROLL:
             if event.action is MouseAction.SCROLL_UP:
-                self._scroll_offset = max(0, self._scroll_offset - 1)
+                self.scroll(-1)
                 return True
 
             if event.action is MouseAction.SCROLL_DOWN:
-                self._scroll_offset = self._scroll_offset + 1
+                self.scroll(1)
                 return True
 
         return False
