@@ -644,9 +644,7 @@ class Container(Widget):
                 other.select(None)
 
         if index is not None:
-            if index >= len(self.selectables) is None:
-                raise IndexError("Container selection index out of range")
-
+            index = max(0, min(index, len(self.selectables) - 1))
             widget, inner_index = self.selectables[index]
             widget.select(inner_index)
 
