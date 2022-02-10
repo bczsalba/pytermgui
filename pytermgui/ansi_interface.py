@@ -12,8 +12,6 @@ from __future__ import annotations
 import re
 import sys
 import signal
-import inspect
-import asyncio
 
 from typing import Optional, Any, Union, Callable, Tuple, Pattern
 from dataclasses import dataclass, fields
@@ -243,8 +241,7 @@ class Terminal:
         if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
 
-        else:
-            asyncio.run(self._alt_sigwinch())
+        # TODO: Support SIGWINCH on Windows.
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Calls callbacks for event.
@@ -257,26 +254,6 @@ class Terminal:
         if event in self._listeners:
             for callback in self._listeners[event]:
                 callback(data)
-
-    async def _alt_sigwinch(self, interval: float = 1) -> None:
-        """Platform-ambigous SIGWINCH implementation.
-
-        This works asynchronously, inkeeping with the official
-        implementation, and calls the same handler as `signal`'s
-        would.
-
-        Args:
-            interval: How often updates should be checked for.
-        """
-
-        while True:
-            n_width = get_terminal_size()
-
-            frame = inspect.currentframe()
-            if n_width != self.size:
-                self._update_size(28, frame.f_back if frame is not None else None)
-
-            await asyncio.sleep(interval)
 
     def _get_size(self) -> tuple[int, int]:
         """Gets the screen size with origin substracted."""
