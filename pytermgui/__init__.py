@@ -36,7 +36,7 @@ if "-m" in sys.argv:
 
     warnings.filterwarnings("ignore")
 
-__version__ = "2.1.0"
+__version__ = "2.1.1"
 
 
 def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:

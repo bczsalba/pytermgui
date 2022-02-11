@@ -1,22 +1,13 @@
-# Version v2.1.0
+# Version 2.1.1
 
-This update is mostly focused on bug fixes, but also has some additions. The
-library should now actually install on Windows machines, which is pretty dapper.
+This release fixes various issues related to `Windows` systems. It also brought about a more logical
+refactor for `WindowManager.process_input`.
 
 > Items marked in bold are API breaking changes.
 
-## Removals
-- **Remove broken `SIGWINCH` monitor** (#25, #19)
-
-
-## Additions
-- **Add `Container.scroll` and `Container.scroll\_end` helpers** (0119e31dccb600eea8e3d6ad83114ea051316bf9)
-- Add `SINGLE` box type, rename old `SINGLE` box to `ROUNDED` (5dda72793644f5144daccbc7d7772771e91afb7e)
-
-
 ## Fixes
-- **Fix some issues with `InputField`** (0920ffc1064db262b333855a856e9ac112ba3d4f)
-- **Improve how terminal resize events are handled** (7143affeeac691eeee23c130fb45686b47e2213a)
-- **Fix 1 char offset in non-`Container` widget widths** (e3ac8d74bbbfb3fba9d4f87a6cd0ff7d225712d8)
+- Fix `CTRL_C` not being captured on Windows machines (01139633c52c07d14e15e4f1fef1ba638a06df35)
+- Fix `widgets/interactive.py not being packaged` (75cebf715a74c4bba9963bc6be8d870a09f7af2c)
+- Silence `keys` attribute errors (75cebf715a74c4bba9963bc6be8d870a09f7af2c)
 
 
