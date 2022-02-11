@@ -329,11 +329,18 @@ def getch(printable: bool = False, interrupts: bool = True) -> Any:
 
     try:
         key = _getch()
+
+        # msvcrt.getch returns CTRL_C as a character, unlike UNIX systems
+        # where an interrupt is raised. Thus, we need to manually raise
+        # the interrupt.
+        if key == chr(3):
+            raise KeyboardInterrupt
+
     except KeyboardInterrupt as error:
         if interrupts:
             raise KeyboardInterrupt("Unhandled interrupt") from error
 
-        return chr(3)
+        key = chr(3)
 
     if printable:
         key = key.encode("unicode_escape").decode("utf-8")

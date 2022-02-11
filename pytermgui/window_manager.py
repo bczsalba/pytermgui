@@ -715,7 +715,11 @@ class WindowManager(Container):
         """Processes incoming input."""
 
         while self._is_running:
-            key = getch()
+            key = getch(interrupts=False)
+
+            if key == chr(3):
+                self.stop()
+                break
 
             if self.handle_key(key):
                 self._should_print = True
