@@ -95,6 +95,12 @@
                                 <a class="function" href="#Container.select">select</a>
                         </li>
                         <li>
+                                <a class="function" href="#Container.scroll">scroll</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Container.scroll_end">scroll_end</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Container.center">center</a>
                         </li>
                         <li>
@@ -204,6 +210,8 @@
     <span class="n">keys</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;next&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">keys</span><span class="o">.</span><span class="n">DOWN</span><span class="p">,</span> <span class="n">keys</span><span class="o">.</span><span class="n">CTRL_N</span><span class="p">,</span> <span class="s2">&quot;j&quot;</span><span class="p">},</span>
         <span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">keys</span><span class="o">.</span><span class="n">UP</span><span class="p">,</span> <span class="n">keys</span><span class="o">.</span><span class="n">CTRL_P</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;scroll_down&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">keys</span><span class="o">.</span><span class="n">SHIFT_DOWN</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;scroll_up&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">keys</span><span class="o">.</span><span class="n">SHIFT_UP</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">},</span>
     <span class="p">}</span>
 
     <span class="n">serialized</span> <span class="o">=</span> <span class="n">Widget</span><span class="o">.</span><span class="n">serialized</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;_centered_axis&quot;</span><span class="p">]</span>
@@ -226,6 +234,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_centered_axis</span><span class="p">:</span> <span class="n">CenteringPolicy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prev_screen</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_printed</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -236,7 +245,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">terminal</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centered_axis</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sidelength</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -432,7 +440,14 @@
 <span class="sd">            A boolean describing whether `other` is in `self.widgets`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">other</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">Container</span><span class="p">)</span> <span class="ow">and</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">widget</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_add_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">run_get_lines</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Adds other to this widget.</span>
@@ -684,7 +699,9 @@
 
             <span class="c1"># lines = new_lines</span>
 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">has_top_bottom</span><span class="p">)</span>
             <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">has_top_bottom</span><span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="n">height</span><span class="p">))</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">+</span> <span class="n">height</span><span class="p">]</span>
 
@@ -795,13 +812,47 @@
                 <span class="n">other</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectables</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Container selection index out of range&quot;</span><span class="p">)</span>
-
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectables</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
             <span class="n">widget</span><span class="p">,</span> <span class="n">inner_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectables</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">inner_index</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="o">=</span> <span class="n">index</span>
+
+    <span class="k">def</span> <span class="nf">scroll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Scrolls to given offset, returns the new scroll_offset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offset: The amount to scroll by. Positive offsets scroll down,</span>
+<span class="sd">                negative up.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The new scroll offset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">+</span> <span class="n">offset</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span>
+
+    <span class="k">def</span> <span class="nf">scroll_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Scrolls to either top or bottom end of this object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            end: The offset to scroll to. 0 goes to the very top, -1 to the</span>
+<span class="sd">                very bottom.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The new scroll offset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">elif</span> <span class="n">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span>
 
     <span class="k">def</span> <span class="nf">center</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="n">CenteringPolicy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -874,8 +925,8 @@
         <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">):</span>
                 <span class="n">handled</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">selectables_index</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">selected_index</span>
+                <span class="c1"># This avoids too many branches from pylint.</span>
+                <span class="n">selectables_index</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">or</span> <span class="mi">0</span>
 
                 <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">LEFT_CLICK</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="o">=</span> <span class="n">widget</span>
@@ -883,23 +934,28 @@
                     <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">selectables_index</span><span class="p">)</span>
 
-                <span class="k">return</span> <span class="n">handled</span>
+                <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">handled</span>
+
+                <span class="k">break</span>
 
             <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">is_selectable</span><span class="p">:</span>
                 <span class="n">selectables_index</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">selectables_length</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overflow</span> <span class="o">==</span> <span class="n">Overflow</span><span class="o">.</span><span class="n">SCROLL</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_UP</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_DOWN</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-return-statements, too-many-branches</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Handles a keypress, returns its success.</span>
 
 <span class="sd">        Args:</span>
@@ -917,13 +973,26 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
 
+        <span class="n">scroll_actions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_down&quot;</span><span class="p">]},</span>
+            <span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_up&quot;</span><span class="p">]},</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_down&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_up&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">Container</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">in</span> <span class="n">widget</span><span class="p">:</span>
+                    <span class="n">widget</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="n">scroll_actions</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
         <span class="c1"># Only use navigation when there is more than one selectable</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectables_length</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">_is_nav</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-            <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
-
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
+
+            <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
@@ -948,8 +1017,11 @@
             <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">ENTER</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">ENTER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectables_length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
@@ -1055,7 +1127,7 @@
 
             <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">size_policy</span> <span class="ow">is</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span><span class="p">:</span>
                 <span class="n">target_width</span> <span class="o">+=</span> <span class="n">target_width</span> <span class="o">-</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
-                <span class="n">width</span> <span class="o">=</span> <span class="n">target_width</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">widget</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">target_width</span> <span class="o">+</span> <span class="n">error</span>
                 <span class="n">width</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
@@ -1122,6 +1194,8 @@
     <span class="n">keys</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;next&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">keys</span><span class="o">.</span><span class="n">DOWN</span><span class="p">,</span> <span class="n">keys</span><span class="o">.</span><span class="n">CTRL_N</span><span class="p">,</span> <span class="s2">&quot;j&quot;</span><span class="p">},</span>
         <span class="s2">&quot;previous&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">keys</span><span class="o">.</span><span class="n">UP</span><span class="p">,</span> <span class="n">keys</span><span class="o">.</span><span class="n">CTRL_P</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;scroll_down&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">keys</span><span class="o">.</span><span class="n">SHIFT_DOWN</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;scroll_up&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">keys</span><span class="o">.</span><span class="n">SHIFT_UP</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">},</span>
     <span class="p">}</span>
 
     <span class="n">serialized</span> <span class="o">=</span> <span class="n">Widget</span><span class="o">.</span><span class="n">serialized</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;_centered_axis&quot;</span><span class="p">]</span>
@@ -1144,6 +1218,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_centered_axis</span><span class="p">:</span> <span class="n">CenteringPolicy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prev_screen</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_printed</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -1154,7 +1229,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">terminal</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centered_axis</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sidelength</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -1350,7 +1424,14 @@
 <span class="sd">            A boolean describing whether `other` is in `self.widgets`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">other</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">Container</span><span class="p">)</span> <span class="ow">and</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">widget</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_add_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">run_get_lines</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Widget</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Adds other to this widget.</span>
@@ -1602,7 +1683,9 @@
 
             <span class="c1"># lines = new_lines</span>
 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">has_top_bottom</span><span class="p">)</span>
             <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">has_top_bottom</span><span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="n">height</span><span class="p">))</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">+</span> <span class="n">height</span><span class="p">]</span>
 
@@ -1713,13 +1796,47 @@
                 <span class="n">other</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectables</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Container selection index out of range&quot;</span><span class="p">)</span>
-
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectables</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
             <span class="n">widget</span><span class="p">,</span> <span class="n">inner_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectables</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">inner_index</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="o">=</span> <span class="n">index</span>
+
+    <span class="k">def</span> <span class="nf">scroll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Scrolls to given offset, returns the new scroll_offset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offset: The amount to scroll by. Positive offsets scroll down,</span>
+<span class="sd">                negative up.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The new scroll offset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">+</span> <span class="n">offset</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span>
+
+    <span class="k">def</span> <span class="nf">scroll_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Scrolls to either top or bottom end of this object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            end: The offset to scroll to. 0 goes to the very top, -1 to the</span>
+<span class="sd">                very bottom.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The new scroll offset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">elif</span> <span class="n">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span>
 
     <span class="k">def</span> <span class="nf">center</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="n">CenteringPolicy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1792,8 +1909,8 @@
         <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">):</span>
                 <span class="n">handled</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">selectables_index</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">selected_index</span>
+                <span class="c1"># This avoids too many branches from pylint.</span>
+                <span class="n">selectables_index</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">or</span> <span class="mi">0</span>
 
                 <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">LEFT_CLICK</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="o">=</span> <span class="n">widget</span>
@@ -1801,23 +1918,28 @@
                     <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">selectables_index</span><span class="p">)</span>
 
-                <span class="k">return</span> <span class="n">handled</span>
+                <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">handled</span>
+
+                <span class="k">break</span>
 
             <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">is_selectable</span><span class="p">:</span>
                 <span class="n">selectables_index</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">selectables_length</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overflow</span> <span class="o">==</span> <span class="n">Overflow</span><span class="o">.</span><span class="n">SCROLL</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_UP</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_DOWN</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-return-statements, too-many-branches</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Handles a keypress, returns its success.</span>
 
 <span class="sd">        Args:</span>
@@ -1835,13 +1957,26 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
 
+        <span class="n">scroll_actions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_down&quot;</span><span class="p">]},</span>
+            <span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_up&quot;</span><span class="p">]},</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_down&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_up&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">Container</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">in</span> <span class="n">widget</span><span class="p">:</span>
+                    <span class="n">widget</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="n">scroll_actions</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
         <span class="c1"># Only use navigation when there is more than one selectable</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectables_length</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">_is_nav</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-            <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
-
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
+
+            <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
@@ -1866,8 +2001,11 @@
             <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">ENTER</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">ENTER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectables_length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
@@ -1948,6 +2086,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_centered_axis</span><span class="p">:</span> <span class="n">CenteringPolicy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prev_screen</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_printed</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -1958,7 +2097,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">terminal</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centered_axis</span><span class="p">))</span>
 </pre></div>
 
         </details>
@@ -1993,7 +2131,7 @@
                             <div id="Container.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;j&#39;, &#39;\x0e&#39;, &#39;\x1b[B&#39;}, &#39;previous&#39;: {&#39;\x1b[A&#39;, &#39;k&#39;, &#39;\x10&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;\x1b[B&#39;, &#39;\x0e&#39;, &#39;j&#39;}, &#39;previous&#39;: {&#39;k&#39;, &#39;\x1b[A&#39;, &#39;\x10&#39;}, &#39;scroll_down&#39;: {&#39;J&#39;, &#39;\x1b[1;2B&#39;}, &#39;scroll_up&#39;: {&#39;K&#39;, &#39;\x1b[1;2A&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Container.handle_key">handle_key</a></code></p>
@@ -2236,7 +2374,9 @@ widget.</p>
 
             <span class="c1"># lines = new_lines</span>
 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">has_top_bottom</span><span class="p">)</span>
             <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">has_top_bottom</span><span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="n">height</span><span class="p">))</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">+</span> <span class="n">height</span><span class="p">]</span>
 
@@ -2508,9 +2648,7 @@ the <code><a href="#Container.parent_align">parent_align</a></code> field.</p>
                 <span class="n">other</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectables</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Container selection index out of range&quot;</span><span class="p">)</span>
-
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectables</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
             <span class="n">widget</span><span class="p">,</span> <span class="n">inner_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectables</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">inner_index</span><span class="p">)</span>
 
@@ -2532,6 +2670,104 @@ the <code><a href="#Container.parent_align">parent_align</a></code> field.</p>
 <ul>
 <li><strong>IndexError:</strong>  The index provided was beyond len(self.selectables).</li>
 </ul>
+</div>
+
+
+                            </div>
+                            <div id="Container.scroll" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Container.scroll">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">scroll</span><span class="signature">(self, offset: int) -&gt; int</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">scroll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Scrolls to given offset, returns the new scroll_offset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offset: The amount to scroll by. Positive offsets scroll down,</span>
+<span class="sd">                negative up.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The new scroll offset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">+</span> <span class="n">offset</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Scrolls to given offset, returns the new scroll_offset.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>offset:</strong>  The amount to scroll by. Positive offsets scroll down,
+negative up.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The new scroll offset.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="Container.scroll_end" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Container.scroll_end">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">scroll_end</span><span class="signature">(self, end: int) -&gt; int</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">scroll_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Scrolls to either top or bottom end of this object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            end: The offset to scroll to. 0 goes to the very top, -1 to the</span>
+<span class="sd">                very bottom.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The new scroll offset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">elif</span> <span class="n">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_scroll</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Scrolls to either top or bottom end of this object.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>end:</strong>  The offset to scroll to. 0 goes to the very top, -1 to the
+very bottom.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The new scroll offset.</p>
+</blockquote>
 </div>
 
 
@@ -2653,8 +2889,8 @@ print, as well as when calling this method with no arguments.</li>
         <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">):</span>
                 <span class="n">handled</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">selectables_index</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">selected_index</span>
+                <span class="c1"># This avoids too many branches from pylint.</span>
+                <span class="n">selectables_index</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">or</span> <span class="mi">0</span>
 
                 <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">LEFT_CLICK</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="o">=</span> <span class="n">widget</span>
@@ -2662,18 +2898,21 @@ print, as well as when calling this method with no arguments.</li>
                     <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">selectables_index</span><span class="p">)</span>
 
-                <span class="k">return</span> <span class="n">handled</span>
+                <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">handled</span>
+
+                <span class="k">break</span>
 
             <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">is_selectable</span><span class="p">:</span>
                 <span class="n">selectables_index</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">selectables_length</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overflow</span> <span class="o">==</span> <span class="n">Overflow</span><span class="o">.</span><span class="n">SCROLL</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_UP</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">SCROLL_DOWN</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scroll_offset</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="kc">False</span>
@@ -2708,7 +2947,9 @@ print, as well as when calling this method with no arguments.</li>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-return-statements, too-many-branches</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Handles a keypress, returns its success.</span>
 
 <span class="sd">        Args:</span>
@@ -2726,13 +2967,26 @@ print, as well as when calling this method with no arguments.</li>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
 
+        <span class="n">scroll_actions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_down&quot;</span><span class="p">]},</span>
+            <span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_up&quot;</span><span class="p">]},</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_down&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="s2">&quot;scroll_up&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">Container</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">in</span> <span class="n">widget</span><span class="p">:</span>
+                    <span class="n">widget</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="n">scroll_actions</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
         <span class="c1"># Only use navigation when there is more than one selectable</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectables_length</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">_is_nav</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-            <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
-
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
+
+            <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
@@ -2757,8 +3011,11 @@ print, as well as when calling this method with no arguments.</li>
             <span class="k">if</span> <span class="n">handled</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">ENTER</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">ENTER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectables_length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
@@ -2982,7 +3239,7 @@ will be centered based on its <code>_centered_axis</code>.</p>
 
             <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">size_policy</span> <span class="ow">is</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span><span class="p">:</span>
                 <span class="n">target_width</span> <span class="o">+=</span> <span class="n">target_width</span> <span class="o">-</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
-                <span class="n">width</span> <span class="o">=</span> <span class="n">target_width</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">widget</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">target_width</span> <span class="o">+</span> <span class="n">error</span>
                 <span class="n">width</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
@@ -3049,7 +3306,7 @@ will be centered based on its <code>_centered_axis</code>.</p>
                             <div id="Splitter.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Splitter.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;\x02&#39;, &#39;\x1b[D&#39;, &#39;h&#39;}, &#39;next&#39;: {&#39;\x06&#39;, &#39;\x1b[C&#39;, &#39;l&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;h&#39;, &#39;\x02&#39;, &#39;\x1b[D&#39;}, &#39;next&#39;: {&#39;\x1b[C&#39;, &#39;l&#39;, &#39;\x06&#39;}}</span>
     </div>
 
             <div class="docstring"><p>Groups of keys that are used in <code><a href="#Splitter.handle_key">handle_key</a></code></p>
@@ -3097,7 +3354,7 @@ will be centered based on its <code>_centered_axis</code>.</p>
 
             <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">size_policy</span> <span class="ow">is</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span><span class="p">:</span>
                 <span class="n">target_width</span> <span class="o">+=</span> <span class="n">target_width</span> <span class="o">-</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
-                <span class="n">width</span> <span class="o">=</span> <span class="n">target_width</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">widget</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">target_width</span> <span class="o">+</span> <span class="n">error</span>
                 <span class="n">width</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
@@ -3178,6 +3435,8 @@ will be centered based on its <code>_centered_axis</code>.</p>
                 <dd id="Splitter.remove" class="function"><a href="#Container.remove">remove</a></dd>
                 <dd id="Splitter.set_recursive_depth" class="function"><a href="#Container.set_recursive_depth">set_recursive_depth</a></dd>
                 <dd id="Splitter.select" class="function"><a href="#Container.select">select</a></dd>
+                <dd id="Splitter.scroll" class="function"><a href="#Container.scroll">scroll</a></dd>
+                <dd id="Splitter.scroll_end" class="function"><a href="#Container.scroll_end">scroll_end</a></dd>
                 <dd id="Splitter.center" class="function"><a href="#Container.center">center</a></dd>
                 <dd id="Splitter.handle_mouse" class="function"><a href="#Container.handle_mouse">handle_mouse</a></dd>
                 <dd id="Splitter.handle_key" class="function"><a href="#Container.handle_key">handle_key</a></dd>

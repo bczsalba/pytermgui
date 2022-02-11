@@ -189,6 +189,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_binding</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
 
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">TAB</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">BACKSPACE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
             <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
@@ -283,16 +286,13 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">cursor_char</span> <span class="o">+</span> <span class="n">right</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">+=</span> <span class="mi">2</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()</span>
 
         <span class="c1"># Set old value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">old</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-=</span> <span class="mi">2</span>
 
         <span class="k">return</span> <span class="p">[</span>
-            <span class="n">line</span> <span class="o">+</span> <span class="n">fill_style</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
+            <span class="n">line</span> <span class="o">+</span> <span class="n">fill_style</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">line</span><span class="p">))</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
         <span class="p">]</span>
 </pre></div>
 
@@ -402,6 +402,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_binding</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
 
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">TAB</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">BACKSPACE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
             <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
@@ -496,16 +499,13 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">cursor_char</span> <span class="o">+</span> <span class="n">right</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">+=</span> <span class="mi">2</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()</span>
 
         <span class="c1"># Set old value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">old</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-=</span> <span class="mi">2</span>
 
         <span class="k">return</span> <span class="p">[</span>
-            <span class="n">line</span> <span class="o">+</span> <span class="n">fill_style</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
+            <span class="n">line</span> <span class="o">+</span> <span class="n">fill_style</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">line</span><span class="p">))</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
         <span class="p">]</span>
 </pre></div>
 
@@ -655,6 +655,9 @@ is also converted using this type.</li>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_binding</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
 
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">TAB</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">BACKSPACE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
             <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
@@ -785,16 +788,13 @@ is also converted using this type.</li>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">cursor_char</span> <span class="o">+</span> <span class="n">right</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">+=</span> <span class="mi">2</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()</span>
 
         <span class="c1"># Set old value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">old</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-=</span> <span class="mi">2</span>
 
         <span class="k">return</span> <span class="p">[</span>
-            <span class="n">line</span> <span class="o">+</span> <span class="n">fill_style</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
+            <span class="n">line</span> <span class="o">+</span> <span class="n">fill_style</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="n">real_length</span><span class="p">(</span><span class="n">line</span><span class="p">))</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
         <span class="p">]</span>
 </pre></div>
 
