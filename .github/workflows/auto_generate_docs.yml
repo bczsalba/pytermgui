@@ -1,0 +1,37 @@
+name: Auto Documentation
+
+on:
+ release:
+    types: [published]
+
+jobs:
+  generate_docs:
+    if: ${{ github.repository_owner == 'bczsalba' }} # prevents workflow from running in forked repos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install pdoc
+        run: |
+          python -m pip install --upgrade pip
+          pip install pdoc
+
+      - name: Generate documentation
+        run: |
+          pdoc -o ./docs pytermgui --logo https://github.com/bczsalba/pytermgui/blob/master/assets/title.png?raw=true --docformat google
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add ./docs/
+          git commit -m "Auto-update documentation"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
