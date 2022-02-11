@@ -30,16 +30,13 @@ from .window_manager import *
 from .input import getch, keys
 from .context_managers import alt_buffer, cursor_at, mouse_handler
 
-# This is needeed for pdoc to parse the include statement above.
-__docformat__ = "google"
-
 # Silence warning if running as standalone module
 if "-m" in sys.argv:
     import warnings
 
     warnings.filterwarnings("ignore")
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 
 def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
