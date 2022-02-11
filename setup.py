@@ -1,7 +1,5 @@
 from setuptools import setup
 
-import pytermgui
-
 setup(
     name="pytermgui",
     version="2.1.0",
