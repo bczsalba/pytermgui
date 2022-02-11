@@ -727,16 +727,13 @@ of the library you use. I will provide an example of usage for each.</p>
 <span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span><span class="p">,</span> <span class="n">keys</span>
 <span class="kn">from</span> <span class="nn">.context_managers</span> <span class="kn">import</span> <span class="n">alt_buffer</span><span class="p">,</span> <span class="n">cursor_at</span><span class="p">,</span> <span class="n">mouse_handler</span>
 
-<span class="c1"># This is needeed for pdoc to parse the include statement above.</span>
-<span class="n">__docformat__</span> <span class="o">=</span> <span class="s2">&quot;google&quot;</span>
-
 <span class="c1"># Silence warning if running as standalone module</span>
 <span class="k">if</span> <span class="s2">&quot;-m&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">warnings</span>
 
     <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2.0.0&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2.1.0&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">auto</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Widget</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]]:</span>

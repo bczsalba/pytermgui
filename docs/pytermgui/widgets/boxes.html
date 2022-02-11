@@ -65,6 +65,9 @@
                     <a class="variable" href="#EMPTY_HORIZONTAL">EMPTY_HORIZONTAL</a>
             </li>
             <li>
+                    <a class="variable" href="#ROUNDED">ROUNDED</a>
+            </li>
+            <li>
                     <a class="variable" href="#SINGLE">SINGLE</a>
             </li>
             <li>
@@ -332,13 +335,22 @@ be referenced &amp; defined in markup file definitions. For more info, check out
         <span class="s2">&quot;│   │&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 <span class="p">)</span>
-<span class="n">SINGLE</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span>
+<span class="n">ROUNDED</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="s2">&quot;╭───╮&quot;</span><span class="p">,</span>
         <span class="s2">&quot;│ x │&quot;</span><span class="p">,</span>
         <span class="s2">&quot;╰───╯&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 <span class="p">)</span>
+
+<span class="n">SINGLE</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;┌───┐&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;│ x │&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;└───┘&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
 <span class="n">SINGLE_VERTICAL</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="s2">&quot;╔───╗&quot;</span><span class="p">,</span>
@@ -754,10 +766,19 @@ construction parameter.</p>
     
 
                 </section>
+                <section id="ROUNDED">
+                                <div class="attr variable"><a class="headerlink" href="#ROUNDED">#&nbsp;&nbsp</a>
+
+        <span class="name">ROUNDED</span><span class="default_value"> = Box(borders=[&#39;│ &#39;, &#39;─&#39;, &#39; │&#39;, &#39;─&#39;], corners=[&#39;╭&#39;, &#39;╮&#39;, &#39;╯&#39;, &#39;╰&#39;])</span>
+    </div>
+
+    
+
+                </section>
                 <section id="SINGLE">
                                 <div class="attr variable"><a class="headerlink" href="#SINGLE">#&nbsp;&nbsp</a>
 
-        <span class="name">SINGLE</span><span class="default_value"> = Box(borders=[&#39;│ &#39;, &#39;─&#39;, &#39; │&#39;, &#39;─&#39;], corners=[&#39;╭&#39;, &#39;╮&#39;, &#39;╯&#39;, &#39;╰&#39;])</span>
+        <span class="name">SINGLE</span><span class="default_value"> = Box(borders=[&#39;│ &#39;, &#39;─&#39;, &#39; │&#39;, &#39;─&#39;], corners=[&#39;┌&#39;, &#39;┐&#39;, &#39;┘&#39;, &#39;└&#39;])</span>
     </div>
 
     

@@ -80,6 +80,9 @@
                                 <a class="variable" href="#Window.styles">styles</a>
                         </li>
                         <li>
+                                <a class="variable" href="#Window.chars">chars</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#Window.rect">rect</a>
                         </li>
                         <li>
@@ -365,6 +368,7 @@ style="max-width: 100%"></p>
 <span class="sd">    may set this value manually.&quot;&quot;&quot;</span>
 
     <span class="n">styles</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">Container</span><span class="o">.</span><span class="n">styles</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">MarkupFormatter</span><span class="p">(</span><span class="s2">&quot;[wm-title]</span><span class="si">{item}</span><span class="s2">&quot;</span><span class="p">)}}</span>
+    <span class="n">chars</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">widgets</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initializes object.</span>
@@ -421,6 +425,12 @@ style="max-width: 100%"></p>
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">-</span> <span class="n">top</span>
 
     <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calls self._add_widget(other) and returns self.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calls self._add_widget(other) and returns self.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
@@ -528,6 +538,7 @@ style="max-width: 100%"></p>
         <span class="sd">&quot;&quot;&quot;Instruct window manager to close object&quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -750,6 +761,9 @@ style="max-width: 100%"></p>
                 <span class="k">if</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">focusing_actions</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 
+                <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+                    <span class="k">break</span>
+
                 <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="n">handlers</span> <span class="ow">and</span> <span class="n">handlers</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">action</span><span class="p">](</span>
                     <span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">window</span>
                 <span class="p">):</span>
@@ -757,9 +771,6 @@ style="max-width: 100%"></p>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">window</span><span class="o">.</span><span class="n">is_modal</span><span class="p">:</span>
                     <span class="k">continue</span>
-
-                <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-                    <span class="k">break</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">execute_binding</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
 
@@ -822,6 +833,10 @@ style="max-width: 100%"></p>
 
         <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">has_focus</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># NOTE: This is supposed to work using `_should_print`, but it doesn&#39;t.</span>
+        <span class="c1"># Force print</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">on_resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Correctly updates window positions &amp; prints when terminal gets resized.</span>
@@ -1135,6 +1150,7 @@ style="max-width: 100%"></p>
 <span class="sd">    may set this value manually.&quot;&quot;&quot;</span>
 
     <span class="n">styles</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">Container</span><span class="o">.</span><span class="n">styles</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">MarkupFormatter</span><span class="p">(</span><span class="s2">&quot;[wm-title]</span><span class="si">{item}</span><span class="s2">&quot;</span><span class="p">)}}</span>
+    <span class="n">chars</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">widgets</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Initializes object.</span>
@@ -1191,6 +1207,12 @@ style="max-width: 100%"></p>
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">-</span> <span class="n">top</span>
 
     <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calls self._add_widget(other) and returns self.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calls self._add_widget(other) and returns self.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
@@ -1298,6 +1320,7 @@ style="max-width: 100%"></p>
         <span class="sd">&quot;&quot;&quot;Instruct window manager to close object&quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1496,6 +1519,17 @@ may set this value manually.</p>
     </div>
 
             <div class="docstring"><p>Default styles for this class</p>
+</div>
+
+
+                            </div>
+                            <div id="Window.chars" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#Window.chars">#&nbsp;&nbsp</a>
+
+        <span class="name">chars</span><span class="annotation">: dict[str, typing.Union[typing.List[str], str]]</span><span class="default_value"> = {&#39;border&#39;: [&#39;| &#39;, &#39;-&#39;, &#39; |&#39;, &#39;-&#39;], &#39;corner&#39;: [&#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;]}</span>
+    </div>
+
+            <div class="docstring"><p>Default characters for this class</p>
 </div>
 
 
@@ -1725,6 +1759,7 @@ defaults to True.</li>
         <span class="sd">&quot;&quot;&quot;Instruct window manager to close object&quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </pre></div>
 
@@ -1765,8 +1800,7 @@ defaults to True.</li>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="widgets/layouts.html#Container">pytermgui.widgets.layouts.Container</a></dt>
-                                <dd id="Window.chars" class="variable"><a href="widgets/layouts.html#Container.chars">chars</a></dd>
-                <dd id="Window.keys" class="variable"><a href="widgets/layouts.html#Container.keys">keys</a></dd>
+                                <dd id="Window.keys" class="variable"><a href="widgets/layouts.html#Container.keys">keys</a></dd>
                 <dd id="Window.serialized" class="variable"><a href="widgets/layouts.html#Container.serialized">serialized</a></dd>
                 <dd id="Window.vertical_align" class="variable"><a href="widgets/layouts.html#Container.vertical_align">vertical_align</a></dd>
                 <dd id="Window.sidelength" class="variable"><a href="widgets/layouts.html#Container.sidelength">sidelength</a></dd>
@@ -1781,6 +1815,8 @@ defaults to True.</li>
                 <dd id="Window.remove" class="function"><a href="widgets/layouts.html#Container.remove">remove</a></dd>
                 <dd id="Window.set_recursive_depth" class="function"><a href="widgets/layouts.html#Container.set_recursive_depth">set_recursive_depth</a></dd>
                 <dd id="Window.select" class="function"><a href="widgets/layouts.html#Container.select">select</a></dd>
+                <dd id="Window.scroll" class="function"><a href="widgets/layouts.html#Container.scroll">scroll</a></dd>
+                <dd id="Window.scroll_end" class="function"><a href="widgets/layouts.html#Container.scroll_end">scroll_end</a></dd>
                 <dd id="Window.handle_mouse" class="function"><a href="widgets/layouts.html#Container.handle_mouse">handle_mouse</a></dd>
                 <dd id="Window.handle_key" class="function"><a href="widgets/layouts.html#Container.handle_key">handle_key</a></dd>
                 <dd id="Window.wipe" class="function"><a href="widgets/layouts.html#Container.wipe">wipe</a></dd>
@@ -2027,6 +2063,9 @@ defaults to True.</li>
                 <span class="k">if</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">focusing_actions</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 
+                <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+                    <span class="k">break</span>
+
                 <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="n">handlers</span> <span class="ow">and</span> <span class="n">handlers</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">action</span><span class="p">](</span>
                     <span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">window</span>
                 <span class="p">):</span>
@@ -2034,9 +2073,6 @@ defaults to True.</li>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">window</span><span class="o">.</span><span class="n">is_modal</span><span class="p">:</span>
                     <span class="k">continue</span>
-
-                <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-                    <span class="k">break</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">execute_binding</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
 
@@ -2099,6 +2135,10 @@ defaults to True.</li>
 
         <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">has_focus</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># NOTE: This is supposed to work using `_should_print`, but it doesn&#39;t.</span>
+        <span class="c1"># Force print</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">on_resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Correctly updates window positions &amp; prints when terminal gets resized.</span>
@@ -2616,6 +2656,9 @@ can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window
                 <span class="k">if</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">focusing_actions</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 
+                <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+                    <span class="k">break</span>
+
                 <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="n">handlers</span> <span class="ow">and</span> <span class="n">handlers</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">action</span><span class="p">](</span>
                     <span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">window</span>
                 <span class="p">):</span>
@@ -2623,9 +2666,6 @@ can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">window</span><span class="o">.</span><span class="n">is_modal</span><span class="p">:</span>
                     <span class="k">continue</span>
-
-                <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-                    <span class="k">break</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">execute_binding</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
 
@@ -2769,6 +2809,10 @@ can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window
 
         <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">has_focus</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># NOTE: This is supposed to work using `_should_print`, but it doesn&#39;t.</span>
+        <span class="c1"># Force print</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 </pre></div>
 
         </details>
@@ -3167,6 +3211,8 @@ Defaults to <code>["press_hold", "hover"]</code>.</li>
                 <dd id="WindowManager.remove" class="function"><a href="widgets/layouts.html#Container.remove">remove</a></dd>
                 <dd id="WindowManager.set_recursive_depth" class="function"><a href="widgets/layouts.html#Container.set_recursive_depth">set_recursive_depth</a></dd>
                 <dd id="WindowManager.select" class="function"><a href="widgets/layouts.html#Container.select">select</a></dd>
+                <dd id="WindowManager.scroll" class="function"><a href="widgets/layouts.html#Container.scroll">scroll</a></dd>
+                <dd id="WindowManager.scroll_end" class="function"><a href="widgets/layouts.html#Container.scroll_end">scroll_end</a></dd>
                 <dd id="WindowManager.center" class="function"><a href="widgets/layouts.html#Container.center">center</a></dd>
                 <dd id="WindowManager.handle_mouse" class="function"><a href="widgets/layouts.html#Container.handle_mouse">handle_mouse</a></dd>
                 <dd id="WindowManager.wipe" class="function"><a href="widgets/layouts.html#Container.wipe">wipe</a></dd>
