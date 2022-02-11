@@ -230,7 +230,7 @@ class Keys:
         if attr == "ANY_KEY":
             return attr
 
-        return self._keys[attr]
+        return self._keys.get(attr, "")
 
     def get_name(self, key: str, default: Optional[str] = None) -> Optional[str]:
         """Gets canonical name of a key code.
