@@ -4,7 +4,7 @@ import pytermgui
 
 setup(
     name="pytermgui",
-    version=pytermgui.__version__,
+    version="2.1.0",
     include_package_data=True,
     package_data={
         "pytermgui": ["py.typed"],
@@ -19,5 +19,7 @@ setup(
     url="https://github.com/bczsalba/pytermgui",
     author="BcZsalba",
     author_email="bczsalba@gmail.com",
-    entry_points={"console_scripts": ["ptg = pytermgui.cmd:main"]},
+    entry_points={
+        "console_scripts": ["ptg = pytermgui.cmd:main"]
+    },
 )
