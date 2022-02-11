@@ -1,0 +1,162 @@
+config:
+  Container:
+    styles:
+      border: &border-style "[60 bold]{item}"
+      corner: *border-style
+
+  Window:
+    styles:
+      border: *border-style
+      corner: *border-style
+
+  Splitter:
+    styles:
+      separator: *border-style
+
+widgets:
+  Window:
+    width: 70
+    box: DOUBLE
+    widgets:
+      # Hello world splitter
+      - Splitter:
+          widgets:
+            - Label:
+                value: "[228]Hello"
+            - Label:
+                value: "< [72]World[/] >"
+
+      # Markup demonstration
+      - Container:
+          box: SINGLE
+          widgets:
+            - Label:
+                parent_align: 0
+                value: "This is a label [cyan italic]demonstration"
+            - Label:
+                parent_align: 1
+                value: "Most [208]widgets[/] support [@60 141]markup[/]."
+            - Label:
+                parent_align: 2
+                value: "There is also support for [bold green]named [red]colors[/]!"
+
+      - Splitter:
+          widgets:
+            - Label: {}
+            - Label: {}
+
+      - Splitter:
+          widgets:
+            - Label:
+                value: "[dim italic]Style tags"
+
+            - Label:
+                value: "[dim italic]Color patterns"
+
+      # Tag demo
+      - Container:
+          box: SINGLE
+          widgets:
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "/"
+                      parent_align: 0
+
+                  - Label: {}
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[bold]bold"
+                      parent_align: 0
+
+                  - Label:
+                      value: "[32]0-255"
+                      parent_align: 2
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[dim]dim"
+                      parent_align: 0
+
+                  - Label:
+                      value: "[#444772]#RRGGBB"
+                      parent_align: 2
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[italic]italic"
+                      parent_align: 0
+
+                  - Label:
+                      value: "[145;69;142]RRR;GGG;BBB"
+                      parent_align: 2
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[underline]underline"
+                      parent_align: 0
+
+                  - Label: {}
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[blink]blink"
+                      parent_align: 0
+
+                  - Label:
+                      value: "[@32]@0-255"
+                      parent_align: 2
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[blink2]blink2"
+                      parent_align: 0
+
+                  - Label:
+                      value: "[@#444772]@#RRGGBB"
+                      parent_align: 2
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[inverse]inverse"
+                      parent_align: 0
+
+                  - Label:
+                      value: "[@145;69;142]@RRR;GGG;BBB"
+                      parent_align: 2
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[invisible]invisible"
+                      parent_align: 0
+
+                  - Label: {}
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[strikethrough]strikethrough"
+                      parent_align: 0
+
+                  - Label:
+                      value: "[210]/fg"
+                      parent_align: 2
+
+            - Splitter:
+                widgets:
+                  - Label:
+                      value: "[overline]overline"
+                      parent_align: 0
+
+                  - Label:
+                      value: "[210]/bg"
+                      parent_align: 2
