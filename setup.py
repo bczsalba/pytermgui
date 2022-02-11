@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 import pytermgui
 
@@ -9,7 +9,7 @@ setup(
     package_data={
         "pytermgui": ["py.typed"],
     },
-    packages=["pytermgui", "pytermgui/widgets"],
+    packages=["pytermgui", "pytermgui/widgets", "pytermgui/widgets/interactive"],
     license="MIT",
     description="A simple and robust terminal UI library, written in Python.",
     long_description=open("README.md").read(),
