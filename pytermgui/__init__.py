@@ -32,9 +32,10 @@ from .context_managers import alt_buffer, cursor_at, mouse_handler
 
 # Silence warning if running as standalone module
 if "-m" in sys.argv:
-    import warnings
+    from warnings import filterwarnings
+    filterwarnings("ignore")
 
-    warnings.filterwarnings("ignore")
+__version__ = "2.1.0"
 
 
 def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
