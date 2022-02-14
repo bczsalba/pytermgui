@@ -9,9 +9,12 @@ from ...helpers import real_length
 from .. import styles as w_styles
 from ..base import Widget
 
+FILLED_SELECTED_STYLE = w_styles.MarkupFormatter("[72]{item}")
+UNFILLED_STYLE = w_styles.MarkupFormatter("[240]{item}")
+
 
 class Slider(Widget):  # pylint: disable=too-many-instance-attributes
-    """A Widget to display & configure scalable data
+    """A Widget to display & configure scalable data.
 
     By default, this Widget will act like a slider you might find in a
     settings page, allowing percentage-based selection of magnitude.
@@ -22,16 +25,14 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
     locked: bool
     """Disallow mouse input, hide cursor and lock current state"""
 
-    show_percentage: bool
-    """Show percentage next to the bar"""
-
-    chars = {"endpoint": "", "cursor": "█", "fill": "█", "rail": "─"}
+    chars = {"cursor": "", "fill": "", "rail": "━"}
 
     styles = {
-        "filled": w_styles.CLICKABLE,
-        "unfilled": w_styles.FOREGROUND,
-        "cursor": w_styles.CLICKABLE,
-        "highlight": w_styles.CLICKED,
+        "filled": w_styles.MarkupFormatter("[white]{item}"),
+        "cursor": FILLED_SELECTED_STYLE,
+        "filled_selected": FILLED_SELECTED_STYLE,
+        "unfilled": UNFILLED_STYLE,
+        "unfilled_selected": UNFILLED_STYLE,
     }
 
     keys = {
@@ -43,121 +44,106 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
         self,
         onchange: Callable[[float], Any] | None = None,
         locked: bool = False,
-        show_counter: bool = True,
         **attrs: Any,
     ) -> None:
-        """Initialize object"""
+        """Initializes a Slider.
 
-        super().__init__(**attrs)
-
-        self.width = 10
-
-        self.locked = locked
-        self.show_counter = show_counter
-        self.onchange = onchange
+        Args:
+            onchange: The callable called every time the value
+                is updated.
+            locked: Whether this Slider should accept value changes.
+        """
 
         self._value = 0.0
-        self._display_value = 0
-        self._available = self.width - 5
 
-    @property
-    def selectables_length(self) -> int:
-        """Return count of selectables"""
+        super().__init__(**attrs)
+        self._selectables_length = 1
 
-        if self.locked:
-            return 0
-        return 1
+        self.is_locked = locked
+        self.onchange = onchange
 
     @property
     def value(self) -> float:
-        """Get float value"""
+        """Returns the value of this Slider.
 
-        return self._display_value / self._available
+        Returns:
+            A floating point number between 0.0 and 1.0.
+        """
 
-    def handle_mouse(self, event: MouseEvent) -> bool:
-        """Change slider position"""
+        return self._value
 
-        # Disallow changing state when Slider is locked
-        if not self.locked:
-            if event.action is MouseAction.RELEASE:
-                self.selected_index = None
-                return True
+    @value.setter
+    def value(self, new: float) -> None:
+        """Updates the value."""
 
-            if event.action in [MouseAction.LEFT_DRAG, MouseAction.LEFT_CLICK]:
-                self._display_value = max(
-                    0, min(event.position[0] - self.pos[0] + 1, self._available)
-                )
-                self.selected_index = 0
+        if self.is_locked:
+            return
 
-                if self.onchange is not None:
-                    self.onchange(self.value)
+        self._value = max(0.0, min(new, 1.0))
 
-                return True
-
-        return super().handle_mouse(event)
+        if self.onchange is not None:
+            self.onchange(self._value)
 
     def handle_key(self, key: str) -> bool:
-        """Change slider position with keys"""
+        """Moves the slider cursor."""
 
-        if key in self.keys["decrease"]:
-            self._display_value -= 1
-
-            if self.onchange is not None:
-                self.onchange(self.value)
+        if self.execute_binding(key):
             return True
 
         if key in self.keys["increase"]:
-            self._display_value += 1
+            self.value += 0.1
+            return True
 
-            if self.onchange is not None:
-                self.onchange(self.value)
+        if key in self.keys["decrease"]:
+            self.value -= 0.1
+            return True
+
+        return False
+
+    def handle_mouse(self, event: MouseEvent) -> bool:
+        """Moves the slider cursor."""
+
+        if event.action in [MouseAction.LEFT_CLICK, MouseAction.LEFT_DRAG]:
+            offset = event.position[0] - self.pos[0] + 1
+            self.value = max(0, min(offset / self.width, 1.0))
             return True
 
         return False
 
     def get_lines(self) -> list[str]:
-        """Get lines of object"""
+        """Gets slider lines."""
 
-        # Get characters
-        rail_char = self._get_char("rail")
-        assert isinstance(rail_char, str)
+        rail = self._get_char("rail")
+        cursor = self._get_char("cursor") or rail
+        assert isinstance(cursor, str)
+        assert isinstance(rail, str)
 
-        endpoint_char = self._get_char("endpoint")
-        assert isinstance(endpoint_char, str)
+        if self.selected_index is None:
+            filled_style = self._get_style("filled")
+            unfilled_style = self._get_style("unfilled")
+        else:
+            filled_style = self._get_style("filled_selected")
+            unfilled_style = self._get_style("unfilled_selected")
 
-        cursor_char = self._get_char("cursor")
-        assert isinstance(cursor_char, str)
+        cursor = self._get_style("cursor")(cursor)
+        unfilled = unfilled_style(rail)
+        filled = filled_style(rail)
 
-        fill_char = self._get_char("fill")
-        assert isinstance(fill_char, str)
+        count = round(self.width * self.value) - 1
 
-        # Clamp value
-        self._display_value = max(
-            0, min(self._display_value, self.width, self._available)
-        )
+        chars = []
+        for i in range(self.width):
+            if i == count and not self.is_locked and self.selected_index is not None:
+                chars.append(cursor)
+                continue
 
-        # Only show cursor if not locked
-        if self.locked:
-            cursor_char = ""
+            if i <= count:
+                chars.append(filled)
+                continue
 
-        # Only highlight cursor if currently selected
-        if self.selected_index != 0:
-            highlight_style = self._get_style("highlight")
-            cursor_char = highlight_style(cursor_char)
-            fill_char = highlight_style(fill_char)
+            chars.append(unfilled)
 
-        # Construct left side
-        left = (self._display_value - real_length(cursor_char) + 1) * fill_char
-        left = self._get_style("filled")(left) + cursor_char
+        line = "".join(chars)
+        self.width = real_length(line)
 
-        # Get counter string
-        counter = ""
-        if self.show_counter:
-            percentage = (self._display_value * 100) // self._available
-            counter = f"{str(percentage) + '%': >5}"
-
-        # Construct final string
-        self._available = self.width - len(counter) - real_length(endpoint_char)
-        line_length = self._available - self._display_value
-
-        return [left + line_length * rail_char + endpoint_char + counter]
+        return [line]
