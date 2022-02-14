@@ -46,7 +46,7 @@ class Container(Widget):
         "scroll_up": {keys.SHIFT_UP, "K"},
     }
 
-    serialized = Widget.serialized + ["_centered_axis"]
+    serialized = Widget.serialized + ["centered_axis"]
     vertical_align = VerticalAlignment.CENTER
     allow_fullscreen = True
 
@@ -63,7 +63,7 @@ class Container(Widget):
             self.width = 40
 
         self._widgets: list[Widget] = []
-        self._centered_axis: CenteringPolicy | None = None
+        self.centered_axis: CenteringPolicy | None = None
 
         self._scroll_offset = 0
         self._max_scroll = 0
@@ -721,7 +721,7 @@ class Container(Widget):
         self.pos = (pos[0], pos[1])
 
         if store:
-            self._centered_axis = where
+            self.centered_axis = where
 
         self._prev_screen = terminal.size
 
@@ -870,12 +870,12 @@ class Container(Widget):
         """Prints this Container.
 
         If the screen size has changed since last `print` call, the object
-        will be centered based on its `_centered_axis`.
+        will be centered based on its `centered_axis`.
         """
 
         if not terminal.size == self._prev_screen:
             clear()
-            self.center(self._centered_axis)
+            self.center(self.centered_axis)
 
         self._prev_screen = terminal.size
 
