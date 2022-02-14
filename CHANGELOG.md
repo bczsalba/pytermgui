@@ -1,13 +1,19 @@
-# Version 2.1.1
-
-This release fixes various issues related to `Windows` systems. It also brought about a more logical
-refactor for `WindowManager.process_input`.
+# Version 2.2.0
 
 > Items marked in bold are API breaking changes.
 
+## Refactors
+- Make `Container.\_centered\_axis` public (0304aca4b94517648b46bcf68e3ae4a18f1e0b68)
+    * Note: This is not deemed API breaking, as this attribute was never meant to be
+user facing.
+
+
 ## Fixes
-- Fix `CTRL_C` not being captured on Windows machines (01139633c52c07d14e15e4f1fef1ba638a06df35)
-- Fix `widgets/interactive.py not being packaged` (75cebf715a74c4bba9963bc6be8d870a09f7af2c)
-- Silence `keys` attribute errors (75cebf715a74c4bba9963bc6be8d870a09f7af2c)
+- Fix `Overflow.HIDE` only hiding entire widgets (4289a5c6bd5df535a43053173179bc9f3ec0526f)
+- Fix `getch` application growing in height indefinitely (ea5b721248f6c599a6c795a34bd1dae5608eb565)
+
+
+## Additions
+- Add Animator class (c87586f40bafcd88c557abd41691c898bb74caaa, ceb030d96269ebf8a8898c8969df13a85ac55704)
 
 
