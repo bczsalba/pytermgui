@@ -500,9 +500,9 @@ class Container(Widget):
                 self.pos[1] + len(lines) + (1 if has_top_bottom[0] else 0),
             )
 
-            widget_lines = []
+            widget_lines: list[str] = []
             for line in widget.get_lines():
-                if len(lines) >= self.height - sum(has_top_bottom):
+                if len(lines) + len(widget_lines) >= self.height - sum(has_top_bottom):
                     if overflow is Overflow.HIDE:
                         break
 
