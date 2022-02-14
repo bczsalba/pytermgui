@@ -81,6 +81,7 @@ class Application(ABC):
     def _update_widgets(window: Window, items: list[Any]) -> None:
         """Update window widgets, using auto() method for each."""
 
+        window.height = 0
         window.set_widgets([])
         for item in items:
             window += item
