@@ -63,6 +63,7 @@ from .widgets import (
 
 from .input import getch
 from .parser import markup
+from .animator import Animator
 from .helpers import strip_ansi, real_length
 from .enums import CenteringPolicy, SizePolicy, Overflow
 from .context_managers import alt_buffer, mouse_handler, MouseTranslator, cursor_at
@@ -333,6 +334,7 @@ class WindowManager(Container):
 
         super().__init__(**attrs)
 
+        self.animator = Animator()
         self._is_paused: bool = False
         self._is_running: bool = True
         self._should_print: bool = False
@@ -375,7 +377,11 @@ class WindowManager(Container):
         An element being "dirty" means it has changes not yet shown. Windows
         can set themselves to be dirty using the `Window.is_dirty` flag."""
 
-        return self._should_print or any(window.is_dirty for window in self._windows)
+        return (
+            self.animator.is_active
+            or self._should_print
+            or any(window.is_dirty for window in self._windows)
+        )
 
     def __enter__(self) -> WindowManager:
         """Starts context manager."""
@@ -413,10 +419,12 @@ class WindowManager(Container):
 
                 # Don't print before frametime elapsed
                 # TODO: This is imprecise, framerate is not followed well
-                if time.perf_counter() - last_frame < frametime:
+                elapsed = time.perf_counter() - last_frame
+                if elapsed < frametime:
                     # time.sleep(sleeptime)
                     continue
 
+                self.animator.step()
                 self.print()
 
                 last_frame = time.perf_counter()
@@ -574,6 +582,16 @@ class WindowManager(Container):
             self.
         """
 
+        original_height = window.height
+
+        def _on_step(window: Widget) -> None:
+            """Sets window's height on step, centers it."""
+
+            assert isinstance(window, Window)
+            window.height = original_height
+            if window.centered_axis is not None:
+                window.center()
+
         self._windows.insert(0, window)
         self._should_print = True
         window.manager = self
@@ -582,6 +600,14 @@ class WindowManager(Container):
         # existing ones, even if they are modal.
         self.focus(window)
 
+        self.animator.animate(
+            window,
+            "width",
+            startpoint=int(window.width * 0.7),
+            endpoint=window.width,
+            duration=150,
+            step_callback=_on_step,
+        )
         return self
 
     def close(self, window: Window) -> None:
@@ -591,14 +617,26 @@ class WindowManager(Container):
             window: The window to close.
         """
 
-        self._windows.remove(window)
+        def _finish(window: Widget) -> None:
+            """Finish closing the window after animation."""
 
-        if window.has_focus and len(self._windows) > 0:
-            self.focus(self._windows[0])
+            assert isinstance(window, Window)
+            self._windows.remove(window)
+            if window.has_focus and len(self._windows) > 0:
+                self.focus(self._windows[0])
 
-        # NOTE: This is supposed to work using `_should_print`, but it doesn't.
-        # Force print
-        self.print()
+            # NOTE: This is supposed to work using `_should_print`, but it doesn't.
+            # Force print
+            self.print()
+
+        window.overflow = Overflow.HIDE
+        self.animator.animate(
+            window,
+            "height",
+            endpoint=0,
+            duration=150,
+            finish_callback=_finish,
+        )
 
     def on_resize(self, size: tuple[int, int]) -> None:
         """Correctly updates window positions & prints when terminal gets resized.
