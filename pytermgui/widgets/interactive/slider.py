@@ -25,9 +25,10 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
     locked: bool
     """Disallow mouse input, hide cursor and lock current state"""
 
-    chars = {"cursor": "", "fill": "", "rail": "━"}
+    chars = {"cursor": "", "fill": "", "rail": "━", "delimiter": ["[", "]"]}
 
     styles = {
+        "delimiter": UNFILLED_STYLE,
         "filled": w_styles.MarkupFormatter("[white]{item}"),
         "cursor": FILLED_SELECTED_STYLE,
         "filled_selected": FILLED_SELECTED_STYLE,
@@ -115,6 +116,8 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
 
         rail = self._get_char("rail")
         cursor = self._get_char("cursor") or rail
+        delimiters = self._get_char("delimiter")
+        assert isinstance(delimiters, list)
         assert isinstance(cursor, str)
         assert isinstance(rail, str)
 
@@ -129,10 +132,14 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
         unfilled = unfilled_style(rail)
         filled = filled_style(rail)
 
+        for i, delimiter in enumerate(delimiters):
+            delimiters[i] = self._get_style("delimiter")(delimiter)
+
         count = round(self.width * self.value) - 1
 
-        chars = []
-        for i in range(self.width):
+        chars = [delimiters[0]]
+        width = self.width - real_length("".join(delimiters))
+        for i in range(width):
             if i == count and not self.is_locked and self.selected_index is not None:
                 chars.append(cursor)
                 continue
@@ -143,6 +150,7 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
 
             chars.append(unfilled)
 
+        chars.append(delimiters[1])
         line = "".join(chars)
         self.width = real_length(line)
 
