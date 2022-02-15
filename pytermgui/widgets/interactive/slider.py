@@ -45,7 +45,7 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
         self,
         onchange: Callable[[float], Any] | None = None,
         locked: bool = False,
-        **attrs: Any,
+        **attrs: Any
     ) -> None:
         """Initializes a Slider.
 
@@ -104,8 +104,9 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
     def handle_mouse(self, event: MouseEvent) -> bool:
         """Moves the slider cursor."""
 
+        delimiter = self._get_char("delimiter")[0]
         if event.action in [MouseAction.LEFT_CLICK, MouseAction.LEFT_DRAG]:
-            offset = event.position[0] - self.pos[0] + 1
+            offset = event.position[0] - self.pos[0] + 1 - real_length(delimiter)
             self.value = max(0, min(offset / self.width, 1.0))
             return True
 
@@ -117,6 +118,7 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
         rail = self._get_char("rail")
         cursor = self._get_char("cursor") or rail
         delimiters = self._get_char("delimiter")
+
         assert isinstance(delimiters, list)
         assert isinstance(cursor, str)
         assert isinstance(rail, str)
