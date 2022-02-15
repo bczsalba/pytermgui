@@ -11,6 +11,11 @@ from .widgets import Widget
 
 AnimationCallback = Callable[[Widget], None]
 
+# At the moment, animations cannot be manually added
+# to animator. Because of this there is no need to
+# also export the Animation name.
+__all__ = ["Animator"]
+
 
 @dataclass
 class Animation:
