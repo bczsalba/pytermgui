@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from .base import Widget
 from ..parser import markup
+from ..ansi_interface import MouseEvent, MouseAction
 
 
 class PixelMatrix(Widget):
@@ -129,6 +130,10 @@ class LargePixelMatrix(PixelMatrix):
     here.
 
     For more information, see `PixelMatrix`.
+
+    Attributes:
+        - selected_pixel: A tuple of the position & value (color) of the
+            currently hovered pixel.
     """
 
     def __init__(self, width: int, height: int, **attrs) -> None:
@@ -150,6 +155,24 @@ class LargePixelMatrix(PixelMatrix):
         self.columns = width
 
         self.width = width * 2
+        self.selected_pixel: tuple[tuple[int, int], str] | None = None
+
+    def handle_mouse(self, event: MouseEvent) -> bool:
+        """Handles a mouse event.
+
+        On hover, the `selected_pixel` attribute is set to the current pixel.
+        """
+
+        if event.action is MouseAction.HOVER:
+            xoffset = event.position[0] - self.pos[0]
+            yoffset = event.position[1] - self.pos[1]
+
+            color = self._matrix[yoffset][xoffset // 2]
+
+            self.selected_pixel = ((yoffset, xoffset), color)
+            return True
+
+        return False
 
     def get_lines(self) -> list[str]:
         """Gets large pixel matrix lines."""
