@@ -20,7 +20,7 @@ class PixelMatrix(Widget):
     ```python3
     from pytermgui import PixelMatrix
 
-    matrix = PixelMatrix(10, 10)
+    matrix = PixelMatrix(10, 10, default="white")
     for y in matrix.rows:
         for x in matrix.columns:
             matrix[y, x] = "black"
@@ -34,12 +34,13 @@ class PixelMatrix(Widget):
     `pytermgui.ansi_interface.Color`.
     """
 
-    def __init__(self, width: int, height: int, **attrs) -> None:
+    def __init__(self, width: int, height: int, default: str = "", **attrs) -> None:
         """Initializes a PixelMatrix.
 
         Args:
             width: The amount of columns the matrix will have.
             height: The amount of rows the matrix will have.
+            default: The default color to use to initialize the matrix with.
         """
 
         super().__init__(**attrs)
@@ -53,7 +54,7 @@ class PixelMatrix(Widget):
         self._matrix = []
 
         for _ in range(self.rows):
-            self._matrix.append([""] * self.columns)
+            self._matrix.append([default] * self.columns)
 
     @classmethod
     def from_matrix(cls, matrix: list[list[str]]) -> PixelMatrix:
@@ -136,12 +137,13 @@ class LargePixelMatrix(PixelMatrix):
             currently hovered pixel.
     """
 
-    def __init__(self, width: int, height: int, **attrs) -> None:
+    def __init__(self, width: int, height: int, default: str = "", **attrs) -> None:
         """Initializes LargePixelMatrix.
 
         Args:
             width: The width of the matrix.
             height: The height of the matrix.
+            default: The default color to use to initialize the matrix with.
 
         Note:
             The `column` attribute is faithful to the matrix dimensions,
@@ -149,7 +151,7 @@ class LargePixelMatrix(PixelMatrix):
             to double the column value.
         """
 
-        super().__init__(width, height, **attrs)
+        super().__init__(width, height, default, **attrs)
 
         self.rows = height
         self.columns = width
