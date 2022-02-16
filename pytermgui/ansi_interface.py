@@ -661,6 +661,8 @@ class MouseAction(Enum):
     HOVER = _auto()
     """Mouse moved without clicking."""
 
+    # TODO: Support left & right mouse release separately, without breaking
+    #       current API.
     RELEASE = _auto()
     """Mouse button released; end of any and all mouse action sequences."""
 
@@ -799,7 +801,8 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
         "decimal_xterm": {
             "0M": MouseAction.LEFT_CLICK,
             "0m": MouseAction.RELEASE,
-            "2": MouseAction.RIGHT_CLICK,
+            "2M": MouseAction.RIGHT_CLICK,
+            "2m": MouseAction.RELEASE,
             "32": MouseAction.LEFT_DRAG,
             "34": MouseAction.RIGHT_DRAG,
             "35": MouseAction.HOVER,
@@ -834,7 +837,7 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
 
             # decimal_xterm uses the last character's
             # capitalization to signify press/release state
-            if len(release_code) > 0 and identifier == "0":
+            if len(release_code) > 0 and identifier in ["0", "2"]:
                 identifier += release_code
 
             if identifier in mapping:
