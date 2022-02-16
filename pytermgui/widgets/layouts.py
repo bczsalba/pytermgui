@@ -395,7 +395,7 @@ class Container(Widget):
             return
 
         if widget.width > available:
-            if widget.size_policy == SizePolicy.STATIC:
+            if widget.size_policy == self.size_policy == SizePolicy.STATIC:
                 raise WidthExceededError(
                     f"Widget {widget}'s static width of {widget.width}"
                     + f" exceeds its parent's available width {available}."
@@ -484,7 +484,7 @@ class Container(Widget):
 
         has_top_bottom = (real_length(borders[1]) > 0, real_length(borders[3]) > 0)
 
-        align = lambda item: item
+        align, offset = self._get_aligners(self, (borders[0], borders[2]))
 
         overflow = self.overflow
         # if overflow == Overflow.SCROLL:
