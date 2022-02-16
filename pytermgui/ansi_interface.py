@@ -80,6 +80,10 @@ RE_MOUSE: dict[str, Pattern] = {
 class Color:
     """Class to store various color utilities
 
+    Shoutout to the best StackOverflow answer I've ever come across, that
+    just so happens to be a great summary of ANSI color systems:
+        https://stackoverflow.com/a/33206814
+
     Two instances of this class are provided, `foreground`
     and `background`. The difference between these is the color
     layer they operate on.

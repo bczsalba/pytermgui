@@ -211,6 +211,7 @@ class Window(Container):
 
         if self.min_width is None and len(self._widgets) > 0:
             self._auto_min_width = max(widget.width for widget in self._widgets)
+            self._auto_min_width += self.sidelength
 
         self.height += added.height
 
