@@ -97,7 +97,6 @@ class Window(Container):
 
     is_bindable = True
     overflow = Overflow.HIDE
-    size_policy = SizePolicy.STATIC
 
     allow_fullscreen = False
     """When a window is allowed fullscreen its manager will try to set it so before each frame."""
@@ -183,9 +182,13 @@ class Window(Container):
         if right - left < minimum:
             return
 
+        # Update size policy to fill to resize inner objects properly
+        self.size_policy = SizePolicy.FILL
         self.pos = (left, top)
         self.width = right - left
         self.height = bottom - top
+        # Restore original size policy
+        self.size_policy = SizePolicy.STATIC
 
     def __iadd__(self, other: object) -> Window:
         """Calls self._add_widget(other) and returns self."""
@@ -816,7 +819,7 @@ class WindowManager(Container):
             if id(window) in self._window_cache:
                 return self._window_cache[id(window)]
 
-            lines = []
+            lines: list[str] = []
             for line in window.get_lines():
                 lines.append(
                     markup.parse("[239]" + strip_ansi(line).replace("[", r"\["))

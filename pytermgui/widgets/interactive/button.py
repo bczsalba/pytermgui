@@ -6,10 +6,10 @@ from __future__ import annotations
 from typing import Any, Callable, Optional
 
 from ...ansi_interface import MouseAction, MouseEvent
-from ...parser import markup
-from ...input import keys
+from ...parser import markup, StyledText
 from ...helpers import real_length
 from .. import styles as w_styles
+from ...input import keys
 from ..base import Widget
 
 
@@ -74,13 +74,13 @@ class Button(Widget):
         assert isinstance(delimiters, list) and len(delimiters) == 2
         left, right = delimiters
 
-        word = markup.parse(left + self.label + right)
+        word: str = markup.parse(left + self.label + right)
         if self.selected_index is None:
             word = label_style(word)
         else:
             word = highlight_style(word)
 
-        line = self.padding * " " + word
+        line = StyledText(word + self.padding * " ")
         self.width = real_length(line)
 
         return [line]

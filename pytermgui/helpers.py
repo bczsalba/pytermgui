@@ -3,7 +3,7 @@ Helper methods and functions for pytermgui.
 """
 
 from typing import Iterator
-from .parser import markup, TokenType, RE_ANSI, RE_MARKUP
+from .parser import markup, TokenType, RE_ANSI, RE_MARKUP, StyledText
 from .ansi_interface import reset
 
 __all__ = ["strip_ansi", "strip_markup", "real_length", "get_sequences", "break_line"]
@@ -18,6 +18,9 @@ def strip_ansi(text: str) -> str:
     Returns:
         The text without any ANSI sequences.
     """
+
+    if isinstance(text, StyledText):
+        return text.plain
 
     return RE_ANSI.sub("", text)
 

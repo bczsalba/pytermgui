@@ -179,7 +179,7 @@ class LargePixelMatrix(PixelMatrix):
     def get_lines(self) -> list[str]:
         """Gets large pixel matrix lines."""
 
-        lines = []
+        lines: list[str] = []
         for row in self._matrix:
             line = ""
             for pixel in row:

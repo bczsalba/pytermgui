@@ -77,7 +77,7 @@ from .ansi_interface import foreground
 from .exceptions import MarkupSyntaxError, AnsiSyntaxError
 
 
-__all__ = ["MacroCallable", "MacroCall", "MarkupLanguage", "markup"]
+__all__ = ["MacroCallable", "MacroCall", "MarkupLanguage", "StyledText", "markup"]
 
 MacroCallable = Callable[..., str]
 MacroCall = Tuple[MacroCallable, List[str]]
@@ -225,6 +225,114 @@ class Token:
         return template.format(c_id="2")
 
 
+class StyledText(str):
+    """A styled text object.
+
+    The purpose of this class is to implement some things regular `str`
+    breaks at when encountering ANSI sequences.
+
+    Instances of this class are usually spat out by `MarkupLanguage.parse`,
+    but may be manually constructed if the need arises. Everything works even
+    if there is no ANSI tomfoolery going on.
+    """
+
+    value: str
+    """The underlying, ANSI-inclusive string value."""
+
+    plain: str
+    """The string value with no ANSI sequences."""
+
+    tags: list[Token]
+    """The list of tags that make up this string."""
+
+    def __new__(cls, value: str = ""):
+        """Creates a StyledText, gets markup tags.
+
+        Args:
+            markup_language: The markup language instance this object uses.
+        """
+
+        obj = super().__new__(cls, value)
+        obj.value = value
+        obj.tags = list(markup.tokenize_ansi(value))
+
+        obj.plain = ""
+        for tag in obj.tags:
+            if tag.ttype is not TokenType.PLAIN:
+                continue
+
+            assert isinstance(tag.data, str)
+            obj.plain += tag.data
+
+        return obj
+
+    def plain_index(self, index: int | None) -> int | None:
+        """Finds given index inside plain text."""
+
+        if index is None:
+            return None
+
+        styled_chars = 0
+        plain_chars = 0
+        negative_index = False
+
+        tags = self.tags.copy()
+        if index < 0:
+            tags.reverse()
+            index = abs(index)
+            negative_index = True
+
+        for tag in tags:
+            if tag.ttype is not TokenType.PLAIN:
+                assert tag.sequence is not None
+                styled_chars += len(tag.sequence)
+                continue
+
+            for _ in range(len(tag.data)):
+                if plain_chars == index:
+                    if negative_index:
+                        return -1 * (plain_chars + styled_chars)
+
+                    return plain_chars + styled_chars
+
+                plain_chars += 1
+
+        return None
+
+    def __len__(self) -> int:
+        """Gets "real" length of object."""
+
+        return len(self.plain)
+
+    def __getitem__(self, subscript: int | slice) -> str:
+        """Gets an item, adjusted for non-plain text.
+
+        Args:
+            subscript: The integer or slice to find.
+
+        Returns:
+            The elements described by the subscript.
+
+        Raises:
+            IndexError: The given index is out of range.
+        """
+
+        if isinstance(subscript, int):
+            plain_index = self.plain_index(subscript)
+            if plain_index is None:
+                raise IndexError("StyledText index out of range")
+
+            return self.value[plain_index]
+
+        return self.value[
+            slice(
+                self.plain_index(subscript.start),
+                self.plain_index(subscript.stop),
+                subscript.step,
+            )
+        ]
+
+
 class MarkupLanguage:
     """A class representing an instance of a Markup Language.
 
@@ -266,7 +374,7 @@ class MarkupLanguage:
         """Initialize object"""
 
         self.tags: dict[str, str] = STYLE_MAP.copy()
-        self._cache: dict[str, str] = {}
+        self._cache: dict[str, StyledText] = {}
         self.macros: dict[str, MacroCallable] = {}
         self.user_tags: dict[str, str] = {}
         self.unsetters: dict[str, str] = UNSETTER_MAP.copy()
@@ -550,7 +658,7 @@ class MarkupLanguage:
         for item in marked:
             del self._cache[item]
 
-    def parse(self, markup_text: str) -> str:
+    def parse(self, markup_text: str) -> StyledText:
         """Parse markup"""
 
         # TODO: Add more optimizations:
@@ -620,6 +728,7 @@ class MarkupLanguage:
         if sequence + previous_sequence != "":
             out += "\x1b[0m"
 
+        out = StyledText(out)
         self._cache[markup_text] = out
         return out
 
