@@ -242,8 +242,8 @@ class StyledText(str):
     plain: str
     """The string value with no ANSI sequences."""
 
-    tags: list[Token]
-    """The list of tags that make up this string."""
+    tokens: list[Token]
+    """The list of tokens that make up this string."""
 
     def __new__(cls, value: str = ""):
         """Creates a StyledText, gets markup tags.
@@ -254,15 +254,15 @@ class StyledText(str):
 
         obj = super().__new__(cls, value)
         obj.value = value
-        obj.tags = list(markup.tokenize_ansi(value))
+        obj.tokens = list(markup.tokenize_ansi(value))
 
         obj.plain = ""
-        for tag in obj.tags:
-            if tag.ttype is not TokenType.PLAIN:
+        for token in obj.tokens:
+            if token.ttype is not TokenType.PLAIN:
                 continue
 
-            assert isinstance(tag.data, str)
-            obj.plain += tag.data
+            assert isinstance(token.data, str)
+            obj.plain += token.data
 
         return obj
 
@@ -276,19 +276,19 @@ class StyledText(str):
         plain_chars = 0
         negative_index = False
 
-        tags = self.tags.copy()
+        tokens = self.tokens.copy()
         if index < 0:
-            tags.reverse()
+            tokens.reverse()
             index = abs(index)
             negative_index = True
 
-        for tag in tags:
-            if tag.ttype is not TokenType.PLAIN:
-                assert tag.sequence is not None
-                styled_chars += len(tag.sequence)
+        for token in tokens:
+            if token.ttype is not TokenType.PLAIN:
+                assert token.sequence is not None
+                styled_chars += len(token.sequence)
                 continue
 
-            for _ in range(len(tag.data)):
+            for _ in range(len(token.data)):
                 if plain_chars == index:
                     if negative_index:
                         return -1 * (plain_chars + styled_chars)
