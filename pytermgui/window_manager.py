@@ -63,7 +63,7 @@ from .widgets import (
 
 from .input import getch
 from .parser import markup
-from .animator import Animator
+from .animator import animator
 from .helpers import strip_ansi, real_length
 from .enums import CenteringPolicy, SizePolicy, Overflow
 from .context_managers import alt_buffer, mouse_handler, MouseTranslator, cursor_at
@@ -335,7 +335,6 @@ class WindowManager(Container):
 
         super().__init__(**attrs)
 
-        self.animator = Animator()
         self._is_paused: bool = False
         self._is_running: bool = True
         self._should_print: bool = False
@@ -379,7 +378,7 @@ class WindowManager(Container):
         can set themselves to be dirty using the `Window.is_dirty` flag."""
 
         return (
-            self.animator.is_active
+            animator.is_active
             or self._should_print
             or any(window.is_dirty for window in self._windows)
         )
@@ -425,7 +424,7 @@ class WindowManager(Container):
                     # time.sleep(sleeptime)
                     continue
 
-                self.animator.step()
+                animator.step()
                 self.print()
 
                 last_frame = time.perf_counter()
@@ -601,7 +600,7 @@ class WindowManager(Container):
         # existing ones, even if they are modal.
         self.focus(window)
 
-        self.animator.animate(
+        animator.animate(
             window,
             "width",
             startpoint=int(window.width * 0.7),
@@ -631,7 +630,7 @@ class WindowManager(Container):
             self.print()
 
         window.overflow = Overflow.HIDE
-        self.animator.animate(
+        animator.animate(
             window,
             "height",
             endpoint=0,

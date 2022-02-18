@@ -1,4 +1,9 @@
-"""The module containing all animation-related classes & functions."""
+"""The module containing all animation-related classes & functions.
+
+This module exports the `animator` name, which is the instance that
+is used by the library.
+"""
+
 # pylint: disable=too-many-arguments
 
 from __future__ import annotations
@@ -139,3 +144,7 @@ class Animator:
                 callbacks=(step_callback, finish_callback),
             )
         )
+
+
+animator = Animator()
+"""The global Animator instance used by all of the library."""
