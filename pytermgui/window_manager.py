@@ -395,9 +395,9 @@ class WindowManager(Container):
         """Ends context manager."""
 
         if exception is not None:
+            self.stop()
             raise exception
 
-        self.stop()
         return True
 
     def _start_display_thread(self) -> None:
