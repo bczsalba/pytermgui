@@ -402,7 +402,11 @@ class Container(Widget):
                     ""
                 )
 
-            widget.width = available
+            if widget.size_policy == SizePolicy.STATIC:
+                self.width = widget.width + self.sidelength
+
+            else:
+                widget.width = available
 
     def _apply_vertalign(
         self, lines: list[str], diff: int, padder: str
