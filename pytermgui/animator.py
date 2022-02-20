@@ -10,9 +10,12 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Callable, Union
+from typing import Callable, Union, TYPE_CHECKING, Any
 
-from .widgets import Widget
+if TYPE_CHECKING:
+    from .widgets import Widget
+else:
+    Widget = Any
 
 AnimationType = Union["Animation", "CustomAnimation"]
 AnimationCallback = Callable[[Widget], Union[bool, None]]

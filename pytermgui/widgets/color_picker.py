@@ -3,6 +3,8 @@
 To test out the widget, run `ptg --color`!
 """
 
+from __future__ import annotations
+
 from typing import Any
 from contextlib import suppress
 
@@ -13,8 +15,8 @@ from ..animator import animator
 from .interactive import Button
 from ..helpers import real_length
 from .pixel_matrix import PixelMatrix
-from ..ansi_interface import MouseAction, MouseEvent
 from ..enums import SizePolicy, HorizontalAlignment
+from ..ansi_interface import MouseAction, MouseEvent
 
 
 def _get_xterm_matrix() -> list[list[str]]:
