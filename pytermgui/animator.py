@@ -9,12 +9,13 @@ is used by the library.
 from __future__ import annotations
 
 import time
-from typing import Callable
 from dataclasses import dataclass
+from typing import Callable, Union
 
 from .widgets import Widget
 
-AnimationCallback = Callable[[Widget], None]
+AnimationType = Union["Animation", "CustomAnimation"]
+AnimationCallback = Callable[[Widget], Union[bool, None]]
 
 # At the moment, animations cannot be manually added
 # to animator. Because of this there is no need to
@@ -70,6 +71,27 @@ class Animation:
         return value == self.end
 
 
+@dataclass
+class CustomAnimation:
+    """A more customizable animation.
+
+    Args:
+        step_callback: The function to run on every step call. If this
+            function returns True, the animation stops.
+    """
+
+    step_callback: Callable[[], bool]
+
+    def step(self) -> bool:
+        """Steps ahead in the animation.
+
+        Returns:
+            The value self.step_callback returns.
+        """
+
+        return self.step_callback()
+
+
 class Animator:
     """The Animator class
 
@@ -83,7 +105,7 @@ class Animator:
     def __init__(self) -> None:
         """Initializes an animator."""
 
-        self._animations: list[Animation] = []
+        self._animations: list[AnimationType] = []
 
     @property
     def is_active(self) -> bool:
@@ -98,9 +120,20 @@ class Animator:
             if animation.step():
                 self._animations.remove(animation)
 
+                if isinstance(animation, CustomAnimation):
+                    continue
+
                 finish_callback = animation.callbacks[1]
                 if finish_callback is not None:
                     finish_callback(animation.target)
+
+    def animate_custom(self, step_callback: Callable[[], bool]) -> None:
+        """Adds a custom animation.
+
+        See `CustomAnimation` for more details.
+        """
+
+        self._animations.append(CustomAnimation(step_callback))
 
     def animate(
         self,
@@ -109,8 +142,8 @@ class Animator:
         endpoint: int,
         duration: int,
         startpoint: int | None = None,
-        step_callback: Callable[[Widget], None] | None = None,
-        finish_callback: Callable[[Widget], None] | None = None,
+        step_callback: AnimationCallback | None = None,
+        finish_callback: AnimationCallback | None = None,
     ) -> None:
         """Animates a widget attribute change.
 
