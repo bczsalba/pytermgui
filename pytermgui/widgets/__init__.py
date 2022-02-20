@@ -66,7 +66,8 @@ from .base import *
 from .styles import *
 from .layouts import *
 from .interactive import *
-from .pixel_matrix import LargePixelMatrix, PixelMatrix
+from .color_picker import ColorPicker
+from .pixel_matrix import PixelMatrix, DensePixelMatrix
 
 WidgetType = Union[Widget, Type[Widget]]
 

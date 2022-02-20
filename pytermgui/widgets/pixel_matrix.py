@@ -34,6 +34,9 @@ class PixelMatrix(Widget):
     `pytermgui.ansi_interface.Color`.
     """
 
+    selected_pixel: tuple[tuple[int, int], str] | None
+    """A tuple of the position & value (color) of the currently hovered pixel."""
+
     def __init__(self, width: int, height: int, default: str = "", **attrs) -> None:
         """Initializes a PixelMatrix.
 
@@ -45,7 +48,7 @@ class PixelMatrix(Widget):
 
         super().__init__(**attrs)
 
-        self.static_width = width
+        self.static_width = width * 2
         self.height = height
 
         self.rows = height
@@ -56,9 +59,14 @@ class PixelMatrix(Widget):
         for _ in range(self.rows):
             self._matrix.append([default] * self.columns)
 
+        self.selected_pixel = None
+
     @classmethod
     def from_matrix(cls, matrix: list[list[str]]) -> PixelMatrix:
         """Creates a PixelMatrix from the given matrix.
+
+        The given matrix should be a list of rows, each containing a number
+        of cells. It is optimal for all rows to share the same amount of cells.
 
         Args:
             matrix: The matrix to use. This is a list of lists of strings
@@ -68,10 +76,82 @@ class PixelMatrix(Widget):
             A new type(self).
         """
 
-        obj = cls(len(matrix), max(len(row) for row in matrix))
+        obj = cls(max(len(row) for row in matrix), len(matrix))
         setattr(obj, "_matrix", matrix)
 
         return obj
+
+    def handle_mouse(self, event: MouseEvent) -> bool:
+        """Handles a mouse event.
+
+        On hover, the `selected_pixel` attribute is set to the current pixel.
+        """
+
+        if event.action is MouseAction.HOVER:
+            xoffset = event.position[0] - self.pos[0]
+            yoffset = event.position[1] - self.pos[1]
+
+            color = self._matrix[yoffset][xoffset // 2]
+
+            self.selected_pixel = ((xoffset // 2, yoffset), color)
+            return True
+
+        return False
+
+    def get_lines(self) -> list[str]:
+        """Gets large pixel matrix lines."""
+
+        lines: list[str] = []
+        for row in self._matrix:
+            line = ""
+            for pixel in row:
+                if len(pixel) > 0:
+                    line += f"[@{pixel}]  "
+                else:
+                    line += "[/]  "
+
+            lines.append(markup.parse(line))
+
+        return lines
+
+    def __getitem__(self, indices: tuple[int, int]) -> str:
+        """Gets a matrix item."""
+
+        posy, posx = indices
+        return self._matrix[posy][posx]
+
+    def __setitem__(self, indices: tuple[int, int], value: str) -> None:
+        """Sets a matrix item."""
+
+        posy, posx = indices
+        self._matrix[posy][posx] = value
+
+
+class DensePixelMatrix(PixelMatrix):
+    """A more dense (2x) PixelMatrix.
+
+    Due to each pixel only occupying 1/2 characters in height, accurately
+    determining selected_pixel is impossible, thus the functionality does
+    not exist here.
+    """
+
+    def __init__(self, width: int, height: int, default: str = "", **attrs) -> None:
+        """Initializes DensePixelMatrix.
+
+        Args:
+            width: The width of the matrix.
+            height: The height of the matrix.
+            default: The default color to use to initialize the matrix with.
+        """
+
+        super().__init__(width, height, default, **attrs)
+
+        self.width = width // 2
+
+    def handle_mouse(self, event: MouseEvent) -> bool:
+        """As mentioned in the class documentation, mouse handling is disabled here."""
+
+        return False
 
     def get_lines(self) -> list[str]:
         """Gets PixelMatrix lines.
@@ -106,88 +186,5 @@ class PixelMatrix(Widget):
 
             lines.append(line)
             lines_to_zip = []
-
-        return lines
-
-    def __getitem__(self, indices: tuple[int, int]) -> str:
-        """Gets a matrix item."""
-
-        posy, posx = indices
-        return self._matrix[posy][posx]
-
-    def __setitem__(self, indices: tuple[int, int], value: str) -> None:
-        """Sets a matrix item."""
-
-        posy, posx = indices
-        self._matrix[posy][posx] = value
-
-
-class LargePixelMatrix(PixelMatrix):
-    """A larger-scale pixel matrix.
-
-    The factor of magnification going from normal PixelMatrix
-    to this is about 4: While 1 pixel in PixelMatrix is displayed
-    as a half-block, it is displayed as a cluster of 2 full blocks
-    here.
-
-    For more information, see `PixelMatrix`.
-
-    Attributes:
-        - selected_pixel: A tuple of the position & value (color) of the
-            currently hovered pixel.
-    """
-
-    def __init__(self, width: int, height: int, default: str = "", **attrs) -> None:
-        """Initializes LargePixelMatrix.
-
-        Args:
-            width: The width of the matrix.
-            height: The height of the matrix.
-            default: The default color to use to initialize the matrix with.
-
-        Note:
-            The `column` attribute is faithful to the matrix dimensions,
-            while the width follows the scaling applied by being set
-            to double the column value.
-        """
-
-        super().__init__(width, height, default, **attrs)
-
-        self.rows = height
-        self.columns = width
-
-        self.width = width * 2
-        self.selected_pixel: tuple[tuple[int, int], str] | None = None
-
-    def handle_mouse(self, event: MouseEvent) -> bool:
-        """Handles a mouse event.
-
-        On hover, the `selected_pixel` attribute is set to the current pixel.
-        """
-
-        if event.action is MouseAction.HOVER:
-            xoffset = event.position[0] - self.pos[0]
-            yoffset = event.position[1] - self.pos[1]
-
-            color = self._matrix[yoffset][xoffset // 2]
-
-            self.selected_pixel = ((yoffset, xoffset), color)
-            return True
-
-        return False
-
-    def get_lines(self) -> list[str]:
-        """Gets large pixel matrix lines."""
-
-        lines: list[str] = []
-        for row in self._matrix:
-            line = ""
-            for pixel in row:
-                if len(pixel) > 0:
-                    line += f"[@{pixel}]  "
-                else:
-                    line += "[/]  "
-
-            lines.append(markup.parse(line))
 
         return lines
