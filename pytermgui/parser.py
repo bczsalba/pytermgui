@@ -83,7 +83,7 @@ MacroCallable = Callable[..., str]
 MacroCall = Tuple[MacroCallable, List[str]]
 
 RE_ANSI = re.compile(r"(?:\x1b)\[([\d;]+)?.")
-RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w:]+)\))?")
+RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w\/\.?=:]+)\))?")
 RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/\(,\)].*?)\])")
 
 RE_256 = re.compile(r"^([\d]{1,3})$")
@@ -155,6 +155,19 @@ def _macro_shuffle(item: str) -> str:
     shuffle(shuffled)
 
     return "".join(shuffled)
+
+
+def _macro_link(*args) -> str:
+    """Creates a clickable hyperlink.
+
+    Note:
+        Since this is a pretty new feature, its support is limited.
+    """
+
+    *uri_parts, label = args
+    uri = ":".join(uri_parts)
+
+    return f"\x1b]8;;{uri}\x1b\\{label}\x1b]8;;\x1b\\"
 
 
 class TokenType(Enum):
@@ -382,6 +395,7 @@ class MarkupLanguage:
         self.should_cache: bool = True
 
         if default_macros:
+            self.define("!link", _macro_link)
             self.define("!align", _macro_align)
             self.define("!markup", self.get_markup)
             self.define("!shuffle", _macro_shuffle)
