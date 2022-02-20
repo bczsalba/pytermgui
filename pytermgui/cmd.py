@@ -25,6 +25,7 @@ from . import (
     # prettify_markup,
     MarkupFormatter,
     WindowManager,
+    ColorPicker,
     real_length,
     YamlLoader,
     get_widget,
@@ -376,6 +377,25 @@ class MarkupApplication(Application):
         return window
 
 
+class ColorPickerApplication(Application):
+    """An application to aid in finding nice xterm-255 colors."""
+
+    title = "ColorPicker"
+    description = "Visually select colors"
+
+    def construct_window(self) -> Window:
+        """Constructs an application Window."""
+
+        window = self._get_base_window()
+        window += ""
+        window += ColorPicker()
+
+        return window.center()
+
+    def finish(self, window: Window) -> None:
+        ...
+
+
 # class HelperApplication(Application):
 #     """Application class to show all currently-active bindings"""
 #
@@ -418,7 +438,11 @@ def run_wm(args: Namespace) -> None:
     """Runs WindowManager using args."""
 
     # This is used for finding Application from arguments
-    app_mapping = {"getch": GetchApplication, "markapp": MarkupApplication}
+    app_mapping: dict[str, Type[Application]] = {
+        "getch": GetchApplication,
+        "markapp": MarkupApplication,
+        "color": ColorPickerApplication,
+    }
 
     window: Optional[Window] = None
 
@@ -427,7 +451,7 @@ def run_wm(args: Namespace) -> None:
         # Define styles
         markup.alias("wm-title", "210")
         boxes.SINGLE.set_chars_of(Container)
-        boxes.DOUBLE_TOP.set_chars_of(Window)
+        boxes.DOUBLE.set_chars_of(Window)
 
         style = MarkupFormatter("[60]{item}")
         for widget in [Window, Container]:
@@ -488,8 +512,8 @@ def main() -> None:
         "--app",
         type=str.lower,
         help="launch an app in standalone mode.",
-        metavar="{Getch, MarkApp}",
-        choices=["getch", "markapp"],
+        metavar="{Getch, MarkApp, Color}",
+        choices=["getch", "markapp", "color"],
     )
 
     parser.add_argument(
@@ -498,6 +522,13 @@ def main() -> None:
 
     parser.add_argument(
         "-m", "--markapp", help="launch MarkApp in standalone mode", action="store_true"
+    )
+
+    parser.add_argument(
+        "-c",
+        "--color",
+        help="launch ColorPicker app in standalone mode",
+        action="store_true",
     )
 
     parser.add_argument(
@@ -581,6 +612,9 @@ def main() -> None:
 
     if args.markapp:
         args.app = "markapp"
+
+    if args.color:
+        args.app = "color"
 
     run_wm(args)
 
