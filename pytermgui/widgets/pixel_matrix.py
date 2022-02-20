@@ -9,6 +9,11 @@ from .base import Widget
 from ..parser import markup
 from ..ansi_interface import MouseEvent, MouseAction
 
+__all__ = [
+    "PixelMatrix",
+    "DensePixelMatrix",
+]
+
 
 class PixelMatrix(Widget):
     """A matrix of pixels.
