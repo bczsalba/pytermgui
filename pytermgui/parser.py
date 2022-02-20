@@ -82,7 +82,7 @@ __all__ = ["MacroCallable", "MacroCall", "MarkupLanguage", "StyledText", "markup
 MacroCallable = Callable[..., str]
 MacroCall = Tuple[MacroCallable, List[str]]
 
-RE_ANSI = re.compile(r"(?:\x1b)\[([\d;]+)?.")
+RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
 RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w\/\.?=:]+)\))?")
 RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/\(,\)].*?)\])")
 
