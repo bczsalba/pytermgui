@@ -342,7 +342,7 @@ class WindowManager(Container):
         self._is_running: bool = True
         self._should_print: bool = False
         self._windows: list[Window] = []
-        self._drag_target: tuple[Widget, Edge] | None = None  # type: ignore
+        self._drag_target: tuple[Widget, Edge | None] | None = None  # type: ignore
         self._drag_offsets: tuple[int, int] = (1, 1)
 
         self._window_cache: dict[int, list[str]] = {}
@@ -530,8 +530,14 @@ class WindowManager(Container):
 
             for window in self._windows:
                 contains_pos = window.contains(event.position)
+                is_target = (
+                    self._drag_target is not None and self._drag_target[0] is window
+                )
 
-                if contains_pos and event.action in self.focusing_actions:
+                if not contains_pos and not is_target:
+                    continue
+
+                if event.action in self.focusing_actions:
                     self.focus(window)
 
                 if window.handle_mouse(event):
@@ -561,6 +567,9 @@ class WindowManager(Container):
         Args:
             window: The window to focus.
         """
+
+        if self.focused is not None:
+            self.focused.handle_mouse(MouseEvent(MouseAction.RELEASE, (0, 0)))
 
         for other_window in self._windows:
             other_window.has_focus = False
