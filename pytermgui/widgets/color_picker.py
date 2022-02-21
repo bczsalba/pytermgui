@@ -31,7 +31,7 @@ def _get_xterm_matrix() -> list[list[str]]:
     """
 
     matrix: list[list[str]] = []
-    for _ in range(9):
+    for _ in range(11):
         current_row = []
         for _ in range(36):
             current_row.append("")
@@ -60,7 +60,7 @@ def _get_xterm_matrix() -> list[list[str]]:
         offset = cursor
 
     cursor = 16
-    for row in range(5, 9):
+    for row in range(5, 11):
         for column in range(37):
             if column == 36:
                 continue
