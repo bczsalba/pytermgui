@@ -282,12 +282,10 @@ class MarkupApplication(Application):
 
         window.manager.stop()
 
-        # print(prettify_markup(window.output_label.value))
-
         # This attribute is currently needed for the Application
         # window to work. Not great architecturally, but I cannot
         # figure out something better at the moment.
-        print(window.output_label.value)  # type: ignore
+        print(markup.prettify_markup(window.output_label.value))  # type: ignore
 
     def construct_window(self) -> Window:
         """Constructs an application window."""
@@ -322,7 +320,8 @@ class MarkupApplication(Application):
         guide = Container().set_char("corner", corners)
 
         for token, color in zip_longest(tokens, colors, fillvalue=""):
-            guide += {token: color}
+            # Not sure why mypy errors here.
+            guide += {token: color}  # type: ignore
 
         custom_tags = Container()
         for tag, _ in sorted(
@@ -332,7 +331,7 @@ class MarkupApplication(Application):
                 f"[{tag}]{tag}[/fg /bg /]: [!expand({tag})]{tag}",
                 parent_align=0,
             )
-        guide += custom_tags
+        guide += custom_tags  # type: ignore
 
         window = (
             self._get_base_window(width=65, resizable=True)
@@ -350,7 +349,8 @@ class MarkupApplication(Application):
         field = get_widget("input_field")
         assert isinstance(field, InputField)
 
-        window.output_label = output
+        # See above note on architectural issues
+        window.output_label = output  # type: ignore
 
         field.bind(
             keys.ANY_KEY,
