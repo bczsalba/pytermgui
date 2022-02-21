@@ -853,9 +853,7 @@ class WindowManager(Container):
 
             lines: list[str] = []
             for line in window.get_lines():
-                lines.append(
-                    markup.parse("[239]" + strip_ansi(line).replace("[", r"\["))
-                )
+                lines.append(markup.parse("[239]" + strip_ansi(line)))
 
             self._window_cache[id(window)] = lines
             return lines

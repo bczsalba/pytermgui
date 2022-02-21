@@ -565,7 +565,7 @@ class MarkupLanguage:
             parts = code.split(";")
 
             if start > cursor:
-                plain = ansi[cursor:start].replace("[", r"\[")
+                plain = ansi[cursor:start]
 
                 yield Token(name=plain, ttype=TokenType.PLAIN, data=plain)
 
@@ -604,7 +604,7 @@ class MarkupLanguage:
             cursor = end
 
         if cursor < len(ansi):
-            plain = ansi[cursor:].replace("[", r"\[")
+            plain = ansi[cursor:]
 
             yield Token(ttype=TokenType.PLAIN, data=plain)
 
