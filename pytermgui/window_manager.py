@@ -220,6 +220,12 @@ class Window(Container):
 
         return added
 
+    def nullify_cache(self) -> None:
+        """Nullifies manager's cached blur state."""
+
+        if self.manager is not None:
+            self.manager.nullify_cache(self)
+
     def contains(self, pos: tuple[int, int]) -> bool:
         """Determines whether widget contains `pos`.
 
@@ -440,6 +446,23 @@ class WindowManager(Container):
                 framecount += 1
 
         Thread(name="WM_DisplayLoop", target=_loop).start()
+
+    def nullify_cache(self, window: Window) -> None:
+        """Nullifies a window's cache.
+
+        All contained windows use caching to save on performance. Cache
+        gets automatically nullified if a window changes while it is
+        focused, but not if a window changes while unfocused.
+
+        To get the correct behavior in that instance, use `Window.nullify_cache`,
+        which calls this method.
+
+        Args:
+            window: The window whos cache we will nullify.
+        """
+
+        if id(window) in self._window_cache:
+            del self._window_cache[id(window)]
 
     def execute_binding(self, key: Any) -> bool:
         """Execute bindings, including mouse ones.
