@@ -776,6 +776,65 @@ class MarkupLanguage:
 
         return out
 
+    def prettify_markup(self, text: str) -> str:
+        """Returns a prettified (syntax-highlighted) markup str.
+
+        Args:
+            text: The markup-text to prettify.
+
+        Returns:
+            Prettified markup. This markup, excluding its styles,
+            remains valid markup.
+        """
+
+        styles: dict[TokenType, str] = {
+            TokenType.MACRO: "210 italic",
+            TokenType.ESCAPED: "210 bold",
+            TokenType.UNSETTER: "203",
+        }
+
+        out = ""
+        in_sequence = False
+        current_styles: list[Token] = []
+
+        for token in self.tokenize_markup(text):
+            if token.ttype is TokenType.PLAIN:
+                in_sequence = False
+
+                if len(out) > 0:
+                    out += "]"
+
+                name = token.name
+                for style in current_styles:
+                    # No None-sequence tokens are added, so this
+                    # is just here for mypy.
+                    if style.sequence is None:
+                        continue
+                    name = style.sequence + name
+
+                out += name + "\033[m"
+                continue
+
+            out += " " if in_sequence else "["
+            in_sequence = True
+
+            if token.ttype is TokenType.UNSETTER:
+                name = token.name[1:]
+                for style in reversed(current_styles):
+                    if style.name == name:
+                        current_styles.remove(style)
+
+            if token.sequence is not None:
+                current_styles.append(token)
+
+            style_markup = styles.get(token.ttype) or token.name
+            out += self.parse(f"[{style_markup}]{token.name}")
+
+        if in_sequence:
+            out += "]"
+
+        return out
+
 
 def main() -> None:
     """Main method"""
