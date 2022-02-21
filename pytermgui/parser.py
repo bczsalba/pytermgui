@@ -551,6 +551,11 @@ class MarkupLanguage:
         start = 0
         cursor = 0
 
+        # StyledText messes with indexing, so we need to cast it
+        # back to str.
+        if isinstance(ansi, StyledText):
+            ansi = str(ansi)
+
         for match in RE_ANSI.finditer(ansi):
             code = match.groups()[0]
             start, end = match.span()
@@ -583,7 +588,7 @@ class MarkupLanguage:
                 yield Token(name=name, ttype=ttype, data=code)
 
             # Colors
-            if len(parts) >= 3:
+            elif len(parts) >= 3:
                 name = ";".join(parts[2:])
 
                 types = [TokenType.FG_8BIT, TokenType.FG_24BIT]
