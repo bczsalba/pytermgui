@@ -422,38 +422,39 @@ class MarkupLanguage:
             return ";".join(str(int(color[i : i + 2], 16)) for i in (0, 2, 4))
 
         background = tag.startswith("@")
-        if tag.startswith("@"):
-            tag = tag[1:]
+        lookup_tag = tag
+        if background:
+            lookup_tag = tag[1:]
 
-        if tag in foreground.names:
+        if lookup_tag in foreground.names:
             return Token(
                 name=tag,
                 ttype=(TokenType.BG_8BIT if background else TokenType.FG_8BIT),
-                data=str(foreground.names[tag]),
+                data=str(foreground.names[lookup_tag]),
             )
 
-        data_256 = RE_256.match(tag)
+        data_256 = RE_256.match(lookup_tag)
         if data_256 is not None:
             return Token(
                 name=tag,
                 ttype=(TokenType.BG_8BIT if background else TokenType.FG_8BIT),
-                data=tag,
+                data=lookup_tag,
             )
 
-        data_hex = RE_HEX.match(tag)
+        data_hex = RE_HEX.match(lookup_tag)
         if data_hex is not None:
             return Token(
                 name=tag,
                 ttype=(TokenType.BG_24BIT if background else TokenType.FG_24BIT),
-                data=_hex_to_rgb(tag[1:]),
+                data=_hex_to_rgb(lookup_tag[1:]),
             )
 
-        data_rgb = RE_RGB.match(tag)
+        data_rgb = RE_RGB.match(lookup_tag)
         if data_rgb is not None:
             return Token(
                 name=tag,
                 ttype=(TokenType.BG_24BIT if background else TokenType.FG_24BIT),
-                data=tag,
+                data=lookup_tag,
             )
 
         return None
@@ -600,7 +601,7 @@ class MarkupLanguage:
                 types = [TokenType.FG_8BIT, TokenType.FG_24BIT]
 
                 if parts[0] == "48":
-                    # name = "@" + name # <- This broke line_break, but might be needed
+                    name = "@" + name
                     types = [TokenType.BG_8BIT, TokenType.BG_24BIT]
 
                 ttype = types[0] if parts[1] == "5" else types[1]
@@ -725,7 +726,7 @@ class MarkupLanguage:
                 applied_macros.append((token.name, token.data))
                 continue
 
-            if token.data == "<macro>" and token.ttype is TokenType.UNSETTER:
+            if token.data is None and token.ttype is TokenType.UNSETTER:
                 for call_str, data in applied_macros:
                     macro_match = RE_MACRO.match(call_str)
                     assert macro_match is not None
@@ -788,9 +789,9 @@ class MarkupLanguage:
         """
 
         styles: dict[TokenType, str] = {
-            TokenType.MACRO: "210 italic",
+            TokenType.MACRO: "210",
             TokenType.ESCAPED: "210 bold",
-            TokenType.UNSETTER: "203",
+            TokenType.UNSETTER: "strikethrough",
         }
 
         out = ""
@@ -804,15 +805,14 @@ class MarkupLanguage:
                 if len(out) > 0:
                     out += "]"
 
-                name = token.name
+                sequence = ""
                 for style in current_styles:
-                    # No None-sequence tokens are added, so this
-                    # is just here for mypy.
                     if style.sequence is None:
                         continue
-                    name = style.sequence + name
 
-                out += name + "\033[m"
+                    sequence += style.sequence
+
+                out += sequence + token.name + "\033[m"
                 continue
 
             out += " " if in_sequence else "["
@@ -820,9 +820,15 @@ class MarkupLanguage:
 
             if token.ttype is TokenType.UNSETTER:
                 name = token.name[1:]
-                for style in reversed(current_styles):
-                    if style.name == name:
-                        current_styles.remove(style)
+
+                current_styles.append(token)
+
+                unsetter_style = styles[TokenType.UNSETTER]
+                special_style = (
+                    name + " " if name in self.tags or name in self.user_tags else ""
+                )
+                out += self.parse(f"[{special_style}{unsetter_style}]{name}")
+                continue
 
             if token.sequence is not None:
                 current_styles.append(token)
