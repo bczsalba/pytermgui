@@ -103,7 +103,7 @@ STYLE_MAP = {
     "overline": "53",
 }
 
-UNSETTER_MAP = {
+UNSETTER_MAP: dict[str, str | None] = {
     "/": "0",
     "/bold": "22",
     "/dim": "22",
@@ -189,7 +189,7 @@ class Token:
     """A class holding information on a singular Markup/ANSI unit"""
 
     ttype: TokenType
-    data: str | MacroCall
+    data: str | MacroCall | None
     name: str = "<unnamed-token>"
 
     def __post_init__(self) -> None:
@@ -217,16 +217,18 @@ class Token:
     def sequence(self) -> str | None:
         """Get ANSI sequence representing token"""
 
+        if self.data is None:
+            return None
+
         if self.ttype in [TokenType.PLAIN, TokenType.MACRO, TokenType.ESCAPED]:
             return None
 
+        assert isinstance(self.data, str)
+
         if self.ttype in [TokenType.STYLE, TokenType.UNSETTER]:
-            assert isinstance(self.data, str)
             return "\033[" + self.data + "m"
 
         # Handle colors
-        assert isinstance(self.data, str)
-
         if self.ttype.name.startswith("BG"):
             template = "\x1b[48;{c_id};" + self.data + "m"
         else:
@@ -296,6 +298,9 @@ class StyledText(str):
             negative_index = True
 
         for token in tokens:
+            if token.data is None:
+                continue
+
             if token.ttype is not TokenType.PLAIN:
                 assert token.sequence is not None
                 styled_chars += len(token.sequence)
@@ -390,7 +395,7 @@ class MarkupLanguage:
         self._cache: dict[str, StyledText] = {}
         self.macros: dict[str, MacroCallable] = {}
         self.user_tags: dict[str, str] = {}
-        self.unsetters: dict[str, str] = UNSETTER_MAP.copy()
+        self.unsetters: dict[str, str | None] = UNSETTER_MAP.copy()
 
         self.should_cache: bool = True
 
@@ -571,13 +576,14 @@ class MarkupLanguage:
 
             # Styles & unsetters
             if len(parts) == 1:
-                for name, code in self.unsetters.items():
-                    if code == parts[0]:
+                token_code: str | None = ""
+                for name, token_code in self.unsetters.items():
+                    if token_code == parts[0]:
                         ttype = TokenType.UNSETTER
                         break
                 else:
-                    for name, code in self.tags.items():
-                        if code == parts[0]:
+                    for name, token_code in self.tags.items():
+                        if token_code == parts[0]:
                             ttype = TokenType.STYLE
                             break
                     else:
@@ -585,7 +591,7 @@ class MarkupLanguage:
                             tag=parts[0], cause="not recognized", context=ansi
                         )
 
-                yield Token(name=name, ttype=ttype, data=code)
+                yield Token(name=name, ttype=ttype, data=token_code)
 
             # Colors
             elif len(parts) >= 3:
@@ -617,7 +623,7 @@ class MarkupLanguage:
             name = "!" + name
 
         self.macros[name] = method
-        self.unsetters["/" + name] = "<macro>"
+        self.unsetters["/" + name] = None
 
     def alias(self, name: str, value: str) -> None:
         """Alias a markup tag to stand for some value, generate unsetter for it"""
