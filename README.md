@@ -133,3 +133,12 @@ Click on each image to see their source code!
 ### A simple window manager demo in 13 lines of code, lifted from the docs
 
 [![window manager](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/wm_demo.gif)](https://bczsalba.github.io/pytermgui/pytermgui/window_manager.html)
+
+## Projects to check out
+
+The TUI game has been heating up as of recent. Here are some other interesting projects in the sphere:
+- [Winman](https://github.com/epiclabs-io/winman) - A window-manager add-on to the golang library [tview](https://github.com/rivo/tview). This project was a big inspiration for that specific aspect of PyTermGUI.
+- [Rich & Textual](https://github.com/textualize) - Another Python-based set of TUI libraries. Some of the Rich markup syntax & code was used as inspiration for our own.
+- [pyTermTk](https://github.com/ceccopierangiolieugenio/pyTermTk) - Name and functionality sibling of this project. Great TUI library if you are after tkinter/qt5 mimicking API.
+- [Jexer](https://jexer.sourceforge.io/) - One of the most insane-looking TUI libraries out there. Supports practically everything the terminal can do. I became aware of this project relatively recently, but it's been of great inspiration.
+- [notcurses](https://github.com/dankamongmen/notcurses) - Another ridiculously powerful TUI library. Well worth installing and checking out the examples provided.
