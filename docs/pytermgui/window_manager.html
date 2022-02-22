@@ -3,14 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 10.0.0"/>
+    <meta name="generator" content="pdoc 10.0.1"/>
     <title>pytermgui.window_manager API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
     <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
     <style>/*! theme.css */:root{--pdoc-background:#fff;}.pdoc{--text:#212529;--muted:#6c757d;--link:#3660a5;--link-hover:#1659c5;--code:#f8f8f8;--active:#fff598;--accent:#eee;--accent2:#c1c1c1;--nav-hover:rgba(255, 255, 255, 0.5);--name:#0066BB;--def:#008800;--annotation:#007020;}</style>
     <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;}nav.pdoc{--pad:1.75rem;--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent }nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc li{display:block;margin:0;padding:.2rem 0 .2rem var(--indent);transition:all 100ms;}nav.pdoc > div > ul > li{padding-left:0;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
-    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--code);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.pdoc details{filter:opacity(1);}.pdoc details:not([open]){height:0;}.pdoc details > summary{position:absolute;top:-35px;right:0;font-size:.75rem;color:var(--muted);padding:0 .7em;user-select:none;cursor:pointer;}.pdoc details > summary:focus{outline:0;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc > section:first-of-type > .docstring{margin-bottom:2.5rem;}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc .headerlink{position:absolute;width:0;margin-left:-1.5rem;line-height:1.4rem;font-size:1.5rem;font-weight:normal;transition:all 100ms ease-in-out;opacity:0;user-select:none;}.pdoc .attr > .headerlink{margin-left:-2.5rem;}.pdoc *:hover > .headerlink,.pdoc *:target > .attr > .headerlink{opacity:1;}.pdoc .attr{display:block;color:var(--text);margin:.5rem 0 .5rem;padding:.4rem 5rem .4rem 1rem;background-color:var(--accent);}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{white-space:pre-wrap;}.pdoc .annotation{color:var(--annotation);}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style></head>
+    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--code);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.pdoc details{filter:opacity(1);}.pdoc details:not([open]){height:0;}.pdoc details > summary{position:absolute;top:-35px;right:0;font-size:.75rem;color:var(--muted);padding:0 .7em;user-select:none;cursor:pointer;}.pdoc details > summary:focus{outline:0;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc > section:first-of-type > .docstring{margin-bottom:2.5rem;}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc .headerlink{position:absolute;width:0;margin-left:-1.5rem;line-height:1.4rem;font-size:1.5rem;font-weight:normal;transition:all 100ms ease-in-out;opacity:0;user-select:none;}.pdoc .attr > .headerlink{margin-left:-2.5rem;}.pdoc *:hover > .headerlink,.pdoc *:target > .attr > .headerlink{opacity:1;}.pdoc .attr{display:block;color:var(--text);margin:.5rem 0 .5rem;padding:.4rem 5rem .4rem 1rem;background-color:var(--accent);}.pdoc .classattr{margin-left:2rem;}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{white-space:pre-wrap;}.pdoc .annotation{color:var(--annotation);}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
+    <style>/*! custom.css */</style></head>
 <body>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
@@ -49,9 +50,6 @@
                                 <a class="variable" href="#Window.overflow">overflow</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Window.size_policy">size_policy</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#Window.allow_fullscreen">allow_fullscreen</a>
                         </li>
                         <li>
@@ -83,6 +81,9 @@
                         </li>
                         <li>
                                 <a class="variable" href="#Window.rect">rect</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Window.nullify_cache">nullify_cache</a>
                         </li>
                         <li>
                                 <a class="function" href="#Window.contains">contains</a>
@@ -122,6 +123,9 @@
                         </li>
                         <li>
                                 <a class="variable" href="#WindowManager.should_print">should_print</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#WindowManager.nullify_cache">nullify_cache</a>
                         </li>
                         <li>
                                 <a class="function" href="#WindowManager.execute_binding">execute_binding</a>
@@ -300,7 +304,7 @@ style="max-width: 100%"></p>
 
 <span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span>
 <span class="kn">from</span> <span class="nn">.parser</span> <span class="kn">import</span> <span class="n">markup</span>
-<span class="kn">from</span> <span class="nn">.animator</span> <span class="kn">import</span> <span class="n">Animator</span>
+<span class="kn">from</span> <span class="nn">.animator</span> <span class="kn">import</span> <span class="n">animator</span>
 <span class="kn">from</span> <span class="nn">.helpers</span> <span class="kn">import</span> <span class="n">strip_ansi</span><span class="p">,</span> <span class="n">real_length</span>
 <span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">CenteringPolicy</span><span class="p">,</span> <span class="n">SizePolicy</span><span class="p">,</span> <span class="n">Overflow</span>
 <span class="kn">from</span> <span class="nn">.context_managers</span> <span class="kn">import</span> <span class="n">alt_buffer</span><span class="p">,</span> <span class="n">mouse_handler</span><span class="p">,</span> <span class="n">MouseTranslator</span><span class="p">,</span> <span class="n">cursor_at</span>
@@ -334,7 +338,6 @@ style="max-width: 100%"></p>
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">overflow</span> <span class="o">=</span> <span class="n">Overflow</span><span class="o">.</span><span class="n">HIDE</span>
-    <span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span>
 
     <span class="n">allow_fullscreen</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="sd">&quot;&quot;&quot;When a window is allowed fullscreen its manager will try to set it so before each frame.&quot;&quot;&quot;</span>
@@ -420,9 +423,13 @@ style="max-width: 100%"></p>
         <span class="k">if</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">minimum</span><span class="p">:</span>
             <span class="k">return</span>
 
+        <span class="c1"># Update size policy to fill to resize inner objects properly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">FILL</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">-</span> <span class="n">top</span>
+        <span class="c1"># Restore original size policy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span>
 
     <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calls self._add_widget(other) and returns self.&quot;&quot;&quot;</span>
@@ -448,10 +455,17 @@ style="max-width: 100%"></p>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_width</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_auto_min_width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">width</span> <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_auto_min_width</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sidelength</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">+=</span> <span class="n">added</span><span class="o">.</span><span class="n">height</span>
 
         <span class="k">return</span> <span class="n">added</span>
+
+    <span class="k">def</span> <span class="nf">nullify_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Nullifies manager&#39;s cached blur state.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">nullify_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Determines whether widget contains `pos`.</span>
@@ -555,7 +569,7 @@ style="max-width: 100%"></p>
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="n">framerate</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="n">framerate</span> <span class="o">=</span> <span class="mi">60</span>
     <span class="sd">&quot;&quot;&quot;Target framerate for rendering. Higher number means more resource usage.&quot;&quot;&quot;</span>
 
     <span class="n">focusing_actions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MouseAction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -571,12 +585,11 @@ style="max-width: 100%"></p>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">animator</span> <span class="o">=</span> <span class="n">Animator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Window</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Edge</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Edge</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_drag_offsets</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -615,7 +628,7 @@ style="max-width: 100%"></p>
 <span class="sd">        can set themselves to be dirty using the `Window.is_dirty` flag.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">is_active</span>
+            <span class="n">animator</span><span class="o">.</span><span class="n">is_active</span>
             <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span>
             <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">is_dirty</span> <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">)</span>
         <span class="p">)</span>
@@ -629,9 +642,9 @@ style="max-width: 100%"></p>
         <span class="sd">&quot;&quot;&quot;Ends context manager.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">exception</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_start_display_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -644,24 +657,29 @@ style="max-width: 100%"></p>
             <span class="sd">&quot;&quot;&quot;Body of thread&quot;&quot;&quot;</span>
 
             <span class="n">last_frame</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-            <span class="n">frametime</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
+            <span class="n">prev_framerate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
 
-            <span class="n">fps_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+            <span class="n">fps_start_time</span> <span class="o">=</span> <span class="n">last_frame</span>
+            <span class="n">frametime</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
             <span class="n">framecount</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">prev_framerate</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span><span class="p">:</span>
+                    <span class="n">frametime</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
+                    <span class="n">prev_framerate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
+
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_print</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_sleep</span><span class="p">(</span><span class="n">frametime</span><span class="p">)</span>
+                    <span class="n">framecount</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">continue</span>
 
-                <span class="c1"># Don&#39;t print before frametime elapsed</span>
-                <span class="c1"># TODO: This is imprecise, framerate is not followed well</span>
                 <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">last_frame</span>
                 <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&lt;</span> <span class="n">frametime</span><span class="p">:</span>
-                    <span class="c1"># time.sleep(sleeptime)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_sleep</span><span class="p">(</span><span class="n">frametime</span> <span class="o">-</span> <span class="n">elapsed</span><span class="p">)</span>
+                    <span class="n">framecount</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">continue</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                <span class="n">animator</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 
                 <span class="n">last_frame</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -674,6 +692,23 @@ style="max-width: 100%"></p>
                 <span class="n">framecount</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">Thread</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;WM_DisplayLoop&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">_loop</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">nullify_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Nullifies a window&#39;s cache.</span>
+
+<span class="sd">        All contained windows use caching to save on performance. Cache</span>
+<span class="sd">        gets automatically nullified if a window changes while it is</span>
+<span class="sd">        focused, but not if a window changes while unfocused.</span>
+
+<span class="sd">        To get the correct behavior in that instance, use `Window.nullify_cache`,</span>
+<span class="sd">        which calls this method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window: The window whos cache we will nullify.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span>
 
     <span class="k">def</span> <span class="nf">execute_binding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Execute bindings, including mouse ones.</span>
@@ -764,8 +799,14 @@ style="max-width: 100%"></p>
 
             <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span>
                 <span class="n">contains_pos</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+                <span class="n">is_target</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="n">window</span>
+                <span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">focusing_actions</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_target</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">focusing_actions</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
@@ -795,6 +836,9 @@ style="max-width: 100%"></p>
 <span class="sd">        Args:</span>
 <span class="sd">            window: The window to focus.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">focused</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">focused</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">MouseEvent</span><span class="p">(</span><span class="n">MouseAction</span><span class="o">.</span><span class="n">RELEASE</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
 
         <span class="k">for</span> <span class="n">other_window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span>
             <span class="n">other_window</span><span class="o">.</span><span class="n">has_focus</span> <span class="o">=</span> <span class="kc">False</span>
@@ -837,7 +881,7 @@ style="max-width: 100%"></p>
         <span class="c1"># existing ones, even if they are modal.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
+        <span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
             <span class="n">window</span><span class="p">,</span>
             <span class="s2">&quot;width&quot;</span><span class="p">,</span>
             <span class="n">startpoint</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.7</span><span class="p">),</span>
@@ -867,7 +911,7 @@ style="max-width: 100%"></p>
             <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 
         <span class="n">window</span><span class="o">.</span><span class="n">overflow</span> <span class="o">=</span> <span class="n">Overflow</span><span class="o">.</span><span class="n">HIDE</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
+        <span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
             <span class="n">window</span><span class="p">,</span>
             <span class="s2">&quot;height&quot;</span><span class="p">,</span>
             <span class="n">endpoint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -1053,11 +1097,9 @@ style="max-width: 100%"></p>
             <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span>
 
-            <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">window</span><span class="o">.</span><span class="n">get_lines</span><span class="p">():</span>
-                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">markup</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;[239]&quot;</span> <span class="o">+</span> <span class="n">strip_ansi</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">))</span>
-                <span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">markup</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;[239]&quot;</span> <span class="o">+</span> <span class="n">strip_ansi</span><span class="p">(</span><span class="n">line</span><span class="p">)))</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span> <span class="o">=</span> <span class="n">lines</span>
             <span class="k">return</span> <span class="n">lines</span>
@@ -1157,7 +1199,6 @@ style="max-width: 100%"></p>
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">overflow</span> <span class="o">=</span> <span class="n">Overflow</span><span class="o">.</span><span class="n">HIDE</span>
-    <span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span>
 
     <span class="n">allow_fullscreen</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="sd">&quot;&quot;&quot;When a window is allowed fullscreen its manager will try to set it so before each frame.&quot;&quot;&quot;</span>
@@ -1243,9 +1284,13 @@ style="max-width: 100%"></p>
         <span class="k">if</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">minimum</span><span class="p">:</span>
             <span class="k">return</span>
 
+        <span class="c1"># Update size policy to fill to resize inner objects properly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">FILL</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">-</span> <span class="n">top</span>
+        <span class="c1"># Restore original size policy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size_policy</span> <span class="o">=</span> <span class="n">SizePolicy</span><span class="o">.</span><span class="n">STATIC</span>
 
     <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calls self._add_widget(other) and returns self.&quot;&quot;&quot;</span>
@@ -1271,10 +1316,17 @@ style="max-width: 100%"></p>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_width</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_auto_min_width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">width</span> <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_auto_min_width</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sidelength</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">+=</span> <span class="n">added</span><span class="o">.</span><span class="n">height</span>
 
         <span class="k">return</span> <span class="n">added</span>
+
+    <span class="k">def</span> <span class="nf">nullify_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Nullifies manager&#39;s cached blur state.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">nullify_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Determines whether widget contains `pos`.</span>
@@ -1449,18 +1501,6 @@ to store and display various widgets, while allowing some custom functionality.<
     
 
                             </div>
-                            <div id="Window.size_policy" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#Window.size_policy">#&nbsp;&nbsp</a>
-
-        <span class="name">size_policy</span><span class="default_value"> = &lt;SizePolicy.STATIC: 1&gt;</span>
-    </div>
-
-    
-            <div class="docstring"><p><code><a href="enums.html#SizePolicy">pytermgui.enums.SizePolicy</a></code> to set widget's width according to</p>
-</div>
-
-
-                            </div>
                             <div id="Window.allow_fullscreen" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Window.allow_fullscreen">#&nbsp;&nbsp</a>
 
@@ -1602,6 +1642,30 @@ may set this value manually.</p>
 <blockquote>
   <p>A tuple of integers, in the order (left, top, right, bottom).</p>
 </blockquote>
+</div>
+
+
+                            </div>
+                            <div id="Window.nullify_cache" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Window.nullify_cache">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">nullify_cache</span><span class="signature">(self) -&gt; None</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">nullify_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Nullifies manager&#39;s cached blur state.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">nullify_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Nullifies manager's cached blur state.</p>
 </div>
 
 
@@ -1881,6 +1945,7 @@ defaults to True.</li>
             <div><dt><a href="widgets/base.html#Widget">pytermgui.widgets.base.Widget</a></dt>
                                 <dd id="Window.set_style" class="function"><a href="widgets/base.html#Widget.set_style">set_style</a></dd>
                 <dd id="Window.set_char" class="function"><a href="widgets/base.html#Widget.set_char">set_char</a></dd>
+                <dd id="Window.size_policy" class="variable"><a href="widgets/base.html#Widget.size_policy">size_policy</a></dd>
                 <dd id="Window.parent_align" class="variable"><a href="widgets/base.html#Widget.parent_align">parent_align</a></dd>
                 <dd id="Window.from_data" class="function"><a href="widgets/base.html#Widget.from_data">from_data</a></dd>
                 <dd id="Window.bindings" class="variable"><a href="widgets/base.html#Widget.bindings">bindings</a></dd>
@@ -1912,7 +1977,7 @@ defaults to True.</li>
 
     <span class="n">is_bindable</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="n">framerate</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="n">framerate</span> <span class="o">=</span> <span class="mi">60</span>
     <span class="sd">&quot;&quot;&quot;Target framerate for rendering. Higher number means more resource usage.&quot;&quot;&quot;</span>
 
     <span class="n">focusing_actions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MouseAction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -1928,12 +1993,11 @@ defaults to True.</li>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">animator</span> <span class="o">=</span> <span class="n">Animator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Window</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Edge</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Edge</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_drag_offsets</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1972,7 +2036,7 @@ defaults to True.</li>
 <span class="sd">        can set themselves to be dirty using the `Window.is_dirty` flag.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">is_active</span>
+            <span class="n">animator</span><span class="o">.</span><span class="n">is_active</span>
             <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span>
             <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">is_dirty</span> <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">)</span>
         <span class="p">)</span>
@@ -1986,9 +2050,9 @@ defaults to True.</li>
         <span class="sd">&quot;&quot;&quot;Ends context manager.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">exception</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_start_display_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2001,24 +2065,29 @@ defaults to True.</li>
             <span class="sd">&quot;&quot;&quot;Body of thread&quot;&quot;&quot;</span>
 
             <span class="n">last_frame</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-            <span class="n">frametime</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
+            <span class="n">prev_framerate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
 
-            <span class="n">fps_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+            <span class="n">fps_start_time</span> <span class="o">=</span> <span class="n">last_frame</span>
+            <span class="n">frametime</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
             <span class="n">framecount</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">prev_framerate</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span><span class="p">:</span>
+                    <span class="n">frametime</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
+                    <span class="n">prev_framerate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
+
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_print</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_sleep</span><span class="p">(</span><span class="n">frametime</span><span class="p">)</span>
+                    <span class="n">framecount</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">continue</span>
 
-                <span class="c1"># Don&#39;t print before frametime elapsed</span>
-                <span class="c1"># TODO: This is imprecise, framerate is not followed well</span>
                 <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">last_frame</span>
                 <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&lt;</span> <span class="n">frametime</span><span class="p">:</span>
-                    <span class="c1"># time.sleep(sleeptime)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_sleep</span><span class="p">(</span><span class="n">frametime</span> <span class="o">-</span> <span class="n">elapsed</span><span class="p">)</span>
+                    <span class="n">framecount</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">continue</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                <span class="n">animator</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 
                 <span class="n">last_frame</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -2031,6 +2100,23 @@ defaults to True.</li>
                 <span class="n">framecount</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">Thread</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;WM_DisplayLoop&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">_loop</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">nullify_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Nullifies a window&#39;s cache.</span>
+
+<span class="sd">        All contained windows use caching to save on performance. Cache</span>
+<span class="sd">        gets automatically nullified if a window changes while it is</span>
+<span class="sd">        focused, but not if a window changes while unfocused.</span>
+
+<span class="sd">        To get the correct behavior in that instance, use `Window.nullify_cache`,</span>
+<span class="sd">        which calls this method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window: The window whos cache we will nullify.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span>
 
     <span class="k">def</span> <span class="nf">execute_binding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Execute bindings, including mouse ones.</span>
@@ -2121,8 +2207,14 @@ defaults to True.</li>
 
             <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span>
                 <span class="n">contains_pos</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+                <span class="n">is_target</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="n">window</span>
+                <span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">focusing_actions</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_target</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">focusing_actions</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
@@ -2152,6 +2244,9 @@ defaults to True.</li>
 <span class="sd">        Args:</span>
 <span class="sd">            window: The window to focus.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">focused</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">focused</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">MouseEvent</span><span class="p">(</span><span class="n">MouseAction</span><span class="o">.</span><span class="n">RELEASE</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
 
         <span class="k">for</span> <span class="n">other_window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span>
             <span class="n">other_window</span><span class="o">.</span><span class="n">has_focus</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2194,7 +2289,7 @@ defaults to True.</li>
         <span class="c1"># existing ones, even if they are modal.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
+        <span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
             <span class="n">window</span><span class="p">,</span>
             <span class="s2">&quot;width&quot;</span><span class="p">,</span>
             <span class="n">startpoint</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.7</span><span class="p">),</span>
@@ -2224,7 +2319,7 @@ defaults to True.</li>
             <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 
         <span class="n">window</span><span class="o">.</span><span class="n">overflow</span> <span class="o">=</span> <span class="n">Overflow</span><span class="o">.</span><span class="n">HIDE</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
+        <span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
             <span class="n">window</span><span class="p">,</span>
             <span class="s2">&quot;height&quot;</span><span class="p">,</span>
             <span class="n">endpoint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -2410,11 +2505,9 @@ defaults to True.</li>
             <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span>
 
-            <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">window</span><span class="o">.</span><span class="n">get_lines</span><span class="p">():</span>
-                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">markup</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;[239]&quot;</span> <span class="o">+</span> <span class="n">strip_ansi</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">))</span>
-                <span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">markup</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;[239]&quot;</span> <span class="o">+</span> <span class="n">strip_ansi</span><span class="p">(</span><span class="n">line</span><span class="p">)))</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span> <span class="o">=</span> <span class="n">lines</span>
             <span class="k">return</span> <span class="n">lines</span>
@@ -2511,12 +2604,11 @@ defaults to True.</li>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">animator</span> <span class="o">=</span> <span class="n">Animator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_should_print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Window</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Edge</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Widget</span><span class="p">,</span> <span class="n">Edge</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_drag_offsets</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2558,7 +2650,7 @@ defaults to True.</li>
                             <div id="WindowManager.framerate" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#WindowManager.framerate">#&nbsp;&nbsp</a>
 
-        <span class="name">framerate</span><span class="default_value"> = 120</span>
+        <span class="name">framerate</span><span class="default_value"> = 60</span>
     </div>
 
     
@@ -2590,6 +2682,54 @@ defaults to True.</li>
 
 <p>An element being "dirty" means it has changes not yet shown. Windows
 can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window.is_dirty</a></code> flag.</p>
+</div>
+
+
+                            </div>
+                            <div id="WindowManager.nullify_cache" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#WindowManager.nullify_cache">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">nullify_cache</span><span class="signature">(self, window: <a href="#Window">pytermgui.window_manager.Window</a>) -&gt; None</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">nullify_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Nullifies a window&#39;s cache.</span>
+
+<span class="sd">        All contained windows use caching to save on performance. Cache</span>
+<span class="sd">        gets automatically nullified if a window changes while it is</span>
+<span class="sd">        focused, but not if a window changes while unfocused.</span>
+
+<span class="sd">        To get the correct behavior in that instance, use `Window.nullify_cache`,</span>
+<span class="sd">        which calls this method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window: The window whos cache we will nullify.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Nullifies a window's cache.</p>
+
+<p>All contained windows use caching to save on performance. Cache
+gets automatically nullified if a window changes while it is
+focused, but not if a window changes while unfocused.</p>
+
+<p>To get the correct behavior in that instance, use <code><a href="#Window.nullify_cache">Window.nullify_cache</a></code>,
+which calls this method.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>window:</strong>  The window whos cache we will nullify.</li>
+</ul>
 </div>
 
 
@@ -2753,8 +2893,14 @@ can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window
 
             <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span>
                 <span class="n">contains_pos</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+                <span class="n">is_target</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="n">window</span>
+                <span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">focusing_actions</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_pos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_target</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">focusing_actions</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
@@ -2808,6 +2954,9 @@ can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window
 <span class="sd">        Args:</span>
 <span class="sd">            window: The window to focus.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">focused</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">focused</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">MouseEvent</span><span class="p">(</span><span class="n">MouseAction</span><span class="o">.</span><span class="n">RELEASE</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
 
         <span class="k">for</span> <span class="n">other_window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">:</span>
             <span class="n">other_window</span><span class="o">.</span><span class="n">has_focus</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2877,7 +3026,7 @@ can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window
         <span class="c1"># existing ones, even if they are modal.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
+        <span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
             <span class="n">window</span><span class="p">,</span>
             <span class="s2">&quot;width&quot;</span><span class="p">,</span>
             <span class="n">startpoint</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.7</span><span class="p">),</span>
@@ -2937,7 +3086,7 @@ can set themselves to be dirty using the <code><a href="#Window.is_dirty">Window
             <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
 
         <span class="n">window</span><span class="o">.</span><span class="n">overflow</span> <span class="o">=</span> <span class="n">Overflow</span><span class="o">.</span><span class="n">HIDE</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
+        <span class="n">animator</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span>
             <span class="n">window</span><span class="p">,</span>
             <span class="s2">&quot;height&quot;</span><span class="p">,</span>
             <span class="n">endpoint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -3193,11 +3342,9 @@ Defaults to <code>["press_hold", "hover"]</code>.</li>
             <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span>
 
-            <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">window</span><span class="o">.</span><span class="n">get_lines</span><span class="p">():</span>
-                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">markup</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;[239]&quot;</span> <span class="o">+</span> <span class="n">strip_ansi</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">))</span>
-                <span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">markup</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;[239]&quot;</span> <span class="o">+</span> <span class="n">strip_ansi</span><span class="p">(</span><span class="n">line</span><span class="p">)))</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_window_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span> <span class="o">=</span> <span class="n">lines</span>
             <span class="k">return</span> <span class="n">lines</span>
