@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from .base import Widget
 from ..parser import markup
+from ..helpers import real_length
 from ..ansi_interface import MouseEvent, MouseAction
 
 __all__ = [
@@ -53,9 +54,6 @@ class PixelMatrix(Widget):
 
         super().__init__(**attrs)
 
-        self.static_width = width * 2
-        self.height = height
-
         self.rows = height
         self.columns = width
 
@@ -65,6 +63,7 @@ class PixelMatrix(Widget):
             self._matrix.append([default] * self.columns)
 
         self.selected_pixel = None
+        self.build()
 
     @classmethod
     def from_matrix(cls, matrix: list[list[str]]) -> PixelMatrix:
@@ -83,8 +82,19 @@ class PixelMatrix(Widget):
 
         obj = cls(max(len(row) for row in matrix), len(matrix))
         setattr(obj, "_matrix", matrix)
+        obj.build()
 
         return obj
+
+    def _update_dimensions(self, lines: list[str]):
+        """Updates the dimensions of this matrix.
+
+        Args:
+            lines: A list of lines that the calculations will be based upon.
+        """
+
+        self.static_width = max(real_length(line) for line in lines)
+        self.height = len(lines)
 
     def handle_mouse(self, event: MouseEvent) -> bool:
         """Handles a mouse event.
@@ -104,7 +114,17 @@ class PixelMatrix(Widget):
         return False
 
     def get_lines(self) -> list[str]:
-        """Gets large pixel matrix lines."""
+        """Returns lines built by the `build` method."""
+
+        return self._lines
+
+    def build(self) -> list[str]:
+        """Builds the image pixels.
+
+        Returns:
+            The lines that this object will return, until a subsequent `build` call.
+            These lines are stored in the `self._lines` variable.
+        """
 
         lines: list[str] = []
         for row in self._matrix:
@@ -116,6 +136,9 @@ class PixelMatrix(Widget):
                     line += "[/]  "
 
             lines.append(markup.parse(line))
+
+        self._lines = lines
+        self._update_dimensions(lines)
 
         return lines
 
@@ -158,12 +181,12 @@ class DensePixelMatrix(PixelMatrix):
 
         return False
 
-    def get_lines(self) -> list[str]:
-        """Gets PixelMatrix lines.
+    def build(self) -> list[str]:
+        """Builds the image pixels, using half-block characters.
 
-        The way the "half-resolution" look is achieved is by using unicode
-        half-block characters, setting a foreground and background color
-        for each.
+        Returns:
+            The lines that this object will return, until a subsequent `build` call.
+            These lines are stored in the `self._lines` variable.
         """
 
         lines = []
@@ -191,5 +214,8 @@ class DensePixelMatrix(PixelMatrix):
 
             lines.append(line)
             lines_to_zip = []
+
+        self._lines = lines
+        self._update_dimensions(lines)
 
         return lines

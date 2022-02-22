@@ -161,7 +161,7 @@ class _FadeInButton(Button):
 
         lines = super().get_lines()
         for i, line in enumerate(lines):
-            lines[i] = line[: self._fade_progress] + "\x1b[0m"
+            lines[i] = line[: self._fade_progress].rstrip("\x1b") + "\x1b[0m"
         return lines
 
 

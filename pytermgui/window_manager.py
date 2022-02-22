@@ -416,21 +416,26 @@ class WindowManager(Container):
             """Body of thread"""
 
             last_frame = time.perf_counter()
-            frametime = 1 / self.framerate
+            prev_framerate = self.framerate
 
-            fps_start_time = time.perf_counter()
+            fps_start_time = last_frame
+            frametime = 1 / self.framerate
             framecount = 0
 
             while self._is_running:
+                if prev_framerate != self.framerate:
+                    frametime = 1 / self.framerate
+                    prev_framerate = self.framerate
+
                 if self._is_paused or not self.should_print:
                     self._sleep(frametime)
+                    framecount += 1
                     continue
 
-                # Don't print before frametime elapsed
-                # TODO: This is imprecise, framerate is not followed well
                 elapsed = time.perf_counter() - last_frame
                 if elapsed < frametime:
-                    # time.sleep(sleeptime)
+                    self._sleep(frametime - elapsed)
+                    framecount += 1
                     continue
 
                 animator.step()
