@@ -16,7 +16,7 @@ from ..base import Widget
 class Button(Widget):
     """A simple Widget representing a mouse-clickable button"""
 
-    chars: dict[str, w_styles.CharType] = {"delimiter": ["  ", "  "]}
+    chars: dict[str, w_styles.CharType] = {"delimiter": ["[ ", " ]"]}
 
     styles: dict[str, w_styles.StyleType] = {
         "label": w_styles.CLICKABLE,
