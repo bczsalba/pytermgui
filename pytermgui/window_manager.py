@@ -328,7 +328,7 @@ class WindowManager(Container):
 
     is_bindable = True
 
-    framerate = 120
+    framerate = 60
     """Target framerate for rendering. Higher number means more resource usage."""
 
     focusing_actions: list[MouseAction] = [
