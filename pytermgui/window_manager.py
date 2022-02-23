@@ -657,6 +657,9 @@ class WindowManager(Container):
             window: The window to close.
         """
 
+        old_overflow = window.overflow
+        old_height = window.height
+
         def _finish(window: Widget) -> None:
             """Finish closing the window after animation."""
 
@@ -664,6 +667,9 @@ class WindowManager(Container):
             self._windows.remove(window)
             if window.has_focus and len(self._windows) > 0:
                 self.focus(self._windows[0])
+
+            window.overflow = old_overflow
+            window.height = old_height
 
             # NOTE: This is supposed to work using `_should_print`, but it doesn't.
             # Force print
