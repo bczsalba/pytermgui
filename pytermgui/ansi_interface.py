@@ -240,12 +240,28 @@ class Terminal:
 
         self.origin: tuple[int, int] = (1, 1)
         self.size: tuple[int, int] = self._get_size()
+        self.pixel_size: tuple[int, int] = self._get_pixel_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
         if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
 
         # TODO: Support SIGWINCH on Windows.
+
+    @staticmethod
+    def _get_pixel_size() -> tuple[int, int]:
+        """Gets the terminal's size, in pixels."""
+
+        sys.stdout.write("\x1b[14t")
+        sys.stdout.flush()
+
+        # TODO: This probably should be error-proofed.
+        output = getch()[4:-1]
+        if ";" in output:
+            size = tuple(int(val) for val in output.split(";"))
+            return size[1], size[0]
+
+        return (0, 0)
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Calls callbacks for event.
@@ -269,6 +285,7 @@ class Terminal:
         """Resize terminal when SIGWINCH occurs, and call listeners."""
 
         self.size = self._get_size()
+        self.pixel_size = self._get_pixel_size()
         self._call_listener(self.RESIZE, self.size)
 
     @property
