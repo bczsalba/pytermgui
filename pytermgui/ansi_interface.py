@@ -252,14 +252,15 @@ class Terminal:
     def _get_pixel_size() -> tuple[int, int]:
         """Gets the terminal's size, in pixels."""
 
-        sys.stdout.write("\x1b[14t")
-        sys.stdout.flush()
+        if sys.stdout.isatty():
+            sys.stdout.write("\x1b[14t")
+            sys.stdout.flush()
 
-        # TODO: This probably should be error-proofed.
-        output = getch()[4:-1]
-        if ";" in output:
-            size = tuple(int(val) for val in output.split(";"))
-            return size[1], size[0]
+            # TODO: This probably should be error-proofed.
+            output = getch()[4:-1]
+            if ";" in output:
+                size = tuple(int(val) for val in output.split(";"))
+                return size[1], size[0]
 
         return (0, 0)
 
