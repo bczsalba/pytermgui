@@ -898,6 +898,9 @@ style="max-width: 100%"></p>
 <span class="sd">            window: The window to close.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">old_overflow</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">overflow</span>
+        <span class="n">old_height</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span>
+
         <span class="k">def</span> <span class="nf">_finish</span><span class="p">(</span><span class="n">window</span><span class="p">:</span> <span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Finish closing the window after animation.&quot;&quot;&quot;</span>
 
@@ -905,6 +908,9 @@ style="max-width: 100%"></p>
             <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">has_focus</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="n">window</span><span class="o">.</span><span class="n">overflow</span> <span class="o">=</span> <span class="n">old_overflow</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">old_height</span>
 
             <span class="c1"># NOTE: This is supposed to work using `_should_print`, but it doesn&#39;t.</span>
             <span class="c1"># Force print</span>
@@ -2306,6 +2312,9 @@ defaults to True.</li>
 <span class="sd">            window: The window to close.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">old_overflow</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">overflow</span>
+        <span class="n">old_height</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span>
+
         <span class="k">def</span> <span class="nf">_finish</span><span class="p">(</span><span class="n">window</span><span class="p">:</span> <span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Finish closing the window after animation.&quot;&quot;&quot;</span>
 
@@ -2313,6 +2322,9 @@ defaults to True.</li>
             <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">has_focus</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="n">window</span><span class="o">.</span><span class="n">overflow</span> <span class="o">=</span> <span class="n">old_overflow</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">old_height</span>
 
             <span class="c1"># NOTE: This is supposed to work using `_should_print`, but it doesn&#39;t.</span>
             <span class="c1"># Force print</span>
@@ -3073,6 +3085,9 @@ which calls this method.</p>
 <span class="sd">            window: The window to close.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">old_overflow</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">overflow</span>
+        <span class="n">old_height</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">height</span>
+
         <span class="k">def</span> <span class="nf">_finish</span><span class="p">(</span><span class="n">window</span><span class="p">:</span> <span class="n">Widget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="sd">&quot;&quot;&quot;Finish closing the window after animation.&quot;&quot;&quot;</span>
 
@@ -3080,6 +3095,9 @@ which calls this method.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">has_focus</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_windows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="n">window</span><span class="o">.</span><span class="n">overflow</span> <span class="o">=</span> <span class="n">old_overflow</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">old_height</span>
 
             <span class="c1"># NOTE: This is supposed to work using `_should_print`, but it doesn&#39;t.</span>
             <span class="c1"># Force print</span>

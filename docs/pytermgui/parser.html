@@ -76,7 +76,19 @@
                                 <a class="function" href="#MarkupLanguage.get_markup">get_markup</a>
                         </li>
                         <li>
+                                <a class="function" href="#MarkupLanguage.prettify_ansi">prettify_ansi</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#MarkupLanguage.prettify_markup">prettify_markup</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#MarkupLanguage.prettify">prettify</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#MarkupLanguage.pprint">pprint</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#MarkupLanguage.setup_displayhook">setup_displayhook</a>
                         </li>
                 </ul>
 
@@ -262,14 +274,17 @@
 <span class="sd">- `MarkupLanguage.alias()`: Define an instance-local alias</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=too-many-lines</span>
+
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">shuffle</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span> <span class="k">as</span> <span class="n">_auto</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">.ansi_interface</span> <span class="kn">import</span> <span class="n">foreground</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">MarkupSyntaxError</span><span class="p">,</span> <span class="n">AnsiSyntaxError</span>
@@ -280,7 +295,7 @@
 <span class="n">MacroCallable</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
 <span class="n">MacroCall</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">MacroCallable</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
 
-<span class="n">RE_ANSI</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b</span><span class="se">\\</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="n">RE_ANSI</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b</span><span class="se">\\</span><span class="s2">)|(?:\x1b_G(.*?)\x1b</span><span class="se">\\</span><span class="s2">)&quot;</span><span class="p">)</span>
 <span class="n">RE_MACRO</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(![a-z0-9_]+)(?:\(([\w\/\.?=:]+)\))?&quot;</span><span class="p">)</span>
 <span class="n">RE_MARKUP</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;((</span><span class="se">\\</span><span class="s2">*)\[([a-z0-9!#@_\/\(,\)].*?)\])&quot;</span><span class="p">)</span>
 
@@ -610,6 +625,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;!capitalize&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;!expand&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="n">_macro_expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">))</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-int&quot;</span><span class="p">,</span> <span class="s2">&quot;176&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-str&quot;</span><span class="p">,</span> <span class="s2">&quot;149 italic&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-type&quot;</span><span class="p">,</span> <span class="s2">&quot;222&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-none&quot;</span><span class="p">,</span> <span class="s2">&quot;210&quot;</span><span class="p">)</span>
+
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_color_token</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Try to get color token from a tag&quot;&quot;&quot;</span>
@@ -786,6 +806,7 @@
                             <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span>
                             <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
+
                         <span class="k">raise</span> <span class="n">AnsiSyntaxError</span><span class="p">(</span>
                             <span class="n">tag</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cause</span><span class="o">=</span><span class="s2">&quot;not recognized&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ansi</span>
                         <span class="p">)</span>
@@ -975,6 +996,38 @@
 
         <span class="k">return</span> <span class="n">out</span>
 
+    <span class="k">def</span> <span class="nf">prettify_ansi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns a prettified (syntax-highlighted) ANSI str.</span>
+
+<span class="sd">        This is useful to quickly &quot;inspect&quot; a given ANSI string. However,</span>
+<span class="sd">        for most real uses `MarkupLanguage.prettify_markup` would be</span>
+<span class="sd">        preferable, given an argument of `MarkupLanguage.get_markup(text)`,</span>
+<span class="sd">        as it is much more verbose.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: The ANSI-text to prettify.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The prettified ANSI text. This text&#39;s styles remain valid,</span>
+<span class="sd">            so copy-pasting the argument into a command (like printf)</span>
+<span class="sd">            that can show styled text will work the same way.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">sequences</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span>
+                <span class="k">continue</span>
+
+            <span class="k">assert</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">x1b&quot;</span><span class="p">)</span>
+            <span class="n">sequences</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">sequences</span>
+
+        <span class="k">return</span> <span class="n">out</span>
+
     <span class="k">def</span> <span class="nf">prettify_markup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns a prettified (syntax-highlighted) markup str.</span>
 
@@ -1038,6 +1091,223 @@
             <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
 
         <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">prettify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">force_markup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Prettifies any string.</span>
+
+<span class="sd">        If the string contains ANSI sequences and `force_markup` is False,</span>
+<span class="sd">        the `prettify_ansi` method is used. Otherwise, `prettify_markup` does</span>
+<span class="sd">        the job.</span>
+
+<span class="sd">        Since the `prettify_markup` method fails cleanly (e.g. doesn&#39;t modify</span>
+<span class="sd">        a string with no markup) this is a safe call to any string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: The string to prettify.</span>
+<span class="sd">            force_markup: If set, when given an ANSI string, the</span>
+<span class="sd">                `MarkupLanguage.get_markup` method is used to translate it into</span>
+<span class="sd">                markup, which is then prettified using `prettify_markup`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">RE_ANSI</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">force_markup</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_markup</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify_markup</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">condensed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_markup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Pretty-prints any object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item: The object to pretty-print.</span>
+<span class="sd">            indent: The number of spaces that should be used for indenting.</span>
+<span class="sd">                Only applies when `condensed` is True.</span>
+<span class="sd">            condensed: If not set each item of a container will occupy different</span>
+<span class="sd">                lines.</span>
+<span class="sd">            force_markup: When given an item of `str` type, containing ANSI sequences,</span>
+<span class="sd">                its markup representation will be generated and displayed using</span>
+<span class="sd">                `MarkupLanguage.get_markup`. See `MarkupLanguage.prettify` for more info.</span>
+<span class="sd">            return_only: If set, nothing will be printed and the prettified string is</span>
+<span class="sd">                returned instead.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The prettified string if `return_only` is set, otherwise `None`, as the</span>
+<span class="sd">            value has already been printed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">type_styles</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nb">int</span><span class="p">:</span> <span class="s2">&quot;[pprint-int]</span><span class="si">{item}</span><span class="s2">[/]&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">:</span> <span class="s2">&quot;[pprint-str]&#39;</span><span class="si">{item}</span><span class="s2">&#39;[/]&quot;</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;[pprint-none]</span><span class="si">{item}</span><span class="s2">[/]&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="p">:</span> <span class="s2">&quot;[pprint-type]</span><span class="si">{item}</span><span class="s2">[/]&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">indent_str</span> <span class="o">=</span> <span class="n">indent</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span>
+
+        <span class="k">def</span> <span class="nf">_apply_style</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Applies type-based style to the given value.</span>
+
+<span class="sd">            This value can technically be of any type, and builtins have</span>
+<span class="sd">            special styles defined for them.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                A styled-str representation of value.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span>
+                        <span class="n">value</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">condensed</span><span class="o">=</span><span class="n">condensed</span><span class="p">,</span> <span class="n">return_only</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                    <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">type_styles</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">type_styles</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">type_styles</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">type_styles</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_format_container_item</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Formats a container item.&quot;&quot;&quot;</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">,&quot;</span>
+            <span class="k">if</span> <span class="n">condensed</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">condensed</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">def</span> <span class="nf">_format_container</span><span class="p">(</span>
+            <span class="n">container</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">set</span><span class="p">,</span> <span class="n">chars</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Formats a container-type instance.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                container: The container to format.</span>
+<span class="sd">                chars: The characters that signify the start &amp; end of the container.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                A pretty representation of the given container.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="n">chars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">condensed</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_format_container_item</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">condensed</span><span class="p">:</span>
+                            <span class="n">out</span> <span class="o">+=</span> <span class="n">line</span>
+                            <span class="k">continue</span>
+
+                        <span class="n">out</span> <span class="o">+=</span> <span class="n">indent_str</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_format_container_item</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">condensed</span><span class="p">:</span>
+                            <span class="n">out</span> <span class="o">+=</span> <span class="n">line</span>
+                            <span class="k">continue</span>
+
+                        <span class="n">out</span> <span class="o">+=</span> <span class="n">indent_str</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">chars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="n">buff</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">chars</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">buff</span> <span class="o">=</span> <span class="n">_format_container</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">chars</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">return_only</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">buff</span>
+
+            <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">mprint</span><span class="p">:</span>
+                <span class="n">mprint</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">return_only</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">item</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">setup_displayhook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">condensed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_markup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Sets up `sys.displayhook` to use `MarkupLanguage.pprint`.</span>
+
+<span class="sd">        This can be used to pretty-print all REPL output. IPython is</span>
+<span class="sd">        also supported.</span>
+
+<span class="sd">        Usage is pretty simple:</span>
+
+<span class="sd">        ```python3</span>
+<span class="sd">        &gt;&gt;&gt; from pytermgui import markup</span>
+<span class="sd">        &gt;&gt;&gt; markup.setup_displayhook()</span>
+<span class="sd">        &gt;&gt;&gt; # Any function output will now be prettified</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            indent: The amount of indentation used in printing container-types.</span>
+<span class="sd">                Only applied when `condensed` is False.</span>
+<span class="sd">            condensed: If set, all items in a container-type will be displayed in</span>
+<span class="sd">                one line, similar to the default `repl`.</span>
+<span class="sd">            force_markup: When given an ANSI-sequence containing str, its markup</span>
+<span class="sd">                representation will be generated using `MarkupLanguage.get_markup`,</span>
+<span class="sd">                and syntax highlighted using `MarkupLanguage.prettify_markup`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try to get IPython instance. This function is provided by the</span>
+            <span class="c1"># IPython runtime, so if running outside of that context a NameError</span>
+            <span class="c1"># is raised.</span>
+            <span class="n">ipython</span> <span class="o">=</span> <span class="n">get_ipython</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">displayhook</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span>
+                <span class="n">value</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span><span class="p">,</span> <span class="n">condensed</span><span class="o">=</span><span class="n">condensed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">ipython</span><span class="o">.</span><span class="n">display_formatter</span><span class="o">.</span><span class="n">formatters</span><span class="p">[</span><span class="s2">&quot;text/plain&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pprint</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1203,6 +1473,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;!capitalize&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;!expand&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="n">_macro_expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">))</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-int&quot;</span><span class="p">,</span> <span class="s2">&quot;176&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-str&quot;</span><span class="p">,</span> <span class="s2">&quot;149 italic&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-type&quot;</span><span class="p">,</span> <span class="s2">&quot;222&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-none&quot;</span><span class="p">,</span> <span class="s2">&quot;210&quot;</span><span class="p">)</span>
+
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_color_token</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Try to get color token from a tag&quot;&quot;&quot;</span>
@@ -1379,6 +1654,7 @@
                             <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span>
                             <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
+
                         <span class="k">raise</span> <span class="n">AnsiSyntaxError</span><span class="p">(</span>
                             <span class="n">tag</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cause</span><span class="o">=</span><span class="s2">&quot;not recognized&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ansi</span>
                         <span class="p">)</span>
@@ -1568,6 +1844,38 @@
 
         <span class="k">return</span> <span class="n">out</span>
 
+    <span class="k">def</span> <span class="nf">prettify_ansi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns a prettified (syntax-highlighted) ANSI str.</span>
+
+<span class="sd">        This is useful to quickly &quot;inspect&quot; a given ANSI string. However,</span>
+<span class="sd">        for most real uses `MarkupLanguage.prettify_markup` would be</span>
+<span class="sd">        preferable, given an argument of `MarkupLanguage.get_markup(text)`,</span>
+<span class="sd">        as it is much more verbose.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: The ANSI-text to prettify.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The prettified ANSI text. This text&#39;s styles remain valid,</span>
+<span class="sd">            so copy-pasting the argument into a command (like printf)</span>
+<span class="sd">            that can show styled text will work the same way.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">sequences</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span>
+                <span class="k">continue</span>
+
+            <span class="k">assert</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">x1b&quot;</span><span class="p">)</span>
+            <span class="n">sequences</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">sequences</span>
+
+        <span class="k">return</span> <span class="n">out</span>
+
     <span class="k">def</span> <span class="nf">prettify_markup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns a prettified (syntax-highlighted) markup str.</span>
 
@@ -1631,6 +1939,223 @@
             <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
 
         <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">prettify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">force_markup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Prettifies any string.</span>
+
+<span class="sd">        If the string contains ANSI sequences and `force_markup` is False,</span>
+<span class="sd">        the `prettify_ansi` method is used. Otherwise, `prettify_markup` does</span>
+<span class="sd">        the job.</span>
+
+<span class="sd">        Since the `prettify_markup` method fails cleanly (e.g. doesn&#39;t modify</span>
+<span class="sd">        a string with no markup) this is a safe call to any string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: The string to prettify.</span>
+<span class="sd">            force_markup: If set, when given an ANSI string, the</span>
+<span class="sd">                `MarkupLanguage.get_markup` method is used to translate it into</span>
+<span class="sd">                markup, which is then prettified using `prettify_markup`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">RE_ANSI</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">force_markup</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_markup</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify_markup</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">condensed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_markup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Pretty-prints any object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item: The object to pretty-print.</span>
+<span class="sd">            indent: The number of spaces that should be used for indenting.</span>
+<span class="sd">                Only applies when `condensed` is True.</span>
+<span class="sd">            condensed: If not set each item of a container will occupy different</span>
+<span class="sd">                lines.</span>
+<span class="sd">            force_markup: When given an item of `str` type, containing ANSI sequences,</span>
+<span class="sd">                its markup representation will be generated and displayed using</span>
+<span class="sd">                `MarkupLanguage.get_markup`. See `MarkupLanguage.prettify` for more info.</span>
+<span class="sd">            return_only: If set, nothing will be printed and the prettified string is</span>
+<span class="sd">                returned instead.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The prettified string if `return_only` is set, otherwise `None`, as the</span>
+<span class="sd">            value has already been printed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">type_styles</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nb">int</span><span class="p">:</span> <span class="s2">&quot;[pprint-int]</span><span class="si">{item}</span><span class="s2">[/]&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">:</span> <span class="s2">&quot;[pprint-str]&#39;</span><span class="si">{item}</span><span class="s2">&#39;[/]&quot;</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;[pprint-none]</span><span class="si">{item}</span><span class="s2">[/]&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="p">:</span> <span class="s2">&quot;[pprint-type]</span><span class="si">{item}</span><span class="s2">[/]&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">indent_str</span> <span class="o">=</span> <span class="n">indent</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span>
+
+        <span class="k">def</span> <span class="nf">_apply_style</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Applies type-based style to the given value.</span>
+
+<span class="sd">            This value can technically be of any type, and builtins have</span>
+<span class="sd">            special styles defined for them.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                A styled-str representation of value.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span>
+                        <span class="n">value</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">condensed</span><span class="o">=</span><span class="n">condensed</span><span class="p">,</span> <span class="n">return_only</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                    <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">type_styles</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">type_styles</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">type_styles</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">type_styles</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_format_container_item</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Formats a container item.&quot;&quot;&quot;</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">,&quot;</span>
+            <span class="k">if</span> <span class="n">condensed</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">condensed</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">def</span> <span class="nf">_format_container</span><span class="p">(</span>
+            <span class="n">container</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">set</span><span class="p">,</span> <span class="n">chars</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Formats a container-type instance.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                container: The container to format.</span>
+<span class="sd">                chars: The characters that signify the start &amp; end of the container.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                A pretty representation of the given container.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="n">chars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">condensed</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_format_container_item</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">condensed</span><span class="p">:</span>
+                            <span class="n">out</span> <span class="o">+=</span> <span class="n">line</span>
+                            <span class="k">continue</span>
+
+                        <span class="n">out</span> <span class="o">+=</span> <span class="n">indent_str</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_format_container_item</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">condensed</span><span class="p">:</span>
+                            <span class="n">out</span> <span class="o">+=</span> <span class="n">line</span>
+                            <span class="k">continue</span>
+
+                        <span class="n">out</span> <span class="o">+=</span> <span class="n">indent_str</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">chars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="n">buff</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">chars</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">buff</span> <span class="o">=</span> <span class="n">_format_container</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">chars</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">return_only</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">buff</span>
+
+            <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">mprint</span><span class="p">:</span>
+                <span class="n">mprint</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">return_only</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">item</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">setup_displayhook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">condensed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_markup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Sets up `sys.displayhook` to use `MarkupLanguage.pprint`.</span>
+
+<span class="sd">        This can be used to pretty-print all REPL output. IPython is</span>
+<span class="sd">        also supported.</span>
+
+<span class="sd">        Usage is pretty simple:</span>
+
+<span class="sd">        ```python3</span>
+<span class="sd">        &gt;&gt;&gt; from pytermgui import markup</span>
+<span class="sd">        &gt;&gt;&gt; markup.setup_displayhook()</span>
+<span class="sd">        &gt;&gt;&gt; # Any function output will now be prettified</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            indent: The amount of indentation used in printing container-types.</span>
+<span class="sd">                Only applied when `condensed` is False.</span>
+<span class="sd">            condensed: If set, all items in a container-type will be displayed in</span>
+<span class="sd">                one line, similar to the default `repl`.</span>
+<span class="sd">            force_markup: When given an ANSI-sequence containing str, its markup</span>
+<span class="sd">                representation will be generated using `MarkupLanguage.get_markup`,</span>
+<span class="sd">                and syntax highlighted using `MarkupLanguage.prettify_markup`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try to get IPython instance. This function is provided by the</span>
+            <span class="c1"># IPython runtime, so if running outside of that context a NameError</span>
+            <span class="c1"># is raised.</span>
+            <span class="n">ipython</span> <span class="o">=</span> <span class="n">get_ipython</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">displayhook</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span>
+                <span class="n">value</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span><span class="p">,</span> <span class="n">condensed</span><span class="o">=</span><span class="n">condensed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">ipython</span><span class="o">.</span><span class="n">display_formatter</span><span class="o">.</span><span class="n">formatters</span><span class="p">[</span><span class="s2">&quot;text/plain&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pprint</span>
 </pre></div>
 
         </details>
@@ -1703,6 +2228,11 @@ given to it, and pass through all **kwargs.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;!title&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">()))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;!capitalize&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;!expand&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">tag</span><span class="p">:</span> <span class="n">_macro_expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-int&quot;</span><span class="p">,</span> <span class="s2">&quot;176&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-str&quot;</span><span class="p">,</span> <span class="s2">&quot;149 italic&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-type&quot;</span><span class="p">,</span> <span class="s2">&quot;222&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pprint-none&quot;</span><span class="p">,</span> <span class="s2">&quot;210&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -1849,6 +2379,7 @@ given to it, and pass through all **kwargs.</p>
                             <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span>
                             <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
+
                         <span class="k">raise</span> <span class="n">AnsiSyntaxError</span><span class="p">(</span>
                             <span class="n">tag</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cause</span><span class="o">=</span><span class="s2">&quot;not recognized&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ansi</span>
                         <span class="p">)</span>
@@ -2120,6 +2651,75 @@ given to it, and pass through all **kwargs.</p>
 
 
                             </div>
+                            <div id="MarkupLanguage.prettify_ansi" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#MarkupLanguage.prettify_ansi">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">prettify_ansi</span><span class="signature">(self, text: str) -&gt; str</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">prettify_ansi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns a prettified (syntax-highlighted) ANSI str.</span>
+
+<span class="sd">        This is useful to quickly &quot;inspect&quot; a given ANSI string. However,</span>
+<span class="sd">        for most real uses `MarkupLanguage.prettify_markup` would be</span>
+<span class="sd">        preferable, given an argument of `MarkupLanguage.get_markup(text)`,</span>
+<span class="sd">        as it is much more verbose.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: The ANSI-text to prettify.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The prettified ANSI text. This text&#39;s styles remain valid,</span>
+<span class="sd">            so copy-pasting the argument into a command (like printf)</span>
+<span class="sd">            that can show styled text will work the same way.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">sequences</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span>
+                <span class="k">continue</span>
+
+            <span class="k">assert</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">x1b&quot;</span><span class="p">)</span>
+            <span class="n">sequences</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">sequences</span>
+
+        <span class="k">return</span> <span class="n">out</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Returns a prettified (syntax-highlighted) ANSI str.</p>
+
+<p>This is useful to quickly "inspect" a given ANSI string. However,
+for most real uses <code><a href="#MarkupLanguage.prettify_markup">MarkupLanguage.prettify_markup</a></code> would be
+preferable, given an argument of <code><a href="#MarkupLanguage.get_markup">MarkupLanguage.get_markup</a>(text)</code>,
+as it is much more verbose.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>text:</strong>  The ANSI-text to prettify.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The prettified ANSI text. This text's styles remain valid,
+  so copy-pasting the argument into a command (like printf)
+  that can show styled text will work the same way.</p>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div id="MarkupLanguage.prettify_markup" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#MarkupLanguage.prettify_markup">#&nbsp;&nbsp</a>
 
@@ -2211,6 +2811,349 @@ given to it, and pass through all **kwargs.</p>
   <p>Prettified markup. This markup, excluding its styles,
   remains valid markup.</p>
 </blockquote>
+</div>
+
+
+                            </div>
+                            <div id="MarkupLanguage.prettify" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#MarkupLanguage.prettify">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">prettify</span><span class="signature">(self, text: str, force_markup: bool = False) -&gt; str</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">prettify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">force_markup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Prettifies any string.</span>
+
+<span class="sd">        If the string contains ANSI sequences and `force_markup` is False,</span>
+<span class="sd">        the `prettify_ansi` method is used. Otherwise, `prettify_markup` does</span>
+<span class="sd">        the job.</span>
+
+<span class="sd">        Since the `prettify_markup` method fails cleanly (e.g. doesn&#39;t modify</span>
+<span class="sd">        a string with no markup) this is a safe call to any string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: The string to prettify.</span>
+<span class="sd">            force_markup: If set, when given an ANSI string, the</span>
+<span class="sd">                `MarkupLanguage.get_markup` method is used to translate it into</span>
+<span class="sd">                markup, which is then prettified using `prettify_markup`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">RE_ANSI</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">force_markup</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_markup</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify_markup</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Prettifies any string.</p>
+
+<p>If the string contains ANSI sequences and <code>force_markup</code> is False,
+the <code><a href="#MarkupLanguage.prettify_ansi">prettify_ansi</a></code> method is used. Otherwise, <code><a href="#MarkupLanguage.prettify_markup">prettify_markup</a></code> does
+the job.</p>
+
+<p>Since the <code><a href="#MarkupLanguage.prettify_markup">prettify_markup</a></code> method fails cleanly (e.g. doesn't modify
+a string with no markup) this is a safe call to any string.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>text:</strong>  The string to prettify.</li>
+<li><strong>force_markup:</strong>  If set, when given an ANSI string, the
+<code><a href="#MarkupLanguage.get_markup">MarkupLanguage.get_markup</a></code> method is used to translate it into
+markup, which is then prettified using <code><a href="#MarkupLanguage.prettify_markup">prettify_markup</a></code>.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="MarkupLanguage.pprint" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#MarkupLanguage.pprint">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">pprint</span><span class="signature">(
+    self,
+    item: Any,
+    indent: int = 2,
+    condensed: bool = False,
+    force_markup: bool = False,
+    return_only: bool = False
+) -&gt; str | None</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">condensed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_markup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Pretty-prints any object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item: The object to pretty-print.</span>
+<span class="sd">            indent: The number of spaces that should be used for indenting.</span>
+<span class="sd">                Only applies when `condensed` is True.</span>
+<span class="sd">            condensed: If not set each item of a container will occupy different</span>
+<span class="sd">                lines.</span>
+<span class="sd">            force_markup: When given an item of `str` type, containing ANSI sequences,</span>
+<span class="sd">                its markup representation will be generated and displayed using</span>
+<span class="sd">                `MarkupLanguage.get_markup`. See `MarkupLanguage.prettify` for more info.</span>
+<span class="sd">            return_only: If set, nothing will be printed and the prettified string is</span>
+<span class="sd">                returned instead.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The prettified string if `return_only` is set, otherwise `None`, as the</span>
+<span class="sd">            value has already been printed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">type_styles</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nb">int</span><span class="p">:</span> <span class="s2">&quot;[pprint-int]</span><span class="si">{item}</span><span class="s2">[/]&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">:</span> <span class="s2">&quot;[pprint-str]&#39;</span><span class="si">{item}</span><span class="s2">&#39;[/]&quot;</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;[pprint-none]</span><span class="si">{item}</span><span class="s2">[/]&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="p">:</span> <span class="s2">&quot;[pprint-type]</span><span class="si">{item}</span><span class="s2">[/]&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">indent_str</span> <span class="o">=</span> <span class="n">indent</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span>
+
+        <span class="k">def</span> <span class="nf">_apply_style</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Applies type-based style to the given value.</span>
+
+<span class="sd">            This value can technically be of any type, and builtins have</span>
+<span class="sd">            special styles defined for them.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                A styled-str representation of value.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span>
+                        <span class="n">value</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">condensed</span><span class="o">=</span><span class="n">condensed</span><span class="p">,</span> <span class="n">return_only</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                    <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">type_styles</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\[&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">type_styles</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">type_styles</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">type_styles</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_format_container_item</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Formats a container item.&quot;&quot;&quot;</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">,&quot;</span>
+            <span class="k">if</span> <span class="n">condensed</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">condensed</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">def</span> <span class="nf">_format_container</span><span class="p">(</span>
+            <span class="n">container</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">set</span><span class="p">,</span> <span class="n">chars</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Formats a container-type instance.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                container: The container to format.</span>
+<span class="sd">                chars: The characters that signify the start &amp; end of the container.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                A pretty representation of the given container.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="n">chars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">condensed</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_format_container_item</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">condensed</span><span class="p">:</span>
+                            <span class="n">out</span> <span class="o">+=</span> <span class="n">line</span>
+                            <span class="k">continue</span>
+
+                        <span class="n">out</span> <span class="o">+=</span> <span class="n">indent_str</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_format_container_item</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">condensed</span><span class="p">:</span>
+                            <span class="n">out</span> <span class="o">+=</span> <span class="n">line</span>
+                            <span class="k">continue</span>
+
+                        <span class="n">out</span> <span class="o">+=</span> <span class="n">indent_str</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">chars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="n">buff</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">chars</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">buff</span> <span class="o">=</span> <span class="n">_format_container</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">chars</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">return_only</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">buff</span>
+
+            <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">mprint</span><span class="p">:</span>
+                <span class="n">mprint</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">return_only</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">item</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Pretty-prints any object.</p>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>item:</strong>  The object to pretty-print.</li>
+<li><strong>indent:</strong>  The number of spaces that should be used for indenting.
+Only applies when <code>condensed</code> is True.</li>
+<li><strong>condensed:</strong>  If not set each item of a container will occupy different
+lines.</li>
+<li><strong>force_markup:</strong>  When given an item of <code>str</code> type, containing ANSI sequences,
+its markup representation will be generated and displayed using
+<code><a href="#MarkupLanguage.get_markup">MarkupLanguage.get_markup</a></code>. See <code><a href="#MarkupLanguage.prettify">MarkupLanguage.prettify</a></code> for more info.</li>
+<li><strong>return_only:</strong>  If set, nothing will be printed and the prettified string is
+returned instead.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>The prettified string if <code>return_only</code> is set, otherwise <code>None</code>, as the
+  value has already been printed.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="MarkupLanguage.setup_displayhook" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#MarkupLanguage.setup_displayhook">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">setup_displayhook</span><span class="signature">(
+    self,
+    indent: int = 2,
+    condensed: bool = False,
+    force_markup: bool = False
+) -&gt; None</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">setup_displayhook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">condensed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_markup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Sets up `sys.displayhook` to use `MarkupLanguage.pprint`.</span>
+
+<span class="sd">        This can be used to pretty-print all REPL output. IPython is</span>
+<span class="sd">        also supported.</span>
+
+<span class="sd">        Usage is pretty simple:</span>
+
+<span class="sd">        ```python3</span>
+<span class="sd">        &gt;&gt;&gt; from pytermgui import markup</span>
+<span class="sd">        &gt;&gt;&gt; markup.setup_displayhook()</span>
+<span class="sd">        &gt;&gt;&gt; # Any function output will now be prettified</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            indent: The amount of indentation used in printing container-types.</span>
+<span class="sd">                Only applied when `condensed` is False.</span>
+<span class="sd">            condensed: If set, all items in a container-type will be displayed in</span>
+<span class="sd">                one line, similar to the default `repl`.</span>
+<span class="sd">            force_markup: When given an ANSI-sequence containing str, its markup</span>
+<span class="sd">                representation will be generated using `MarkupLanguage.get_markup`,</span>
+<span class="sd">                and syntax highlighted using `MarkupLanguage.prettify_markup`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try to get IPython instance. This function is provided by the</span>
+            <span class="c1"># IPython runtime, so if running outside of that context a NameError</span>
+            <span class="c1"># is raised.</span>
+            <span class="n">ipython</span> <span class="o">=</span> <span class="n">get_ipython</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">displayhook</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span>
+                <span class="n">value</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span><span class="p">,</span> <span class="n">condensed</span><span class="o">=</span><span class="n">condensed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">ipython</span><span class="o">.</span><span class="n">display_formatter</span><span class="o">.</span><span class="n">formatters</span><span class="p">[</span><span class="s2">&quot;text/plain&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pprint</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Sets up <code>sys.displayhook</code> to use <code><a href="#MarkupLanguage.pprint">MarkupLanguage.pprint</a></code>.</p>
+
+<p>This can be used to pretty-print all REPL output. IPython is
+also supported.</p>
+
+<p>Usage is pretty simple:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">pytermgui</span> <span class="kn">import</span> <span class="n">markup</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">markup</span><span class="o">.</span><span class="n">setup_displayhook</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># Any function output will now be prettified</span>
+</code></pre></div>
+
+<h6 id="args">Args</h6>
+
+<ul>
+<li><strong>indent:</strong>  The amount of indentation used in printing container-types.
+Only applied when <code>condensed</code> is False.</li>
+<li><strong>condensed:</strong>  If set, all items in a container-type will be displayed in
+one line, similar to the default <code>repl</code>.</li>
+<li><strong>force_markup:</strong>  When given an ANSI-sequence containing str, its markup
+representation will be generated using <code><a href="#MarkupLanguage.get_markup">MarkupLanguage.get_markup</a></code>,
+and syntax highlighted using <code><a href="#MarkupLanguage.prettify_markup">MarkupLanguage.prettify_markup</a></code>.</li>
+</ul>
 </div>
 
 
