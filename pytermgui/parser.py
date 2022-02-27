@@ -1067,6 +1067,14 @@ class MarkupLanguage:
         This can be used to pretty-print all REPL output. IPython is
         also supported.
 
+        Usage is pretty simple:
+
+        ```python3
+        >>> from pytermgui import markup
+        >>> markup.setup_displayhook()
+        >>> # Any function output will now be prettified
+        ```
+
         Args:
             indent: The amount of indentation used in printing container-types.
                 Only applied when `condensed` is False.
