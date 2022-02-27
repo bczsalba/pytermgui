@@ -64,14 +64,17 @@ Usage
 - `MarkupLanguage.alias()`: Define an instance-local alias
 
 """
+# pylint: disable=too-many-lines
+
 from __future__ import annotations
 
 import re
+import sys
 from random import shuffle
 from dataclasses import dataclass
 from argparse import ArgumentParser
 from enum import Enum, auto as _auto
-from typing import Iterator, Callable, Tuple, List
+from typing import Iterator, Callable, Tuple, List, Any
 
 from .ansi_interface import foreground
 from .exceptions import MarkupSyntaxError, AnsiSyntaxError
@@ -82,7 +85,7 @@ __all__ = ["MacroCallable", "MacroCall", "MarkupLanguage", "StyledText", "markup
 MacroCallable = Callable[..., str]
 MacroCall = Tuple[MacroCallable, List[str]]
 
-RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)")
+RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)|(?:\x1b_G(.*?)\x1b\\)")
 RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w\/\.?=:]+)\))?")
 RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/\(,\)].*?)\])")
 
@@ -412,6 +415,11 @@ class MarkupLanguage:
             self.define("!capitalize", lambda item: str(item.capitalize()))
             self.define("!expand", lambda tag: _macro_expand(self, tag))
 
+        self.alias("pprint-int", "176")
+        self.alias("pprint-str", "149 italic")
+        self.alias("pprint-type", "222")
+        self.alias("pprint-none", "210")
+
     @staticmethod
     def _get_color_token(tag: str) -> Token | None:
         """Try to get color token from a tag"""
@@ -588,6 +596,7 @@ class MarkupLanguage:
                             ttype = TokenType.STYLE
                             break
                     else:
+
                         raise AnsiSyntaxError(
                             tag=parts[0], cause="not recognized", context=ansi
                         )
@@ -777,6 +786,38 @@ class MarkupLanguage:
 
         return out
 
+    def prettify_ansi(self, text: str) -> str:
+        """Returns a prettified (syntax-highlighted) ANSI str.
+
+        This is useful to quickly "inspect" a given ANSI string. However,
+        for most real uses `MarkupLanguage.prettify_markup` would be
+        preferable, given an argument of `MarkupLanguage.get_markup(text)`,
+        as it is much more verbose.
+
+        Args:
+            text: The ANSI-text to prettify.
+
+        Returns:
+            The prettified ANSI text. This text's styles remain valid,
+            so copy-pasting the argument into a command (like printf)
+            that can show styled text will work the same way.
+        """
+
+        out = ""
+        sequences = ""
+        for token in self.tokenize_ansi(text):
+            if token.ttype is TokenType.PLAIN:
+                assert isinstance(token.data, str)
+                out += token.data
+                continue
+
+            assert token.sequence is not None
+            out += "\x1b[0m" + token.sequence + token.sequence.replace("\x1b", "\\x1b")
+            sequences += token.sequence
+            out += sequences
+
+        return out
+
     def prettify_markup(self, text: str) -> str:
         """Returns a prettified (syntax-highlighted) markup str.
 
@@ -840,6 +881,215 @@ class MarkupLanguage:
             out += "]"
 
         return out
+
+    def prettify(self, text: str, force_markup: bool = False) -> str:
+        """Prettifies any string.
+
+        If the string contains ANSI sequences and `force_markup` is False,
+        the `prettify_ansi` method is used. Otherwise, `prettify_markup` does
+        the job.
+
+        Since the `prettify_markup` method fails cleanly (e.g. doesn't modify
+        a string with no markup) this is a safe call to any string.
+
+        Args:
+            text: The string to prettify.
+            force_markup: If set, when given an ANSI string, the
+                `MarkupLanguage.get_markup` method is used to translate it into
+                markup, which is then prettified using `prettify_markup`.
+        """
+
+        if len(RE_ANSI.findall(text)) > 0:
+            if not force_markup:
+                return self.prettify_ansi(text)
+
+            text = self.get_markup(text)
+
+        return self.prettify_markup(text)
+
+    def pprint(  # pylint: disable=too-many-arguments
+        self,
+        item: Any,
+        indent: int = 2,
+        condensed: bool = False,
+        force_markup: bool = False,
+        return_only: bool = False,
+    ) -> str | None:
+        """Pretty-prints any object.
+
+        Args:
+            item: The object to pretty-print.
+            indent: The number of spaces that should be used for indenting.
+                Only applies when `condensed` is True.
+            condensed: If not set each item of a container will occupy different
+                lines.
+            force_markup: When given an item of `str` type, containing ANSI sequences,
+                its markup representation will be generated and displayed using
+                `MarkupLanguage.get_markup`. See `MarkupLanguage.prettify` for more info.
+            return_only: If set, nothing will be printed and the prettified string is
+                returned instead.
+
+        Returns:
+            The prettified string if `return_only` is set, otherwise `None`, as the
+            value has already been printed.
+        """
+
+        type_styles = {
+            int: "[pprint-int]{item}[/]",
+            str: "[pprint-str]'{item}'[/]",
+            None: "[pprint-none]{item}[/]",
+            type: "[pprint-type]{item}[/]",
+        }
+
+        indent_str = indent * " "
+
+        def _apply_style(value: Any) -> str:
+            """Applies type-based style to the given value.
+
+            This value can technically be of any type, and builtins have
+            special styles defined for them.
+
+            Returns:
+                A styled-str representation of value.
+            """
+
+            if isinstance(value, (dict, list, tuple, set)):
+                return (
+                    self.pprint(
+                        value, indent=indent, condensed=condensed, return_only=True
+                    )
+                    or ""
+                )
+
+            if isinstance(value, type):
+                return type_styles[type].format(item=value.__name__)
+
+            if isinstance(value, str):
+                value = value.replace("[", r"\[")
+
+            if type(value) in type_styles:
+                return type_styles[type(value)].format(item=str(value))
+
+            if value is None:
+                return type_styles[None].format(item=str(value))
+
+            return str(value)
+
+        def _format_container_item(value: str) -> str:
+            """Formats a container item."""
+
+            out = f"{value},"
+            if condensed:
+                out += " "
+
+            if not condensed:
+                out += "\n"
+
+            return out
+
+        def _format_container(
+            container: dict | list | tuple | set, chars: tuple[str, str]
+        ) -> str:
+            """Formats a container-type instance.
+
+            Args:
+                container: The container to format.
+                chars: The characters that signify the start & end of the container.
+
+            Returns:
+                A pretty representation of the given container.
+            """
+
+            out = chars[0]
+
+            if not condensed:
+                out += "\n"
+
+            if isinstance(container, dict):
+                for key, value in item.items():
+                    for line in _format_container_item(
+                        f"{_apply_style(key)}: {_apply_style(value)}"
+                    ).splitlines():
+                        if condensed:
+                            out += line
+                            continue
+
+                        out += indent_str + line + "\n"
+            else:
+                for value in item:
+                    for line in _format_container_item(
+                        f"{_apply_style(value)}"
+                    ).splitlines():
+                        if condensed:
+                            out += line
+                            continue
+
+                        out += indent_str + line + "\n"
+
+            out = out.rstrip(", ")
+            out += chars[1]
+
+            return out
+
+        buff = ""
+        if isinstance(item, (dict, set, tuple, list)):
+            chars = str(item)[0], str(item)[-1]
+            buff = _format_container(item, chars)
+
+            if return_only:
+                return buff
+
+            with self as mprint:
+                mprint(buff)
+
+            return None
+
+        if isinstance(item, str):
+            item = self.prettify(item, force_markup=force_markup)
+
+        if item is not None:
+            if return_only:
+                return item
+
+            print(item)
+            return None
+
+        return None
+
+    def setup_displayhook(
+        self,
+        indent: int = 2,
+        condensed: bool = False,
+        force_markup: bool = False,
+    ) -> None:
+        """Sets up `sys.displayhook` to use `MarkupLanguage.pprint`.
+
+        This can be used to pretty-print all REPL output. IPython is
+        also supported.
+
+        Args:
+            indent: The amount of indentation used in printing container-types.
+                Only applied when `condensed` is False.
+            condensed: If set, all items in a container-type will be displayed in
+                one line, similar to the default `repl`.
+            force_markup: When given an ANSI-sequence containing str, its markup
+                representation will be generated using `MarkupLanguage.get_markup`,
+                and syntax highlighted using `MarkupLanguage.prettify_markup`.
+        """
+
+        try:
+            # Try to get IPython instance. This function is provided by the
+            # IPython runtime, so if running outside of that context a NameError
+            # is raised.
+            ipython = get_ipython()  # type: ignore
+
+        except NameError:
+            sys.displayhook = lambda value: self.pprint(
+                value, force_markup=force_markup, condensed=condensed, indent=indent
+            )
+            return
+
+        ipython.display_formatter.formatters["text/plain"] = self.pprint
 
 
 def main() -> None:
