@@ -80,6 +80,18 @@ from .ansi_interface import foreground
 from .exceptions import MarkupSyntaxError, AnsiSyntaxError
 
 
+try:
+    # Try to get IPython instance. This function is provided by the
+    # IPython runtime, so if running outside of that context a NameError
+    # is raised.
+    IPYTHON = get_ipython()  # type: ignore
+    from IPython.core.formatters import BaseFormatter  # pylint: disable=import-error
+
+except NameError:
+    IPYTHON = None
+    BaseFormatter = object
+
+
 __all__ = ["MacroCallable", "MacroCall", "MarkupLanguage", "StyledText", "markup"]
 
 MacroCallable = Callable[..., str]
@@ -1047,6 +1059,9 @@ class MarkupLanguage:
         if isinstance(item, str):
             item = self.prettify(item, force_markup=force_markup)
 
+        elif hasattr(item, "get_lines"):
+            item = "\n".join(line for line in item.get_lines())
+
         if item is not None:
             if return_only:
                 return item
@@ -1085,19 +1100,36 @@ class MarkupLanguage:
                 and syntax highlighted using `MarkupLanguage.prettify_markup`.
         """
 
-        try:
-            # Try to get IPython instance. This function is provided by the
-            # IPython runtime, so if running outside of that context a NameError
-            # is raised.
-            ipython = get_ipython()  # type: ignore
-
-        except NameError:
-            sys.displayhook = lambda value: self.pprint(
-                value, force_markup=force_markup, condensed=condensed, indent=indent
+        if IPYTHON is not None:
+            IPYTHON.display_formatter.formatters["text/plain"] = PTGFormatter(
+                force_markup=force_markup, condensed=condensed, indent=indent
             )
             return
 
-        ipython.display_formatter.formatters["text/plain"] = self.pprint
+        sys.displayhook = lambda value: self.pprint(
+            value, force_markup=force_markup, condensed=condensed, indent=indent
+        )
+
+
+class PTGFormatter(BaseFormatter):  # pylint: disable=too-few-public-methods
+    """An IPython formatter for PTG pretty printing."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        """Initializes PTGFormatter, storing **kwargs."""
+
+        super().__init__()
+
+        self.kwargs = kwargs
+
+    def __call__(self, value: Any) -> None:
+        """Pretty prints the given value, as well as a leading newline.
+
+        The newline is needed since IPython output is prepended with
+        "Out[i]:", and it might mess alignments up.
+        """
+
+        markup.pprint("\n")
+        markup.pprint(value, **self.kwargs)
 
 
 def main() -> None:
