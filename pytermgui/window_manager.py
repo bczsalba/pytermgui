@@ -563,6 +563,9 @@ class WindowManager(Container):
                 )
 
                 if not contains_pos and not is_target:
+                    if window.is_modal:
+                        break
+
                     continue
 
                 if event.action in self.focusing_actions:
