@@ -1,7 +1,7 @@
 """The module containing all of the layout-related widgets."""
 
 # These widgets have more than the 7 allowed instance attributes.
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes, too-many-lines
 
 from __future__ import annotations
 
@@ -75,6 +75,9 @@ class Container(Widget):
 
         for widget in widgets:
             self._add_widget(widget)
+
+        if "box" in attrs:
+            self.box = attrs["box"]
 
         self._drag_target: Widget | None = None
 
