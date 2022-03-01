@@ -866,7 +866,7 @@ class MarkupLanguage:
 
                     sequence += style.sequence
 
-                out += sequence + token.name + "\033[m"
+                out += sequence + token.name + "\033[0m"
                 continue
 
             out += " " if in_sequence else "["
@@ -920,18 +920,22 @@ class MarkupLanguage:
 
         return self.prettify_markup(text)
 
-    def pprint(  # pylint: disable=too-many-arguments
+    def pprint(  # pylint: disable=too-many-arguments, too-many-locals
         self,
-        item: Any,
+        *items: Any,
         indent: int = 2,
         condensed: bool = False,
         force_markup: bool = False,
         return_only: bool = False,
+        **print_args: Any,
     ) -> str | None:
         """Pretty-prints any object.
 
+        If a container (set, dict, tuple, etc..) is passed and its `len` is less than
+        or equal to 1 it will display as condensed, regardless of the `condensed` arg.
+
         Args:
-            item: The object to pretty-print.
+            *items: The objects to pretty-print.
             indent: The number of spaces that should be used for indenting.
                 Only applies when `condensed` is True.
             condensed: If not set each item of a container will occupy different
@@ -941,6 +945,9 @@ class MarkupLanguage:
                 `MarkupLanguage.get_markup`. See `MarkupLanguage.prettify` for more info.
             return_only: If set, nothing will be printed and the prettified string is
                 returned instead.
+            **print_args: The kwargs passed to `print` at the end of this call. The `sep`
+                argument is respected when given, otherwise it defaults to ", " if
+                `condensed`, else `, \\n`.
 
         Returns:
             The prettified string if `return_only` is set, otherwise `None`, as the
@@ -1014,26 +1021,29 @@ class MarkupLanguage:
             """
 
             out = chars[0]
+            local_condensed = condensed
+            if len(container) < 2:
+                local_condensed = True
 
-            if not condensed:
+            if not local_condensed:
                 out += "\n"
 
             if isinstance(container, dict):
-                for key, value in item.items():
+                for key, value in container.items():
                     for line in _format_container_item(
                         f"{_apply_style(key)}: {_apply_style(value)}"
                     ).splitlines():
-                        if condensed:
+                        if local_condensed:
                             out += line
                             continue
 
                         out += indent_str + line + "\n"
             else:
-                for value in item:
+                for value in container:
                     for line in _format_container_item(
                         f"{_apply_style(value)}"
                     ).splitlines():
-                        if condensed:
+                        if local_condensed:
                             out += line
                             continue
 
@@ -1044,32 +1054,38 @@ class MarkupLanguage:
 
             return out
 
-        buff = ""
-        if isinstance(item, (dict, set, tuple, list)):
-            chars = str(item)[0], str(item)[-1]
-            buff = _format_container(item, chars)
+        parsed: list[str] = []
+        joiner = print_args.get("sep", (", " if condensed else ", \n"))
+        for i, item in enumerate(items):
+            if isinstance(item, (dict, set, tuple, list)):
+                chars = str(item)[0], str(item)[-1]
+                parsed.append(self.parse(_format_container(item, chars)))
 
-            if return_only:
-                return buff
+            elif isinstance(item, (int, str)):
+                # This is ugly but its a slight bit better than adding an extra
+                # pylint ignore for too many statements.
+                value = {
+                    str: lambda item: self.prettify(item, force_markup=force_markup),
+                    int: lambda item: self.parse(_apply_style(item)),
+                }[type(item)](item)
 
-            with self as mprint:
-                mprint(buff)
+                if i == 0 or not isinstance(items[i - 1], type(item)):
+                    parsed.append(value)
+                    continue
 
-            return None
+                parsed[-1] += joiner.rstrip("\n") + value
 
-        if isinstance(item, str):
-            item = self.prettify(item, force_markup=force_markup)
+            elif hasattr(item, "get_lines"):
+                parsed.append("\n".join(line for line in item.get_lines()))
 
-        elif hasattr(item, "get_lines"):
-            item = "\n".join(line for line in item.get_lines())
+            elif item is not None:
+                parsed.append(str(item))
 
-        if item is not None:
-            if return_only:
-                return item
+        buff = joiner.join(parsed)
+        if return_only:
+            return buff
 
-            print(item)
-            return None
-
+        print(buff, **print_args)
         return None
 
     def setup_displayhook(
