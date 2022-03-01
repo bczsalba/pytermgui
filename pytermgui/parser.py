@@ -70,6 +70,7 @@ from __future__ import annotations
 
 import re
 import sys
+import builtins
 from random import shuffle
 from dataclasses import dataclass
 from argparse import ArgumentParser
@@ -1090,6 +1091,17 @@ class MarkupLanguage:
         >>> # Any function output will now be prettified
         ```
 
+        ...or alternatively, you can import `print` from `pytermgui.pretty`,
+        and have it automatically set up, and replace your namespace's `print`
+        function with `markup.pprint`:
+
+        ```python3
+        >>> from pytermgui.pretty import print
+        ... # Under the hood, the above is called and `markup.pprint` is set
+        ... # for the `print` name
+        >>> # Any function output will now be prettified
+        ```
+
         Args:
             indent: The amount of indentation used in printing container-types.
                 Only applied when `condensed` is False.
@@ -1100,15 +1112,22 @@ class MarkupLanguage:
                 and syntax highlighted using `MarkupLanguage.prettify_markup`.
         """
 
+        def _hook(value: Any) -> None:
+            self.pprint(
+                value, force_markup=force_markup, condensed=condensed, indent=indent
+            )
+
+            # Sets up "_" as a way to access return value,
+            # inkeeping with sys.displayhook
+            builtins._ = value  # type: ignore
+
         if IPYTHON is not None:
             IPYTHON.display_formatter.formatters["text/plain"] = PTGFormatter(
                 force_markup=force_markup, condensed=condensed, indent=indent
             )
             return
 
-        sys.displayhook = lambda value: self.pprint(
-            value, force_markup=force_markup, condensed=condensed, indent=indent
-        )
+        sys.displayhook = _hook
 
 
 class PTGFormatter(BaseFormatter):  # pylint: disable=too-few-public-methods
@@ -1130,6 +1149,10 @@ class PTGFormatter(BaseFormatter):  # pylint: disable=too-few-public-methods
 
         markup.pprint("\n")
         markup.pprint(value, **self.kwargs)
+
+        # Sets up "_" as a way to access return value,
+        # inkeeping with sys.displayhook
+        builtins._ = value  # type: ignore
 
 
 def main() -> None:
