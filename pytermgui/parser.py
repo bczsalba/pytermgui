@@ -829,7 +829,11 @@ docs/parser/markup_language.png"
             return text
 
         # TODO: Macros are only ran once with caching enabled
-        if self.should_cache and markup_text in self._cache:
+        if (
+            RE_MACRO.match(markup_text) is not None
+            and self.should_cache
+            and markup_text in self._cache
+        ):
             return self._cache[markup_text]
 
         for token in self.tokenize_markup(markup_text):
