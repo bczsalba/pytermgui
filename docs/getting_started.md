@@ -49,9 +49,9 @@ import pytermgui as ptg
 with ptg.WindowManager() as manager:
     manager.add(
         ptg.Window()
-        + "[wm-title]My first window!",
-        + "",
-        + ["Exit", lambda *_: manager.exit()],
+        + "[wm-title]My first window!"
+        + ""
+        + ["Exit", lambda *_: manager.exit()]
     )
     
     manager.run()
