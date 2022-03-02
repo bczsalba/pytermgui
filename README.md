@@ -41,13 +41,17 @@ Here are just a couple of ways to define the same widget structure:
 # -- demo.py --
 import pytermgui as ptg
 
-demo = ptg.Window(
-   ptg.Label("[210 bold]Hello world!"),
-   ptg.Label(),
-   ptg.InputField(prompt="Who are you?"),
-   ptg.Label(),
-   ptg.Button("Submit!")
-)
+with ptg.WindowManager() as manager:
+   demo = ptg.Window(
+      ptg.Label("[210 bold]Hello world!"),
+      ptg.Label(),
+      ptg.InputField(prompt="Who are you?"),
+      ptg.Label(),
+      ptg.Button("Submit!")
+   )
+   
+   manager.add(demo)
+   manager.run()
 ```
 
 **Using data-pattern conversion**
@@ -56,14 +60,18 @@ demo = ptg.Window(
 # -- demo.py --
 import pytermgui as ptg
 
-demo = (
-    ptg.Window()
-    + "[210 bold]Hello world!"
-    + ""
-    + ptg.InputField(prompt="Who are you?")
-    + ""
-    + ["Submit!"]
-)
+with ptg.WindowManager() as manager:
+   demo = (
+       ptg.Window()
+       + "[210 bold]Hello world!"
+       + ""
+       + ptg.InputField(prompt="Who are you?")
+       + ""
+       + ["Submit!"]
+   )
+   
+   manager.add(demo)
+   manager.run()
 ```
 
 **Using YAML**
