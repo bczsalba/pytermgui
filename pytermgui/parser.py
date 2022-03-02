@@ -866,17 +866,20 @@ docs/parser/markup_language.png"
                 continue
 
             if token.sequence is None:
-                if previous_sequence == sequence:
-                    out += _apply_macros(token.name)
-                    continue
+                applied = sequence
+                for prev in previous_sequence.split("\x1b"):
+                    if prev == "":
+                        continue
 
+                    prev = "\x1b" + prev
+                    applied = applied.replace(prev, "")
+
+                out += applied + _apply_macros(token.name)
                 previous_sequence = sequence
-
-                out += sequence + _apply_macros(token.name)
                 sequence = ""
+                continue
 
-            else:
-                sequence += token.sequence
+            sequence += token.sequence
 
         if sequence + previous_sequence != "":
             out += "\x1b[0m"
