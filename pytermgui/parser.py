@@ -1,68 +1,107 @@
 """
 A custom markup language to make styling `Widget`-s easier, and, well, more stylish.
 
-Markup Syntax
-=============
+Basic rundown
+-------------
 
-Basics
-------
-- Everything inside [square_brackets] is considered a tag
-- Everything outside is considered a PLAIN text
+The PTG markup language is included in order to make styling easier to read and manage.
+Its syntax is based on square brackets, within which tags are strictly separated by one
+space character. Tags can stand for colors (xterm-256, RGB or HEX, both background &
+foreground), styles, unsetters and macros.
 
-Tag types
----------
-- Style tags use the english name of the style (e.g. `[bold]`)
+The 16 simple colors of the terminal exist as named tags that refer to their numerical
+value.
 
-- Color tags can be of three types:
-    + 8BIT: `[141]`
-    + 24BIT/RGB: `[22;3;243]`
-    + 24BIT/HEX: `[#2203FA]`
-    + 24BIT colors are parsed as the same token type.
+Here is a simple example of the syntax, using the `pytermgui.pretty` submodule to
+syntax-highlight it inside the REPL:
 
-- Color tags set background when using the @ prefix: `[@141]`
+```python3
+>>> from pytermgui import pretty
+>>> '[141 @61 bold] Hello [!upper inverse] There '
+```
 
-- Macros are denoted by `!` prefix, and optional `(argument:list)` suffix
+<p align=center>
+<img src="https://github.com/bczsalba/pytermgui/blob/master/assets/docs/parser/\
+simple_example.png?raw=true" width=70%>
+</p>
 
-Macros
-------
 
-- Macros in markup convert from `[!name(arg1:arg2)]` to `name(arg1, arg2, text)`
-- The next PLAIN token is always passed to the macro as its last argument
-- The argument list is optional if a macro doesn't take any additional arguments
-- A macro can be defined by using `MarkupLanguage.define(name, callable)`
+General syntax
+--------------
 
-Aliases
--------
+Background colors are always denoted by a leading `@` character in front of the color
+tag. Styles are just the name of the style and macros have an exclamation mark in front
+of them. Additionally, unsetters use a leading slash (`/`) for their syntax. Color
+tokens have special unsetters: they use `/fg` to cancel foreground colors, and `/bg` to
+do so with backgrounds.
 
-- Tag aliases can be defined using `MarkupLanguage.alias(src, dst)`
-- These are expanded in parse-time, and are recognized as regular style tokens
-- Whenever an alias is defined, any cached markup containing it is removed
+### Macros:
+
+Macros are any type of callable that take at least *args; this is the value of the plain
+text enclosed by the tag group within which the given macro resides. Additionally,
+macros can be given any number of positional arguments from within markup, using the
+syntax:
+
+```
+[!macro(arg1:arg2:arg3)]Text that the macro applies to.[/!macro]plain text, no macro
+```
+
+This syntax gets parsed as follows:
+
+```python3
+macro("Text that the macro applies to.", "arg1", "arg2", "arg3")
+```
+
+`macro` here is whatever the name `macro` was defined as prior.
+
+### Colors:
+
+Colors can be of three general types: xterm-256, RGB and HEX.
+
+`xterm-256` stands for one of the 256 xterm colors. You can use `ptg -c` to see the all
+of the available colors. Its syntax is just the 0-base index of the color, like `[141]`
+
+`RGB` colors are pretty self explanatory. Their syntax is follows the format
+`RED;GREEN;BLUE`, such as `[111;222;333]`.
+
+`HEX` colors are basically just RGB with extra steps. Their syntax is `#RRGGBB`, such as
+`[#FA72BF]`. This code then gets converted to a tuple of RGB colors under the hood, so
+from then on RGB and HEX colors are treated the same, and emit the same tokens.
+
+As mentioned above, all colors can be made to act on the background instead by
+prepending the color tag with `@`, such as `@141`, `@111;222;333` or `@#FA72BF`. To
+clear these effects, use `/fg` for foreground and `/bg` for background colors.
+
+`MarkupLanguage` and instancing
+-------------------------------
+
+All markup behaviour is done by an instance of the `MarkupLanguage` class. This is done
+partially for organization reasons, but also to allow a sort of sandboxing of custom
+definitions and settings.
+
+PyTermGUI provides the `markup` name as the global markup language instance. This should
+be used pretty much all of the time, and custom instances should only ever come about
+when some security-sensitive macro definitions are needed, as `markup` is used by every
+widget, including user-input ones such as `InputField`.
+
+For the rest of this page, `MarkupLanguage` will refer to whichever instance you are
+using.
+
+TL;DR : Use `markup` always, unless a security concern blocks you from doing so.
 
 Caching
 -------
 
-- This module provides (opt-out) caching for parsed markup
-- After parsing a previously unknown string, it is stored in `MarkupLanguage._cache`
-- Next time the parser sees this markup string, it will restore the cached value
-- Alias definitions delete affected cache entries
+By default, all markup parse results are cached and returned when the same input is
+given. To disable this behaviour, set your markup instance (usually `markup`)'s
+`should_cache` field to False.
 
-Instancing
-----------
+Customization
+-------------
 
-- `pytermgui` provides the `markup` name, which acts as the module-level language instance
-- You can create your own instance using the `MarkupLanguage` name
-- Each instance has its own tags, user tags & macros
-- You might want a system-level and user-level instance when users can freely input markup
-
-Usage
------
-
-- `MarkupLanguage.parse()`: Parse markup text into ANSI string
-- `MarkupLanguage.get_markup()`: Get markup string from ANSI text
-- `MarkupLanguage.tokenize_ansi()`, `MarkupLanguage.tokenize_markup()`: Tokenize text
-- `MarkupLanguage.define()`: Define an instance-local macro
-- `MarkupLanguage.alias()`: Define an instance-local alias
-
+There are a couple of ways to customize how markup is parsed. Custom tags can be created
+by calling `MarkupLanguage.alias`. For defining custom macros, you can use
+`MarkupLanguage.define`. For more information, see each method's documentation.
 """
 # pylint: disable=too-many-lines
 
@@ -136,15 +175,21 @@ UNSETTER_MAP: dict[str, str | None] = {
 }
 
 
-def _macro_align(width: str, alignment: str, content: str) -> str:
-    """Align text using fstring magic"""
+def macro_align(width: str, alignment: str, content: str) -> str:
+    """Aligns given text using fstrings.
+
+    Args:
+        width: The width to align to.
+        alignment: One of "left", "center", "right".
+        content: The content to align; implicit argument.
+    """
 
     aligner = "<" if alignment == "left" else (">" if alignment == "right" else "^")
     return f"{content:{aligner}{width}}"
 
 
-def _macro_expand(lang: MarkupLanguage, tag: str) -> str:
-    """Expand tag alias"""
+def macro_expand(lang: MarkupLanguage, tag: str) -> str:
+    """Expands a tag alias."""
 
     if not tag in lang.user_tags:
         return tag
@@ -152,20 +197,20 @@ def _macro_expand(lang: MarkupLanguage, tag: str) -> str:
     return lang.get_markup("\x1b[" + lang.user_tags[tag] + "m ")[:-1]
 
 
-def _macro_strip_fg(item: str) -> str:
-    """Strip foreground color from item"""
+def macro_strip_fg(item: str) -> str:
+    """Strips foreground color from item"""
 
     return markup.parse("[/fg]" + item)
 
 
-def _macro_strip_bg(item: str) -> str:
-    """Strip foreground color from item"""
+def macro_strip_bg(item: str) -> str:
+    """Strips foreground color from item"""
 
     return markup.parse("[/bg]" + item)
 
 
-def _macro_shuffle(item: str) -> str:
-    """Shuffle a string using shuffle.shuffle on its list cast"""
+def macro_shuffle(item: str) -> str:
+    """Shuffles a string using shuffle.shuffle on its list cast."""
 
     shuffled = list(item)
     shuffle(shuffled)
@@ -173,11 +218,11 @@ def _macro_shuffle(item: str) -> str:
     return "".join(shuffled)
 
 
-def _macro_link(*args) -> str:
+def macro_link(*args) -> str:
     """Creates a clickable hyperlink.
 
     Note:
-        Since this is a pretty new feature, its support is limited.
+        Since this is a pretty new feature for terminals, its support is limited.
     """
 
     *uri_parts, label = args
@@ -187,36 +232,61 @@ def _macro_link(*args) -> str:
 
 
 class TokenType(Enum):
-    """An Enum to store various token types"""
+    """An Enum to store various token types."""
 
     PLAIN = _auto()
+    """Plain text, nothing interesting."""
+
     STYLE = _auto()
+    """A builtin terminal style, such as `bold` or `italic`."""
+
     MACRO = _auto()
+    """A PTG markup macro. The macro itself is stored inside `self.data`."""
+
     ESCAPED = _auto()
+    """An escaped token."""
+
     FG_8BIT = _auto()
+    """8 bit (xterm-255) foreground color."""
+
     BG_8BIT = _auto()
+    """8 bit (xterm-255) background color."""
+
     FG_24BIT = _auto()
+    """24 bit (RGB) foreground color."""
+
     BG_24BIT = _auto()
+    """24 bit (RGB) background color."""
+
     UNSETTER = _auto()
+    """A token that unsets some other attribute."""
 
 
 @dataclass
 class Token:
-    """A class holding information on a singular Markup/ANSI unit"""
+    """A class holding information on a singular markup or ANSI style unit.
+
+    Attributes:
+    """
 
     ttype: TokenType
+    """The type of this token."""
+
     data: str | MacroCall | None
+    """The data contained within this token. This changes based on the `ttype` attr."""
+
     name: str = "<unnamed-token>"
+    """An optional display name of the token. Defaults to `data` when not given."""
 
     def __post_init__(self) -> None:
-        """Set name to data if not provided"""
+        """Sets `name` to `data` if not provided."""
 
         if self.name == "<unnamed-token>":
             assert isinstance(self.data, str)
             self.name = self.data
 
     def __eq__(self, other: object) -> bool:
-        """Check equality with `other`"""
+        """Checks equality with `other`."""
 
         if other is None:
             return False
@@ -231,7 +301,7 @@ class Token:
 
     @property
     def sequence(self) -> str | None:
-        """Get ANSI sequence representing token"""
+        """Returns the ANSI sequence this token represents."""
 
         if self.data is None:
             return None
@@ -370,25 +440,7 @@ class StyledText(str):
 class MarkupLanguage:
     """A class representing an instance of a Markup Language.
 
-    It holds data on default & custom tags and macros.
-
-    It offers tokenizer methods for both `markup` and `ANSI` text,
-    which can then be used to convert between the two formats.
-
-    You can define macros using `MarkupLanguage.define`, and alias
-    a set of tags using `MarkupLanguage.alias`.
-
-    Parsing `markup` into `ANSI` text is done using the `parse()` method,
-    where `optimizer_level` sets the amount of optimization that should be
-    done on the result string.
-
-    Getting `markup` from `ANSI` is done using the `get_markup()` method. Note
-    that this method is "lossy": it does not preserve information about macros,
-    and turns aliases into their underlying values.
-
-    You can also use a `MarkupLanguage` instance as a context manager, which
-    returns a callable with the signature of print that will parse every argument
-    given to it, and pass through all **kwargs.
+    This class is used for all markup/ANSI parsing, tokenizing and usage.
 
     ```python3
     import pytermgui as ptg
@@ -399,13 +451,18 @@ class MarkupLanguage:
     ```
 
     <p style="text-align: center">
-        <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/parser.png
+        <img src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/\
+docs/parser/markup_language.png"
         style="width: 80%">
     </p>
     """
 
     def __init__(self, default_macros: bool = True) -> None:
-        """Initialize object"""
+        """Initializes a MarkupLanguage.
+
+        Args:
+            default_macros: If not set, the builtin macros are not defined.
+        """
 
         self.tags: dict[str, str] = STYLE_MAP.copy()
         self._cache: dict[str, StyledText] = {}
@@ -416,17 +473,17 @@ class MarkupLanguage:
         self.should_cache: bool = True
 
         if default_macros:
-            self.define("!link", _macro_link)
-            self.define("!align", _macro_align)
+            self.define("!link", macro_link)
+            self.define("!align", macro_align)
             self.define("!markup", self.get_markup)
-            self.define("!shuffle", _macro_shuffle)
-            self.define("!strip_bg", _macro_strip_bg)
-            self.define("!strip_fg", _macro_strip_fg)
+            self.define("!shuffle", macro_shuffle)
+            self.define("!strip_bg", macro_strip_bg)
+            self.define("!strip_fg", macro_strip_fg)
             self.define("!upper", lambda item: str(item.upper()))
             self.define("!lower", lambda item: str(item.lower()))
             self.define("!title", lambda item: str(item.title()))
             self.define("!capitalize", lambda item: str(item.capitalize()))
-            self.define("!expand", lambda tag: _macro_expand(self, tag))
+            self.define("!expand", lambda tag: macro_expand(self, tag))
 
         self.alias("pprint-int", "176")
         self.alias("pprint-str", "149 italic")
@@ -435,7 +492,14 @@ class MarkupLanguage:
 
     @staticmethod
     def _get_color_token(tag: str) -> Token | None:
-        """Try to get color token from a tag"""
+        """Tries to get a color token from the given tag.
+
+        Args:
+            tag: The tag to parse.
+
+        Returns:
+            A color token if the given tag could be parsed into one, else None.
+        """
 
         def _hex_to_rgb(color: str) -> str:
             """Get rgb color from hex"""
@@ -481,7 +545,7 @@ class MarkupLanguage:
         return None
 
     def __enter__(self) -> Callable[..., None]:
-        """Return a print method that parses markup"""
+        """Returns a print method that parses markup."""
 
         def printer(*args, **kwargs) -> None:
             """Parse all arguments and pass them through to print, along with kwargs"""
@@ -495,13 +559,21 @@ class MarkupLanguage:
         return printer
 
     def __exit__(self, _, exception: Exception, __) -> None:
-        """Raise any exception that happened in context"""
+        """Raises any exception that happened in context."""
 
         if exception is not None:
             raise exception
 
     def tokenize_markup(self, markup_text: str) -> Iterator[Token]:
-        """Tokenize markup text, return an Iterator to save memory"""
+        """Converts the given markup string into an iterator of `Token`.
+
+        Args:
+            markup_text: The text to look at.
+
+        Returns:
+            An iterator of tokens. The reason this is an iterator is to possibly save
+            on memory.
+        """
 
         end = 0
         start = 0
@@ -572,7 +644,15 @@ class MarkupLanguage:
     def tokenize_ansi(  # pylint: disable=too-many-branches
         self, ansi: str
     ) -> Iterator[Token]:
-        """Tokenize ansi text, return an Iterator to save memory."""
+        """Converts the given ANSI string into an iterator of `Token`.
+
+        Args:
+            ansi: The text to look at.
+
+        Returns:
+            An iterator of tokens. The reason this is an iterator is to possibly save
+            on memory.
+        """
 
         end = 0
         start = 0
@@ -638,9 +718,13 @@ class MarkupLanguage:
             yield Token(ttype=TokenType.PLAIN, data=plain)
 
     def define(self, name: str, method: MacroCallable) -> None:
-        """Define a Macro tag that executes `method`
+        """Defines a Macro tag that executes the given method.
 
-        The `!` prefix is added to the name if not there already."""
+        Args:
+            name: The name the given method will be reachable by within markup.
+                The given value gets "!" prepended if it isn't present already.
+            method: The method this macro will execute.
+        """
 
         if not name.startswith("!"):
             name = "!" + name
@@ -649,7 +733,14 @@ class MarkupLanguage:
         self.unsetters["/" + name] = None
 
     def alias(self, name: str, value: str) -> None:
-        """Alias a markup tag to stand for some value, generate unsetter for it"""
+        """Aliases the given name to a value, and generates an unsetter for it.
+
+        Note that it is not possible to alias macros.
+
+        Args:
+            name: The name of the new tag.
+            value: The value the new tag will stand for.
+        """
 
         def _get_unsetter(token: Token) -> str | None:
             """Get unsetter for a token"""
@@ -707,7 +798,17 @@ class MarkupLanguage:
             del self._cache[item]
 
     def parse(self, markup_text: str) -> StyledText:
-        """Parse markup"""
+        """Parses the given markup.
+
+        Args:
+            markup_text: The markup to parse.
+
+        Returns:
+            A `StyledText` instance of the result of parsing the input. This
+            custom `str` class is used to allow accessing the plain value of
+            the output, as well as to cleanly index within it. It is analogous
+            to builtin `str`, only adds extra things on top.
+        """
 
         # TODO: Add more optimizations:
         #       - keep track of currently-active tokens
@@ -781,7 +882,17 @@ class MarkupLanguage:
         return out
 
     def get_markup(self, ansi: str) -> str:
-        """Get markup from ANSI text"""
+        """Generates markup from ANSI text.
+
+        Args:
+            ansi: The text to get markup from.
+
+        Returns:
+            A markup string that can be parsed to get (visually) the same
+            result. Note that this conversion is lossy in a way: there are some
+            details (like macros) that cannot be preserved in an ANSI->Markup->ANSI
+            conversion.
+        """
 
         current_tags: list[str] = []
         out = ""
@@ -896,7 +1007,11 @@ class MarkupLanguage:
         return out
 
     def prettify(self, text: str, force_markup: bool = False) -> str:
-        """Prettifies any string.
+        """Prettifies any ANSI or Markup str.
+
+        Note that this is not a general-use pretty-print formatter. For that,
+        please refer to `MarkupLanguage.pprint` with the `return_only` flag set
+        to `True`.
 
         If the string contains ANSI sequences and `force_markup` is False,
         the `prettify_ansi` method is used. Otherwise, `prettify_markup` does
