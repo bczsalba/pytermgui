@@ -622,19 +622,40 @@ class Label(Widget):
 
     serialized = Widget.serialized + ["*value", "align", "padding"]
 
-    def __init__(self, value: str = "", padding: int = 0, **attrs: Any) -> None:
-        """Set up object"""
+    def __init__(
+        self,
+        value: str = "",
+        padding: int = 0,
+        non_first_padding: int = 0,
+        **attrs: Any,
+    ) -> None:
+        """Initializes a Label.
+
+        Args:
+            value: The value of this string. Using the default value style
+                (`pytermgui.widgets.styles.MARKUP`),
+            padding: The number of space (" ") characters to prepend to every line after
+                line breaking.
+            non_first_padding: The number of space characters to prepend to every
+                non-first line of `get_lines`. This is applied on top of `padding`.
+        """
 
         super().__init__(**attrs)
 
         self.value = value
         self.padding = padding
+        self.non_first_padding = non_first_padding
         self.width = real_length(value) + self.padding
 
     def get_lines(self) -> list[str]:
         """Get lines representing this Label, breaking lines as necessary"""
 
         value_style = self._get_style("value")
-        line_gen = break_line(value_style(self.padding * " " + self.value), self.width)
 
-        return list(line_gen) or [""]
+        lines = []
+        for line in break_line(
+            value_style(self.padding * " " + self.value), self.width
+        ):
+            lines.append(self.padding * " " + self.non_first_padding * " " + line)
+
+        return lines or [""]
