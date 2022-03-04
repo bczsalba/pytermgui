@@ -559,6 +559,7 @@ def main() -> None:
         return
 
     if args.version:
+        no_hash = False
         try:
             # Credit to: https://stackoverflow.com/a/21901260
             git_hash = (
@@ -579,14 +580,17 @@ def main() -> None:
                 .strip()
             )
 
-        except Exception as error:  # pylint: disable=broad-except
-            git_hash = f"Could not determine due to {type(error).__name__}:\n\t{error}."
-            latest_tag_hash = ""
+        except Exception:  # pylint: disable=broad-except
+            # Don't display has if we couldn't find it
+            # This is usually the case when installing through PIP.
+            no_hash = True
 
         print(f"PyTermGUI v{__version__}{'+' if latest_tag_hash != git_hash else ''}")
         print(f"Python: {sys.version.split()[0]}")
         print(f"Platform: {platform.platform()}")
-        print(f"Git commit: {git_hash}")
+
+        if not no_hash:
+            print(f"Git commit: {git_hash}")
 
         return
 
