@@ -584,6 +584,7 @@ def main() -> None:
             # Don't display has if we couldn't find it
             # This is usually the case when installing through PIP.
             no_hash = True
+            latest_tag_hash = git_hash = "0"
 
         with markup as mprint:
             mprint(
