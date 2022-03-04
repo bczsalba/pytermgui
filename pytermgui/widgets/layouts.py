@@ -792,6 +792,35 @@ class Container(Widget):
 
         return False
 
+    def execute_binding(self, key: str) -> bool:
+        """Executes a binding on self, and then on self._widgets.
+
+        If a widget.execute_binding call returns True this function will too. Note
+        that on success the function returns immediately; no further widgets are
+        checked.
+
+        Args:
+            key: The binding key.
+
+        Returns:
+            True if any widget returned True, False otherwise.
+        """
+
+        if super().execute_binding(key):
+            return True
+
+        selectables_index = 0
+        for widget in self._widgets:
+            if widget.execute_binding(key):
+                selectables_index += widget.selected_index or 0
+                self.select(selectables_index)
+                return True
+
+            if widget.is_selectable:
+                selectables_index += widget.selectables_length
+
+        return False
+
     def handle_key(  # pylint: disable=too-many-return-statements, too-many-branches
         self, key: str
     ) -> bool:
@@ -862,6 +891,10 @@ class Container(Widget):
 
             if self.selected is not None:
                 self.selected.handle_key(key)
+                return True
+
+        for widget in self._widgets:
+            if widget.execute_binding(key):
                 return True
 
         return False
