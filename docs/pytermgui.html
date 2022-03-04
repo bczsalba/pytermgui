@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 10.0.1"/>
+    <meta name="generator" content="pdoc 10.0.2"/>
     <title>pytermgui API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -76,6 +76,7 @@
                 <li><a href="pytermgui/input.html">pytermgui.input</a></li>
                 <li><a href="pytermgui/inspector.html">pytermgui.inspector</a></li>
                 <li><a href="pytermgui/parser.html">pytermgui.parser</a></li>
+                <li><a href="pytermgui/pretty.html">pytermgui.pretty</a></li>
                 <li><a href="pytermgui/serializer.html">pytermgui.serializer</a></li>
                 <li><a href="pytermgui/widgets.html">pytermgui.widgets</a></li>
                 <li><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></li>
@@ -128,7 +129,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <h2 id="adding-windows-as-variables">Adding windows as variables</h2>
 
-<p>In order to actually have something going on, you can call <code><a href="pytermgui/widgets.html#WindowManager.add">pytermgui.widgets.WindowManager.add</a></code> with a window of your choice. Adding a window to the manager will bring it to focus.</p>
+<p>In order to actually have something going on, you can call <code>pytermgui.widgets.WindowManager.add</code> with a window of your choice. Adding a window to the manager will bring it to focus.</p>
 
 <p>Here is a quick example of the most basic usecase:</p>
 
@@ -156,9 +157,9 @@ of the library you use. I will provide an example of usage for each.</p>
 <span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
         <span class="n">ptg</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
-        <span class="o">+</span> <span class="s2">&quot;[wm-title]My first window!&quot;</span><span class="p">,</span>
-        <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">exit</span><span class="p">()],</span>
+        <span class="o">+</span> <span class="s2">&quot;[wm-title]My first window!&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">exit</span><span class="p">()]</span>
     <span class="p">)</span>
 
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -167,9 +168,9 @@ of the library you use. I will provide an example of usage for each.</p>
 <h2 id="useful-methods-to-know-about">Useful methods to know about</h2>
 
 <ul>
-<li><code><a href="pytermgui/widgets.html#Widget.bind">pytermgui.widgets.Widget.bind</a></code>: Bind a keypress to an action. You can also add a description, which you can then use to have a sort of help menu.</li>
+<li><code>pytermgui.widgets.Widget.bind</code>: Bind a keypress to an action. You can also add a description, which you can then use to have a sort of help menu.</li>
 <li><code><a href="pytermgui/parser.html#MarkupLanguage.alias">pytermgui.parser.MarkupLanguage.alias</a></code>: Alias a single word (with no spaces) to some markup.</li>
-<li><code><a href="pytermgui/parser.html#MarkupLanguage.define">pytermgui.parser.MarkupLanguage.define</a></code>: Define a markup macro. See <code><a href="pytermgui/parser.html">pytermgui.parser</a></code> for info on the macro functionality.</li>
+<li><code><a href="pytermgui/parser.html#MarkupLanguage.define">pytermgui.parser.MarkupLanguage.define</a></code>: Define a markup macro. See <code>pytermgui.parser</code> for info on the macro functionality.</li>
 </ul>
 
 <p><strong>Note:</strong> For markup functions, it is recommended to use the <code>markup</code> name that is exported by the module.</p>
@@ -294,7 +295,7 @@ of the library you use. I will provide an example of usage for each.</p>
 <span class="w">            </span><span class="nt">char_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">char_str</span><span class="w"></span>
 </code></pre></div>
 
-<p>As you can see, styles take markup strings. This is because they are converted right into <code><a href="#styles.MarkupFormatter">pytermgui.styles.MarkupFormatter</a></code> objects, which means you can incorporate both <code>{depth}</code> and <code>{item}</code> into them.</p>
+<p>As you can see, styles take markup strings. This is because they are converted right into <code>pytermgui.styles.MarkupFormatter</code> objects, which means you can incorporate both <code>{depth}</code> and <code>{item}</code> into them.</p>
 
 <p><strong>Note:</strong> While it is permitted, not including <code>depth</code> nor <code>item</code> into your markup will turn it static, likely causing some headaches.</p>
 
@@ -603,11 +604,11 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <h1 id="how-to-define-your-own-widget">How to: Define your own Widget</h1>
 
-<p>As mentioned above, you <strong>usually</strong> don't have to do this. <code><a href="">pytermgui</a></code> tries to make everything definable inline, but for some functionalities you might need more than what is exposed.</p>
+<p>As mentioned above, you <strong>usually</strong> don't have to do this. <code>pytermgui</code> tries to make everything definable inline, but for some functionalities you might need more than what is exposed.</p>
 
 <h2 id="important-things-to-know">Important things to know</h2>
 
-<p>Firstly, the most important aspect of how the library works is the <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code> threading system. As listening for any IO, let it be keyboard or mouse, is always blocking, we cannot print while that is happening. This obviously will not do, so we separate the input and output to different threads.</p>
+<p>Firstly, the most important aspect of how the library works is the <code>pytermgui.window_manager</code> threading system. As listening for any IO, let it be keyboard or mouse, is always blocking, we cannot print while that is happening. This obviously will not do, so we separate the input and output to different threads.</p>
 
 <p>The main thread is input. This thread is completely handled by the library, and the only place the user can influence it is with the <code><a href="pytermgui/widgets/base.html#Widget.bind">pytermgui.widgets.base.Widget.bind</a></code> system.</p>
 
@@ -627,7 +628,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <p>For having a number of suboptions within the widget, define the <code>selectables_length</code> property. This is defined by <code>Container</code> already, so if you subclass any of its children you won't have to worry about it. <code>selectables_length</code> defines how many options can be selected within the widget, and is checked by its parent. Be sure to make it a <code>@property</code>, otherwise you will get errors.</p>
 
-<p>For custom styles &amp; chars, define those attributes in the widget body. There is plenty of examples in the <code><a href="pytermgui/widgets.html">pytermgui.widgets</a></code> submodule on how to do this.</p>
+<p>For custom styles &amp; chars, define those attributes in the widget body. There is plenty of examples in the <code>pytermgui.widgets</code> submodule on how to do this.</p>
 
 <h1 id="layers-of-the-api">Layers of the API</h1>
 
@@ -635,7 +636,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <h2 id="low-level">Low level</h2>
 
-<p>At the base, there is <code><a href="pytermgui/ansi_interface.html">pytermgui.ansi_interface</a></code> and <code><a href="pytermgui/input.html">pytermgui.input</a></code>, handling terminal APIs for output and input respectively. This is the lowest-level layer of the library.</p>
+<p>At the base, there is <code>pytermgui.ansi_interface</code> and <code>pytermgui.input</code>, handling terminal APIs for output and input respectively. This is the lowest-level layer of the library.</p>
 
 <div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 
@@ -655,7 +656,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <h2 id="helper-level">Helper level</h2>
 
-<p>On top of that, there is the helper layer, including things like <code><a href="pytermgui/helpers.html">pytermgui.helpers</a></code>, <code><a href="pytermgui/context_managers.html">pytermgui.context_managers</a></code> and the kind. These provide no extra functionality, only combine functions defined below them in order to make them more usable.</p>
+<p>On top of that, there is the helper layer, including things like <code>pytermgui.helpers</code>, <code>pytermgui.context_managers</code> and the kind. These provide no extra functionality, only combine functions defined below them in order to make them more usable.</p>
 
 <div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 
@@ -672,9 +673,9 @@ of the library you use. I will provide an example of usage for each.</p>
 
 <h2 id="high-level">High level</h2>
 
-<p>Building on all that is the relatively high level <code><a href="pytermgui/widgets.html">pytermgui.widgets</a></code> module. This part uses things from everything defined before it to create a visually appealing interface system. It introduces a lot of its own APIs and abstractions, and leaves all the parts below it free of cross-layer dependencies.</p>
+<p>Building on all that is the relatively high level <code>pytermgui.widgets</code> module. This part uses things from everything defined before it to create a visually appealing interface system. It introduces a lot of its own APIs and abstractions, and leaves all the parts below it free of cross-layer dependencies.</p>
 
-<p>The highest layer of the library is for <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code>. This layer combines parts from everything below. It introduces abstractions on top of the <code><a href="#widget">pytermgui.widget</a></code> system, and creates its own featureset. </p>
+<p>The highest layer of the library is for <code>pytermgui.window_manager</code>. This layer combines parts from everything below. It introduces abstractions on top of the <code>pytermgui.widget</code> system, and creates its own featureset. </p>
 
 <div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
 <span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
@@ -734,7 +735,7 @@ of the library you use. I will provide an example of usage for each.</p>
 
     <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;3.1.0&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;3.2.0&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">auto</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Widget</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]]:</span>
@@ -1034,35 +1035,35 @@ attempted to be added to a Widget.</p>
 <li>Syntax example: <code>"Label value"</code></li>
 </ul>
 
-<p><code><a href="pytermgui/widgets.html#extra.Splitter">pytermgui.widgets.extra.Splitter</a></code>:</p>
+<p><code>pytermgui.widgets.extra.Splitter</code>:</p>
 
 <ul>
 <li>Created from <code>tuple[Any]</code></li>
 <li>Syntax example: <code>(YourWidget(), "auto_syntax", ...)</code></li>
 </ul>
 
-<p><code><a href="pytermgui/widgets.html#extra.Splitter">pytermgui.widgets.extra.Splitter</a></code> prompt:</p>
+<p><code>pytermgui.widgets.extra.Splitter</code> prompt:</p>
 
 <ul>
 <li>Created from <code>dict[Any, Any]</code></li>
 <li>Syntax example: <code>{YourWidget(): "auto_syntax"}</code></li>
 </ul>
 
-<p><code><a href="pytermgui/widgets.html#buttons.Button">pytermgui.widgets.buttons.Button</a></code>:</p>
+<p><code>pytermgui.widgets.buttons.Button</code>:</p>
 
 <ul>
-<li>Created from <code>list[str, <a href="pytermgui/widgets.html#buttons.MouseCallback">pytermgui.widgets.buttons.MouseCallback</a>]</code></li>
+<li>Created from <code>list[str, pytermgui.widgets.buttons.MouseCallback]</code></li>
 <li>Syntax example: <code>["Button label", lambda target, caller: ...]</code></li>
 </ul>
 
-<p><code><a href="pytermgui/widgets.html#buttons.Checkbox">pytermgui.widgets.buttons.Checkbox</a></code>:</p>
+<p><code>pytermgui.widgets.buttons.Checkbox</code>:</p>
 
 <ul>
 <li>Created from <code>list[bool, Callable[[bool], Any]]</code></li>
 <li>Syntax example: <code>[True, lambda checked: ...]</code></li>
 </ul>
 
-<p><code><a href="pytermgui/widgets.html#buttons.Toggle">pytermgui.widgets.buttons.Toggle</a></code>:</p>
+<p><code>pytermgui.widgets.buttons.Toggle</code>:</p>
 
 <ul>
 <li>Created from <code>list[tuple[str, str], Callable[[str], Any]]</code></li>
