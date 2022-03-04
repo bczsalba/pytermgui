@@ -585,12 +585,19 @@ def main() -> None:
             # This is usually the case when installing through PIP.
             no_hash = True
 
-        print(f"PyTermGUI v{__version__}{'+' if latest_tag_hash != git_hash else ''}")
-        print(f"Python: {sys.version.split()[0]}")
-        print(f"Platform: {platform.platform()}")
+        with markup as mprint:
+            mprint(
+                f"[!gradient(60)]PyTermGUI[/!gradient] [bold 204]v{__version__}"
+                + f"{'+' if latest_tag_hash != git_hash else ''}"
+            )
+            mprint()
+            mprint(f"[30]Python[/]: [150]{sys.version.split()[0]}")
 
-        if not no_hash:
-            print(f"Git commit: {git_hash}")
+            if not no_hash:
+                mprint(f"[36]Git commit[/]: [186]{git_hash}")
+
+            colors = ("36", "186") if no_hash else ("42", "222")
+            mprint(f"[{colors[0]}]Platform[/]: [{colors[1]}]{platform.platform()}")
 
         return
 
