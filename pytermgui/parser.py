@@ -231,6 +231,60 @@ def macro_link(*args) -> str:
     return f"\x1b]8;;{uri}\x1b\\{label}\x1b]8;;\x1b\\"
 
 
+def _apply_colors(colors: list[str] | list[int], item: str) -> str:
+    """Applies the given list of colors to the item, spread out evenly."""
+
+    blocksize = round(len(item) / len(colors))
+
+    out = ""
+    current_block = 0
+    for i, char in enumerate(item):
+        if i % blocksize == 0 and current_block < len(colors):
+            out += f"[{colors[current_block]}]"
+            current_block += 1
+
+        out += char
+
+    return markup.parse(out)
+
+
+def macro_rainbow(item: str) -> str:
+    """Creates rainbow-colored text."""
+
+    colors = ["red", "208", "yellow", "green", "brightblue", "blue", "93"]
+
+    return _apply_colors(colors, item)
+
+
+def macro_gradient(base_str: str, item: str) -> str:
+    """Creates an xterm-256 gradient from a base color.
+
+    This exploits the way the colors are arranged in the xterm color table; every
+    36th color is the next item of a single gradient.
+
+    The start of this given gradient is calculated by decreasing the given base by 36 on
+    every iteration as long as the point is a valid gradient start.
+
+    After that, the 6 colors of this gradient are calculated and applied.
+    """
+
+    if not base_str.isdigit():
+        raise ValueError("Gradient base has to be a digit.")
+
+    base = int(base_str)
+    if base < 16 or base > 231:
+        raise ValueError("Gradient base must be between 16 and 232")
+
+    while base > 52:
+        base -= 36
+
+    colors = []
+    for i in range(6):
+        colors.append(base + 36 * i)
+
+    return _apply_colors(colors, item)
+
+
 class TokenType(Enum):
     """An Enum to store various token types."""
 
@@ -479,6 +533,8 @@ docs/parser/markup_language.png"
             self.define("!shuffle", macro_shuffle)
             self.define("!strip_bg", macro_strip_bg)
             self.define("!strip_fg", macro_strip_fg)
+            self.define("!rainbow", macro_rainbow)
+            self.define("!gradient", macro_gradient)
             self.define("!upper", lambda item: str(item.upper()))
             self.define("!lower", lambda item: str(item.lower()))
             self.define("!title", lambda item: str(item.title()))
