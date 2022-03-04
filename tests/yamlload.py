@@ -44,6 +44,7 @@ def main() -> None:
             ptg.Container()
             + ptg.Container(ptg.Button("Press me", lambda *_: manager.alert("AAAAA")))
             + ptg.Button("No, press me!", lambda *_: manager.alert("BBBBB"))
+            + ptg.KeyboardButton("Help", lambda *_: manager.alert("HELP"), index=2)
         )
 
         manager.add(window)
