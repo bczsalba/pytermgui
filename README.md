@@ -1,5 +1,3 @@
-<!-- TODO: these colors could be randomly generated -->
-
 ![title](https://github.com/bczsalba/pytermgui/raw/master/assets/title.png)
 
 > A simple yet powerful TUI framework for your Python (3.7+) applications
@@ -23,19 +21,55 @@ pip3 install pytermgui
    </a>
  </p>
 
-## Batteries included or bare-metal. It's your choice.
 
-PyTermGUI has both higher and lower level interfaces. If you're only here for the terminal APIs, `ansi_interface` will be your friend.
+<!-- TODO: The images here use my personal terminal theme, while the ones below use GitHub's. We should unite them. -->
 
-## Zero dependencies
+## Usecases
 
-Everything here is home made, just like your grandmas cookies. There is only one optional dependency, `PyYaml`, which you won't have to install unless you plan on using YAML features.
+PyTermGUI can be used for a variety of things. You are ought to find something useful, whether you are after a TUI library with a [mature widget API](), a way to easily color and style your program's output or even just get syntax highlighting in the REPL.
 
-## Adapting to your needs
+### Interfacing with the terminal
 
-Here are just a couple of ways to define the same widget structure:
+At its core, PyTermGUI is based on the [ANSI interface](https://ptg.bczsalba.com/pytermgui/ansi_interface.html) module to provide pretty much all of the raw terminal capabilities. If you just want easy, Pythonic access to these APIs `ansi_interface` was made just for you!
 
-**Using the basic class structure**
+![ANSI example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/ansi.png)
+
+
+### Prettification
+
+You can prettify all REPL output using just **one line** of code! It supports various datatypes, automatic printing of PyTermGUI and Rich objects and more!
+
+Under the hood it calls `markup.setup_displayhook()` with no arguments. For more granular control, including flattening structures and customizing the colors, check out the [markup docs](https://ptg.bczsalba.com/pytermgui/parser.html)!
+
+![Pretty example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/pretty.png)
+
+
+
+### Using TIM to style your program's output
+
+TIM, our **T**erminal **I**nline **M**arkup language provides an easy to read, semantic and performant way to style your text. It is also extensible, and supports macros, all commonly used ANSI styles & colors, RGB & HEX and more!
+
+![TIM example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/tim.png)
+
+
+
+### Fully featured TUIs
+
+You can check out an example TUI built into the library itself using the `ptg` command! It features some utility applications for PyTermGUI, such as an `xterm-256` colorpicker, a markup sandbox and a simple key-getter.
+
+Our [WindowManager](https://ptg.bczsalba.com/pytermgui/window_manager.html) implementation lets you create desktop-like interfaces, including mouse support, draggable, resizable and fullscreen-capable windows, animations and more!
+
+![TUI example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/tui.png)
+
+
+
+## No constraints
+
+This library was built with the goal of allowing the most amount of customizability at each step of the process. This is due to my own personal experience with other similar projects, where I felt too confined into a certain program-architecture, way to express colors and the like. PyTermGUI aims to shed all of those limits to truly put you in control.
+
+For example, you can define a `Window` in a couple of ways:
+
+**Instantiating it with its children as the arguments**
 
 ```python3
 # -- demo.py --
@@ -54,7 +88,7 @@ with ptg.WindowManager() as manager:
    manager.run()
 ```
 
-**Using data-pattern conversion**
+**Converting builtin datatypes into widgets**
 
 ```python3
 # -- demo.py --
@@ -74,7 +108,9 @@ with ptg.WindowManager() as manager:
    manager.run()
 ```
 
-**Using YAML**
+**Definining the whole thing in YAML**
+
+*Note that for YAML functionality the optional `PyYAML` dependency is required.*
 
 ```yaml
 # -- demo.yaml --
@@ -92,28 +128,31 @@ widgets:
 
       - Button:
           label: Submit!
+
+# Run `ptg -f demo.yaml` to interpret this file
 ```
 
-None of these is better than any other, it is all up to individual taste. We don't force you to do
-what _we_ want, rather encourage you to morph the library around your needs.
+These all give you the exact same result, while allowing you to pick the best syntax for each case. I personally find YAML to be a great way to prototype complex widget layouts without having to write any driving code.
 
-By the way, this is what the created `Window` looks like. Nifty, huh?
+For completeness' sake, here is the `Window` we just created:
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/demos/versatility.png">
-</p>
+![Example window](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/demos/versatility.png)
 
-## A powerful CLI
+## The `ptg` command line utility
 
-The [cli](/pytermgui/cmd.py) simultaneously serves as a set of powerful tooling for TUI related work, as well as a nice usage example of the higher level part of the library. You can run `ptg --getch` to get information about a keypress, `ptg --size` to get the current terminal dimensions and `ptg --file <file>` to interpret & run a YAML markup file inside of a window manager.
+As mentioned above, the `ptg` CLI tool is a great example for both the capabilities of the library and how to make use of it. It also provides some simpler helpers, such as `--size` to retrieve your terminal dimensions, and the `--file` argument which allows you to load and play around with a PTG YAML file.
 
-For more info, check out `ptg -h`.
+## Documentation!
 
-## Fully documented
+*Every single* public and non-public name in the library is full documented, using [Google's docstring style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings). If you ever have questions about the library, the documentation should have your answers.
 
-The [documentation](http://ptg.bczsalba.com/pytermgui.html) details every public name in the library, making its usage as easy as possible. For more complete projects, check out [examples](/examples), or some of the projects using PTG.
+## Contributions welcome!
 
-## Projects using pytermgui
+PyTermGUI will only become its best self if its users have their say. As such, we provide a [contribution](https://github.com/bczsalba/pytermgui/blob/master/CONTRIBUTING.md) guide and are open to issues, suggestions and PRs!
+
+All input is appreciated.
+
+## Some projects using PyTermGUI
 
 We take pride in seeing others use the library. If you have a project you'd like us to add here, create a PR!
 
@@ -124,9 +163,11 @@ We take pride in seeing others use the library. If you have a project you'd like
 | [`sipedon`](https://github.com/bczsalba/sipedon) | An interactive aquarium for your terminal.                      | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/master/assets/demos/sipedon.png?raw=true" width=80%></p> |
 | [`tracers`](https://github.com/bczsalba/tracers) | Easily debug and trace attribute changes in your Python classes | <p align="center"><img src="https://github.com/bczsalba/pytermgui/blob/master/assets/demos/tracers.png?raw=true" width=80%></p> |
 
-## Some showcase images
+## Examples
 
-Click on each image to see their source code!
+The `examples/` directory contains some nice showcases of the library. Here are some of them:
+
+*Click on each image to see their source code*
 
 ### A hello world program
 
