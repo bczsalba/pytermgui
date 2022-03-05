@@ -234,7 +234,7 @@ def macro_link(*args) -> str:
 def _apply_colors(colors: list[str] | list[int], item: str) -> str:
     """Applies the given list of colors to the item, spread out evenly."""
 
-    blocksize = round(len(item) / len(colors))
+    blocksize = max(round(len(item) / len(colors)), 1)
 
     out = ""
     current_block = 0
@@ -1016,11 +1016,29 @@ docs/parser/markup_language.png"
             remains valid markup.
         """
 
+        def _apply_macros(text: str) -> str:
+            """Apply current macros to text"""
+
+            for _, (method, args) in applied_macros:
+                text = method(*args, text)
+
+            return text
+
+        def _pop_macro(name: str) -> None:
+            """Pops a macro from applied_macros."""
+
+            for i, (macro_name, _) in enumerate(applied_macros):
+                if macro_name == name:
+                    applied_macros.pop(i)
+                    break
+
         styles: dict[TokenType, str] = {
             TokenType.MACRO: "210",
             TokenType.ESCAPED: "210 bold",
             TokenType.UNSETTER: "strikethrough",
         }
+
+        applied_macros: list[tuple[str, MacroCall]] = []
 
         out = ""
         in_sequence = False
@@ -1040,7 +1058,7 @@ docs/parser/markup_language.png"
 
                     sequence += style.sequence
 
-                out += sequence + token.name + "\033[0m"
+                out += sequence + _apply_macros(token.name) + "\033[0m"
                 continue
 
             out += " " if in_sequence else "["
@@ -1049,14 +1067,29 @@ docs/parser/markup_language.png"
             if token.ttype is TokenType.UNSETTER:
                 name = token.name[1:]
 
+                if name in self.macros:
+                    _pop_macro(name)
+
                 current_styles.append(token)
 
-                unsetter_style = styles[TokenType.UNSETTER]
                 special_style = (
                     name + " " if name in self.tags or name in self.user_tags else ""
                 )
-                out += self.parse(f"[{special_style}{unsetter_style}]{name}")
+                out += self.parse(
+                    f"[{special_style}{styles[TokenType.UNSETTER]}]{name}"
+                )
                 continue
+
+            if token.ttype is TokenType.MACRO:
+                assert isinstance(token.data, tuple)
+                applied_macros.append((token.name, token.data))
+
+                try:
+                    out += token.data[0](token.name)
+                    continue
+
+                except TypeError:  # Not enough arguments
+                    pass
 
             if token.sequence is not None:
                 current_styles.append(token)
