@@ -47,9 +47,11 @@ Under the hood it calls `markup.setup_displayhook()` with no arguments. For more
 
 ### Using TIM to style your program's output
 
-TIM, our **T**erminal **I**nline **M**arkup language provides an easy to read, semantic and performant way to style your text. It is also extensible, and supports macros, all commonly used ANSI styles & colors, RGB & HEX and more!
+TIM, our **T**erminal **I**nline **M**arkup language provides an easy to read, semantic and performant way to style your text. It is also modular and extensible, supports macros, in-terminal hyperlinks, all commonly used ANSI styles & colors, RGB & HEX and more!
 
 ![TIM example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/tim.png)
+
+In this demo, clicking `docs` will bring you to the [documentation](https://ptg.bczsalba.com).
 
 
 ### Fully featured TUIs
