@@ -20,10 +20,7 @@ else:
 AnimationType = Union["Animation", "CustomAnimation"]
 AnimationCallback = Callable[[Widget], Union[bool, None]]
 
-# At the moment, animations cannot be manually added
-# to animator. Because of this there is no need to
-# also export the Animation name.
-__all__ = ["Animator"]
+__all__ = ["Animator", "Animation", "CustomAnimation", "animator"]
 
 
 @dataclass
@@ -130,13 +127,13 @@ class Animator:
                 if finish_callback is not None:
                     finish_callback(animation.target)
 
-    def animate_custom(self, step_callback: Callable[[], bool]) -> None:
+    def add_custom(self, custom_animation: CustomAnimation) -> None:
         """Adds a custom animation.
 
         See `CustomAnimation` for more details.
         """
 
-        self._animations.append(CustomAnimation(step_callback))
+        self._animations.append(custom_animation)
 
     def animate(
         self,

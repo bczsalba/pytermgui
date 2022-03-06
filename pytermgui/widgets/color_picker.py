@@ -11,8 +11,8 @@ from contextlib import suppress
 from . import boxes
 from .layouts import Container
 from .base import Label, Widget
-from ..animator import animator
 from .interactive import Button
+from ..animations import animator
 from ..helpers import real_length
 from .pixel_matrix import PixelMatrix
 from ..enums import SizePolicy, HorizontalAlignment

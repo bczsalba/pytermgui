@@ -63,7 +63,7 @@ from .widgets import (
 
 from .input import getch
 from .parser import markup
-from .animator import animator
+from .animations import animator
 from .helpers import strip_ansi, real_length
 from .enums import CenteringPolicy, SizePolicy, Overflow
 from .context_managers import alt_buffer, mouse_handler, MouseTranslator, cursor_at
