@@ -135,7 +135,14 @@ except NameError:
     BaseFormatter = object
 
 
-__all__ = ["MacroCallable", "MacroCall", "MarkupLanguage", "StyledText", "markup"]
+__all__ = [
+    "MacroCallable",
+    "MacroCall",
+    "MarkupLanguage",
+    "StyledText",
+    "markup",
+    "tim",
+]
 
 MacroCallable = Callable[..., str]
 MacroCall = Tuple[MacroCallable, List[str]]
@@ -1079,13 +1086,18 @@ docs/parser/markup_language.png"
                     name + " " if name in self.tags or name in self.user_tags else ""
                 )
                 out += self.parse(
-                    f"[{special_style}{styles[TokenType.UNSETTER]}]{name}"
+                    f"/[{special_style}{styles[TokenType.UNSETTER]}]{name}"
                 )
                 continue
 
             if token.ttype is TokenType.MACRO:
                 assert isinstance(token.data, tuple)
-                applied_macros.append((token.name, token.data))
+
+                name = token.name
+                if "(" in name:
+                    name = name[: token.name.index("(")]
+
+                applied_macros.append((name, token.data))
 
                 try:
                     out += token.data[0](token.name)
