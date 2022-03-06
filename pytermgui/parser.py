@@ -1,10 +1,12 @@
 """
-A custom markup language to make styling `Widget`-s easier, and, well, more stylish.
+This module provides `TIM`, PyTermGUI's Terminal Inline Markup language. It is a simple,
+performant and easy to read way to style, colorize & modify text.
 
 Basic rundown
 -------------
 
-The PTG markup language is included in order to make styling easier to read and manage.
+TIM is included with the purpose of making styling easier to read and manage.
+
 Its syntax is based on square brackets, within which tags are strictly separated by one
 space character. Tags can stand for colors (xterm-256, RGB or HEX, both background &
 foreground), styles, unsetters and macros.
@@ -79,15 +81,16 @@ All markup behaviour is done by an instance of the `MarkupLanguage` class. This 
 partially for organization reasons, but also to allow a sort of sandboxing of custom
 definitions and settings.
 
-PyTermGUI provides the `markup` name as the global markup language instance. This should
-be used pretty much all of the time, and custom instances should only ever come about
-when some security-sensitive macro definitions are needed, as `markup` is used by every
-widget, including user-input ones such as `InputField`.
+PyTermGUI provides the `tim` name as the global markup language instance. For historical
+reasons, the same instance is available as `markup`. This should be used pretty much all
+of the time, and custom instances should only ever come about when some
+security-sensitive macro definitions are needed, as `markup` is used by every widget,
+including user-input ones such as `InputField`.
 
 For the rest of this page, `MarkupLanguage` will refer to whichever instance you are
 using.
 
-TL;DR : Use `markup` always, unless a security concern blocks you from doing so.
+TL;DR : Use `tim` always, unless a security concern blocks you from doing so.
 
 Caching
 -------
@@ -1444,7 +1447,7 @@ def main() -> None:
         return
 
 
-markup = MarkupLanguage()
+tim = markup = MarkupLanguage()
 
 if __name__ == "__main__":
     main()
