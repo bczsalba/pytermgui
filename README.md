@@ -34,12 +34,27 @@ PyTermGUI can be used for a variety of things. You are ought to find something u
 
 At its core, PyTermGUI is based on the [ANSI interface](https://ptg.bczsalba.com/pytermgui/ansi_interface.html) module to provide pretty much all of the raw terminal capabilities. If you just want easy, Pythonic access to these APIs `ansi_interface` was made just for you!
 
-![ANSI example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/ansi.png)
+```python3
+from pytermgui import print_to, report_cursor, bold
+
+print_to((10, 5), "12345"); report_cursor()
+```
+
+<p align=center>
+   <img alt="ANSI example" src="https://github.com/bczsalba/pytermgui/raw/master/assets/readme/ansi.png">
+</p>
 
 
 ### Using TIM to style your program's output
 
 TIM, our **T**erminal **I**nline **M**arkup language provides an easy to read, semantic and performant way to style your text. It is also modular and extensible, supports macros, in-terminal hyperlinks, all commonly used ANSI styles & colors, RGB & HEX and more!
+
+```python3
+from pytermgui import tim
+
+print(tim.parse("[dim italic]Welcome to [/dim /italic bold !rainbow]PyTermGUI"))
+print(tim.parse("Check out the [blue !link(https://ptg.bczsalba.com)]docs[/!link /fg]!"))
+```
 
 ![TIM example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/tim.png)
 
@@ -52,12 +67,20 @@ You can prettify all REPL output using just **one line** of code! It supports va
 
 Under the hood it calls `tim.setup_displayhook()` with no arguments. For more granular control, including flattening structures and customizing the colors, check out the [TIM docs](https://ptg.bczsalba.com/pytermgui/parser.html)!
 
+```python3
+>>> from pytermgui import pretty, tim
+>>> ["Welcome to PyTermGUI!", {0: "Things are now", 1: "Prettier!"}, locals()]
+>>> ''[dim]TIM [/]code is automatically [/dim !gradient(222)]syntax-highlighted'
+```
+
 ![Pretty example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/pretty.png)
 
 
 ### Fully featured TUIs
 
 You can check out an example TUI built into the library itself using the `ptg` command! It features some utility applications for PyTermGUI, such as an `xterm-256` colorpicker, a TIM sandbox and a simple key-getter.
+
+You can also follow a how-to guide on creating a simple application in the [docs](https://ptg.bczsalba.com/pytermgui.html).
 
 Our [WindowManager](https://ptg.bczsalba.com/pytermgui/window_manager.html) implementation lets you create desktop-like interfaces, including mouse support, draggable, resizable and fullscreen-capable windows, animations and more!
 
