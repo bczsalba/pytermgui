@@ -864,7 +864,11 @@ docs/parser/markup_language.png"
         for item in marked:
             del self._cache[item]
 
-    def parse(self, markup_text: str) -> StyledText:
+    # TODO: I cannot cut down the one-too-many branch that this has at the moment.
+    #       We could look into it in the future, however.
+    def parse(  # pylint: disable=too-many-branches
+        self, markup_text: str
+    ) -> StyledText:
         """Parses the given markup.
 
         Args:
@@ -891,7 +895,20 @@ docs/parser/markup_language.png"
 
             return text
 
-        # TODO: Macros are only ran once with caching enabled
+        def _is_same_colorgroup(previous: Token, new: Token) -> bool:
+            color_types = [
+                TokenType.FG_8BIT,
+                TokenType.BG_8BIT,
+                TokenType.FG_24BIT,
+                TokenType.BG_24BIT,
+            ]
+            if not (previous.ttype in color_types and token.ttype in color_types):
+                return False
+
+            prev_prefix = previous.ttype.name.split("_")[0]
+            prefix = new.ttype.name.split("_")[0]
+            return prev_prefix == prefix
+
         if (
             RE_MACRO.match(markup_text) is not None
             and self.should_cache
@@ -899,8 +916,19 @@ docs/parser/markup_language.png"
         ):
             return self._cache[markup_text]
 
+        token: Token
         for token in self.tokenize_markup(markup_text):
             if sequence != "" and previous_token == token:
+                continue
+
+            # Optimize out previously added color tokens, as only the most
+            # recent would be visible anyways.
+            if (
+                token.sequence is not None
+                and previous_token is not None
+                and _is_same_colorgroup(previous_token, token)
+            ):
+                sequence = token.sequence
                 continue
 
             if token.ttype == TokenType.UNSETTER and token.data == "0":
@@ -930,16 +958,15 @@ docs/parser/markup_language.png"
                 continue
 
             if token.sequence is None:
-                applied = sequence
+                previous_sequence = sequence
                 for prev in previous_sequence.split("\x1b"):
                     if prev == "":
                         continue
 
                     prev = "\x1b" + prev
-                    applied = applied.replace(prev, "")
+                    sequence = sequence.replace(prev, "")
 
-                out += applied + _apply_macros(token.name)
-                previous_sequence = sequence
+                out += sequence + _apply_macros(token.name)
                 sequence = ""
                 continue
 
