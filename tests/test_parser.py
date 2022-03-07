@@ -1,4 +1,4 @@
-from pytermgui import tim, StyledText
+from pytermgui import tim, StyledText, pretty
 from pytermgui.parser import Token, TokenType, STYLE_MAP
 
 
@@ -44,10 +44,10 @@ class TestFunctionality:
 
     def test_pprint_works(self):
         for obj in [{1, 2, 3}, "test", set, list(range(10)), {"abc": "efg"}]:
-            tim.pprint(obj)
+            pretty.pprint(obj)
 
     def test_displayhook_works(self):
-        tim.setup_displayhook()
+        pretty.install()
 
 
 class TestTokens:

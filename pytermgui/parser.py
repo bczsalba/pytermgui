@@ -111,8 +111,6 @@ by calling `MarkupLanguage.alias`. For defining custom macros, you can use
 from __future__ import annotations
 
 import re
-import sys
-import builtins
 from random import shuffle
 from dataclasses import dataclass
 from argparse import ArgumentParser
@@ -121,18 +119,6 @@ from typing import Iterator, Callable, Tuple, List, Any
 
 from .ansi_interface import foreground
 from .exceptions import MarkupSyntaxError, AnsiSyntaxError
-
-
-try:
-    # Try to get IPython instance. This function is provided by the
-    # IPython runtime, so if running outside of that context a NameError
-    # is raised.
-    IPYTHON = get_ipython()  # type: ignore
-    from IPython.core.formatters import BaseFormatter  # pylint: disable=import-error
-
-except NameError:
-    IPYTHON = None
-    BaseFormatter = object
 
 
 __all__ = [
@@ -1144,289 +1130,115 @@ docs/parser/markup_language.png"
 
         return out
 
-    def prettify(self, text: str, force_markup: bool = False) -> str:
-        """Prettifies any ANSI or Markup str.
-
-        Note that this is not a general-use pretty-print formatter. For that,
-        please refer to `MarkupLanguage.pprint` with the `return_only` flag set
-        to `True`.
-
-        If the string contains ANSI sequences and `force_markup` is False,
-        the `prettify_ansi` method is used. Otherwise, `prettify_markup` does
-        the job.
-
-        Since the `prettify_markup` method fails cleanly (e.g. doesn't modify
-        a string with no markup) this is a safe call to any string.
-
-        Args:
-            text: The string to prettify.
-            force_markup: If set, when given an ANSI string, the
-                `MarkupLanguage.get_markup` method is used to translate it into
-                markup, which is then prettified using `prettify_markup`.
-        """
-
-        if len(RE_ANSI.findall(text)) > 0:
-            if not force_markup:
-                return self.prettify_ansi(text)
-
-            text = self.get_markup(text)
-
-        return self.prettify_markup(text)
-
-    # Ignore all of the ignores, this function will be rewritten soon.
-    def pprint(  # pylint: disable=too-many-arguments, too-many-locals, too-many-statements
+    # This function IMO is very well readable, and further splitting
+    # it and hacking around for less branches would ruin that.
+    def prettify(  # pylint: disable=too-many-branches
         self,
-        *items: Any,
+        target: Any,
         indent: int = 2,
-        condensed: bool = False,
         force_markup: bool = False,
-        return_only: bool = False,
-        **print_args: Any,
-    ) -> str | None:
-        """Pretty-prints any object.
-
-        If a container (set, dict, tuple, etc..) is passed and its `len` is less than
-        or equal to 1 it will display as condensed, regardless of the `condensed` arg.
+        expand_all: bool = False,
+    ) -> str:
+        """Prettifies any Python object.
 
         Args:
-            *items: The objects to pretty-print.
-            indent: The number of spaces that should be used for indenting.
-                Only applies when `condensed` is True.
-            condensed: If not set each item of a container will occupy different
-                lines.
-            force_markup: When given an item of `str` type, containing ANSI sequences,
-                its markup representation will be generated and displayed using
-                `MarkupLanguage.get_markup`. See `MarkupLanguage.prettify` for more info.
-            return_only: If set, nothing will be printed and the prettified string is
-                returned instead.
-            **print_args: The kwargs passed to `print` at the end of this call. The `sep`
-                argument is respected when given, otherwise it defaults to ", " if
-                `condensed`, else `, \\n`.
+            target: The object to prettify. Can be any type.
+            indent: The indentation used for multi-line objects, like containers. When
+                set to 0, these will be collapsed. By default, container types with
+                `len() == 1` are always collapsed, regardless of this value. See `expand_all`
+                to overwrite that behaviour.
+            force_markup: When this is set every ANSI-sequence string will be turned into
+                markup and syntax highlighted.
+            expand_all: When set, objects that would normally be force-collapsed are also going
+                to be expanded.
 
         Returns:
-            The prettified string if `return_only` is set, otherwise `None`, as the
-            value has already been printed.
+            A pretty string of the given target.
         """
 
-        type_styles = {
-            int: "[pprint-int]{item}[/]",
-            str: "[pprint-str]'{item}'[/]",
-            None: "[pprint-none]{item}[/]",
-            type: "[pprint-type]{item}[/]",
-        }
+        if isinstance(target, (list, dict, set, tuple)):
+            if len(target) < 2 and not expand_all:
+                indent = 0
 
-        indent_str = indent * " "
+            chars = str(target)[0], str(target)[-1]
+            buff = chars[0]
 
-        def _apply_style(value: Any) -> str:
-            """Applies type-based style to the given value.
+            if isinstance(target, dict):
+                for i, (key, value) in enumerate(target.items()):
+                    if i > 0:
+                        buff += ", "
 
-            This value can technically be of any type, and builtins have
-            special styles defined for them.
+                    if indent > 0:
+                        buff += "\n"
 
-            Returns:
-                A styled-str representation of value.
-            """
+                    buff += indent * " "
+                    buff += f"{self.prettify(key, indent=0)}: "
 
-            if isinstance(value, (dict, list, tuple, set)):
-                return (
-                    self.pprint(
-                        value, indent=indent, condensed=condensed, return_only=True
+                    pretty = self.prettify(
+                        value,
+                        indent=indent,
+                        expand_all=expand_all,
+                        force_markup=force_markup,
                     )
-                    or ""
-                )
 
-            if isinstance(value, type):
-                return type_styles[type].format(item=value.__name__)
+                    lines = pretty.splitlines()
+                    buff += lines[0]
+                    for line in lines[1:]:
+                        if indent > 0:
+                            buff += "\n"
 
-            if isinstance(value, str):
-                value = value.replace("[", r"\[")
+                        buff += indent * " " + line
 
-            if type(value) in type_styles:
-                return type_styles[type(value)].format(item=str(value))
-
-            if value is None:
-                return type_styles[None].format(item=str(value))
-
-            return str(value)
-
-        def _format_container_item(value: str) -> str:
-            """Formats a container item."""
-
-            out = f"{value},"
-            if condensed:
-                out += " "
-
-            if not condensed:
-                out += "\n"
-
-            return out
-
-        def _format_container(
-            container: dict | list | tuple | set, chars: tuple[str, str]
-        ) -> str:
-            """Formats a container-type instance.
-
-            Args:
-                container: The container to format.
-                chars: The characters that signify the start & end of the container.
-
-            Returns:
-                A pretty representation of the given container.
-            """
-
-            out = chars[0]
-            local_condensed = condensed
-            if len(container) < 2:
-                local_condensed = True
-
-            if not local_condensed:
-                out += "\n"
-
-            if isinstance(container, dict):
-                for key, value in container.items():
-                    for line in _format_container_item(
-                        f"{_apply_style(key)}: {_apply_style(value)}"
-                    ).splitlines():
-                        if local_condensed:
-                            out += line
-                            continue
-
-                        out += indent_str + line + "\n"
             else:
-                for value in container:
-                    for line in _format_container_item(
-                        f"{_apply_style(value)}"
-                    ).splitlines():
-                        if local_condensed:
-                            out += line
-                            continue
+                for i, item in enumerate(target):
+                    if i > 0:
+                        buff += ", "
 
-                        out += indent_str + line + "\n"
+                    pretty = self.prettify(
+                        item,
+                        indent=indent,
+                        expand_all=expand_all,
+                        force_markup=force_markup,
+                    )
 
-            out = out.rstrip(", ")
-            out += chars[1]
+                    for line in pretty.splitlines():
+                        if indent > 0:
+                            buff += "\n"
 
-            return out
+                        buff += indent * " " + line
 
-        parsed: list[str] = []
-        joiner = print_args.get("sep", (", " if condensed else ", \n"))
-        for i, item in enumerate(items):
-            if isinstance(item, (dict, set, tuple, list)):
-                chars = str(item)[0], str(item)[-1]
-                parsed.append(self.parse(_format_container(item, chars)))
+            if indent > 0:
+                buff += ",\n"
 
-            elif isinstance(item, (int, str)):
-                # This is ugly but its a slight bit better than adding an extra
-                # pylint ignore for too many statements.
-                itype = type(item)
-                if isinstance(item, StyledText):
-                    itype = str
-
-                value = {
-                    str: lambda item: self.prettify(item, force_markup=force_markup),
-                    int: lambda item: self.parse(_apply_style(item)),
-                }[itype](item)
-
-                if i == 0 or not isinstance(items[i - 1], type(item)):
-                    parsed.append(value)
-                    continue
-
-                parsed[-1] += joiner.rstrip("\n") + value
-
-            elif hasattr(item, "get_lines"):
-                parsed.append("\n".join(line for line in item.get_lines()))
-
-            elif item is not None:
-                parsed.append(str(item))
-
-        buff = joiner.join(parsed)
-        if return_only:
+            buff += chars[1]
             return buff
 
-        print(buff, **print_args)
-        return None
+        buff = ""
+        if isinstance(target, str):
+            if len(RE_ANSI.findall(target)) > 0:
+                if not force_markup:
+                    return target
 
-    def setup_displayhook(
-        self,
-        indent: int = 2,
-        condensed: bool = False,
-        force_markup: bool = False,
-    ) -> None:
-        """Sets up `sys.displayhook` to use `MarkupLanguage.pprint`.
+                target = self.get_markup(target)
 
-        This can be used to pretty-print all REPL output. IPython is
-        also supported.
+            if len(RE_MARKUP.findall(target)) > 0:
+                return f"'{self.prettify_markup(target)}'"
 
-        Usage is pretty simple:
+            buff = f"[pprint-str]'{target}'"
 
-        ```python3
-        >>> from pytermgui import markup
-        >>> markup.setup_displayhook()
-        >>> # Any function output will now be prettified
-        ```
+        elif isinstance(target, type):
+            buff = f"[pprint-type]{target.__name__}"
 
-        ...or alternatively, you can import `print` from `pytermgui.pretty`,
-        and have it automatically set up, and replace your namespace's `print`
-        function with `markup.pprint`:
+        elif isinstance(target, int):
+            buff = f"[pprint-int]{target}"
 
-        ```python3
-        >>> from pytermgui.pretty import print
-        ... # Under the hood, the above is called and `markup.pprint` is set
-        ... # for the `print` name
-        >>> # Any function output will now be prettified
-        ```
+        elif target is None:
+            buff = f"[pprint-none]{target}"
 
-        Args:
-            indent: The amount of indentation used in printing container-types.
-                Only applied when `condensed` is False.
-            condensed: If set, all items in a container-type will be displayed in
-                one line, similar to the default `repl`.
-            force_markup: When given an ANSI-sequence containing str, its markup
-                representation will be generated using `MarkupLanguage.get_markup`,
-                and syntax highlighted using `MarkupLanguage.prettify_markup`.
-        """
+        else:
+            return str(target)
 
-        def _hook(value: Any) -> None:
-            self.pprint(
-                value, force_markup=force_markup, condensed=condensed, indent=indent
-            )
-
-            # Sets up "_" as a way to access return value,
-            # inkeeping with sys.displayhook
-            builtins._ = value  # type: ignore
-
-        if IPYTHON is not None:
-            IPYTHON.display_formatter.formatters["text/plain"] = PTGFormatter(
-                force_markup=force_markup, condensed=condensed, indent=indent
-            )
-            return
-
-        sys.displayhook = _hook
-
-
-class PTGFormatter(BaseFormatter):  # pylint: disable=too-few-public-methods
-    """An IPython formatter for PTG pretty printing."""
-
-    def __init__(self, **kwargs: Any) -> None:
-        """Initializes PTGFormatter, storing **kwargs."""
-
-        super().__init__()
-
-        self.kwargs = kwargs
-
-    def __call__(self, value: Any) -> None:
-        """Pretty prints the given value, as well as a leading newline.
-
-        The newline is needed since IPython output is prepended with
-        "Out[i]:", and it might mess alignments up.
-        """
-
-        markup.pprint("\n")
-        markup.pprint(value, **self.kwargs)
-
-        # Sets up "_" as a way to access return value,
-        # inkeeping with sys.displayhook
-        builtins._ = value  # type: ignore
+        return self.parse(buff)
 
 
 def main() -> None:
