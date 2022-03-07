@@ -22,8 +22,6 @@ pip3 install pytermgui
  </p>
 
 
-<!-- TODO: The images here use my personal terminal theme, while the ones below use GitHub's. We should unite them. -->
-
 ## Usecases
 
 PyTermGUI can be used for a variety of things. You are ought to find something useful, whether you are after a TUI library with a [mature widget API](), a way to easily color and style your program's output or even just get syntax highlighting in the REPL.
@@ -36,15 +34,6 @@ At its core, PyTermGUI is based on the [ANSI interface](https://ptg.bczsalba.com
 ![ANSI example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/ansi.png)
 
 
-### Prettification
-
-You can prettify all REPL output using just **one line** of code! It supports various datatypes, automatic printing of PyTermGUI and Rich objects and more!
-
-Under the hood it calls `markup.setup_displayhook()` with no arguments. For more granular control, including flattening structures and customizing the colors, check out the [markup docs](https://ptg.bczsalba.com/pytermgui/parser.html)!
-
-![Pretty example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/pretty.png)
-
-
 ### Using TIM to style your program's output
 
 TIM, our **T**erminal **I**nline **M**arkup language provides an easy to read, semantic and performant way to style your text. It is also modular and extensible, supports macros, in-terminal hyperlinks, all commonly used ANSI styles & colors, RGB & HEX and more!
@@ -54,9 +43,18 @@ TIM, our **T**erminal **I**nline **M**arkup language provides an easy to read, s
 In this demo, clicking `docs` will bring you to the [documentation](https://ptg.bczsalba.com).
 
 
+### Prettification
+
+You can prettify all REPL output using just **one line** of code! It supports various datatypes, automatic printing of PyTermGUI and Rich objects and more!
+
+Under the hood it calls `tim.setup_displayhook()` with no arguments. For more granular control, including flattening structures and customizing the colors, check out the [TIM docs](https://ptg.bczsalba.com/pytermgui/parser.html)!
+
+![Pretty example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/pretty.png)
+
+
 ### Fully featured TUIs
 
-You can check out an example TUI built into the library itself using the `ptg` command! It features some utility applications for PyTermGUI, such as an `xterm-256` colorpicker, a markup sandbox and a simple key-getter.
+You can check out an example TUI built into the library itself using the `ptg` command! It features some utility applications for PyTermGUI, such as an `xterm-256` colorpicker, a TIM sandbox and a simple key-getter.
 
 Our [WindowManager](https://ptg.bczsalba.com/pytermgui/window_manager.html) implementation lets you create desktop-like interfaces, including mouse support, draggable, resizable and fullscreen-capable windows, animations and more!
 
@@ -177,7 +175,7 @@ The `examples/` directory contains some nice showcases of the library. Here are 
 
 [![hello world](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/demos/hello_world.png)](examples/hello_world.yaml)
 
-### The markup playground app
+### The TIM playground app
 
 > Note: Use `ptg --markapp` to try
 
