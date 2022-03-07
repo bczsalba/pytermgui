@@ -940,14 +940,14 @@ docs/parser/markup_language.png"
 
             # Macro unsetters are stored with None as their data
             if token.data is None and token.ttype is TokenType.UNSETTER:
-                for call_str, data in applied_macros:
-                    macro_match = RE_MACRO.match(call_str)
+                for item, data in applied_macros:
+                    macro_match = RE_MACRO.match(item)
                     assert macro_match is not None
 
                     macro_name = macro_match.groups()[0]
 
                     if "/" + macro_name == token.name:
-                        applied_macros.remove((call_str, data))
+                        applied_macros.remove((item, data))
 
                 continue
 
@@ -958,15 +958,16 @@ docs/parser/markup_language.png"
                 continue
 
             if token.sequence is None:
-                previous_sequence = sequence
-                for prev in previous_sequence.split("\x1b"):
-                    if prev == "":
+                applied = sequence
+                for item in previous_sequence.split("\x1b"):
+                    if item == "":
                         continue
 
-                    prev = "\x1b" + prev
-                    sequence = sequence.replace(prev, "")
+                    item = "\x1b" + item
+                    applied = applied.replace(item, "")
 
-                out += sequence + _apply_macros(token.name)
+                out += applied + _apply_macros(token.name)
+                previous_sequence = sequence
                 sequence = ""
                 continue
 
