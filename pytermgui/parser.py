@@ -1100,7 +1100,7 @@ docs/parser/markup_language.png"
                 applied_macros.append((name, token.data))
 
                 try:
-                    out += token.data[0](token.name)
+                    out += token.data[0](*token.data[1], token.name)
                     continue
 
                 except TypeError:  # Not enough arguments
@@ -1146,7 +1146,8 @@ docs/parser/markup_language.png"
 
         return self.prettify_markup(text)
 
-    def pprint(  # pylint: disable=too-many-arguments, too-many-locals
+    # Ignore all of the ignores, this function will be rewritten soon.
+    def pprint(  # pylint: disable=too-many-arguments, too-many-locals, too-many-statements
         self,
         *items: Any,
         indent: int = 2,
@@ -1290,10 +1291,14 @@ docs/parser/markup_language.png"
             elif isinstance(item, (int, str)):
                 # This is ugly but its a slight bit better than adding an extra
                 # pylint ignore for too many statements.
+                itype = type(item)
+                if isinstance(item, StyledText):
+                    itype = str
+
                 value = {
                     str: lambda item: self.prettify(item, force_markup=force_markup),
                     int: lambda item: self.parse(_apply_style(item)),
-                }[type(item)](item)
+                }[itype](item)
 
                 if i == 0 or not isinstance(items[i - 1], type(item)):
                     parsed.append(value)
