@@ -1141,6 +1141,18 @@ docs/parser/markup_language.png"
     ) -> str:
         """Prettifies any Python object.
 
+        This uses a set of pre-defined aliases for the styling, and as such is fully
+        customizable.
+
+        The aliases are:
+        - `pprint-str`: Applied to all strings, so long as they do not contain TIM code.
+        - `pprint-int`: Applied to all integers and booleans. The latter are included as
+            they subclass int.
+        - `pprint-type`: Applied to all types.
+        - `pprint-none`: Applied to NoneType. Note that when using `pytermgui.pretty`, a
+            single `None` return value will not be printed, only when part of a more
+            complex structure.
+
         Args:
             target: The object to prettify. Can be any type.
             indent: The indentation used for multi-line objects, like containers. When

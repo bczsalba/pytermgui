@@ -41,6 +41,8 @@ def pprint(
     `**print_args` right through to print. Note that when the `sep` print argument is
     ommitted it is manually set to ", \n".
 
+    To customize any of the styles, see `MarkupLanguage.prettify`.
+
     Args:
         *items: The items to print. These are passed in the same way they would be into
             builtin print.
