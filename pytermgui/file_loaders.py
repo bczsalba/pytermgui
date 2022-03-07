@@ -107,8 +107,7 @@ widgets:
 
 import pytermgui as ptg
 
-loader = ptg.YamlLoader()
-with open("data.yaml", "r") as datafile:
+with ptg.YamlLoader() as loader, open("data.yaml", "r") as datafile:
     namespace = loader.load(datafile)
 
 with ptg.WindowManager() as manager:
@@ -287,6 +286,17 @@ class FileLoader(ABC):
             serializer = Serializer()
 
         self.serializer = serializer
+
+    def __enter__(self) -> FileLoader:
+        """Starts context manager."""
+
+        return self
+
+    def __exit__(self, _: Any, exception: Exception, __: Any) -> bool:
+        """Ends context manager."""
+
+        if exception is not None:
+            raise exception
 
     def register(self, cls: Type[widgets.Widget]) -> None:
         """Registers a widget to the serializer.
