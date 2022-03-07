@@ -111,6 +111,7 @@ by calling `MarkupLanguage.alias`. For defining custom macros, you can use
 from __future__ import annotations
 
 import re
+import builtins
 from random import shuffle
 from dataclasses import dataclass
 from argparse import ArgumentParser
@@ -538,10 +539,10 @@ docs/parser/markup_language.png"
             self.define("!capitalize", lambda item: str(item.capitalize()))
             self.define("!expand", lambda tag: macro_expand(self, tag))
 
-        self.alias("pprint-int", "176")
-        self.alias("pprint-str", "149 italic")
-        self.alias("pprint-type", "222")
-        self.alias("pprint-none", "210")
+        self.alias("pprint-int", "175")
+        self.alias("pprint-str", "142")
+        self.alias("pprint-type", "214")
+        self.alias("pprint-none", "167")
 
     @staticmethod
     def _get_color_token(tag: str) -> Token | None:
@@ -1157,12 +1158,12 @@ docs/parser/markup_language.png"
             target: The object to prettify. Can be any type.
             indent: The indentation used for multi-line objects, like containers. When
                 set to 0, these will be collapsed. By default, container types with
-                `len() == 1` are always collapsed, regardless of this value. See `expand_all`
-                to overwrite that behaviour.
-            force_markup: When this is set every ANSI-sequence string will be turned into
-                markup and syntax highlighted.
-            expand_all: When set, objects that would normally be force-collapsed are also going
-                to be expanded.
+                `len() == 1` are always collapsed, regardless of this value. See
+                `expand_all` to overwrite that behaviour.
+            force_markup: When this is set every ANSI-sequence string will be turned
+                into markup and syntax highlighted.
+            expand_all: When set, objects that would normally be force-collapsed are
+                also going to be expanded.
 
         Returns:
             A pretty string of the given target.
@@ -1225,6 +1226,9 @@ docs/parser/markup_language.png"
             buff += chars[1]
             return buff
 
+        if target in dir(builtins) and not target.startswith("__"):
+            target = builtins.__dict__[target]
+
         buff = ""
         if isinstance(target, str):
             if len(RE_ANSI.findall(target)) > 0:
@@ -1238,11 +1242,11 @@ docs/parser/markup_language.png"
 
             buff = f"[pprint-str]'{target}'"
 
-        elif isinstance(target, type):
-            buff = f"[pprint-type]{target.__name__}"
-
         elif isinstance(target, int):
             buff = f"[pprint-int]{target}"
+
+        elif isinstance(target, type):
+            buff = f"[pprint-type]{target.__name__}"
 
         elif target is None:
             buff = f"[pprint-none]{target}"

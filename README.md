@@ -68,7 +68,7 @@ You can prettify all REPL output using just **one line** of code! It supports va
 Under the hood it calls `tim.setup_displayhook()` with no arguments. For more granular control, including flattening structures and customizing the colors, check out the [TIM docs](https://ptg.bczsalba.com/pytermgui/parser.html)!
 
 ```python3
->>> from pytermgui import pretty, tim
+>>> from pytermgui import pretty
 >>> ["Welcome to PyTermGUI!", {0: "Things are now", 1: "Prettier!"}, locals()]
 >>> '[dim]TIM [/dim]code is automatically [!gradient(222)]syntax-highlighted'
 ```
