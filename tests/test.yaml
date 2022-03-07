@@ -95,38 +95,9 @@ config:
   Window: *container_style
 
 widgets:
-  Test:
-    type: Window
-    pos: [20, 5]
-    widgets:
-      - Splitter:
-          widgets:
-            - Label:
-                value: "Left"
-            - Label:
-                value: "Right"
-
   CriteriaWindow:
     type: Window
     pos: [30, 10]
-    not_widgets__buttons:
-      - Container:
-          widgets:
-            - Container:
-                widgets:
-                  - Label:
-                      value: Wassup
-                  - Button:
-                      label: "Press me!"
-            - Button:
-                label: I am better
-
     widgets__detail: *detail_criteria
     widgets__padding: [Label: {}]
     widgets__condition: *condition_criteria
-
-  RuleEntryWindow:
-    type: Window
-    widgets:
-      - Label:
-          value: There

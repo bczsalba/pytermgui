@@ -279,7 +279,7 @@ def macro_gradient(base_str: str, item: str) -> str:
     """
 
     if not base_str.isdigit():
-        raise ValueError("Gradient base has to be a digit.")
+        raise ValueError(f"Gradient base has to be a digit, got {base_str}.")
 
     base = int(base_str)
     if base < 16 or base > 231:
@@ -902,6 +902,7 @@ docs/parser/markup_language.png"
                 TokenType.FG_24BIT,
                 TokenType.BG_24BIT,
             ]
+
             if not (previous.ttype in color_types and token.ttype in color_types):
                 return False
 

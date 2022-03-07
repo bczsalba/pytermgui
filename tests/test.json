@@ -1,0 +1,45 @@
+{
+    "markup": {
+        "bg": "[234 grey]"
+    },
+    "config": {
+        "Splitter": {
+            "styles": {
+                "separator": "[bg]{item}"
+            }
+        },
+        "Window": {
+            "chars": {
+                "border": ["a", "b", "c", "d"]
+            },
+            "styles": {
+                "corner": "[bg]{item}",
+                "border": "[bg]{item}",
+                "fill": "[bg]{item}"
+            }
+        }
+    },
+    "widgets": {
+        "Window": {
+            "pos": [30, 5],
+            "widgets": [
+                {
+                    "Label": {
+                        "value": "[bg]Hello"
+                    }
+                },
+                {
+                    "Label": {
+                        "value": ""
+                    }
+                },
+                {
+                    "Button": {}
+                },
+                {
+                    "ColorPicker": {}
+                }
+            ]
+        }
+    }
+}
