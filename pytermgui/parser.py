@@ -374,15 +374,16 @@ class Token:
             return None
 
         assert isinstance(self.data, str)
+        data = self.data.lstrip("@")
 
         if self.ttype in [TokenType.STYLE, TokenType.UNSETTER]:
-            return "\033[" + self.data + "m"
+            return "\033[" + data + "m"
 
         # Handle colors
         if self.ttype.name.startswith("BG"):
-            template = "\x1b[48;{c_id};" + self.data + "m"
+            template = "\x1b[48;{c_id};" + data + "m"
         else:
-            template = "\x1b[38;{c_id};" + self.data + "m"
+            template = "\x1b[38;{c_id};" + data + "m"
 
         if self.ttype in [TokenType.FG_8BIT, TokenType.BG_8BIT]:
             return template.format(c_id="5")
@@ -461,7 +462,7 @@ class StyledText(str):
                     if negative_index:
                         return -1 * (plain_chars + styled_chars)
 
-                    return plain_chars + styled_chars
+                    return styled_chars + plain_chars
 
                 plain_chars += 1
 
@@ -876,10 +877,6 @@ docs/parser/markup_language.png"
             to builtin `str`, only adds extra things on top.
         """
 
-        # TODO: Add more optimizations:
-        #       - keep track of currently-active tokens
-        #       - clean up widget dump
-
         applied_macros: list[tuple[str, MacroCall]] = []
         previous_token: Token | None = None
         previous_sequence = ""
@@ -913,12 +910,7 @@ docs/parser/markup_language.png"
 
             previous_token = token
 
-            if token.ttype is TokenType.MACRO:
-                assert isinstance(token.data, tuple)
-
-                applied_macros.append((token.name, token.data))
-                continue
-
+            # Macro unsetters are stored with None as their data
             if token.data is None and token.ttype is TokenType.UNSETTER:
                 for call_str, data in applied_macros:
                     macro_match = RE_MACRO.match(call_str)
@@ -929,6 +921,12 @@ docs/parser/markup_language.png"
                     if "/" + macro_name == token.name:
                         applied_macros.remove((call_str, data))
 
+                continue
+
+            if token.ttype is TokenType.MACRO:
+                assert isinstance(token.data, tuple)
+
+                applied_macros.append((token.name, token.data))
                 continue
 
             if token.sequence is None:
