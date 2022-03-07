@@ -19,6 +19,9 @@ pip3 install pytermgui
    <a href="http://ptg.bczsalba.com/pytermgui.html">
       <img src="https://img.shields.io/badge/documentation-up%20to%20date-brightgreen">
    </a>
+   <a href="https://github.com/bczsalba/pytermgui/actions/workflows/pytest.yml">
+      <img src="https://github.com/bczsalba/pytermgui/actions/workflows/pytest.yml/badge.svg">
+   </a>
  </p>
 
 
