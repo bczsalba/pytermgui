@@ -112,6 +112,9 @@
             <li>
                     <a class="variable" href="#markup">markup</a>
             </li>
+            <li>
+                    <a class="variable" href="#tim">tim</a>
+            </li>
     </ul>
 
 
@@ -128,12 +131,14 @@
                     <h1 class="modulename">
 <a href="./../pytermgui.html">pytermgui</a><wbr>.parser    </h1>
 
-                        <div class="docstring"><p>A custom markup language to make styling <code>Widget</code>-s easier, and, well, more stylish.</p>
+                        <div class="docstring"><p>This module provides <code>TIM</code>, PyTermGUI's Terminal Inline Markup language. It is a simple,
+performant and easy to read way to style, colorize &amp; modify text.</p>
 
 <h2 id="basic-rundown">Basic rundown</h2>
 
-<p>The PTG markup language is included in order to make styling easier to read and manage.
-Its syntax is based on square brackets, within which tags are strictly separated by one
+<p>TIM is included with the purpose of making styling easier to read and manage.</p>
+
+<p>Its syntax is based on square brackets, within which tags are strictly separated by one
 space character. Tags can stand for colors (xterm-256, RGB or HEX, both background &amp;
 foreground), styles, unsetters and macros.</p>
 
@@ -200,15 +205,16 @@ clear these effects, use <code>/fg</code> for foreground and <code>/bg</code> fo
 partially for organization reasons, but also to allow a sort of sandboxing of custom
 definitions and settings.</p>
 
-<p>PyTermGUI provides the <code><a href="#markup">markup</a></code> name as the global markup language instance. This should
-be used pretty much all of the time, and custom instances should only ever come about
-when some security-sensitive macro definitions are needed, as <code><a href="#markup">markup</a></code> is used by every
-widget, including user-input ones such as <code>InputField</code>.</p>
+<p>PyTermGUI provides the <code><a href="#tim">tim</a></code> name as the global markup language instance. For historical
+reasons, the same instance is available as <code><a href="#markup">markup</a></code>. This should be used pretty much all
+of the time, and custom instances should only ever come about when some
+security-sensitive macro definitions are needed, as <code><a href="#markup">markup</a></code> is used by every widget,
+including user-input ones such as <code>InputField</code>.</p>
 
 <p>For the rest of this page, <code><a href="#MarkupLanguage">MarkupLanguage</a></code> will refer to whichever instance you are
 using.</p>
 
-<p>TL;DR : Use <code><a href="#markup">markup</a></code> always, unless a security concern blocks you from doing so.</p>
+<p>TL;DR : Use <code><a href="#tim">tim</a></code> always, unless a security concern blocks you from doing so.</p>
 
 <h2 id="caching">Caching</h2>
 
@@ -226,12 +232,14 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
                         <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">A custom markup language to make styling `Widget`-s easier, and, well, more stylish.</span>
+<span class="sd">This module provides `TIM`, PyTermGUI&#39;s Terminal Inline Markup language. It is a simple,</span>
+<span class="sd">performant and easy to read way to style, colorize &amp; modify text.</span>
 
 <span class="sd">Basic rundown</span>
 <span class="sd">-------------</span>
 
-<span class="sd">The PTG markup language is included in order to make styling easier to read and manage.</span>
+<span class="sd">TIM is included with the purpose of making styling easier to read and manage.</span>
+
 <span class="sd">Its syntax is based on square brackets, within which tags are strictly separated by one</span>
 <span class="sd">space character. Tags can stand for colors (xterm-256, RGB or HEX, both background &amp;</span>
 <span class="sd">foreground), styles, unsetters and macros.</span>
@@ -306,15 +314,16 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="sd">partially for organization reasons, but also to allow a sort of sandboxing of custom</span>
 <span class="sd">definitions and settings.</span>
 
-<span class="sd">PyTermGUI provides the `markup` name as the global markup language instance. This should</span>
-<span class="sd">be used pretty much all of the time, and custom instances should only ever come about</span>
-<span class="sd">when some security-sensitive macro definitions are needed, as `markup` is used by every</span>
-<span class="sd">widget, including user-input ones such as `InputField`.</span>
+<span class="sd">PyTermGUI provides the `tim` name as the global markup language instance. For historical</span>
+<span class="sd">reasons, the same instance is available as `markup`. This should be used pretty much all</span>
+<span class="sd">of the time, and custom instances should only ever come about when some</span>
+<span class="sd">security-sensitive macro definitions are needed, as `markup` is used by every widget,</span>
+<span class="sd">including user-input ones such as `InputField`.</span>
 
 <span class="sd">For the rest of this page, `MarkupLanguage` will refer to whichever instance you are</span>
 <span class="sd">using.</span>
 
-<span class="sd">TL;DR : Use `markup` always, unless a security concern blocks you from doing so.</span>
+<span class="sd">TL;DR : Use `tim` always, unless a security concern blocks you from doing so.</span>
 
 <span class="sd">Caching</span>
 <span class="sd">-------</span>
@@ -359,7 +368,14 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
     <span class="n">BaseFormatter</span> <span class="o">=</span> <span class="nb">object</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MacroCallable&quot;</span><span class="p">,</span> <span class="s2">&quot;MacroCall&quot;</span><span class="p">,</span> <span class="s2">&quot;MarkupLanguage&quot;</span><span class="p">,</span> <span class="s2">&quot;StyledText&quot;</span><span class="p">,</span> <span class="s2">&quot;markup&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;MacroCallable&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MacroCall&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MarkupLanguage&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;StyledText&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;markup&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tim&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 
 <span class="n">MacroCallable</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
 <span class="n">MacroCall</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">MacroCallable</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
@@ -461,7 +477,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="k">def</span> <span class="nf">_apply_colors</span><span class="p">(</span><span class="n">colors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Applies the given list of colors to the item, spread out evenly.&quot;&quot;&quot;</span>
 
-    <span class="n">blocksize</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">))</span>
+    <span class="n">blocksize</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">current_block</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1243,11 +1259,29 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="sd">            remains valid markup.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="k">def</span> <span class="nf">_apply_macros</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Apply current macros to text&quot;&quot;&quot;</span>
+
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="ow">in</span> <span class="n">applied_macros</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">text</span>
+
+        <span class="k">def</span> <span class="nf">_pop_macro</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Pops a macro from applied_macros.&quot;&quot;&quot;</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">macro_name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">applied_macros</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">macro_name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="n">applied_macros</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">break</span>
+
         <span class="n">styles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TokenType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">:</span> <span class="s2">&quot;210&quot;</span><span class="p">,</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">ESCAPED</span><span class="p">:</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">,</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">:</span> <span class="s2">&quot;strikethrough&quot;</span><span class="p">,</span>
         <span class="p">}</span>
+
+        <span class="n">applied_macros</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MacroCall</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">in_sequence</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1267,7 +1301,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
                     <span class="n">sequence</span> <span class="o">+=</span> <span class="n">style</span><span class="o">.</span><span class="n">sequence</span>
 
-                <span class="n">out</span> <span class="o">+=</span> <span class="n">sequence</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="n">sequence</span> <span class="o">+</span> <span class="n">_apply_macros</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
                 <span class="k">continue</span>
 
             <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="k">if</span> <span class="n">in_sequence</span> <span class="k">else</span> <span class="s2">&quot;[&quot;</span>
@@ -1276,14 +1310,34 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">:</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="p">:</span>
+                    <span class="n">_pop_macro</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
                 <span class="n">current_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
 
-                <span class="n">unsetter_style</span> <span class="o">=</span> <span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span>
                 <span class="n">special_style</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_tags</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
                 <span class="p">)</span>
-                <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">special_style</span><span class="si">}{</span><span class="n">unsetter_style</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;/[</span><span class="si">{</span><span class="n">special_style</span><span class="si">}{</span><span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
                 <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+
+                <span class="n">name</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="s2">&quot;(&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)]</span>
+
+                <span class="n">applied_macros</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">*</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># Not enough arguments</span>
+                    <span class="k">pass</span>
 
             <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">current_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
@@ -1325,7 +1379,8 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify_markup</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments, too-many-locals</span>
+    <span class="c1"># Ignore all of the ignores, this function will be rewritten soon.</span>
+    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments, too-many-locals, too-many-statements</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">items</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
@@ -1469,10 +1524,14 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
                 <span class="c1"># This is ugly but its a slight bit better than adding an extra</span>
                 <span class="c1"># pylint ignore for too many statements.</span>
+                <span class="n">itype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">StyledText</span><span class="p">):</span>
+                    <span class="n">itype</span> <span class="o">=</span> <span class="nb">str</span>
+
                 <span class="n">value</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="nb">str</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span><span class="p">),</span>
                     <span class="nb">int</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">item</span><span class="p">)),</span>
-                <span class="p">}[</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)](</span><span class="n">item</span><span class="p">)</span>
+                <span class="p">}[</span><span class="n">itype</span><span class="p">](</span><span class="n">item</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)):</span>
                     <span class="n">parsed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -1638,7 +1697,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="k">return</span>
 
 
-<span class="n">markup</span> <span class="o">=</span> <span class="n">MarkupLanguage</span><span class="p">()</span>
+<span class="n">tim</span> <span class="o">=</span> <span class="n">markup</span> <span class="o">=</span> <span class="n">MarkupLanguage</span><span class="p">()</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
@@ -2203,11 +2262,29 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="sd">            remains valid markup.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="k">def</span> <span class="nf">_apply_macros</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Apply current macros to text&quot;&quot;&quot;</span>
+
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="ow">in</span> <span class="n">applied_macros</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">text</span>
+
+        <span class="k">def</span> <span class="nf">_pop_macro</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Pops a macro from applied_macros.&quot;&quot;&quot;</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">macro_name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">applied_macros</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">macro_name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="n">applied_macros</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">break</span>
+
         <span class="n">styles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TokenType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">:</span> <span class="s2">&quot;210&quot;</span><span class="p">,</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">ESCAPED</span><span class="p">:</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">,</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">:</span> <span class="s2">&quot;strikethrough&quot;</span><span class="p">,</span>
         <span class="p">}</span>
+
+        <span class="n">applied_macros</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MacroCall</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">in_sequence</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2227,7 +2304,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
                     <span class="n">sequence</span> <span class="o">+=</span> <span class="n">style</span><span class="o">.</span><span class="n">sequence</span>
 
-                <span class="n">out</span> <span class="o">+=</span> <span class="n">sequence</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="n">sequence</span> <span class="o">+</span> <span class="n">_apply_macros</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
                 <span class="k">continue</span>
 
             <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="k">if</span> <span class="n">in_sequence</span> <span class="k">else</span> <span class="s2">&quot;[&quot;</span>
@@ -2236,14 +2313,34 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">:</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="p">:</span>
+                    <span class="n">_pop_macro</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
                 <span class="n">current_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
 
-                <span class="n">unsetter_style</span> <span class="o">=</span> <span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span>
                 <span class="n">special_style</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_tags</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
                 <span class="p">)</span>
-                <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">special_style</span><span class="si">}{</span><span class="n">unsetter_style</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;/[</span><span class="si">{</span><span class="n">special_style</span><span class="si">}{</span><span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
                 <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+
+                <span class="n">name</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="s2">&quot;(&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)]</span>
+
+                <span class="n">applied_macros</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">*</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># Not enough arguments</span>
+                    <span class="k">pass</span>
 
             <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">current_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
@@ -2285,7 +2382,8 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify_markup</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments, too-many-locals</span>
+    <span class="c1"># Ignore all of the ignores, this function will be rewritten soon.</span>
+    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments, too-many-locals, too-many-statements</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">items</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
@@ -2429,10 +2527,14 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
                 <span class="c1"># This is ugly but its a slight bit better than adding an extra</span>
                 <span class="c1"># pylint ignore for too many statements.</span>
+                <span class="n">itype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">StyledText</span><span class="p">):</span>
+                    <span class="n">itype</span> <span class="o">=</span> <span class="nb">str</span>
+
                 <span class="n">value</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="nb">str</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span><span class="p">),</span>
                     <span class="nb">int</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">item</span><span class="p">)),</span>
-                <span class="p">}[</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)](</span><span class="n">item</span><span class="p">)</span>
+                <span class="p">}[</span><span class="n">itype</span><span class="p">](</span><span class="n">item</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)):</span>
                     <span class="n">parsed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -3213,11 +3315,29 @@ as it is much more verbose.</p>
 <span class="sd">            remains valid markup.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="k">def</span> <span class="nf">_apply_macros</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Apply current macros to text&quot;&quot;&quot;</span>
+
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="ow">in</span> <span class="n">applied_macros</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">text</span>
+
+        <span class="k">def</span> <span class="nf">_pop_macro</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Pops a macro from applied_macros.&quot;&quot;&quot;</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">macro_name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">applied_macros</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">macro_name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="n">applied_macros</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">break</span>
+
         <span class="n">styles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TokenType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">:</span> <span class="s2">&quot;210&quot;</span><span class="p">,</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">ESCAPED</span><span class="p">:</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">,</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">:</span> <span class="s2">&quot;strikethrough&quot;</span><span class="p">,</span>
         <span class="p">}</span>
+
+        <span class="n">applied_macros</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MacroCall</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">in_sequence</span> <span class="o">=</span> <span class="kc">False</span>
@@ -3237,7 +3357,7 @@ as it is much more verbose.</p>
 
                     <span class="n">sequence</span> <span class="o">+=</span> <span class="n">style</span><span class="o">.</span><span class="n">sequence</span>
 
-                <span class="n">out</span> <span class="o">+=</span> <span class="n">sequence</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="n">sequence</span> <span class="o">+</span> <span class="n">_apply_macros</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
                 <span class="k">continue</span>
 
             <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="k">if</span> <span class="n">in_sequence</span> <span class="k">else</span> <span class="s2">&quot;[&quot;</span>
@@ -3246,14 +3366,34 @@ as it is much more verbose.</p>
             <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">:</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="p">:</span>
+                    <span class="n">_pop_macro</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
                 <span class="n">current_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
 
-                <span class="n">unsetter_style</span> <span class="o">=</span> <span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span>
                 <span class="n">special_style</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_tags</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
                 <span class="p">)</span>
-                <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">special_style</span><span class="si">}{</span><span class="n">unsetter_style</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;/[</span><span class="si">{</span><span class="n">special_style</span><span class="si">}{</span><span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
                 <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+
+                <span class="n">name</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="s2">&quot;(&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)]</span>
+
+                <span class="n">applied_macros</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">*</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># Not enough arguments</span>
+                    <span class="k">pass</span>
 
             <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">current_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
@@ -3372,7 +3512,7 @@ markup, which is then prettified using <code><a href="#MarkupLanguage.prettify_m
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments, too-many-locals</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments, too-many-locals, too-many-statements</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">items</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
@@ -3516,10 +3656,14 @@ markup, which is then prettified using <code><a href="#MarkupLanguage.prettify_m
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
                 <span class="c1"># This is ugly but its a slight bit better than adding an extra</span>
                 <span class="c1"># pylint ignore for too many statements.</span>
+                <span class="n">itype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">StyledText</span><span class="p">):</span>
+                    <span class="n">itype</span> <span class="o">=</span> <span class="nb">str</span>
+
                 <span class="n">value</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="nb">str</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prettify</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span><span class="p">),</span>
                     <span class="nb">int</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">_apply_style</span><span class="p">(</span><span class="n">item</span><span class="p">)),</span>
-                <span class="p">}[</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)](</span><span class="n">item</span><span class="p">)</span>
+                <span class="p">}[</span><span class="n">itype</span><span class="p">](</span><span class="n">item</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)):</span>
                     <span class="n">parsed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -4018,6 +4162,16 @@ if there is no ANSI tomfoolery going on.</p>
                                 <div class="attr variable"><a class="headerlink" href="#markup">#&nbsp;&nbsp</a>
 
         <span class="name">markup</span><span class="default_value"> = &lt;<a href="#MarkupLanguage">pytermgui.parser.MarkupLanguage</a> object&gt;</span>
+    </div>
+
+    
+    
+
+                </section>
+                <section id="tim">
+                                <div class="attr variable"><a class="headerlink" href="#tim">#&nbsp;&nbsp</a>
+
+        <span class="name">tim</span><span class="default_value"> = &lt;<a href="#MarkupLanguage">pytermgui.parser.MarkupLanguage</a> object&gt;</span>
     </div>
 
     
