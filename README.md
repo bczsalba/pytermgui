@@ -70,7 +70,7 @@ Under the hood it calls `tim.setup_displayhook()` with no arguments. For more gr
 ```python3
 >>> from pytermgui import pretty, tim
 >>> ["Welcome to PyTermGUI!", {0: "Things are now", 1: "Prettier!"}, locals()]
->>> ''[dim]TIM [/]code is automatically [/dim !gradient(222)]syntax-highlighted'
+>>> '[dim]TIM [/dim]code is automatically [!gradient(222)]syntax-highlighted'
 ```
 
 ![Pretty example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/pretty.png)
