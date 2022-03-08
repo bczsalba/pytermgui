@@ -509,6 +509,9 @@ docs/parser/markup_language.png"
     </p>
     """
 
+    raise_unknown_markup: bool = False
+    """Raise `pytermgui.exceptions.MarkupSyntaxError` when encountering unknown markup tags."""
+
     def __init__(self, default_macros: bool = True) -> None:
         """Initializes a MarkupLanguage.
 
@@ -598,6 +601,27 @@ docs/parser/markup_language.png"
 
         return None
 
+    def _get_style_token(self, tag: str) -> Token | None:
+        """Tries to get a style (including unsetter) token from tags, user tags and unsetters.
+
+        Args:
+            tag: The tag to parse.
+
+        Returns:
+            A `Token` if one could be created, None otherwise.
+        """
+
+        if tag in self.unsetters:
+            return Token(name=tag, ttype=TokenType.UNSETTER, data=self.unsetters[tag])
+
+        if tag in self.user_tags:
+            return Token(name=tag, ttype=TokenType.STYLE, data=self.user_tags[tag])
+
+        if tag in self.tags:
+            return Token(name=tag, ttype=TokenType.STYLE, data=self.tags[tag])
+
+        return None
+
     def __enter__(self) -> Callable[..., None]:
         """Returns a print method that parses markup."""
 
@@ -646,45 +670,37 @@ docs/parser/markup_language.png"
                 continue
 
             for tag in tag_text.split():
-                if tag in self.unsetters:
-                    yield Token(
-                        name=tag, ttype=TokenType.UNSETTER, data=self.unsetters[tag]
-                    )
-
-                elif tag in self.user_tags:
-                    yield Token(
-                        name=tag, ttype=TokenType.STYLE, data=self.user_tags[tag]
-                    )
-
-                elif tag in self.tags:
-                    yield Token(name=tag, ttype=TokenType.STYLE, data=self.tags[tag])
+                token = self._get_style_token(tag)
+                if token is not None:
+                    yield token
+                    continue
 
                 # Try to find a color token
-                else:
-                    color_token = self._get_color_token(tag)
-                    if color_token is not None:
-                        yield color_token
-                        continue
+                token = self._get_color_token(tag)
+                if token is not None:
+                    yield token
+                    continue
 
-                    macro_match = RE_MACRO.match(tag)
-                    if macro_match is not None:
-                        name, args = macro_match.groups()
-                        macro_args = () if args is None else args.split(":")
+                macro_match = RE_MACRO.match(tag)
+                if macro_match is not None:
+                    name, args = macro_match.groups()
+                    macro_args = () if args is None else args.split(":")
 
-                        if not name in self.macros:
-                            raise MarkupSyntaxError(
-                                tag=tag,
-                                cause="is not a defined macro",
-                                context=markup_text,
-                            )
-
-                        yield Token(
-                            name=tag,
-                            ttype=TokenType.MACRO,
-                            data=(self.macros[name], macro_args),
+                    if not name in self.macros:
+                        raise MarkupSyntaxError(
+                            tag=tag,
+                            cause="is not a defined macro",
+                            context=markup_text,
                         )
-                        continue
 
+                    yield Token(
+                        name=tag,
+                        ttype=TokenType.MACRO,
+                        data=(self.macros[name], macro_args),
+                    )
+                    continue
+
+                if self.raise_unknown_markup:
                     raise MarkupSyntaxError(
                         tag=tag, cause="not defined", context=markup_text
                     )
@@ -1254,7 +1270,10 @@ docs/parser/markup_language.png"
         else:
             return str(target)
 
-        return self.parse(buff)
+        try:
+            return self.parse(buff)
+        except (AnsiSyntaxError, MarkupSyntaxError):
+            return str(target)
 
 
 def main() -> None:
@@ -1320,6 +1339,7 @@ def main() -> None:
 
 
 tim = markup = MarkupLanguage()
+"""The default TIM instances."""
 
 if __name__ == "__main__":
     main()
