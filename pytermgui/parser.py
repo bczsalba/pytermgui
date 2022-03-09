@@ -495,11 +495,10 @@ class MarkupLanguage:
     This class is used for all markup/ANSI parsing, tokenizing and usage.
 
     ```python3
-    import pytermgui as ptg
+    from pytermgui import tim
 
-    ptg.markup.alias("my-tag", "@152 72 bold")
-    with ptg.markup as mprint:
-        mprint("This is [my-tag]my-tag[/]!")
+    tim.alias("my-tag", "@152 72 bold")
+    tim.print("This is [my-tag]my-tag[/]!")
     ```
 
     <p style="text-align: center">
@@ -622,25 +621,14 @@ docs/parser/markup_language.png"
 
         return None
 
-    def __enter__(self) -> Callable[..., None]:
-        """Returns a print method that parses markup."""
+    def print(self, *args, **kwargs) -> None:
+        """Parse all arguments and pass them through to print, along with kwargs."""
 
-        def printer(*args, **kwargs) -> None:
-            """Parse all arguments and pass them through to print, along with kwargs"""
+        parsed = []
+        for arg in args:
+            parsed.append(self.parse(str(arg)))
 
-            parsed = []
-            for arg in args:
-                parsed.append(self.parse(str(arg)))
-
-            print(*parsed, **kwargs)
-
-        return printer
-
-    def __exit__(self, _, exception: Exception, __) -> None:
-        """Raises any exception that happened in context."""
-
-        if exception is not None:
-            raise exception
+        print(*parsed, **kwargs)
 
     def tokenize_markup(self, markup_text: str) -> Iterator[Token]:
         """Converts the given markup string into an iterator of `Token`.
