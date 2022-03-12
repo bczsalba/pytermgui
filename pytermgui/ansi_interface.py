@@ -23,14 +23,11 @@ from shutil import get_terminal_size
 
 from .input import getch
 
-_IS_NT = _name == "nt"
-
 __all__ = [
     "Color",
     "foreground",
     "background",
     "terminal",
-    "is_interactive",
     "save_screen",
     "restore_screen",
     "set_alt_buffer",
@@ -235,6 +232,9 @@ class Terminal:
     margins = [0, 0, 0, 0]
     """Not quite sure what this does at the moment."""
 
+    displayhook_installed: bool = False
+    """This is set to True when `pretty.install` is called."""
+
     def __init__(self) -> None:
         """Initialize `_Terminal` class."""
 
@@ -301,6 +301,15 @@ class Terminal:
 
         return self.size[1]
 
+    @staticmethod
+    def is_interactive() -> bool:
+        """Determines whether shell is interactive.
+
+        A shell is interactive if it is run from `python3` or `python3 -i`.
+        """
+
+        return hasattr(sys, "ps1")
+
     def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
         """Subcribes a callback to be called when event occurs.
 
@@ -340,16 +349,6 @@ class Terminal:
 
 terminal = Terminal()
 """Terminal instance that should be used pretty much always."""
-
-
-def is_interactive() -> bool:
-    """Determines whether shell is interactive.
-
-    A shell is interactive if it is run from `python3` or `python3 -i`.
-    """
-
-    return hasattr(sys, "ps1")
-
 
 # screen commands
 def save_screen() -> None:
