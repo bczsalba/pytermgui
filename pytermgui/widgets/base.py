@@ -653,9 +653,7 @@ class Label(Widget):
         value_style = self._get_style("value")
 
         lines = []
-        for i, line in enumerate(
-            break_line(value_style(self.padding * " " + self.value), self.width)
-        ):
+        for i, line in enumerate(break_line(value_style(self.value), self.width)):
             if i == 0:
                 lines.append(self.padding * " " + line)
                 continue

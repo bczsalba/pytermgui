@@ -1,7 +1,8 @@
 """The module containing all of the layout-related widgets."""
 
-# These widgets have more than the 7 allowed instance attributes.
-# pylint: disable=too-many-instance-attributes, too-many-lines
+# The widgets defined here are quite complex, so I think unrestricting them this way
+# is more or less reasonable.
+# pylint: disable=too-many-instance-attributes, too-many-lines, too-many-public-methods
 
 from __future__ import annotations
 
@@ -455,6 +456,17 @@ class Container(Widget):
         raise NotImplementedError(
             f"Vertical alignment {self.vertical_align} is not implemented for {type(self)}."
         )
+
+    def lazy_add(self, other: object) -> None:
+        """Adds `other` without running get_lines.
+
+        This is analogous to `self._add_widget(other, run_get_lines=False).
+
+        Args:
+            other: The object to add.
+        """
+
+        self._add_widget(other, run_get_lines=False)
 
     def get_lines(self) -> list[str]:
         """Gets all lines by spacing out inner widgets.
