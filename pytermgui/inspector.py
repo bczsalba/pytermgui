@@ -1,313 +1,479 @@
+"""This module provides introspection utilities.
+
+The `inspect` method can be used to create an `Inspector` widget, which can
+then be used to see what is happening inside any python object. This method is
+usually preferred for instantiating an `Inspector`, as it sets up overwriteable default
+arguments passed to the new widget.
+
+These defaults are meant to hide the non-important information when they are not needed,
+in order to allow the least amount of code for the most usability. For example, by
+default, when passed a class, `inspect` will clip the docstrings to their first lines,
+but show all methods. When an class' method is given it will hide show the full
+docstring, and also use the method's fully qualified name.
 """
-`Inspector` widget and inspection utilities for (in the future) any Python objects. This
-module will soon see a full overhaul, so the API is likely to change.
-"""
-# TODO: This module should get a rewrite at some point:
-#       - Tie into WindowManager
-#       - Live object inspection
-#       - Support for module inspection
-#       - Handle long items
+
+# pylint: disable=too-many-instance-attributes
+
+# Note: There are a lot of `type: ignore`-s in this file. These show up in places where
+#       mypy sees potential for an error, but the possible error is already counteracted.
 
 from __future__ import annotations
 
-from typing import Optional, Any
-from inspect import signature, getdoc, isclass, ismodule, Signature
+from enum import Enum, auto
+from typing import Any, Iterator
 
-from .input import getch
-from .parser import markup
-from .enums import HorizontalAlignment
+from inspect import (
+    signature,
+    isclass,
+    ismodule,
+    isfunction,
+    getdoc,
+    getfile,
+)
 
-from .context_managers import alt_buffer
-from .widgets.boxes import DOUBLE_BOTTOM
-from .widgets import Container, Label
-from .widgets.styles import MarkupFormatter, StyleType, StyleCall
-from .ansi_interface import foreground, terminal, is_interactive
+from .parser import tim
+from .helpers import real_length
+from .prettifiers import prettify
+from .ansi_interface import terminal
+from .widgets import Widget, Container, Label, boxes
 
-__all__ = ["inspect", "Inspector"]
+try:
+    from typing import get_origin  # pylint: disable=ungrouped-imports
+
+except NameError:
+
+    def get_origin(_: object) -> Any:  # type: ignore
+        """Spoofs typing.get_origin, which is used to determine type-hints.
+
+        Since this function is only available >=3.8, we need to have some
+        implementation on it for 3.7. The code checks for the origin to be
+        non-null, as that is the value returned by this method on non-typing
+        objects.
+
+        This will cause annotations to show up on 3.7, but not on 3.8+.
+        """
+
+        return None
 
 
-def create_color_style(color: int) -> StyleType:
-    """Create a color style callable"""
-
-    def color_style(_: int, item: str) -> str:
-        """Simple style using foreground colors"""
-
-        return foreground(item, color)
-
-    return color_style
+__all__ = ["Inspector", "inspect"]
 
 
-def inspect(
-    target: Any,
-    style: bool = True,
-    show_dunder: bool = False,
-    show_private: bool = False,
-) -> None:
-    """Inspect an object"""
+class ObjectType(Enum):
+    """All types an object can be."""
 
-    target_height = int(terminal.height * 3 / 4)
-    inspector = Inspector()
-    inspector.inspect(target, show_dunder=show_dunder, show_private=show_private)
+    LIVE = auto()
+    """An instance that does not fit the other types."""
 
-    def handle_scrolling(root: Container, index: int) -> Optional[Container]:
-        """Handle scrolling root to index"""
+    CLASS = auto()
+    """A class object."""
 
-        widgets = []
-        current = 0
+    MODULE = auto()
+    """A module object."""
 
-        for label in inspector[index:]:
-            if current > target_height:
-                break
+    BUILTIN = auto()
+    """Some sort of a builtin object.
 
-            widgets.append(label)
-            current += label.height
+    As builtins are often implemented in C, a lot of the standard python APIs
+    won't work on them, so we need to treat them separately."""
 
-        if inspector.height < target_height:
-            root.height = inspector.height
+    FUNCTION = auto()
+    """A callable object, that is not a class."""
 
-        else:
-            for _ in range(target_height - current):
-                widgets.append(Label())
 
-        root.set_widgets(widgets)
+def _is_builtin(target: object) -> bool:
+    """Determines if the given target is a builtin."""
 
-        return root
+    try:
+        signature(target)  # type: ignore
+        return False
 
-    root = Container(width=terminal.width)
-    root.height = target_height
-    root += Label()
+    except (ValueError, TypeError):
+        return True
 
-    if style:
-        builtin_style = StyleCall(inspector, inspector.styles["builtin"])
-        DOUBLE_BOTTOM.set_chars_of(root)
 
-        corners = root.chars["corner"]
-        assert isinstance(corners, list)
-        corners[1] = " Inspecting: " + builtin_style(str(target)) + " " + corners[1]
-        root.set_char("corner", corners)
+def _determine_type(target: object) -> ObjectType:
+    """Determines the type of an object."""
 
-        root.set_style("corner", lambda _, item: item)
+    if ismodule(target):
+        return ObjectType.MODULE
 
-    handle_scrolling(root, 0)
-    scroll = 0
+    if _is_builtin(target):
+        return ObjectType.BUILTIN
 
-    with alt_buffer(cursor=False):
-        root.center()
-        root.print()
+    if isclass(target):
+        return ObjectType.CLASS
 
-        while True:
-            previous = scroll
+    if isfunction(target) or callable(target):
+        return ObjectType.FUNCTION
 
-            try:
-                key = getch()
-            except KeyboardInterrupt:
-                break
+    return ObjectType.LIVE
 
-            if inspector.height > target_height:
-                if key == "j":
-                    scroll += 1
 
-                elif key == "k":
-                    scroll -= 1
+def _is_type_alias(obj: object) -> bool:
+    """Determines whether the given object is (likely) a type alias."""
 
-                scroll = max(0, scroll)
+    return get_origin(obj) is not None
 
-                if not handle_scrolling(root, scroll):
-                    scroll = previous
 
-            root.center()
-            root.print()
+INDENTED_EMPTY_BOX = boxes.Box(
+    [
+        "   ",
+        "   x",
+        "",
+    ]
+)
 
-    print("Inspection complete!")
-    if is_interactive():
-        print(
-            markup.parse(
-                "\n[210 bold]Note: [/]"
-                + "The Python interactive shell doesn't support hiding input characters,"
-                + " so the inspect() experience is not ideal.\n"
-                + "Consider using [249]`ptg --inspect`[/fg] instead."
-            )
+
+def inspect(target: object, **inspector_args) -> Inspector:
+    """Inspects an object.
+
+    Args:
+        obj: The object to inspect.
+        show_private: Whether `_private` attributes should be shown.
+        show_dunder: Whether `__dunder__` attributes should be shown.
+        show_methods: Whether methods should be shown when encountering a class.
+        show_full_doc: If not set, docstrings are cut to only include their first
+            line.
+        show_qualname: Show fully-qualified name, e.g. `module.submodule.name`
+            instead of `name`.
+    """
+
+    def _conditionally_overwrite_kwarg(**kwargs) -> None:
+        for key, value in kwargs.items():
+            if not key in inspector_args:
+                inspector_args[key] = value
+
+    if ismodule(target):
+        _conditionally_overwrite_kwarg(
+            show_dunder=False,
+            show_private=False,
+            show_full_doc=False,
+            show_methods=True,
+            show_qualname=False,
         )
+
+    elif isclass(target):
+        _conditionally_overwrite_kwarg(
+            show_dunder=True,
+            show_private=False,
+            show_full_doc=False,
+            show_methods=True,
+            show_qualname=False,
+        )
+
+    elif callable(target):
+        _conditionally_overwrite_kwarg(
+            show_dunder=False,
+            show_private=False,
+            show_full_doc=True,
+            show_methods=False,
+            show_qualname=True,
+        )
+
+    else:
+        _conditionally_overwrite_kwarg(
+            show_dunder=False,
+            show_private=False,
+            show_full_doc=True,
+            show_methods=True,
+            show_qualname=False,
+        )
+
+    inspector = Inspector(**inspector_args).inspect(target)
+
+    return inspector
 
 
 class Inspector(Container):
-    """A Container subclass that allows inspection of any Python object"""
+    """A widget to inspect any Python object."""
 
-    styles = {
-        **Container.styles,
-        **{
-            "builtin": MarkupFormatter("[208]{item}"),
-            "declaration": MarkupFormatter("[9 bold]{item}"),
-            "name": MarkupFormatter("[114]{item}"),
-            "string": lambda depth, item: foreground(item, 142),
-        },
-    }
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        target: object = None,
+        show_private: bool = False,
+        show_dunder: bool = False,
+        show_methods: bool = False,
+        show_full_doc: bool = False,
+        show_qualname: bool = True,
+        **attrs: Any,
+    ):
+        """Initializes an inspector.
 
-    _inspectable = ["__init__", "inspect"]
+        Note that most of the time, using `inspect` to do this is going to be more
+        useful.
 
-    def __init__(self, **container_args: Any) -> None:
-        """Initialize object and inspect something"""
+        Some styles of the inspector can be changed using the `inspector-name`,
+        `inspector-file` and `inspector-keyword` markup aliases. The rest of the
+        highlighting is done using `pprint`, with all of its respective colors.
 
-        super().__init__(**container_args)
+        Args:
+            show_private: Whether `_private` attributes should be shown.
+            show_dunder: Whether `__dunder__` attributes should be shown.
+            show_methods: Whether methods should be shown when encountering a class.
+            show_full_doc: If not set, docstrings are cut to only include their first
+                line.
+            show_qualname: Show fully-qualified name, e.g. `module.submodule.name`
+                instead of `name`.
+        """
 
-        self.styles = type(self).styles.copy()
+        if "box" not in attrs:
+            attrs["box"] = "EMPTY"
 
-    @staticmethod
-    def _get_signature(target: Any) -> Optional[Signature]:
-        """Get signature of target, return None if exception occurs"""
+        super().__init__(**attrs)
+
+        self.width = terminal.width
+        self.show_private = show_private
+        self.show_dunder = show_dunder
+        self.show_methods = show_methods
+        self.show_full_doc = show_full_doc
+        self.show_qualname = show_qualname
+
+        # TODO: Fix attr-showing
+        self.show_attrs = False
+
+        self.target: object
+        if target is not None:
+            self.inspect(target)
+            self.target = target
+
+    def _get_header(self) -> Container:
+        """Creates a header containing the name and location of the object."""
+
+        header = Container(box="SINGLE")
+
+        line = "[inspector-name]"
+        if self.target_type is ObjectType.MODULE:
+            line += self.target.__name__  # type: ignore
+
+        else:
+            cls = (
+                self.target
+                if isclass(self.target) or isfunction(self.target)
+                else self.target.__class__
+            )
+            line += cls.__module__ + "." + cls.__qualname__  # type: ignore
+
+        header += line
 
         try:
-            return signature(target)
+            file = getfile(self.target)  # type: ignore
+        except TypeError:
+            return header
+
+        header += f"Located in [inspector-file !link(file://{file})]{file}"
+
+        return header
+
+    def _get_definition(self) -> Label:
+        """Returns the definition str of self.target."""
+
+        target = self.target
+
+        if self.show_qualname:
+            name = getattr(target, "__qualname__", type(target).__name__)
+        else:
+            name = getattr(target, "__name__", type(target).__name__)
+
+        definition = "[inspector-keyword]"
+
+        if self.target_type == ObjectType.LIVE:
+            target = type(target)
+
+        otype = _determine_type(target)
+        if otype == ObjectType.CLASS:
+            definition += "class"
+
+        elif otype == ObjectType.FUNCTION:
+            definition += "def"
+
+        definition += " [/ 109]" + name + "[/]"
+
+        try:
+            definition += self.highlight(str(signature(target))) + ":"  # type: ignore
 
         except (TypeError, ValueError):
-            return None
+            definition += "(...)"
 
-    def _get_docstring(self, target: Any) -> list[str]:
-        """Get docstring of target"""
+        return Label(definition, parent_align=0, non_first_padding=4)
 
-        string_style = self._get_style("string")
+    def _get_docs(self, padding: int) -> Iterator[Label]:
+        """Returns a list of Labels of the object's documentation."""
 
-        doc = getdoc(target)
+        if self.target.__doc__ is None:
+            return
+
+        doc = getdoc(self.target)
         if doc is None:
-            return []
+            return
 
-        doc = '"""' + doc + '"""'
+        for i, line in enumerate(doc.splitlines()):
+            if i == 1 and not self.show_full_doc:
+                return
 
-        lines = []
-        for line in doc.splitlines():
-            lines.append(string_style(line))
+            line = line.replace("[", r"\[")
 
-        return lines
+            yield Label(
+                "[102]" + line, parent_align=0, padding=padding, non_first_padding=4
+            )
 
-    def _get_definition(self, target: Any) -> str:
-        """Get definition (def fun(...) / class Cls(...)) of an object"""
+    def _get_keys(self) -> list[str]:
+        """Gets all inspectable keys of an object.
 
-        name_style = self._get_style("name")
-        declaration_style = self._get_style("declaration")
+        It first checks for an `__all__` attribute, and substitutes `dir` if not found.
+        Then, if there are too many keys and the given target is a module it tries to
+        list all of the present submodules.
+        """
 
-        elements = [declaration_style("class" if isclass(target) else "def")]
+        keys = getattr(self.target, "__all__", dir(self.target))
 
-        if hasattr(target, "__name__"):
-            obj_name = name_style(getattr(target, "__name__"))
+        if not self.show_dunder:
+            keys = [key for key in keys if not key.startswith("__")]
 
-        else:
-            obj_name = name_style(type(target).__name__)
+        if not self.show_private:
+            keys = [key for key in keys if not (key.startswith("_") and key[1] != "_")]
 
-        obj_name += "("
+        if not self.show_methods:
+            keys = [key for key in keys if not callable(getattr(self.target, key))]
 
-        sig = self._get_signature(target)
+        keys.sort(key=lambda item: callable(getattr(self.target, item, None)))
 
-        if isclass(target) or sig is None:
-            parameters = ["..."]
+        return keys
 
-        else:
-            parameters = []
-            for name, parameter in sig.parameters.items():
-                param_str = name
+    def _get_preview(self) -> Container:
+        """Gets a Container with self.target inside."""
 
-                if name == "self" or parameter.annotation is Signature.empty:
-                    parameters.append(param_str)
+        preview = Container(static_width=self.width // 2, parent_align=0, box="SINGLE")
+
+        if isinstance(self.target, str):
+            preview.lazy_add(prettify(tim.get_markup(self.target), parse=False))
+            return preview
+
+        for line in prettify(self.target).splitlines():
+            if real_length(line) > preview.width - preview.sidelength:
+                preview.width = real_length(line) + preview.sidelength
+
+            preview.lazy_add(Label(tim.get_markup(line), parent_align=0))
+
+        return preview
+
+    @staticmethod
+    def highlight(text: str) -> str:
+        """Applies highlighting to a given string.
+
+        This highlight includes keywords, builtin types and more.
+
+        Args:
+            text: The string to highlight.
+
+        Returns:
+            Unparsed markup.
+        """
+
+        def _split(text: str, chars: str = " ,:|()[]{}") -> list[tuple[str, str]]:
+            """Splits given text by the given chars.
+
+            Args:
+                text: The text to split.
+                chars: A string of characters we will split by.
+
+            Returns:
+                A tuple of (delimiter, word) tuples. Delimiter is one of the characters
+                of `chars`.
+            """
+
+            last_delim = ""
+            output = []
+            word = ""
+            for char in text:
+                if char in chars:
+                    output.append((last_delim, word))
+                    last_delim = char
+                    word = ""
                     continue
 
-                param_str += ": "
-                param_str += self._style_annotation(parameter.annotation)
+                word += char
 
-                if parameter.default is not Signature.empty:
-                    param_str += " = "
-                    param_str += str(parameter.default)
+            output.append((last_delim, word))
+            return output
 
-                parameters.append(param_str)
+        buff = ""
+        for (delim, word) in _split(text):
+            word = word.strip("'")
 
-        obj_name += ", ".join(parameters) + ")"
+            pretty = prettify(word, indent=0, parse=False)
+            if pretty != f"[pprint-str]'{word}'[/]":
+                buff += delim + pretty
+                continue
 
-        if not isclass(target):
-            if sig is not None and sig.return_annotation is not Signature.empty:
-                obj_name += " -> "
-                obj_name += self._style_annotation(sig.return_annotation)
+            buff += delim + word
 
-        obj_name += ":"
-        elements.append(obj_name)
+        return buff
 
-        return " ".join(elements)
+    def inspect(self, target: object) -> Inspector:
+        """Inspects a given object, and sets self.target to it.
 
-    def _style_annotation(self, annotation: Any) -> str:
-        """Style an annotation property"""
+        Returns:
+            Self, with the new content based on the inspection.
+        """
 
-        builtin_style = self._get_style("builtin")
-        if isinstance(annotation, type):
-            return builtin_style(annotation.__name__.replace("[", r"\["))
+        self.target = target
+        self.target_type = _determine_type(target)
 
-        return builtin_style(str(annotation.replace("[", r"\[")))
+        # Header
+        if self.box is not INDENTED_EMPTY_BOX:
+            self.lazy_add(self._get_header())
 
-    def inspect(
-        self,
-        target: Any,
-        keep_elements: bool = False,
-        show_dunder: bool = False,
-        show_private: bool = False,
-        _padding: int = 0,
-    ) -> Container:
-        """Inspect any Python element"""
+        # Body
+        if self.target_type is not ObjectType.MODULE:
+            self.lazy_add(self._get_definition())
 
-        if ismodule(target):
-            raise NotImplementedError("Modules are not inspectable yet.")
+        padding = 0 if self.target_type is ObjectType.MODULE else 4
 
-        if not keep_elements:
-            self._widgets = []
+        for item in self._get_docs(padding):
+            self.lazy_add(item)
 
-        definition = Label(
-            self._get_definition(target),
-            padding=_padding,
-            parent_align=HorizontalAlignment.LEFT,
-        )
-        definition.set_style("value", lambda _, item: item)
+        keys = self._get_keys()
 
-        # it keeps the same type
-        self._add_widget(definition)
+        for key in keys:
+            attr = getattr(target, key, None)
 
-        for line in self._get_docstring(target):
-            doc = Label(
-                line, padding=_padding + 4, parent_align=HorizontalAlignment.LEFT
-            )
-            doc.set_style("value", lambda _, item: item)
-            self._add_widget(doc)
+            # Don't show type aliases
+            if _is_type_alias(attr):
+                continue
 
-        if isclass(target):
-            self._add_widget(Label())
+            # Only show functions if they are not lambdas
+            if isfunction(attr) and not attr.__name__ == "<lambda>":
+                self.lazy_add(
+                    Inspector(
+                        box=INDENTED_EMPTY_BOX,
+                        show_dunder=self.show_dunder,
+                        show_private=self.show_private,
+                        show_full_doc=self.show_full_doc,
+                        show_qualname=self.show_qualname,
+                    ).inspect(attr)
+                )
+                continue
 
-            if hasattr(target, "_inspectable"):
-                functions = [
-                    getattr(target, name) for name in getattr(target, "_inspectable")
-                ]
+            if not self.show_attrs:
+                continue
 
-            else:
-                functions = []
-                for name in dir(target):
-                    value = getattr(target, name)
+            for i, line in enumerate(prettify(attr, parse=False).splitlines()):
+                if i == 0:
+                    line = f"- {key}: {line}"
 
-                    value_name = getattr(value, "__name__", None)
+                self.lazy_add(Label(line, parent_align=0))
 
-                    if value_name:
-                        if (
-                            not show_dunder
-                            and value_name.startswith("__")
-                            and value_name.endswith("__")
-                            and not value_name == "__init__"
-                        ):
-                            continue
-
-                        if (
-                            not show_private
-                            and value_name.startswith("_")
-                            and not value_name.endswith("__")
-                        ):
-                            continue
-
-                    if callable(value) and not isinstance(value, type):
-                        functions.append(value)
-
-            for function in functions:
-                self.inspect(function, keep_elements=True, _padding=_padding + 4)
-                self._add_widget(Label())
+        # Footer
+        if self.target_type in [ObjectType.LIVE, ObjectType.BUILTIN]:
+            self.lazy_add(self._get_preview())
 
         return self
+
+    def debug(self) -> str:
+        """Returns identifiable information used in repr."""
+
+        if terminal.is_interactive and not terminal.displayhook_installed:
+            return "\n".join(self.get_lines())
+
+        return Widget.debug(self)

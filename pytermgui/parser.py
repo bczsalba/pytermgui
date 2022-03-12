@@ -539,11 +539,16 @@ docs/parser/markup_language.png"
             self.define("!title", lambda item: str(item.title()))
             self.define("!capitalize", lambda item: str(item.capitalize()))
             self.define("!expand", lambda tag: macro_expand(self, tag))
+            self.define("!debug", lambda *args: ",".join(ascii(arg) for arg in args))
 
         self.alias("pprint-int", "175")
         self.alias("pprint-str", "142")
         self.alias("pprint-type", "214")
         self.alias("pprint-none", "167")
+
+        self.alias("inspector-name", "pprint-type")
+        self.alias("inspector-file", "109")
+        self.alias("inspector-keyword", "203")
 
     @staticmethod
     def _get_color_token(tag: str) -> Token | None:
