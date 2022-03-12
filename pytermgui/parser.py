@@ -1073,12 +1073,11 @@ docs/parser/markup_language.png"
         current_styles: list[Token] = []
 
         for token in self.tokenize_markup(text):
-            if token.ttype is TokenType.PLAIN:
-                in_sequence = False
-
-                if len(out) > 0:
+            if token.ttype in [TokenType.PLAIN, TokenType.ESCAPED]:
+                if in_sequence:
                     out += "]"
 
+                in_sequence = False
                 sequence = ""
                 for style in current_styles:
                     if style.sequence is None:
