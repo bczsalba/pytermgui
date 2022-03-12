@@ -14,7 +14,9 @@ import sys
 import builtins
 from typing import Any
 
-from pytermgui import tim
+from .parser import tim
+from .prettifiers import prettify
+from .ansi_interface import terminal
 
 try:
     # Try to get IPython instance. This function is provided by the
@@ -36,11 +38,12 @@ def pprint(
     indent: int = 2,
     expand_all: bool = False,
     force_markup: bool = False,
+    parse: bool = True,
     **print_args: Any,
 ) -> None:
     r"""A wrapper to pretty-print any object.
 
-    This essentially just calls `tim.prettify` on each given object, and passes the
+    This essentially just calls `prettify` on each given object, and passes the
     `**print_args` right through to print. Note that when the `sep` print argument is
     ommitted it is manually set to ", \n".
 
@@ -66,11 +69,12 @@ def pprint(
             continue
 
         pretty.append(
-            tim.prettify(
+            prettify(
                 item,
                 force_markup=force_markup,
                 indent=indent,
                 expand_all=expand_all,
+                parse=parse,
             )
         )
 
@@ -122,21 +126,22 @@ def install(
         # inkeeping with sys.displayhook
         builtins._ = value  # type: ignore
 
-    with tim as mprint:
-        mprint()
-        mprint("[113 bold]Successfully set up prettification!")
-        mprint("[245 italic]> All function returns will now be pretty-printed,")
-        mprint()
-        pprint("[245 italic]Including [/italic 210]Markup!")
-        mprint()
-
     if IPYTHON is not None:
         IPYTHON.display_formatter.formatters["text/plain"] = PTGFormatter(
             force_markup=force_markup, indent=indent, expand_all=expand_all
         )
-        return
 
-    sys.displayhook = _hook
+    else:
+        sys.displayhook = _hook
+
+    print()
+    tim.print("[113 bold]Successfully set up prettification!")
+    tim.print("[245 italic]> All function returns will now be pretty-printed,")
+    print()
+    pprint("[245 italic]Including [/italic 210]Markup!")
+    print()
+
+    terminal.displayhook_installed = True
 
 
 class PTGFormatter(BaseFormatter):  # pylint: disable=too-few-public-methods

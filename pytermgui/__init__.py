@@ -17,6 +17,7 @@ from typing import Union, Any, Optional
 from random import shuffle
 import sys
 
+from . import pretty
 from .enums import *
 from .parser import *
 from .widgets import *
@@ -25,6 +26,7 @@ from .inspector import *
 from .animations import *
 from .serializer import *
 from .exceptions import *
+from .prettifiers import *
 from .file_loaders import *
 from .ansi_interface import *
 from .window_manager import *

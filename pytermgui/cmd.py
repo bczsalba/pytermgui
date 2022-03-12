@@ -22,7 +22,6 @@ from argparse import ArgumentParser, Namespace
 from . import (
     __version__,
     MarkupSyntaxError,
-    # prettify_markup,
     MarkupFormatter,
     WindowManager,
     ColorPicker,
@@ -33,7 +32,7 @@ from . import (
     Container,
     Splitter,
     terminal,
-    markup,
+    tim,
     Window,
     Button,
     Label,
@@ -229,7 +228,7 @@ class MarkupApplication(Application):
         """Gets all tokens using the parser."""
 
         tokens: list[Label] = []
-        for token in markup.tags:
+        for token in tim.tags:
             tokens.append(Label(f"[{token}]{token}", parent_align=0))
 
         return tokens
@@ -241,7 +240,7 @@ class MarkupApplication(Application):
         This shows parsed markup if parsing succeeded, SyntaxError otherwise."""
 
         try:
-            markup.parse(field.value)
+            tim.parse(field.value)
             output.value = field.value
         except MarkupSyntaxError as error:
             output.value = "[210 bold]SyntaxError:[/] " + error.escape_message()
@@ -270,9 +269,9 @@ class MarkupApplication(Application):
             randcol = lambda: randint(0, 255)
             return "#" + "".join(f"{randcol():02x}" for _ in range(3))
 
-        markup.alias("demo-255", str(randint(0, 255)))
-        markup.alias("demo-hex", _random_hex())
-        markup.alias("demo-rgb", _random_hex())
+        tim.alias("demo-255", str(randint(0, 255)))
+        tim.alias("demo-hex", _random_hex())
+        tim.alias("demo-rgb", _random_hex())
 
     def finish(self, window: Window) -> None:
         """Dumps output markup to stdout on finish."""
@@ -285,7 +284,7 @@ class MarkupApplication(Application):
         # This attribute is currently needed for the Application
         # window to work. Not great architecturally, but I cannot
         # figure out something better at the moment.
-        print(markup.prettify_markup(window.output_label.value))  # type: ignore
+        print(tim.prettify_markup(window.output_label.value))  # type: ignore
 
     def construct_window(self) -> Window:
         """Constructs an application window."""
@@ -325,7 +324,7 @@ class MarkupApplication(Application):
 
         custom_tags = Container()
         for tag, _ in sorted(
-            markup.user_tags.items(), key=lambda item: len(item[0] + item[1])
+            tim.user_tags.items(), key=lambda item: len(item[0] + item[1])
         ):
             custom_tags += Label(
                 f"[{tag}]{tag}[/fg /bg /]: [!expand({tag})]{tag}",
@@ -449,7 +448,7 @@ def run_wm(args: Namespace) -> None:
     with WindowManager() as manager:
 
         # Define styles
-        markup.alias("wm-title", "210")
+        tim.alias("wm-title", "210")
         boxes.SINGLE.set_chars_of(Container)
         boxes.DOUBLE.set_chars_of(Window)
 
@@ -586,19 +585,18 @@ def main() -> None:
             no_hash = True
             latest_tag_hash = git_hash = "0"
 
-        with markup as mprint:
-            mprint(
-                f"[!gradient(60)]PyTermGUI[/!gradient] [bold 204]v{__version__}"
-                + f"{'+' if latest_tag_hash != git_hash else ''}"
-            )
-            mprint()
-            mprint(f"[30]Python[/]: [150]{sys.version.split()[0]}")
+        tim.print(
+            f"[!gradient(60)]PyTermGUI[/!gradient] [bold 204]v{__version__}"
+            + f"{'+' if latest_tag_hash != git_hash else ''}"
+        )
+        tim.print()
+        tim.print(f"[30]Python[/]: [150]{sys.version.split()[0]}")
 
-            if not no_hash:
-                mprint(f"[36]Git commit[/]: [186]{git_hash}")
+        if not no_hash:
+            tim.print(f"[36]Git commit[/]: [186]{git_hash}")
 
-            colors = ("36", "186") if no_hash else ("42", "222")
-            mprint(f"[{colors[0]}]Platform[/]: [{colors[1]}]{platform.platform()}")
+        colors = ("36", "186") if no_hash else ("42", "222")
+        tim.print(f"[{colors[0]}]Platform[/]: [{colors[1]}]{platform.platform()}")
 
         return
 

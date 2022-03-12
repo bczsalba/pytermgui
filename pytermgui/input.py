@@ -29,6 +29,8 @@ from typing import (
 from select import select
 from codecs import getincrementaldecoder
 
+__all__ = ["Keys", "getch", "keys"]
+
 
 def _is_ready(file: IO[AnyStr]) -> bool:
     """Determines if IO object is reading to read.
