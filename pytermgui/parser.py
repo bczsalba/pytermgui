@@ -829,8 +829,8 @@ docs/parser/markup_language.png"
 
         # Try to link to existing tag
         if value in self.user_tags:
-            self.unsetters["/" + name] = value
-            self.user_tags[name] = value
+            self.unsetters["/" + name] = self.unsetters["/" + value]
+            self.user_tags[name] = self.user_tags[value]
             return
 
         for token in self.tokenize_markup("[" + value + "]"):
