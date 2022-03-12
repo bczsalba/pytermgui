@@ -111,12 +111,11 @@ by calling `MarkupLanguage.alias`. For defining custom macros, you can use
 from __future__ import annotations
 
 import re
-import builtins
 from random import shuffle
 from dataclasses import dataclass
 from argparse import ArgumentParser
 from enum import Enum, auto as _auto
-from typing import Iterator, Callable, Tuple, List, Any
+from typing import Iterator, Callable, Tuple, List
 
 from .ansi_interface import foreground
 from .exceptions import MarkupSyntaxError, AnsiSyntaxError
@@ -1132,135 +1131,7 @@ docs/parser/markup_language.png"
         if in_sequence:
             out += "]"
 
-        return out
-
-    # This function IMO is very well readable, and further splitting
-    # it and hacking around for less branches would ruin that.
-    def prettify(  # pylint: disable=too-many-branches
-        self,
-        target: Any,
-        indent: int = 2,
-        force_markup: bool = False,
-        expand_all: bool = False,
-    ) -> str:
-        """Prettifies any Python object.
-
-        This uses a set of pre-defined aliases for the styling, and as such is fully
-        customizable.
-
-        The aliases are:
-        - `pprint-str`: Applied to all strings, so long as they do not contain TIM code.
-        - `pprint-int`: Applied to all integers and booleans. The latter are included as
-            they subclass int.
-        - `pprint-type`: Applied to all types.
-        - `pprint-none`: Applied to NoneType. Note that when using `pytermgui.pretty`, a
-            single `None` return value will not be printed, only when part of a more
-            complex structure.
-
-        Args:
-            target: The object to prettify. Can be any type.
-            indent: The indentation used for multi-line objects, like containers. When
-                set to 0, these will be collapsed. By default, container types with
-                `len() == 1` are always collapsed, regardless of this value. See
-                `expand_all` to overwrite that behaviour.
-            force_markup: When this is set every ANSI-sequence string will be turned
-                into markup and syntax highlighted.
-            expand_all: When set, objects that would normally be force-collapsed are
-                also going to be expanded.
-
-        Returns:
-            A pretty string of the given target.
-        """
-
-        if isinstance(target, (list, dict, set, tuple)):
-            if len(target) < 2 and not expand_all:
-                indent = 0
-
-            chars = str(target)[0], str(target)[-1]
-            buff = chars[0]
-
-            if isinstance(target, dict):
-                for i, (key, value) in enumerate(target.items()):
-                    if i > 0:
-                        buff += ", "
-
-                    if indent > 0:
-                        buff += "\n"
-
-                    buff += indent * " "
-                    buff += f"{self.prettify(key, indent=0)}: "
-
-                    pretty = self.prettify(
-                        value,
-                        indent=indent,
-                        expand_all=expand_all,
-                        force_markup=force_markup,
-                    )
-
-                    lines = pretty.splitlines()
-                    buff += lines[0]
-                    for line in lines[1:]:
-                        if indent > 0:
-                            buff += "\n"
-
-                        buff += indent * " " + line
-
-            else:
-                for i, item in enumerate(target):
-                    if i > 0:
-                        buff += ", "
-
-                    pretty = self.prettify(
-                        item,
-                        indent=indent,
-                        expand_all=expand_all,
-                        force_markup=force_markup,
-                    )
-
-                    for line in pretty.splitlines():
-                        if indent > 0:
-                            buff += "\n"
-
-                        buff += indent * " " + line
-
-            if indent > 0:
-                buff += ",\n"
-
-            buff += chars[1]
-            return buff
-
-        if target in dir(builtins) and not target.startswith("__"):
-            target = builtins.__dict__[target]
-
-        buff = ""
-        if isinstance(target, str):
-            if len(RE_ANSI.findall(target)) > 0:
-                if not force_markup:
-                    return target
-
-                target = self.get_markup(target)
-
-            if len(RE_MARKUP.findall(target)) > 0:
-                return f"'{self.prettify_markup(target)}'"
-
-            buff = f"[pprint-str]'{target}'"
-
-        elif isinstance(target, int):
-            buff = f"[pprint-int]{target}"
-
-        elif isinstance(target, type):
-            buff = f"[pprint-type]{target.__name__}"
-
-        elif target is None:
-            buff = f"[pprint-none]{target}"
-
-        else:
-            return str(target)
-
-        try:
-            return self.parse(buff)
-        except (AnsiSyntaxError, MarkupSyntaxError):
-            return str(target)
+        return out + "[/]"
 
 
 def main() -> None:
