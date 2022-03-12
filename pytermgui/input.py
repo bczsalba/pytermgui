@@ -134,9 +134,11 @@ class _GetchWindows:
 
         # We need to type: ignore these on non-windows machines,
         # as the library does not exist.
-        if not msvcrt.kbhit():
-            # Return empty string if there is no input to get
-            return str()
+
+        # Return empty string if there is no input to get
+        if not msvcrt.kbhit():  # type: ignore
+            return ""
+
         char = msvcrt.getch()  # type: ignore
         if char == b"\xe0":
             char = "\x1b"

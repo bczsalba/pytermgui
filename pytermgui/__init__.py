@@ -17,7 +17,6 @@ from typing import Union, Any, Optional
 from random import shuffle
 import sys
 
-from . import pretty
 from .enums import *
 from .parser import *
 from .widgets import *
@@ -39,7 +38,7 @@ if "-m" in sys.argv:
 
     warnings.filterwarnings("ignore")
 
-__version__ = "3.2.1"
+__version__ = "4.0.0"
 
 
 def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:

@@ -19,7 +19,7 @@ docstring, and also use the method's fully qualified name.
 
 from __future__ import annotations
 
-from enum import Enum, auto
+from enum import Enum, auto as _auto
 from typing import Any, Iterator
 
 from inspect import (
@@ -62,22 +62,22 @@ __all__ = ["Inspector", "inspect"]
 class ObjectType(Enum):
     """All types an object can be."""
 
-    LIVE = auto()
+    LIVE = _auto()
     """An instance that does not fit the other types."""
 
-    CLASS = auto()
+    CLASS = _auto()
     """A class object."""
 
-    MODULE = auto()
+    MODULE = _auto()
     """A module object."""
 
-    BUILTIN = auto()
+    BUILTIN = _auto()
     """Some sort of a builtin object.
 
     As builtins are often implemented in C, a lot of the standard python APIs
     won't work on them, so we need to treat them separately."""
 
-    FUNCTION = auto()
+    FUNCTION = _auto()
     """A callable object, that is not a class."""
 
 
