@@ -399,10 +399,13 @@ class Inspector(Container):
 
         buff = ""
         for (delim, word) in _split(text):
-            word = word.strip("'")
+            stripped = word.strip("'")
 
-            pretty = prettify(word, indent=0, parse=False)
-            if pretty != f"[pprint-str]'{word}'[/]":
+            if delim == "[":
+                delim = r"\["
+
+            pretty = prettify(stripped, indent=0, parse=False)
+            if pretty != f"[pprint-str]'{stripped}'[/]":
                 buff += delim + pretty
                 continue
 
