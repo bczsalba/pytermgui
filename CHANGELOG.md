@@ -1,11 +1,11 @@
 ## [4.0.1] - 2022-03-12
 
 ### Bugfixes
-- Fix broken macro call in `Markapp (524d9199a5bd026b44bb37f35f2f7cc621221c08)`
-- Fix string literals not being displayed correctly in `inspect` (418812492e298f0e5fbce2122f72561afd215d10)
+- Fix broken macro call in `Markapp`
+- Fix string literals not being displayed correctly in `inspect`
 
 ### Additions
-- Expose `inspect-identifier` markup alias (319be785350a76ff1742002dc83820f5eb9d30ac)
+- Expose `inspect-identifier` markup alias
 
 
 ## [4.0.0] - 2022-03-12
@@ -23,3 +23,6 @@
 ### Bugfixes
 - Fix support for aliasing to an existing tag
 - Fix blocking `getch` call on Windows
+
+[4.0.1]: https://github.com/bczsalba/pytermgui/compare/4.0.0...4.0.1
+[4.0.0]: https://github.com/bczsalba/pytermgui/compare/3.2.1...4.0.0
