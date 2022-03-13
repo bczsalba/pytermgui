@@ -547,8 +547,9 @@ docs/parser/markup_language.png"
         self.alias("pprint-none", "167")
 
         self.alias("inspector-name", "pprint-type")
-        self.alias("inspector-file", "109")
         self.alias("inspector-keyword", "203")
+        self.alias("inspector-identifier", "109")
+        self.alias("inspector-file", "inspector-identifier")
 
     @staticmethod
     def _get_color_token(tag: str) -> Token | None:

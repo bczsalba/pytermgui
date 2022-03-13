@@ -282,12 +282,12 @@ class Inspector(Container):
 
         otype = _determine_type(target)
         if otype == ObjectType.CLASS:
-            definition += "class"
+            definition += "class "
 
         elif otype == ObjectType.FUNCTION:
-            definition += "def"
+            definition += "def "
 
-        definition += " [/ 109]" + name + "[/]"
+        definition += "[/ inspector-identifier]" + name + "[/]"
 
         try:
             definition += self.highlight(str(signature(target))) + ":"  # type: ignore
