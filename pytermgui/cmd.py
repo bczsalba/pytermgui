@@ -327,7 +327,7 @@ class MarkupApplication(Application):
             tim.user_tags.items(), key=lambda item: len(item[0] + item[1])
         ):
             custom_tags += Label(
-                f"[{tag}]{tag}[/fg /bg /]: [!expand({tag})]{tag}",
+                f"[{tag}]{tag}[/fg /bg /]: [!expand]{tag}",
                 parent_align=0,
             )
         guide += custom_tags  # type: ignore
