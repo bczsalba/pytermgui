@@ -841,6 +841,10 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
     pattern: Pattern = RE_MOUSE[method]
 
     events: list[MouseEvent | None] = []
+
+    if code == "\x1b":
+        return
+
     for sequence in code.split("\x1b"):
         if len(sequence) == 0:
             continue
