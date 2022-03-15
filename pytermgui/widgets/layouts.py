@@ -948,9 +948,14 @@ class Container(Widget):
             __could have been__ used to create this Container.
         """
 
-        out = "Container("
+        out = type(self).__name__ + "("
         for widget in self._widgets:
-            out += widget.debug() + ", "
+            debuginfo = widget.debug() + ", "
+            if len(out + debuginfo) > 20:
+                out += "..."
+                break
+
+            out += debuginfo
 
         out = out.strip(", ")
         out += ", **attrs)"
