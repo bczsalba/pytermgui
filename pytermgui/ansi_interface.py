@@ -7,6 +7,10 @@ Credits:
 - https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 """
 
+# The entirety of Terminal will soon be moved over to a new submodule, so
+# this ignore is temporary.
+# pylint: disable=too-many-lines
+
 from __future__ import annotations
 
 import re
@@ -814,6 +818,9 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
         and no codes could be determined None is returned.
     """
 
+    if code == "\x1b":
+        return None
+
     mouse_codes = {
         "decimal_xterm": {
             "0M": MouseAction.LEFT_CLICK,
@@ -841,9 +848,6 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
     pattern: Pattern = RE_MOUSE[method]
 
     events: list[MouseEvent | None] = []
-
-    if code == "\x1b":
-        return
 
     for sequence in code.split("\x1b"):
         if len(sequence) == 0:
