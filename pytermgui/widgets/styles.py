@@ -103,12 +103,14 @@ class MarkupFormatter:
         return tim.parse(self.markup.format(depth=depth, item=item))
 
     def __str__(self) -> str:
+        """Returns __repr__, but with markup escaped."""
 
         return self.__repr__().replace("[", r"\[")
 
 
-class StyleManager(UserDict):
-    """An object to manage a Widget's styles.
+# There is only a single ancestor here.
+class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
+    """An fancy dictionary to manage a Widget's styles.
 
     Individual styles can be accessed two ways:
 
@@ -146,6 +148,14 @@ class StyleManager(UserDict):
         **base,
     ) -> None:
 
+        """Initializes a `StyleManager`.
+
+        Args:
+            parent: The parent of this instance. It will be assigned in all
+                `StyleCall`-s created by it.
+            late_base: Additional data that will be added to this manager on `branch`.
+        """
+
         self.parent = parent
         super().__init__()
 
@@ -162,6 +172,12 @@ class StyleManager(UserDict):
         - '60'
         - '[60]'
         - '[60]{item}'
+
+        Args:
+            shorthand: The short version of markup to expand.
+
+        Returns:
+            A `MarkupFormatter` with the expanded markup.
         """
 
         if len(shorthand) == 0:
@@ -181,9 +197,15 @@ class StyleManager(UserDict):
     def merge(cls, other: StyleManager, **styles) -> StyleManager:
         """Creates a new manager that merges `other` with the passed in styles.
 
-        The returned manager is not fully "initialized". This is done so the other's
-        data can change between declaration of the merge and usage of the resulting
-        object. To initialize the object, call `branch`.
+        Args:
+            other: The style manager to base the new one from.
+            **styles: The additional styles the new instance should have.
+
+        Returns:
+            A new `StyleManager`. This instance will only gather its data when
+            `branch` is called on it. This is done so any changes made to the original
+            data between the `merge` call and the actual usage of the instance will be
+            reflected.
         """
 
         return cls(late_base=other, **styles)
@@ -191,23 +213,18 @@ class StyleManager(UserDict):
     def branch(self, parent: Widget | Type[Widget]) -> StyleManager:
         """Branch off from the `base` style dictionary.
 
-        Calling this will assing `self.data` as a copy of the original value, so any
-        new modifications will not be applied in other managers using the same data.
+        This method should be called during widget construction. It creates a new
+        `StyleManager` based on self, but with its data detached from the original.
 
-        It will also apply `late_base`, if it is not None.
+        Args:
+            parent: The parent of the new instance.
+
+        Returns:
+            A new `StyleManager`, with detached instances of data. This can then be
+            modified without touching the original instance.
         """
 
-        self.parent = parent
-
-        self.data = self.data.copy()
-        if self._late_base is not None:
-            for key, value in self._late_base.items():
-                self.data[key] = value
-
-        for key, value in self.data.items():
-            self.data[key].obj = self.parent
-
-        return self
+        return type(self)(parent, **{**self.data, **(self._late_base or {})})
 
     def _set_as_stylecall(
         self, key: str, item: str | StyleCall | MarkupFormatter | StyleType
@@ -261,7 +278,7 @@ class StyleManager(UserDict):
         if found:
             return
 
-        if self.__dict__.get("parent") is not None and key not in self.__dict__:
+        if self.__dict__.get("_late_base") is not None and key not in self.__dict__:
             raise KeyError(f"Style {key!r} was not defined during construction.")
 
         self.__dict__[key] = value
