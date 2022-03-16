@@ -151,8 +151,9 @@ class LauncherApplication(Application):
         manager = self.manager
 
         for app in self.apps:
-            button = Button(app.title)
-            button.onclick = lambda *_, app=app,: manager.add(app.construct_window())
+            button = Button(
+                app.title, lambda *_, app=app,: manager.add(app.construct_window())
+            )
             window += button
 
         window += ""
@@ -183,6 +184,7 @@ class GetchApplication(Application):
             "[wm-title]Your output",
             "",
             {"[wm-section]key": name},
+            {"[wm-section]value:": ascii(key)},
             {"[wm-section]len()": str(len(key))},
             {"[wm-section]real_length()": str(real_length(key))},
         ]
