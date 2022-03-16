@@ -52,8 +52,8 @@ TIM, our **T**erminal **I**nline **M**arkup language provides an easy to read, s
 ```python3
 from pytermgui import tim
 
-print(tim.parse("[dim italic]Welcome to [/dim /italic bold !rainbow]PyTermGUI"))
-print(tim.parse("Check out the [blue !link(https://ptg.bczsalba.com)]docs[/!link /fg]!"))
+tim.print("[dim italic]Welcome to [/dim /italic bold !rainbow]PyTermGUI"))
+tim.print("Check out the [blue !link(https://ptg.bczsalba.com)]docs[/!link /fg]!"))
 ```
 
 ![TIM example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/tim.png)
