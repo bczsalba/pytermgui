@@ -59,6 +59,7 @@ from .widgets import (
     MarkupFormatter,
     Widget,
     boxes,
+    styles as w_styles,
 )
 
 from .input import getch
@@ -129,8 +130,11 @@ class Window(Container):
     If you find this to be the case, **AND** you can ensure that your window will not break, you
     may set this value manually."""
 
-    styles = {**Container.styles, **{"title": MarkupFormatter("[wm-title]{item}")}}
     chars = Container.chars.copy()
+
+    styles = w_styles.StyleManager.merge(
+        Container.styles, title=MarkupFormatter("[wm-title]{item}")
+    )
 
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
         """Initializes object.
@@ -683,7 +687,7 @@ class WindowManager(Container):
             window,
             "height",
             endpoint=0,
-            duration=150,
+            duration=300,
             finish_callback=_finish,
         )
 

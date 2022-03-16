@@ -10,6 +10,7 @@ from .. import styles as w_styles
 from ..base import Widget
 
 FILLED_SELECTED_STYLE = w_styles.MarkupFormatter("[72]{item}")
+FILLED_UNSELECTED_STYLE = w_styles.MarkupFormatter("[247]{item}")
 UNFILLED_STYLE = w_styles.MarkupFormatter("[240]{item}")
 
 
@@ -27,14 +28,14 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
 
     chars = {"cursor": "", "fill": "", "rail": "━", "delimiter": ["[", "]"]}
 
-    styles = {
-        "delimiter": UNFILLED_STYLE,
-        "filled": w_styles.MarkupFormatter("[white]{item}"),
-        "cursor": FILLED_SELECTED_STYLE,
-        "filled_selected": FILLED_SELECTED_STYLE,
-        "unfilled": UNFILLED_STYLE,
-        "unfilled_selected": UNFILLED_STYLE,
-    }
+    styles = w_styles.StyleManager(
+        delimiter=UNFILLED_STYLE,
+        filled=FILLED_UNSELECTED_STYLE,
+        cursor=FILLED_SELECTED_STYLE,
+        filled_selected=FILLED_SELECTED_STYLE,
+        unfilled=UNFILLED_STYLE,
+        unfilled_selected=UNFILLED_STYLE,
+    )
 
     keys = {
         "increase": {keys.RIGHT, keys.CTRL_F, "l", "+"},
@@ -123,19 +124,16 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
         assert isinstance(cursor, str)
         assert isinstance(rail, str)
 
-        if self.selected_index is None:
-            filled_style = self._get_style("filled")
-            unfilled_style = self._get_style("unfilled")
-        else:
-            filled_style = self._get_style("filled_selected")
-            unfilled_style = self._get_style("unfilled_selected")
-
         cursor = self._get_style("cursor")(cursor)
-        unfilled = unfilled_style(rail)
-        filled = filled_style(rail)
+        unfilled = self.styles.unfilled(rail)
+
+        if self.selected_index is None:
+            filled = self.styles.filled(rail)
+        else:
+            filled = self.styles.filled_selected(rail)
 
         for i, delimiter in enumerate(delimiters):
-            delimiters[i] = self._get_style("delimiter")(delimiter)
+            delimiters[i] = self.styles.delimiter(delimiter)
 
         count = round(self.width * self.value) - 1
 

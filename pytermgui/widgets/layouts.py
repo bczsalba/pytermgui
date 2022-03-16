@@ -18,8 +18,9 @@ from ..enums import (
     VerticalAlignment,
     Overflow,
 )
+
 from ..exceptions import WidthExceededError
-from ..helpers import real_length
+from ..helpers import real_length, strip_markup
 from ..input import keys
 from . import boxes
 from . import styles as w_styles
@@ -29,15 +30,15 @@ from .base import Widget
 class Container(Widget):
     """A widget that displays other widgets, stacked vertically."""
 
+    styles = w_styles.StyleManager(
+        border=w_styles.MARKUP,
+        corner=w_styles.MARKUP,
+        fill=w_styles.BACKGROUND,
+    )
+
     chars: dict[str, w_styles.CharType] = {
         "border": ["| ", "-", " |", "-"],
         "corner": [""] * 4,
-    }
-
-    styles = {
-        "border": w_styles.MARKUP,
-        "corner": w_styles.MARKUP,
-        "fill": w_styles.BACKGROUND,
     }
 
     keys = {
@@ -70,9 +71,6 @@ class Container(Widget):
         self._max_scroll = 0
         self._prev_screen: tuple[int, int] = (0, 0)
         self._has_printed = False
-
-        self.styles = type(self).styles.copy()
-        self.chars = type(self).chars.copy()
 
         for widget in widgets:
             self._add_widget(widget)
@@ -338,7 +336,7 @@ class Container(Widget):
             the horizontal offset resulting from the widget being aligned.
         """
 
-        left, right = borders
+        left, right = self.styles.border(borders[0]), self.styles.border(borders[1])
         char = self._get_style("fill")(" ")
 
         def _align_left(text: str) -> str:
@@ -490,16 +488,19 @@ class Container(Widget):
                 The border line.
             """
 
-            offset = real_length(left + right)
-            return left + char * (self.width - offset) + right
+            offset = real_length(strip_markup(left + right))
+            return (
+                self.styles.corner(left)
+                + self.styles.border(char * (self.width - offset))
+                + self.styles.corner(right)
+            )
 
         lines: list[str] = []
 
-        style = self._get_style("border")
-        borders = [style(char) for char in self._get_char("border")]
-
-        style = self._get_style("corner")
-        corners = [style(char) for char in self._get_char("corner")]
+        borders = self._get_char("border")
+        corners = self._get_char("corner")
+        # [self.styles.border(char) for char in self._get_char("border")]
+        # corners = [self.styles.corner(char) for char in self._get_char("corner")]
 
         has_top_bottom = (real_length(borders[1]) > 0, real_length(borders[3]) > 0)
 
@@ -949,16 +950,21 @@ class Container(Widget):
         """
 
         out = type(self).__name__ + "("
-        for widget in self._widgets:
-            debuginfo = widget.debug() + ", "
-            if len(out + debuginfo) > 20:
-                out += "..."
-                break
+        if hasattr(self, "_widgets"):
+            for widget in self._widgets:
+                debuginfo = widget.debug() + ", "
+                if len(out + debuginfo) > 20:
+                    out += "..."
+                    break
 
-            out += debuginfo
+                out += debuginfo
 
-        out = out.strip(", ")
-        out += ", **attrs)"
+            out = out.strip(", ")
+
+            if len(self._widgets) > 0:
+                out += ", "
+
+        out += ")"
 
         return out
 
@@ -966,8 +972,9 @@ class Container(Widget):
 class Splitter(Container):
     """A widget that displays other widgets, stacked horizontally."""
 
+    styles = w_styles.StyleManager(separator=w_styles.MARKUP, fill=w_styles.BACKGROUND)
+
     chars: dict[str, list[str] | str] = {"separator": " | "}
-    styles = {"separator": w_styles.MARKUP, "fill": w_styles.BACKGROUND}
     keys = {
         "previous": {keys.LEFT, "h", keys.CTRL_B},
         "next": {keys.RIGHT, "l", keys.CTRL_F},

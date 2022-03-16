@@ -48,11 +48,11 @@ class InputField(Label):
     ```
     """
 
-    styles = {
-        "value": w_styles.FOREGROUND,
-        "cursor": w_styles.MarkupFormatter("[inverse]{item}"),
-        "fill": w_styles.MarkupFormatter("[@243]{item}"),
-    }
+    styles = w_styles.StyleManager(
+        value=w_styles.FOREGROUND,
+        cursor=w_styles.MarkupFormatter("[inverse]{item}"),
+        fill=w_styles.MarkupFormatter("[@243]{item}"),
+    )
 
     is_bindable = True
 
@@ -167,9 +167,6 @@ class InputField(Label):
     def get_lines(self) -> list[str]:
         """Get lines of object"""
 
-        cursor_style = self._get_style("cursor")
-        fill_style = self._get_style("fill")
-
         # Cache value to be reset later
         old = self.value
 
@@ -177,8 +174,8 @@ class InputField(Label):
         self.value = str(self.value)
 
         # Create sides separated by cursor
-        left = fill_style(self.value[: self.cursor])
-        right = fill_style(self.value[self.cursor + 1 :])
+        left = self.styles.fill(self.value[: self.cursor])
+        right = self.styles.fill(self.value[self.cursor + 1 :])
 
         # Assign cursor character
         if self.selected_index is None:
@@ -186,13 +183,17 @@ class InputField(Label):
                 cursor_char = ""
 
             else:
-                cursor_char = fill_style(self.value[self.cursor])
+                cursor_char = self.styles.fill(self.value[self.cursor])
 
+        # These errors are really weird, as there is nothing different with
+        # styles.cursor compared to others, which pass just fine.
         elif len(self.value) > self.cursor:
-            cursor_char = cursor_style(self.value[self.cursor])
+            cursor_char = self.styles.cursor(  # pylint: disable=not-callable
+                self.value[self.cursor]
+            )
 
         else:
-            cursor_char = cursor_style(" ")
+            cursor_char = self.styles.cursor(" ")  # pylint: disable=not-callable
 
         # Set new value, get lines using it
         self.value = self.prompt
@@ -208,5 +209,6 @@ class InputField(Label):
         self.value = old
 
         return [
-            line + fill_style((self.width - real_length(line)) * " ") for line in lines
+            line + self.styles.fill((self.width - real_length(line)) * " ")
+            for line in lines
         ]

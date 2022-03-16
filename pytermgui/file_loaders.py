@@ -178,7 +178,7 @@ class WidgetNamespace:
                 raise KeyError(f"Unknown widget type {name}.")
 
             namespace.config[obj] = {
-                "styles": obj.styles.copy(),
+                "styles": obj.styles.branch(obj),
                 "chars": obj.chars.copy(),
             }
 

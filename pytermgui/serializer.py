@@ -187,7 +187,7 @@ class Serializer:
                 continue
 
             if key == "styles":
-                obj_styles = obj.styles.copy()
+                obj_styles = obj.styles.branch(obj)
                 for name, markup_str in value.items():
                     if isinstance(markup_str, str):
                         obj_styles[name] = styles.MarkupFormatter(markup_str)

@@ -16,12 +16,12 @@ from ..base import Widget
 class Button(Widget):
     """A simple Widget representing a mouse-clickable button"""
 
-    chars: dict[str, w_styles.CharType] = {"delimiter": ["[ ", " ]"]}
+    styles = w_styles.StyleManager(
+        label=w_styles.CLICKABLE,
+        highlight=w_styles.CLICKED,
+    )
 
-    styles: dict[str, w_styles.StyleType] = {
-        "label": w_styles.CLICKABLE,
-        "highlight": w_styles.CLICKED,
-    }
+    chars: dict[str, w_styles.CharType] = {"delimiter": ["[ ", " ]"]}
 
     def __init__(
         self,
@@ -67,18 +67,15 @@ class Button(Widget):
     def get_lines(self) -> list[str]:
         """Get object lines"""
 
-        label_style = self._get_style("label")
         delimiters = self._get_char("delimiter")
-        highlight_style = self._get_style("highlight")
-
         assert isinstance(delimiters, list) and len(delimiters) == 2
         left, right = delimiters
 
         word: str = markup.parse(left + self.label + right)
         if self.selected_index is None:
-            word = label_style(word)
+            word = self.styles.label(word)
         else:
-            word = highlight_style(word)
+            word = self.styles.highlight(word)
 
         line = StyledText(word + self.padding * " ")
         self.width = real_length(line)

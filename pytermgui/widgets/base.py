@@ -86,7 +86,7 @@ class Widget:
     set_style = classmethod(_set_obj_or_cls_style)
     set_char = classmethod(_set_obj_or_cls_char)
 
-    styles: dict[str, w_styles.StyleType] = {}
+    styles = w_styles.StyleManager()
     """Default styles for this class"""
 
     chars: dict[str, w_styles.CharType] = {}
@@ -136,7 +136,7 @@ class Widget:
 
         self.depth = 0
 
-        self.styles = type(self).styles.copy()
+        self.styles = type(self).styles.branch(self)
         self.chars = type(self).chars.copy()
 
         self.parent: Widget | None = None
@@ -408,8 +408,10 @@ class Widget:
     def _get_style(self, key: str) -> w_styles.DepthlessStyleType:
         """Gets style call from its key.
 
+        This is analogous to using `self.styles.{key}`
+
         Args:
-            key: A key into the widget's styles dictionary.
+            key: A key into the widget's style manager.
 
         Returns:
             A `pytermgui.styles.StyleCall` object containing the referenced
@@ -420,9 +422,7 @@ class Widget:
             KeyError: Style key is invalid.
         """
 
-        style_method = self.styles[key]
-
-        return w_styles.StyleCall(self, style_method)
+        return self.styles[key]
 
     def _get_char(self, key: str) -> w_styles.CharType:
         """Gets character from its key.
@@ -618,9 +618,8 @@ class Label(Widget):
     </p>
     """
 
-    styles: dict[str, w_styles.StyleType] = {"value": w_styles.MARKUP}
-
     serialized = Widget.serialized + ["*value", "align", "padding"]
+    styles = w_styles.StyleManager(value=w_styles.MARKUP)
 
     def __init__(
         self,
@@ -650,10 +649,10 @@ class Label(Widget):
     def get_lines(self) -> list[str]:
         """Get lines representing this Label, breaking lines as necessary"""
 
-        value_style = self._get_style("value")
-
         lines = []
-        for i, line in enumerate(break_line(value_style(self.value), self.width)):
+        broken = break_line(self.styles.value(self.value), self.width)
+
+        for i, line in enumerate(broken):
             if i == 0:
                 lines.append(self.padding * " " + line)
                 continue

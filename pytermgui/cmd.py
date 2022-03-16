@@ -22,7 +22,6 @@ from argparse import ArgumentParser, Namespace
 from . import (
     __version__,
     MarkupSyntaxError,
-    MarkupFormatter,
     WindowManager,
     ColorPicker,
     real_length,
@@ -450,18 +449,14 @@ def run_wm(args: Namespace) -> None:
     with WindowManager() as manager:
 
         # Define styles
-        tim.alias("wm-title", "210")
+        tim.alias("ptg-border", "60")
+
         boxes.SINGLE.set_chars_of(Container)
         boxes.DOUBLE.set_chars_of(Window)
 
-        style = MarkupFormatter("[60]{item}")
-        for widget in [Window, Container]:
-            widget.set_style("border", style)
-            widget.set_style("corner", style)
-
-        Splitter.set_style("separator", style)
-        Splitter.set_char("separator", " " + boxes.SINGLE.borders[0])
-        InputField.set_style("cursor", MarkupFormatter("[@72]{item}"))
+        Container.styles.border__corner = "ptg-border"
+        Splitter.styles.separator = "ptg-border"
+        InputField.styles.cursor = "@72"
 
         # helper = HelperApplication(manager)
 
