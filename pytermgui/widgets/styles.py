@@ -156,6 +156,8 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
             late_base: Additional data that will be added to this manager on `branch`.
         """
 
+        self.__dict__["_is_setup"] = False
+
         self.parent = parent
         super().__init__()
 
@@ -163,6 +165,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
             self._set_as_stylecall(key, value)
 
         self._late_base = late_base
+        self.__dict__["_is_setup"] = True
 
     @staticmethod
     def expand_shorthand(shorthand: str) -> MarkupFormatter:
@@ -278,7 +281,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
         if found:
             return
 
-        if self.__dict__.get("_late_base") is not None and key not in self.__dict__:
+        if self.__dict__.get("_is_setup") and key not in self.__dict__:
             raise KeyError(f"Style {key!r} was not defined during construction.")
 
         self.__dict__[key] = value
