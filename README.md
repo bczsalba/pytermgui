@@ -76,6 +76,20 @@ Under the hood it calls `tim.setup_displayhook()` with no arguments. For more gr
 ![Pretty example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/pretty.png)
 
 
+### Code-introspection
+
+PyTermGUI offers an `Inspector` widget, as well as a higher level wrapper function, `inspect` that can be used to see detailed & pretty information on any Python object, including its documentation, methods, clickable hyperlink to its source & more!
+
+```python3
+>>> from pytermgui import inspect, Container
+>>> inspect(Container.scroll_end)
+```
+
+![inspect example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/inspect.png)
+
+See the [docs](https://ptg.bczsalba.com/pytermgui/inspector.html) or `inspect(inspect)` for more info!
+
+
 ### Fully featured TUIs
 
 You can check out an example TUI built into the library itself using the `ptg` command! It features some utility applications for PyTermGUI, such as an `xterm-256` colorpicker, a TIM sandbox and a simple key-getter.
