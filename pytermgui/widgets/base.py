@@ -40,15 +40,8 @@ def _set_obj_or_cls_style(
         Type[Widget] | Widget: The updated class.
 
     Raises:
-        KeyError: The style key provided is invalid.
-        ValueError: The style value is not callable.
+        See `pytermgui.widgets.styles.StyleManager`.
     """
-
-    if not key in obj_or_cls.styles.keys():
-        raise KeyError(f"Style {key} is not valid for {obj_or_cls}!")
-
-    if not callable(value):
-        raise ValueError(f"Style {key} for {type(obj_or_cls)} has to be a callable.")
 
     obj_or_cls.styles[key] = value
 

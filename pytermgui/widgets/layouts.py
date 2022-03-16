@@ -499,8 +499,6 @@ class Container(Widget):
 
         borders = self._get_char("border")
         corners = self._get_char("corner")
-        # [self.styles.border(char) for char in self._get_char("border")]
-        # corners = [self.styles.corner(char) for char in self._get_char("corner")]
 
         has_top_bottom = (real_length(borders[1]) > 0, real_length(borders[3]) > 0)
 
