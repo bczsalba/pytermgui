@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from pytermgui import FileLoader, JsonLoader, YamlLoader
+from pytermgui import FileLoader, JsonLoader, YamlLoader, prettifiers
 
 # TODO: Once dumping is once again more supported that should be included
 #       here as well.

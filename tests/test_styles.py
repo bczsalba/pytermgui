@@ -14,16 +14,12 @@ class TestStyles:
             self.container, ptg.MarkupFormatter("[60]{item}")
         )
 
-    def test_style_inherits(self):
-        assert isinstance(self.container.styles.border, ptg.StyleCall)
-
-        assert (
-            self.container.styles.border
-            == self.window.styles.border
-            == self.target_formatter
-        )
-
     def test_style_branches(self):
+        assert ptg.Container.styles.border != ptg.Window.styles.border
+
+        ptg.Container.styles.border = "153"
+        assert ptg.Container.styles.border != ptg.Window.styles.border
+
         self.window.styles.border = "153"
         assert self.container.styles.border.method != self.window.styles.border.method
 

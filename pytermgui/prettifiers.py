@@ -6,12 +6,15 @@ markup magic to create prettier representations of whatever is given.
 
 import builtins
 from typing import Any
+from collections import UserDict, UserList
 
 from .parser import RE_ANSI, RE_MARKUP, tim
 from .exceptions import MarkupSyntaxError, AnsiSyntaxError
 
 
 __all__ = ["prettify"]
+
+CONTAINER_TYPES = (list, dict, set, tuple, UserDict, UserList)
 
 
 def _prettify_container(
@@ -33,7 +36,7 @@ def _prettify_container(
 
     indent_str = ("\n" if indent > 0 else "") + indent * " "
 
-    if isinstance(target, dict):
+    if isinstance(target, (dict, UserDict)):
         for i, (key, value) in enumerate(target.items()):
             if i > 0:
                 buff += ", "
@@ -153,7 +156,7 @@ def prettify(
         target = builtins.__dict__[target]
 
     buff = ""
-    if isinstance(target, (list, dict, set, tuple)):
+    if isinstance(target, CONTAINER_TYPES):
         buff = _prettify_container(
             target, indent=indent, expand_all=expand_all, force_markup=force_markup
         )
@@ -171,7 +174,13 @@ def prettify(
         buff = f"[pprint-none]{target}[/]"
 
     else:
-        return str(target)
+        try:
+            iterator = iter(target)
+        except TypeError:
+            return str(target)
+
+        for inner in iterator:
+            buff += prettify(inner, parse=False)
 
     if parse:
         try:
