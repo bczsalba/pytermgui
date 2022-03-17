@@ -455,6 +455,7 @@ def run_wm(args: Namespace) -> None:
         boxes.DOUBLE.set_chars_of(Window)
 
         Container.styles.border__corner = "ptg-border"
+        Window.styles.border__corner = "ptg-border"
         Splitter.styles.separator = "ptg-border"
         InputField.styles.cursor = "@72"
 

@@ -144,7 +144,6 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
     def __init__(
         self,
         parent: Widget | Type[Widget] | None = None,
-        late_base: StyleManager | None = None,
         **base,
     ) -> None:
 
@@ -153,19 +152,18 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
         Args:
             parent: The parent of this instance. It will be assigned in all
                 `StyleCall`-s created by it.
-            late_base: Additional data that will be added to this manager on `branch`.
         """
 
         self.__dict__["_is_setup"] = False
 
         self.parent = parent
+
         super().__init__()
 
         for key, value in base.items():
             self._set_as_stylecall(key, value)
 
-        self._late_base = late_base
-        self.__dict__["_is_setup"] = True
+        self.__dict__["_is_setup"] = self.parent is not None
 
     @staticmethod
     def expand_shorthand(shorthand: str) -> MarkupFormatter:
@@ -211,7 +209,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
             reflected.
         """
 
-        return cls(late_base=other, **styles)
+        return cls(**{**other, **styles})
 
     def branch(self, parent: Widget | Type[Widget]) -> StyleManager:
         """Branch off from the `base` style dictionary.
@@ -227,7 +225,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
             modified without touching the original instance.
         """
 
-        return type(self)(parent, **{**self.data, **(self._late_base or {})})
+        return type(self)(parent, **self.data)
 
     def _set_as_stylecall(
         self, key: str, item: str | StyleCall | MarkupFormatter | StyleType
@@ -292,7 +290,10 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
         if key in self.__dict__:
             return self.__dict__[key]
 
-        return self.__dict__["data"][key]
+        if key in self.__dict__["data"]:
+            return self.__dict__["data"][key]
+
+        raise AttributeError(key, self.data)
 
 
 CLICKABLE = MarkupFormatter("[@238 72 bold]{item}")
@@ -301,10 +302,10 @@ CLICKABLE = MarkupFormatter("[@238 72 bold]{item}")
 CLICKED = MarkupFormatter("[238 @72 bold]{item}")
 """Style for active clickable things, such as `pytermgui.widgets.Button`"""
 
-FOREGROUND = lambda depth, item: item
+FOREGROUND = lambda _, item: item
 """Standard foreground style, currently unused by the library"""
 
-BACKGROUND = lambda depth, item: item
+BACKGROUND = lambda _, item: item
 """Standard background, used by most `fill` styles"""
 
 MARKUP = lambda depth, item: tim.parse(item)
