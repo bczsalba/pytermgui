@@ -11,8 +11,8 @@ from typing import Any, Type, IO, Dict, Callable
 from . import widgets
 from .parser import markup
 
+from .widgets import CharType
 from .widgets.base import Widget
-from .widgets import styles, CharType
 from .window_manager import Window
 
 WidgetDict = Dict[str, Type[Widget]]
@@ -187,15 +187,9 @@ class Serializer:
                 continue
 
             if key == "styles":
-                obj_styles = obj.styles.branch(obj)
                 for name, markup_str in value.items():
-                    if isinstance(markup_str, str):
-                        obj_styles[name] = styles.MarkupFormatter(markup_str)
-                        continue
+                    obj.styles[name] = markup_str
 
-                    obj_styles[name] = markup_str
-
-                setattr(obj, "styles", obj_styles)
                 continue
 
             setattr(obj, key, value)

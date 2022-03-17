@@ -178,7 +178,7 @@ class WidgetNamespace:
                 raise KeyError(f"Unknown widget type {name}.")
 
             namespace.config[obj] = {
-                "styles": obj.styles.branch(obj),
+                "styles": obj.styles,
                 "chars": obj.chars.copy(),
             }
 
@@ -203,8 +203,7 @@ class WidgetNamespace:
 
         for key, value in section.items():
             if title == "styles":
-                if isinstance(value, str):
-                    widget.set_style(key, widgets.styles.MarkupFormatter(value))
+                widget.set_style(key, value)
                 continue
 
             widget.set_char(key, value)
