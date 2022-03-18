@@ -1,5 +1,5 @@
 from pytermgui import tim, StyledText, pretty
-from pytermgui.parser import Token, TokenType, STYLE_MAP
+from pytermgui.parser import Token, TokenType, STYLE_MAP, StyledText
 
 
 class TestParser:
@@ -30,6 +30,10 @@ class TestParser:
             tim.parse("[141 @61 bold !upper]Hello")
             == "\x1b[38;5;141m\x1b[48;5;61m\x1b[1mHELLO\x1b[0m"
         )
+
+    def test_pretty_markup(self):
+        markup = "[141 bold]Hello[/bold /fg dim italic]There[/]"
+        assert StyledText(tim.prettify_markup(markup)).plain == markup
 
 
 class TestFunctionality:

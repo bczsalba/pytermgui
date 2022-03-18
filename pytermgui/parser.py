@@ -1065,6 +1065,17 @@ docs/parser/markup_language.png"
                     applied_macros.pop(i)
                     break
 
+        def _finish(out: str, in_sequence: bool) -> str:
+            """Adds ending cap to the given string."""
+
+            if in_sequence:
+                if not out.endswith("\x1b[0m"):
+                    out += "\x1b[0m"
+
+                return out + "]"
+
+            return out + "[/]"
+
         styles: dict[TokenType, str] = {
             TokenType.MACRO: "210",
             TokenType.ESCAPED: "210 bold",
@@ -1083,6 +1094,7 @@ docs/parser/markup_language.png"
                     out += "]"
 
                 in_sequence = False
+
                 sequence = ""
                 for style in current_styles:
                     if style.sequence is None:
@@ -1104,11 +1116,9 @@ docs/parser/markup_language.png"
 
                 current_styles.append(token)
 
-                special_style = (
-                    name + " " if name in self.tags or name in self.user_tags else ""
-                )
                 out += self.parse(
-                    f"/[{special_style}{styles[TokenType.UNSETTER]}]{name}"
+                    ("" if (name in self.tags) or (name in self.user_tags) else "")
+                    + f"[{styles[TokenType.UNSETTER]}]/{name}"
                 )
                 continue
 
@@ -1134,10 +1144,7 @@ docs/parser/markup_language.png"
             style_markup = styles.get(token.ttype) or token.name
             out += self.parse(f"[{style_markup}]{token.name}")
 
-        if in_sequence:
-            out += "]"
-
-        return out + "[/]"
+        return _finish(out, in_sequence)
 
 
 def main() -> None:
