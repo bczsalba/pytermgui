@@ -738,6 +738,23 @@ docs/parser/markup_language.png"
             # Styles & unsetters
             if len(parts) == 1:
                 token_code: str | None = ""
+
+                if parts[0].isdigit():
+                    index = int(parts[0])
+                    if 30 <= index < 38 or 90 <= index < 98:
+                        yield Token(
+                            name=parts[0], ttype=TokenType.FG_8BIT, data=parts[0]
+                        )
+
+                        continue
+
+                    if 40 <= index < 48 or 100 <= index < 108:
+                        yield Token(
+                            name=parts[0], ttype=TokenType.FG_8BIT, data=parts[0]
+                        )
+
+                        continue
+
                 for name, token_code in self.unsetters.items():
                     if token_code == parts[0]:
                         ttype = TokenType.UNSETTER
@@ -748,7 +765,6 @@ docs/parser/markup_language.png"
                             ttype = TokenType.STYLE
                             break
                     else:
-
                         raise AnsiSyntaxError(
                             tag=parts[0], cause="not recognized", context=ansi
                         )
