@@ -32,9 +32,9 @@ from inspect import (
 )
 
 from .parser import tim
+from .terminal import terminal
 from .helpers import real_length
 from .prettifiers import prettify
-from .ansi_interface import terminal
 from .widgets import Widget, Container, Label, boxes
 
 try:

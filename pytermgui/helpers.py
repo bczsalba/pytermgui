@@ -1,12 +1,16 @@
-"""
-Helper methods and functions for pytermgui.
-"""
+"""Helper methods and functions for pytermgui."""
 
 from typing import Iterator
 from .parser import markup, TokenType, RE_ANSI, RE_MARKUP, StyledText
 from .ansi_interface import reset
 
-__all__ = ["strip_ansi", "strip_markup", "real_length", "get_sequences", "break_line"]
+__all__ = [
+    "strip_ansi",
+    "strip_markup",
+    "real_length",
+    "get_sequences",
+    "break_line",
+]
 
 
 def strip_ansi(text: str) -> str:

@@ -9,7 +9,7 @@ from __future__ import annotations
 from itertools import zip_longest
 from typing import Any, Callable, Iterator, cast
 
-from ..ansi_interface import MouseAction, MouseEvent, clear, reset, terminal
+from ..ansi_interface import MouseAction, MouseEvent, clear, reset
 from ..context_managers import cursor_at
 from ..enums import (
     CenteringPolicy,
@@ -21,6 +21,7 @@ from ..enums import (
 
 from ..exceptions import WidthExceededError
 from ..helpers import real_length, strip_markup
+from ..terminal import terminal
 from ..input import keys
 from . import boxes
 from . import styles as w_styles

@@ -13,7 +13,6 @@ from contextlib import contextmanager
 from typing import Callable, Generator, Any, Union, List
 
 from .ansi_interface import (
-    terminal,
     save_cursor,
     restore_cursor,
     print_to,
@@ -28,6 +27,8 @@ from .ansi_interface import (
     translate_mouse,
     MouseEvent,
 )
+
+from .terminal import terminal
 
 # TODO: Move this absolute beast to a types submodule
 MouseTranslator = Callable[[str], Union[List[Union[MouseEvent, None]], None]]

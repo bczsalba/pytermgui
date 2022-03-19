@@ -122,10 +122,10 @@ from .exceptions import MarkupSyntaxError, AnsiSyntaxError
 
 
 __all__ = [
+    "StyledText",
     "MacroCallable",
     "MacroCall",
     "MarkupLanguage",
-    "StyledText",
     "markup",
     "tim",
 ]
@@ -398,15 +398,11 @@ class StyledText(str):
     """The list of tokens that make up this string."""
 
     def __new__(cls, value: str = ""):
-        """Creates a StyledText, gets markup tags.
-
-        Args:
-            markup_language: The markup language instance this object uses.
-        """
+        """Creates a StyledText, gets markup tags."""
 
         obj = super().__new__(cls, value)
         obj.value = value
-        obj.tokens = list(markup.tokenize_ansi(value))
+        obj.tokens = list(tim.tokenize_ansi(value))
 
         obj.plain = ""
         for token in obj.tokens:

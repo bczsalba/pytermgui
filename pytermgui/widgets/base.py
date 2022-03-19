@@ -14,8 +14,9 @@ from typing import Callable, Optional, Type, Iterator, Any, Union
 
 from ..input import keys
 from ..parser import markup
+from ..terminal import terminal
+from ..ansi_interface import MouseEvent
 from ..helpers import real_length, break_line
-from ..ansi_interface import terminal, MouseEvent
 from ..enums import SizePolicy, HorizontalAlignment
 
 from . import styles as w_styles

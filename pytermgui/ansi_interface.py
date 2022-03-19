@@ -14,16 +14,13 @@ Credits:
 from __future__ import annotations
 
 import re
-import sys
-import signal
 
-from typing import Optional, Any, Union, Callable, Tuple, Pattern
+from typing import Optional, Any, Union, Tuple, Pattern
 from dataclasses import dataclass, fields
 from enum import Enum, auto as _auto
 from sys import stdout as _stdout
 from string import hexdigits
 from os import name as _name, system
-from shutil import get_terminal_size
 
 from .input import getch
 
@@ -31,7 +28,6 @@ __all__ = [
     "Color",
     "foreground",
     "background",
-    "terminal",
     "save_screen",
     "restore_screen",
     "set_alt_buffer",
@@ -217,142 +213,8 @@ class Color:
 
 
 foreground = Color()
-"""`Color` instance for setting foreground colors."""
-
 background = Color(1)
-"""`Color` instance for setting background colors."""
 
-
-class Terminal:
-    """A class to store & access data about a terminal."""
-
-    RESIZE = 0
-    """Event sent out when the terminal has been resized.
-
-    Arguments passed:
-    - New size: tuple[int, int]
-    """
-
-    margins = [0, 0, 0, 0]
-    """Not quite sure what this does at the moment."""
-
-    displayhook_installed: bool = False
-    """This is set to True when `pretty.install` is called."""
-
-    def __init__(self) -> None:
-        """Initialize `_Terminal` class."""
-
-        self.origin: tuple[int, int] = (1, 1)
-        self.size: tuple[int, int] = self._get_size()
-        self.pixel_size: tuple[int, int] = self._get_pixel_size()
-        self._listeners: dict[int, list[Callable[..., Any]]] = {}
-
-        if hasattr(signal, "SIGWINCH"):
-            signal.signal(signal.SIGWINCH, self._update_size)
-
-        # TODO: Support SIGWINCH on Windows.
-
-    @staticmethod
-    def _get_pixel_size() -> tuple[int, int]:
-        """Gets the terminal's size, in pixels."""
-
-        if sys.stdout.isatty():
-            sys.stdout.write("\x1b[14t")
-            sys.stdout.flush()
-
-            # TODO: This probably should be error-proofed.
-            output = getch()[4:-1]
-            if ";" in output:
-                size = tuple(int(val) for val in output.split(";"))
-                return size[1], size[0]
-
-        return (0, 0)
-
-    def _call_listener(self, event: int, data: Any) -> None:
-        """Calls callbacks for event.
-
-        Args:
-            event: A terminal event.
-            data: Arbitrary data passed to the callback.
-        """
-
-        if event in self._listeners:
-            for callback in self._listeners[event]:
-                callback(data)
-
-    def _get_size(self) -> tuple[int, int]:
-        """Gets the screen size with origin substracted."""
-
-        size = get_terminal_size()
-        return (size[0] - self.origin[0], size[1] - self.origin[1])
-
-    def _update_size(self, *_: Any) -> None:
-        """Resize terminal when SIGWINCH occurs, and call listeners."""
-
-        self.size = self._get_size()
-        self.pixel_size = self._get_pixel_size()
-        self._call_listener(self.RESIZE, self.size)
-
-    @property
-    def width(self) -> int:
-        """Gets the current width of the terminal."""
-
-        return self.size[0]
-
-    @property
-    def height(self) -> int:
-        """Gets the current height of the terminal."""
-
-        return self.size[1]
-
-    @staticmethod
-    def is_interactive() -> bool:
-        """Determines whether shell is interactive.
-
-        A shell is interactive if it is run from `python3` or `python3 -i`.
-        """
-
-        return hasattr(sys, "ps1")
-
-    def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
-        """Subcribes a callback to be called when event occurs.
-
-        Args:
-            event: The terminal event that calls callback.
-            callback: The callable to be called. The signature of this
-                callable is dependent on the event. See the documentation
-                of the specific event for more information.
-        """
-
-        if not event in self._listeners:
-            self._listeners[event] = []
-
-        self._listeners[event].append(callback)
-
-    def fill(self, color: int = 0, flush: bool = True) -> None:
-        """Fills the entire terminal with the given color.
-
-        This is more of a debug function than anything, as performance is not the
-        greatest.
-
-        Args:
-            color: An integer for the color to fill in. Must be in the 0-255 xterm
-                color range.
-            flush: Whether stdout should be flushed. Defaults to True, but setting
-                it False can be beneficial for performance, as long as you flush in
-                some other place.
-        """
-
-        for height in range(self.height):
-            sys.stdout.write(
-                f"\033[{height};0H"
-                + background(" " * (self.width - 1), color)
-                + ("\n" if flush else "")
-            )
-
-
-terminal = Terminal()
-"""Terminal instance that should be used pretty much always."""
 
 # screen commands
 def save_screen() -> None:

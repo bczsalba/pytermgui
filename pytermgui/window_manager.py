@@ -64,12 +64,12 @@ from .widgets import (
 
 from .input import getch
 from .parser import markup
+from .terminal import terminal
 from .animations import animator
 from .helpers import strip_ansi, real_length
 from .enums import CenteringPolicy, SizePolicy, Overflow
 from .context_managers import alt_buffer, mouse_handler, MouseTranslator, cursor_at
 from .ansi_interface import (
-    terminal,
     background,
     MouseEvent,
     move_cursor,

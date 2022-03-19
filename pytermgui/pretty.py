@@ -15,8 +15,8 @@ import builtins
 from typing import Any
 
 from .parser import tim
+from .terminal import terminal
 from .prettifiers import prettify
-from .ansi_interface import terminal
 
 try:
     # Try to get IPython instance. This function is provided by the

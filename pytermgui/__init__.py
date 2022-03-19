@@ -21,6 +21,7 @@ from .enums import *
 from .parser import *
 from .widgets import *
 from .helpers import *
+from .terminal import *
 from .inspector import *
 from .animations import *
 from .serializer import *
