@@ -1,5 +1,7 @@
 """This module houses the `Terminal` class, and its provided instance."""
 
+from __future__ import annotations
+
 import sys
 import signal
 from typing import Any, Callable
