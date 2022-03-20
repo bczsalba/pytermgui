@@ -19,6 +19,7 @@ import sys
 
 from .enums import *
 from .parser import *
+from .colors import *
 from .widgets import *
 from .helpers import *
 from .terminal import *

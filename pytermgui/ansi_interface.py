@@ -15,19 +15,15 @@ from __future__ import annotations
 
 import re
 
-from typing import Optional, Any, Union, Tuple, Pattern
+from typing import Optional, Any, Union, Pattern
 from dataclasses import dataclass, fields
 from enum import Enum, auto as _auto
-from sys import stdout as _stdout
-from string import hexdigits
 from os import name as _name, system
+from sys import stdout as _stdout
 
 from .input import getch
 
 __all__ = [
-    "Color",
-    "foreground",
-    "background",
     "save_screen",
     "restore_screen",
     "set_alt_buffer",
@@ -72,148 +68,6 @@ RE_MOUSE: dict[str, Pattern] = {
     "decimal_xterm": re.compile(r"<(\d{1,2})\;(\d{1,3})\;(\d{1,3})(\w)"),
     "decimal_urxvt": re.compile(r"(\d{1,2})\;(\d{1,3})\;(\d{1,3})()"),
 }
-
-
-class Color:
-    """Class to store various color utilities
-
-    Shoutout to the best StackOverflow answer I've ever come across, that
-    just so happens to be a great summary of ANSI color systems:
-        https://stackoverflow.com/a/33206814
-
-    Two instances of this class are provided, `foreground`
-    and `background`. The difference between these is the color
-    layer they operate on.
-
-    To use this class you should call either instances with some
-    data type representing a color. The following patterns are supported:
-
-    - `int`: 0-256 terminal colors
-    - `str`: Name of one of the registered named colors. See `Color.names`.
-    - `#rrggbb`: RGB hex string. Note: alpha values are not supported.
-    - `tuple[int, int]`: Tuple of RGB colors, each 0-256.
-
-    When calling an instance of the class, the following args are set:
-
-    Args:
-        text: The string that will be colored.
-        color: The color specifier.
-        reset_color: A boolean that determines whether the returned value should
-            end with a reset code. Defaults to True.
-
-    Returns:
-        The colored string.
-
-    Raises:
-        NotImplementedError: Unrecognized color specifier was passed.
-    """
-
-    ColorType = Union[int, str, Tuple[int, int, int]]
-    """A simple type to represent color patterns. See `Color` for more info."""
-
-    names = {
-        "black": 0,
-        "red": 1,
-        "green": 2,
-        "yellow": 3,
-        "blue": 4,
-        "magenta": 5,
-        "cyan": 6,
-        "white": 7,
-        "grey": 8,
-        "brightred": 9,
-        "brightgreen": 10,
-        "brightyellow": 11,
-        "brightblue": 12,
-        "brightmagenta": 13,
-        "brightcyan": 14,
-        "brightwhite": 15,
-    }
-    """16 default named colors. Expanding this list will expand the names `pytermgui.parser.markup`
-    will recognize, but if that is your objective it is better to use
-    `pytermgui.parser.MarkupLanguage.alias`."""
-
-    def __init__(self, layer: int = 0) -> None:
-        """Initialize Color object.
-
-        Args:
-            layer: One of [0, 1]. Objects instantiated with 0 will represent foreground
-                colors, while objects instantiated with 1 will display background ones.
-
-        Raises:
-            NotImplementedError: Invalid layer.
-        """
-
-        if layer not in [0, 1]:
-            raise NotImplementedError(f"Layer {layer} can only be one of [0, 1].")
-
-        self.layer_offset = layer * 10
-
-    @staticmethod
-    def translate_hex(color: str) -> tuple[int, int, int]:
-        """Translates a hex string of format #RRGGBB into an RGB tuple of integers.
-
-        Args:
-            color: The hexadecimal string to convert. Must follow the format #RRGGBB, where
-                capitalization is optional.
-
-        Returns:
-            A tuple of integers, 0-255 each, standing for red, green and blue values in that
-            order.
-        """
-
-        if color.startswith("#"):
-            color = color[1:]
-
-        rgb = []
-        for i in (0, 2, 4):
-            color_hex = color[i : i + 2]
-            rgb.append(int(color_hex, 16))
-
-        return rgb[0], rgb[1], rgb[2]
-
-    def __call__(self, text: str, color: ColorType, reset_color: bool = True) -> str:
-        """Colors a piece of text. See help(Color) for more info."""
-
-        # convert hex string to tuple[int, int, int]
-        if isinstance(color, str) and all(
-            char in hexdigits or char == "#" for char in color
-        ):
-            try:
-                color = self.translate_hex(color)
-            except ValueError:
-                # value is not a hex number, but is string
-                pass
-
-        if color in self.names:
-            new = self.names[str(color)]
-            assert isinstance(new, int)
-            color = new
-
-        # rgb values
-        if isinstance(color, tuple):
-            red, green, blue = color
-            color_value = f"2;{red};{green};{blue}m"
-
-        # 8-bit colors (including 0-16)
-        elif isinstance(color, int) or color.isdigit():
-            color_value = f"5;{color}m"
-
-        else:
-            raise NotImplementedError(
-                f"Not sure what to do with {color} of type {type(color)}"
-            )
-
-        return (
-            f"\x1b[{38 + self.layer_offset};"
-            + color_value
-            + text
-            + (set_mode("reset") if reset_color else "")
-        )
-
-
-foreground = Color()
-background = Color(1)
 
 
 # screen commands
@@ -753,13 +607,7 @@ def print_to(pos: tuple[int, int], *args: Any, **kwargs: Any) -> None:
 
 
 def reset() -> str:
-    """Resets printing mode.
-
-    Args:
-        reset_style: Boolean that determines whether a reset
-            character should be appended to the end of the
-            string.
-    """
+    """Resets printing mode."""
 
     return set_mode("reset", False)
 

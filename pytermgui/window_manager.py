@@ -64,13 +64,13 @@ from .widgets import (
 
 from .input import getch
 from .parser import markup
+from .colors import background
 from .terminal import terminal
 from .animations import animator
 from .helpers import strip_ansi, real_length
 from .enums import CenteringPolicy, SizePolicy, Overflow
 from .context_managers import alt_buffer, mouse_handler, MouseTranslator, cursor_at
 from .ansi_interface import (
-    background,
     MouseEvent,
     move_cursor,
     MouseAction,
@@ -913,7 +913,7 @@ class WindowManager(Container):
 
             with cursor_at(widget.pos) as pprint:
                 debug = widget.debug()
-                buff = background(" ", color_base, reset_color=False)
+                buff = background(" ", str(color_base), reset=False)
 
                 for i in range(min(widget.width, real_length(debug)) - 1):
                     buff += debug[i]

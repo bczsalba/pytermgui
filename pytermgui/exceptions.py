@@ -22,6 +22,10 @@ class LineLengthError(Exception):
     """Raised when a widget line is not the expected length."""
 
 
+class ColorSyntaxError(Exception):
+    """Raised when a color string could not be parsed into a `pytermgui.colors.Color`"""
+
+
 @dataclass
 class ParserSyntaxError(Exception):
     """Parent exception for unparsable strings.

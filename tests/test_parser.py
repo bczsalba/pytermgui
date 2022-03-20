@@ -1,5 +1,6 @@
 from pytermgui import tim, StyledText, pretty
 from pytermgui.parser import Token, TokenType, STYLE_MAP, StyledText
+from pytermgui.colors import str_to_color
 
 
 class TestParser:
@@ -78,19 +79,19 @@ class TestTokens:
         assert token.ttype is TokenType.ESCAPED
 
     def test_fg_8bit(self):
-        token = Token(ttype=TokenType.FG_8BIT, data="141")
+        token = Token(ttype=TokenType.COLOR, data=str_to_color("141"))
         assert token.sequence == "\x1b[38;5;141m"
 
     def test_bg_8bit(self):
-        token = Token(ttype=TokenType.BG_8BIT, data="@141")
+        token = Token(ttype=TokenType.COLOR, data=str_to_color("@141"))
         assert token.sequence == "\x1b[48;5;141m"
 
     def test_fg_rgb(self):
-        token = Token(ttype=TokenType.FG_24BIT, data="000;111;222")
-        assert token.sequence == "\x1b[38;2;000;111;222m"
+        token = Token(ttype=TokenType.COLOR, data=str_to_color("000;111;222"))
+        assert token.sequence == "\x1b[38;2;0;111;222m"
 
     def test_bg_rgb(self):
-        token = Token(ttype=TokenType.BG_24BIT, data="123;61;231")
+        token = Token(ttype=TokenType.COLOR, data=str_to_color("@123;61;231"))
         assert token.sequence == "\x1b[48;2;123;61;231m"
 
     def test_fg_hex(self):

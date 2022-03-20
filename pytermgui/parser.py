@@ -112,13 +112,14 @@ from __future__ import annotations
 
 import re
 from random import shuffle
+from contextlib import suppress
 from dataclasses import dataclass
 from argparse import ArgumentParser
 from enum import Enum, auto as _auto
 from typing import Iterator, Callable, Tuple, List
 
-from .ansi_interface import foreground
-from .exceptions import MarkupSyntaxError, AnsiSyntaxError
+from .colors import str_to_color, Color
+from .exceptions import MarkupSyntaxError, ColorSyntaxError, AnsiSyntaxError
 
 
 __all__ = [
@@ -138,7 +139,7 @@ RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w\/\.?\-=:]+)\))?")
 RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/\(,\)].*?)\])")
 
 RE_256 = re.compile(r"^([\d]{1,3})$")
-RE_HEX = re.compile(r"#([0-9a-fA-F]{6})")
+RE_HEX = re.compile(r"(?:#)?([0-9a-fA-F]{6})")
 RE_RGB = re.compile(r"(\d{1,3};\d{1,3};\d{1,3})")
 
 STYLE_MAP = {
@@ -287,6 +288,9 @@ class TokenType(Enum):
     PLAIN = _auto()
     """Plain text, nothing interesting."""
 
+    COLOR = _auto()
+    """A color token. Has a `pytermgui.colors.Color` instance as its data."""
+
     STYLE = _auto()
     """A builtin terminal style, such as `bold` or `italic`."""
 
@@ -295,18 +299,6 @@ class TokenType(Enum):
 
     ESCAPED = _auto()
     """An escaped token."""
-
-    FG_8BIT = _auto()
-    """8 bit (xterm-255) foreground color."""
-
-    BG_8BIT = _auto()
-    """8 bit (xterm-255) background color."""
-
-    FG_24BIT = _auto()
-    """24 bit (RGB) foreground color."""
-
-    BG_24BIT = _auto()
-    """24 bit (RGB) background color."""
 
     UNSETTER = _auto()
     """A token that unsets some other attribute."""
@@ -322,7 +314,7 @@ class Token:
     ttype: TokenType
     """The type of this token."""
 
-    data: str | MacroCall | None
+    data: str | MacroCall | Color | None
     """The data contained within this token. This changes based on the `ttype` attr."""
 
     name: str = "<unnamed-token>"
@@ -332,8 +324,14 @@ class Token:
         """Sets `name` to `data` if not provided."""
 
         if self.name == "<unnamed-token>":
-            assert isinstance(self.data, str)
-            self.name = self.data
+            if isinstance(self.data, str):
+                self.name = self.data
+
+            elif isinstance(self.data, Color):
+                self.name = self.data.name
+
+            else:
+                raise TypeError
 
     def __eq__(self, other: object) -> bool:
         """Checks equality with `other`."""
@@ -341,11 +339,8 @@ class Token:
         if other is None:
             return False
 
-        if not isinstance(other, Token):
-            raise NotImplementedError(
-                "Cannot check for equality between Token and non-Token of type"
-                + f" {type(other)}."
-            )
+        if not isinstance(other, type(self)):
+            return False
 
         return other.data == self.data and other.ttype is self.ttype
 
@@ -359,22 +354,15 @@ class Token:
         if self.ttype in [TokenType.PLAIN, TokenType.MACRO, TokenType.ESCAPED]:
             return None
 
-        assert isinstance(self.data, str)
-        data = self.data.lstrip("@")
+        # Colors and styles
+        data = self.data
 
         if self.ttype in [TokenType.STYLE, TokenType.UNSETTER]:
+            assert isinstance(data, str)
             return "\033[" + data + "m"
 
-        # Handle colors
-        if self.ttype.name.startswith("BG"):
-            template = "\x1b[48;{c_id};" + data + "m"
-        else:
-            template = "\x1b[38;{c_id};" + data + "m"
-
-        if self.ttype in [TokenType.FG_8BIT, TokenType.BG_8BIT]:
-            return template.format(c_id="5")
-
-        return template.format(c_id="2")
+        assert isinstance(data, Color)
+        return data.sequence
 
 
 class StyledText(str):
@@ -439,6 +427,7 @@ class StyledText(str):
                 styled_chars += len(token.sequence)
                 continue
 
+            assert isinstance(token.data, str)
             for _ in range(len(token.data)):
                 if plain_chars == index:
                     if negative_index:
@@ -558,48 +547,13 @@ docs/parser/markup_language.png"
             A color token if the given tag could be parsed into one, else None.
         """
 
-        def _hex_to_rgb(color: str) -> str:
-            """Get rgb color from hex"""
+        try:
+            color = str_to_color(tag)
 
-            return ";".join(str(int(color[i : i + 2], 16)) for i in (0, 2, 4))
+        except ColorSyntaxError:
+            return None
 
-        background = tag.startswith("@")
-        lookup_tag = tag
-        if background:
-            lookup_tag = tag[1:]
-
-        if lookup_tag in foreground.names:
-            return Token(
-                name=tag,
-                ttype=(TokenType.BG_8BIT if background else TokenType.FG_8BIT),
-                data=str(foreground.names[lookup_tag]),
-            )
-
-        data_256 = RE_256.match(lookup_tag)
-        if data_256 is not None:
-            return Token(
-                name=tag,
-                ttype=(TokenType.BG_8BIT if background else TokenType.FG_8BIT),
-                data=lookup_tag,
-            )
-
-        data_hex = RE_HEX.match(lookup_tag)
-        if data_hex is not None:
-            return Token(
-                name=tag,
-                ttype=(TokenType.BG_24BIT if background else TokenType.FG_24BIT),
-                data=_hex_to_rgb(lookup_tag[1:]),
-            )
-
-        data_rgb = RE_RGB.match(lookup_tag)
-        if data_rgb is not None:
-            return Token(
-                name=tag,
-                ttype=(TokenType.BG_24BIT if background else TokenType.FG_24BIT),
-                data=lookup_tag,
-            )
-
-        return None
+        return Token(name=color.value, ttype=TokenType.COLOR, data=color)
 
     def _get_style_token(self, tag: str) -> Token | None:
         """Tries to get a style (including unsetter) token from tags, user tags and unsetters.
@@ -700,9 +654,7 @@ docs/parser/markup_language.png"
         if len(markup_text) > cursor:
             yield Token(ttype=TokenType.PLAIN, data=markup_text[cursor:])
 
-    def tokenize_ansi(  # pylint: disable=too-many-branches
-        self, ansi: str
-    ) -> Iterator[Token]:
+    def tokenize_ansi(self, ansi: str) -> Iterator[Token]:
         """Converts the given ANSI string into an iterator of `Token`.
 
         Args:
@@ -712,6 +664,15 @@ docs/parser/markup_language.png"
             An iterator of tokens. The reason this is an iterator is to possibly save
             on memory.
         """
+
+        def _is_in_tags(code: str, tags: dict[str, str]) -> str | None:
+            """Determines whether a code is in the given dict of tags."""
+
+            for name, current in tags.items():
+                if current == code:
+                    return name
+
+            return None
 
         end = 0
         start = 0
@@ -725,6 +686,7 @@ docs/parser/markup_language.png"
         for match in RE_ANSI.finditer(ansi):
             code = match.groups()[0]
             start, end = match.span()
+
             if code is None:
                 continue
 
@@ -735,56 +697,35 @@ docs/parser/markup_language.png"
 
                 yield Token(name=plain, ttype=TokenType.PLAIN, data=plain)
 
-            # Styles & unsetters
+            name: str | None = code
+            ttype = None
+            data: str | Color = parts[0]
+
+            # Styles & Unsetters
             if len(parts) == 1:
-                token_code: str | None = ""
+                # Covariancy is not an issue here, even though mypy seems to think so.
+                name = _is_in_tags(parts[0], self.unsetters)  # type: ignore
+                if name is not None:
+                    ttype = TokenType.UNSETTER
 
-                if parts[0].isdigit():
-                    index = int(parts[0])
-                    if 30 <= index < 38 or 90 <= index < 98:
-                        yield Token(
-                            name=parts[0], ttype=TokenType.FG_8BIT, data=parts[0]
-                        )
-
-                        continue
-
-                    if 40 <= index < 48 or 100 <= index < 108:
-                        yield Token(
-                            name=parts[0], ttype=TokenType.FG_8BIT, data=parts[0]
-                        )
-
-                        continue
-
-                for name, token_code in self.unsetters.items():
-                    if token_code == parts[0]:
-                        ttype = TokenType.UNSETTER
-                        break
                 else:
-                    for name, token_code in self.tags.items():
-                        if token_code == parts[0]:
-                            ttype = TokenType.STYLE
-                            break
-                    else:
-                        raise AnsiSyntaxError(
-                            tag=parts[0], cause="not recognized", context=ansi
-                        )
-
-                yield Token(name=name, ttype=ttype, data=token_code)
+                    name = _is_in_tags(parts[0], self.tags)
+                    if name is not None:
+                        ttype = TokenType.STYLE
 
             # Colors
-            elif len(parts) >= 3:
-                name = ";".join(parts[2:])
+            if ttype is None:
+                with suppress(ColorSyntaxError):
+                    data = str_to_color(code)
+                    name = data.name
+                    ttype = TokenType.COLOR
 
-                types = [TokenType.FG_8BIT, TokenType.FG_24BIT]
+            if name is None or ttype is None or data is None:
+                raise AnsiSyntaxError(
+                    tag=parts[0], cause="not recognized", context=ansi
+                )
 
-                if parts[0] == "48":
-                    name = "@" + name
-                    types = [TokenType.BG_8BIT, TokenType.BG_24BIT]
-
-                ttype = types[0] if parts[1] == "5" else types[1]
-
-                yield Token(ttype=ttype, data=name)
-
+            yield Token(name=name, ttype=ttype, data=data)
             cursor = end
 
         if cursor < len(ansi):
@@ -826,10 +767,12 @@ docs/parser/markup_language.png"
             if token.ttype is TokenType.UNSETTER:
                 return self.unsetters[token.name]
 
-            if token.ttype.name.startswith("FG"):
-                return self.unsetters["/fg"]
+            if token.ttype is TokenType.COLOR:
+                assert isinstance(token.data, Color)
 
-            if token.ttype.name.startswith("BG"):
+                if token.data.background:
+                    return self.unsetters["/fg"]
+
                 return self.unsetters["/bg"]
 
             name = "/" + token.name
@@ -904,19 +847,12 @@ docs/parser/markup_language.png"
             return text
 
         def _is_same_colorgroup(previous: Token, new: Token) -> bool:
-            color_types = [
-                TokenType.FG_8BIT,
-                TokenType.BG_8BIT,
-                TokenType.FG_24BIT,
-                TokenType.BG_24BIT,
-            ]
-
-            if not (previous.ttype in color_types and token.ttype in color_types):
+            if not isinstance(new.data, Color) or not isinstance(previous.data, Color):
                 return False
 
-            prev_prefix = previous.ttype.name.split("_")[0]
-            prefix = new.ttype.name.split("_")[0]
-            return prev_prefix == prefix
+            return previous.data.background == new.data.background and type(
+                previous
+            ) is type(new)
 
         if (
             RE_MACRO.match(markup_text) is not None
