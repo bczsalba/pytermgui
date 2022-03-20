@@ -130,7 +130,6 @@ class _FadeInButton(Button):
         self.onclick = self.remove_from_parent
         self.set_char("delimiter", ["", ""])
 
-        self.set_style("label", lambda _, item: item)
         self._fade_progress = 0
 
         self.get_lines()
@@ -159,10 +158,7 @@ class _FadeInButton(Button):
     def get_lines(self) -> list[str]:
         """Gets the lines from Button, and cuts them off at self._fade_progress"""
 
-        lines = super().get_lines()
-        for i, line in enumerate(lines):
-            lines[i] = line[: self._fade_progress].rstrip("\x1b") + "\x1b[0m"
-        return lines
+        return [self.styles.label(self.label[: self._fade_progress])]
 
 
 class ColorPicker(Container):
@@ -229,8 +225,10 @@ class ColorPicker(Container):
             if len(color) == 0:
                 return False
 
-            # Why does mypy freak out about this?
-            self.chosen += _FadeInButton(f"[black @{color}]{color:^5}")  # type: ignore
+            button = _FadeInButton(f"{color:^5}", width=5)
+            button.styles.label = f"black @{color}"
+            self.chosen.lazy_add(button)
+
             return True
 
         return False
