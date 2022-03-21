@@ -1,10 +1,17 @@
-"""https://stackoverflow.com/a/33206814"""
+"""The module containing all of the color-centric features of this library.
+
+This module provides a base class, `Color`, and a bunch of abstractions over it.
+
+Shoutout to: https://stackoverflow.com/a/33206814, one of the best StackOverflow
+answers I've ever bumped into.
+"""
 
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Type
+from math import sqrt  # pylint: disable=no-name-in-module
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Type, no_type_check
 
 from .exceptions import ColorSyntaxError
 from .terminal import terminal, ColorSystem
@@ -33,6 +40,8 @@ RE_HEX = re.compile(r"(?:#)?([0-9a-fA-F]{6})")
 RE_RGB = re.compile(r"(\d{1,3};\d{1,3};\d{1,3})")
 
 # Adapted from https://gist.github.com/MicahElliott/719710
+# TODO: Maybe this could be generated dynamically?
+#       See https://superuser.com/a/905280
 COLOR_TABLE = {
     # 3 bit
     0: "000000",
@@ -318,6 +327,7 @@ XTERM_NAMED_COLORS = {
 NAMED_COLORS = {**{color: str(index) for index, color in XTERM_NAMED_COLORS.items()}}
 
 _COLOR_CACHE: dict[str, Color] = {}
+_COLOR_MATCH_CACHE: dict[tuple[float, float, float], Color] = {}
 
 
 @dataclass
@@ -334,9 +344,9 @@ class Color:
 
     system: ColorSystem = field(init=False)
 
-    _luminance: float | None = field(init=False, default=None)
-    _brightness: float | None = field(init=False, default=None)
-    _rgb: tuple[int, int, int] | None = field(init=False, default=None)
+    _luminance: float | None = field(init=False, default=None, repr=False)
+    _brightness: float | None = field(init=False, default=None, repr=False)
+    _rgb: tuple[int, int, int] | None = field(init=False, default=None, repr=False)
 
     @classmethod
     def from_rgb(cls, rgb: tuple[int, int, int]) -> Color:
@@ -440,7 +450,11 @@ class Color:
         return StyledText(buff)
 
     def get_localized(self) -> Color:
-        """Creates a terminal-capability local Color instance."""
+        """Creates a terminal-capability local Color instance.
+
+        This method essentially allows for graceful degradation of colors in the
+        terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.
+        """
 
         system = terminal.get_colorsystem()
         if self.system.value <= system.value:
@@ -448,11 +462,7 @@ class Color:
 
         colortype = SYSTEM_TO_TYPE[system]
 
-        try:
-            local = colortype.from_rgb(self.rgb)
-        except NotImplementedError:
-            return self
-
+        local = colortype.from_rgb(self.rgb)
         local.background = self.background
 
         return local
@@ -480,6 +490,36 @@ class IndexedColor(Color):
 
         else:
             self.system = ColorSystem.EIGHT_BIT
+
+    @classmethod
+    def from_rgb(cls, rgb: tuple[int, int, int]) -> IndexedColor:
+        """Constructs an `IndexedColor` from the closest matching option."""
+
+        if rgb in _COLOR_MATCH_CACHE:
+            color = _COLOR_MATCH_CACHE[rgb]
+
+            assert isinstance(color, IndexedColor)
+            return color
+
+        distances: list[float] = []
+
+        table = COLOR_TABLE
+        if terminal.get_colorsystem() is ColorSystem.STANDARD:
+            table = {key: value for key, value in table.items() if key in range(16)}
+
+        for hxcol in table.values():
+            red2 = int(hxcol[0:2], base=16)
+            blue2 = int(hxcol[2:4], base=16)
+            green2 = int(hxcol[4:6], base=16)
+
+            distances.append(_get_color_difference(rgb, (red2, blue2, green2)))
+
+        index = min(range(len(distances)), key=distances.__getitem__)
+
+        color = cls(str(index))
+        _COLOR_MATCH_CACHE[rgb] = color
+
+        return color
 
     @property
     def sequence(self) -> str:
@@ -598,6 +638,30 @@ SYSTEM_TO_TYPE: dict[ColorSystem, Type[Color]] = {
     ColorSystem.EIGHT_BIT: IndexedColor,
     ColorSystem.TRUE: RGBColor,
 }
+
+
+def _get_color_difference(
+    rgb1: tuple[int, int, int], rgb2: tuple[int, int, int]
+) -> float:
+    """Gets the geometric difference of 2 RGB colors (0-255).
+
+    See https://en.wikipedia.org/wiki/Color_difference's Euclidian section.
+    """
+
+    red1, green1, blue1 = rgb1
+    red2, green2, blue2 = rgb2
+
+    redmean = (red1 + red2) / 2
+
+    delta_red = red1 - red2
+    delta_green = green1 - green2
+    delta_blue = blue1 - blue2
+
+    return sqrt(
+        (2 + (redmean / 256)) * (delta_red ** 2)
+        + 4 * (delta_green ** 2)
+        + (2 + (255 - redmean) / 256) * (delta_blue ** 2)
+    )
 
 
 def str_to_color(
@@ -733,9 +797,53 @@ def background(text: str, color: str | Color, reset: bool = True) -> str:
     return color(text, reset=reset)
 
 
-if __name__ == "__main__":
-    terminal.forced_colorsystem = ColorSystem.STANDARD
+@no_type_check
+def _display_colorgrids() -> None:
+    """Displays some RGB colorgrids in the terminal.
 
-    for _i in range(256):
-        _color = str_to_color(f"@{_i}")
-        print(_i, _color("   "), _color.get_localized()("   "))
+    Runs on `python -m pytermgui.colors`.
+    """
+
+    from pytermgui import tim  # pylint: disable=import-outside-toplevel
+    import colorsys  # pylint: disable=import-outside-toplevel
+
+    def _normalize(_rgb: tuple[float, float, float]) -> str:
+        normalized = tuple(str(int(_col * 255)) for _col in _rgb)
+
+        return normalized[0], normalized[1], normalized[2]
+
+    def _get_colorbox() -> str:
+        _buff = ""
+        for y_pos in range(0, 5):
+            for x_pos in range(100):
+                # Mmmm, spiky code
+                _hue = x_pos / 100
+                _lightness = 0.1 + ((y_pos / 5) * 0.7)
+                _rgb1 = colorsys.hls_to_rgb(_hue, _lightness, 1.0)
+                _rgb2 = colorsys.hls_to_rgb(_hue, _lightness + 0.7 / 10, 1.0)
+
+                _bg_color = ";".join(_normalize(_rgb1))
+                _color = ";".join(_normalize(_rgb2))
+                _buff += f"[{_bg_color} @{_color}]▀"
+
+            _buff += "[/]\n"
+
+        return _buff
+
+    tim.should_cache = False
+
+    _buff = _get_colorbox()
+    print(terminal.get_colorsystem())
+    tim.print(_get_colorbox())
+
+    terminal.forced_colorsystem = ColorSystem.EIGHT_BIT
+    print(terminal.get_colorsystem())
+    tim.print(_get_colorbox())
+
+    terminal.forced_colorsystem = ColorSystem.STANDARD
+    print(terminal.get_colorsystem())
+    tim.print(_get_colorbox())
+
+
+if __name__ == "__main__":
+    _display_colorgrids()
