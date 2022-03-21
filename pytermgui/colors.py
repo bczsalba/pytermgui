@@ -345,8 +345,11 @@ class Color:
             rgb: The RGB value to base the new color off of.
         """
 
-        # Return an RGB color until a better implementation is complete
-        return RGBColor(";".join((str(i) for i in rgb)))
+        # This is here so pylint doesn't detect the method as being abstract.
+        # The code calling this method will catch the exception and handle it
+        # correctly.
+        if rgb:
+            raise NotImplementedError
 
     @property
     def sequence(self) -> str:
@@ -444,7 +447,11 @@ class Color:
 
         colortype = SYSTEM_TO_TYPE[system]
 
-        local = colortype.from_rgb(self.rgb)
+        try:
+            local = colortype.from_rgb(self.rgb)
+        except NotImplementedError:
+            return self
+
         local.background = self.background
 
         return local
@@ -538,7 +545,7 @@ class RGBColor(Color):
     def __post_init__(self) -> None:
         """Ensures data validity."""
 
-        if not self.value.count(";") == 2:
+        if self.value.count(";") != 2:
             raise ValueError(
                 "Invalid value passed to RGBColor."
                 + f" Format has to be rrr;ggg;bbb, got {self.value!r}."
