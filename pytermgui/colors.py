@@ -11,7 +11,8 @@ from .terminal import terminal, ColorSystem
 from .ansi_interface import reset as reset_style
 
 if TYPE_CHECKING:
-    from .parser import StyledText
+    # This cyclic won't be relevant while type checking.
+    from .parser import StyledText  # pylint: disable=cyclic-import
 
 __all__ = [
     "COLOR_TABLE",
@@ -600,7 +601,10 @@ SYSTEM_TO_TYPE: dict[ColorSystem, Type[Color]] = {
 
 
 def str_to_color(
-    text: str, is_background: bool = False, localize: bool = True
+    text: str,
+    is_background: bool = False,
+    localize: bool = True,
+    use_cache: bool = False,
 ) -> Color:
     """Creates a `Color` from the given text.
 
@@ -609,14 +613,16 @@ def str_to_color(
     - 'rrr;ggg;bbb': `RGBColor`.
     - '(#)rrggbb': `HEXColor`. Leading hash is optional.
 
-    You can also add a leading '@' into the string to make the output represent a background
-    color, such as `@#123abc`.
+    You can also add a leading '@' into the string to make the output represent a
+    background color, such as `@#123abc`.
 
     Args:
         text: The string to format from.
-        is_background: Whether the output should be forced into a background color. Mostly
-            used internally.
+        is_background: Whether the output should be forced into a background color.
+            Mostly used internally, when set will take precedence over syntax of leading
+            '@' symbol.
         localize: Whether `get_localized` should be called on the output color.
+        use_cache: Whether caching should be used.
     """
 
     def _trim_code(code: str) -> str:
@@ -643,7 +649,7 @@ def str_to_color(
     # Try to return from cache if possible
     # This is a very minor optimization, as most repeated color constructions will already
     # be cached in TIM. It still might be useful though.
-    if text in _COLOR_CACHE:
+    if use_cache and text in _COLOR_CACHE:
         color = _COLOR_CACHE[text]
 
         return color.get_localized() if localize else color

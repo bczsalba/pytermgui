@@ -536,8 +536,7 @@ docs/parser/markup_language.png"
         self.alias("inspector-identifier", "109")
         self.alias("inspector-file", "inspector-identifier")
 
-    @staticmethod
-    def _get_color_token(tag: str) -> Token | None:
+    def _get_color_token(self, tag: str) -> Token | None:
         """Tries to get a color token from the given tag.
 
         Args:
@@ -548,7 +547,7 @@ docs/parser/markup_language.png"
         """
 
         try:
-            color = str_to_color(tag)
+            color = str_to_color(tag, use_cache=self.should_cache)
 
         except ColorSyntaxError:
             return None
