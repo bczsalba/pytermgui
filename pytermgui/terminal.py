@@ -11,7 +11,7 @@ from shutil import get_terminal_size
 
 from .input import getch
 
-__all__ = ["terminal"]
+__all__ = ["terminal", "ColorSystem"]
 
 
 class ColorSystem(Enum):

@@ -1,4 +1,13 @@
-from pytermgui import str_to_color, IndexedColor, RGBColor, HEXColor
+from pytermgui import (
+    str_to_color,
+    IndexedColor,
+    RGBColor,
+    HEXColor,
+    terminal,
+    ColorSystem,
+)
+
+terminal.forced_colorsystem = ColorSystem.TRUE
 
 
 def test_fg_simple():
