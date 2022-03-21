@@ -30,6 +30,20 @@ class ColorSystem(Enum):
     """'True' color, a.k.a. 24-bit RGB colors."""
 
 
+def _get_env_colorsys() -> ColorSystem | None:
+    """Gets a colorsystem if the `PTG_COLORSYS` env var can be linked to one."""
+
+    colorsys = os.getenv("PTG_COLORSYS")
+    if colorsys is None:
+        return None
+
+    try:
+        return ColorSystem[colorsys]
+
+    except NameError:
+        return None
+
+
 class Terminal:
     """A class to store & access data about a terminal."""
 
@@ -51,7 +65,7 @@ class Terminal:
 
         self.origin: tuple[int, int] = (1, 1)
         self.size: tuple[int, int] = self._get_size()
-        self.forced_colorsystem: ColorSystem | None = None
+        self.forced_colorsystem: ColorSystem | None = _get_env_colorsys()
         self.pixel_size: tuple[int, int] = self._get_pixel_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
