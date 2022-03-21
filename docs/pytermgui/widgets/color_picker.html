@@ -219,7 +219,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">onclick</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_from_parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_char</span><span class="p">(</span><span class="s2">&quot;delimiter&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">])</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fade_progress</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()</span>
@@ -248,10 +247,7 @@
     <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Gets the lines from Button, and cuts them off at self._fade_progress&quot;&quot;&quot;</span>
 
-        <span class="n">lines</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
-            <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fade_progress</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
-        <span class="k">return</span> <span class="n">lines</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fade_progress</span><span class="p">])]</span>
 
 
 <span class="k">class</span> <span class="nc">ColorPicker</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
@@ -318,8 +314,10 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
-            <span class="c1"># Why does mypy freak out about this?</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">chosen</span> <span class="o">+=</span> <span class="n">_FadeInButton</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[black @</span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">color</span><span class="si">:</span><span class="s2">^5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">button</span> <span class="o">=</span> <span class="n">_FadeInButton</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">color</span><span class="si">:</span><span class="s2">^5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;black @</span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chosen</span><span class="o">.</span><span class="n">lazy_add</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="kc">False</span>
@@ -606,8 +604,10 @@ they come.</p>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
-            <span class="c1"># Why does mypy freak out about this?</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">chosen</span> <span class="o">+=</span> <span class="n">_FadeInButton</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[black @</span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">color</span><span class="si">:</span><span class="s2">^5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">button</span> <span class="o">=</span> <span class="n">_FadeInButton</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">color</span><span class="si">:</span><span class="s2">^5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;black @</span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chosen</span><span class="o">.</span><span class="n">lazy_add</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="kc">False</span>
@@ -744,8 +744,10 @@ for those anyways.</p>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
-            <span class="c1"># Why does mypy freak out about this?</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">chosen</span> <span class="o">+=</span> <span class="n">_FadeInButton</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[black @</span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">color</span><span class="si">:</span><span class="s2">^5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">button</span> <span class="o">=</span> <span class="n">_FadeInButton</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">color</span><span class="si">:</span><span class="s2">^5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;black @</span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chosen</span><span class="o">.</span><span class="n">lazy_add</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="kc">False</span>

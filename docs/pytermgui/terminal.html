@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="pdoc 10.0.3"/>
-    <title>pytermgui.exceptions API documentation</title>
+    <title>pytermgui.terminal API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
     <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
@@ -32,26 +32,23 @@
         <h2>API Documentation</h2>
             <ul class="memberlist">
             <li>
-                    <a class="class" href="#WidthExceededError">WidthExceededError</a>
-                            <ul class="memberlist">
-                </ul>
-
+                    <a class="variable" href="#terminal">terminal</a>
             </li>
             <li>
-                    <a class="class" href="#LineLengthError">LineLengthError</a>
+                    <a class="class" href="#ColorSystem">ColorSystem</a>
                             <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#AnsiSyntaxError">AnsiSyntaxError</a>
-                            <ul class="memberlist">
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#MarkupSyntaxError">MarkupSyntaxError</a>
-                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#ColorSystem.NO_COLOR">NO_COLOR</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ColorSystem.STANDARD">STANDARD</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ColorSystem.EIGHT_BIT">EIGHT_BIT</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ColorSystem.TRUE">TRUE</a>
+                        </li>
                 </ul>
 
             </li>
@@ -69,239 +66,292 @@
     <main class="pdoc">
             <section>
                     <h1 class="modulename">
-<a href="./../pytermgui.html">pytermgui</a><wbr>.exceptions    </h1>
+<a href="./../pytermgui.html">pytermgui</a><wbr>.terminal    </h1>
 
-                        <div class="docstring"><p>Custom Exception-s used in pytermgui.</p>
+                        <div class="docstring"><p>This module houses the <code>Terminal</code> class, and its provided instance.</p>
 </div>
 
                         <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Custom Exception-s used in pytermgui.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;This module houses the `Terminal` class, and its provided instance.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">get_terminal_size</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;WidthExceededError&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LineLengthError&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;AnsiSyntaxError&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MarkupSyntaxError&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span>
 
-
-<span class="k">class</span> <span class="nc">WidthExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when an element&#39;s width is larger than the screen.&quot;&quot;&quot;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;terminal&quot;</span><span class="p">,</span> <span class="s2">&quot;ColorSystem&quot;</span><span class="p">]</span>
 
 
-<span class="k">class</span> <span class="nc">LineLengthError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when a widget line is not the expected length.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">ColorSystem</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An enumeration of various terminal-supported colorsystems.&quot;&quot;&quot;</span>
+
+    <span class="n">NO_COLOR</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;No-color terminal. See https://no-color.org/.&quot;&quot;&quot;</span>
+
+    <span class="n">STANDARD</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Standard 3-bit colorsystem of the basic 16 colors.&quot;&quot;&quot;</span>
+
+    <span class="n">EIGHT_BIT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;xterm 8-bit colors, 0-256.&quot;&quot;&quot;</span>
+
+    <span class="n">TRUE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;&#39;True&#39; color, a.k.a. 24-bit RGB colors.&quot;&quot;&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">ColorSyntaxError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when a color string could not be parsed into a `pytermgui.colors.Color`&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">_get_env_colorsys</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ColorSystem</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Gets a colorsystem if the `PTG_COLORSYS` env var can be linked to one.&quot;&quot;&quot;</span>
+
+    <span class="n">colorsys</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;PTG_COLORSYS&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">colorsys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ColorSystem</span><span class="p">[</span><span class="n">colorsys</span><span class="p">]</span>
+
+    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
 
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ParserSyntaxError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parent exception for unparsable strings.</span>
+<span class="k">class</span> <span class="nc">Terminal</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A class to store &amp; access data about a terminal.&quot;&quot;&quot;</span>
 
-<span class="sd">    This exception takes some basic parameters, and formats</span>
-<span class="sd">    a message depending on the _delimiters value. This has to</span>
-<span class="sd">    be supplied by each child, while the rest of the arguments</span>
-<span class="sd">    are to be given at construction.&quot;&quot;&quot;</span>
+    <span class="n">RESIZE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Event sent out when the terminal has been resized.</span>
 
-    <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">cause</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">context</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">_delimiters</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="sd">    Arguments passed:</span>
+<span class="sd">    - New size: tuple[int, int]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">margins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;Not quite sure what this does at the moment.&quot;&quot;&quot;</span>
+
+    <span class="n">displayhook_installed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="sd">&quot;&quot;&quot;This is set to True when `pretty.install` is called.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize `_Terminal` class.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forced_colorsystem</span><span class="p">:</span> <span class="n">ColorSystem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_get_env_colorsys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pixel_size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="s2">&quot;SIGWINCH&quot;</span><span class="p">):</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGWINCH</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_size</span><span class="p">)</span>
+
+        <span class="c1"># TODO: Support SIGWINCH on Windows.</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_pixel_size</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Gets the terminal&#39;s size, in pixels.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">isatty</span><span class="p">():</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[14t&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+            <span class="c1"># TODO: This probably should be error-proofed.</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">getch</span><span class="p">()[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;;&quot;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_call_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calls callbacks for event.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event: A terminal event.</span>
+<span class="sd">            data: Arbitrary data passed to the callback.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]:</span>
+                <span class="n">callback</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Gets the screen size with origin substracted.&quot;&quot;&quot;</span>
+
+        <span class="n">size</span> <span class="o">=</span> <span class="n">get_terminal_size</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_update_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Resize terminal when SIGWINCH occurs, and call listeners.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pixel_size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_call_listener</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create message from tag, context and cause.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Gets the current width of the terminal.&quot;&quot;&quot;</span>
 
-        <span class="n">escaped_context</span> <span class="o">=</span> <span class="n">ascii</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
-        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delimiters</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;Tag &quot;</span><span class="si">{</span><span class="n">start</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="si">}{</span><span class="n">end</span><span class="si">}</span><span class="s1">&quot; in string &quot;</span><span class="si">{</span><span class="n">escaped_context</span><span class="si">}</span><span class="s1">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cause</span><span class="si">}</span><span class="s1">.&#39;</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">escape_message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return message with markup tags escaped.&quot;&quot;&quot;</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Gets the current height of the terminal.&quot;&quot;&quot;</span>
 
-        <span class="n">char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delimiters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">char</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">char</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Show message.&quot;&quot;&quot;</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_interactive</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Determines whether shell is interactive.</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+<span class="sd">        A shell is interactive if it is run from `python3` or `python3 -i`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_colorsystem</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorSystem</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Gets the current terminal&#39;s supported color system.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forced_colorsystem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forced_colorsystem</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NO_COLOR&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">NO_COLOR</span>
+
+        <span class="n">color_term</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;COLORTERM&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">color_term</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;24bit&quot;</span><span class="p">,</span> <span class="s2">&quot;truecolor&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">TRUE</span>
+
+        <span class="k">if</span> <span class="n">color_term</span> <span class="o">==</span> <span class="s2">&quot;256color&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">EIGHT_BIT</span>
+
+        <span class="k">return</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">STANDARD</span>
+
+    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Subcribes a callback to be called when event occurs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event: The terminal event that calls callback.</span>
+<span class="sd">            callback: The callable to be called. The signature of this</span>
+<span class="sd">                callable is dependent on the event. See the documentation</span>
+<span class="sd">                of the specific event for more information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">MarkupSyntaxError</span><span class="p">(</span><span class="n">ParserSyntaxError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when parsed markup text contains an error.&quot;&quot;&quot;</span>
-
-    <span class="n">_delimiters</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span>
-
-
-<span class="k">class</span> <span class="nc">AnsiSyntaxError</span><span class="p">(</span><span class="n">ParserSyntaxError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when parsed ANSI text contains an error.&quot;&quot;&quot;</span>
-
-    <span class="n">_delimiters</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">x1b[&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">)</span>
+<span class="n">terminal</span> <span class="o">=</span> <span class="n">Terminal</span><span class="p">()</span>
+<span class="sd">&quot;&quot;&quot;Terminal instance that should be used pretty much always.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
 
             </section>
-                <section id="WidthExceededError">
-                                <div class="attr class">
-        <a class="headerlink" href="#WidthExceededError">#&nbsp;&nbsp</a>
+                <section id="terminal">
+                                <div class="attr variable"><a class="headerlink" href="#terminal">#&nbsp;&nbsp</a>
 
-        
-        <span class="def">class</span>
-        <span class="name">WidthExceededError</span><wbr>(<span class="base">builtins.Exception</span>):
+        <span class="name">terminal</span><span class="default_value"> = &lt;pytermgui.terminal.Terminal object&gt;</span>
     </div>
 
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">WidthExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when an element&#39;s width is larger than the screen.&quot;&quot;&quot;</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Raised when an element's width is larger than the screen.</p>
+    
+            <div class="docstring"><p>Terminal instance that should be used pretty much always.</p>
 </div>
 
 
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>builtins.Exception</dt>
-                                <dd id="WidthExceededError.__init__" class="function">Exception</dd>
-
-            </div>
-            <div><dt>builtins.BaseException</dt>
-                                <dd id="WidthExceededError.with_traceback" class="function">with_traceback</dd>
-                <dd id="WidthExceededError.args" class="variable">args</dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
-                <section id="LineLengthError">
+                <section id="ColorSystem">
                                 <div class="attr class">
-        <a class="headerlink" href="#LineLengthError">#&nbsp;&nbsp</a>
+        <a class="headerlink" href="#ColorSystem">#&nbsp;&nbsp</a>
 
         
         <span class="def">class</span>
-        <span class="name">LineLengthError</span><wbr>(<span class="base">builtins.Exception</span>):
+        <span class="name">ColorSystem</span><wbr>(<span class="base">enum.Enum</span>):
     </div>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">LineLengthError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when a widget line is not the expected length.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ColorSystem</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An enumeration of various terminal-supported colorsystems.&quot;&quot;&quot;</span>
+
+    <span class="n">NO_COLOR</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;No-color terminal. See https://no-color.org/.&quot;&quot;&quot;</span>
+
+    <span class="n">STANDARD</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Standard 3-bit colorsystem of the basic 16 colors.&quot;&quot;&quot;</span>
+
+    <span class="n">EIGHT_BIT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;xterm 8-bit colors, 0-256.&quot;&quot;&quot;</span>
+
+    <span class="n">TRUE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;&#39;True&#39; color, a.k.a. 24-bit RGB colors.&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Raised when a widget line is not the expected length.</p>
+            <div class="docstring"><p>An enumeration of various terminal-supported colorsystems.</p>
 </div>
 
 
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>builtins.Exception</dt>
-                                <dd id="LineLengthError.__init__" class="function">Exception</dd>
+                            <div id="ColorSystem.NO_COLOR" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ColorSystem.NO_COLOR">#&nbsp;&nbsp</a>
 
-            </div>
-            <div><dt>builtins.BaseException</dt>
-                                <dd id="LineLengthError.with_traceback" class="function">with_traceback</dd>
-                <dd id="LineLengthError.args" class="variable">args</dd>
+        <span class="name">NO_COLOR</span><span class="default_value"> = &lt;<a href="#ColorSystem.NO_COLOR">ColorSystem.NO_COLOR</a>: -1&gt;</span>
+    </div>
 
-            </div>
-                                </dl>
+    
+            <div class="docstring"><p>No-color terminal. See https://no-color.org/.</p>
+</div>
+
+
                             </div>
-                </section>
-                <section id="AnsiSyntaxError">
-                                <div class="attr class">
-        <a class="headerlink" href="#AnsiSyntaxError">#&nbsp;&nbsp</a>
+                            <div id="ColorSystem.STANDARD" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ColorSystem.STANDARD">#&nbsp;&nbsp</a>
 
-        
-        <span class="def">class</span>
-        <span class="name">AnsiSyntaxError</span><wbr>(<span class="base"><a href="#ParserSyntaxError">ParserSyntaxError</a></span>):
+        <span class="name">STANDARD</span><span class="default_value"> = &lt;<a href="#ColorSystem.STANDARD">ColorSystem.STANDARD</a>: 0&gt;</span>
     </div>
 
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AnsiSyntaxError</span><span class="p">(</span><span class="n">ParserSyntaxError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when parsed ANSI text contains an error.&quot;&quot;&quot;</span>
-
-    <span class="n">_delimiters</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">x1b[&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Raised when parsed ANSI text contains an error.</p>
+    
+            <div class="docstring"><p>Standard 3-bit colorsystem of the basic 16 colors.</p>
 </div>
 
 
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="#ParserSyntaxError">ParserSyntaxError</a></dt>
-                                <dd id="AnsiSyntaxError.__init__" class="function"><a href="#ParserSyntaxError.__init__">ParserSyntaxError</a></dd>
-                <dd id="AnsiSyntaxError.message" class="variable"><a href="#ParserSyntaxError.message">message</a></dd>
-                <dd id="AnsiSyntaxError.escape_message" class="function"><a href="#ParserSyntaxError.escape_message">escape_message</a></dd>
-
-            </div>
-            <div><dt>builtins.BaseException</dt>
-                                <dd id="AnsiSyntaxError.with_traceback" class="function">with_traceback</dd>
-                <dd id="AnsiSyntaxError.args" class="variable">args</dd>
-
-            </div>
-                                </dl>
                             </div>
-                </section>
-                <section id="MarkupSyntaxError">
-                                <div class="attr class">
-        <a class="headerlink" href="#MarkupSyntaxError">#&nbsp;&nbsp</a>
+                            <div id="ColorSystem.EIGHT_BIT" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ColorSystem.EIGHT_BIT">#&nbsp;&nbsp</a>
 
-        
-        <span class="def">class</span>
-        <span class="name">MarkupSyntaxError</span><wbr>(<span class="base"><a href="#ParserSyntaxError">ParserSyntaxError</a></span>):
+        <span class="name">EIGHT_BIT</span><span class="default_value"> = &lt;<a href="#ColorSystem.EIGHT_BIT">ColorSystem.EIGHT_BIT</a>: 1&gt;</span>
     </div>
 
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MarkupSyntaxError</span><span class="p">(</span><span class="n">ParserSyntaxError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when parsed markup text contains an error.&quot;&quot;&quot;</span>
-
-    <span class="n">_delimiters</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Raised when parsed markup text contains an error.</p>
+    
+            <div class="docstring"><p>xterm 8-bit colors, 0-256.</p>
 </div>
 
 
+                            </div>
+                            <div id="ColorSystem.TRUE" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#ColorSystem.TRUE">#&nbsp;&nbsp</a>
+
+        <span class="name">TRUE</span><span class="default_value"> = &lt;<a href="#ColorSystem.TRUE">ColorSystem.TRUE</a>: 2&gt;</span>
+    </div>
+
+    
+            <div class="docstring"><p>'True' color, a.k.a. 24-bit RGB colors.</p>
+</div>
+
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt><a href="#ParserSyntaxError">ParserSyntaxError</a></dt>
-                                <dd id="MarkupSyntaxError.__init__" class="function"><a href="#ParserSyntaxError.__init__">ParserSyntaxError</a></dd>
-                <dd id="MarkupSyntaxError.message" class="variable"><a href="#ParserSyntaxError.message">message</a></dd>
-                <dd id="MarkupSyntaxError.escape_message" class="function"><a href="#ParserSyntaxError.escape_message">escape_message</a></dd>
-
-            </div>
-            <div><dt>builtins.BaseException</dt>
-                                <dd id="MarkupSyntaxError.with_traceback" class="function">with_traceback</dd>
-                <dd id="MarkupSyntaxError.args" class="variable">args</dd>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="ColorSystem.name" class="variable">name</dd>
+                <dd id="ColorSystem.value" class="variable">value</dd>
 
             </div>
                                 </dl>

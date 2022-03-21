@@ -66,12 +66,15 @@ markup magic to create prettier representations of whatever is given.</p>
 
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">UserDict</span><span class="p">,</span> <span class="n">UserList</span>
 
 <span class="kn">from</span> <span class="nn">.parser</span> <span class="kn">import</span> <span class="n">RE_ANSI</span><span class="p">,</span> <span class="n">RE_MARKUP</span><span class="p">,</span> <span class="n">tim</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">MarkupSyntaxError</span><span class="p">,</span> <span class="n">AnsiSyntaxError</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;prettify&quot;</span><span class="p">]</span>
+
+<span class="n">CONTAINER_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">UserDict</span><span class="p">,</span> <span class="n">UserList</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_prettify_container</span><span class="p">(</span>
@@ -93,7 +96,7 @@ markup magic to create prettier representations of whatever is given.</p>
 
     <span class="n">indent_str</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">indent</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">indent</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">UserDict</span><span class="p">)):</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">buff</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span>
@@ -213,7 +216,7 @@ markup magic to create prettier representations of whatever is given.</p>
         <span class="n">target</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
 
     <span class="n">buff</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">CONTAINER_TYPES</span><span class="p">):</span>
         <span class="n">buff</span> <span class="o">=</span> <span class="n">_prettify_container</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">expand_all</span><span class="o">=</span><span class="n">expand_all</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span>
         <span class="p">)</span>
@@ -231,7 +234,13 @@ markup magic to create prettier representations of whatever is given.</p>
         <span class="n">buff</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[pprint-none]</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">[/]&quot;</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">inner</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+            <span class="n">buff</span> <span class="o">+=</span> <span class="n">prettify</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="n">parse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">parse</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -303,7 +312,7 @@ markup magic to create prettier representations of whatever is given.</p>
         <span class="n">target</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
 
     <span class="n">buff</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">CONTAINER_TYPES</span><span class="p">):</span>
         <span class="n">buff</span> <span class="o">=</span> <span class="n">_prettify_container</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">expand_all</span><span class="o">=</span><span class="n">expand_all</span><span class="p">,</span> <span class="n">force_markup</span><span class="o">=</span><span class="n">force_markup</span>
         <span class="p">)</span>
@@ -321,7 +330,13 @@ markup magic to create prettier representations of whatever is given.</p>
         <span class="n">buff</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[pprint-none]</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">[/]&quot;</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">inner</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+            <span class="n">buff</span> <span class="o">+=</span> <span class="n">prettify</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="n">parse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">parse</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>

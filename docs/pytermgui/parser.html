@@ -41,6 +41,27 @@
         <h2>API Documentation</h2>
             <ul class="memberlist">
             <li>
+                    <a class="class" href="#StyledText">StyledText</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#StyledText.__init__">StyledText</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StyledText.value">value</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StyledText.plain">plain</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StyledText.tokens">tokens</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#StyledText.plain_index">plain_index</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="variable" href="#MacroCallable">MacroCallable</a>
             </li>
             <li>
@@ -81,27 +102,6 @@
                         </li>
                         <li>
                                 <a class="function" href="#MarkupLanguage.prettify_markup">prettify_markup</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#StyledText">StyledText</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#StyledText.__init__">StyledText</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#StyledText.value">value</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#StyledText.plain">plain</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#StyledText.tokens">tokens</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#StyledText.plain_index">plain_index</a>
                         </li>
                 </ul>
 
@@ -342,20 +342,21 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">shuffle</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span> <span class="k">as</span> <span class="n">_auto</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">.ansi_interface</span> <span class="kn">import</span> <span class="n">foreground</span>
-<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">MarkupSyntaxError</span><span class="p">,</span> <span class="n">AnsiSyntaxError</span>
+<span class="kn">from</span> <span class="nn">.colors</span> <span class="kn">import</span> <span class="n">str_to_color</span><span class="p">,</span> <span class="n">Color</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">MarkupSyntaxError</span><span class="p">,</span> <span class="n">ColorSyntaxError</span><span class="p">,</span> <span class="n">AnsiSyntaxError</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;StyledText&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MacroCallable&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MacroCall&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MarkupLanguage&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;StyledText&quot;</span><span class="p">,</span>
     <span class="s2">&quot;markup&quot;</span><span class="p">,</span>
     <span class="s2">&quot;tim&quot;</span><span class="p">,</span>
 <span class="p">]</span>
@@ -368,7 +369,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="n">RE_MARKUP</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;((</span><span class="se">\\</span><span class="s2">*)\[([a-z0-9!#@_\/\(,\)].*?)\])&quot;</span><span class="p">)</span>
 
 <span class="n">RE_256</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^([\d]{1,3})$&quot;</span><span class="p">)</span>
-<span class="n">RE_HEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;#([0-9a-fA-F]</span><span class="si">{6}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="n">RE_HEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?:#)?([0-9a-fA-F]</span><span class="si">{6}</span><span class="s2">)&quot;</span><span class="p">)</span>
 <span class="n">RE_RGB</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d{1,3};\d{1,3};\d{1,3})&quot;</span><span class="p">)</span>
 
 <span class="n">STYLE_MAP</span> <span class="o">=</span> <span class="p">{</span>
@@ -517,6 +518,9 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
     <span class="n">PLAIN</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
     <span class="sd">&quot;&quot;&quot;Plain text, nothing interesting.&quot;&quot;&quot;</span>
 
+    <span class="n">COLOR</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
+    <span class="sd">&quot;&quot;&quot;A color token. Has a `pytermgui.colors.Color` instance as its data.&quot;&quot;&quot;</span>
+
     <span class="n">STYLE</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
     <span class="sd">&quot;&quot;&quot;A builtin terminal style, such as `bold` or `italic`.&quot;&quot;&quot;</span>
 
@@ -525,18 +529,6 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
     <span class="n">ESCAPED</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
     <span class="sd">&quot;&quot;&quot;An escaped token.&quot;&quot;&quot;</span>
-
-    <span class="n">FG_8BIT</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;8 bit (xterm-255) foreground color.&quot;&quot;&quot;</span>
-
-    <span class="n">BG_8BIT</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;8 bit (xterm-255) background color.&quot;&quot;&quot;</span>
-
-    <span class="n">FG_24BIT</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;24 bit (RGB) foreground color.&quot;&quot;&quot;</span>
-
-    <span class="n">BG_24BIT</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;24 bit (RGB) background color.&quot;&quot;&quot;</span>
 
     <span class="n">UNSETTER</span> <span class="o">=</span> <span class="n">_auto</span><span class="p">()</span>
     <span class="sd">&quot;&quot;&quot;A token that unsets some other attribute.&quot;&quot;&quot;</span>
@@ -552,7 +544,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
     <span class="n">ttype</span><span class="p">:</span> <span class="n">TokenType</span>
     <span class="sd">&quot;&quot;&quot;The type of this token.&quot;&quot;&quot;</span>
 
-    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">MacroCall</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">MacroCall</span> <span class="o">|</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;The data contained within this token. This changes based on the `ttype` attr.&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&lt;unnamed-token&gt;&quot;</span>
@@ -562,8 +554,14 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="sd">&quot;&quot;&quot;Sets `name` to `data` if not provided.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;&lt;unnamed-token&gt;&quot;</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Checks equality with `other`.&quot;&quot;&quot;</span>
@@ -571,11 +569,8 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Token</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot check for equality between Token and non-Token of type&quot;</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">ttype</span>
 
@@ -589,22 +584,15 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ESCAPED</span><span class="p">]:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
+        <span class="c1"># Colors and styles</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[&quot;</span> <span class="o">+</span> <span class="n">data</span> <span class="o">+</span> <span class="s2">&quot;m&quot;</span>
 
-        <span class="c1"># Handle colors</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;BG&quot;</span><span class="p">):</span>
-            <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[48;</span><span class="si">{c_id}</span><span class="s2">;&quot;</span> <span class="o">+</span> <span class="n">data</span> <span class="o">+</span> <span class="s2">&quot;m&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[38;</span><span class="si">{c_id}</span><span class="s2">;&quot;</span> <span class="o">+</span> <span class="n">data</span> <span class="o">+</span> <span class="s2">&quot;m&quot;</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c_id</span><span class="o">=</span><span class="s2">&quot;5&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c_id</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">sequence</span>
 
 
 <span class="k">class</span> <span class="nc">StyledText</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
@@ -628,15 +616,11 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
     <span class="sd">&quot;&quot;&quot;The list of tokens that make up this string.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates a StyledText, gets markup tags.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            markup_language: The markup language instance this object uses.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Creates a StyledText, gets markup tags.&quot;&quot;&quot;</span>
 
         <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">markup</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tim</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
         <span class="n">obj</span><span class="o">.</span><span class="n">plain</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
@@ -673,6 +657,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
                 <span class="n">styled_chars</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span>
                 <span class="k">continue</span>
 
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
                 <span class="k">if</span> <span class="n">plain_chars</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">negative_index</span><span class="p">:</span>
@@ -781,8 +766,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;inspector-identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;109&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;inspector-file&quot;</span><span class="p">,</span> <span class="s2">&quot;inspector-identifier&quot;</span><span class="p">)</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_color_token</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_color_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Tries to get a color token from the given tag.</span>
 
 <span class="sd">        Args:</span>
@@ -792,48 +776,13 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="sd">            A color token if the given tag could be parsed into one, else None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">_hex_to_rgb</span><span class="p">(</span><span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="sd">&quot;&quot;&quot;Get rgb color from hex&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">str_to_color</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">should_cache</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">ColorSyntaxError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="n">background</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
-        <span class="n">lookup_tag</span> <span class="o">=</span> <span class="n">tag</span>
-        <span class="k">if</span> <span class="n">background</span><span class="p">:</span>
-            <span class="n">lookup_tag</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-
-        <span class="k">if</span> <span class="n">lookup_tag</span> <span class="ow">in</span> <span class="n">foreground</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Token</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">ttype</span><span class="o">=</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span> <span class="k">if</span> <span class="n">background</span> <span class="k">else</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">),</span>
-                <span class="n">data</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">foreground</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">lookup_tag</span><span class="p">]),</span>
-            <span class="p">)</span>
-
-        <span class="n">data_256</span> <span class="o">=</span> <span class="n">RE_256</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lookup_tag</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">data_256</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Token</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">ttype</span><span class="o">=</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span> <span class="k">if</span> <span class="n">background</span> <span class="k">else</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">),</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">lookup_tag</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="n">data_hex</span> <span class="o">=</span> <span class="n">RE_HEX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lookup_tag</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">data_hex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Token</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">ttype</span><span class="o">=</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span> <span class="k">if</span> <span class="n">background</span> <span class="k">else</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">),</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">_hex_to_rgb</span><span class="p">(</span><span class="n">lookup_tag</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span>
-            <span class="p">)</span>
-
-        <span class="n">data_rgb</span> <span class="o">=</span> <span class="n">RE_RGB</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lookup_tag</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">data_rgb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Token</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">ttype</span><span class="o">=</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span> <span class="k">if</span> <span class="n">background</span> <span class="k">else</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">),</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">lookup_tag</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">color</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">TokenType</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_style_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Tries to get a style (including unsetter) token from tags, user tags and unsetters.</span>
@@ -934,9 +883,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">markup_text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">ttype</span><span class="o">=</span><span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">markup_text</span><span class="p">[</span><span class="n">cursor</span><span class="p">:])</span>
 
-    <span class="k">def</span> <span class="nf">tokenize_ansi</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">ansi</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">tokenize_ansi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ansi</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Converts the given ANSI string into an iterator of `Token`.</span>
 
 <span class="sd">        Args:</span>
@@ -946,6 +893,15 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="sd">            An iterator of tokens. The reason this is an iterator is to possibly save</span>
 <span class="sd">            on memory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_is_in_tags</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Determines whether a code is in the given dict of tags.&quot;&quot;&quot;</span>
+
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">current</span> <span class="ow">in</span> <span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">current</span> <span class="o">==</span> <span class="n">code</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">name</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">end</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
@@ -959,6 +915,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">RE_ANSI</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">ansi</span><span class="p">):</span>
             <span class="n">code</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+
             <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
 
@@ -969,40 +926,35 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
                 <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">plain</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">plain</span><span class="p">)</span>
 
-            <span class="c1"># Styles &amp; unsetters</span>
+            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">code</span>
+            <span class="n">ttype</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Color</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Styles &amp; Unsetters</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">token_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">token_code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">token_code</span> <span class="o">==</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                        <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span>
-                        <span class="k">break</span>
+                <span class="c1"># Covariancy is not an issue here, even though mypy seems to think so.</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">_is_in_tags</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span>
+
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">token_code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="n">token_code</span> <span class="o">==</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                            <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span>
-                            <span class="k">break</span>
-                    <span class="k">else</span><span class="p">:</span>
-
-                        <span class="k">raise</span> <span class="n">AnsiSyntaxError</span><span class="p">(</span>
-                            <span class="n">tag</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cause</span><span class="o">=</span><span class="s2">&quot;not recognized&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ansi</span>
-                        <span class="p">)</span>
-
-                <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">ttype</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">token_code</span><span class="p">)</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">_is_in_tags</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span>
 
             <span class="c1"># Colors</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="k">if</span> <span class="n">ttype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="n">ColorSyntaxError</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">str_to_color</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+                    <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">COLOR</span>
 
-                <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ttype</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AnsiSyntaxError</span><span class="p">(</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cause</span><span class="o">=</span><span class="s2">&quot;not recognized&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ansi</span>
+                <span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;48&quot;</span><span class="p">:</span>
-                    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span> <span class="o">+</span> <span class="n">name</span>
-                    <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span><span class="p">]</span>
-
-                <span class="n">ttype</span> <span class="o">=</span> <span class="n">types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;5&quot;</span> <span class="k">else</span> <span class="n">types</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-                <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">ttype</span><span class="o">=</span><span class="n">ttype</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-
+            <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">ttype</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
             <span class="n">cursor</span> <span class="o">=</span> <span class="n">end</span>
 
         <span class="k">if</span> <span class="n">cursor</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ansi</span><span class="p">):</span>
@@ -1044,10 +996,12 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;FG&quot;</span><span class="p">):</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="s2">&quot;/fg&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">COLOR</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;BG&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">background</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="s2">&quot;/fg&quot;</span><span class="p">]</span>
+
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="s2">&quot;/bg&quot;</span><span class="p">]</span>
 
             <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span>
@@ -1122,24 +1076,17 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="k">return</span> <span class="n">text</span>
 
         <span class="k">def</span> <span class="nf">_is_same_colorgroup</span><span class="p">(</span><span class="n">previous</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="n">Token</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-            <span class="n">color_types</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">,</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span><span class="p">,</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">,</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span><span class="p">,</span>
-            <span class="p">]</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">previous</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">in</span> <span class="n">color_types</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">in</span> <span class="n">color_types</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">previous</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
-            <span class="n">prev_prefix</span> <span class="o">=</span> <span class="n">previous</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">prev_prefix</span> <span class="o">==</span> <span class="n">prefix</span>
+            <span class="k">return</span> <span class="n">previous</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">background</span> <span class="o">==</span> <span class="n">new</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">background</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span>
+                <span class="n">previous</span>
+            <span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span>
-            <span class="n">RE_MACRO</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">markup_text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_cache</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">should_cache</span>
             <span class="ow">and</span> <span class="n">markup_text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">RE_MACRO</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">markup_text</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">markup_text</span><span class="p">]</span>
 
@@ -1295,6 +1242,17 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
                     <span class="n">applied_macros</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
                     <span class="k">break</span>
 
+        <span class="k">def</span> <span class="nf">_finish</span><span class="p">(</span><span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">in_sequence</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Adds ending cap to the given string.&quot;&quot;&quot;</span>
+
+            <span class="k">if</span> <span class="n">in_sequence</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span><span class="p">):</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
+
+                <span class="k">return</span> <span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+
+            <span class="k">return</span> <span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;[/]&quot;</span>
+
         <span class="n">styles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TokenType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">:</span> <span class="s2">&quot;210&quot;</span><span class="p">,</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">ESCAPED</span><span class="p">:</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">,</span>
@@ -1313,6 +1271,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
                     <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
 
                 <span class="n">in_sequence</span> <span class="o">=</span> <span class="kc">False</span>
+
                 <span class="n">sequence</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">for</span> <span class="n">style</span> <span class="ow">in</span> <span class="n">current_styles</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">style</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1334,11 +1293,9 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
                 <span class="n">current_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
 
-                <span class="n">special_style</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_tags</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-                <span class="p">)</span>
                 <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;/[</span><span class="si">{</span><span class="n">special_style</span><span class="si">}{</span><span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_tags</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span><span class="si">}</span><span class="s2">]/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
 
@@ -1364,10 +1321,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="n">style_markup</span> <span class="o">=</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">ttype</span><span class="p">)</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span>
             <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">style_markup</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">in_sequence</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
-
-        <span class="k">return</span> <span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;[/]&quot;</span>
+        <span class="k">return</span> <span class="n">_finish</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">in_sequence</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1442,6 +1396,319 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         </details>
 
             </section>
+                <section id="StyledText">
+                                <div class="attr class">
+        <a class="headerlink" href="#StyledText">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">StyledText</span><wbr>(<span class="base">builtins.str</span>):
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">StyledText</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A styled text object.</span>
+
+<span class="sd">    The purpose of this class is to implement some things regular `str`</span>
+<span class="sd">    breaks at when encountering ANSI sequences.</span>
+
+<span class="sd">    Instances of this class are usually spat out by `MarkupLanguage.parse`,</span>
+<span class="sd">    but may be manually constructed if the need arises. Everything works even</span>
+<span class="sd">    if there is no ANSI tomfoolery going on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="sd">&quot;&quot;&quot;The underlying, ANSI-inclusive string value.&quot;&quot;&quot;</span>
+
+    <span class="n">plain</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="sd">&quot;&quot;&quot;The string value with no ANSI sequences.&quot;&quot;&quot;</span>
+
+    <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;The list of tokens that make up this string.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a StyledText, gets markup tags.&quot;&quot;&quot;</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tim</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">plain</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">plain</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="nf">plain_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Finds given index inside plain text.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">styled_chars</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">plain_chars</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">negative_index</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tokens</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">negative_index</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="n">styled_chars</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">plain_chars</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">negative_index</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">plain_chars</span> <span class="o">+</span> <span class="n">styled_chars</span><span class="p">)</span>
+
+                    <span class="k">return</span> <span class="n">styled_chars</span> <span class="o">+</span> <span class="n">plain_chars</span>
+
+                <span class="n">plain_chars</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Gets &quot;real&quot; length of object.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plain</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscript</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Gets an item, adjusted for non-plain text.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subscript: The integer or slice to find.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The elements described by the subscript.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: The given index is out of range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subscript</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">plain_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plain_index</span><span class="p">(</span><span class="n">subscript</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plain_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;StyledText index out of range&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">plain_index</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span>
+            <span class="nb">slice</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plain_index</span><span class="p">(</span><span class="n">subscript</span><span class="o">.</span><span class="n">start</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plain_index</span><span class="p">(</span><span class="n">subscript</span><span class="o">.</span><span class="n">stop</span><span class="p">),</span>
+                <span class="n">subscript</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>A styled text object.</p>
+
+<p>The purpose of this class is to implement some things regular <code>str</code>
+breaks at when encountering ANSI sequences.</p>
+
+<p>Instances of this class are usually spat out by <code><a href="#MarkupLanguage.parse">MarkupLanguage.parse</a></code>,
+but may be manually constructed if the need arises. Everything works even
+if there is no ANSI tomfoolery going on.</p>
+</div>
+
+
+                            <div id="StyledText.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#StyledText.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">StyledText</span><span class="signature">(value: str = &#39;&#39;)</span>
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a StyledText, gets markup tags.&quot;&quot;&quot;</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tim</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">plain</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">plain</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="k">return</span> <span class="n">obj</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Creates a StyledText, gets markup tags.</p>
+</div>
+
+
+                            </div>
+                            <div id="StyledText.value" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StyledText.value">#&nbsp;&nbsp</a>
+
+        <span class="name">value</span><span class="annotation">: str</span>
+    </div>
+
+    
+            <div class="docstring"><p>The underlying, ANSI-inclusive string value.</p>
+</div>
+
+
+                            </div>
+                            <div id="StyledText.plain" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StyledText.plain">#&nbsp;&nbsp</a>
+
+        <span class="name">plain</span><span class="annotation">: str</span>
+    </div>
+
+    
+            <div class="docstring"><p>The string value with no ANSI sequences.</p>
+</div>
+
+
+                            </div>
+                            <div id="StyledText.tokens" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#StyledText.tokens">#&nbsp;&nbsp</a>
+
+        <span class="name">tokens</span><span class="annotation">: list[pytermgui.parser.Token]</span>
+    </div>
+
+    
+            <div class="docstring"><p>The list of tokens that make up this string.</p>
+</div>
+
+
+                            </div>
+                            <div id="StyledText.plain_index" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#StyledText.plain_index">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">plain_index</span><span class="signature">(self, index: int | None) -&gt; int | None</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">plain_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Finds given index inside plain text.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">styled_chars</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">plain_chars</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">negative_index</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tokens</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">negative_index</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="n">styled_chars</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">plain_chars</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">negative_index</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">plain_chars</span> <span class="o">+</span> <span class="n">styled_chars</span><span class="p">)</span>
+
+                    <span class="k">return</span> <span class="n">styled_chars</span> <span class="o">+</span> <span class="n">plain_chars</span>
+
+                <span class="n">plain_chars</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Finds given index inside plain text.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>builtins.str</dt>
+                                <dd id="StyledText.encode" class="function">encode</dd>
+                <dd id="StyledText.replace" class="function">replace</dd>
+                <dd id="StyledText.split" class="function">split</dd>
+                <dd id="StyledText.rsplit" class="function">rsplit</dd>
+                <dd id="StyledText.join" class="function">join</dd>
+                <dd id="StyledText.capitalize" class="function">capitalize</dd>
+                <dd id="StyledText.casefold" class="function">casefold</dd>
+                <dd id="StyledText.title" class="function">title</dd>
+                <dd id="StyledText.center" class="function">center</dd>
+                <dd id="StyledText.count" class="function">count</dd>
+                <dd id="StyledText.expandtabs" class="function">expandtabs</dd>
+                <dd id="StyledText.find" class="function">find</dd>
+                <dd id="StyledText.partition" class="function">partition</dd>
+                <dd id="StyledText.index" class="function">index</dd>
+                <dd id="StyledText.ljust" class="function">ljust</dd>
+                <dd id="StyledText.lower" class="function">lower</dd>
+                <dd id="StyledText.lstrip" class="function">lstrip</dd>
+                <dd id="StyledText.rfind" class="function">rfind</dd>
+                <dd id="StyledText.rindex" class="function">rindex</dd>
+                <dd id="StyledText.rjust" class="function">rjust</dd>
+                <dd id="StyledText.rstrip" class="function">rstrip</dd>
+                <dd id="StyledText.rpartition" class="function">rpartition</dd>
+                <dd id="StyledText.splitlines" class="function">splitlines</dd>
+                <dd id="StyledText.strip" class="function">strip</dd>
+                <dd id="StyledText.swapcase" class="function">swapcase</dd>
+                <dd id="StyledText.translate" class="function">translate</dd>
+                <dd id="StyledText.upper" class="function">upper</dd>
+                <dd id="StyledText.startswith" class="function">startswith</dd>
+                <dd id="StyledText.endswith" class="function">endswith</dd>
+                <dd id="StyledText.removeprefix" class="function">removeprefix</dd>
+                <dd id="StyledText.removesuffix" class="function">removesuffix</dd>
+                <dd id="StyledText.isascii" class="function">isascii</dd>
+                <dd id="StyledText.islower" class="function">islower</dd>
+                <dd id="StyledText.isupper" class="function">isupper</dd>
+                <dd id="StyledText.istitle" class="function">istitle</dd>
+                <dd id="StyledText.isspace" class="function">isspace</dd>
+                <dd id="StyledText.isdecimal" class="function">isdecimal</dd>
+                <dd id="StyledText.isdigit" class="function">isdigit</dd>
+                <dd id="StyledText.isnumeric" class="function">isnumeric</dd>
+                <dd id="StyledText.isalpha" class="function">isalpha</dd>
+                <dd id="StyledText.isalnum" class="function">isalnum</dd>
+                <dd id="StyledText.isidentifier" class="function">isidentifier</dd>
+                <dd id="StyledText.isprintable" class="function">isprintable</dd>
+                <dd id="StyledText.zfill" class="function">zfill</dd>
+                <dd id="StyledText.format" class="function">format</dd>
+                <dd id="StyledText.format_map" class="function">format_map</dd>
+                <dd id="StyledText.maketrans" class="function">maketrans</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
                 <section id="MacroCallable">
                                 <div class="attr variable"><a class="headerlink" href="#MacroCallable">#&nbsp;&nbsp</a>
 
@@ -1536,8 +1803,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;inspector-identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;109&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;inspector-file&quot;</span><span class="p">,</span> <span class="s2">&quot;inspector-identifier&quot;</span><span class="p">)</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_color_token</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_color_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Tries to get a color token from the given tag.</span>
 
 <span class="sd">        Args:</span>
@@ -1547,48 +1813,13 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="sd">            A color token if the given tag could be parsed into one, else None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">_hex_to_rgb</span><span class="p">(</span><span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="sd">&quot;&quot;&quot;Get rgb color from hex&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">str_to_color</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">should_cache</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">ColorSyntaxError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="n">background</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
-        <span class="n">lookup_tag</span> <span class="o">=</span> <span class="n">tag</span>
-        <span class="k">if</span> <span class="n">background</span><span class="p">:</span>
-            <span class="n">lookup_tag</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-
-        <span class="k">if</span> <span class="n">lookup_tag</span> <span class="ow">in</span> <span class="n">foreground</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Token</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">ttype</span><span class="o">=</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span> <span class="k">if</span> <span class="n">background</span> <span class="k">else</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">),</span>
-                <span class="n">data</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">foreground</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">lookup_tag</span><span class="p">]),</span>
-            <span class="p">)</span>
-
-        <span class="n">data_256</span> <span class="o">=</span> <span class="n">RE_256</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lookup_tag</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">data_256</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Token</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">ttype</span><span class="o">=</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span> <span class="k">if</span> <span class="n">background</span> <span class="k">else</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">),</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">lookup_tag</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="n">data_hex</span> <span class="o">=</span> <span class="n">RE_HEX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lookup_tag</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">data_hex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Token</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">ttype</span><span class="o">=</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span> <span class="k">if</span> <span class="n">background</span> <span class="k">else</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">),</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">_hex_to_rgb</span><span class="p">(</span><span class="n">lookup_tag</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span>
-            <span class="p">)</span>
-
-        <span class="n">data_rgb</span> <span class="o">=</span> <span class="n">RE_RGB</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lookup_tag</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">data_rgb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Token</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
-                <span class="n">ttype</span><span class="o">=</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span> <span class="k">if</span> <span class="n">background</span> <span class="k">else</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">),</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">lookup_tag</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">color</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">TokenType</span><span class="o">.</span><span class="n">COLOR</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_style_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Tries to get a style (including unsetter) token from tags, user tags and unsetters.</span>
@@ -1689,9 +1920,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">markup_text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">cursor</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">ttype</span><span class="o">=</span><span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">markup_text</span><span class="p">[</span><span class="n">cursor</span><span class="p">:])</span>
 
-    <span class="k">def</span> <span class="nf">tokenize_ansi</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">ansi</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">tokenize_ansi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ansi</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Converts the given ANSI string into an iterator of `Token`.</span>
 
 <span class="sd">        Args:</span>
@@ -1701,6 +1930,15 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="sd">            An iterator of tokens. The reason this is an iterator is to possibly save</span>
 <span class="sd">            on memory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_is_in_tags</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Determines whether a code is in the given dict of tags.&quot;&quot;&quot;</span>
+
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">current</span> <span class="ow">in</span> <span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">current</span> <span class="o">==</span> <span class="n">code</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">name</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">end</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1714,6 +1952,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">RE_ANSI</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">ansi</span><span class="p">):</span>
             <span class="n">code</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+
             <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
 
@@ -1724,40 +1963,35 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
                 <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">plain</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">plain</span><span class="p">)</span>
 
-            <span class="c1"># Styles &amp; unsetters</span>
+            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">code</span>
+            <span class="n">ttype</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Color</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Styles &amp; Unsetters</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">token_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">token_code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">token_code</span> <span class="o">==</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                        <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span>
-                        <span class="k">break</span>
+                <span class="c1"># Covariancy is not an issue here, even though mypy seems to think so.</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">_is_in_tags</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span>
+
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">token_code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="n">token_code</span> <span class="o">==</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                            <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span>
-                            <span class="k">break</span>
-                    <span class="k">else</span><span class="p">:</span>
-
-                        <span class="k">raise</span> <span class="n">AnsiSyntaxError</span><span class="p">(</span>
-                            <span class="n">tag</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cause</span><span class="o">=</span><span class="s2">&quot;not recognized&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ansi</span>
-                        <span class="p">)</span>
-
-                <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">ttype</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">token_code</span><span class="p">)</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">_is_in_tags</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span>
 
             <span class="c1"># Colors</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="k">if</span> <span class="n">ttype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="n">ColorSyntaxError</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">str_to_color</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+                    <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">COLOR</span>
 
-                <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ttype</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AnsiSyntaxError</span><span class="p">(</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cause</span><span class="o">=</span><span class="s2">&quot;not recognized&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ansi</span>
+                <span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;48&quot;</span><span class="p">:</span>
-                    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span> <span class="o">+</span> <span class="n">name</span>
-                    <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span><span class="p">]</span>
-
-                <span class="n">ttype</span> <span class="o">=</span> <span class="n">types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;5&quot;</span> <span class="k">else</span> <span class="n">types</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-                <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">ttype</span><span class="o">=</span><span class="n">ttype</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-
+            <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">ttype</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
             <span class="n">cursor</span> <span class="o">=</span> <span class="n">end</span>
 
         <span class="k">if</span> <span class="n">cursor</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ansi</span><span class="p">):</span>
@@ -1799,10 +2033,12 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;FG&quot;</span><span class="p">):</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="s2">&quot;/fg&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">COLOR</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;BG&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">background</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="s2">&quot;/fg&quot;</span><span class="p">]</span>
+
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="s2">&quot;/bg&quot;</span><span class="p">]</span>
 
             <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span>
@@ -1877,24 +2113,17 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="k">return</span> <span class="n">text</span>
 
         <span class="k">def</span> <span class="nf">_is_same_colorgroup</span><span class="p">(</span><span class="n">previous</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="n">Token</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-            <span class="n">color_types</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">,</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span><span class="p">,</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">,</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span><span class="p">,</span>
-            <span class="p">]</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">previous</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">in</span> <span class="n">color_types</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">in</span> <span class="n">color_types</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">previous</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
-            <span class="n">prev_prefix</span> <span class="o">=</span> <span class="n">previous</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">prev_prefix</span> <span class="o">==</span> <span class="n">prefix</span>
+            <span class="k">return</span> <span class="n">previous</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">background</span> <span class="o">==</span> <span class="n">new</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">background</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span>
+                <span class="n">previous</span>
+            <span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span>
-            <span class="n">RE_MACRO</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">markup_text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_cache</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">should_cache</span>
             <span class="ow">and</span> <span class="n">markup_text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">RE_MACRO</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">markup_text</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">markup_text</span><span class="p">]</span>
 
@@ -2050,6 +2279,17 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
                     <span class="n">applied_macros</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
                     <span class="k">break</span>
 
+        <span class="k">def</span> <span class="nf">_finish</span><span class="p">(</span><span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">in_sequence</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Adds ending cap to the given string.&quot;&quot;&quot;</span>
+
+            <span class="k">if</span> <span class="n">in_sequence</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span><span class="p">):</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
+
+                <span class="k">return</span> <span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+
+            <span class="k">return</span> <span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;[/]&quot;</span>
+
         <span class="n">styles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TokenType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">:</span> <span class="s2">&quot;210&quot;</span><span class="p">,</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">ESCAPED</span><span class="p">:</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">,</span>
@@ -2068,6 +2308,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
                     <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
 
                 <span class="n">in_sequence</span> <span class="o">=</span> <span class="kc">False</span>
+
                 <span class="n">sequence</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">for</span> <span class="n">style</span> <span class="ow">in</span> <span class="n">current_styles</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">style</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2089,11 +2330,9 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
                 <span class="n">current_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
 
-                <span class="n">special_style</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_tags</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-                <span class="p">)</span>
                 <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;/[</span><span class="si">{</span><span class="n">special_style</span><span class="si">}{</span><span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_tags</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span><span class="si">}</span><span class="s2">]/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
 
@@ -2119,10 +2358,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
             <span class="n">style_markup</span> <span class="o">=</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">ttype</span><span class="p">)</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span>
             <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">style_markup</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">in_sequence</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
-
-        <span class="k">return</span> <span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;[/]&quot;</span>
+        <span class="k">return</span> <span class="n">_finish</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">in_sequence</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -2357,9 +2593,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">tokenize_ansi</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">ansi</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">tokenize_ansi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ansi</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Converts the given ANSI string into an iterator of `Token`.</span>
 
 <span class="sd">        Args:</span>
@@ -2369,6 +2603,15 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 <span class="sd">            An iterator of tokens. The reason this is an iterator is to possibly save</span>
 <span class="sd">            on memory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_is_in_tags</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Determines whether a code is in the given dict of tags.&quot;&quot;&quot;</span>
+
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">current</span> <span class="ow">in</span> <span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">current</span> <span class="o">==</span> <span class="n">code</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">name</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">end</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
@@ -2382,6 +2625,7 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
         <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">RE_ANSI</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">ansi</span><span class="p">):</span>
             <span class="n">code</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+
             <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
 
@@ -2392,40 +2636,35 @@ by calling <code><a href="#MarkupLanguage.alias">MarkupLanguage.alias</a></code>
 
                 <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">plain</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">plain</span><span class="p">)</span>
 
-            <span class="c1"># Styles &amp; unsetters</span>
+            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">code</span>
+            <span class="n">ttype</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Color</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Styles &amp; Unsetters</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">token_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">token_code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">token_code</span> <span class="o">==</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                        <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span>
-                        <span class="k">break</span>
+                <span class="c1"># Covariancy is not an issue here, even though mypy seems to think so.</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">_is_in_tags</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span>
+
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">token_code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="n">token_code</span> <span class="o">==</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                            <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span>
-                            <span class="k">break</span>
-                    <span class="k">else</span><span class="p">:</span>
-
-                        <span class="k">raise</span> <span class="n">AnsiSyntaxError</span><span class="p">(</span>
-                            <span class="n">tag</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cause</span><span class="o">=</span><span class="s2">&quot;not recognized&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ansi</span>
-                        <span class="p">)</span>
-
-                <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">ttype</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">token_code</span><span class="p">)</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">_is_in_tags</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">STYLE</span>
 
             <span class="c1"># Colors</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="k">if</span> <span class="n">ttype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="n">ColorSyntaxError</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">str_to_color</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+                    <span class="n">ttype</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">COLOR</span>
 
-                <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ttype</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AnsiSyntaxError</span><span class="p">(</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cause</span><span class="o">=</span><span class="s2">&quot;not recognized&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ansi</span>
+                <span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;48&quot;</span><span class="p">:</span>
-                    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span> <span class="o">+</span> <span class="n">name</span>
-                    <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span><span class="p">]</span>
-
-                <span class="n">ttype</span> <span class="o">=</span> <span class="n">types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;5&quot;</span> <span class="k">else</span> <span class="n">types</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-                <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">ttype</span><span class="o">=</span><span class="n">ttype</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-
+            <span class="k">yield</span> <span class="n">Token</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ttype</span><span class="o">=</span><span class="n">ttype</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
             <span class="n">cursor</span> <span class="o">=</span> <span class="n">end</span>
 
         <span class="k">if</span> <span class="n">cursor</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ansi</span><span class="p">):</span>
@@ -2524,10 +2763,12 @@ The given value gets "!" prepended if it isn't present already.</li>
             <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;FG&quot;</span><span class="p">):</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="s2">&quot;/fg&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">COLOR</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;BG&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">background</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="s2">&quot;/fg&quot;</span><span class="p">]</span>
+
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsetters</span><span class="p">[</span><span class="s2">&quot;/bg&quot;</span><span class="p">]</span>
 
             <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span>
@@ -2627,24 +2868,17 @@ The given value gets "!" prepended if it isn't present already.</li>
             <span class="k">return</span> <span class="n">text</span>
 
         <span class="k">def</span> <span class="nf">_is_same_colorgroup</span><span class="p">(</span><span class="n">previous</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="n">Token</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-            <span class="n">color_types</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_8BIT</span><span class="p">,</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_8BIT</span><span class="p">,</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">FG_24BIT</span><span class="p">,</span>
-                <span class="n">TokenType</span><span class="o">.</span><span class="n">BG_24BIT</span><span class="p">,</span>
-            <span class="p">]</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">previous</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">in</span> <span class="n">color_types</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">in</span> <span class="n">color_types</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">previous</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Color</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
-            <span class="n">prev_prefix</span> <span class="o">=</span> <span class="n">previous</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">ttype</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">prev_prefix</span> <span class="o">==</span> <span class="n">prefix</span>
+            <span class="k">return</span> <span class="n">previous</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">background</span> <span class="o">==</span> <span class="n">new</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">background</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span>
+                <span class="n">previous</span>
+            <span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span>
-            <span class="n">RE_MACRO</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">markup_text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_cache</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">should_cache</span>
             <span class="ow">and</span> <span class="n">markup_text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">RE_MACRO</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">markup_text</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">markup_text</span><span class="p">]</span>
 
@@ -2903,6 +3137,17 @@ as it is much more verbose.</p>
                     <span class="n">applied_macros</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
                     <span class="k">break</span>
 
+        <span class="k">def</span> <span class="nf">_finish</span><span class="p">(</span><span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">in_sequence</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Adds ending cap to the given string.&quot;&quot;&quot;</span>
+
+            <span class="k">if</span> <span class="n">in_sequence</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span><span class="p">):</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
+
+                <span class="k">return</span> <span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+
+            <span class="k">return</span> <span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;[/]&quot;</span>
+
         <span class="n">styles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TokenType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">MACRO</span><span class="p">:</span> <span class="s2">&quot;210&quot;</span><span class="p">,</span>
             <span class="n">TokenType</span><span class="o">.</span><span class="n">ESCAPED</span><span class="p">:</span> <span class="s2">&quot;210 bold&quot;</span><span class="p">,</span>
@@ -2921,6 +3166,7 @@ as it is much more verbose.</p>
                     <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
 
                 <span class="n">in_sequence</span> <span class="o">=</span> <span class="kc">False</span>
+
                 <span class="n">sequence</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">for</span> <span class="n">style</span> <span class="ow">in</span> <span class="n">current_styles</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">style</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2942,11 +3188,9 @@ as it is much more verbose.</p>
 
                 <span class="n">current_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
 
-                <span class="n">special_style</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_tags</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-                <span class="p">)</span>
                 <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;/[</span><span class="si">{</span><span class="n">special_style</span><span class="si">}{</span><span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_tags</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">styles</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">UNSETTER</span><span class="p">]</span><span class="si">}</span><span class="s2">]/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
 
@@ -2972,10 +3216,7 @@ as it is much more verbose.</p>
             <span class="n">style_markup</span> <span class="o">=</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">ttype</span><span class="p">)</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">name</span>
             <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">style_markup</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">token</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">in_sequence</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
-
-        <span class="k">return</span> <span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;[/]&quot;</span>
+        <span class="k">return</span> <span class="n">_finish</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">in_sequence</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -2997,331 +3238,6 @@ as it is much more verbose.</p>
 </div>
 
 
-                            </div>
-                </section>
-                <section id="StyledText">
-                                <div class="attr class">
-        <a class="headerlink" href="#StyledText">#&nbsp;&nbsp</a>
-
-        
-        <span class="def">class</span>
-        <span class="name">StyledText</span><wbr>(<span class="base">builtins.str</span>):
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">StyledText</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A styled text object.</span>
-
-<span class="sd">    The purpose of this class is to implement some things regular `str`</span>
-<span class="sd">    breaks at when encountering ANSI sequences.</span>
-
-<span class="sd">    Instances of this class are usually spat out by `MarkupLanguage.parse`,</span>
-<span class="sd">    but may be manually constructed if the need arises. Everything works even</span>
-<span class="sd">    if there is no ANSI tomfoolery going on.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="sd">&quot;&quot;&quot;The underlying, ANSI-inclusive string value.&quot;&quot;&quot;</span>
-
-    <span class="n">plain</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="sd">&quot;&quot;&quot;The string value with no ANSI sequences.&quot;&quot;&quot;</span>
-
-    <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;The list of tokens that make up this string.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates a StyledText, gets markup tags.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            markup_language: The markup language instance this object uses.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">markup</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-
-        <span class="n">obj</span><span class="o">.</span><span class="n">plain</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">plain</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span>
-
-        <span class="k">return</span> <span class="n">obj</span>
-
-    <span class="k">def</span> <span class="nf">plain_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Finds given index inside plain text.&quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="n">styled_chars</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">plain_chars</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">negative_index</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">tokens</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-            <span class="n">negative_index</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="n">styled_chars</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">plain_chars</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">negative_index</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">plain_chars</span> <span class="o">+</span> <span class="n">styled_chars</span><span class="p">)</span>
-
-                    <span class="k">return</span> <span class="n">styled_chars</span> <span class="o">+</span> <span class="n">plain_chars</span>
-
-                <span class="n">plain_chars</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Gets &quot;real&quot; length of object.&quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plain</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscript</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Gets an item, adjusted for non-plain text.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            subscript: The integer or slice to find.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The elements described by the subscript.</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            IndexError: The given index is out of range.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subscript</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">plain_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plain_index</span><span class="p">(</span><span class="n">subscript</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">plain_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;StyledText index out of range&quot;</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">plain_index</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span>
-            <span class="nb">slice</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">plain_index</span><span class="p">(</span><span class="n">subscript</span><span class="o">.</span><span class="n">start</span><span class="p">),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">plain_index</span><span class="p">(</span><span class="n">subscript</span><span class="o">.</span><span class="n">stop</span><span class="p">),</span>
-                <span class="n">subscript</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>A styled text object.</p>
-
-<p>The purpose of this class is to implement some things regular <code>str</code>
-breaks at when encountering ANSI sequences.</p>
-
-<p>Instances of this class are usually spat out by <code><a href="#MarkupLanguage.parse">MarkupLanguage.parse</a></code>,
-but may be manually constructed if the need arises. Everything works even
-if there is no ANSI tomfoolery going on.</p>
-</div>
-
-
-                            <div id="StyledText.__init__" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#StyledText.__init__">#&nbsp;&nbsp</a>
-
-        
-            <span class="name">StyledText</span><span class="signature">(value: str = &#39;&#39;)</span>
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates a StyledText, gets markup tags.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            markup_language: The markup language instance this object uses.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">markup</span><span class="o">.</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-
-        <span class="n">obj</span><span class="o">.</span><span class="n">plain</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">plain</span> <span class="o">+=</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span>
-
-        <span class="k">return</span> <span class="n">obj</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Creates a StyledText, gets markup tags.</p>
-
-<h6 id="args">Args</h6>
-
-<ul>
-<li><strong>markup_language:</strong>  The markup language instance this object uses.</li>
-</ul>
-</div>
-
-
-                            </div>
-                            <div id="StyledText.value" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#StyledText.value">#&nbsp;&nbsp</a>
-
-        <span class="name">value</span><span class="annotation">: str</span>
-    </div>
-
-    
-            <div class="docstring"><p>The underlying, ANSI-inclusive string value.</p>
-</div>
-
-
-                            </div>
-                            <div id="StyledText.plain" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#StyledText.plain">#&nbsp;&nbsp</a>
-
-        <span class="name">plain</span><span class="annotation">: str</span>
-    </div>
-
-    
-            <div class="docstring"><p>The string value with no ANSI sequences.</p>
-</div>
-
-
-                            </div>
-                            <div id="StyledText.tokens" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#StyledText.tokens">#&nbsp;&nbsp</a>
-
-        <span class="name">tokens</span><span class="annotation">: list[pytermgui.parser.Token]</span>
-    </div>
-
-    
-            <div class="docstring"><p>The list of tokens that make up this string.</p>
-</div>
-
-
-                            </div>
-                            <div id="StyledText.plain_index" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#StyledText.plain_index">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">plain_index</span><span class="signature">(self, index: int | None) -&gt; int | None</span>:
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">plain_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Finds given index inside plain text.&quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="n">styled_chars</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">plain_chars</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">negative_index</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">tokens</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-            <span class="n">negative_index</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">ttype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PLAIN</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">token</span><span class="o">.</span><span class="n">sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="n">styled_chars</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">sequence</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">plain_chars</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">negative_index</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">plain_chars</span> <span class="o">+</span> <span class="n">styled_chars</span><span class="p">)</span>
-
-                    <span class="k">return</span> <span class="n">styled_chars</span> <span class="o">+</span> <span class="n">plain_chars</span>
-
-                <span class="n">plain_chars</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="k">return</span> <span class="kc">None</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Finds given index inside plain text.</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>builtins.str</dt>
-                                <dd id="StyledText.encode" class="function">encode</dd>
-                <dd id="StyledText.replace" class="function">replace</dd>
-                <dd id="StyledText.split" class="function">split</dd>
-                <dd id="StyledText.rsplit" class="function">rsplit</dd>
-                <dd id="StyledText.join" class="function">join</dd>
-                <dd id="StyledText.capitalize" class="function">capitalize</dd>
-                <dd id="StyledText.casefold" class="function">casefold</dd>
-                <dd id="StyledText.title" class="function">title</dd>
-                <dd id="StyledText.center" class="function">center</dd>
-                <dd id="StyledText.count" class="function">count</dd>
-                <dd id="StyledText.expandtabs" class="function">expandtabs</dd>
-                <dd id="StyledText.find" class="function">find</dd>
-                <dd id="StyledText.partition" class="function">partition</dd>
-                <dd id="StyledText.index" class="function">index</dd>
-                <dd id="StyledText.ljust" class="function">ljust</dd>
-                <dd id="StyledText.lower" class="function">lower</dd>
-                <dd id="StyledText.lstrip" class="function">lstrip</dd>
-                <dd id="StyledText.rfind" class="function">rfind</dd>
-                <dd id="StyledText.rindex" class="function">rindex</dd>
-                <dd id="StyledText.rjust" class="function">rjust</dd>
-                <dd id="StyledText.rstrip" class="function">rstrip</dd>
-                <dd id="StyledText.rpartition" class="function">rpartition</dd>
-                <dd id="StyledText.splitlines" class="function">splitlines</dd>
-                <dd id="StyledText.strip" class="function">strip</dd>
-                <dd id="StyledText.swapcase" class="function">swapcase</dd>
-                <dd id="StyledText.translate" class="function">translate</dd>
-                <dd id="StyledText.upper" class="function">upper</dd>
-                <dd id="StyledText.startswith" class="function">startswith</dd>
-                <dd id="StyledText.endswith" class="function">endswith</dd>
-                <dd id="StyledText.removeprefix" class="function">removeprefix</dd>
-                <dd id="StyledText.removesuffix" class="function">removesuffix</dd>
-                <dd id="StyledText.isascii" class="function">isascii</dd>
-                <dd id="StyledText.islower" class="function">islower</dd>
-                <dd id="StyledText.isupper" class="function">isupper</dd>
-                <dd id="StyledText.istitle" class="function">istitle</dd>
-                <dd id="StyledText.isspace" class="function">isspace</dd>
-                <dd id="StyledText.isdecimal" class="function">isdecimal</dd>
-                <dd id="StyledText.isdigit" class="function">isdigit</dd>
-                <dd id="StyledText.isnumeric" class="function">isnumeric</dd>
-                <dd id="StyledText.isalpha" class="function">isalpha</dd>
-                <dd id="StyledText.isalnum" class="function">isalnum</dd>
-                <dd id="StyledText.isidentifier" class="function">isidentifier</dd>
-                <dd id="StyledText.isprintable" class="function">isprintable</dd>
-                <dd id="StyledText.zfill" class="function">zfill</dd>
-                <dd id="StyledText.format" class="function">format</dd>
-                <dd id="StyledText.format_map" class="function">format_map</dd>
-                <dd id="StyledText.maketrans" class="function">maketrans</dd>
-
-            </div>
-                                </dl>
                             </div>
                 </section>
                 <section id="markup">

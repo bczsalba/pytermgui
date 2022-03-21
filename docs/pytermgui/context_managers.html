@@ -80,7 +80,6 @@ most things are nicer-packaged combinations to already available methods from
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">.ansi_interface</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">terminal</span><span class="p">,</span>
     <span class="n">save_cursor</span><span class="p">,</span>
     <span class="n">restore_cursor</span><span class="p">,</span>
     <span class="n">print_to</span><span class="p">,</span>
@@ -95,6 +94,8 @@ most things are nicer-packaged combinations to already available methods from
     <span class="n">translate_mouse</span><span class="p">,</span>
     <span class="n">MouseEvent</span><span class="p">,</span>
 <span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">terminal</span>
 
 <span class="c1"># TODO: Move this absolute beast to a types submodule</span>
 <span class="n">MouseTranslator</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">MouseEvent</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]]</span>

@@ -268,7 +268,6 @@ that represents that "deep" the Widget is within the hierarchy, and
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="n">Type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">late_base</span><span class="p">:</span> <span class="n">StyleManager</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">base</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -277,16 +276,18 @@ that represents that "deep" the Widget is within the hierarchy, and
 <span class="sd">        Args:</span>
 <span class="sd">            parent: The parent of this instance. It will be assigned in all</span>
 <span class="sd">                `StyleCall`-s created by it.</span>
-<span class="sd">            late_base: Additional data that will be added to this manager on `branch`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_is_setup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">base</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_as_stylecall</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_late_base</span> <span class="o">=</span> <span class="n">late_base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_is_setup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">expand_shorthand</span><span class="p">(</span><span class="n">shorthand</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MarkupFormatter</span><span class="p">:</span>
@@ -332,7 +333,7 @@ that represents that "deep" the Widget is within the hierarchy, and
 <span class="sd">            reflected.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">late_base</span><span class="o">=</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">})</span>
 
     <span class="k">def</span> <span class="nf">branch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="n">Type</span><span class="p">[</span><span class="n">Widget</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StyleManager</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Branch off from the `base` style dictionary.</span>
@@ -348,7 +349,7 @@ that represents that "deep" the Widget is within the hierarchy, and
 <span class="sd">            modified without touching the original instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_late_base</span> <span class="ow">or</span> <span class="p">{})})</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_set_as_stylecall</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">StyleCall</span> <span class="o">|</span> <span class="n">MarkupFormatter</span> <span class="o">|</span> <span class="n">StyleType</span>
@@ -402,7 +403,7 @@ that represents that "deep" the Widget is within the hierarchy, and
         <span class="k">if</span> <span class="n">found</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_late_base&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_is_setup&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Style </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> was not defined during construction.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
@@ -413,7 +414,10 @@ that represents that "deep" the Widget is within the hierarchy, and
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
 
 <span class="n">CLICKABLE</span> <span class="o">=</span> <span class="n">MarkupFormatter</span><span class="p">(</span><span class="s2">&quot;[@238 72 bold]</span><span class="si">{item}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -422,10 +426,10 @@ that represents that "deep" the Widget is within the hierarchy, and
 <span class="n">CLICKED</span> <span class="o">=</span> <span class="n">MarkupFormatter</span><span class="p">(</span><span class="s2">&quot;[238 @72 bold]</span><span class="si">{item}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;Style for active clickable things, such as `pytermgui.widgets.Button`&quot;&quot;&quot;</span>
 
-<span class="n">FOREGROUND</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">depth</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span>
+<span class="n">FOREGROUND</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span>
 <span class="sd">&quot;&quot;&quot;Standard foreground style, currently unused by the library&quot;&quot;&quot;</span>
 
-<span class="n">BACKGROUND</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">depth</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span>
+<span class="n">BACKGROUND</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span>
 <span class="sd">&quot;&quot;&quot;Standard background, used by most `fill` styles&quot;&quot;&quot;</span>
 
 <span class="n">MARKUP</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">depth</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">tim</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
@@ -656,7 +660,6 @@ method, and this class should not be used outside of that context.</p>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="n">Type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">late_base</span><span class="p">:</span> <span class="n">StyleManager</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">base</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -665,16 +668,18 @@ method, and this class should not be used outside of that context.</p>
 <span class="sd">        Args:</span>
 <span class="sd">            parent: The parent of this instance. It will be assigned in all</span>
 <span class="sd">                `StyleCall`-s created by it.</span>
-<span class="sd">            late_base: Additional data that will be added to this manager on `branch`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_is_setup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">base</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_as_stylecall</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_late_base</span> <span class="o">=</span> <span class="n">late_base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_is_setup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">expand_shorthand</span><span class="p">(</span><span class="n">shorthand</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MarkupFormatter</span><span class="p">:</span>
@@ -720,7 +725,7 @@ method, and this class should not be used outside of that context.</p>
 <span class="sd">            reflected.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">late_base</span><span class="o">=</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">})</span>
 
     <span class="k">def</span> <span class="nf">branch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="n">Type</span><span class="p">[</span><span class="n">Widget</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">StyleManager</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Branch off from the `base` style dictionary.</span>
@@ -736,7 +741,7 @@ method, and this class should not be used outside of that context.</p>
 <span class="sd">            modified without touching the original instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_late_base</span> <span class="ow">or</span> <span class="p">{})})</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_set_as_stylecall</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">StyleCall</span> <span class="o">|</span> <span class="n">MarkupFormatter</span> <span class="o">|</span> <span class="n">StyleType</span>
@@ -790,7 +795,7 @@ method, and this class should not be used outside of that context.</p>
         <span class="k">if</span> <span class="n">found</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_late_base&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_is_setup&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Style </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> was not defined during construction.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
@@ -801,7 +806,10 @@ method, and this class should not be used outside of that context.</p>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -840,7 +848,6 @@ newly written code should use the dot syntax.</p>
         
             <span class="name">StyleManager</span><span class="signature">(
     parent: Union[<a href="base.html#Widget">pytermgui.widgets.base.Widget</a>, Type[<a href="base.html#Widget">pytermgui.widgets.base.Widget</a>], NoneType] = None,
-    late_base: <a href="#StyleManager">pytermgui.widgets.styles.StyleManager</a> | None = None,
     **base
 )</span>
     </div>
@@ -850,7 +857,6 @@ newly written code should use the dot syntax.</p>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parent</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="n">Type</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">late_base</span><span class="p">:</span> <span class="n">StyleManager</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">base</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -859,16 +865,18 @@ newly written code should use the dot syntax.</p>
 <span class="sd">        Args:</span>
 <span class="sd">            parent: The parent of this instance. It will be assigned in all</span>
 <span class="sd">                `StyleCall`-s created by it.</span>
-<span class="sd">            late_base: Additional data that will be added to this manager on `branch`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_is_setup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">base</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_as_stylecall</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_late_base</span> <span class="o">=</span> <span class="n">late_base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_is_setup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 </pre></div>
 
         </details>
@@ -880,7 +888,6 @@ newly written code should use the dot syntax.</p>
 <ul>
 <li><strong>parent:</strong>  The parent of this instance. It will be assigned in all
 <code><a href="#StyleCall">StyleCall</a></code>-s created by it.</li>
-<li><strong>late_base:</strong>  Additional data that will be added to this manager on <code><a href="#StyleManager.branch">branch</a></code>.</li>
 </ul>
 </div>
 
@@ -984,7 +991,7 @@ newly written code should use the dot syntax.</p>
 <span class="sd">            reflected.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">late_base</span><span class="o">=</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">})</span>
 </pre></div>
 
         </details>
@@ -1037,7 +1044,7 @@ newly written code should use the dot syntax.</p>
 <span class="sd">            modified without touching the original instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_late_base</span> <span class="ow">or</span> <span class="p">{})})</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -1134,12 +1141,12 @@ newly written code should use the dot syntax.</p>
 
         
             <span class="def">def</span>
-            <span class="name">FOREGROUND</span><span class="signature">(depth, item)</span>:
+            <span class="name">FOREGROUND</span><span class="signature">(_, item)</span>:
     </div>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="n">FOREGROUND</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">depth</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="n">FOREGROUND</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span>
 </pre></div>
 
         </details>
@@ -1154,12 +1161,12 @@ newly written code should use the dot syntax.</p>
 
         
             <span class="def">def</span>
-            <span class="name">BACKGROUND</span><span class="signature">(depth, item)</span>:
+            <span class="name">BACKGROUND</span><span class="signature">(_, item)</span>:
     </div>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="n">BACKGROUND</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">depth</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="n">BACKGROUND</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span>
 </pre></div>
 
         </details>

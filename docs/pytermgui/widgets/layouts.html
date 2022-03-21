@@ -183,7 +183,7 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">zip_longest</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">cast</span>
 
-<span class="kn">from</span> <span class="nn">..ansi_interface</span> <span class="kn">import</span> <span class="n">MouseAction</span><span class="p">,</span> <span class="n">MouseEvent</span><span class="p">,</span> <span class="n">clear</span><span class="p">,</span> <span class="n">reset</span><span class="p">,</span> <span class="n">terminal</span>
+<span class="kn">from</span> <span class="nn">..ansi_interface</span> <span class="kn">import</span> <span class="n">MouseAction</span><span class="p">,</span> <span class="n">MouseEvent</span><span class="p">,</span> <span class="n">clear</span><span class="p">,</span> <span class="n">reset</span>
 <span class="kn">from</span> <span class="nn">..context_managers</span> <span class="kn">import</span> <span class="n">cursor_at</span>
 <span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CenteringPolicy</span><span class="p">,</span>
@@ -195,6 +195,7 @@
 
 <span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">WidthExceededError</span>
 <span class="kn">from</span> <span class="nn">..helpers</span> <span class="kn">import</span> <span class="n">real_length</span><span class="p">,</span> <span class="n">strip_markup</span>
+<span class="kn">from</span> <span class="nn">..terminal</span> <span class="kn">import</span> <span class="n">terminal</span>
 <span class="kn">from</span> <span class="nn">..input</span> <span class="kn">import</span> <span class="n">keys</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">boxes</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">styles</span> <span class="k">as</span> <span class="n">w_styles</span>
@@ -2260,7 +2261,7 @@
                             <div id="Container.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Container.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;j&#39;, &#39;\x1b[B&#39;, &#39;\x0e&#39;}, &#39;previous&#39;: {&#39;\x10&#39;, &#39;k&#39;, &#39;\x1b[A&#39;}, &#39;scroll_down&#39;: {&#39;J&#39;, &#39;\x1b[1;2B&#39;}, &#39;scroll_up&#39;: {&#39;K&#39;, &#39;\x1b[1;2A&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;next&#39;: {&#39;j&#39;, &#39;\x0e&#39;, &#39;\x1b[B&#39;}, &#39;previous&#39;: {&#39;k&#39;, &#39;\x1b[A&#39;, &#39;\x10&#39;}, &#39;scroll_down&#39;: {&#39;J&#39;, &#39;\x1b[1;2B&#39;}, &#39;scroll_up&#39;: {&#39;\x1b[1;2A&#39;, &#39;K&#39;}}</span>
     </div>
 
     
@@ -3562,7 +3563,7 @@ will be centered based on its <code>centered_axis</code>.</p>
                             <div id="Splitter.keys" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#Splitter.keys">#&nbsp;&nbsp</a>
 
-        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;h&#39;, &#39;\x1b[D&#39;, &#39;\x02&#39;}, &#39;next&#39;: {&#39;\x06&#39;, &#39;\x1b[C&#39;, &#39;l&#39;}}</span>
+        <span class="name">keys</span><span class="annotation">: dict[str, set[str]]</span><span class="default_value"> = {&#39;previous&#39;: {&#39;h&#39;, &#39;\x02&#39;, &#39;\x1b[D&#39;}, &#39;next&#39;: {&#39;\x06&#39;, &#39;l&#39;, &#39;\x1b[C&#39;}}</span>
     </div>
 
     
