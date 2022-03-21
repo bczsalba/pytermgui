@@ -855,9 +855,9 @@ docs/parser/markup_language.png"
             ) is type(new)
 
         if (
-            RE_MACRO.match(markup_text) is not None
-            and self.should_cache
+            self.should_cache
             and markup_text in self._cache
+            and len(RE_MACRO.findall(markup_text)) == 0
         ):
             return self._cache[markup_text]
 
