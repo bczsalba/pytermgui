@@ -2,14 +2,32 @@
 
 from __future__ import annotations
 
+import os
 import sys
 import signal
+from enum import Enum
 from typing import Any, Callable
 from shutil import get_terminal_size
 
 from .input import getch
 
 __all__ = ["terminal"]
+
+
+class ColorSystem(Enum):
+    """An enumeration of various terminal-supported colorsystems."""
+
+    NO_COLOR = -1
+    """No-color terminal. See https://no-color.org/."""
+
+    STANDARD = 0
+    """Standard 3-bit colorsystem of the basic 16 colors."""
+
+    EIGHT_BIT = 1
+    """xterm 8-bit colors, 0-256."""
+
+    TRUE = 2
+    """'True' color, a.k.a. 24-bit RGB colors."""
 
 
 class Terminal:
@@ -33,6 +51,7 @@ class Terminal:
 
         self.origin: tuple[int, int] = (1, 1)
         self.size: tuple[int, int] = self._get_size()
+        self.forced_colorsystem: ColorSystem | None = None
         self.pixel_size: tuple[int, int] = self._get_pixel_size()
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
@@ -102,6 +121,25 @@ class Terminal:
         """
 
         return hasattr(sys, "ps1")
+
+    def get_colorsystem(self) -> ColorSystem:
+        """Gets the current terminal's supported color system."""
+
+        if self.forced_colorsystem is not None:
+            return self.forced_colorsystem
+
+        if os.getenv("NO_COLOR") is not None:
+            return ColorSystem.NO_COLOR
+
+        color_term = os.getenv("COLORTERM", "").strip().lower()
+
+        if color_term in ["24bit", "truecolor"]:
+            return ColorSystem.TRUE
+
+        if color_term == "256color":
+            return ColorSystem.EIGHT_BIT
+
+        return ColorSystem.STANDARD
 
     def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
         """Subcribes a callback to be called when event occurs.

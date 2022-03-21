@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
-from dataclasses import dataclass
+from typing import TYPE_CHECKING, Type
+from dataclasses import dataclass, field
 
 from .exceptions import ColorSyntaxError
+from .terminal import terminal, ColorSystem
 from .ansi_interface import reset as reset_style
 
 if TYPE_CHECKING:
@@ -315,6 +316,8 @@ XTERM_NAMED_COLORS = {
 
 NAMED_COLORS = {**{color: str(index) for index, color in XTERM_NAMED_COLORS.items()}}
 
+_COLOR_CACHE: dict[str, Color] = {}
+
 
 @dataclass
 class Color:
@@ -328,19 +331,96 @@ class Color:
     value: str
     background: bool = False
 
+    system: ColorSystem = field(init=False)
+
+    _luminance: float | None = field(init=False, default=None)
+    _brightness: float | None = field(init=False, default=None)
+    _rgb: tuple[int, int, int] | None = field(init=False, default=None)
+
+    @classmethod
+    def from_rgb(cls, rgb: tuple[int, int, int]) -> Color:
+        """Creates a color from the given RGB, within terminal's colorsystem.
+
+        Args:
+            rgb: The RGB value to base the new color off of.
+        """
+
+        # Return an RGB color until a better implementation is complete
+        return RGBColor(";".join((str(i) for i in rgb)))
+
     @property
     def sequence(self) -> str:
         """Returns the ANSI sequence representation of the color."""
 
+        raise NotImplementedError
+
     @property
     def rgb(self) -> tuple[int, int, int]:
         """Returns this color as a tuple of (red, green, blue) values."""
+
+        if self._rgb is None:
+            raise NotImplementedError
+
+        return self._rgb
 
     @property
     def name(self) -> str:
         """Returns the reverse-parseable name of this color."""
 
         return ("@" if self.background else "") + self.value
+
+    @property
+    def luminance(self) -> float:
+        """Returns this color's perceived luminance (brightness).
+
+        From https://stackoverflow.com/a/596243
+        """
+
+        # Don't do expensive calculations over and over
+        if self._luminance is not None:
+            return self._luminance
+
+        def _linearize(color: float) -> float:
+            """Converts sRGB color to linear value."""
+
+            if color <= 0.04045:
+                return color / 12.92
+
+            return ((color + 0.055) / 1.055) ** 2.4
+
+        red, green, blue = float(self.rgb[0]), float(self.rgb[1]), float(self.rgb[2])
+
+        red /= 255
+        green /= 255
+        blue /= 255
+
+        red = _linearize(red)
+        blue = _linearize(blue)
+        green = _linearize(green)
+
+        self._luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+
+        return self._luminance
+
+    @property
+    def brightness(self) -> float:
+        """Returns the perceived "brightness" of a color.
+
+        From https://stackoverflow.com/a/56678483
+        """
+
+        # Don't do expensive calculations over and over
+        if self._brightness is not None:
+            return self._brightness
+
+        if self.luminance <= (216 / 24389):
+            brightness = self.luminance * (24389 / 27)
+
+        else:
+            brightness = self.luminance ** (1 / 3) * 116 - 16
+
+        self._brightness = brightness / 100
+        return self._brightness
 
     def __call__(self, text: str, reset: bool = True) -> StyledText:
         """Colors the given string, returning a `pytermgui.parser.StyledText`."""
@@ -358,7 +438,16 @@ class Color:
     def get_localized(self) -> Color:
         """Creates a terminal-capability local Color instance."""
 
-        return self
+        system = terminal.get_colorsystem()
+        if self.system.value <= system.value:
+            return self
+
+        colortype = SYSTEM_TO_TYPE[system]
+
+        local = colortype.from_rgb(self.rgb)
+        local.background = self.background
+
+        return local
 
 
 @dataclass
@@ -377,6 +466,12 @@ class IndexedColor(Color):
             raise ValueError(
                 f"IndexedColor value has to fit in range 0-255, got {self.value!r}."
             )
+
+        if int(self.value) <= 16:
+            self.system = ColorSystem.STANDARD
+
+        else:
+            self.system = ColorSystem.EIGHT_BIT
 
     @property
     def sequence(self) -> str:
@@ -402,6 +497,9 @@ class IndexedColor(Color):
     def rgb(self) -> tuple[int, int, int]:
         """Returns an RGB representation of this color."""
 
+        if self._rgb is not None:
+            return self._rgb
+
         index = int(self.value)
         hexc = COLOR_TABLE[index]
 
@@ -412,9 +510,30 @@ class IndexedColor(Color):
         return (rgb[0], rgb[1], rgb[2])
 
 
+class GreyscaleRampColor(IndexedColor):
+    """The color type used for NO_COLOR greyscale ramps.
+
+    This implementation uses the color's perceived brightness as its base.
+    """
+
+    @classmethod
+    def from_rgb(cls, rgb: tuple[int, int, int]) -> GreyscaleRampColor:
+        """Gets a greyscale color based on the given color's luminance."""
+
+        color = cls("0")
+        setattr(color, "_rgb", rgb)
+
+        index = int(232 + color.brightness * 23)
+        color.value = str(index)
+
+        return color
+
+
 @dataclass
 class RGBColor(Color):
     """An arbitrary RGB color."""
+
+    system = ColorSystem.TRUE
 
     def __post_init__(self) -> None:
         """Ensures data validity."""
@@ -425,13 +544,8 @@ class RGBColor(Color):
                 + f" Format has to be rrr;ggg;bbb, got {self.value!r}."
             )
 
-        self._rgb = tuple(int(num) for num in self.value.split(";"))
-
-    @property
-    def rgb(self) -> tuple[int, int, int]:
-        """Returns the RGB representation of this color."""
-
-        return self._rgb[0], self._rgb[1], self._rgb[2]
+        rgb = tuple(int(num) for num in self.value.split(";"))
+        self._rgb = rgb[0], rgb[1], rgb[2]
 
     @property
     def sequence(self) -> str:
@@ -450,6 +564,8 @@ class RGBColor(Color):
 class HEXColor(RGBColor):
     """An arbitrary, CSS-like HEX color."""
 
+    system = ColorSystem.TRUE
+
     def __post_init__(self) -> None:
         """Ensures data validity."""
 
@@ -463,12 +579,22 @@ class HEXColor(RGBColor):
             value = data[start:end]
             rgb.append(int(value, base=16))
 
-        self._rgb = tuple(rgb)
+        self._rgb = rgb[0], rgb[1], rgb[2]
 
         assert len(self._rgb) == 3
 
 
-def str_to_color(text: str, is_background: bool = False) -> Color:
+SYSTEM_TO_TYPE: dict[ColorSystem, Type[Color]] = {
+    ColorSystem.NO_COLOR: GreyscaleRampColor,
+    ColorSystem.STANDARD: IndexedColor,
+    ColorSystem.EIGHT_BIT: IndexedColor,
+    ColorSystem.TRUE: RGBColor,
+}
+
+
+def str_to_color(
+    text: str, is_background: bool = False, localize: bool = True
+) -> Color:
     """Creates a `Color` from the given text.
 
     Accepted formats:
@@ -476,8 +602,14 @@ def str_to_color(text: str, is_background: bool = False) -> Color:
     - 'rrr;ggg;bbb': `RGBColor`.
     - '(#)rrggbb': `HEXColor`. Leading hash is optional.
 
+    You can also add a leading '@' into the string to make the output represent a background
+    color, such as `@#123abc`.
+
     Args:
         text: The string to format from.
+        is_background: Whether the output should be forced into a background color. Mostly
+            used internally.
+        localize: Whether `get_localized` should be called on the output color.
     """
 
     def _trim_code(code: str) -> str:
@@ -499,6 +631,15 @@ def str_to_color(text: str, is_background: bool = False) -> Color:
         return code
 
     text = _trim_code(text)
+    original = text
+
+    # Try to return from cache if possible
+    # This is a very minor optimization, as most repeated color constructions will already
+    # be cached in TIM. It still might be useful though.
+    if text in _COLOR_CACHE:
+        color = _COLOR_CACHE[text]
+
+        return color.get_localized() if localize else color
 
     if text.startswith("@"):
         is_background = True
@@ -507,19 +648,28 @@ def str_to_color(text: str, is_background: bool = False) -> Color:
     if text in NAMED_COLORS:
         return str_to_color(NAMED_COLORS[text], is_background=is_background)
 
+    # This code is not pretty, but having these separate branches for each type
+    # should improve the performance by quite a large margin.
     match = RE_256.match(text)
     if match is not None:
-        index = int(match[0])
+        color = IndexedColor(match[0], background=is_background)
+        _COLOR_CACHE[original] = color
 
-        return IndexedColor(str(index), background=is_background)
+        return color.get_localized() if localize else color
 
     match = RE_HEX.match(text)
     if match is not None:
-        return HEXColor(match[0], background=is_background)
+        color = HEXColor(match[0], background=is_background).get_localized()
+        _COLOR_CACHE[original] = color
+
+        return color.get_localized() if localize else color
 
     match = RE_RGB.match(text)
     if match is not None:
-        return RGBColor(match[0], background=is_background)
+        color = RGBColor(match[0], background=is_background).get_localized()
+        _COLOR_CACHE[original] = color
+
+        return color.get_localized() if localize else color
 
     raise ColorSyntaxError(f"Could not convert {text!r} into a `Color`.")
 
@@ -568,3 +718,11 @@ def background(text: str, color: str | Color, reset: bool = True) -> str:
     color.background = True
 
     return color(text, reset=reset)
+
+
+if __name__ == "__main__":
+    terminal.forced_colorsystem = ColorSystem.STANDARD
+
+    for _i in range(256):
+        _color = str_to_color(f"@{_i}")
+        print(_i, _color("   "), _color.get_localized()("   "))
