@@ -8,6 +8,7 @@ import signal
 from enum import Enum
 from typing import Any, Callable
 from shutil import get_terminal_size
+from functools import cached_property
 
 from .input import getch
 
@@ -28,6 +29,38 @@ class ColorSystem(Enum):
 
     TRUE = 2
     """'True' color, a.k.a. 24-bit RGB colors."""
+
+    def __ge__(self, other):
+        """Comparison: self >= other."""
+
+        if self.__class__ is other.__class__:
+            return self.value >= other.value
+
+        return NotImplemented
+
+    def __gt__(self, other):
+        """Comparison: self > other."""
+
+        if self.__class__ is other.__class__:
+            return self.value > other.value
+
+        return NotImplemented
+
+    def __le__(self, other):
+        """Comparison: self <= other."""
+
+        if self.__class__ is other.__class__:
+            return self.value <= other.value
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        """Comparison: self < other."""
+
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+
+        return NotImplemented
 
 
 def _get_env_colorsys() -> ColorSystem | None:
@@ -136,7 +169,23 @@ class Terminal:
 
         return hasattr(sys, "ps1")
 
-    def get_colorsystem(self) -> ColorSystem:
+    @property
+    def forced_colorsystem(self) -> ColorSystem | None:
+        """Forces a color system type on this terminal."""
+
+        return self._forced_colorsystem
+
+    @forced_colorsystem.setter
+    def forced_colorsystem(self, new: ColorSystem | None) -> None:
+        """Sets a colorsystem, clears colorsystem cache."""
+
+        self._forced_colorsystem = new
+
+        if hasattr(self, "colorsystem"):
+            del self.colorsystem
+
+    @cached_property
+    def colorsystem(self) -> ColorSystem:
         """Gets the current terminal's supported color system."""
 
         if self.forced_colorsystem is not None:

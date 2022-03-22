@@ -10,8 +10,9 @@ from __future__ import annotations
 
 import re
 from math import sqrt  # pylint: disable=no-name-in-module
+from functools import lru_cache
+from typing import TYPE_CHECKING, Type
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Type, no_type_check
 
 from .exceptions import ColorSyntaxError
 from .terminal import terminal, ColorSystem
@@ -42,268 +43,264 @@ RE_RGB = re.compile(r"(\d{1,3};\d{1,3};\d{1,3})")
 # Adapted from https://gist.github.com/MicahElliott/719710
 # TODO: Maybe this could be generated dynamically?
 #       See https://superuser.com/a/905280
-COLOR_TABLE = {
-    # 3 bit
-    0: "000000",
-    1: "800000",
-    2: "008000",
-    3: "808000",
-    4: "000080",
-    5: "800080",
-    6: "008080",
-    7: "c0c0c0",
-    8: "808080",
-    # Same colors, but bright
-    9: "ff0000",
-    10: "00ff00",
-    11: "ffff00",
-    12: "0000ff",
-    13: "ff00ff",
-    14: "00ffff",
-    15: "ffffff",
-    16: "000000",
-    # xterm 256
-    17: "00005f",
-    18: "000087",
-    19: "0000af",
-    20: "0000d7",
-    21: "0000ff",
-    22: "005f00",
-    23: "005f5f",
-    24: "005f87",
-    25: "005faf",
-    26: "005fd7",
-    27: "005fff",
-    28: "008700",
-    29: "00875f",
-    30: "008787",
-    31: "0087af",
-    32: "0087d7",
-    33: "0087ff",
-    34: "00af00",
-    35: "00af5f",
-    36: "00af87",
-    37: "00afaf",
-    38: "00afd7",
-    39: "00afff",
-    40: "00d700",
-    41: "00d75f",
-    42: "00d787",
-    43: "00d7af",
-    44: "00d7d7",
-    45: "00d7ff",
-    46: "00ff00",
-    47: "00ff5f",
-    48: "00ff87",
-    49: "00ffaf",
-    50: "00ffd7",
-    51: "00ffff",
-    52: "5f0000",
-    53: "5f005f",
-    54: "5f0087",
-    55: "5f00af",
-    56: "5f00d7",
-    57: "5f00ff",
-    58: "5f5f00",
-    59: "5f5f5f",
-    60: "5f5f87",
-    61: "5f5faf",
-    62: "5f5fd7",
-    63: "5f5fff",
-    64: "5f8700",
-    65: "5f875f",
-    66: "5f8787",
-    67: "5f87af",
-    68: "5f87d7",
-    69: "5f87ff",
-    70: "5faf00",
-    71: "5faf5f",
-    72: "5faf87",
-    73: "5fafaf",
-    74: "5fafd7",
-    75: "5fafff",
-    76: "5fd700",
-    77: "5fd75f",
-    78: "5fd787",
-    79: "5fd7af",
-    80: "5fd7d7",
-    81: "5fd7ff",
-    82: "5fff00",
-    83: "5fff5f",
-    84: "5fff87",
-    85: "5fffaf",
-    86: "5fffd7",
-    87: "5fffff",
-    88: "870000",
-    89: "87005f",
-    90: "870087",
-    91: "8700af",
-    92: "8700d7",
-    93: "8700ff",
-    94: "875f00",
-    95: "875f5f",
-    96: "875f87",
-    97: "875faf",
-    98: "875fd7",
-    99: "875fff",
-    100: "878700",
-    101: "87875f",
-    102: "878787",
-    103: "8787af",
-    104: "8787d7",
-    105: "8787ff",
-    106: "87af00",
-    107: "87af5f",
-    108: "87af87",
-    109: "87afaf",
-    110: "87afd7",
-    111: "87afff",
-    112: "87d700",
-    113: "87d75f",
-    114: "87d787",
-    115: "87d7af",
-    116: "87d7d7",
-    117: "87d7ff",
-    118: "87ff00",
-    119: "87ff5f",
-    120: "87ff87",
-    121: "87ffaf",
-    122: "87ffd7",
-    123: "87ffff",
-    124: "af0000",
-    125: "af005f",
-    126: "af0087",
-    127: "af00af",
-    128: "af00d7",
-    129: "af00ff",
-    130: "af5f00",
-    131: "af5f5f",
-    132: "af5f87",
-    133: "af5faf",
-    134: "af5fd7",
-    135: "af5fff",
-    136: "af8700",
-    137: "af875f",
-    138: "af8787",
-    139: "af87af",
-    140: "af87d7",
-    141: "af87ff",
-    142: "afaf00",
-    143: "afaf5f",
-    144: "afaf87",
-    145: "afafaf",
-    146: "afafd7",
-    147: "afafff",
-    148: "afd700",
-    149: "afd75f",
-    150: "afd787",
-    151: "afd7af",
-    152: "afd7d7",
-    153: "afd7ff",
-    154: "afff00",
-    155: "afff5f",
-    156: "afff87",
-    157: "afffaf",
-    158: "afffd7",
-    159: "afffff",
-    160: "d70000",
-    161: "d7005f",
-    162: "d70087",
-    163: "d700af",
-    164: "d700d7",
-    165: "d700ff",
-    166: "d75f00",
-    167: "d75f5f",
-    168: "d75f87",
-    169: "d75faf",
-    170: "d75fd7",
-    171: "d75fff",
-    172: "d78700",
-    173: "d7875f",
-    174: "d78787",
-    175: "d787af",
-    176: "d787d7",
-    177: "d787ff",
-    178: "d7af00",
-    179: "d7af5f",
-    180: "d7af87",
-    181: "d7afaf",
-    182: "d7afd7",
-    183: "d7afff",
-    184: "d7d700",
-    185: "d7d75f",
-    186: "d7d787",
-    187: "d7d7af",
-    188: "d7d7d7",
-    189: "d7d7ff",
-    190: "d7ff00",
-    191: "d7ff5f",
-    192: "d7ff87",
-    193: "d7ffaf",
-    194: "d7ffd7",
-    195: "d7ffff",
-    196: "ff0000",
-    197: "ff005f",
-    198: "ff0087",
-    199: "ff00af",
-    200: "ff00d7",
-    201: "ff00ff",
-    202: "ff5f00",
-    203: "ff5f5f",
-    204: "ff5f87",
-    205: "ff5faf",
-    206: "ff5fd7",
-    207: "ff5fff",
-    208: "ff8700",
-    209: "ff875f",
-    210: "ff8787",
-    211: "ff87af",
-    212: "ff87d7",
-    213: "ff87ff",
-    214: "ffaf00",
-    215: "ffaf5f",
-    216: "ffaf87",
-    217: "ffafaf",
-    218: "ffafd7",
-    219: "ffafff",
-    220: "ffd700",
-    221: "ffd75f",
-    222: "ffd787",
-    223: "ffd7af",
-    224: "ffd7d7",
-    225: "ffd7ff",
-    226: "ffff00",
-    227: "ffff5f",
-    228: "ffff87",
-    229: "ffffaf",
-    230: "ffffd7",
-    231: "ffffff",
-    # Gray-scale
-    232: "080808",
-    233: "121212",
-    234: "1c1c1c",
-    235: "262626",
-    236: "303030",
-    237: "3a3a3a",
-    238: "444444",
-    239: "4e4e4e",
-    240: "585858",
-    241: "626262",
-    242: "6c6c6c",
-    243: "767676",
-    244: "808080",
-    245: "8a8a8a",
-    246: "949494",
-    247: "9e9e9e",
-    248: "a8a8a8",
-    249: "b2b2b2",
-    250: "bcbcbc",
-    251: "c6c6c6",
-    252: "d0d0d0",
-    253: "dadada",
-    254: "e4e4e4",
-    255: "eeeeee",
-}
+COLOR_TABLE = [
+    (0, 0, 0),
+    (170, 0, 0),
+    (0, 170, 0),
+    (170, 85, 0),
+    (0, 0, 170),
+    (170, 0, 170),
+    (0, 170, 170),
+    (170, 170, 170),
+    (85, 85, 85),
+    (255, 85, 85),
+    (85, 255, 85),
+    (255, 255, 85),
+    (85, 85, 255),
+    (255, 85, 255),
+    (85, 255, 255),
+    (255, 255, 255),
+    (0, 0, 0),
+    (0, 0, 95),
+    (0, 0, 135),
+    (0, 0, 175),
+    (0, 0, 215),
+    (0, 0, 255),
+    (0, 95, 0),
+    (0, 95, 95),
+    (0, 95, 135),
+    (0, 95, 175),
+    (0, 95, 215),
+    (0, 95, 255),
+    (0, 135, 0),
+    (0, 135, 95),
+    (0, 135, 135),
+    (0, 135, 175),
+    (0, 135, 215),
+    (0, 135, 255),
+    (0, 175, 0),
+    (0, 175, 95),
+    (0, 175, 135),
+    (0, 175, 175),
+    (0, 175, 215),
+    (0, 175, 255),
+    (0, 215, 0),
+    (0, 215, 95),
+    (0, 215, 135),
+    (0, 215, 175),
+    (0, 215, 215),
+    (0, 215, 255),
+    (0, 255, 0),
+    (0, 255, 95),
+    (0, 255, 135),
+    (0, 255, 175),
+    (0, 255, 215),
+    (0, 255, 255),
+    (95, 0, 0),
+    (95, 0, 95),
+    (95, 0, 135),
+    (95, 0, 175),
+    (95, 0, 215),
+    (95, 0, 255),
+    (95, 95, 0),
+    (95, 95, 95),
+    (95, 95, 135),
+    (95, 95, 175),
+    (95, 95, 215),
+    (95, 95, 255),
+    (95, 135, 0),
+    (95, 135, 95),
+    (95, 135, 135),
+    (95, 135, 175),
+    (95, 135, 215),
+    (95, 135, 255),
+    (95, 175, 0),
+    (95, 175, 95),
+    (95, 175, 135),
+    (95, 175, 175),
+    (95, 175, 215),
+    (95, 175, 255),
+    (95, 215, 0),
+    (95, 215, 95),
+    (95, 215, 135),
+    (95, 215, 175),
+    (95, 215, 215),
+    (95, 215, 255),
+    (95, 255, 0),
+    (95, 255, 95),
+    (95, 255, 135),
+    (95, 255, 175),
+    (95, 255, 215),
+    (95, 255, 255),
+    (135, 0, 0),
+    (135, 0, 95),
+    (135, 0, 135),
+    (135, 0, 175),
+    (135, 0, 215),
+    (135, 0, 255),
+    (135, 95, 0),
+    (135, 95, 95),
+    (135, 95, 135),
+    (135, 95, 175),
+    (135, 95, 215),
+    (135, 95, 255),
+    (135, 135, 0),
+    (135, 135, 95),
+    (135, 135, 135),
+    (135, 135, 175),
+    (135, 135, 215),
+    (135, 135, 255),
+    (135, 175, 0),
+    (135, 175, 95),
+    (135, 175, 135),
+    (135, 175, 175),
+    (135, 175, 215),
+    (135, 175, 255),
+    (135, 215, 0),
+    (135, 215, 95),
+    (135, 215, 135),
+    (135, 215, 175),
+    (135, 215, 215),
+    (135, 215, 255),
+    (135, 255, 0),
+    (135, 255, 95),
+    (135, 255, 135),
+    (135, 255, 175),
+    (135, 255, 215),
+    (135, 255, 255),
+    (175, 0, 0),
+    (175, 0, 95),
+    (175, 0, 135),
+    (175, 0, 175),
+    (175, 0, 215),
+    (175, 0, 255),
+    (175, 95, 0),
+    (175, 95, 95),
+    (175, 95, 135),
+    (175, 95, 175),
+    (175, 95, 215),
+    (175, 95, 255),
+    (175, 135, 0),
+    (175, 135, 95),
+    (175, 135, 135),
+    (175, 135, 175),
+    (175, 135, 215),
+    (175, 135, 255),
+    (175, 175, 0),
+    (175, 175, 95),
+    (175, 175, 135),
+    (175, 175, 175),
+    (175, 175, 215),
+    (175, 175, 255),
+    (175, 215, 0),
+    (175, 215, 95),
+    (175, 215, 135),
+    (175, 215, 175),
+    (175, 215, 215),
+    (175, 215, 255),
+    (175, 255, 0),
+    (175, 255, 95),
+    (175, 255, 135),
+    (175, 255, 175),
+    (175, 255, 215),
+    (175, 255, 255),
+    (215, 0, 0),
+    (215, 0, 95),
+    (215, 0, 135),
+    (215, 0, 175),
+    (215, 0, 215),
+    (215, 0, 255),
+    (215, 95, 0),
+    (215, 95, 95),
+    (215, 95, 135),
+    (215, 95, 175),
+    (215, 95, 215),
+    (215, 95, 255),
+    (215, 135, 0),
+    (215, 135, 95),
+    (215, 135, 135),
+    (215, 135, 175),
+    (215, 135, 215),
+    (215, 135, 255),
+    (215, 175, 0),
+    (215, 175, 95),
+    (215, 175, 135),
+    (215, 175, 175),
+    (215, 175, 215),
+    (215, 175, 255),
+    (215, 215, 0),
+    (215, 215, 95),
+    (215, 215, 135),
+    (215, 215, 175),
+    (215, 215, 215),
+    (215, 215, 255),
+    (215, 255, 0),
+    (215, 255, 95),
+    (215, 255, 135),
+    (215, 255, 175),
+    (215, 255, 215),
+    (215, 255, 255),
+    (255, 0, 0),
+    (255, 0, 95),
+    (255, 0, 135),
+    (255, 0, 175),
+    (255, 0, 215),
+    (255, 0, 255),
+    (255, 95, 0),
+    (255, 95, 95),
+    (255, 95, 135),
+    (255, 95, 175),
+    (255, 95, 215),
+    (255, 95, 255),
+    (255, 135, 0),
+    (255, 135, 95),
+    (255, 135, 135),
+    (255, 135, 175),
+    (255, 135, 215),
+    (255, 135, 255),
+    (255, 175, 0),
+    (255, 175, 95),
+    (255, 175, 135),
+    (255, 175, 175),
+    (255, 175, 215),
+    (255, 175, 255),
+    (255, 215, 0),
+    (255, 215, 95),
+    (255, 215, 135),
+    (255, 215, 175),
+    (255, 215, 215),
+    (255, 215, 255),
+    (255, 255, 0),
+    (255, 255, 95),
+    (255, 255, 135),
+    (255, 255, 175),
+    (255, 255, 215),
+    (255, 255, 255),
+    (8, 8, 8),
+    (18, 18, 18),
+    (28, 28, 28),
+    (38, 38, 38),
+    (48, 48, 48),
+    (58, 58, 58),
+    (68, 68, 68),
+    (78, 78, 78),
+    (88, 88, 88),
+    (98, 98, 98),
+    (108, 108, 108),
+    (118, 118, 118),
+    (128, 128, 128),
+    (138, 138, 138),
+    (148, 148, 148),
+    (158, 158, 158),
+    (168, 168, 168),
+    (178, 178, 178),
+    (188, 188, 188),
+    (198, 198, 198),
+    (208, 208, 208),
+    (218, 218, 218),
+    (228, 228, 228),
+    (238, 238, 238),
+]
 
 XTERM_NAMED_COLORS = {
     0: "black",
@@ -356,11 +353,7 @@ class Color:
             rgb: The RGB value to base the new color off of.
         """
 
-        # This is here so pylint doesn't detect the method as being abstract.
-        # The code calling this method will catch the exception and handle it
-        # correctly.
-        if rgb:
-            raise NotImplementedError
+        raise NotImplementedError
 
     @property
     def sequence(self) -> str:
@@ -456,8 +449,8 @@ class Color:
         terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.
         """
 
-        system = terminal.get_colorsystem()
-        if self.system.value <= system.value:
+        system = terminal.colorsystem
+        if self.system <= system:
             return self
 
         colortype = SYSTEM_TO_TYPE[system]
@@ -501,22 +494,22 @@ class IndexedColor(Color):
             assert isinstance(color, IndexedColor)
             return color
 
-        distances: list[float] = []
+        # Normalize the color values
+        red, green, blue = (x / 255 for x in rgb)
 
-        table = COLOR_TABLE
-        if terminal.get_colorsystem() is ColorSystem.STANDARD:
-            table = {key: value for key, value in table.items() if key in range(16)}
+        # Calculate the eight-bit color index
+        if terminal.colorsystem is ColorSystem.EIGHT_BIT:
+            color_num = 16
+            color_num += 36 * round(red * 5.0)
+            color_num += 6 * round(green * 5.0)
+            color_num += round(blue * 5.0)
 
-        for hxcol in table.values():
-            red2 = int(hxcol[0:2], base=16)
-            blue2 = int(hxcol[2:4], base=16)
-            green2 = int(hxcol[4:6], base=16)
+            return cls(str(color_num))
 
-            distances.append(_get_color_difference(rgb, (red2, blue2, green2)))
-
-        index = min(range(len(distances)), key=distances.__getitem__)
-
+        # Find the least-different color in the table
+        index = min(range(16), key=lambda i: _get_color_difference(rgb, COLOR_TABLE[i]))
         color = cls(str(index))
+
         _COLOR_MATCH_CACHE[rgb] = color
 
         return color
@@ -549,11 +542,7 @@ class IndexedColor(Color):
             return self._rgb
 
         index = int(self.value)
-        hexc = COLOR_TABLE[index]
-
-        rgb = []
-        for i in (0, 2, 4):
-            rgb.append(int(hexc[i : i + 2], base=16))
+        rgb = COLOR_TABLE[index]
 
         return (rgb[0], rgb[1], rgb[2])
 
@@ -594,6 +583,12 @@ class RGBColor(Color):
 
         rgb = tuple(int(num) for num in self.value.split(";"))
         self._rgb = rgb[0], rgb[1], rgb[2]
+
+    @classmethod
+    def from_rgb(cls, rgb: tuple[int, int, int]) -> RGBColor:
+        """Returns an `RGBColor` from the given triplet."""
+
+        return cls(";".join(map(str, rgb)))
 
     @property
     def sequence(self) -> str:
@@ -651,7 +646,7 @@ def _get_color_difference(
     red1, green1, blue1 = rgb1
     red2, green2, blue2 = rgb2
 
-    redmean = (red1 + red2) / 2
+    redmean = (red1 + red2) // 2
 
     delta_red = red1 - red2
     delta_green = green1 - green2
@@ -664,6 +659,7 @@ def _get_color_difference(
     )
 
 
+@lru_cache(maxsize=None)
 def str_to_color(
     text: str,
     is_background: bool = False,
@@ -708,15 +704,9 @@ def str_to_color(
         return code
 
     text = _trim_code(text)
-    original = text
 
-    # Try to return from cache if possible
-    # This is a very minor optimization, as most repeated color constructions will already
-    # be cached in TIM. It still might be useful though.
-    if use_cache and text in _COLOR_CACHE:
-        color = _COLOR_CACHE[text]
-
-        return color.get_localized() if localize else color
+    if not use_cache:
+        str_to_color.cache_clear()
 
     if text.startswith("@"):
         is_background = True
@@ -725,26 +715,25 @@ def str_to_color(
     if text in NAMED_COLORS:
         return str_to_color(NAMED_COLORS[text], is_background=is_background)
 
+    color: Color
+
     # This code is not pretty, but having these separate branches for each type
     # should improve the performance by quite a large margin.
     match = RE_256.match(text)
     if match is not None:
         color = IndexedColor(match[0], background=is_background)
-        _COLOR_CACHE[original] = color
 
         return color.get_localized() if localize else color
 
     match = RE_HEX.match(text)
     if match is not None:
         color = HEXColor(match[0], background=is_background).get_localized()
-        _COLOR_CACHE[original] = color
 
         return color.get_localized() if localize else color
 
     match = RE_RGB.match(text)
     if match is not None:
         color = RGBColor(match[0], background=is_background).get_localized()
-        _COLOR_CACHE[original] = color
 
         return color.get_localized() if localize else color
 
@@ -795,55 +784,3 @@ def background(text: str, color: str | Color, reset: bool = True) -> str:
     color.background = True
 
     return color(text, reset=reset)
-
-
-@no_type_check
-def _display_colorgrids() -> None:
-    """Displays some RGB colorgrids in the terminal.
-
-    Runs on `python -m pytermgui.colors`.
-    """
-
-    from pytermgui import tim  # pylint: disable=import-outside-toplevel
-    import colorsys  # pylint: disable=import-outside-toplevel
-
-    def _normalize(_rgb: tuple[float, float, float]) -> str:
-        normalized = tuple(str(int(_col * 255)) for _col in _rgb)
-
-        return normalized[0], normalized[1], normalized[2]
-
-    def _get_colorbox() -> str:
-        _buff = ""
-        for y_pos in range(0, 5):
-            for x_pos in range(100):
-                # Mmmm, spiky code
-                _hue = x_pos / 100
-                _lightness = 0.1 + ((y_pos / 5) * 0.7)
-                _rgb1 = colorsys.hls_to_rgb(_hue, _lightness, 1.0)
-                _rgb2 = colorsys.hls_to_rgb(_hue, _lightness + 0.7 / 10, 1.0)
-
-                _bg_color = ";".join(_normalize(_rgb1))
-                _color = ";".join(_normalize(_rgb2))
-                _buff += f"[{_bg_color} @{_color}]▀"
-
-            _buff += "[/]\n"
-
-        return _buff
-
-    tim.should_cache = False
-
-    _buff = _get_colorbox()
-    print(terminal.get_colorsystem())
-    tim.print(_get_colorbox())
-
-    terminal.forced_colorsystem = ColorSystem.EIGHT_BIT
-    print(terminal.get_colorsystem())
-    tim.print(_get_colorbox())
-
-    terminal.forced_colorsystem = ColorSystem.STANDARD
-    print(terminal.get_colorsystem())
-    tim.print(_get_colorbox())
-
-
-if __name__ == "__main__":
-    _display_colorgrids()
