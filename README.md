@@ -101,6 +101,14 @@ Our [WindowManager](https://ptg.bczsalba.com/pytermgui/window_manager.html) impl
 ![TUI example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/tui.png)
 
 
+### High factor of compatibility
+
+Using some color math, PyTermGUI provides graceful color degradation from RGB all the way to the standard, `xterm-16` colors. This allows you to write your program with the exact colors you want, and let the library worry about the end-user's terminal capabilities.
+
+<p align="center">
+<img alt="Graceful degradation" src="https://github.com/bczsalba/pytermgui/raw/master/assets/readme/degradation.png">
+</p>
+
 
 ## No constraints
 
