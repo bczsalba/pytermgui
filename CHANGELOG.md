@@ -1,3 +1,10 @@
+## [4.2.1] - 2022-03-22
+
+### Refactors
+- Improve color degradation & caching
+
+
+
 ## [4.2.0] - 2022-03-21
 
 ### Additions
