@@ -110,6 +110,9 @@
                                 <a class="variable" href="#RGBColor.system">system</a>
                         </li>
                         <li>
+                                <a class="function" href="#RGBColor.from_rgb">from_rgb</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#RGBColor.sequence">sequence</a>
                         </li>
                 </ul>
@@ -165,8 +168,9 @@ answers I've ever bumped into.</p>
 
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>  <span class="c1"># pylint: disable=no-name-in-module</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Type</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">no_type_check</span>
 
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ColorSyntaxError</span>
 <span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">terminal</span><span class="p">,</span> <span class="n">ColorSystem</span>
@@ -197,268 +201,264 @@ answers I've ever bumped into.</p>
 <span class="c1"># Adapted from https://gist.github.com/MicahElliott/719710</span>
 <span class="c1"># TODO: Maybe this could be generated dynamically?</span>
 <span class="c1">#       See https://superuser.com/a/905280</span>
-<span class="n">COLOR_TABLE</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c1"># 3 bit</span>
-    <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;000000&quot;</span><span class="p">,</span>
-    <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;800000&quot;</span><span class="p">,</span>
-    <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;008000&quot;</span><span class="p">,</span>
-    <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;808000&quot;</span><span class="p">,</span>
-    <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;000080&quot;</span><span class="p">,</span>
-    <span class="mi">5</span><span class="p">:</span> <span class="s2">&quot;800080&quot;</span><span class="p">,</span>
-    <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;008080&quot;</span><span class="p">,</span>
-    <span class="mi">7</span><span class="p">:</span> <span class="s2">&quot;c0c0c0&quot;</span><span class="p">,</span>
-    <span class="mi">8</span><span class="p">:</span> <span class="s2">&quot;808080&quot;</span><span class="p">,</span>
-    <span class="c1"># Same colors, but bright</span>
-    <span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;ff0000&quot;</span><span class="p">,</span>
-    <span class="mi">10</span><span class="p">:</span> <span class="s2">&quot;00ff00&quot;</span><span class="p">,</span>
-    <span class="mi">11</span><span class="p">:</span> <span class="s2">&quot;ffff00&quot;</span><span class="p">,</span>
-    <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;0000ff&quot;</span><span class="p">,</span>
-    <span class="mi">13</span><span class="p">:</span> <span class="s2">&quot;ff00ff&quot;</span><span class="p">,</span>
-    <span class="mi">14</span><span class="p">:</span> <span class="s2">&quot;00ffff&quot;</span><span class="p">,</span>
-    <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;ffffff&quot;</span><span class="p">,</span>
-    <span class="mi">16</span><span class="p">:</span> <span class="s2">&quot;000000&quot;</span><span class="p">,</span>
-    <span class="c1"># xterm 256</span>
-    <span class="mi">17</span><span class="p">:</span> <span class="s2">&quot;00005f&quot;</span><span class="p">,</span>
-    <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;000087&quot;</span><span class="p">,</span>
-    <span class="mi">19</span><span class="p">:</span> <span class="s2">&quot;0000af&quot;</span><span class="p">,</span>
-    <span class="mi">20</span><span class="p">:</span> <span class="s2">&quot;0000d7&quot;</span><span class="p">,</span>
-    <span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;0000ff&quot;</span><span class="p">,</span>
-    <span class="mi">22</span><span class="p">:</span> <span class="s2">&quot;005f00&quot;</span><span class="p">,</span>
-    <span class="mi">23</span><span class="p">:</span> <span class="s2">&quot;005f5f&quot;</span><span class="p">,</span>
-    <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;005f87&quot;</span><span class="p">,</span>
-    <span class="mi">25</span><span class="p">:</span> <span class="s2">&quot;005faf&quot;</span><span class="p">,</span>
-    <span class="mi">26</span><span class="p">:</span> <span class="s2">&quot;005fd7&quot;</span><span class="p">,</span>
-    <span class="mi">27</span><span class="p">:</span> <span class="s2">&quot;005fff&quot;</span><span class="p">,</span>
-    <span class="mi">28</span><span class="p">:</span> <span class="s2">&quot;008700&quot;</span><span class="p">,</span>
-    <span class="mi">29</span><span class="p">:</span> <span class="s2">&quot;00875f&quot;</span><span class="p">,</span>
-    <span class="mi">30</span><span class="p">:</span> <span class="s2">&quot;008787&quot;</span><span class="p">,</span>
-    <span class="mi">31</span><span class="p">:</span> <span class="s2">&quot;0087af&quot;</span><span class="p">,</span>
-    <span class="mi">32</span><span class="p">:</span> <span class="s2">&quot;0087d7&quot;</span><span class="p">,</span>
-    <span class="mi">33</span><span class="p">:</span> <span class="s2">&quot;0087ff&quot;</span><span class="p">,</span>
-    <span class="mi">34</span><span class="p">:</span> <span class="s2">&quot;00af00&quot;</span><span class="p">,</span>
-    <span class="mi">35</span><span class="p">:</span> <span class="s2">&quot;00af5f&quot;</span><span class="p">,</span>
-    <span class="mi">36</span><span class="p">:</span> <span class="s2">&quot;00af87&quot;</span><span class="p">,</span>
-    <span class="mi">37</span><span class="p">:</span> <span class="s2">&quot;00afaf&quot;</span><span class="p">,</span>
-    <span class="mi">38</span><span class="p">:</span> <span class="s2">&quot;00afd7&quot;</span><span class="p">,</span>
-    <span class="mi">39</span><span class="p">:</span> <span class="s2">&quot;00afff&quot;</span><span class="p">,</span>
-    <span class="mi">40</span><span class="p">:</span> <span class="s2">&quot;00d700&quot;</span><span class="p">,</span>
-    <span class="mi">41</span><span class="p">:</span> <span class="s2">&quot;00d75f&quot;</span><span class="p">,</span>
-    <span class="mi">42</span><span class="p">:</span> <span class="s2">&quot;00d787&quot;</span><span class="p">,</span>
-    <span class="mi">43</span><span class="p">:</span> <span class="s2">&quot;00d7af&quot;</span><span class="p">,</span>
-    <span class="mi">44</span><span class="p">:</span> <span class="s2">&quot;00d7d7&quot;</span><span class="p">,</span>
-    <span class="mi">45</span><span class="p">:</span> <span class="s2">&quot;00d7ff&quot;</span><span class="p">,</span>
-    <span class="mi">46</span><span class="p">:</span> <span class="s2">&quot;00ff00&quot;</span><span class="p">,</span>
-    <span class="mi">47</span><span class="p">:</span> <span class="s2">&quot;00ff5f&quot;</span><span class="p">,</span>
-    <span class="mi">48</span><span class="p">:</span> <span class="s2">&quot;00ff87&quot;</span><span class="p">,</span>
-    <span class="mi">49</span><span class="p">:</span> <span class="s2">&quot;00ffaf&quot;</span><span class="p">,</span>
-    <span class="mi">50</span><span class="p">:</span> <span class="s2">&quot;00ffd7&quot;</span><span class="p">,</span>
-    <span class="mi">51</span><span class="p">:</span> <span class="s2">&quot;00ffff&quot;</span><span class="p">,</span>
-    <span class="mi">52</span><span class="p">:</span> <span class="s2">&quot;5f0000&quot;</span><span class="p">,</span>
-    <span class="mi">53</span><span class="p">:</span> <span class="s2">&quot;5f005f&quot;</span><span class="p">,</span>
-    <span class="mi">54</span><span class="p">:</span> <span class="s2">&quot;5f0087&quot;</span><span class="p">,</span>
-    <span class="mi">55</span><span class="p">:</span> <span class="s2">&quot;5f00af&quot;</span><span class="p">,</span>
-    <span class="mi">56</span><span class="p">:</span> <span class="s2">&quot;5f00d7&quot;</span><span class="p">,</span>
-    <span class="mi">57</span><span class="p">:</span> <span class="s2">&quot;5f00ff&quot;</span><span class="p">,</span>
-    <span class="mi">58</span><span class="p">:</span> <span class="s2">&quot;5f5f00&quot;</span><span class="p">,</span>
-    <span class="mi">59</span><span class="p">:</span> <span class="s2">&quot;5f5f5f&quot;</span><span class="p">,</span>
-    <span class="mi">60</span><span class="p">:</span> <span class="s2">&quot;5f5f87&quot;</span><span class="p">,</span>
-    <span class="mi">61</span><span class="p">:</span> <span class="s2">&quot;5f5faf&quot;</span><span class="p">,</span>
-    <span class="mi">62</span><span class="p">:</span> <span class="s2">&quot;5f5fd7&quot;</span><span class="p">,</span>
-    <span class="mi">63</span><span class="p">:</span> <span class="s2">&quot;5f5fff&quot;</span><span class="p">,</span>
-    <span class="mi">64</span><span class="p">:</span> <span class="s2">&quot;5f8700&quot;</span><span class="p">,</span>
-    <span class="mi">65</span><span class="p">:</span> <span class="s2">&quot;5f875f&quot;</span><span class="p">,</span>
-    <span class="mi">66</span><span class="p">:</span> <span class="s2">&quot;5f8787&quot;</span><span class="p">,</span>
-    <span class="mi">67</span><span class="p">:</span> <span class="s2">&quot;5f87af&quot;</span><span class="p">,</span>
-    <span class="mi">68</span><span class="p">:</span> <span class="s2">&quot;5f87d7&quot;</span><span class="p">,</span>
-    <span class="mi">69</span><span class="p">:</span> <span class="s2">&quot;5f87ff&quot;</span><span class="p">,</span>
-    <span class="mi">70</span><span class="p">:</span> <span class="s2">&quot;5faf00&quot;</span><span class="p">,</span>
-    <span class="mi">71</span><span class="p">:</span> <span class="s2">&quot;5faf5f&quot;</span><span class="p">,</span>
-    <span class="mi">72</span><span class="p">:</span> <span class="s2">&quot;5faf87&quot;</span><span class="p">,</span>
-    <span class="mi">73</span><span class="p">:</span> <span class="s2">&quot;5fafaf&quot;</span><span class="p">,</span>
-    <span class="mi">74</span><span class="p">:</span> <span class="s2">&quot;5fafd7&quot;</span><span class="p">,</span>
-    <span class="mi">75</span><span class="p">:</span> <span class="s2">&quot;5fafff&quot;</span><span class="p">,</span>
-    <span class="mi">76</span><span class="p">:</span> <span class="s2">&quot;5fd700&quot;</span><span class="p">,</span>
-    <span class="mi">77</span><span class="p">:</span> <span class="s2">&quot;5fd75f&quot;</span><span class="p">,</span>
-    <span class="mi">78</span><span class="p">:</span> <span class="s2">&quot;5fd787&quot;</span><span class="p">,</span>
-    <span class="mi">79</span><span class="p">:</span> <span class="s2">&quot;5fd7af&quot;</span><span class="p">,</span>
-    <span class="mi">80</span><span class="p">:</span> <span class="s2">&quot;5fd7d7&quot;</span><span class="p">,</span>
-    <span class="mi">81</span><span class="p">:</span> <span class="s2">&quot;5fd7ff&quot;</span><span class="p">,</span>
-    <span class="mi">82</span><span class="p">:</span> <span class="s2">&quot;5fff00&quot;</span><span class="p">,</span>
-    <span class="mi">83</span><span class="p">:</span> <span class="s2">&quot;5fff5f&quot;</span><span class="p">,</span>
-    <span class="mi">84</span><span class="p">:</span> <span class="s2">&quot;5fff87&quot;</span><span class="p">,</span>
-    <span class="mi">85</span><span class="p">:</span> <span class="s2">&quot;5fffaf&quot;</span><span class="p">,</span>
-    <span class="mi">86</span><span class="p">:</span> <span class="s2">&quot;5fffd7&quot;</span><span class="p">,</span>
-    <span class="mi">87</span><span class="p">:</span> <span class="s2">&quot;5fffff&quot;</span><span class="p">,</span>
-    <span class="mi">88</span><span class="p">:</span> <span class="s2">&quot;870000&quot;</span><span class="p">,</span>
-    <span class="mi">89</span><span class="p">:</span> <span class="s2">&quot;87005f&quot;</span><span class="p">,</span>
-    <span class="mi">90</span><span class="p">:</span> <span class="s2">&quot;870087&quot;</span><span class="p">,</span>
-    <span class="mi">91</span><span class="p">:</span> <span class="s2">&quot;8700af&quot;</span><span class="p">,</span>
-    <span class="mi">92</span><span class="p">:</span> <span class="s2">&quot;8700d7&quot;</span><span class="p">,</span>
-    <span class="mi">93</span><span class="p">:</span> <span class="s2">&quot;8700ff&quot;</span><span class="p">,</span>
-    <span class="mi">94</span><span class="p">:</span> <span class="s2">&quot;875f00&quot;</span><span class="p">,</span>
-    <span class="mi">95</span><span class="p">:</span> <span class="s2">&quot;875f5f&quot;</span><span class="p">,</span>
-    <span class="mi">96</span><span class="p">:</span> <span class="s2">&quot;875f87&quot;</span><span class="p">,</span>
-    <span class="mi">97</span><span class="p">:</span> <span class="s2">&quot;875faf&quot;</span><span class="p">,</span>
-    <span class="mi">98</span><span class="p">:</span> <span class="s2">&quot;875fd7&quot;</span><span class="p">,</span>
-    <span class="mi">99</span><span class="p">:</span> <span class="s2">&quot;875fff&quot;</span><span class="p">,</span>
-    <span class="mi">100</span><span class="p">:</span> <span class="s2">&quot;878700&quot;</span><span class="p">,</span>
-    <span class="mi">101</span><span class="p">:</span> <span class="s2">&quot;87875f&quot;</span><span class="p">,</span>
-    <span class="mi">102</span><span class="p">:</span> <span class="s2">&quot;878787&quot;</span><span class="p">,</span>
-    <span class="mi">103</span><span class="p">:</span> <span class="s2">&quot;8787af&quot;</span><span class="p">,</span>
-    <span class="mi">104</span><span class="p">:</span> <span class="s2">&quot;8787d7&quot;</span><span class="p">,</span>
-    <span class="mi">105</span><span class="p">:</span> <span class="s2">&quot;8787ff&quot;</span><span class="p">,</span>
-    <span class="mi">106</span><span class="p">:</span> <span class="s2">&quot;87af00&quot;</span><span class="p">,</span>
-    <span class="mi">107</span><span class="p">:</span> <span class="s2">&quot;87af5f&quot;</span><span class="p">,</span>
-    <span class="mi">108</span><span class="p">:</span> <span class="s2">&quot;87af87&quot;</span><span class="p">,</span>
-    <span class="mi">109</span><span class="p">:</span> <span class="s2">&quot;87afaf&quot;</span><span class="p">,</span>
-    <span class="mi">110</span><span class="p">:</span> <span class="s2">&quot;87afd7&quot;</span><span class="p">,</span>
-    <span class="mi">111</span><span class="p">:</span> <span class="s2">&quot;87afff&quot;</span><span class="p">,</span>
-    <span class="mi">112</span><span class="p">:</span> <span class="s2">&quot;87d700&quot;</span><span class="p">,</span>
-    <span class="mi">113</span><span class="p">:</span> <span class="s2">&quot;87d75f&quot;</span><span class="p">,</span>
-    <span class="mi">114</span><span class="p">:</span> <span class="s2">&quot;87d787&quot;</span><span class="p">,</span>
-    <span class="mi">115</span><span class="p">:</span> <span class="s2">&quot;87d7af&quot;</span><span class="p">,</span>
-    <span class="mi">116</span><span class="p">:</span> <span class="s2">&quot;87d7d7&quot;</span><span class="p">,</span>
-    <span class="mi">117</span><span class="p">:</span> <span class="s2">&quot;87d7ff&quot;</span><span class="p">,</span>
-    <span class="mi">118</span><span class="p">:</span> <span class="s2">&quot;87ff00&quot;</span><span class="p">,</span>
-    <span class="mi">119</span><span class="p">:</span> <span class="s2">&quot;87ff5f&quot;</span><span class="p">,</span>
-    <span class="mi">120</span><span class="p">:</span> <span class="s2">&quot;87ff87&quot;</span><span class="p">,</span>
-    <span class="mi">121</span><span class="p">:</span> <span class="s2">&quot;87ffaf&quot;</span><span class="p">,</span>
-    <span class="mi">122</span><span class="p">:</span> <span class="s2">&quot;87ffd7&quot;</span><span class="p">,</span>
-    <span class="mi">123</span><span class="p">:</span> <span class="s2">&quot;87ffff&quot;</span><span class="p">,</span>
-    <span class="mi">124</span><span class="p">:</span> <span class="s2">&quot;af0000&quot;</span><span class="p">,</span>
-    <span class="mi">125</span><span class="p">:</span> <span class="s2">&quot;af005f&quot;</span><span class="p">,</span>
-    <span class="mi">126</span><span class="p">:</span> <span class="s2">&quot;af0087&quot;</span><span class="p">,</span>
-    <span class="mi">127</span><span class="p">:</span> <span class="s2">&quot;af00af&quot;</span><span class="p">,</span>
-    <span class="mi">128</span><span class="p">:</span> <span class="s2">&quot;af00d7&quot;</span><span class="p">,</span>
-    <span class="mi">129</span><span class="p">:</span> <span class="s2">&quot;af00ff&quot;</span><span class="p">,</span>
-    <span class="mi">130</span><span class="p">:</span> <span class="s2">&quot;af5f00&quot;</span><span class="p">,</span>
-    <span class="mi">131</span><span class="p">:</span> <span class="s2">&quot;af5f5f&quot;</span><span class="p">,</span>
-    <span class="mi">132</span><span class="p">:</span> <span class="s2">&quot;af5f87&quot;</span><span class="p">,</span>
-    <span class="mi">133</span><span class="p">:</span> <span class="s2">&quot;af5faf&quot;</span><span class="p">,</span>
-    <span class="mi">134</span><span class="p">:</span> <span class="s2">&quot;af5fd7&quot;</span><span class="p">,</span>
-    <span class="mi">135</span><span class="p">:</span> <span class="s2">&quot;af5fff&quot;</span><span class="p">,</span>
-    <span class="mi">136</span><span class="p">:</span> <span class="s2">&quot;af8700&quot;</span><span class="p">,</span>
-    <span class="mi">137</span><span class="p">:</span> <span class="s2">&quot;af875f&quot;</span><span class="p">,</span>
-    <span class="mi">138</span><span class="p">:</span> <span class="s2">&quot;af8787&quot;</span><span class="p">,</span>
-    <span class="mi">139</span><span class="p">:</span> <span class="s2">&quot;af87af&quot;</span><span class="p">,</span>
-    <span class="mi">140</span><span class="p">:</span> <span class="s2">&quot;af87d7&quot;</span><span class="p">,</span>
-    <span class="mi">141</span><span class="p">:</span> <span class="s2">&quot;af87ff&quot;</span><span class="p">,</span>
-    <span class="mi">142</span><span class="p">:</span> <span class="s2">&quot;afaf00&quot;</span><span class="p">,</span>
-    <span class="mi">143</span><span class="p">:</span> <span class="s2">&quot;afaf5f&quot;</span><span class="p">,</span>
-    <span class="mi">144</span><span class="p">:</span> <span class="s2">&quot;afaf87&quot;</span><span class="p">,</span>
-    <span class="mi">145</span><span class="p">:</span> <span class="s2">&quot;afafaf&quot;</span><span class="p">,</span>
-    <span class="mi">146</span><span class="p">:</span> <span class="s2">&quot;afafd7&quot;</span><span class="p">,</span>
-    <span class="mi">147</span><span class="p">:</span> <span class="s2">&quot;afafff&quot;</span><span class="p">,</span>
-    <span class="mi">148</span><span class="p">:</span> <span class="s2">&quot;afd700&quot;</span><span class="p">,</span>
-    <span class="mi">149</span><span class="p">:</span> <span class="s2">&quot;afd75f&quot;</span><span class="p">,</span>
-    <span class="mi">150</span><span class="p">:</span> <span class="s2">&quot;afd787&quot;</span><span class="p">,</span>
-    <span class="mi">151</span><span class="p">:</span> <span class="s2">&quot;afd7af&quot;</span><span class="p">,</span>
-    <span class="mi">152</span><span class="p">:</span> <span class="s2">&quot;afd7d7&quot;</span><span class="p">,</span>
-    <span class="mi">153</span><span class="p">:</span> <span class="s2">&quot;afd7ff&quot;</span><span class="p">,</span>
-    <span class="mi">154</span><span class="p">:</span> <span class="s2">&quot;afff00&quot;</span><span class="p">,</span>
-    <span class="mi">155</span><span class="p">:</span> <span class="s2">&quot;afff5f&quot;</span><span class="p">,</span>
-    <span class="mi">156</span><span class="p">:</span> <span class="s2">&quot;afff87&quot;</span><span class="p">,</span>
-    <span class="mi">157</span><span class="p">:</span> <span class="s2">&quot;afffaf&quot;</span><span class="p">,</span>
-    <span class="mi">158</span><span class="p">:</span> <span class="s2">&quot;afffd7&quot;</span><span class="p">,</span>
-    <span class="mi">159</span><span class="p">:</span> <span class="s2">&quot;afffff&quot;</span><span class="p">,</span>
-    <span class="mi">160</span><span class="p">:</span> <span class="s2">&quot;d70000&quot;</span><span class="p">,</span>
-    <span class="mi">161</span><span class="p">:</span> <span class="s2">&quot;d7005f&quot;</span><span class="p">,</span>
-    <span class="mi">162</span><span class="p">:</span> <span class="s2">&quot;d70087&quot;</span><span class="p">,</span>
-    <span class="mi">163</span><span class="p">:</span> <span class="s2">&quot;d700af&quot;</span><span class="p">,</span>
-    <span class="mi">164</span><span class="p">:</span> <span class="s2">&quot;d700d7&quot;</span><span class="p">,</span>
-    <span class="mi">165</span><span class="p">:</span> <span class="s2">&quot;d700ff&quot;</span><span class="p">,</span>
-    <span class="mi">166</span><span class="p">:</span> <span class="s2">&quot;d75f00&quot;</span><span class="p">,</span>
-    <span class="mi">167</span><span class="p">:</span> <span class="s2">&quot;d75f5f&quot;</span><span class="p">,</span>
-    <span class="mi">168</span><span class="p">:</span> <span class="s2">&quot;d75f87&quot;</span><span class="p">,</span>
-    <span class="mi">169</span><span class="p">:</span> <span class="s2">&quot;d75faf&quot;</span><span class="p">,</span>
-    <span class="mi">170</span><span class="p">:</span> <span class="s2">&quot;d75fd7&quot;</span><span class="p">,</span>
-    <span class="mi">171</span><span class="p">:</span> <span class="s2">&quot;d75fff&quot;</span><span class="p">,</span>
-    <span class="mi">172</span><span class="p">:</span> <span class="s2">&quot;d78700&quot;</span><span class="p">,</span>
-    <span class="mi">173</span><span class="p">:</span> <span class="s2">&quot;d7875f&quot;</span><span class="p">,</span>
-    <span class="mi">174</span><span class="p">:</span> <span class="s2">&quot;d78787&quot;</span><span class="p">,</span>
-    <span class="mi">175</span><span class="p">:</span> <span class="s2">&quot;d787af&quot;</span><span class="p">,</span>
-    <span class="mi">176</span><span class="p">:</span> <span class="s2">&quot;d787d7&quot;</span><span class="p">,</span>
-    <span class="mi">177</span><span class="p">:</span> <span class="s2">&quot;d787ff&quot;</span><span class="p">,</span>
-    <span class="mi">178</span><span class="p">:</span> <span class="s2">&quot;d7af00&quot;</span><span class="p">,</span>
-    <span class="mi">179</span><span class="p">:</span> <span class="s2">&quot;d7af5f&quot;</span><span class="p">,</span>
-    <span class="mi">180</span><span class="p">:</span> <span class="s2">&quot;d7af87&quot;</span><span class="p">,</span>
-    <span class="mi">181</span><span class="p">:</span> <span class="s2">&quot;d7afaf&quot;</span><span class="p">,</span>
-    <span class="mi">182</span><span class="p">:</span> <span class="s2">&quot;d7afd7&quot;</span><span class="p">,</span>
-    <span class="mi">183</span><span class="p">:</span> <span class="s2">&quot;d7afff&quot;</span><span class="p">,</span>
-    <span class="mi">184</span><span class="p">:</span> <span class="s2">&quot;d7d700&quot;</span><span class="p">,</span>
-    <span class="mi">185</span><span class="p">:</span> <span class="s2">&quot;d7d75f&quot;</span><span class="p">,</span>
-    <span class="mi">186</span><span class="p">:</span> <span class="s2">&quot;d7d787&quot;</span><span class="p">,</span>
-    <span class="mi">187</span><span class="p">:</span> <span class="s2">&quot;d7d7af&quot;</span><span class="p">,</span>
-    <span class="mi">188</span><span class="p">:</span> <span class="s2">&quot;d7d7d7&quot;</span><span class="p">,</span>
-    <span class="mi">189</span><span class="p">:</span> <span class="s2">&quot;d7d7ff&quot;</span><span class="p">,</span>
-    <span class="mi">190</span><span class="p">:</span> <span class="s2">&quot;d7ff00&quot;</span><span class="p">,</span>
-    <span class="mi">191</span><span class="p">:</span> <span class="s2">&quot;d7ff5f&quot;</span><span class="p">,</span>
-    <span class="mi">192</span><span class="p">:</span> <span class="s2">&quot;d7ff87&quot;</span><span class="p">,</span>
-    <span class="mi">193</span><span class="p">:</span> <span class="s2">&quot;d7ffaf&quot;</span><span class="p">,</span>
-    <span class="mi">194</span><span class="p">:</span> <span class="s2">&quot;d7ffd7&quot;</span><span class="p">,</span>
-    <span class="mi">195</span><span class="p">:</span> <span class="s2">&quot;d7ffff&quot;</span><span class="p">,</span>
-    <span class="mi">196</span><span class="p">:</span> <span class="s2">&quot;ff0000&quot;</span><span class="p">,</span>
-    <span class="mi">197</span><span class="p">:</span> <span class="s2">&quot;ff005f&quot;</span><span class="p">,</span>
-    <span class="mi">198</span><span class="p">:</span> <span class="s2">&quot;ff0087&quot;</span><span class="p">,</span>
-    <span class="mi">199</span><span class="p">:</span> <span class="s2">&quot;ff00af&quot;</span><span class="p">,</span>
-    <span class="mi">200</span><span class="p">:</span> <span class="s2">&quot;ff00d7&quot;</span><span class="p">,</span>
-    <span class="mi">201</span><span class="p">:</span> <span class="s2">&quot;ff00ff&quot;</span><span class="p">,</span>
-    <span class="mi">202</span><span class="p">:</span> <span class="s2">&quot;ff5f00&quot;</span><span class="p">,</span>
-    <span class="mi">203</span><span class="p">:</span> <span class="s2">&quot;ff5f5f&quot;</span><span class="p">,</span>
-    <span class="mi">204</span><span class="p">:</span> <span class="s2">&quot;ff5f87&quot;</span><span class="p">,</span>
-    <span class="mi">205</span><span class="p">:</span> <span class="s2">&quot;ff5faf&quot;</span><span class="p">,</span>
-    <span class="mi">206</span><span class="p">:</span> <span class="s2">&quot;ff5fd7&quot;</span><span class="p">,</span>
-    <span class="mi">207</span><span class="p">:</span> <span class="s2">&quot;ff5fff&quot;</span><span class="p">,</span>
-    <span class="mi">208</span><span class="p">:</span> <span class="s2">&quot;ff8700&quot;</span><span class="p">,</span>
-    <span class="mi">209</span><span class="p">:</span> <span class="s2">&quot;ff875f&quot;</span><span class="p">,</span>
-    <span class="mi">210</span><span class="p">:</span> <span class="s2">&quot;ff8787&quot;</span><span class="p">,</span>
-    <span class="mi">211</span><span class="p">:</span> <span class="s2">&quot;ff87af&quot;</span><span class="p">,</span>
-    <span class="mi">212</span><span class="p">:</span> <span class="s2">&quot;ff87d7&quot;</span><span class="p">,</span>
-    <span class="mi">213</span><span class="p">:</span> <span class="s2">&quot;ff87ff&quot;</span><span class="p">,</span>
-    <span class="mi">214</span><span class="p">:</span> <span class="s2">&quot;ffaf00&quot;</span><span class="p">,</span>
-    <span class="mi">215</span><span class="p">:</span> <span class="s2">&quot;ffaf5f&quot;</span><span class="p">,</span>
-    <span class="mi">216</span><span class="p">:</span> <span class="s2">&quot;ffaf87&quot;</span><span class="p">,</span>
-    <span class="mi">217</span><span class="p">:</span> <span class="s2">&quot;ffafaf&quot;</span><span class="p">,</span>
-    <span class="mi">218</span><span class="p">:</span> <span class="s2">&quot;ffafd7&quot;</span><span class="p">,</span>
-    <span class="mi">219</span><span class="p">:</span> <span class="s2">&quot;ffafff&quot;</span><span class="p">,</span>
-    <span class="mi">220</span><span class="p">:</span> <span class="s2">&quot;ffd700&quot;</span><span class="p">,</span>
-    <span class="mi">221</span><span class="p">:</span> <span class="s2">&quot;ffd75f&quot;</span><span class="p">,</span>
-    <span class="mi">222</span><span class="p">:</span> <span class="s2">&quot;ffd787&quot;</span><span class="p">,</span>
-    <span class="mi">223</span><span class="p">:</span> <span class="s2">&quot;ffd7af&quot;</span><span class="p">,</span>
-    <span class="mi">224</span><span class="p">:</span> <span class="s2">&quot;ffd7d7&quot;</span><span class="p">,</span>
-    <span class="mi">225</span><span class="p">:</span> <span class="s2">&quot;ffd7ff&quot;</span><span class="p">,</span>
-    <span class="mi">226</span><span class="p">:</span> <span class="s2">&quot;ffff00&quot;</span><span class="p">,</span>
-    <span class="mi">227</span><span class="p">:</span> <span class="s2">&quot;ffff5f&quot;</span><span class="p">,</span>
-    <span class="mi">228</span><span class="p">:</span> <span class="s2">&quot;ffff87&quot;</span><span class="p">,</span>
-    <span class="mi">229</span><span class="p">:</span> <span class="s2">&quot;ffffaf&quot;</span><span class="p">,</span>
-    <span class="mi">230</span><span class="p">:</span> <span class="s2">&quot;ffffd7&quot;</span><span class="p">,</span>
-    <span class="mi">231</span><span class="p">:</span> <span class="s2">&quot;ffffff&quot;</span><span class="p">,</span>
-    <span class="c1"># Gray-scale</span>
-    <span class="mi">232</span><span class="p">:</span> <span class="s2">&quot;080808&quot;</span><span class="p">,</span>
-    <span class="mi">233</span><span class="p">:</span> <span class="s2">&quot;121212&quot;</span><span class="p">,</span>
-    <span class="mi">234</span><span class="p">:</span> <span class="s2">&quot;1c1c1c&quot;</span><span class="p">,</span>
-    <span class="mi">235</span><span class="p">:</span> <span class="s2">&quot;262626&quot;</span><span class="p">,</span>
-    <span class="mi">236</span><span class="p">:</span> <span class="s2">&quot;303030&quot;</span><span class="p">,</span>
-    <span class="mi">237</span><span class="p">:</span> <span class="s2">&quot;3a3a3a&quot;</span><span class="p">,</span>
-    <span class="mi">238</span><span class="p">:</span> <span class="s2">&quot;444444&quot;</span><span class="p">,</span>
-    <span class="mi">239</span><span class="p">:</span> <span class="s2">&quot;4e4e4e&quot;</span><span class="p">,</span>
-    <span class="mi">240</span><span class="p">:</span> <span class="s2">&quot;585858&quot;</span><span class="p">,</span>
-    <span class="mi">241</span><span class="p">:</span> <span class="s2">&quot;626262&quot;</span><span class="p">,</span>
-    <span class="mi">242</span><span class="p">:</span> <span class="s2">&quot;6c6c6c&quot;</span><span class="p">,</span>
-    <span class="mi">243</span><span class="p">:</span> <span class="s2">&quot;767676&quot;</span><span class="p">,</span>
-    <span class="mi">244</span><span class="p">:</span> <span class="s2">&quot;808080&quot;</span><span class="p">,</span>
-    <span class="mi">245</span><span class="p">:</span> <span class="s2">&quot;8a8a8a&quot;</span><span class="p">,</span>
-    <span class="mi">246</span><span class="p">:</span> <span class="s2">&quot;949494&quot;</span><span class="p">,</span>
-    <span class="mi">247</span><span class="p">:</span> <span class="s2">&quot;9e9e9e&quot;</span><span class="p">,</span>
-    <span class="mi">248</span><span class="p">:</span> <span class="s2">&quot;a8a8a8&quot;</span><span class="p">,</span>
-    <span class="mi">249</span><span class="p">:</span> <span class="s2">&quot;b2b2b2&quot;</span><span class="p">,</span>
-    <span class="mi">250</span><span class="p">:</span> <span class="s2">&quot;bcbcbc&quot;</span><span class="p">,</span>
-    <span class="mi">251</span><span class="p">:</span> <span class="s2">&quot;c6c6c6&quot;</span><span class="p">,</span>
-    <span class="mi">252</span><span class="p">:</span> <span class="s2">&quot;d0d0d0&quot;</span><span class="p">,</span>
-    <span class="mi">253</span><span class="p">:</span> <span class="s2">&quot;dadada&quot;</span><span class="p">,</span>
-    <span class="mi">254</span><span class="p">:</span> <span class="s2">&quot;e4e4e4&quot;</span><span class="p">,</span>
-    <span class="mi">255</span><span class="p">:</span> <span class="s2">&quot;eeeeee&quot;</span><span class="p">,</span>
-<span class="p">}</span>
+<span class="n">COLOR_TABLE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">170</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">170</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">170</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">170</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">85</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">85</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">85</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">85</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">135</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">175</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">38</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">38</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">58</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span> <span class="mi">58</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">68</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">68</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">78</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">78</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">88</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">88</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">98</span><span class="p">,</span> <span class="mi">98</span><span class="p">,</span> <span class="mi">98</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">108</span><span class="p">,</span> <span class="mi">108</span><span class="p">,</span> <span class="mi">108</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">118</span><span class="p">,</span> <span class="mi">118</span><span class="p">,</span> <span class="mi">118</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">138</span><span class="p">,</span> <span class="mi">138</span><span class="p">,</span> <span class="mi">138</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">148</span><span class="p">,</span> <span class="mi">148</span><span class="p">,</span> <span class="mi">148</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">158</span><span class="p">,</span> <span class="mi">158</span><span class="p">,</span> <span class="mi">158</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">168</span><span class="p">,</span> <span class="mi">168</span><span class="p">,</span> <span class="mi">168</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">178</span><span class="p">,</span> <span class="mi">178</span><span class="p">,</span> <span class="mi">178</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">188</span><span class="p">,</span> <span class="mi">188</span><span class="p">,</span> <span class="mi">188</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">198</span><span class="p">,</span> <span class="mi">198</span><span class="p">,</span> <span class="mi">198</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">208</span><span class="p">,</span> <span class="mi">208</span><span class="p">,</span> <span class="mi">208</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">218</span><span class="p">,</span> <span class="mi">218</span><span class="p">,</span> <span class="mi">218</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">228</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">228</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">238</span><span class="p">,</span> <span class="mi">238</span><span class="p">,</span> <span class="mi">238</span><span class="p">),</span>
+<span class="p">]</span>
 
 <span class="n">XTERM_NAMED_COLORS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>
@@ -511,11 +511,7 @@ answers I've ever bumped into.</p>
 <span class="sd">            rgb: The RGB value to base the new color off of.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># This is here so pylint doesn&#39;t detect the method as being abstract.</span>
-        <span class="c1"># The code calling this method will catch the exception and handle it</span>
-        <span class="c1"># correctly.</span>
-        <span class="k">if</span> <span class="n">rgb</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -611,8 +607,8 @@ answers I've ever bumped into.</p>
 <span class="sd">        terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">system</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">get_colorsystem</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;=</span> <span class="n">system</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+        <span class="n">system</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">colorsystem</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">&lt;=</span> <span class="n">system</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
 
         <span class="n">colortype</span> <span class="o">=</span> <span class="n">SYSTEM_TO_TYPE</span><span class="p">[</span><span class="n">system</span><span class="p">]</span>
@@ -656,22 +652,22 @@ answers I've ever bumped into.</p>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">IndexedColor</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">color</span>
 
-        <span class="n">distances</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Normalize the color values</span>
+        <span class="n">red</span><span class="p">,</span> <span class="n">green</span><span class="p">,</span> <span class="n">blue</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">255</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">)</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">COLOR_TABLE</span>
-        <span class="k">if</span> <span class="n">terminal</span><span class="o">.</span><span class="n">get_colorsystem</span><span class="p">()</span> <span class="ow">is</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">STANDARD</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">)}</span>
+        <span class="c1"># Calculate the eight-bit color index</span>
+        <span class="k">if</span> <span class="n">terminal</span><span class="o">.</span><span class="n">colorsystem</span> <span class="ow">is</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">EIGHT_BIT</span><span class="p">:</span>
+            <span class="n">color_num</span> <span class="o">=</span> <span class="mi">16</span>
+            <span class="n">color_num</span> <span class="o">+=</span> <span class="mi">36</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">red</span> <span class="o">*</span> <span class="mf">5.0</span><span class="p">)</span>
+            <span class="n">color_num</span> <span class="o">+=</span> <span class="mi">6</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">green</span> <span class="o">*</span> <span class="mf">5.0</span><span class="p">)</span>
+            <span class="n">color_num</span> <span class="o">+=</span> <span class="nb">round</span><span class="p">(</span><span class="n">blue</span> <span class="o">*</span> <span class="mf">5.0</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">hxcol</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">red2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hxcol</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-            <span class="n">blue2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hxcol</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-            <span class="n">green2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hxcol</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">color_num</span><span class="p">))</span>
 
-            <span class="n">distances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_get_color_difference</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="p">(</span><span class="n">red2</span><span class="p">,</span> <span class="n">blue2</span><span class="p">,</span> <span class="n">green2</span><span class="p">)))</span>
-
-        <span class="n">index</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="n">distances</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">)</span>
-
+        <span class="c1"># Find the least-different color in the table</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">_get_color_difference</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">COLOR_TABLE</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
         <span class="n">color</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+
         <span class="n">_COLOR_MATCH_CACHE</span><span class="p">[</span><span class="n">rgb</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="k">return</span> <span class="n">color</span>
@@ -704,11 +700,7 @@ answers I've ever bumped into.</p>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rgb</span>
 
         <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">hexc</span> <span class="o">=</span> <span class="n">COLOR_TABLE</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-
-        <span class="n">rgb</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
-            <span class="n">rgb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">hexc</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">COLOR_TABLE</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
@@ -749,6 +741,12 @@ answers I've ever bumped into.</p>
 
         <span class="n">rgb</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rgb</span> <span class="o">=</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_rgb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">RGBColor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns an `RGBColor` from the given triplet.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">rgb</span><span class="p">)))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -806,7 +804,7 @@ answers I've ever bumped into.</p>
     <span class="n">red1</span><span class="p">,</span> <span class="n">green1</span><span class="p">,</span> <span class="n">blue1</span> <span class="o">=</span> <span class="n">rgb1</span>
     <span class="n">red2</span><span class="p">,</span> <span class="n">green2</span><span class="p">,</span> <span class="n">blue2</span> <span class="o">=</span> <span class="n">rgb2</span>
 
-    <span class="n">redmean</span> <span class="o">=</span> <span class="p">(</span><span class="n">red1</span> <span class="o">+</span> <span class="n">red2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">redmean</span> <span class="o">=</span> <span class="p">(</span><span class="n">red1</span> <span class="o">+</span> <span class="n">red2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
 
     <span class="n">delta_red</span> <span class="o">=</span> <span class="n">red1</span> <span class="o">-</span> <span class="n">red2</span>
     <span class="n">delta_green</span> <span class="o">=</span> <span class="n">green1</span> <span class="o">-</span> <span class="n">green2</span>
@@ -819,6 +817,7 @@ answers I've ever bumped into.</p>
     <span class="p">)</span>
 
 
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">str_to_color</span><span class="p">(</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">is_background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -863,15 +862,9 @@ answers I've ever bumped into.</p>
         <span class="k">return</span> <span class="n">code</span>
 
     <span class="n">text</span> <span class="o">=</span> <span class="n">_trim_code</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-    <span class="n">original</span> <span class="o">=</span> <span class="n">text</span>
 
-    <span class="c1"># Try to return from cache if possible</span>
-    <span class="c1"># This is a very minor optimization, as most repeated color constructions will already</span>
-    <span class="c1"># be cached in TIM. It still might be useful though.</span>
-    <span class="k">if</span> <span class="n">use_cache</span> <span class="ow">and</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_COLOR_CACHE</span><span class="p">:</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">_COLOR_CACHE</span><span class="p">[</span><span class="n">text</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span> <span class="k">if</span> <span class="n">localize</span> <span class="k">else</span> <span class="n">color</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">use_cache</span><span class="p">:</span>
+        <span class="n">str_to_color</span><span class="o">.</span><span class="n">cache_clear</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">):</span>
         <span class="n">is_background</span> <span class="o">=</span> <span class="kc">True</span>
@@ -880,26 +873,25 @@ answers I've ever bumped into.</p>
     <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">NAMED_COLORS</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">str_to_color</span><span class="p">(</span><span class="n">NAMED_COLORS</span><span class="p">[</span><span class="n">text</span><span class="p">],</span> <span class="n">is_background</span><span class="o">=</span><span class="n">is_background</span><span class="p">)</span>
 
+    <span class="n">color</span><span class="p">:</span> <span class="n">Color</span>
+
     <span class="c1"># This code is not pretty, but having these separate branches for each type</span>
     <span class="c1"># should improve the performance by quite a large margin.</span>
     <span class="n">match</span> <span class="o">=</span> <span class="n">RE_256</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">IndexedColor</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">background</span><span class="o">=</span><span class="n">is_background</span><span class="p">)</span>
-        <span class="n">_COLOR_CACHE</span><span class="p">[</span><span class="n">original</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span> <span class="k">if</span> <span class="n">localize</span> <span class="k">else</span> <span class="n">color</span>
 
     <span class="n">match</span> <span class="o">=</span> <span class="n">RE_HEX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">HEXColor</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">background</span><span class="o">=</span><span class="n">is_background</span><span class="p">)</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span>
-        <span class="n">_COLOR_CACHE</span><span class="p">[</span><span class="n">original</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span> <span class="k">if</span> <span class="n">localize</span> <span class="k">else</span> <span class="n">color</span>
 
     <span class="n">match</span> <span class="o">=</span> <span class="n">RE_RGB</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">RGBColor</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">background</span><span class="o">=</span><span class="n">is_background</span><span class="p">)</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span>
-        <span class="n">_COLOR_CACHE</span><span class="p">[</span><span class="n">original</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span> <span class="k">if</span> <span class="n">localize</span> <span class="k">else</span> <span class="n">color</span>
 
@@ -950,58 +942,6 @@ answers I've ever bumped into.</p>
     <span class="n">color</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">return</span> <span class="n">color</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="n">reset</span><span class="p">)</span>
-
-
-<span class="nd">@no_type_check</span>
-<span class="k">def</span> <span class="nf">_display_colorgrids</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Displays some RGB colorgrids in the terminal.</span>
-
-<span class="sd">    Runs on `python -m pytermgui.colors`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="kn">from</span> <span class="nn">pytermgui</span> <span class="kn">import</span> <span class="n">tim</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
-    <span class="kn">import</span> <span class="nn">colorsys</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
-
-    <span class="k">def</span> <span class="nf">_normalize</span><span class="p">(</span><span class="n">_rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">normalized</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">_col</span> <span class="o">*</span> <span class="mi">255</span><span class="p">))</span> <span class="k">for</span> <span class="n">_col</span> <span class="ow">in</span> <span class="n">_rgb</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">normalized</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">normalized</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">normalized</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">_get_colorbox</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">_buff</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">y_pos</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">x_pos</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
-                <span class="c1"># Mmmm, spiky code</span>
-                <span class="n">_hue</span> <span class="o">=</span> <span class="n">x_pos</span> <span class="o">/</span> <span class="mi">100</span>
-                <span class="n">_lightness</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="p">((</span><span class="n">y_pos</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.7</span><span class="p">)</span>
-                <span class="n">_rgb1</span> <span class="o">=</span> <span class="n">colorsys</span><span class="o">.</span><span class="n">hls_to_rgb</span><span class="p">(</span><span class="n">_hue</span><span class="p">,</span> <span class="n">_lightness</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-                <span class="n">_rgb2</span> <span class="o">=</span> <span class="n">colorsys</span><span class="o">.</span><span class="n">hls_to_rgb</span><span class="p">(</span><span class="n">_hue</span><span class="p">,</span> <span class="n">_lightness</span> <span class="o">+</span> <span class="mf">0.7</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-
-                <span class="n">_bg_color</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_normalize</span><span class="p">(</span><span class="n">_rgb1</span><span class="p">))</span>
-                <span class="n">_color</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_normalize</span><span class="p">(</span><span class="n">_rgb2</span><span class="p">))</span>
-                <span class="n">_buff</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">_bg_color</span><span class="si">}</span><span class="s2"> @</span><span class="si">{</span><span class="n">_color</span><span class="si">}</span><span class="s2">]▀&quot;</span>
-
-            <span class="n">_buff</span> <span class="o">+=</span> <span class="s2">&quot;[/]</span><span class="se">\n</span><span class="s2">&quot;</span>
-
-        <span class="k">return</span> <span class="n">_buff</span>
-
-    <span class="n">tim</span><span class="o">.</span><span class="n">should_cache</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="n">_buff</span> <span class="o">=</span> <span class="n">_get_colorbox</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">get_colorsystem</span><span class="p">())</span>
-    <span class="n">tim</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">_get_colorbox</span><span class="p">())</span>
-
-    <span class="n">terminal</span><span class="o">.</span><span class="n">forced_colorsystem</span> <span class="o">=</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">EIGHT_BIT</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">get_colorsystem</span><span class="p">())</span>
-    <span class="n">tim</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">_get_colorbox</span><span class="p">())</span>
-
-    <span class="n">terminal</span><span class="o">.</span><span class="n">forced_colorsystem</span> <span class="o">=</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">STANDARD</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">get_colorsystem</span><span class="p">())</span>
-    <span class="n">tim</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">_get_colorbox</span><span class="p">())</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">_display_colorgrids</span><span class="p">()</span>
 </pre></div>
 
         </details>
@@ -1010,7 +950,7 @@ answers I've ever bumped into.</p>
                 <section id="COLOR_TABLE">
                                 <div class="attr variable"><a class="headerlink" href="#COLOR_TABLE">#&nbsp;&nbsp</a>
 
-        <span class="name">COLOR_TABLE</span><span class="default_value"> = {0: &#39;000000&#39;, 1: &#39;800000&#39;, 2: &#39;008000&#39;, 3: &#39;808000&#39;, 4: &#39;000080&#39;, 5: &#39;800080&#39;, 6: &#39;008080&#39;, 7: &#39;c0c0c0&#39;, 8: &#39;808080&#39;, 9: &#39;ff0000&#39;, 10: &#39;00ff00&#39;, 11: &#39;ffff00&#39;, 12: &#39;0000ff&#39;, 13: &#39;ff00ff&#39;, 14: &#39;00ffff&#39;, 15: &#39;ffffff&#39;, 16: &#39;000000&#39;, 17: &#39;00005f&#39;, 18: &#39;000087&#39;, 19: &#39;0000af&#39;, 20: &#39;0000d7&#39;, 21: &#39;0000ff&#39;, 22: &#39;005f00&#39;, 23: &#39;005f5f&#39;, 24: &#39;005f87&#39;, 25: &#39;005faf&#39;, 26: &#39;005fd7&#39;, 27: &#39;005fff&#39;, 28: &#39;008700&#39;, 29: &#39;00875f&#39;, 30: &#39;008787&#39;, 31: &#39;0087af&#39;, 32: &#39;0087d7&#39;, 33: &#39;0087ff&#39;, 34: &#39;00af00&#39;, 35: &#39;00af5f&#39;, 36: &#39;00af87&#39;, 37: &#39;00afaf&#39;, 38: &#39;00afd7&#39;, 39: &#39;00afff&#39;, 40: &#39;00d700&#39;, 41: &#39;00d75f&#39;, 42: &#39;00d787&#39;, 43: &#39;00d7af&#39;, 44: &#39;00d7d7&#39;, 45: &#39;00d7ff&#39;, 46: &#39;00ff00&#39;, 47: &#39;00ff5f&#39;, 48: &#39;00ff87&#39;, 49: &#39;00ffaf&#39;, 50: &#39;00ffd7&#39;, 51: &#39;00ffff&#39;, 52: &#39;5f0000&#39;, 53: &#39;5f005f&#39;, 54: &#39;5f0087&#39;, 55: &#39;5f00af&#39;, 56: &#39;5f00d7&#39;, 57: &#39;5f00ff&#39;, 58: &#39;5f5f00&#39;, 59: &#39;5f5f5f&#39;, 60: &#39;5f5f87&#39;, 61: &#39;5f5faf&#39;, 62: &#39;5f5fd7&#39;, 63: &#39;5f5fff&#39;, 64: &#39;5f8700&#39;, 65: &#39;5f875f&#39;, 66: &#39;5f8787&#39;, 67: &#39;5f87af&#39;, 68: &#39;5f87d7&#39;, 69: &#39;5f87ff&#39;, 70: &#39;5faf00&#39;, 71: &#39;5faf5f&#39;, 72: &#39;5faf87&#39;, 73: &#39;5fafaf&#39;, 74: &#39;5fafd7&#39;, 75: &#39;5fafff&#39;, 76: &#39;5fd700&#39;, 77: &#39;5fd75f&#39;, 78: &#39;5fd787&#39;, 79: &#39;5fd7af&#39;, 80: &#39;5fd7d7&#39;, 81: &#39;5fd7ff&#39;, 82: &#39;5fff00&#39;, 83: &#39;5fff5f&#39;, 84: &#39;5fff87&#39;, 85: &#39;5fffaf&#39;, 86: &#39;5fffd7&#39;, 87: &#39;5fffff&#39;, 88: &#39;870000&#39;, 89: &#39;87005f&#39;, 90: &#39;870087&#39;, 91: &#39;8700af&#39;, 92: &#39;8700d7&#39;, 93: &#39;8700ff&#39;, 94: &#39;875f00&#39;, 95: &#39;875f5f&#39;, 96: &#39;875f87&#39;, 97: &#39;875faf&#39;, 98: &#39;875fd7&#39;, 99: &#39;875fff&#39;, 100: &#39;878700&#39;, 101: &#39;87875f&#39;, 102: &#39;878787&#39;, 103: &#39;8787af&#39;, 104: &#39;8787d7&#39;, 105: &#39;8787ff&#39;, 106: &#39;87af00&#39;, 107: &#39;87af5f&#39;, 108: &#39;87af87&#39;, 109: &#39;87afaf&#39;, 110: &#39;87afd7&#39;, 111: &#39;87afff&#39;, 112: &#39;87d700&#39;, 113: &#39;87d75f&#39;, 114: &#39;87d787&#39;, 115: &#39;87d7af&#39;, 116: &#39;87d7d7&#39;, 117: &#39;87d7ff&#39;, 118: &#39;87ff00&#39;, 119: &#39;87ff5f&#39;, 120: &#39;87ff87&#39;, 121: &#39;87ffaf&#39;, 122: &#39;87ffd7&#39;, 123: &#39;87ffff&#39;, 124: &#39;af0000&#39;, 125: &#39;af005f&#39;, 126: &#39;af0087&#39;, 127: &#39;af00af&#39;, 128: &#39;af00d7&#39;, 129: &#39;af00ff&#39;, 130: &#39;af5f00&#39;, 131: &#39;af5f5f&#39;, 132: &#39;af5f87&#39;, 133: &#39;af5faf&#39;, 134: &#39;af5fd7&#39;, 135: &#39;af5fff&#39;, 136: &#39;af8700&#39;, 137: &#39;af875f&#39;, 138: &#39;af8787&#39;, 139: &#39;af87af&#39;, 140: &#39;af87d7&#39;, 141: &#39;af87ff&#39;, 142: &#39;afaf00&#39;, 143: &#39;afaf5f&#39;, 144: &#39;afaf87&#39;, 145: &#39;afafaf&#39;, 146: &#39;afafd7&#39;, 147: &#39;afafff&#39;, 148: &#39;afd700&#39;, 149: &#39;afd75f&#39;, 150: &#39;afd787&#39;, 151: &#39;afd7af&#39;, 152: &#39;afd7d7&#39;, 153: &#39;afd7ff&#39;, 154: &#39;afff00&#39;, 155: &#39;afff5f&#39;, 156: &#39;afff87&#39;, 157: &#39;afffaf&#39;, 158: &#39;afffd7&#39;, 159: &#39;afffff&#39;, 160: &#39;d70000&#39;, 161: &#39;d7005f&#39;, 162: &#39;d70087&#39;, 163: &#39;d700af&#39;, 164: &#39;d700d7&#39;, 165: &#39;d700ff&#39;, 166: &#39;d75f00&#39;, 167: &#39;d75f5f&#39;, 168: &#39;d75f87&#39;, 169: &#39;d75faf&#39;, 170: &#39;d75fd7&#39;, 171: &#39;d75fff&#39;, 172: &#39;d78700&#39;, 173: &#39;d7875f&#39;, 174: &#39;d78787&#39;, 175: &#39;d787af&#39;, 176: &#39;d787d7&#39;, 177: &#39;d787ff&#39;, 178: &#39;d7af00&#39;, 179: &#39;d7af5f&#39;, 180: &#39;d7af87&#39;, 181: &#39;d7afaf&#39;, 182: &#39;d7afd7&#39;, 183: &#39;d7afff&#39;, 184: &#39;d7d700&#39;, 185: &#39;d7d75f&#39;, 186: &#39;d7d787&#39;, 187: &#39;d7d7af&#39;, 188: &#39;d7d7d7&#39;, 189: &#39;d7d7ff&#39;, 190: &#39;d7ff00&#39;, 191: &#39;d7ff5f&#39;, 192: &#39;d7ff87&#39;, 193: &#39;d7ffaf&#39;, 194: &#39;d7ffd7&#39;, 195: &#39;d7ffff&#39;, 196: &#39;ff0000&#39;, 197: &#39;ff005f&#39;, 198: &#39;ff0087&#39;, 199: &#39;ff00af&#39;, 200: &#39;ff00d7&#39;, 201: &#39;ff00ff&#39;, 202: &#39;ff5f00&#39;, 203: &#39;ff5f5f&#39;, 204: &#39;ff5f87&#39;, 205: &#39;ff5faf&#39;, 206: &#39;ff5fd7&#39;, 207: &#39;ff5fff&#39;, 208: &#39;ff8700&#39;, 209: &#39;ff875f&#39;, 210: &#39;ff8787&#39;, 211: &#39;ff87af&#39;, 212: &#39;ff87d7&#39;, 213: &#39;ff87ff&#39;, 214: &#39;ffaf00&#39;, 215: &#39;ffaf5f&#39;, 216: &#39;ffaf87&#39;, 217: &#39;ffafaf&#39;, 218: &#39;ffafd7&#39;, 219: &#39;ffafff&#39;, 220: &#39;ffd700&#39;, 221: &#39;ffd75f&#39;, 222: &#39;ffd787&#39;, 223: &#39;ffd7af&#39;, 224: &#39;ffd7d7&#39;, 225: &#39;ffd7ff&#39;, 226: &#39;ffff00&#39;, 227: &#39;ffff5f&#39;, 228: &#39;ffff87&#39;, 229: &#39;ffffaf&#39;, 230: &#39;ffffd7&#39;, 231: &#39;ffffff&#39;, 232: &#39;080808&#39;, 233: &#39;121212&#39;, 234: &#39;1c1c1c&#39;, 235: &#39;262626&#39;, 236: &#39;303030&#39;, 237: &#39;3a3a3a&#39;, 238: &#39;444444&#39;, 239: &#39;4e4e4e&#39;, 240: &#39;585858&#39;, 241: &#39;626262&#39;, 242: &#39;6c6c6c&#39;, 243: &#39;767676&#39;, 244: &#39;808080&#39;, 245: &#39;8a8a8a&#39;, 246: &#39;949494&#39;, 247: &#39;9e9e9e&#39;, 248: &#39;a8a8a8&#39;, 249: &#39;b2b2b2&#39;, 250: &#39;bcbcbc&#39;, 251: &#39;c6c6c6&#39;, 252: &#39;d0d0d0&#39;, 253: &#39;dadada&#39;, 254: &#39;e4e4e4&#39;, 255: &#39;eeeeee&#39;}</span>
+        <span class="name">COLOR_TABLE</span><span class="default_value"> = [(0, 0, 0), (170, 0, 0), (0, 170, 0), (170, 85, 0), (0, 0, 170), (170, 0, 170), (0, 170, 170), (170, 170, 170), (85, 85, 85), (255, 85, 85), (85, 255, 85), (255, 255, 85), (85, 85, 255), (255, 85, 255), (85, 255, 255), (255, 255, 255), (0, 0, 0), (0, 0, 95), (0, 0, 135), (0, 0, 175), (0, 0, 215), (0, 0, 255), (0, 95, 0), (0, 95, 95), (0, 95, 135), (0, 95, 175), (0, 95, 215), (0, 95, 255), (0, 135, 0), (0, 135, 95), (0, 135, 135), (0, 135, 175), (0, 135, 215), (0, 135, 255), (0, 175, 0), (0, 175, 95), (0, 175, 135), (0, 175, 175), (0, 175, 215), (0, 175, 255), (0, 215, 0), (0, 215, 95), (0, 215, 135), (0, 215, 175), (0, 215, 215), (0, 215, 255), (0, 255, 0), (0, 255, 95), (0, 255, 135), (0, 255, 175), (0, 255, 215), (0, 255, 255), (95, 0, 0), (95, 0, 95), (95, 0, 135), (95, 0, 175), (95, 0, 215), (95, 0, 255), (95, 95, 0), (95, 95, 95), (95, 95, 135), (95, 95, 175), (95, 95, 215), (95, 95, 255), (95, 135, 0), (95, 135, 95), (95, 135, 135), (95, 135, 175), (95, 135, 215), (95, 135, 255), (95, 175, 0), (95, 175, 95), (95, 175, 135), (95, 175, 175), (95, 175, 215), (95, 175, 255), (95, 215, 0), (95, 215, 95), (95, 215, 135), (95, 215, 175), (95, 215, 215), (95, 215, 255), (95, 255, 0), (95, 255, 95), (95, 255, 135), (95, 255, 175), (95, 255, 215), (95, 255, 255), (135, 0, 0), (135, 0, 95), (135, 0, 135), (135, 0, 175), (135, 0, 215), (135, 0, 255), (135, 95, 0), (135, 95, 95), (135, 95, 135), (135, 95, 175), (135, 95, 215), (135, 95, 255), (135, 135, 0), (135, 135, 95), (135, 135, 135), (135, 135, 175), (135, 135, 215), (135, 135, 255), (135, 175, 0), (135, 175, 95), (135, 175, 135), (135, 175, 175), (135, 175, 215), (135, 175, 255), (135, 215, 0), (135, 215, 95), (135, 215, 135), (135, 215, 175), (135, 215, 215), (135, 215, 255), (135, 255, 0), (135, 255, 95), (135, 255, 135), (135, 255, 175), (135, 255, 215), (135, 255, 255), (175, 0, 0), (175, 0, 95), (175, 0, 135), (175, 0, 175), (175, 0, 215), (175, 0, 255), (175, 95, 0), (175, 95, 95), (175, 95, 135), (175, 95, 175), (175, 95, 215), (175, 95, 255), (175, 135, 0), (175, 135, 95), (175, 135, 135), (175, 135, 175), (175, 135, 215), (175, 135, 255), (175, 175, 0), (175, 175, 95), (175, 175, 135), (175, 175, 175), (175, 175, 215), (175, 175, 255), (175, 215, 0), (175, 215, 95), (175, 215, 135), (175, 215, 175), (175, 215, 215), (175, 215, 255), (175, 255, 0), (175, 255, 95), (175, 255, 135), (175, 255, 175), (175, 255, 215), (175, 255, 255), (215, 0, 0), (215, 0, 95), (215, 0, 135), (215, 0, 175), (215, 0, 215), (215, 0, 255), (215, 95, 0), (215, 95, 95), (215, 95, 135), (215, 95, 175), (215, 95, 215), (215, 95, 255), (215, 135, 0), (215, 135, 95), (215, 135, 135), (215, 135, 175), (215, 135, 215), (215, 135, 255), (215, 175, 0), (215, 175, 95), (215, 175, 135), (215, 175, 175), (215, 175, 215), (215, 175, 255), (215, 215, 0), (215, 215, 95), (215, 215, 135), (215, 215, 175), (215, 215, 215), (215, 215, 255), (215, 255, 0), (215, 255, 95), (215, 255, 135), (215, 255, 175), (215, 255, 215), (215, 255, 255), (255, 0, 0), (255, 0, 95), (255, 0, 135), (255, 0, 175), (255, 0, 215), (255, 0, 255), (255, 95, 0), (255, 95, 95), (255, 95, 135), (255, 95, 175), (255, 95, 215), (255, 95, 255), (255, 135, 0), (255, 135, 95), (255, 135, 135), (255, 135, 175), (255, 135, 215), (255, 135, 255), (255, 175, 0), (255, 175, 95), (255, 175, 135), (255, 175, 175), (255, 175, 215), (255, 175, 255), (255, 215, 0), (255, 215, 95), (255, 215, 135), (255, 215, 175), (255, 215, 215), (255, 215, 255), (255, 255, 0), (255, 255, 95), (255, 255, 135), (255, 255, 175), (255, 255, 215), (255, 255, 255), (8, 8, 8), (18, 18, 18), (28, 28, 28), (38, 38, 38), (48, 48, 48), (58, 58, 58), (68, 68, 68), (78, 78, 78), (88, 88, 88), (98, 98, 98), (108, 108, 108), (118, 118, 118), (128, 128, 128), (138, 138, 138), (148, 148, 148), (158, 158, 158), (168, 168, 168), (178, 178, 178), (188, 188, 188), (198, 198, 198), (208, 208, 208), (218, 218, 218), (228, 228, 228), (238, 238, 238)]</span>
     </div>
 
     
@@ -1162,7 +1102,8 @@ str formats.</li>
                 <section id="str_to_color">
                             <div class="attr function"><a class="headerlink" href="#str_to_color">#&nbsp;&nbsp</a>
 
-        
+                <div class="decorator">@lru_cache(maxsize=None)</div>
+
             <span class="def">def</span>
             <span class="name">str_to_color</span><span class="signature">(
     text: str,
@@ -1174,7 +1115,8 @@ str formats.</li>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">str_to_color</span><span class="p">(</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">str_to_color</span><span class="p">(</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">is_background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">localize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1218,15 +1160,9 @@ str formats.</li>
         <span class="k">return</span> <span class="n">code</span>
 
     <span class="n">text</span> <span class="o">=</span> <span class="n">_trim_code</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-    <span class="n">original</span> <span class="o">=</span> <span class="n">text</span>
 
-    <span class="c1"># Try to return from cache if possible</span>
-    <span class="c1"># This is a very minor optimization, as most repeated color constructions will already</span>
-    <span class="c1"># be cached in TIM. It still might be useful though.</span>
-    <span class="k">if</span> <span class="n">use_cache</span> <span class="ow">and</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_COLOR_CACHE</span><span class="p">:</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">_COLOR_CACHE</span><span class="p">[</span><span class="n">text</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span> <span class="k">if</span> <span class="n">localize</span> <span class="k">else</span> <span class="n">color</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">use_cache</span><span class="p">:</span>
+        <span class="n">str_to_color</span><span class="o">.</span><span class="n">cache_clear</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">):</span>
         <span class="n">is_background</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1235,26 +1171,25 @@ str formats.</li>
     <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">NAMED_COLORS</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">str_to_color</span><span class="p">(</span><span class="n">NAMED_COLORS</span><span class="p">[</span><span class="n">text</span><span class="p">],</span> <span class="n">is_background</span><span class="o">=</span><span class="n">is_background</span><span class="p">)</span>
 
+    <span class="n">color</span><span class="p">:</span> <span class="n">Color</span>
+
     <span class="c1"># This code is not pretty, but having these separate branches for each type</span>
     <span class="c1"># should improve the performance by quite a large margin.</span>
     <span class="n">match</span> <span class="o">=</span> <span class="n">RE_256</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">IndexedColor</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">background</span><span class="o">=</span><span class="n">is_background</span><span class="p">)</span>
-        <span class="n">_COLOR_CACHE</span><span class="p">[</span><span class="n">original</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span> <span class="k">if</span> <span class="n">localize</span> <span class="k">else</span> <span class="n">color</span>
 
     <span class="n">match</span> <span class="o">=</span> <span class="n">RE_HEX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">HEXColor</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">background</span><span class="o">=</span><span class="n">is_background</span><span class="p">)</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span>
-        <span class="n">_COLOR_CACHE</span><span class="p">[</span><span class="n">original</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span> <span class="k">if</span> <span class="n">localize</span> <span class="k">else</span> <span class="n">color</span>
 
     <span class="n">match</span> <span class="o">=</span> <span class="n">RE_RGB</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">RGBColor</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">background</span><span class="o">=</span><span class="n">is_background</span><span class="p">)</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span>
-        <span class="n">_COLOR_CACHE</span><span class="p">[</span><span class="n">original</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span> <span class="k">if</span> <span class="n">localize</span> <span class="k">else</span> <span class="n">color</span>
 
@@ -1328,11 +1263,7 @@ Mostly used internally, when set will take precedence over syntax of leading
 <span class="sd">            rgb: The RGB value to base the new color off of.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># This is here so pylint doesn&#39;t detect the method as being abstract.</span>
-        <span class="c1"># The code calling this method will catch the exception and handle it</span>
-        <span class="c1"># correctly.</span>
-        <span class="k">if</span> <span class="n">rgb</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -1428,8 +1359,8 @@ Mostly used internally, when set will take precedence over syntax of leading
 <span class="sd">        terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">system</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">get_colorsystem</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;=</span> <span class="n">system</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+        <span class="n">system</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">colorsystem</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">&lt;=</span> <span class="n">system</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
 
         <span class="n">colortype</span> <span class="o">=</span> <span class="n">SYSTEM_TO_TYPE</span><span class="p">[</span><span class="n">system</span><span class="p">]</span>
@@ -1493,11 +1424,7 @@ Mostly used internally, when set will take precedence over syntax of leading
 <span class="sd">            rgb: The RGB value to base the new color off of.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># This is here so pylint doesn&#39;t detect the method as being abstract.</span>
-        <span class="c1"># The code calling this method will catch the exception and handle it</span>
-        <span class="c1"># correctly.</span>
-        <span class="k">if</span> <span class="n">rgb</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </pre></div>
 
         </details>
@@ -1594,8 +1521,8 @@ Mostly used internally, when set will take precedence over syntax of leading
 <span class="sd">        terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">system</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">get_colorsystem</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;=</span> <span class="n">system</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+        <span class="n">system</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">colorsystem</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">&lt;=</span> <span class="n">system</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
 
         <span class="n">colortype</span> <span class="o">=</span> <span class="n">SYSTEM_TO_TYPE</span><span class="p">[</span><span class="n">system</span><span class="p">]</span>
@@ -1662,22 +1589,22 @@ terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.<
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">IndexedColor</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">color</span>
 
-        <span class="n">distances</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Normalize the color values</span>
+        <span class="n">red</span><span class="p">,</span> <span class="n">green</span><span class="p">,</span> <span class="n">blue</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">255</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">)</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">COLOR_TABLE</span>
-        <span class="k">if</span> <span class="n">terminal</span><span class="o">.</span><span class="n">get_colorsystem</span><span class="p">()</span> <span class="ow">is</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">STANDARD</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">)}</span>
+        <span class="c1"># Calculate the eight-bit color index</span>
+        <span class="k">if</span> <span class="n">terminal</span><span class="o">.</span><span class="n">colorsystem</span> <span class="ow">is</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">EIGHT_BIT</span><span class="p">:</span>
+            <span class="n">color_num</span> <span class="o">=</span> <span class="mi">16</span>
+            <span class="n">color_num</span> <span class="o">+=</span> <span class="mi">36</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">red</span> <span class="o">*</span> <span class="mf">5.0</span><span class="p">)</span>
+            <span class="n">color_num</span> <span class="o">+=</span> <span class="mi">6</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">green</span> <span class="o">*</span> <span class="mf">5.0</span><span class="p">)</span>
+            <span class="n">color_num</span> <span class="o">+=</span> <span class="nb">round</span><span class="p">(</span><span class="n">blue</span> <span class="o">*</span> <span class="mf">5.0</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">hxcol</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">red2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hxcol</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-            <span class="n">blue2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hxcol</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-            <span class="n">green2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hxcol</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">color_num</span><span class="p">))</span>
 
-            <span class="n">distances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_get_color_difference</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="p">(</span><span class="n">red2</span><span class="p">,</span> <span class="n">blue2</span><span class="p">,</span> <span class="n">green2</span><span class="p">)))</span>
-
-        <span class="n">index</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="n">distances</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">)</span>
-
+        <span class="c1"># Find the least-different color in the table</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">_get_color_difference</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">COLOR_TABLE</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
         <span class="n">color</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+
         <span class="n">_COLOR_MATCH_CACHE</span><span class="p">[</span><span class="n">rgb</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="k">return</span> <span class="n">color</span>
@@ -1710,11 +1637,7 @@ terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.<
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rgb</span>
 
         <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">hexc</span> <span class="o">=</span> <span class="n">COLOR_TABLE</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-
-        <span class="n">rgb</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
-            <span class="n">rgb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">hexc</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">COLOR_TABLE</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
@@ -1757,22 +1680,22 @@ terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.<
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">IndexedColor</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">color</span>
 
-        <span class="n">distances</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Normalize the color values</span>
+        <span class="n">red</span><span class="p">,</span> <span class="n">green</span><span class="p">,</span> <span class="n">blue</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">255</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">)</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">COLOR_TABLE</span>
-        <span class="k">if</span> <span class="n">terminal</span><span class="o">.</span><span class="n">get_colorsystem</span><span class="p">()</span> <span class="ow">is</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">STANDARD</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">)}</span>
+        <span class="c1"># Calculate the eight-bit color index</span>
+        <span class="k">if</span> <span class="n">terminal</span><span class="o">.</span><span class="n">colorsystem</span> <span class="ow">is</span> <span class="n">ColorSystem</span><span class="o">.</span><span class="n">EIGHT_BIT</span><span class="p">:</span>
+            <span class="n">color_num</span> <span class="o">=</span> <span class="mi">16</span>
+            <span class="n">color_num</span> <span class="o">+=</span> <span class="mi">36</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">red</span> <span class="o">*</span> <span class="mf">5.0</span><span class="p">)</span>
+            <span class="n">color_num</span> <span class="o">+=</span> <span class="mi">6</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">green</span> <span class="o">*</span> <span class="mf">5.0</span><span class="p">)</span>
+            <span class="n">color_num</span> <span class="o">+=</span> <span class="nb">round</span><span class="p">(</span><span class="n">blue</span> <span class="o">*</span> <span class="mf">5.0</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">hxcol</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">red2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hxcol</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-            <span class="n">blue2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hxcol</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-            <span class="n">green2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hxcol</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">color_num</span><span class="p">))</span>
 
-            <span class="n">distances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_get_color_difference</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="p">(</span><span class="n">red2</span><span class="p">,</span> <span class="n">blue2</span><span class="p">,</span> <span class="n">green2</span><span class="p">)))</span>
-
-        <span class="n">index</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="n">distances</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">)</span>
-
+        <span class="c1"># Find the least-different color in the table</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">_get_color_difference</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">COLOR_TABLE</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
         <span class="n">color</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+
         <span class="n">_COLOR_MATCH_CACHE</span><span class="p">[</span><span class="n">rgb</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="k">return</span> <span class="n">color</span>
@@ -1853,6 +1776,12 @@ terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.<
         <span class="n">rgb</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rgb</span> <span class="o">=</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_rgb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">RGBColor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns an `RGBColor` from the given triplet.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">rgb</span><span class="p">)))</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the ANSI sequence representing this color.&quot;&quot;&quot;</span>
@@ -1893,6 +1822,31 @@ terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.<
     
 
                             </div>
+                            <div id="RGBColor.from_rgb" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#RGBColor.from_rgb">#&nbsp;&nbsp</a>
+
+                <div class="decorator">@classmethod</div>
+
+            <span class="def">def</span>
+            <span class="name">from_rgb</span><span class="signature">(cls, rgb: tuple[int, int, int]) -&gt; <a href="#RGBColor">pytermgui.colors.RGBColor</a></span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_rgb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">RGBColor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns an `RGBColor` from the given triplet.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">rgb</span><span class="p">)))</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Returns an <code><a href="#RGBColor">RGBColor</a></code> from the given triplet.</p>
+</div>
+
+
+                            </div>
                             <div id="RGBColor.sequence" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#RGBColor.sequence">#&nbsp;&nbsp</a>
 
@@ -1910,7 +1864,6 @@ terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.<
                                 <dl>
                                     <div><dt><a href="#Color">Color</a></dt>
                                 <dd id="RGBColor.background" class="variable"><a href="#Color.background">background</a></dd>
-                <dd id="RGBColor.from_rgb" class="function"><a href="#Color.from_rgb">from_rgb</a></dd>
                 <dd id="RGBColor.rgb" class="variable"><a href="#Color.rgb">rgb</a></dd>
                 <dd id="RGBColor.name" class="variable"><a href="#Color.name">name</a></dd>
                 <dd id="RGBColor.luminance" class="variable"><a href="#Color.luminance">luminance</a></dd>
@@ -1988,12 +1941,12 @@ terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.<
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="#RGBColor">RGBColor</a></dt>
-                                <dd id="HEXColor.sequence" class="variable"><a href="#RGBColor.sequence">sequence</a></dd>
+                                <dd id="HEXColor.from_rgb" class="function"><a href="#RGBColor.from_rgb">from_rgb</a></dd>
+                <dd id="HEXColor.sequence" class="variable"><a href="#RGBColor.sequence">sequence</a></dd>
 
             </div>
             <div><dt><a href="#Color">Color</a></dt>
                                 <dd id="HEXColor.background" class="variable"><a href="#Color.background">background</a></dd>
-                <dd id="HEXColor.from_rgb" class="function"><a href="#Color.from_rgb">from_rgb</a></dd>
                 <dd id="HEXColor.rgb" class="variable"><a href="#Color.rgb">rgb</a></dd>
                 <dd id="HEXColor.name" class="variable"><a href="#Color.name">name</a></dd>
                 <dd id="HEXColor.luminance" class="variable"><a href="#Color.luminance">luminance</a></dd>
