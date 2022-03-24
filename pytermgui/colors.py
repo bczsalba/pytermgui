@@ -26,6 +26,7 @@ __all__ = [
     "COLOR_TABLE",
     "XTERM_NAMED_COLORS",
     "NAMED_COLORS",
+    "clear_color_cache",
     "foreground",
     "background",
     "str_to_color",
@@ -327,6 +328,13 @@ _COLOR_CACHE: dict[str, Color] = {}
 _COLOR_MATCH_CACHE: dict[tuple[float, float, float], Color] = {}
 
 
+def clear_color_cache() -> None:
+    """Clears `_COLOR_CACHE` and `_COLOR_MATCH_CACHE`."""
+
+    _COLOR_CACHE.clear()
+    _COLOR_MATCH_CACHE.clear()
+
+
 @dataclass
 class Color:
     """A terminal color.
@@ -528,7 +536,7 @@ class IndexedColor(Color):
 class StandardColor(IndexedColor):
     """A color in the xterm-16 palette."""
 
-    colorsystem = ColorSystem.STANDARD
+    system = ColorSystem.STANDARD
 
     @classmethod
     def from_rgb(cls, rgb: tuple[int, int, int]) -> StandardColor:
@@ -537,6 +545,13 @@ class StandardColor(IndexedColor):
         Args:
             rgb: The target color.
         """
+
+        if rgb in _COLOR_MATCH_CACHE:
+            color = _COLOR_MATCH_CACHE[rgb]
+
+            if color.system is ColorSystem.STANDARD:
+                assert isinstance(color, StandardColor)
+                return color
 
         # Find the least-different color in the table
         index = min(range(16), key=lambda i: _get_color_difference(rgb, COLOR_TABLE[i]))
