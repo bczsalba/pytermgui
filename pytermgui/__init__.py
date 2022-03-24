@@ -17,6 +17,7 @@ from typing import Union, Any, Optional
 from random import shuffle
 import sys
 
+from .html import *
 from .enums import *
 from .parser import *
 from .colors import *

@@ -56,6 +56,9 @@ _STYLE_TO_CSS = {
 }
 
 
+__all__ = ["token_to_css", "to_html"]
+
+
 def token_to_css(token: Token) -> str:
     """Finds the CSS representation of a token."""
 
@@ -73,8 +76,6 @@ def token_to_css(token: Token) -> str:
         return _STYLE_TO_CSS[token.name]
 
     return ""
-
-    # tim.print(f"[210 bold]Unhandled token:[/] {token}")
 
 
 def to_html(
