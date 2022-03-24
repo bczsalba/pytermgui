@@ -1159,7 +1159,6 @@ docs/parser/markup_language.png"
                     style_name.startswith(target_name)
                     and style.ttype is TokenType.MACRO
                 ):
-
                     styles.remove(style)
 
                 elif style.ttype is TokenType.COLOR:

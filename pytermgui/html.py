@@ -9,41 +9,21 @@ from .colors import Color
 from .widgets import Widget
 from .parser import Token, TokenType, StyledText, tim
 
-BASE_HTML = """\
-<html>
-    <head>
-        <style>
-            @import url(
-                'https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
-
-            :root {
-                --ptg-foreground: #fff;
-                --ptg-background: #212121;
-            }
-
-
-            body {
-                background: var(--ptg-background);
-                color: var(--ptg-foreground);
-                font-family: 'Fira Code', monospace;
-            }
-
-            pre.ptg {
-                font-size: 17px;
-                font-family: Menlo,\'DejaVu Sans Mono\',consolas,\'Courier New\', monospace;
-            }
-
-        </style>
-    </head>
-    <body>
-    <pre class="ptg">
-"""
-
-HTML_FOOTER = """\
-    </pre>
-    </body>
+HTML_FORMAT = "".join(
+    """\
+<html><head>
+<style>
+{styles}
+</style>
+</head>
+<body>
+<pre class="ptg" style="font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;">
+{content}
+</pre>
+</body>
 </html>
-"""
+""".splitlines()
+)
 
 _STYLE_TO_CSS = {
     "bold": "font-weight: bold",
@@ -94,6 +74,13 @@ def to_html(
 ) -> str:
     """Creates a static HTML representation of the given object.
 
+    Note that the output HTML will not be very attractive or easy to read. This is because
+    these files probably aren't meant to be read by a human anyways, so file sizes are more
+    important.
+
+    If you do care about the visual style of the output, you can run it through some prettifiers
+    to get the result you are looking for.
+
     Args:
         obj: The object to represent. Takes either a Widget or some markup text.
         prefix: The prefix included in the generated classes, e.g. instead of `ptg-0`,
@@ -139,7 +126,7 @@ def to_html(
             else:
                 document_styles.append(styles)
 
-            escaped = escape(styled.plain).replace(" ", "&nbsp;")
+            escaped = escape(styled.plain)
 
             value = ";".join(styles) if inline_styles else _get_cls(index)
             prefix = "style" if inline_styles else "class"
@@ -154,21 +141,18 @@ def to_html(
     else:
         data = obj.splitlines()
 
-    document = BASE_HTML
-
+    lines = []
     for line in data:
-        for span in _get_spans(line):
-            document += span
-        document += "<br>"
+        lines.append("".join(_get_spans(line)))
+    content = "<br>".join(lines)
 
+    styles = ""
     if not inline_styles:
-        document += "<style>"
-        document += "".join(
-            f".{_get_cls(i)} " + "{" + f"{';'.join(style)}" + "}"
+        styles += "".join(
+            f".{_get_cls(i)} {{{';'.join(style)}}}"
             for i, style in enumerate(document_styles)
         )
-        document += "</style>"
 
-    document += HTML_FOOTER
+    document = HTML_FORMAT.format(content=content, styles=styles)
 
     return document
