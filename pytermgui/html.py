@@ -50,7 +50,6 @@ _STYLE_TO_CSS = {
     "italic": "font-style: italic",
     "dim": "filter: brightness(70%)",
     "underline": "text-decoration: underline",
-    "inverse": "mix-blend-mode: difference",
     "strikethrough": "text-decoration: line-through",
     "overline": "text-decoration: overline",
 }
@@ -59,14 +58,24 @@ _STYLE_TO_CSS = {
 __all__ = ["token_to_css", "to_html"]
 
 
-def token_to_css(token: Token) -> str:
-    """Finds the CSS representation of a token."""
+def token_to_css(token: Token, invert: bool = False) -> str:
+    """Finds the CSS representation of a token.
+
+    Args:
+        token: The token to represent.
+        invert: If set, the role of background & foreground colors
+            are flipped.
+    """
 
     if token.ttype is TokenType.COLOR:
         color = token.data
         assert isinstance(color, Color)
 
-        style = "color: rgb({}, {}, {});".format(*color.rgb)
+        style = "color:rgb({},{},{});".format(*color.rgb)
+
+        if invert:
+            color.background = not color.background
+
         if color.background:
             style = "background-" + style
 
@@ -106,6 +115,8 @@ def to_html(
         for styled in tim.get_styled_plains(line):
             styles = []
             has_link = False
+            has_inverse = False
+
             for token in styled.tokens:
                 if token.ttype is TokenType.PLAIN:
                     continue
@@ -114,7 +125,11 @@ def to_html(
                     has_link = True
                     yield f"<a href='{token.data}'>"
 
-                css = token_to_css(token)
+                if token.ttype is TokenType.STYLE and token.name == "inverse":
+                    has_inverse = True
+                    continue
+
+                css = token_to_css(token, has_inverse)
                 if css is not None and css not in styles:
                     styles.append(css)
 
