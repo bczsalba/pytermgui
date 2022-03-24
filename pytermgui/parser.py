@@ -1093,6 +1093,90 @@ docs/parser/markup_language.png"
 
         return _finish(out, in_sequence)
 
+    def get_styled_plains(self, text: str) -> Iterator[StyledText]:
+        """Gets all plain tokens within text, with their respective styles applied.
+
+        Args:
+            text: The ANSI-sequence containing string to find plains from.
+
+        Returns:
+            An iterator of `StyledText` objects, each yielded when a new plain token is found,
+            containing the styles that are relevant and active on the given plain.
+        """
+
+        def _apply_styles(styles: list[Token], text: str) -> str:
+            """Applies given styles to text."""
+
+            for token in styles:
+                if token.ttype is TokenType.MACRO:
+                    assert isinstance(token.data, tuple)
+                    text = token.data[0](*token.data[1], text)
+                    continue
+
+                if token.sequence is None:
+                    continue
+
+                text = token.sequence + text
+
+            return text
+
+        def _pop_unsetter(token: Token, styles: list[Token]) -> list[Token]:
+            """Removes an unsetter from the list, returns the new list."""
+
+            if token.name == "/":
+                return []
+
+            target_name = token.name[1:]
+            for style in styles:
+                if style.name == target_name:
+                    styles.remove(style)
+
+                elif (
+                    style.name.startswith(target_name)
+                    and style.ttype is TokenType.MACRO
+                ):
+
+                    styles.remove(style)
+
+                elif style.ttype is TokenType.COLOR:
+                    assert isinstance(style.data, Color)
+                    if target_name == "fg" and not style.data.background:
+                        styles.remove(style)
+
+                    elif target_name == "bg" and style.data.background:
+                        styles.remove(style)
+
+            return styles
+
+        styles: list[Token] = []
+        for token in self.tokenize_ansi(text):
+            if token.ttype is TokenType.COLOR:
+                for i, style in enumerate(reversed(styles)):
+                    if style.ttype is TokenType.COLOR:
+                        assert isinstance(style.data, Color)
+                        assert isinstance(token.data, Color)
+
+                        if style.data.background != token.data.background:
+                            continue
+
+                        styles[len(styles) - i - 1] = token
+                        break
+                else:
+                    styles.append(token)
+
+                continue
+
+            if token.ttype is TokenType.PLAIN:
+                assert isinstance(token.data, str)
+                yield StyledText(_apply_styles(styles, token.data))
+                continue
+
+            if token.ttype is TokenType.UNSETTER:
+                styles = _pop_unsetter(token, styles)
+                continue
+
+            styles.append(token)
+
 
 def main() -> None:
     """Main method"""
