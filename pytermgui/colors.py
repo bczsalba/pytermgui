@@ -10,9 +10,9 @@ from __future__ import annotations
 
 import re
 from math import sqrt  # pylint: disable=no-name-in-module
-from functools import lru_cache
 from typing import TYPE_CHECKING, Type
 from dataclasses import dataclass, field
+from functools import lru_cache, cached_property
 
 from .exceptions import ColorSyntaxError
 from .terminal import terminal, ColorSystem
@@ -361,7 +361,7 @@ class Color:
 
         raise NotImplementedError
 
-    @property
+    @cached_property
     def rgb(self) -> tuple[int, int, int]:
         """Returns this color as a tuple of (red, green, blue) values."""
 
@@ -461,9 +461,11 @@ class Color:
         return local
 
 
-@dataclass
+@dataclass(repr=False)
 class IndexedColor(Color):
     """A color representing an index into the xterm-256 color palette."""
+
+    system = ColorSystem.EIGHT_BIT
 
     def __post_init__(self) -> None:
         """Ensures data validity."""
@@ -477,12 +479,6 @@ class IndexedColor(Color):
             raise ValueError(
                 f"IndexedColor value has to fit in range 0-255, got {self.value!r}."
             )
-
-        if int(self.value) <= 16:
-            self.system = ColorSystem.STANDARD
-
-        else:
-            self.system = ColorSystem.EIGHT_BIT
 
     @classmethod
     def from_rgb(cls, rgb: tuple[int, int, int]) -> IndexedColor:
@@ -498,13 +494,49 @@ class IndexedColor(Color):
         red, green, blue = (x / 255 for x in rgb)
 
         # Calculate the eight-bit color index
-        if terminal.colorsystem is ColorSystem.EIGHT_BIT:
-            color_num = 16
-            color_num += 36 * round(red * 5.0)
-            color_num += 6 * round(green * 5.0)
-            color_num += round(blue * 5.0)
+        color_num = 16
+        color_num += 36 * round(red * 5.0)
+        color_num += 6 * round(green * 5.0)
+        color_num += round(blue * 5.0)
 
-            return cls(str(color_num))
+        color = cls(str(color_num))
+        _COLOR_MATCH_CACHE[rgb] = color
+
+        return color
+
+    @property
+    def sequence(self) -> str:
+        r"""Returns an ANSI sequence representing this color."""
+
+        index = int(self.value)
+
+        return "\x1b[" + ("48" if self.background else "38") + f";5;{index}m"
+
+    @cached_property
+    def rgb(self) -> tuple[int, int, int]:
+        """Returns an RGB representation of this color."""
+
+        if self._rgb is not None:
+            return self._rgb
+
+        index = int(self.value)
+        rgb = COLOR_TABLE[index]
+
+        return (rgb[0], rgb[1], rgb[2])
+
+
+class StandardColor(IndexedColor):
+    """A color in the xterm-16 palette."""
+
+    colorsystem = ColorSystem.STANDARD
+
+    @classmethod
+    def from_rgb(cls, rgb: tuple[int, int, int]) -> StandardColor:
+        """Creates a color with the closest-matching xterm index, based on rgb.
+
+        Args:
+            rgb: The target color.
+        """
 
         # Find the least-different color in the table
         index = min(range(16), key=lambda i: _get_color_difference(rgb, COLOR_TABLE[i]))
@@ -520,9 +552,6 @@ class IndexedColor(Color):
 
         index = int(self.value)
 
-        if index >= 16:
-            return "\x1b[" + ("48" if self.background else "38") + f";5;{index}m"
-
         if index <= 7:
             index += 30
 
@@ -533,18 +562,6 @@ class IndexedColor(Color):
             index += 10
 
         return f"\x1b[{index}m"
-
-    @property
-    def rgb(self) -> tuple[int, int, int]:
-        """Returns an RGB representation of this color."""
-
-        if self._rgb is not None:
-            return self._rgb
-
-        index = int(self.value)
-        rgb = COLOR_TABLE[index]
-
-        return (rgb[0], rgb[1], rgb[2])
 
 
 class GreyscaleRampColor(IndexedColor):
@@ -566,7 +583,7 @@ class GreyscaleRampColor(IndexedColor):
         return color
 
 
-@dataclass
+@dataclass(repr=False)
 class RGBColor(Color):
     """An arbitrary RGB color."""
 
@@ -629,7 +646,7 @@ class HEXColor(RGBColor):
 
 SYSTEM_TO_TYPE: dict[ColorSystem, Type[Color]] = {
     ColorSystem.NO_COLOR: GreyscaleRampColor,
-    ColorSystem.STANDARD: IndexedColor,
+    ColorSystem.STANDARD: StandardColor,
     ColorSystem.EIGHT_BIT: IndexedColor,
     ColorSystem.TRUE: RGBColor,
 }
@@ -713,7 +730,7 @@ def str_to_color(
         text = text[1:]
 
     if text in NAMED_COLORS:
-        return str_to_color(NAMED_COLORS[text], is_background=is_background)
+        return str_to_color(str(NAMED_COLORS[text]), is_background=is_background)
 
     color: Color
 
@@ -721,7 +738,15 @@ def str_to_color(
     # should improve the performance by quite a large margin.
     match = RE_256.match(text)
     if match is not None:
-        color = IndexedColor(match[0], background=is_background)
+        index = int(match[0])
+
+        if index >= 16:
+            cls = IndexedColor
+
+        else:
+            cls = StandardColor
+
+        color = cls(match[0], background=is_background)
 
         return color.get_localized() if localize else color
 
