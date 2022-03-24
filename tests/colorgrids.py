@@ -70,20 +70,16 @@ def print_colorboxes(args: Namespace) -> None:
                 f"[dim italic]Rendered in ([blue]cold[/]):"
                 + _highlight(time.time() - start)
             )
+
             warm_start = time.time()
 
-            _html_buff += tim.parse(_buff)
+            tim.parse(_buff)
 
             tim.print(
                 f"[dim italic]Rendered in ([208]warm[/]):"
                 + _highlight(time.time() - warm_start)
             )
             print()
-
-    terminal.forced_colorsystem = None
-
-    with open("colorgrids.html", "w") as html:
-        html.write(to_html(_html_buff))
 
 
 def main() -> None:

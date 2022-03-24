@@ -498,6 +498,9 @@ class IndexedColor(Color):
             assert isinstance(color, IndexedColor)
             return color
 
+        if terminal.colorsystem == ColorSystem.STANDARD:
+            return StandardColor.from_rgb(rgb)
+
         # Normalize the color values
         red, green, blue = (x / 255 for x in rgb)
 
@@ -753,15 +756,11 @@ def str_to_color(
     # should improve the performance by quite a large margin.
     match = RE_256.match(text)
     if match is not None:
-        index = int(match[0])
-
-        if index >= 16:
-            cls = IndexedColor
-
-        else:
-            cls = StandardColor
-
-        color = cls(match[0], background=is_background)
+        # Note: At the moment, all colors become an `IndexedColor`, due to a large
+        #       amount of problems a separated `StandardColor` class caused. Not
+        #       sure if there are any real drawbacks to doing it this way, bar the
+        #       extra characters that 255 colors use up compared to xterm-16.
+        color = IndexedColor(match[0], background=is_background)
 
         return color.get_localized() if localize else color
 

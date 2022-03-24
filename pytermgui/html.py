@@ -18,7 +18,7 @@ BASE_HTML = """\
 
             :root {
                 --ptg-foreground: #fff;
-                --ptg-background: #000;
+                --ptg-background: #212121;
             }
 
 

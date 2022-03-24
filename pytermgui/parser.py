@@ -1128,11 +1128,18 @@ docs/parser/markup_language.png"
 
             target_name = token.name[1:]
             for style in styles:
-                if style.name == target_name:
+                # bold & dim unsetters represent the same character, so we have
+                # to treat them the same way.
+                style_name = style.name
+
+                if style.name == "dim":
+                    style_name = "bold"
+
+                if style_name == target_name:
                     styles.remove(style)
 
                 elif (
-                    style.name.startswith(target_name)
+                    style_name.startswith(target_name)
                     and style.ttype is TokenType.MACRO
                 ):
 
