@@ -135,6 +135,7 @@ MacroCallable = Callable[..., str]
 MacroCall = Tuple[MacroCallable, List[str]]
 
 RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)|(?:\x1b_G(.*?)\x1b\\)")
+RE_LINK = re.compile(r"(?:\x1b]8;;(.*?)\x1b\\(.*?)\x1b]8;;\x1b\\)")
 RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w\/\.?\-=:]+)\))?")
 RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/\(,\)].*?)\])")
 
@@ -285,6 +286,9 @@ def macro_gradient(base_str: str, item: str) -> str:
 class TokenType(Enum):
     """An Enum to store various token types."""
 
+    LINK = _auto()
+    """A terminal hyperlink."""
+
     PLAIN = _auto()
     """Plain text, nothing interesting."""
 
@@ -333,6 +337,16 @@ class Token:
             else:
                 raise TypeError
 
+        # Create LINK from a plain token
+        if self.ttype is TokenType.PLAIN:
+            assert isinstance(self.data, str)
+
+            link_match = RE_LINK.match(self.data)
+
+            if link_match is not None:
+                self.data, self.name = link_match.groups()
+                self.ttype = TokenType.LINK
+
     def __eq__(self, other: object) -> bool:
         """Checks equality with `other`."""
 
@@ -353,6 +367,9 @@ class Token:
 
         if self.ttype in [TokenType.PLAIN, TokenType.MACRO, TokenType.ESCAPED]:
             return None
+
+        if self.ttype is TokenType.LINK:
+            return macro_link(self.data, self.name)
 
         # Colors and styles
         data = self.data
@@ -1172,6 +1189,10 @@ docs/parser/markup_language.png"
                     styles.append(token)
 
                 continue
+
+            if token.ttype is TokenType.LINK:
+                styles.append(token)
+                yield StyledText(_apply_styles(styles, token.name))
 
             if token.ttype is TokenType.PLAIN:
                 assert isinstance(token.data, str)

@@ -105,9 +105,14 @@ def to_html(
 
         for styled in tim.get_styled_plains(line):
             styles = []
+            has_link = False
             for token in styled.tokens:
                 if token.ttype is TokenType.PLAIN:
                     continue
+
+                if token.ttype is TokenType.LINK:
+                    has_link = True
+                    yield f"<a href='{token.data}'>"
 
                 css = token_to_css(token)
                 if css is not None and css not in styles:
@@ -121,10 +126,12 @@ def to_html(
 
             escaped = escape(styled.plain).replace(" ", "&nbsp;")
 
-            if inline_styles:
-                yield f"<span style='{';'.join(styles)}'>{escaped}</span>"
-            else:
-                yield f"<span class='{_get_cls(index)}'>{escaped}</span>"
+            value = ";".join(styles) if inline_styles else _get_cls(index)
+            prefix = "style" if inline_styles else "class"
+
+            tag = f"<span {prefix}='{value}'>{escaped}</span>"
+            tag += "</a>" if has_link else ""
+            yield tag
 
     if isinstance(obj, Widget):
         data = obj.get_lines()

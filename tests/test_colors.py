@@ -7,39 +7,57 @@ from pytermgui import (
     ColorSystem,
 )
 
+from contextlib import contextmanager
+
 terminal.forced_colorsystem = ColorSystem.TRUE
 
 
-def test_fg_simple():
-    color = str_to_color("4")
+@contextmanager
+def set_colorsystem(term, system):
+    old = term.colorsystem
 
-    assert isinstance(color, IndexedColor)
-    assert color.name == "4"
-    assert color.sequence == "\x1b[34m"
+    try:
+        term.forced_colorsystem = system
+        yield
+
+    finally:
+        term.forced_colorsystem = old
+
+
+def test_fg_simple():
+    with set_colorsystem(terminal, ColorSystem.STANDARD):
+        color = str_to_color("4")
+
+        assert isinstance(color, IndexedColor)
+        assert color.name == "4"
+        assert color.sequence == "\x1b[34m"
 
 
 def test_bg_simple():
-    color = str_to_color("@2")
+    with set_colorsystem(terminal, ColorSystem.STANDARD):
+        color = str_to_color("@2")
 
-    assert isinstance(color, IndexedColor)
-    assert color.name == "@2"
-    assert color.sequence == "\x1b[42m"
+        assert isinstance(color, IndexedColor)
+        assert color.name == "@2"
+        assert color.sequence == "\x1b[42m"
 
 
 def test_fg_named():
-    color = str_to_color("green")
+    with set_colorsystem(terminal, ColorSystem.STANDARD):
+        color = str_to_color("green")
 
-    assert isinstance(color, IndexedColor)
-    assert color.name == "2"
-    assert color.sequence == "\x1b[32m"
+        assert isinstance(color, IndexedColor)
+        assert color.name == "2"
+        assert color.sequence == "\x1b[32m"
 
 
 def test_bg_named():
-    color = str_to_color("@bright-blue")
+    with set_colorsystem(terminal, ColorSystem.STANDARD):
+        color = str_to_color("@bright-blue")
 
-    assert isinstance(color, IndexedColor)
-    assert color.name == "@12"
-    assert color.sequence == "\x1b[104m"
+        assert isinstance(color, IndexedColor)
+        assert color.name == "@12"
+        assert color.sequence == "\x1b[104m"
 
 
 def test_fg_indexed():
