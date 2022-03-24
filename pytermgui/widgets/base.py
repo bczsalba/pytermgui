@@ -618,6 +618,7 @@ class Label(Widget):
     def __init__(
         self,
         value: str = "",
+        style: str | w_styles.StyleCall = "",
         padding: int = 0,
         non_first_padding: int = 0,
         **attrs: Any,
@@ -627,6 +628,7 @@ class Label(Widget):
         Args:
             value: The value of this string. Using the default value style
                 (`pytermgui.widgets.styles.MARKUP`),
+            style: A pre-set value for self.styles.value.
             padding: The number of space (" ") characters to prepend to every line after
                 line breaking.
             non_first_padding: The number of space characters to prepend to every
@@ -639,6 +641,8 @@ class Label(Widget):
         self.padding = padding
         self.non_first_padding = non_first_padding
         self.width = real_length(value) + self.padding
+
+        self.styles.value = style
 
     def get_lines(self) -> list[str]:
         """Get lines representing this Label, breaking lines as necessary"""
