@@ -9,11 +9,13 @@ answers I've ever bumped into.
 from __future__ import annotations
 
 import re
+import sys
 from math import sqrt  # pylint: disable=no-name-in-module
-from typing import TYPE_CHECKING, Type
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Type, Literal
 from functools import lru_cache, cached_property
 
+from .input import getch
 from .exceptions import ColorSyntaxError
 from .terminal import terminal, ColorSystem
 from .ansi_interface import reset as reset_style
@@ -40,6 +42,10 @@ __all__ = [
 RE_256 = re.compile(r"^([\d]{1,3})$")
 RE_HEX = re.compile(r"(?:#)?([0-9a-fA-F]{6})")
 RE_RGB = re.compile(r"(\d{1,3};\d{1,3};\d{1,3})")
+
+RE_PALETTE_REPLY = re.compile(
+    r"\x1b]((?:10)|(?:11));rgb:([0-9a-f]{4})\/([0-9a-f]{4})\/([0-9a-f]{4})\x1b\\"
+)
 
 # Adapted from https://gist.github.com/MicahElliott/719710
 # TODO: Maybe this could be generated dynamically?
@@ -335,6 +341,37 @@ def clear_color_cache() -> None:
     _COLOR_MATCH_CACHE.clear()
 
 
+def _get_palette_color(color: Literal["10", "11"]) -> Color:
+    """Gets either the foreground or background color of the current emulator.
+
+    Args:
+        color: The value used for `Ps` in the query. See https://unix.stackexchange.com/a/172674.
+    """
+
+    sys.stdout.write(f"\x1b]{color};?\007")
+    sys.stdout.flush()
+
+    reply = getch()
+
+    match = RE_PALETTE_REPLY.match(reply)
+    if match is None:
+        if color == "10":
+            return RGBColor.from_rgb((255, 255, 255))
+
+        return RGBColor.from_rgb((0, 0, 0))
+
+    _, red, green, blue = match.groups()
+
+    rgb: list[int] = []
+    for part in (red, green, blue):
+        rgb.append(int(part[:2], base=16))
+
+    palette_color = RGBColor.from_rgb(tuple(rgb))  # type: ignore
+    palette_color.background = color == "11"
+
+    return palette_color
+
+
 @dataclass
 class Color:
     """A terminal color.
@@ -377,6 +414,18 @@ class Color:
             raise NotImplementedError
 
         return self._rgb
+
+    @classmethod
+    def get_default_foreground(cls) -> Color:
+        """Gets the terminal emulator's default foreground color."""
+
+        return _get_palette_color("10")
+
+    @classmethod
+    def get_default_background(cls) -> Color:
+        """Gets the terminal emulator's default foreground color."""
+
+        return _get_palette_color("11")
 
     @property
     def name(self) -> str:

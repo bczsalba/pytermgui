@@ -13,11 +13,13 @@ HTML_FORMAT = "".join(
     """\
 <html><head>
 <style>
+    body{{color: {foreground};background-color: {background}}}
+    pre{{font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace}}
 {styles}
 </style>
 </head>
 <body>
-<pre class="ptg" style="font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;">
+<pre class="ptg">
 {content}
 </pre>
 </body>
@@ -101,9 +103,9 @@ def to_html(
 
         for styled in tim.get_styled_plains(line):
             styles = []
+
             has_link = False
             has_inverse = False
-
             for token in styled.tokens:
                 if token.ttype is TokenType.PLAIN:
                     continue
@@ -153,6 +155,11 @@ def to_html(
             for i, style in enumerate(document_styles)
         )
 
-    document = HTML_FORMAT.format(content=content, styles=styles)
+    document = HTML_FORMAT.format(
+        foreground="rgb({},{},{})".format(*Color.get_default_foreground().rgb),
+        background="rgb({},{},{})".format(*Color.get_default_background().rgb),
+        content=content,
+        styles=styles,
+    )
 
     return document
