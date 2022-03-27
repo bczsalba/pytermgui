@@ -6,13 +6,71 @@ import os
 import sys
 import signal
 from enum import Enum
-from typing import Any, Callable
 from shutil import get_terminal_size
+from contextlib import contextmanager
 from functools import cached_property
+from typing import Any, Callable, IO, Generator
 
 from .input import getch
 
 __all__ = ["terminal", "ColorSystem"]
+
+
+class Recorder:
+    """A class that records & exports terminal content."""
+
+    def __init__(self) -> None:
+        """Initializes the Recorder."""
+
+        self._content = ""
+
+    def write(self, data: str) -> None:
+        """Writes to the recorder."""
+
+        self._content += data
+
+    def export_text(self) -> str:
+        """Exports current content as plain text."""
+
+        from .helpers import strip_ansi  # pylint: disable=import-outside-toplevel
+
+        return strip_ansi(self._content)
+
+    def export_html(
+        self, prefix: str | None = None, inline_styles: bool = False
+    ) -> str:
+        """Exports current content as HTML.
+
+        For help on the arguments, see `pytermgui.html.to_html`.
+        """
+
+        from .exporters import to_html  # pylint: disable=import-outside-toplevel
+
+        return to_html(self._content, prefix=prefix, inline_styles=inline_styles)
+
+    def save_html(
+        self, filename: str, prefix: str | None = None, inline_styles: bool = False
+    ) -> None:
+        """Exports HTML content to the given file.
+
+        For help on the arguments, see `pytermgui.exporters.to_html`.
+
+        Args:
+            filename: The file to save to.
+        """
+
+        with open(filename, "w") as file:
+            file.write(self.export_html(prefix=prefix, inline_styles=inline_styles))
+
+    def save_plain(self, filename: str) -> None:
+        """Exports plain text content to the given file.
+
+        Args:
+            filename: The file to save to.
+        """
+
+        with open(filename, "w") as file:
+            file.write(self.export_text())
 
 
 class ColorSystem(Enum):
@@ -93,13 +151,22 @@ class Terminal:
     displayhook_installed: bool = False
     """This is set to True when `pretty.install` is called."""
 
-    def __init__(self) -> None:
+    origin: tuple[int, int] = (1, 1)
+    """Origin of the internal coordinate system."""
+
+    def __init__(self, stream: IO[str] | None = None) -> None:
         """Initialize `_Terminal` class."""
 
-        self.origin: tuple[int, int] = (1, 1)
+        if stream is None:
+            stream = sys.stdout
+
+        self._stream = stream
+        self._recorder: Recorder | None = None
+
         self.size: tuple[int, int] = self._get_size()
         self.forced_colorsystem: ColorSystem | None = _get_env_colorsys()
         self.pixel_size: tuple[int, int] = self._get_pixel_size()
+
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
         if hasattr(signal, "SIGWINCH"):
@@ -204,6 +271,20 @@ class Terminal:
 
         return ColorSystem.STANDARD
 
+    @contextmanager
+    def record(self) -> Generator[Recorder, None, None]:
+        """Records the terminal's stream."""
+
+        if self._recorder is not None:
+            raise RuntimeError(f"{self!r} is already recording.")
+
+        try:
+            self._recorder = Recorder()
+            yield self._recorder
+
+        finally:
+            self._recorder = None
+
     def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
         """Subcribes a callback to be called when event occurs.
 
@@ -218,6 +299,37 @@ class Terminal:
             self._listeners[event] = []
 
         self._listeners[event].append(callback)
+
+    def write(self, data: str, flush: bool = False) -> None:
+        """Writes the given data to the terminal's stream.
+
+        Args:
+            data: The data to write.
+            flush: If set, `flush` will be called on the stream after reading.
+        """
+
+        if self._recorder is not None:
+            self._recorder.write(data)
+
+        self._stream.write(data)
+
+        if flush:
+            self._stream.flush()
+
+    def clear_stream(self) -> None:
+        """Clears (truncates) the terminal's stream."""
+
+        self._stream.truncate(0)
+
+    def print(self, *items, sep: str = " ", end="\n", flush: bool = True) -> None:
+        """Prints items to the stream."""
+
+        self.write(sep.join(items) + end, flush=flush)
+
+    def flush(self) -> None:
+        """Flushes self._stream."""
+
+        self._stream.flush()
 
 
 terminal = Terminal()
