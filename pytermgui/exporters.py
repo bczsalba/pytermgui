@@ -156,8 +156,8 @@ def to_html(
         )
 
     document = HTML_FORMAT.format(
-        foreground="rgb({},{},{})".format(*Color.get_default_foreground().rgb),
-        background="rgb({},{},{})".format(*Color.get_default_background().rgb),
+        foreground=Color.get_default_foreground().hex,
+        background=Color.get_default_background().hex,
         content=content,
         styles=styles,
     )

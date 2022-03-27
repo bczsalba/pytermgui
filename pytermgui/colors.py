@@ -415,6 +415,12 @@ class Color:
 
         return self._rgb
 
+    @cached_property
+    def hex(self) -> str:
+        """Returns CSS-like HEX representation of this color."""
+
+        return "#" + "".join(hex(color) for color in self.rgb)
+
     @classmethod
     def get_default_foreground(cls) -> Color:
         """Gets the terminal emulator's default foreground color."""
