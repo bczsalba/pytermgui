@@ -48,10 +48,10 @@ def print_colorboxes(args: Namespace) -> None:
         "   These results are gathered using [dim italic]tim.should_cache = False[/]."
     )
 
-    print("   Thus, these only show unoptimized, one cold and one warm cache")
-    print("   timings, which are magnitudes slower than the optimized end-user")
-    print("   performance.")
-    print()
+    tim.print("   Thus, these only show unoptimized, one cold and one warm cache")
+    tim.print("   timings, which are magnitudes slower than the optimized end-user")
+    tim.print("   performance.")
+    tim.print()
 
     if not args.cache:
         tim.should_cache = False
@@ -79,7 +79,9 @@ def print_colorboxes(args: Namespace) -> None:
                 f"[dim italic]Rendered in ([208]warm[/]):"
                 + _highlight(time.time() - warm_start)
             )
-            print()
+            tim.print()
+
+    terminal.forced_colorsystem = None
 
 
 def main() -> None:
@@ -100,7 +102,20 @@ def main() -> None:
     parser.add_argument(
         "-w", "--width", help="Width of color grids.", default=70, type=int
     )
-    print_colorboxes(parser.parse_args())
+
+    parser.add_argument(
+        "--html", help="Export to HTML file `colorgrids.html`.", action="store_true"
+    )
+
+    args = parser.parse_args()
+    if args.html:
+        with terminal.record() as recording:
+            print_colorboxes(args)
+
+        recording.save_html("colorgrids.html")
+        return
+
+    print_colorboxes(args)
 
 
 if __name__ == "__main__":

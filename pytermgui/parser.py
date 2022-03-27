@@ -118,6 +118,7 @@ from argparse import ArgumentParser
 from enum import Enum, auto as _auto
 from typing import Iterator, Callable, Tuple, List
 
+from .terminal import terminal
 from .colors import str_to_color, Color
 from .exceptions import MarkupSyntaxError, ColorSyntaxError, AnsiSyntaxError
 
@@ -599,7 +600,7 @@ docs/parser/markup_language.png"
         for arg in args:
             parsed.append(self.parse(str(arg)))
 
-        print(*parsed, **kwargs)
+        terminal.print(*parsed, **kwargs)
 
     def tokenize_markup(self, markup_text: str) -> Iterator[Token]:
         """Converts the given markup string into an iterator of `Token`.

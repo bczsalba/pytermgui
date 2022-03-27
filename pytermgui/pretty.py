@@ -78,7 +78,7 @@ def pprint(
             )
         )
 
-    builtins.print(*pretty, **print_args)
+    terminal.print(*pretty, **print_args)
 
 
 def install(

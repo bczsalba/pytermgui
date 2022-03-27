@@ -876,7 +876,7 @@ class WindowManager(Container):
             self._window_cache[id(window)] = lines
             return lines
 
-        sys.stdout.write("\033[2J")
+        terminal.write("\x1b[2J")
         for window in reversed(self._windows):
             # TODO: Why are these offsets needed?
             if window.allow_fullscreen:
@@ -891,9 +891,9 @@ class WindowManager(Container):
             lines = _get_lines(window)
             for i, line in enumerate(lines):
                 move_cursor((window.pos[0], window.pos[1] + i))
-                sys.stdout.write(line)
+                terminal.write(line)
 
-        sys.stdout.flush()
+        terminal.flush()
         self._should_print = False
 
     def show_targets(self) -> None:

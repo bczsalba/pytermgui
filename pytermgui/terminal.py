@@ -9,7 +9,7 @@ from enum import Enum
 from shutil import get_terminal_size
 from contextlib import contextmanager
 from functools import cached_property
-from typing import Any, Callable, IO, Generator
+from typing import Any, Callable, TextIO, Generator
 
 from .input import getch
 
@@ -135,7 +135,7 @@ def _get_env_colorsys() -> ColorSystem | None:
         return None
 
 
-class Terminal:
+class Terminal:  # pylint: disable=too-many-instance-attributes
     """A class to store & access data about a terminal."""
 
     RESIZE = 0
@@ -154,7 +154,7 @@ class Terminal:
     origin: tuple[int, int] = (1, 1)
     """Origin of the internal coordinate system."""
 
-    def __init__(self, stream: IO[str] | None = None) -> None:
+    def __init__(self, stream: TextIO | None = None) -> None:
         """Initialize `_Terminal` class."""
 
         if stream is None:
