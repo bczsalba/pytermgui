@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import sys
+import time
 import signal
 from enum import Enum
 from shutil import get_terminal_size
@@ -22,12 +23,19 @@ class Recorder:
     def __init__(self) -> None:
         """Initializes the Recorder."""
 
-        self._content = ""
+        self.recording: list[tuple[str, float]] = []
+        self._start_stamp = time.time()
+
+    @property
+    def _content(self) -> str:
+        """Returns the str part of self._recording"""
+
+        return "".join(data for data, _ in self.recording)
 
     def write(self, data: str) -> None:
         """Writes to the recorder."""
 
-        self._content += data
+        self.recording.append((data, time.time() - self._start_stamp))
 
     def export_text(self) -> str:
         """Exports current content as plain text."""
@@ -284,6 +292,17 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         finally:
             self._recorder = None
+
+    def replay(self, recorder: Recorder) -> None:
+        """Replays a recording."""
+
+        last_time = 0.0
+        for data, delay in recorder.recording:
+            if last_time > 0.0:
+                time.sleep(delay - last_time)
+
+            self.write(data, flush=True)
+            last_time = delay
 
     def isatty(self) -> bool:
         """Returns whether self._stream is a tty."""
