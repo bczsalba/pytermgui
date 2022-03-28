@@ -348,6 +348,14 @@ def _get_palette_color(color: Literal["10", "11"]) -> Color:
         color: The value used for `Ps` in the query. See https://unix.stackexchange.com/a/172674.
     """
 
+    defaults = {
+        "10": RGBColor.from_rgb((255, 255, 255)),
+        "11": RGBColor.from_rgb((0, 0, 0)),
+    }
+
+    if not terminal.isatty():
+        return defaults[color]
+
     sys.stdout.write(f"\x1b]{color};?\007")
     sys.stdout.flush()
 
@@ -355,10 +363,7 @@ def _get_palette_color(color: Literal["10", "11"]) -> Color:
 
     match = RE_PALETTE_REPLY.match(reply)
     if match is None:
-        if color == "10":
-            return RGBColor.from_rgb((255, 255, 255))
-
-        return RGBColor.from_rgb((0, 0, 0))
+        return defaults[color]
 
     _, red, green, blue = match.groups()
 
@@ -419,7 +424,11 @@ class Color:
     def hex(self) -> str:
         """Returns CSS-like HEX representation of this color."""
 
-        return "#" + "".join(hex(color) for color in self.rgb)
+        buff = "#"
+        for color in self.rgb:
+            buff += f"{format(color, 'x'):0>2}"
+
+        return buff
 
     @classmethod
     def get_default_foreground(cls) -> Color:

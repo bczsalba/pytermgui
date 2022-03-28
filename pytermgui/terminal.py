@@ -285,6 +285,11 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         finally:
             self._recorder = None
 
+    def isatty(self) -> bool:
+        """Returns whether self._stream is a tty."""
+
+        return self._stream.isatty()
+
     def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
         """Subcribes a callback to be called when event occurs.
 
