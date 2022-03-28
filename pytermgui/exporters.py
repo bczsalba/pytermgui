@@ -53,7 +53,7 @@ def token_to_css(token: Token, invert: bool = False) -> str:
         color = token.data
         assert isinstance(color, Color)
 
-        style = "color:rgb({},{},{});".format(*color.rgb)
+        style = "color:" + color.hex
 
         if invert:
             color.background = not color.background
@@ -122,13 +122,17 @@ def to_html(
                 if css is not None and css not in styles:
                     styles.append(css)
 
+            escaped = escape(styled.plain)
+
+            if len(styles) == 0:
+                yield f"<span>{escaped}</span>"
+                continue
+
             index = len(document_styles)
             if styles in document_styles:
                 index = document_styles.index(styles)
             else:
                 document_styles.append(styles)
-
-            escaped = escape(styled.plain)
 
             value = ";".join(styles) if inline_styles else _get_cls(index)
             prefix = "style" if inline_styles else "class"
