@@ -20,7 +20,7 @@ from ..enums import (
 )
 
 from ..exceptions import WidthExceededError
-from ..helpers import real_length, strip_markup
+from ..regex import real_length, strip_markup
 from ..terminal import terminal
 from ..input import keys
 from . import boxes

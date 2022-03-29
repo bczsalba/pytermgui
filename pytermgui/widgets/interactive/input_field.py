@@ -8,7 +8,7 @@ import string
 from ...ansi_interface import MouseAction, MouseEvent
 from ...input import keys
 from ...enums import HorizontalAlignment
-from ...helpers import real_length
+from ...regex import real_length
 from .. import styles as w_styles
 from ..base import Label
 

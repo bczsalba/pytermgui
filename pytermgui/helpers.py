@@ -1,61 +1,13 @@
 """Helper methods and functions for pytermgui."""
 
 from typing import Iterator
-from .parser import markup, TokenType, RE_ANSI, RE_MARKUP, StyledText
-from .ansi_interface import reset
+from .regex import real_length
+from .parser import markup, TokenType
 
 __all__ = [
-    "strip_ansi",
-    "strip_markup",
-    "real_length",
     "get_sequences",
     "break_line",
 ]
-
-
-def strip_ansi(text: str) -> str:
-    """Removes ANSI sequences from text.
-
-    Args:
-        text: A string or bytes object containing 0 or more ANSI sequences.
-
-    Returns:
-        The text without any ANSI sequences.
-    """
-
-    if isinstance(text, StyledText):
-        return text.plain
-
-    return RE_ANSI.sub("", text)
-
-
-def strip_markup(text: str) -> str:
-    """Removes markup tags from text.
-
-    Args:
-        text: A string or bytes object containing 0 or more markup tags.
-
-    Returns:
-        The text without any markup tags.
-    """
-
-    return RE_MARKUP.sub("", text)
-
-
-def real_length(text: str) -> int:
-    """Gets the display-length of text.
-
-    This length means no ANSI sequences are counted. This method is a convenience wrapper
-    for `len(strip_ansi(text))`.
-
-    Args:
-        text: The text to calculate the length of.
-
-    Returns:
-        The display-length of text.
-    """
-
-    return len(strip_ansi(text))
 
 
 def get_sequences(text: str) -> str:
@@ -144,7 +96,7 @@ def break_line(  # pylint: disable=too-many-branches
         # subdivide a word into right lengths
         if new_len > limit or "\n" in word:
             if _should_yield():
-                yield current + reset()
+                yield current + "\x1b[0m"
 
             _reset()
 
@@ -182,14 +134,14 @@ def break_line(  # pylint: disable=too-many-branches
                         cur_len += chr_len
 
                     if _should_yield():
-                        yield current.rstrip() + reset()
+                        yield current.rstrip() + "\x1b[0m"
                     _reset()
 
             continue
 
         # add current if we pass the limit
         if cur_len + new_len + chr_len > limit and _should_yield():
-            yield current.rstrip() + reset()
+            yield current.rstrip() + "\x1b[0m"
             _reset()
 
         current += word + char
@@ -197,4 +149,4 @@ def break_line(  # pylint: disable=too-many-branches
 
     current = current.rstrip()
     if _should_yield():
-        yield current.rstrip() + reset()
+        yield current.rstrip() + "\x1b[0m"

@@ -14,7 +14,7 @@ from collections import UserDict
 from dataclasses import dataclass
 from typing import Callable, Union, List, Type, TYPE_CHECKING
 
-from ..helpers import strip_ansi
+from ..regex import strip_ansi
 from ..parser import tim, RE_MARKUP
 
 __all__ = [

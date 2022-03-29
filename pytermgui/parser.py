@@ -110,7 +110,6 @@ by calling `MarkupLanguage.alias`. For defining custom macros, you can use
 
 from __future__ import annotations
 
-import re
 from random import shuffle
 from contextlib import suppress
 from dataclasses import dataclass
@@ -120,6 +119,7 @@ from typing import Iterator, Callable, Tuple, List
 
 from .terminal import terminal
 from .colors import str_to_color, Color
+from .regex import RE_ANSI, RE_MARKUP, RE_MACRO, RE_LINK
 from .exceptions import MarkupSyntaxError, ColorSyntaxError, AnsiSyntaxError
 
 
@@ -134,15 +134,6 @@ __all__ = [
 
 MacroCallable = Callable[..., str]
 MacroCall = Tuple[MacroCallable, List[str]]
-
-RE_ANSI = re.compile(r"(?:\x1b\[(.*?)m)|(?:\x1b\](.*?)\x1b\\)|(?:\x1b_G(.*?)\x1b\\)")
-RE_LINK = re.compile(r"(?:\x1b]8;;(.*?)\x1b\\(.*?)\x1b]8;;\x1b\\)")
-RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w\/\.?\-=:]+)\))?")
-RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/\(,\)].*?)\])")
-
-RE_256 = re.compile(r"^([\d]{1,3})$")
-RE_HEX = re.compile(r"(?:#)?([0-9a-fA-F]{6})")
-RE_RGB = re.compile(r"(\d{1,3};\d{1,3};\d{1,3})")
 
 STYLE_MAP = {
     "bold": "1",

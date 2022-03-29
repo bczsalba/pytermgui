@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from .base import Widget
 from ..parser import markup
-from ..helpers import real_length
+from ..regex import real_length
 from ..ansi_interface import MouseEvent, MouseAction
 
 __all__ = [

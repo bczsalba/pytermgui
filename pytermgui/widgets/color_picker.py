@@ -10,10 +10,10 @@ from contextlib import suppress
 
 from . import boxes
 from .layouts import Container
+from ..regex import real_length
 from .base import Label, Widget
 from .interactive import Button
 from ..animations import animator
-from ..helpers import real_length
 from .pixel_matrix import PixelMatrix
 from ..enums import SizePolicy, HorizontalAlignment
 from ..ansi_interface import MouseAction, MouseEvent

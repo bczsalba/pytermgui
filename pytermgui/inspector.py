@@ -33,7 +33,7 @@ from inspect import (
 
 from .parser import tim
 from .terminal import terminal
-from .helpers import real_length
+from .regex import real_length
 from .prettifiers import prettify
 from .widgets import Widget, Container, Label, boxes
 

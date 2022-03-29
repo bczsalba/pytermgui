@@ -13,6 +13,7 @@ from functools import cached_property
 from typing import Any, Callable, TextIO, Generator
 
 from .input import getch
+from .regex import strip_ansi, real_length
 
 __all__ = ["terminal", "ColorSystem"]
 
@@ -39,8 +40,6 @@ class Recorder:
 
     def export_text(self) -> str:
         """Exports current content as plain text."""
-
-        from .helpers import strip_ansi  # pylint: disable=import-outside-toplevel
 
         return strip_ansi(self._content)
 
@@ -170,6 +169,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         self._stream = stream
         self._recorder: Recorder | None = None
+        self._cursor: tuple[int, int] = self.origin
 
         self.size: tuple[int, int] = self._get_size()
         self.forced_colorsystem: ColorSystem | None = _get_env_colorsys()
@@ -324,13 +324,22 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         self._listeners[event].append(callback)
 
-    def write(self, data: str, flush: bool = False) -> None:
+    def write(
+        self, data: str, pos: tuple[int, int] | None = None, flush: bool = False
+    ) -> None:
         """Writes the given data to the terminal's stream.
 
         Args:
             data: The data to write.
+            pos: Terminal-character space position to write the data to, (x, y).
             flush: If set, `flush` will be called on the stream after reading.
         """
+
+        if "\x1b[2J" in data:
+            self.clear_stream()
+
+        if pos is not None:
+            data = "\x1b[{};{}H".format(*reversed(pos)) + data
 
         if self._recorder is not None:
             self._recorder.write(data)
@@ -340,15 +349,34 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         if flush:
             self._stream.flush()
 
+        self._cursor = (
+            self._cursor[0] + real_length("".join(data.splitlines())),
+            self._cursor[1] + data.count("\n"),
+        )
+
     def clear_stream(self) -> None:
         """Clears (truncates) the terminal's stream."""
 
         self._stream.truncate(0)
 
-    def print(self, *items, sep: str = " ", end="\n", flush: bool = True) -> None:
-        """Prints items to the stream."""
+    def print(
+        self,
+        *items,
+        pos: tuple[int, int] | None = None,
+        sep: str = " ",
+        end="\n",
+        flush: bool = True,
+    ) -> None:
+        """Prints items to the stream.
 
-        self.write(sep.join(items) + end, flush=flush)
+        All arguments not mentioned here are analogous to `print`.
+
+        Args:
+            pos: Terminal-character space position to write the data to, (x, y).
+
+        """
+
+        self.write(sep.join(items) + end, pos=pos, flush=flush)
 
     def flush(self) -> None:
         """Flushes self._stream."""

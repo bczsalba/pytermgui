@@ -19,7 +19,7 @@ from __future__ import annotations
 from typing import Tuple
 
 from .base import WidgetType
-from ..helpers import real_length
+from ..regex import real_length
 
 
 class Box:
