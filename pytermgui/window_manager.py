@@ -43,6 +43,10 @@ style="max-width: 100%">
 # These object need more than 7 attributes.
 # pylint: disable=too-many-instance-attributes
 
+# A restructuring of this part of the module is slated for an upcoming release, which will
+# alleviate this.
+# pylint: disable=too-many-lines
+
 from __future__ import annotations
 
 import sys
@@ -66,15 +70,11 @@ from .input import getch
 from .parser import markup
 from .colors import background
 from .terminal import terminal
-from .animations import animator
 from .regex import strip_ansi, real_length
+from .ansi_interface import MouseEvent, MouseAction
+from .animations import animator, AnimationCallback
 from .enums import CenteringPolicy, SizePolicy, Overflow
 from .context_managers import alt_buffer, mouse_handler, MouseTranslator, cursor_at
-from .ansi_interface import (
-    MouseEvent,
-    move_cursor,
-    MouseAction,
-)
 
 
 __all__ = ["Window", "WindowManager"]
@@ -322,7 +322,7 @@ class Window(Container):
         """Print without flushing"""
 
         for i, line in enumerate(self.get_lines()):
-            sys.stdout.write(f"\033[{self.pos[1] + i};{self.pos[0]}H" + line)
+            terminal.write(f"\033[{self.pos[1] + i};{self.pos[0]}H" + line)
 
         self._has_printed = True
 
@@ -354,6 +354,7 @@ class WindowManager(Container):
         self._windows: list[Window] = []
         self._drag_target: tuple[Widget, Edge | None] | None = None  # type: ignore
         self._drag_offsets: tuple[int, int] = (1, 1)
+        self._updated_rects: dict[int, list[tuple[int, int, int, int]]] = {}
 
         self._window_cache: dict[int, list[str]] = {}
 
@@ -639,6 +640,8 @@ class WindowManager(Container):
             if window.centered_axis is not None:
                 window.center()
 
+            self.nullify_cache(window)
+
         self._windows.insert(0, window)
         self._should_print = True
         window.manager = self
@@ -647,7 +650,7 @@ class WindowManager(Container):
         # existing ones, even if they are modal.
         self.focus(window)
 
-        animator.animate(
+        self.animate(
             window,
             "width",
             startpoint=int(window.width * 0.7),
@@ -683,7 +686,8 @@ class WindowManager(Container):
             self.print()
 
         window.overflow = Overflow.HIDE
-        animator.animate(
+
+        self.animate(
             window,
             "height",
             endpoint=0,
@@ -764,7 +768,8 @@ class WindowManager(Container):
         if window is not target_window:
             return False
 
-        left, top, right, bottom = window.rect
+        left, top, right, bottom = original = window.rect
+
         if not window.is_static and edge is Edge.TOP:
             window.pos = (
                 _clamp_pos(0),
@@ -790,6 +795,11 @@ class WindowManager(Container):
         # Wipe window from cache
         if id(window) in self._window_cache:
             del self._window_cache[id(window)]
+
+        if id(window) not in self._updated_rects:
+            self._updated_rects[id(window)] = []
+
+        self._updated_rects[id(window)].append(original)
 
         return handled
 
@@ -864,10 +874,13 @@ class WindowManager(Container):
         def _get_lines(window: Window) -> list[str]:
             """Get cached or live lines from a Window"""
 
-            # This optimization is really important for
-            # a lot of windows being rendered.
-            if id(window) in self._window_cache:
-                return self._window_cache[id(window)]
+            cached_lines = self._window_cache.get(id(window))
+
+            if window.has_focus or window.is_noblur:
+                return window.get_lines()
+
+            if cached_lines is not None:
+                return cached_lines
 
             lines: list[str] = []
             for line in window.get_lines():
@@ -876,7 +889,6 @@ class WindowManager(Container):
             self._window_cache[id(window)] = lines
             return lines
 
-        terminal.write("\x1b[2J")
         for window in reversed(self._windows):
             # TODO: Why are these offsets needed?
             if window.allow_fullscreen:
@@ -884,16 +896,25 @@ class WindowManager(Container):
                 window.width = terminal.width + 1
                 window.height = terminal.height + 3
 
-            if window.has_focus or window.is_noblur:
-                window.print()
-                continue
+            win_id = id(window)
+            if win_id in self._updated_rects:
+                for rect in self._updated_rects[win_id]:
+                    old_left, old_top, old_right, old_bottom = rect
+
+                    old_height = old_bottom - old_top
+                    old_width = old_right - old_left
+
+                    for i in range(old_height):
+                        terminal.write(" " * old_width, pos=(old_left, old_top + i))
+
+                del self._updated_rects[win_id]
 
             lines = _get_lines(window)
             for i, line in enumerate(lines):
-                move_cursor((window.pos[0], window.pos[1] + i))
-                terminal.write(line)
+                terminal.write(line, pos=(window.pos[0], window.pos[1] + i))
 
         terminal.flush()
+
         self._should_print = False
 
     def show_targets(self) -> None:
@@ -946,3 +967,50 @@ class WindowManager(Container):
 
         self.add(window.center())
         self.focus(window)
+
+    def redraw(self) -> None:
+        """Wipes the screen and reprints everything."""
+
+        terminal.write("\x1b[2J")
+        self.print()
+
+    def animate(  # pylint: disable=too-many-arguments
+        self,
+        target: Widget,
+        attribute: str,
+        endpoint: int,
+        duration: int,
+        startpoint: int | None = None,
+        step_callback: AnimationCallback | None = None,
+        finish_callback: AnimationCallback | None = None,
+    ) -> None:
+        """Wraps `pytermgui.animations.animator.animate` to hook into the printing pipeline.
+
+        For arguments and usage, see the aforementioned function.
+        """
+
+        def _on_step(_target: Widget) -> bool | None:
+            ret_val = None
+            if step_callback is not None:
+                ret_val = step_callback(_target)
+
+            self.redraw()
+            return ret_val
+
+        def _on_finish(_: Widget) -> bool | None:
+            ret_val = None
+            if finish_callback is not None:
+                ret_val = finish_callback(target)
+
+            self.redraw()
+            return ret_val
+
+        animator.animate(
+            target,
+            attribute,
+            startpoint=startpoint,
+            endpoint=endpoint,
+            duration=duration,
+            step_callback=_on_step,
+            finish_callback=_on_finish,
+        )
