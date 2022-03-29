@@ -13,8 +13,15 @@ HTML_FORMAT = """\
 <html>
     <head>
         <style>
-            body{{color: {foreground};background-color: {background}}}
-            pre{{font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace}}
+            body {{
+                --ptg-background: {background};
+                --ptg-foreground: {foreground};
+                color: var(--ptg-foreground);
+                background-color: var(--ptg-background);
+            }}
+            pre {{
+                font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+            }}
 {styles}
         </style>
     </head>
@@ -101,7 +108,7 @@ def to_html(
 
         position = None
         for styled in tim.get_styled_plains(line):
-            styles = []
+            styles = ["background-color: var(--ptg-background)"]
 
             has_link = False
             has_inverse = False
@@ -115,7 +122,13 @@ def to_html(
                     if token.data != position:
                         position = token.data
                         split = position.split(",")
-                        adjusted = 0.5 * int(split[0]), 1.1 * int(split[1])
+                        adjusted = tuple(
+                            (
+                                round(val, 2)
+                                for val in (int(split[0]) * 0.5, 1.1 * int(split[1]))
+                            )
+                        )
+
                         yield (
                             "<div style='position: fixed;"
                             + "left: {}em; top: {}em'>".format(*adjusted)
