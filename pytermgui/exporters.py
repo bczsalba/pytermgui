@@ -9,23 +9,21 @@ from .colors import Color
 from .widgets import Widget
 from .parser import Token, TokenType, StyledText, tim
 
-HTML_FORMAT = "".join(
-    """\
-<html><head>
-<style>
-    body{{color: {foreground};background-color: {background}}}
-    pre{{font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace}}
+HTML_FORMAT = """\
+<html>
+    <head>
+        <style>
+            body{{color: {foreground};background-color: {background}}}
+            pre{{font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace}}
 {styles}
-</style>
-</head>
-<body>
-<pre class="ptg">
+        </style>
+    </head>
+    <body>
+        <pre class="ptg">
 {content}
-</pre>
-</body>
-</html>
-""".splitlines()
-)
+        </pre>
+    </body>
+</html>"""
 
 _STYLE_TO_CSS = {
     "bold": "font-weight: bold",
@@ -101,20 +99,33 @@ def to_html(
     def _get_spans(line: str) -> Iterator[str]:
         """Creates `span` elements from the given line."""
 
+        position = None
         for styled in tim.get_styled_plains(line):
             styles = []
 
             has_link = False
             has_inverse = False
+
             for token in styled.tokens:
                 if token.ttype is TokenType.PLAIN:
                     continue
 
-                if token.ttype is TokenType.LINK:
+                if token.ttype is TokenType.POSITION:
+                    assert isinstance(token.data, str)
+                    if token.data != position:
+                        position = token.data
+                        split = position.split(",")
+                        adjusted = 0.5 * int(split[0]), 1.1 * int(split[1])
+                        yield (
+                            "<div style='position: fixed;"
+                            + "left: {}em; top: {}em'>".format(*adjusted)
+                        )
+
+                elif token.ttype is TokenType.LINK:
                     has_link = True
                     yield f"<a href='{token.data}'>"
 
-                if token.ttype is TokenType.STYLE and token.name == "inverse":
+                elif token.ttype is TokenType.STYLE and token.name == "inverse":
                     has_inverse = True
                     continue
 
@@ -139,6 +150,7 @@ def to_html(
 
             tag = f"<span {prefix}='{value}'>{escaped}</span>"
             tag += "</a>" if has_link else ""
+
             yield tag
 
     if isinstance(obj, Widget):
@@ -150,11 +162,12 @@ def to_html(
     lines = []
     for line in data:
         lines.append("".join(_get_spans(line)))
-    content = "<br>".join(lines)
+
+    content = "\n".join(lines)
 
     styles = ""
     if not inline_styles:
-        styles += "".join(
+        styles += "\n".join(
             f".{_get_cls(i)} {{{';'.join(style)}}}"
             for i, style in enumerate(document_styles)
         )

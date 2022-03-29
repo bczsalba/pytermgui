@@ -299,6 +299,9 @@ class TokenType(Enum):
     UNSETTER = _auto()
     """A token that unsets some other attribute."""
 
+    POSITION = _auto()
+    """A token representing a positioning string. `self.data` follows the format `x,y`."""
+
 
 @dataclass
 class Token:
@@ -362,6 +365,10 @@ class Token:
 
         if self.ttype is TokenType.LINK:
             return macro_link(self.data, self.name)
+
+        if self.ttype is TokenType.POSITION:
+            assert isinstance(self.data, str)
+            return "\x1b[{};{}H".format(*reversed(self.data.split(",")))
 
         # Colors and styles
         data = self.data
@@ -729,9 +736,14 @@ docs/parser/markup_language.png"
                     ttype = TokenType.COLOR
 
             if name is None or ttype is None or data is None:
-                raise AnsiSyntaxError(
-                    tag=parts[0], cause="not recognized", context=ansi
-                )
+                if len(parts) != 2:
+                    raise AnsiSyntaxError(
+                        tag=parts[0], cause="not recognized", context=ansi
+                    )
+
+                name = "position"
+                ttype = TokenType.POSITION
+                data = ",".join(reversed(parts))
 
             yield Token(name=name, ttype=ttype, data=data)
             cursor = end
