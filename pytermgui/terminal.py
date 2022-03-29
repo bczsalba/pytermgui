@@ -223,6 +223,9 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         self.pixel_size = self._get_pixel_size()
         self._call_listener(self.RESIZE, self.size)
 
+        # Wipe the screen in case anything got messed up
+        self.write("\x1b[2J")
+
     @property
     def width(self) -> int:
         """Gets the current width of the terminal."""
