@@ -1,5 +1,7 @@
 """This module houses the `Terminal` class, and its provided instance."""
 
+# pylint: disable=cyclic-import
+
 from __future__ import annotations
 
 import os
@@ -55,19 +57,15 @@ class Recorder:
 
         return to_html(self._content, prefix=prefix, inline_styles=inline_styles)
 
-    def save_html(
-        self, filename: str, prefix: str | None = None, inline_styles: bool = False
-    ) -> None:
-        """Exports HTML content to the given file.
+    def export_svg(self, prefix: str | None = None, inline_styles: bool = False) -> str:
+        """Exports current content as SVG.
 
-        For help on the arguments, see `pytermgui.exporters.to_html`.
-
-        Args:
-            filename: The file to save to.
+        For help on the arguments, see `pytermgui.html.to_svg`.
         """
 
-        with open(filename, "w") as file:
-            file.write(self.export_html(prefix=prefix, inline_styles=inline_styles))
+        from .exporters import to_svg  # pylint: disable=import-outside-toplevel
+
+        return to_svg(self._content, prefix=prefix, inline_styles=inline_styles)
 
     def save_plain(self, filename: str) -> None:
         """Exports plain text content to the given file.
@@ -78,6 +76,42 @@ class Recorder:
 
         with open(filename, "w") as file:
             file.write(self.export_text())
+
+    def save_html(
+        self, filename: str, prefix: str | None = None, inline_styles: bool = False
+    ) -> None:
+        """Exports HTML content to the given file.
+
+        For help on the arguments, see `pytermgui.exporters.to_html`.
+
+        Args:
+            filename: The file to save to. If the filename does not contain the '.html'
+                extension it will be appended to the end.
+        """
+
+        if not filename.endswith(".html"):
+            filename += ".html"
+
+        with open(filename, "w") as file:
+            file.write(self.export_html(prefix=prefix, inline_styles=inline_styles))
+
+    def save_svg(
+        self, filename: str, prefix: str | None = None, inline_styles: bool = False
+    ) -> None:
+        """Exports SVG content to the given file.
+
+        For help on the arguments, see `pytermgui.exporters.to_svg`.
+
+        Args:
+            filename: The file to save to. If the filename does not contain the '.svg'
+                extension it will be appended to the end.
+        """
+
+        if not filename.endswith(".svg"):
+            filename += ".svg"
+
+        with open(filename, "w") as file:
+            file.write(self.export_svg(prefix=prefix, inline_styles=inline_styles))
 
 
 class ColorSystem(Enum):
