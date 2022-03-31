@@ -33,8 +33,8 @@ from inspect import (
 
 from .parser import tim
 from .terminal import terminal
-from .regex import real_length
 from .prettifiers import prettify
+from .regex import real_length, RE_MARKUP
 from .widgets import Widget, Container, Label, boxes
 
 try:
@@ -345,15 +345,16 @@ class Inspector(Container):
 
         preview = Container(static_width=self.width // 2, parent_align=0, box="SINGLE")
 
-        if isinstance(self.target, str):
-            preview.lazy_add(prettify(tim.get_markup(self.target), parse=False))
+        if isinstance(self.target, str) and RE_MARKUP.match(self.target) is not None:
+            preview += Label(prettify(self.target, parse=False), parent_align=0)
             return preview
 
         for line in prettify(self.target).splitlines():
+
             if real_length(line) > preview.width - preview.sidelength:
                 preview.width = real_length(line) + preview.sidelength
 
-            preview.lazy_add(Label(tim.get_markup(line), parent_align=0))
+            preview += Label("[pprint-str]" + tim.get_markup(line), parent_align=0)
 
         return preview
 
