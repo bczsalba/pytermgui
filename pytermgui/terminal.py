@@ -57,7 +57,12 @@ class Recorder:
 
         return to_html(self._content, prefix=prefix, inline_styles=inline_styles)
 
-    def export_svg(self, prefix: str | None = None, inline_styles: bool = False) -> str:
+    def export_svg(
+        self,
+        prefix: str | None = None,
+        inline_styles: bool = False,
+        title: str = "PyTermGUI",
+    ) -> str:
         """Exports current content as SVG.
 
         For help on the arguments, see `pytermgui.html.to_svg`.
@@ -65,7 +70,9 @@ class Recorder:
 
         from .exporters import to_svg  # pylint: disable=import-outside-toplevel
 
-        return to_svg(self._content, prefix=prefix, inline_styles=inline_styles)
+        return to_svg(
+            self._content, prefix=prefix, inline_styles=inline_styles, title=title
+        )
 
     def save_plain(self, filename: str) -> None:
         """Exports plain text content to the given file.
@@ -96,7 +103,11 @@ class Recorder:
             file.write(self.export_html(prefix=prefix, inline_styles=inline_styles))
 
     def save_svg(
-        self, filename: str, prefix: str | None = None, inline_styles: bool = False
+        self,
+        filename: str,
+        prefix: str | None = None,
+        inline_styles: bool = False,
+        title: str = "PyTermGUI",
     ) -> None:
         """Exports SVG content to the given file.
 
@@ -111,7 +122,9 @@ class Recorder:
             filename += ".svg"
 
         with open(filename, "w") as file:
-            file.write(self.export_svg(prefix=prefix, inline_styles=inline_styles))
+            file.write(
+                self.export_svg(prefix=prefix, inline_styles=inline_styles, title=title)
+            )
 
 
 class ColorSystem(Enum):
