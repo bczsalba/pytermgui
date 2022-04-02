@@ -29,6 +29,7 @@ from . import (
     get_widget,
     InputField,
     Container,
+    Overflow,
     Splitter,
     terminal,
     tim,
@@ -146,7 +147,10 @@ class LauncherApplication(Application):
     def construct_window(self) -> Window:
         """Constructs an application window."""
 
-        window = self._get_base_window(width=30, is_noblur=False) + ""
+        window = (
+            self._get_base_window(width=40, is_noblur=False, overflow=Overflow.RESIZE)
+            + ""
+        )
         manager = self.manager
 
         for app in self.apps:
@@ -156,7 +160,11 @@ class LauncherApplication(Application):
             window += button
 
         window += ""
-        window += Label("[247 italic]> Choose an app to run", parent_align=0)
+        window += Label(
+            "> Choose an app to run, or press for available keybinds.",
+            parent_align=0,
+            style="242 italic",
+        )
 
         assert isinstance(window, Window)
         return window
@@ -396,42 +404,53 @@ class ColorPickerApplication(Application):
         ...
 
 
-# class HelperApplication(Application):
-#     """Application class to show all currently-active bindings"""
-#
-#     title = "Help"
-#     description = "See all current bindings"
-#
-#     def finish(self, window: Window) -> None:
-#         """Do nothing on finish"""
-#
-#     def construct_window(self) -> Window:
-#         """Construct an application window"""
-#
-#         window = self._get_base_window(width=50) + "[wm-title]Current bindings" + ""
-#
-#         bindings = list(self.manager.bindings)
-#
-#         if self.manager.focused is not None:
-#             bindings += list(self.manager.focused.bindings)
-#
-#         # Convert keycode into key name
-#         for i, binding in enumerate(bindings):
-#             binding_mutable = list(binding)
-#             binding_mutable[0] = _get_key_name(binding[0]).strip("'")
-#             bindings[i] = tuple(binding_mutable)
-#
-#         # Sort keys according to key name length
-#         bindings.sort(key=lambda item: real_length(item[0]))
-#
-#         for (key, _, description) in bindings:
-#             window += Label("[wm-section]" + key + ": ", parent_align=0)
-#             window += Label(description, padding=2, parent_align=0)
-#             window += ""
-#
-#         window.bind(keys.ESC, lambda *_: window.close())
-#
-#         return window.center()
+class HelperApplication(Application):
+    """Application class to show all currently-active bindings"""
+
+    title = "Help"
+    description = "See all current bindings"
+
+    def finish(self, window: Window) -> None:
+        """Do nothing on finish"""
+
+    def construct_window(self) -> Window:
+        """Construct an application window"""
+
+        window = (
+            self._get_base_window(width=50, overflow=Overflow.RESIZE)
+            + "[wm-title]Current bindings"
+            + ""
+        )
+
+        bindings = [
+            (key, description)
+            for key, (_, description) in self.manager.bindings.items()
+        ]
+
+        if self.manager.focused is not None:
+            bindings += [
+                (key, description)
+                for key, (_, description) in self.manager.focused.bindings.items()
+            ]
+
+        # Convert keycode into key name
+        bindinfo: list[tuple[str, str]] = []
+        for i, binding in enumerate(bindings):
+            binding_mutable = list(binding)
+            binding_mutable[0] = _get_key_name(str(binding[0])).strip("'")
+            bindings[i] = (str(binding_mutable[0]), str(binding_mutable[1]))
+
+        # Sort keys according to key name length
+        bindinfo.sort(key=lambda item: real_length(item[0]))
+
+        for (key, description) in bindinfo:
+            window += Label(str(key), parent_align=0, style="wm-section")
+            window += Label(description, padding=2, parent_align=0)
+            window += ""
+
+        window.bind(keys.ESC, lambda *_: window.close())
+
+        return window.center()
 
 
 def take_screenshot(manager: WindowManager, title: str) -> None:
@@ -488,7 +507,7 @@ def run_wm(args: Namespace) -> None:
         Splitter.styles.separator = "ptg-border"
         InputField.styles.cursor = "@72"
 
-        # helper = HelperApplication(manager)
+        helper = HelperApplication(manager)
 
         # Setup bindings
         manager.bind(
@@ -501,11 +520,11 @@ def run_wm(args: Namespace) -> None:
             description="Close focused window",
         )
 
-        # manager.bind(
-        #     "?",
-        #     lambda *_: manager.add(helper.construct_window()),
-        #     description="Show all active bindings",
-        # )
+        manager.bind(
+            "?",
+            lambda *_: manager.add(helper.construct_window()),
+            description="Show all active bindings",
+        )
 
         # Run with a launcher
         if len(sys.argv) == 1:
