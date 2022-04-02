@@ -434,6 +434,19 @@ class ColorPickerApplication(Application):
 #         return window.center()
 
 
+def take_screenshot(manager: WindowManager, title: str) -> None:
+    """Takes a screenshot, saves it as an SVG file in the current directory.
+
+    Args:
+        manager: The WindowManager to take a screenshot of.
+        title: The title of the screenshot, displayed in the "terminal"'s top bar."""
+
+    with terminal.record() as recording:
+        manager.print()
+
+    recording.save_svg("screenshot", title=title)
+
+
 def run_wm(args: Namespace) -> None:
     """Runs WindowManager using args."""
 
@@ -447,6 +460,22 @@ def run_wm(args: Namespace) -> None:
     window: Optional[Window] = None
 
     with WindowManager() as manager:
+        manager.bind(
+            keys.F12,
+            lambda *_: take_screenshot(manager, " ".join(["ptg"] + sys.argv[1:])),
+            "Takes a screenshot of the current state, saves it as screenshot.svg.",
+        )
+        manager.bind(
+            keys.F11,
+            lambda *_: {
+                None
+                if manager.focused is None
+                else manager.focused.set_fullscreen(
+                    not manager.focused.allow_fullscreen
+                )
+            },
+            "Toggles the currently focused window's fullscreen state.",
+        )
 
         # Define styles
         tim.alias("ptg-border", "60")

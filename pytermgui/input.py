@@ -291,6 +291,18 @@ try:
         "ENTER": "\r",
         "RETURN": "\r",
         "BACKSPACE": "\x08",
+        "F1": "\x00;",
+        "F2": "\x00<",
+        "F3": "\x00=",
+        "F4": "\x00>",
+        "F5": "\x00?",
+        "F6": "\x00@",
+        "F7": "\x00A",
+        "F8": "\x00B",
+        "F9": "\x00C",
+        "F10": "\x00D",
+        "F11": "\xe0\x85",
+        "F12": "\xe0\x86",
     }
 
     _getch = _GetchWindows()
@@ -319,6 +331,18 @@ except ImportError as import_error:
         "INSERT": "\x1b[2~",
         "DELETE": "\x1b[3~",
         "BACKTAB": "\x1b[Z",
+        "F1": "\x1b[11~",
+        "F2": "\x1b[12~",
+        "F3": "\x1b[13~",
+        "F4": "\x1b[14~",
+        "F5": "\x1b[15~",
+        "F6": "\x1b[17~",
+        "F7": "\x1b[18~",
+        "F8": "\x1b[19~",
+        "F9": "\x1b[20~",
+        "F10": "\x1b[21~",
+        "F11": "\x1b[23~",
+        "F12": "\x1b[24~",
     }
 
     _getch = _GetchUnix()

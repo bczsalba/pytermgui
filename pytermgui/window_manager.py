@@ -301,6 +301,7 @@ class Window(Container):
             self.allow_fullscreen = False
             self.size_policy = SizePolicy.STATIC
 
+        self.nullify_cache()
         return self
 
     def center(
@@ -473,6 +474,8 @@ class WindowManager(Container):
 
         if id(window) in self._window_cache:
             del self._window_cache[id(window)]
+
+        self.redraw()
 
     def execute_binding(self, key: Any) -> bool:
         """Execute bindings, including mouse ones.
