@@ -435,10 +435,10 @@ class HelperApplication(Application):
 
         # Convert keycode into key name
         bindinfo: list[tuple[str, str]] = []
-        for i, binding in enumerate(bindings):
+        for binding in bindings:
             binding_mutable = list(binding)
             binding_mutable[0] = _get_key_name(str(binding[0])).strip("'")
-            bindings[i] = (str(binding_mutable[0]), str(binding_mutable[1]))
+            bindinfo.append((str(binding_mutable[0]), str(binding_mutable[1])))
 
         # Sort keys according to key name length
         bindinfo.sort(key=lambda item: real_length(item[0]))
