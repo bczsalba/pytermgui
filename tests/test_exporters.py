@@ -1,5 +1,6 @@
-from random import randint
+from __future__ import annotations
 
+from random import randint
 
 from testfixtures import compare
 
