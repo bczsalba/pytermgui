@@ -6,6 +6,9 @@ Shoutout to: https://stackoverflow.com/a/33206814, one of the best StackOverflow
 answers I've ever bumped into.
 """
 
+# pylint: disable=too-many-instance-attributes
+
+
 from __future__ import annotations
 
 import re
@@ -391,6 +394,9 @@ class Color:
 
     system: ColorSystem = field(init=False)
 
+    default_foreground: Color | None = None
+    default_background: Color | None = None
+
     _luminance: float | None = field(init=False, default=None, repr=False)
     _brightness: float | None = field(init=False, default=None, repr=False)
     _rgb: tuple[int, int, int] | None = field(init=False, default=None, repr=False)
@@ -434,11 +440,17 @@ class Color:
     def get_default_foreground(cls) -> Color:
         """Gets the terminal emulator's default foreground color."""
 
+        if cls.default_foreground is not None:
+            return cls.default_foreground
+
         return _get_palette_color("10")
 
     @classmethod
     def get_default_background(cls) -> Color:
         """Gets the terminal emulator's default foreground color."""
+
+        if cls.default_background is not None:
+            return cls.default_background
 
         return _get_palette_color("11")
 

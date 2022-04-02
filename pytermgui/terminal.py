@@ -17,7 +17,7 @@ from typing import Any, Callable, TextIO, Generator
 from .input import getch
 from .regex import strip_ansi, real_length
 
-__all__ = ["terminal", "ColorSystem"]
+__all__ = ["terminal", "Recorder", "ColorSystem"]
 
 
 class Recorder:

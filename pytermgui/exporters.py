@@ -333,7 +333,7 @@ def to_html(  # pylint: disable=too-many-arguments, too-many-locals
 
             if inline_styles:
                 stylesheet = ";".join(styles)
-                line += span.format(" styles='{stylesheet}'")
+                line += span.format(f" styles='{stylesheet}'")
 
             else:
                 line += span.format(" class='" + _get_cls(prefix, index) + "'")
