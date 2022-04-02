@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 10.0.3"/>
+    <meta name="generator" content="pdoc 10.0.4"/>
     <title>pytermgui.helpers API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -31,15 +31,6 @@
 
         <h2>API Documentation</h2>
             <ul class="memberlist">
-            <li>
-                    <a class="function" href="#strip_ansi">strip_ansi</a>
-            </li>
-            <li>
-                    <a class="function" href="#strip_markup">strip_markup</a>
-            </li>
-            <li>
-                    <a class="function" href="#real_length">real_length</a>
-            </li>
             <li>
                     <a class="function" href="#get_sequences">get_sequences</a>
             </li>
@@ -70,61 +61,13 @@
             <div class="pdoc-code codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Helper methods and functions for pytermgui.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span>
-<span class="kn">from</span> <span class="nn">.parser</span> <span class="kn">import</span> <span class="n">markup</span><span class="p">,</span> <span class="n">TokenType</span><span class="p">,</span> <span class="n">RE_ANSI</span><span class="p">,</span> <span class="n">RE_MARKUP</span><span class="p">,</span> <span class="n">StyledText</span>
-<span class="kn">from</span> <span class="nn">.ansi_interface</span> <span class="kn">import</span> <span class="n">reset</span>
+<span class="kn">from</span> <span class="nn">.regex</span> <span class="kn">import</span> <span class="n">real_length</span>
+<span class="kn">from</span> <span class="nn">.parser</span> <span class="kn">import</span> <span class="n">markup</span><span class="p">,</span> <span class="n">TokenType</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;strip_ansi&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;strip_markup&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;real_length&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_sequences&quot;</span><span class="p">,</span>
     <span class="s2">&quot;break_line&quot;</span><span class="p">,</span>
 <span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Removes ANSI sequences from text.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        text: A string or bytes object containing 0 or more ANSI sequences.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The text without any ANSI sequences.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">StyledText</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">plain</span>
-
-    <span class="k">return</span> <span class="n">RE_ANSI</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">strip_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Removes markup tags from text.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        text: A string or bytes object containing 0 or more markup tags.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The text without any markup tags.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">return</span> <span class="n">RE_MARKUP</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">real_length</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Gets the display-length of text.</span>
-
-<span class="sd">    This length means no ANSI sequences are counted. This method is a convenience wrapper</span>
-<span class="sd">    for `len(strip_ansi(text))`.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        text: The text to calculate the length of.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The display-length of text.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">get_sequences</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -213,7 +156,7 @@
         <span class="c1"># subdivide a word into right lengths</span>
         <span class="k">if</span> <span class="n">new_len</span> <span class="o">&gt;</span> <span class="n">limit</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">word</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">_should_yield</span><span class="p">():</span>
-                <span class="k">yield</span> <span class="n">current</span> <span class="o">+</span> <span class="n">reset</span><span class="p">()</span>
+                <span class="k">yield</span> <span class="n">current</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
 
             <span class="n">_reset</span><span class="p">()</span>
 
@@ -251,14 +194,14 @@
                         <span class="n">cur_len</span> <span class="o">+=</span> <span class="n">chr_len</span>
 
                     <span class="k">if</span> <span class="n">_should_yield</span><span class="p">():</span>
-                        <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="n">reset</span><span class="p">()</span>
+                        <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
                     <span class="n">_reset</span><span class="p">()</span>
 
             <span class="k">continue</span>
 
         <span class="c1"># add current if we pass the limit</span>
         <span class="k">if</span> <span class="n">cur_len</span> <span class="o">+</span> <span class="n">new_len</span> <span class="o">+</span> <span class="n">chr_len</span> <span class="o">&gt;</span> <span class="n">limit</span> <span class="ow">and</span> <span class="n">_should_yield</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="n">reset</span><span class="p">()</span>
+            <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
             <span class="n">_reset</span><span class="p">()</span>
 
         <span class="n">current</span> <span class="o">+=</span> <span class="n">word</span> <span class="o">+</span> <span class="n">char</span>
@@ -266,147 +209,12 @@
 
     <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">_should_yield</span><span class="p">():</span>
-        <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="n">reset</span><span class="p">()</span>
+        <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
 </pre></div>
 
         </details>
 
             </section>
-                <section id="strip_ansi">
-                            <div class="attr function"><a class="headerlink" href="#strip_ansi">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">strip_ansi</span><span class="signature">(text: str) -&gt; str</span>:
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Removes ANSI sequences from text.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        text: A string or bytes object containing 0 or more ANSI sequences.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The text without any ANSI sequences.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">StyledText</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">plain</span>
-
-    <span class="k">return</span> <span class="n">RE_ANSI</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Removes ANSI sequences from text.</p>
-
-<h6 id="args">Args</h6>
-
-<ul>
-<li><strong>text:</strong>  A string or bytes object containing 0 or more ANSI sequences.</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>The text without any ANSI sequences.</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="strip_markup">
-                            <div class="attr function"><a class="headerlink" href="#strip_markup">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">strip_markup</span><span class="signature">(text: str) -&gt; str</span>:
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">strip_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Removes markup tags from text.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        text: A string or bytes object containing 0 or more markup tags.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The text without any markup tags.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">return</span> <span class="n">RE_MARKUP</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Removes markup tags from text.</p>
-
-<h6 id="args">Args</h6>
-
-<ul>
-<li><strong>text:</strong>  A string or bytes object containing 0 or more markup tags.</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>The text without any markup tags.</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="real_length">
-                            <div class="attr function"><a class="headerlink" href="#real_length">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">real_length</span><span class="signature">(text: str) -&gt; int</span>:
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">real_length</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Gets the display-length of text.</span>
-
-<span class="sd">    This length means no ANSI sequences are counted. This method is a convenience wrapper</span>
-<span class="sd">    for `len(strip_ansi(text))`.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        text: The text to calculate the length of.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The display-length of text.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">strip_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Gets the display-length of text.</p>
-
-<p>This length means no ANSI sequences are counted. This method is a convenience wrapper
-for <code>len(strip_ansi(text))</code>.</p>
-
-<h6 id="args">Args</h6>
-
-<ul>
-<li><strong>text:</strong>  The text to calculate the length of.</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>The display-length of text.</p>
-</blockquote>
-</div>
-
-
-                </section>
                 <section id="get_sequences">
                             <div class="attr function"><a class="headerlink" href="#get_sequences">#&nbsp;&nbsp</a>
 
@@ -532,7 +340,7 @@ for <code>len(strip_ansi(text))</code>.</p>
         <span class="c1"># subdivide a word into right lengths</span>
         <span class="k">if</span> <span class="n">new_len</span> <span class="o">&gt;</span> <span class="n">limit</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">word</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">_should_yield</span><span class="p">():</span>
-                <span class="k">yield</span> <span class="n">current</span> <span class="o">+</span> <span class="n">reset</span><span class="p">()</span>
+                <span class="k">yield</span> <span class="n">current</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
 
             <span class="n">_reset</span><span class="p">()</span>
 
@@ -570,14 +378,14 @@ for <code>len(strip_ansi(text))</code>.</p>
                         <span class="n">cur_len</span> <span class="o">+=</span> <span class="n">chr_len</span>
 
                     <span class="k">if</span> <span class="n">_should_yield</span><span class="p">():</span>
-                        <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="n">reset</span><span class="p">()</span>
+                        <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
                     <span class="n">_reset</span><span class="p">()</span>
 
             <span class="k">continue</span>
 
         <span class="c1"># add current if we pass the limit</span>
         <span class="k">if</span> <span class="n">cur_len</span> <span class="o">+</span> <span class="n">new_len</span> <span class="o">+</span> <span class="n">chr_len</span> <span class="o">&gt;</span> <span class="n">limit</span> <span class="ow">and</span> <span class="n">_should_yield</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="n">reset</span><span class="p">()</span>
+            <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
             <span class="n">_reset</span><span class="p">()</span>
 
         <span class="n">current</span> <span class="o">+=</span> <span class="n">word</span> <span class="o">+</span> <span class="n">char</span>
@@ -585,7 +393,7 @@ for <code>len(strip_ansi(text))</code>.</p>
 
     <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">_should_yield</span><span class="p">():</span>
-        <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="n">reset</span><span class="p">()</span>
+        <span class="k">yield</span> <span class="n">current</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
 </pre></div>
 
         </details>
@@ -599,7 +407,7 @@ even between lines.</p>
 
 <ul>
 <li><strong>line:</strong>  The line to break up.</li>
-<li><strong>limit:</strong>  The maximum width of a line, counting with <code><a href="#real_length">real_length</a></code>.</li>
+<li><strong>limit:</strong>  The maximum width of a line, counting with <code>real_length</code>.</li>
 <li><strong>char:</strong>  The character that separates words. Defaults to a space.</li>
 </ul>
 

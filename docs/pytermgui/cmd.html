@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 10.0.3"/>
+    <meta name="generator" content="pdoc 10.0.4"/>
     <title>pytermgui.cmd API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -106,6 +106,7 @@ of the interesting parts of pytermgui.</p>
     <span class="n">get_widget</span><span class="p">,</span>
     <span class="n">InputField</span><span class="p">,</span>
     <span class="n">Container</span><span class="p">,</span>
+    <span class="n">Overflow</span><span class="p">,</span>
     <span class="n">Splitter</span><span class="p">,</span>
     <span class="n">terminal</span><span class="p">,</span>
     <span class="n">tim</span><span class="p">,</span>
@@ -223,7 +224,10 @@ of the interesting parts of pytermgui.</p>
     <span class="k">def</span> <span class="nf">construct_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Constructs an application window.&quot;&quot;&quot;</span>
 
-        <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_base_window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">is_noblur</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_base_window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">is_noblur</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="n">Overflow</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
         <span class="n">manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span>
 
         <span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">apps</span><span class="p">:</span>
@@ -233,7 +237,11 @@ of the interesting parts of pytermgui.</p>
             <span class="n">window</span> <span class="o">+=</span> <span class="n">button</span>
 
         <span class="n">window</span> <span class="o">+=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">window</span> <span class="o">+=</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;[247 italic]&gt; Choose an app to run&quot;</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">window</span> <span class="o">+=</span> <span class="n">Label</span><span class="p">(</span>
+            <span class="s2">&quot;&gt; Choose an app to run, or press for available keybinds.&quot;</span><span class="p">,</span>
+            <span class="n">parent_align</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">style</span><span class="o">=</span><span class="s2">&quot;242 italic&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">Window</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">window</span>
@@ -473,42 +481,66 @@ of the interesting parts of pytermgui.</p>
         <span class="o">...</span>
 
 
-<span class="c1"># class HelperApplication(Application):</span>
-<span class="c1">#     &quot;&quot;&quot;Application class to show all currently-active bindings&quot;&quot;&quot;</span>
-<span class="c1">#</span>
-<span class="c1">#     title = &quot;Help&quot;</span>
-<span class="c1">#     description = &quot;See all current bindings&quot;</span>
-<span class="c1">#</span>
-<span class="c1">#     def finish(self, window: Window) -&gt; None:</span>
-<span class="c1">#         &quot;&quot;&quot;Do nothing on finish&quot;&quot;&quot;</span>
-<span class="c1">#</span>
-<span class="c1">#     def construct_window(self) -&gt; Window:</span>
-<span class="c1">#         &quot;&quot;&quot;Construct an application window&quot;&quot;&quot;</span>
-<span class="c1">#</span>
-<span class="c1">#         window = self._get_base_window(width=50) + &quot;[wm-title]Current bindings&quot; + &quot;&quot;</span>
-<span class="c1">#</span>
-<span class="c1">#         bindings = list(self.manager.bindings)</span>
-<span class="c1">#</span>
-<span class="c1">#         if self.manager.focused is not None:</span>
-<span class="c1">#             bindings += list(self.manager.focused.bindings)</span>
-<span class="c1">#</span>
-<span class="c1">#         # Convert keycode into key name</span>
-<span class="c1">#         for i, binding in enumerate(bindings):</span>
-<span class="c1">#             binding_mutable = list(binding)</span>
-<span class="c1">#             binding_mutable[0] = _get_key_name(binding[0]).strip(&quot;&#39;&quot;)</span>
-<span class="c1">#             bindings[i] = tuple(binding_mutable)</span>
-<span class="c1">#</span>
-<span class="c1">#         # Sort keys according to key name length</span>
-<span class="c1">#         bindings.sort(key=lambda item: real_length(item[0]))</span>
-<span class="c1">#</span>
-<span class="c1">#         for (key, _, description) in bindings:</span>
-<span class="c1">#             window += Label(&quot;[wm-section]&quot; + key + &quot;: &quot;, parent_align=0)</span>
-<span class="c1">#             window += Label(description, padding=2, parent_align=0)</span>
-<span class="c1">#             window += &quot;&quot;</span>
-<span class="c1">#</span>
-<span class="c1">#         window.bind(keys.ESC, lambda *_: window.close())</span>
-<span class="c1">#</span>
-<span class="c1">#         return window.center()</span>
+<span class="k">class</span> <span class="nc">HelperApplication</span><span class="p">(</span><span class="n">Application</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Application class to show all currently-active bindings&quot;&quot;&quot;</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Help&quot;</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;See all current bindings&quot;</span>
+
+    <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="n">Window</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Do nothing on finish&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">construct_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Window</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Construct an application window&quot;&quot;&quot;</span>
+
+        <span class="n">window</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_base_window</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="n">Overflow</span><span class="o">.</span><span class="n">RESIZE</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;[wm-title]Current bindings&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">bindings</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">bindings</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">focused</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bindings</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">focused</span><span class="o">.</span><span class="n">bindings</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">]</span>
+
+        <span class="c1"># Convert keycode into key name</span>
+        <span class="n">bindinfo</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">binding</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bindings</span><span class="p">):</span>
+            <span class="n">binding_mutable</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">binding</span><span class="p">)</span>
+            <span class="n">binding_mutable</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_key_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">binding</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+            <span class="n">bindings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">binding_mutable</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">binding_mutable</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># Sort keys according to key name length</span>
+        <span class="n">bindinfo</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">real_length</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span> <span class="ow">in</span> <span class="n">bindinfo</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">+=</span> <span class="n">Label</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">parent_align</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;wm-section&quot;</span><span class="p">)</span>
+            <span class="n">window</span> <span class="o">+=</span> <span class="n">Label</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">window</span> <span class="o">+=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">window</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">keys</span><span class="o">.</span><span class="n">ESC</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">window</span><span class="o">.</span><span class="n">close</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">window</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">take_screenshot</span><span class="p">(</span><span class="n">manager</span><span class="p">:</span> <span class="n">WindowManager</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Takes a screenshot, saves it as an SVG file in the current directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        manager: The WindowManager to take a screenshot of.</span>
+<span class="sd">        title: The title of the screenshot, displayed in the &quot;terminal&quot;&#39;s top bar.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="n">terminal</span><span class="o">.</span><span class="n">record</span><span class="p">()</span> <span class="k">as</span> <span class="n">recording</span><span class="p">:</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+
+    <span class="n">recording</span><span class="o">.</span><span class="n">save_svg</span><span class="p">(</span><span class="s2">&quot;screenshot&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">run_wm</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -524,6 +556,22 @@ of the interesting parts of pytermgui.</p>
     <span class="n">window</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Window</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">with</span> <span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">F12</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">take_screenshot</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;ptg&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])),</span>
+            <span class="s2">&quot;Takes a screenshot of the current state, saves it as screenshot.svg.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">F11</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="p">{</span>
+                <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">manager</span><span class="o">.</span><span class="n">focused</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="n">manager</span><span class="o">.</span><span class="n">focused</span><span class="o">.</span><span class="n">set_fullscreen</span><span class="p">(</span>
+                    <span class="ow">not</span> <span class="n">manager</span><span class="o">.</span><span class="n">focused</span><span class="o">.</span><span class="n">allow_fullscreen</span>
+                <span class="p">)</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;Toggles the currently focused window&#39;s fullscreen state.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Define styles</span>
         <span class="n">tim</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;ptg-border&quot;</span><span class="p">,</span> <span class="s2">&quot;60&quot;</span><span class="p">)</span>
@@ -536,7 +584,7 @@ of the interesting parts of pytermgui.</p>
         <span class="n">Splitter</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;ptg-border&quot;</span>
         <span class="n">InputField</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="s2">&quot;@72&quot;</span>
 
-        <span class="c1"># helper = HelperApplication(manager)</span>
+        <span class="n">helper</span> <span class="o">=</span> <span class="n">HelperApplication</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
 
         <span class="c1"># Setup bindings</span>
         <span class="n">manager</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span>
@@ -549,11 +597,11 @@ of the interesting parts of pytermgui.</p>
             <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Close focused window&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># manager.bind(</span>
-        <span class="c1">#     &quot;?&quot;,</span>
-        <span class="c1">#     lambda *_: manager.add(helper.construct_window()),</span>
-        <span class="c1">#     description=&quot;Show all active bindings&quot;,</span>
-        <span class="c1"># )</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span>
+            <span class="s2">&quot;?&quot;</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">construct_window</span><span class="p">()),</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Show all active bindings&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Run with a launcher</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
