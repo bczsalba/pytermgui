@@ -1,3 +1,23 @@
+## [4.3.0] - 2022-04-02
+
+### Additions
+- Re-introduce `Helpers` ptg app 
+- Add F-keys to `input.keys` 
+- Add `terminal` `Recorder` class, ability to record anything written to the terminal using a context 
+- Add `Color.hex` property 
+- Add `Color` default fore & background setter and getters, using the terminal’s palette 
+- Add `LINK` and `POSITION` `TIM` token types 
+- Add `exporters` module to generate HTML pages and SVG screenshots from any terminal content 
+- Add `style` construction argument to `Label` 
+- Add `tim.get_styled_plains` method 
+
+
+### Refactors
+- Slightly optimize how `WindowManager.print` works 
+- Move regex-related utilities into `regex.py` 
+
+
+
 ## [4.2.1] - 2022-03-22
 
 ### Refactors
@@ -65,6 +85,8 @@
 
 
 
+[4.3.0]: https://github.com/bczsalba/pytermgui/compare/4.2.0...4.3.0
+[4.2.1]: https://github.com/bczsalba/pytermgui/compare/4.2.0...4.2.1
 [4.2.0]: https://github.com/bczsalba/pytermgui/compare/4.1.0...4.2.0
 [4.1.0]: https://github.com/bczsalba/pytermgui/compare/4.0.0...4.1.0
 [4.0.1]: https://github.com/bczsalba/pytermgui/compare/4.0.0...4.0.1
