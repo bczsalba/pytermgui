@@ -982,15 +982,9 @@ class SizedTerminal(Terminal):
 
 
 def _generate_stressor(term: Terminal = terminal) -> Recorder:
-    from pytermgui import pretty
-
     pytermgui.terminal = term
 
     with term.record() as recording:
-        pretty.install()
-
-        pretty.print([1, 2, {"abc": "efg"}])
-
         width, height = 30, 30
         matrix = DensePixelMatrix(width, height)
 
@@ -1045,7 +1039,6 @@ def test_export_svg():
     Color.default_foreground = str_to_color("#ffffff")
 
     output = recording.export_svg()
-    print(output)
 
     if output != SVG_TARGET:
         print(*_diff(output, SVG_TARGET))
