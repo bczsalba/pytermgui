@@ -508,6 +508,7 @@ SVG_TARGET = """\
         }
         pre {
             font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+            white-space: pre-wrap;
         }
         a {
             text-decoration: none;
