@@ -1,3 +1,13 @@
+## [4.3.1] - 2022-04-03
+
+### Bugfixes
+- Fix #45 by catching `errno.EINVAL` on stream truncation
+- Fix `Container` first lines sometimes having wrong indentations in SVG exports
+- Fix `Helpers` app not showing any bindings
+
+
+
+
 ## [4.3.0] - 2022-04-02
 
 ### Additions
@@ -85,6 +95,7 @@
 
 
 
+[4.3.1]: https://github.com/bczsalba/pytermgui/compare/4.3.0...4.3.1
 [4.3.0]: https://github.com/bczsalba/pytermgui/compare/4.2.0...4.3.0
 [4.2.1]: https://github.com/bczsalba/pytermgui/compare/4.2.0...4.2.1
 [4.2.0]: https://github.com/bczsalba/pytermgui/compare/4.1.0...4.2.0
