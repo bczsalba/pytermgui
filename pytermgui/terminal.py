@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import sys
 import time
+import errno
 import signal
 from enum import Enum
 from shutil import get_terminal_size
@@ -407,7 +408,12 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
     def clear_stream(self) -> None:
         """Clears (truncates) the terminal's stream."""
 
-        self._stream.truncate(0)
+        try:
+            self._stream.truncate(0)
+
+        except OSError as error:
+            if error.errno != errno.EINVAL:
+                raise
 
     def print(
         self,
