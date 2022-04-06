@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import os
 import sys
+import signal
 
 from typing import (
     IO,
@@ -27,6 +28,7 @@ from typing import (
 )
 
 from select import select
+from contextlib import contextmanager
 from codecs import getincrementaldecoder
 
 __all__ = ["Keys", "getch", "keys"]
@@ -45,6 +47,30 @@ def _is_ready(file: IO[AnyStr]) -> bool:
 
     result = select([file], [], [], 0.0)
     return len(result[0]) > 0
+
+
+class TimeoutException(Exception):
+    """Raised when an action has timed out."""
+
+
+@contextmanager
+def _timeout(duration: float) -> None:
+    """Creates a timeout."""
+
+    def _raise_timeout(*_, **__):
+        raise TimeoutException("The action has timed out.")
+
+    try:
+        # set the timeout handler
+        signal.signal(signal.SIGALRM, _raise_timeout)
+        signal.setitimer(signal.ITIMER_REAL, duration)
+        yield
+
+    except TimeoutException:
+        raise
+
+    finally:
+        signal.alarm(0)
 
 
 class _GetchUnix:
@@ -71,6 +97,7 @@ class _GetchUnix:
         buff = ""
         while len(buff) < num:
             char = os.read(sys.stdin.fileno(), 1)
+
             try:
                 buff += self.decode(char)
             except UnicodeDecodeError:
@@ -347,6 +374,30 @@ except ImportError as import_error:
 
     _getch = _GetchUnix()
     keys = Keys(_platform_keys, "posix")
+
+
+def getch_timeout(
+    timeout: float, default: str = "", printable: bool = False, interrupts: bool = True
+) -> Any:
+    """Calls `getch`, returns `default` if timeout passes before getting input.
+
+    No timeout is applied on Windows systems, as there is no support for `SIGALRM`.
+
+    Args:
+        timeout: How long the call should wait for input.
+        default: The value to return if timeout occured.
+    """
+
+    if isinstance(_getch, _GetchWindows):
+        return getch()
+
+    with _timeout(timeout):
+        try:
+            return getch(printable=printable, interrupts=interrupts)
+        except TimeoutException:
+            pass
+
+    return default
 
 
 def getch(printable: bool = False, interrupts: bool = True) -> Any:
