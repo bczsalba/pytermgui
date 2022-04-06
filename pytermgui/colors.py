@@ -530,7 +530,7 @@ class Color:
         """Creates a terminal-capability local Color instance.
 
         This method essentially allows for graceful degradation of colors in the
-        terminal, a feature that AFAIK is unique to PyTermGUI at the moment of writing.
+        terminal.
         """
 
         system = terminal.colorsystem
