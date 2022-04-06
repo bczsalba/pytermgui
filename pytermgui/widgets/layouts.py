@@ -21,7 +21,6 @@ from ..enums import (
 
 from ..exceptions import WidthExceededError
 from ..regex import real_length, strip_markup
-from ..terminal import terminal
 from ..input import keys
 from . import boxes
 from . import styles as w_styles
@@ -732,17 +731,17 @@ class Container(Widget):
 
         pos = list(self.pos)
         if centerx:
-            pos[0] = (terminal.width - self.width + 2) // 2
+            pos[0] = (self.terminal.width - self.width + 2) // 2
 
         if centery:
-            pos[1] = (terminal.height - self.height + 2) // 2
+            pos[1] = (self.terminal.height - self.height + 2) // 2
 
         self.pos = (pos[0], pos[1])
 
         if store:
             self.centered_axis = where
 
-        self._prev_screen = terminal.size
+        self._prev_screen = self.terminal.size
 
         return self
 
@@ -925,14 +924,14 @@ class Container(Widget):
         will be centered based on its `centered_axis`.
         """
 
-        if not terminal.size == self._prev_screen:
+        if not self.terminal.size == self._prev_screen:
             clear()
             self.center(self.centered_axis)
 
-        self._prev_screen = terminal.size
+        self._prev_screen = self.terminal.size
 
         if self.allow_fullscreen:
-            self.pos = terminal.origin
+            self.pos = self.terminal.origin
 
         with cursor_at(self.pos) as print_here:
             for line in self.get_lines():

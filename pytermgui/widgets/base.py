@@ -14,10 +14,10 @@ from typing import Callable, Optional, Type, Iterator, Any, Union
 
 from ..input import keys
 from ..parser import markup
-from ..terminal import terminal
 from ..regex import real_length
 from ..helpers import break_line
 from ..ansi_interface import MouseEvent
+from ..terminal import get_terminal, Terminal
 from ..enums import SizePolicy, HorizontalAlignment
 
 from . import styles as w_styles
@@ -127,7 +127,7 @@ class Widget:
 
         self.width = 1
         self.height = 1
-        self.pos = terminal.origin
+        self.pos = self.terminal.origin
 
         self.depth = 0
 
@@ -286,6 +286,12 @@ class Widget:
 
         self.size_policy = SizePolicy.RELATIVE
         self._relative_width = min(1.0, value)
+
+    @property
+    def terminal(self) -> Terminal:
+        """Returns the current global terminal instance."""
+
+        return get_terminal()
 
     def contains(self, pos: tuple[int, int]) -> bool:
         """Determines whether widget contains `pos`.
