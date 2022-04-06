@@ -16,7 +16,7 @@ from contextlib import contextmanager
 from typing import Any, Callable, TextIO, Generator
 
 from .input import getch
-from .regex import strip_ansi, real_length
+from .regex import strip_ansi, real_length, has_open_sequence
 
 __all__ = [
     "terminal",
@@ -421,16 +421,49 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             flush: If set, `flush` will be called on the stream after reading.
         """
 
+        def _slice(line: str, maximum: int) -> str:
+            length = 0
+            sliced = ""
+            for char in line:
+                sliced += char
+                if char == "\x1b":
+                    continue
+
+                if (
+                    length > maximum
+                    and real_length(sliced) > maximum
+                    and not has_open_sequence(sliced)
+                ):
+                    break
+
+                length += 1
+
+            return sliced
+
         if "\x1b[2J" in data:
             self.clear_stream()
 
         if pos is not None:
-            data = "\x1b[{};{}H".format(*reversed(pos)) + data
+            self._cursor = pos
+
+            xpos, ypos = pos
+
+            if not self.height + self.origin[1] + 1 > ypos >= 0:
+                return
+
+            maximum = self.width - xpos + self.origin[0]
+
+            if xpos < self.origin[0]:
+                xpos = self.origin[0]
+
+            sliced = _slice(data, maximum) if len(data) > maximum else data
+
+            data = "\x1b[{};{}H".format(*reversed((xpos, ypos))) + sliced + "\x1b[0m"
+
+        self._stream.write(data)
 
         if self._recorder is not None:
             self._recorder.write(data)
-
-        self._stream.write(data)
 
         if flush:
             self._stream.flush()
