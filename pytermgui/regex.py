@@ -1,6 +1,7 @@
 """This modules contains all of the regex-related names and utilites."""
 
 import re
+from functools import lru_cache
 
 RE_ANSI = re.compile(r"(?:\x1b\[(.*?)[mH])|(?:\x1b\](.*?)\x1b\\)|(?:\x1b_G(.*?)\x1b\\)")
 RE_LINK = re.compile(r"(?:\x1b]8;;(.*?)\x1b\\(.*?)\x1b]8;;\x1b\\)")
@@ -62,3 +63,61 @@ def real_length(text: str) -> int:
     """
 
     return len(strip_ansi(text))
+
+
+@lru_cache
+def has_open_sequence(text: str) -> bool:
+    """Figures out if the given text has any unclosed ANSI sequences.
+
+    It supports standard SGR (`\\x1b[1mHello`), OSC (`\\x1b[30;2ST\\x1b\\\\`) and Kitty APC codes
+    (`\x1b_Garguments;hex_data\\x1b\\\\`). It also recognizes incorrect syntax; it only considers
+    a tag closed when it is using the right closing sequence, e.g. `m` or `H` for SGR, `\\x1b\\\\`
+    for OSC and APC types.
+
+    Args:
+        text: The text to test.
+
+    Returns:
+        True if there is at least one tag that hasn't been closed, False otherwise.
+    """
+
+    is_osc = False
+    is_sgr = False
+    is_apc = False
+
+    open_count = 0
+    sequence = ""
+
+    for char in text:
+        if char == "\x1b":
+            open_count += 1
+            sequence += char
+            continue
+
+        if len(sequence) == 0:
+            continue
+
+        # Ignore OSC and APC closers as new openers
+        if char == "\\" and sequence[-1] == "\x1b":
+            open_count -= 1
+
+        if not is_osc:
+            is_osc = sequence[:2] == "\x1b]"
+
+        if not is_sgr:
+            is_sgr = sequence[:2] == "\x1b["
+
+        if not is_apc:
+            is_apc = sequence[:3] == "\x1b_G"
+
+        sequence += char
+
+        if (is_osc or is_apc) and sequence[-2:] == "\x1b\\":
+            sequence = ""
+            open_count -= 1
+
+        elif is_sgr and char in {"m", "H"}:
+            sequence = ""
+            open_count -= 1
+
+    return len(sequence) != 0 or open_count != 0
