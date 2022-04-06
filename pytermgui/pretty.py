@@ -31,6 +31,8 @@ except NameError:
     BaseFormatter = object
 
 
+NO_WELCOME = os.getenv("PTG_SILENCE_PRETTY") is not None
+
 __all__ = ["pprint", "install"]
 
 
@@ -135,12 +137,13 @@ def install(
     else:
         sys.displayhook = _hook
 
-    print()
-    tim.print("[113 bold]Successfully set up prettification!")
-    tim.print("[245 italic]> All function returns will now be pretty-printed,")
-    print()
-    pprint("[245 italic]Including [/italic 210]Markup!")
-    print()
+    if not NO_WELCOME:
+        print()
+        tim.print("[113 bold]Successfully set up prettification!")
+        tim.print("[245 italic]> All function returns will now be pretty-printed,")
+        print()
+        pprint("[245 italic]Including [/italic 210]Markup!")
+        print()
 
     get_terminal().displayhook_installed = True
 
