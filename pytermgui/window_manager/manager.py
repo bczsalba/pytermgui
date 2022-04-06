@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 import signal
 from enum import Enum, auto as _auto
 
@@ -7,7 +8,8 @@ from ..parser import tim
 from ..input import getch
 from ..widgets import Widget
 from ..terminal import terminal
-from ..ansi_interface import MouseAction
+from ..animations import animator
+from ..ansi_interface import MouseAction, MouseEvent
 from ..context_managers import alt_buffer, mouse_handler, MouseTranslator
 
 from .window import Window
@@ -94,6 +96,11 @@ class WindowManager(Widget):
 
             self.process_mouse(key)
 
+    def clear_cache(self, window: Window) -> None:
+        """Clears the compositor's cache related to the given window."""
+
+        self.compositor.clear_cache(window)
+
     def on_resize(self, size: tuple[int, int]) -> None:
         """Correctly updates window positions & prints when terminal gets resized.
 
@@ -141,30 +148,75 @@ class WindowManager(Widget):
         self.compositor.stop()
         self._is_running = False
 
-    def add(self, other: Window) -> WindowManager:
+    def add(self, window: Window) -> WindowManager:
         """Adds a window to the manager."""
 
-        other.manager = self
-        self._windows.insert(0, other)
+        original_height = window.height
 
-        self.focus(other)
+        def _on_step(window: Widget) -> None:
+            """Sets window's height on step, centers it."""
 
-    def remove(self, other: Window, autostop: bool = True) -> WindowManager:
+            assert isinstance(window, Window)
+            window.height = original_height
+            if window.centered_axis is not None:
+                window.center()
+
+            self.clear_cache(window)
+
+        if self.focused is not None:
+            self.focused.handle_mouse(MouseEvent(MouseAction.RELEASE, (0, 0)))
+
+        self._windows.insert(0, window)
+        self._should_print = True
+        window.manager = self
+
+        # New windows take focus-precedence over already
+        # existing ones, even if they are modal.
+        self.focus(window)
+
+        animator.animate(
+            window,
+            "width",
+            startpoint=int(window.width * 0.7),
+            endpoint=window.width,
+            duration=150,
+            step_callback=_on_step,
+        )
+        return self
+
+    def remove(self, window: Window, autostop: bool = True) -> WindowManager:
         """Removes a window from the manager.
 
         Args:
-            other: The window to remove.
+            window: The window to remove.
             autostop: If set, the manager will be stopped if the length of its windows
                 hits 0.
         """
 
-        self._windows.remove(other)
+        def _on_finish(window: Window) -> None:
+            self._windows.remove(window)
 
-        if autostop and len(self._windows) == 0:
-            self.stop()
-            return self
+            if autostop and len(self._windows) == 0:
+                self.stop()
+                return self
 
-        self.focus(self._windows[0])
+            self.focus(self._windows[0])
+
+        animator.animate(
+            window,
+            "height",
+            endpoint=0,
+            duration=350,
+            finish_callback=_on_finish,
+        )
+
+        animator.animate(
+            window,
+            "width",
+            endpoint=window.min_width,
+            duration=350,
+        )
+
         return self
 
     def focus(self, window: Window | None) -> None:
@@ -365,3 +417,14 @@ class WindowManager(Widget):
             # Unset drag_target if no windows received the input
             else:
                 self._drag_target = None
+
+    def screenshot(self, title: str, filename: str = "screenshot.svg") -> None:
+        """Takes a screenshot of the current state.
+
+        See `pytermgui.exporters.to_svg` for more information.
+
+        Args:
+            filename: The name of the file.
+        """
+
+        self.compositor.capture(title=title, filename=filename)
