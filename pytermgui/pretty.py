@@ -10,13 +10,14 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import sys
 import builtins
 from typing import Any
 
 from .parser import tim
-from .terminal import terminal
 from .prettifiers import prettify
+from .terminal import get_terminal
 
 try:
     # Try to get IPython instance. This function is provided by the
@@ -78,7 +79,7 @@ def pprint(
             )
         )
 
-    terminal.print(*pretty, **print_args)
+    get_terminal().print(*pretty, **print_args)
 
 
 def install(
@@ -141,7 +142,7 @@ def install(
     pprint("[245 italic]Including [/italic 210]Markup!")
     print()
 
-    terminal.displayhook_installed = True
+    get_terminal().displayhook_installed = True
 
 
 class PTGFormatter(BaseFormatter):  # pylint: disable=too-few-public-methods

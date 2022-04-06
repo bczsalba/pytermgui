@@ -28,7 +28,7 @@ from .ansi_interface import (
     MouseEvent,
 )
 
-from .terminal import terminal
+from .terminal import get_terminal
 
 # TODO: Move this absolute beast to a types submodule
 MouseTranslator = Callable[[str], Union[List[Union[MouseEvent, None]], None]]
@@ -76,6 +76,8 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
         echo: Whether `unset_echo` should be called on startup.
         cursor: Whether `hide_cursor` should be called on startup.
     """
+
+    terminal = get_terminal()
 
     try:
         set_alt_buffer()

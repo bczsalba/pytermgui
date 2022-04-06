@@ -7,7 +7,7 @@ from typing import Iterator
 
 from .colors import Color
 from .widgets import Widget
-from .terminal import terminal
+from .terminal import get_terminal
 from .parser import Token, TokenType, StyledText, tim
 
 MARGIN = 15
@@ -382,6 +382,7 @@ def to_svg(
             to see all of its arguments.
     """
 
+    terminal = get_terminal()
     width = terminal.width * FONT_SIZE * CHAR_WIDTH + MARGIN + 10
     height = terminal.height * FONT_SIZE * CHAR_HEIGHT + 105
 
