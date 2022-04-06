@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from ..enums import Overflow
 from ..widgets import Container
 from ..terminal import terminal
+from ..enums import Overflow, SizePolicy
 from ..widgets import styles as w_styles
 
 
@@ -38,14 +38,6 @@ class Window(Container):
     """Control whether the parent manager needs to print this Window."""
 
     min_width: int | None = None
-    """Minimum width of the window.
-
-    If set to none, _auto_min_width will be calculated based on the maximum width of inner widgets.
-    This is accurate enough for general use, but tends to lean to the safer side, i.e. it often
-    overshoots the 'real' minimum width possible.
-
-    If you find this to be the case, **AND** you can ensure that your window will not break, you
-    may set this value manually."""
 
     chars = Container.chars.copy()
 
@@ -61,7 +53,8 @@ class Window(Container):
             attrs: Attributes that are passed to the constructor.
         """
 
-        self._auto_min_width = 0
+        self._min_width = None
+        self._auto_min_width = None
 
         super().__init__(*widgets, **attrs)
 
@@ -73,6 +66,25 @@ class Window(Container):
 
         if self.title != "":
             self.set_title(self.title)
+
+    @property
+    def min_width(self) -> int | None:
+        """Minimum width of the window.
+
+        If set to none, _auto_min_width will be calculated based on the maximum width of inner widgets.
+        This is accurate enough for general use, but tends to lean to the safer side, i.e. it often
+        overshoots the 'real' minimum width possible.
+
+        If you find this to be the case, **AND** you can ensure that your window will not break, you
+        may set this value manually."""
+
+        return self._min_width or self._auto_min_width
+
+    @min_width.setter
+    def min_width(self, new: int) -> None:
+        """Sets a new minimum width."""
+
+        self._min_width = new
 
     @property
     def rect(self) -> tuple[int, int, int, int]:
@@ -98,7 +110,7 @@ class Window(Container):
         """
 
         left, top, right, bottom = new
-        minimum = self.min_width or self._auto_min_width
+        minimum = self.min_width
 
         if right - left < minimum:
             return
