@@ -10,15 +10,22 @@ import time
 import errno
 import signal
 from enum import Enum
+from datetime import datetime
 from shutil import get_terminal_size
 from contextlib import contextmanager
-from functools import cached_property
 from typing import Any, Callable, TextIO, Generator
 
 from .input import getch
 from .regex import strip_ansi, real_length
 
-__all__ = ["terminal", "Recorder", "ColorSystem"]
+__all__ = [
+    "terminal",
+    "set_global_terminal",
+    "get_terminal",
+    "Terminal",
+    "Recorder",
+    "ColorSystem",
+]
 
 
 class Recorder:
@@ -86,7 +93,10 @@ class Recorder:
             file.write(self.export_text())
 
     def save_html(
-        self, filename: str, prefix: str | None = None, inline_styles: bool = False
+        self,
+        filename: str | None = None,
+        prefix: str | None = None,
+        inline_styles: bool = False,
     ) -> None:
         """Exports HTML content to the given file.
 
@@ -97,6 +107,9 @@ class Recorder:
                 extension it will be appended to the end.
         """
 
+        if filename is None:
+            filename = f"PTG_{time.time():%Y-%m-%d %H:%M:%S}.html"
+
         if not filename.endswith(".html"):
             filename += ".html"
 
@@ -105,7 +118,7 @@ class Recorder:
 
     def save_svg(
         self,
-        filename: str,
+        filename: str | None = None,
         prefix: str | None = None,
         inline_styles: bool = False,
         title: str = "PyTermGUI",
@@ -118,6 +131,10 @@ class Recorder:
             filename: The file to save to. If the filename does not contain the '.svg'
                 extension it will be appended to the end.
         """
+
+        if filename is None:
+            timeval = datetime.now()
+            filename = f"PTG_{timeval:%Y-%m-%d_%H:%M:%S}.svg"
 
         if not filename.endswith(".svg"):
             filename += ".svg"
@@ -209,11 +226,19 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
     origin: tuple[int, int] = (1, 1)
     """Origin of the internal coordinate system."""
 
-    def __init__(self, stream: TextIO | None = None) -> None:
+    def __init__(
+        self,
+        stream: TextIO | None = None,
+        size: tuple[int, int] | None = None,
+        pixel_size: tuple[int, int] | None = None,
+    ) -> None:
         """Initialize `_Terminal` class."""
 
         if stream is None:
             stream = sys.stdout
+
+        self._size = size
+        self._pixel_size = pixel_size
 
         self._stream = stream
         self._recorder: Recorder | None = None
@@ -230,9 +255,15 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         # TODO: Support SIGWINCH on Windows.
 
-    @staticmethod
-    def _get_pixel_size() -> tuple[int, int]:
+        self._diff_buffer = [
+            ["" for _ in range(self.width)] for y in range(self.height)
+        ]
+
+    def _get_pixel_size(self) -> tuple[int, int]:
         """Gets the terminal's size, in pixels."""
+
+        if self._pixel_size is not None:
+            return self._pixel_size
 
         if sys.stdout.isatty():
             sys.stdout.write("\x1b[14t")
@@ -260,6 +291,9 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
     def _get_size(self) -> tuple[int, int]:
         """Gets the screen size with origin substracted."""
+
+        if self._size is not None:
+            return self.size
 
         size = get_terminal_size()
         return (size[0] - self.origin[0], size[1] - self.origin[1])
@@ -307,10 +341,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         self._forced_colorsystem = new
 
-        if hasattr(self, "colorsystem"):
-            del self.colorsystem
-
-    @cached_property
+    @property
     def colorsystem(self) -> ColorSystem:
         """Gets the current terminal's supported color system."""
 
@@ -320,7 +351,11 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         if os.getenv("NO_COLOR") is not None:
             return ColorSystem.NO_COLOR
 
+        term = os.getenv("TERM")
         color_term = os.getenv("COLORTERM", "").strip().lower()
+
+        if color_term == "":
+            color_term = term.split("xterm-")[-1]
 
         if color_term in ["24bit", "truecolor"]:
             return ColorSystem.TRUE
@@ -415,6 +450,8 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             if error.errno != errno.EINVAL:
                 raise
 
+        self._stream.write("\x1b[2J")
+
     def print(
         self,
         *items,
@@ -432,7 +469,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         """
 
-        self.write(sep.join(items) + end, pos=pos, flush=flush)
+        self.write(sep.join(map(str, items)) + end, pos=pos, flush=flush)
 
     def flush(self) -> None:
         """Flushes self._stream."""
@@ -440,5 +477,17 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         self._stream.flush()
 
 
-terminal = Terminal()
+terminal = Terminal()  # pylint: disable=invalid-name
 """Terminal instance that should be used pretty much always."""
+
+
+def set_global_terminal(new: Terminal) -> None:
+    """Sets the terminal instance to be used by the module."""
+
+    globals()["terminal"] = new
+
+
+def get_terminal() -> Terminal:
+    """Gets the default terminal instance used by the module."""
+
+    return terminal
