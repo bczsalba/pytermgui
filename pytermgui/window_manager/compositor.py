@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 from itertools import zip_longest
 
 from ..regex import strip_ansi
-from ..terminal import terminal
 from ..parser import tim, TokenType
 from ..animations import animator, Animation
+from ..terminal import get_terminal, Terminal
 
 from .window import Window
 
@@ -29,34 +29,44 @@ class Compositor:
         self._previous = ""
         self._cache: dict[int, list[str]] = {}
 
+        self.fps = 0
         self.framerate = framerate
+
+    @property
+    def terminal(self) -> Terminal:
+        """Returns the current global terminal."""
+
+        return get_terminal()
 
     def _draw_loop(self) -> None:
         """A loop that draws at regular intervals."""
 
         last_frame = fps_start_time = time.perf_counter()
         framecount = 0
-        while self._is_running:
-            elapsed = time.perf_counter() - last_frame
-            if elapsed < self._frametime:
-                time.sleep(self._frametime - elapsed)
-                framecount += 1
-                continue
 
+        while self._is_running:
             animator.step()
             self.draw()
-
-            last_frame = time.perf_counter()
+            framecount += 1
 
             if last_frame - fps_start_time >= 1:
                 self.fps = framecount
                 fps_start_time = last_frame
                 framecount = 0
 
-            framecount += 1
+            elapsed = time.perf_counter() - last_frame
+            if elapsed < self._frametime:
+                time.sleep(self._frametime - elapsed)
+
+            last_frame = time.perf_counter()
 
     def _get_lines(self, window: Window) -> list[str]:
         """Gets lines from the window, caching when possible."""
+
+        if window.allow_fullscreen:
+            window.pos = self.terminal.origin
+            window.width = self.terminal.width + 1
+            window.height = self.terminal.height + 1
 
         _id = id(window)
         if window.has_focus or window.is_noblur:
@@ -65,11 +75,12 @@ class Compositor:
         if not window.is_dirty and _id in self._cache:
             return self._cache[_id]
 
-        lines = window.get_lines()
+        lines = []
+        for line in window.get_lines():
+            if not window.has_focus:
+                line = tim.parse("[239]" + strip_ansi(line))
 
-        if not window.has_focus:
-            for i, line in enumerate(lines):
-                lines[i] = tim.parse("[239]" + strip_ansi(line))
+            lines.append(line)
 
         self._cache[_id] = lines
         return lines
@@ -108,10 +119,24 @@ class Compositor:
         """Composites the windows into one string."""
 
         lines = []
-        for window in reversed(self._windows):
+
+        # Don't unnecessarily print under full screen windows
+        if any(window.allow_fullscreen for window in self._windows):
+            for window in reversed(self._windows):
+                if window.allow_fullscreen:
+                    windows = [window]
+                    break
+
+        else:
+            windows = self._windows
+
+        for window in reversed(windows):
             for i, line in enumerate(self._get_lines(window)):
                 pos = (window.pos[0], window.pos[1] + i)
                 lines.append((pos, line))
+
+            if window.allow_fullscreen:
+                break
 
         return lines
 
@@ -120,7 +145,7 @@ class Compositor:
 
         Steps:
         - Composite screen
-        - Get difference of current composite against the previous
+        - TODO: Get difference of current composite against the previous
         - Write difference to the terminal
         """
 
@@ -128,11 +153,11 @@ class Compositor:
         if self._previous == lines:
             return
 
-        terminal.clear_stream()
+        self.terminal.clear_stream()
         for (pos, line) in lines:
-            terminal.write(line, pos=pos)
+            self.terminal.write(line, pos=pos)
 
-        terminal.flush()
+        self.terminal.flush()
 
         self._previous = lines
 
@@ -142,9 +167,9 @@ class Compositor:
         See `pytermgui.exporters.to_svg` for more information.
         """
 
-        with terminal.record() as recording:
+        with self.terminal.record() as recording:
             for (pos, line) in self._previous:
-                terminal.write(line, pos=pos)
+                self.terminal.write(line, pos=pos)
 
         recording.save_svg(title=title, filename=filename)
         self.draw()

@@ -163,11 +163,11 @@ class Window(Container):
 
         self.has_focus = False
 
-    def nullify_cache(self) -> None:
-        """Nullifies manager's cached blur state."""
+    def clear_cache(self) -> None:
+        """Clears manager compositor's cached blur state."""
 
         if self.manager is not None:
-            self.manager.nullify_cache(self)
+            self.manager.clear_cache(self)
 
     def contains(self, pos: tuple[int, int]) -> bool:
         """Determines whether widget contains `pos`.
@@ -242,7 +242,7 @@ class Window(Container):
             self.allow_fullscreen = False
             self.size_policy = SizePolicy.STATIC
 
-        self.nullify_cache()
+        self.clear_cache()
         return self
 
     def center(

@@ -29,7 +29,9 @@ class WindowManager(Widget):
     is_bindable = True
     focusing_actions = (MouseAction.LEFT_CLICK, MouseAction.RIGHT_CLICK)
 
-    def __init__(self) -> None:
+    def __init__(
+        self, *, framerate: int = 60, restrict_within_bounds: bool = True
+    ) -> None:
 
         self._is_running = False
         self._windows: list[Window] = []
@@ -37,11 +39,11 @@ class WindowManager(Widget):
         self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
 
         self.focused: Window | None = None
-        self.compositor = Compositor(self._windows, 60)
+        self.compositor = Compositor(self._windows, framerate=framerate)
         self.mouse_translator: MouseTranslator | None = None
+        self.restrict_within_bounds = restrict_within_bounds
 
         terminal.subscribe(terminal.RESIZE, self.on_resize)
-        signal.signal(signal.SIGINT, lambda *_: self.stop())
 
         tim.alias("wm-title", "210 bold")
         tim.alias("wm-section", "157")
@@ -272,13 +274,17 @@ class WindowManager(Widget):
             maximum = terminal.size[index] - ((window.width, window.height)[index] - 2)
 
             start_margin_index = abs(index - 1)
-            return max(
-                index + terminal.margins[start_margin_index],
-                min(
-                    pos[index] - offset,
-                    maximum - terminal.margins[start_margin_index + 2],
-                ),
-            )
+
+            if self.restrict_within_bounds:
+                return max(
+                    index + terminal.margins[start_margin_index],
+                    min(
+                        pos[index] - offset,
+                        maximum - terminal.margins[start_margin_index + 2],
+                    ),
+                )
+
+            return pos[index] - offset
 
         def _click(pos: tuple[int, int], window: Window) -> bool:
             """Process clicking a window."""
