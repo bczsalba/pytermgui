@@ -41,10 +41,18 @@ class Compositor:
     def _draw_loop(self) -> None:
         """A loop that draws at regular intervals."""
 
-        last_frame = fps_start_time = time.perf_counter()
         framecount = 0
+        last_frame = fps_start_time = time.perf_counter()
 
         while self._is_running:
+            elapsed = time.perf_counter() - last_frame
+
+            if elapsed < self._frametime:
+                time.sleep(self._frametime - elapsed)
+                continue
+
+            last_frame = time.perf_counter()
+
             animator.step()
             self.draw()
             framecount += 1
@@ -53,12 +61,6 @@ class Compositor:
                 self.fps = framecount
                 fps_start_time = last_frame
                 framecount = 0
-
-            elapsed = time.perf_counter() - last_frame
-            if elapsed < self._frametime:
-                time.sleep(self._frametime - elapsed)
-
-            last_frame = time.perf_counter()
 
     def _get_lines(self, window: Window) -> list[str]:
         """Gets lines from the window, caching when possible."""
