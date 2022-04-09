@@ -14,6 +14,10 @@ __all__ = [
 ]
 
 
+class TimeoutException(Exception):
+    """Raised when an action has timed out."""
+
+
 class WidthExceededError(Exception):
     """Raised when an element's width is larger than the screen."""
 

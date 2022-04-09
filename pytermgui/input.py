@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import os
 import sys
+import signal
+from contextlib import contextmanager
 
 from typing import (
     IO,
@@ -29,7 +31,34 @@ from typing import (
 from select import select
 from codecs import getincrementaldecoder
 
-__all__ = ["Keys", "getch", "keys"]
+from .exceptions import TimeoutException
+
+__all__ = ["Keys", "getch", "getch_timeout", "keys"]
+
+
+@contextmanager
+def timeout(duration: float) -> Generator[None, None, None]:
+    """Allows context to run for a certain amount of time, quits it once it's up.
+
+    Note that this should never be run on Windows, as the required signals are not
+    present. Whenever this function is run, there should be a preliminary OS check,
+    to avoid running into issues on unsupported machines.
+    """
+
+    def _raise_timeout(*_, **__):
+        raise TimeoutException("The action has timed out.")
+
+    try:
+        # set the timeout handler
+        signal.signal(signal.SIGALRM, _raise_timeout)
+        signal.setitimer(signal.ITIMER_REAL, duration)
+        yield
+
+    except TimeoutException:
+        pass
+
+    finally:
+        signal.alarm(0)
 
 
 def _is_ready(file: IO[AnyStr]) -> bool:
@@ -377,3 +406,24 @@ def getch(printable: bool = False, interrupts: bool = True) -> Any:
         key = key.encode("unicode_escape").decode("utf-8")
 
     return key
+
+
+def getch_timeout(
+    duration: float, default: str = "", printable: bool = False, interrupts: bool = True
+) -> Any:
+    """Calls `getch`, returns `default` if timeout passes before getting input.
+
+    No timeout is applied on Windows systems, as there is no support for `SIGALRM`.
+
+    Args:
+        timeout: How long the call should wait for input.
+        default: The value to return if timeout occured.
+    """
+
+    if isinstance(_getch, _GetchWindows):
+        return getch()
+
+    with timeout(duration):
+        return getch(printable=printable, interrupts=interrupts)
+
+    return default

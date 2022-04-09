@@ -15,8 +15,8 @@ from contextlib import contextmanager
 from functools import cached_property
 from typing import Any, Callable, TextIO, Generator
 
-from .input import getch
-from .regex import strip_ansi, real_length
+from .input import getch_timeout
+from .regex import strip_ansi, real_length, RE_PIXEL_SIZE
 
 __all__ = ["terminal", "Recorder", "ColorSystem"]
 
@@ -238,11 +238,13 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             sys.stdout.write("\x1b[14t")
             sys.stdout.flush()
 
-            # TODO: This probably should be error-proofed.
-            output = getch()[4:-1]
-            if ";" in output:
-                size = tuple(int(val) for val in output.split(";"))
-                return size[1], size[0]
+            # Some terminals may not respond to a pixel size query, so we send
+            # a timed-out getch call with a default response of 1280x720.
+            output = getch_timeout(0.01, default="\x1b[4;720;1280t")
+            match = RE_PIXEL_SIZE.match(output)
+
+            if match is not None:
+                return (int(match[1]), int(match[0]))
 
         return (0, 0)
 
