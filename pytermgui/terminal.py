@@ -244,7 +244,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             match = RE_PIXEL_SIZE.match(output)
 
             if match is not None:
-                return (int(match[1]), int(match[0]))
+                return (int(match[2]), int(match[1]))
 
         return (0, 0)
 
