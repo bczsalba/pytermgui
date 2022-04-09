@@ -412,7 +412,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             self._stream.truncate(0)
 
         except OSError as error:
-            if error.errno != errno.EINVAL:
+            if error.errno != errno.EINVAL and os.name != "nt":
                 raise
 
     def print(
