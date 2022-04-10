@@ -23,6 +23,12 @@ pip3 install pytermgui
       <img src="https://github.com/bczsalba/pytermgui/actions/workflows/pytest.yml/badge.svg">
    </a>
  </p>
+ <p align=center>
+   <a href="https://twitter.com/bczsalba">
+   <img alt="Twitter" 
+        src="https://img.shields.io/twitter/url/https/twitter.com/bczsalba.svg?style=social&label=Follow%20%40bczsalba">
+   </a>
+</p>
 
 
 ## Usecases
