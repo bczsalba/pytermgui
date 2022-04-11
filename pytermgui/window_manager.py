@@ -57,7 +57,7 @@ from enum import Enum, auto as _auto
 from typing import Optional, Any
 
 # https://github.com/python/mypy/issues/4930
-from .widgets.layouts import Container
+from .widgets.containers import Container
 
 from .widgets import (
     MarkupFormatter,

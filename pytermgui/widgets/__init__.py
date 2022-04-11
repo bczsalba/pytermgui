@@ -64,7 +64,7 @@ from . import boxes
 
 from .base import *
 from .styles import *
-from .layouts import *
+from .containers import *
 from .interactive import *
 from .pixel_matrix import *
 from .color_picker import ColorPicker
