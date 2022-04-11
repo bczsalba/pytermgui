@@ -184,19 +184,19 @@ def macro_expand(lang: MarkupLanguage, tag: str) -> str:
     if not tag in lang.user_tags:
         return tag
 
-    return lang.get_markup("\x1b[" + lang.user_tags[tag] + "m ")[:-1]
+    return lang.get_markup(f"\x1b[{lang.user_tags[tag]}m ")[:-1]
 
 
 def macro_strip_fg(item: str) -> str:
     """Strips foreground color from item"""
 
-    return markup.parse("[/fg]" + item)
+    return markup.parse(f"[/fg]{item}")
 
 
 def macro_strip_bg(item: str) -> str:
     """Strips foreground color from item"""
 
-    return markup.parse("[/bg]" + item)
+    return markup.parse(f"[/bg]{item}")
 
 
 def macro_shuffle(item: str) -> str:
@@ -368,14 +368,14 @@ class Token:
 
         if self.ttype is TokenType.POSITION:
             assert isinstance(self.data, str)
-            return "\x1b[{};{}H".format(*reversed(self.data.split(",")))
+            position = self.data.split(",")
+            return f"\x1b[{position[1]};{position[0]}H"
 
         # Colors and styles
         data = self.data
 
         if self.ttype in [TokenType.STYLE, TokenType.UNSETTER]:
-            assert isinstance(data, str)
-            return "\033[" + data + "m"
+            return f"\033[{data}m"
 
         assert isinstance(data, Color)
         return data.sequence
@@ -763,10 +763,10 @@ docs/parser/markup_language.png"
         """
 
         if not name.startswith("!"):
-            name = "!" + name
+            name = f"!{name}"
 
         self.macros[name] = method
-        self.unsetters["/" + name] = None
+        self.unsetters[f"/{name}"] = None
 
     def alias(self, name: str, value: str) -> None:
         """Aliases the given name to a value, and generates an unsetter for it.
@@ -795,7 +795,7 @@ docs/parser/markup_language.png"
 
                 return self.unsetters["/bg"]
 
-            name = "/" + token.name
+            name = f"/{token.name}"
             if not name in self.unsetters:
                 raise KeyError(f"Could not find unsetter for token {token}.")
 
@@ -809,11 +809,11 @@ docs/parser/markup_language.png"
 
         # Try to link to existing tag
         if value in self.user_tags:
-            self.unsetters["/" + name] = self.unsetters["/" + value]
+            self.unsetters[f"/{name}"] = self.unsetters[f"/{value}"]
             self.user_tags[name] = self.user_tags[value]
             return
 
-        for token in self.tokenize_markup("[" + value + "]"):
+        for token in self.tokenize_markup(f"[{value}]"):
             if token.ttype is TokenType.PLAIN:
                 continue
 
@@ -821,10 +821,9 @@ docs/parser/markup_language.png"
             setter += token.sequence
 
             t_unsetter = _get_unsetter(token)
-            assert t_unsetter is not None
-            unsetter += "\x1b[" + t_unsetter + "m"
+            unsetter += f"\x1b[{t_unsetter}m"
 
-        self.unsetters["/" + name] = unsetter.lstrip("\x1b[").rstrip("m")
+        self.unsetters[f"/{name}"] = unsetter.lstrip("\x1b[").rstrip("m")
         self.user_tags[name] = setter.lstrip("\x1b[").rstrip("m")
 
         marked: list[str] = []
@@ -911,7 +910,7 @@ docs/parser/markup_language.png"
 
                     macro_name = macro_match.groups()[0]
 
-                    if "/" + macro_name == token.name:
+                    if f"/{macro_name}" == token.name:
                         applied_macros.remove((item, data))
 
                 continue
@@ -928,7 +927,7 @@ docs/parser/markup_language.png"
                     if item == "":
                         continue
 
-                    item = "\x1b" + item
+                    item = f"\x1b{item}"
                     applied = applied.replace(item, "")
 
                 out += applied + _apply_macros(token.name)
@@ -1070,7 +1069,7 @@ docs/parser/markup_language.png"
 
                     sequence += style.sequence
 
-                out += sequence + _apply_macros(token.name) + "\033[0m"
+                out += f"{sequence}{_apply_macros(token.name)}\033[0m"
                 continue
 
             out += " " if in_sequence else "["
