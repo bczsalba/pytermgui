@@ -7,7 +7,7 @@ Credits:
 """
 
 # pylint doesn't see the C source
-# pylint: disable=c-extension-no-member, no-name-in-module
+# pylint: disable=c-extension-no-member, no-name-in-module, used-before-assignment
 
 from __future__ import annotations
 

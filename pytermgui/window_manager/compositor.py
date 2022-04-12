@@ -6,18 +6,18 @@ from __future__ import annotations
 
 import time
 from threading import Thread
-from typing import Iterator, List
+from typing import Iterator, List, Tuple
 
 from ..parser import tim
-from ..regex import strip_ansi
 from ..widgets import Widget
+from ..regex import strip_ansi
 from ..enums import WidgetChange
 from ..animations import animator
 from ..terminal import get_terminal, Terminal
 
 from .window import Window
 
-PositionedLineList = List[tuple[tuple[int, int], str]]
+PositionedLineList = List[Tuple[Tuple[int, int], str]]
 
 
 class Compositor:

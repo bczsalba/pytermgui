@@ -221,7 +221,7 @@ def _get_spans(  # pylint: disable=too-many-locals
 
                     yield (
                         "<div class='ptg-position'"
-                        + " style='left: {}em; top: {}em'>".format(*adjusted)
+                        + f" style='left: {adjusted[0]}em; top: {adjusted[1]}em'>"
                     ), []
 
             elif token.ttype is TokenType.LINK:

@@ -89,7 +89,7 @@ class Recorder:
             filename: The file to save to.
         """
 
-        with open(filename, "w") as file:
+        with open(filename, "w", encoding="utf-8") as file:
             file.write(self.export_text())
 
     def save_html(
@@ -113,7 +113,7 @@ class Recorder:
         if not filename.endswith(".html"):
             filename += ".html"
 
-        with open(filename, "w") as file:
+        with open(filename, "w", encoding="utf-8") as file:
             file.write(self.export_html(prefix=prefix, inline_styles=inline_styles))
 
     def save_svg(
@@ -139,7 +139,7 @@ class Recorder:
         if not filename.endswith(".svg"):
             filename += ".svg"
 
-        with open(filename, "w") as file:
+        with open(filename, "w", encoding="utf-8") as file:
             file.write(
                 self.export_svg(prefix=prefix, inline_styles=inline_styles, title=title)
             )

@@ -16,7 +16,6 @@ from ..context_managers import alt_buffer, mouse_handler, MouseTranslator
 
 from .window import Window
 from .compositor import Compositor
-from .animations import ScreenshotAnimation
 
 
 class Edge(Enum):
@@ -449,7 +448,4 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
             filename: The name of the file.
         """
 
-        box = Window(box="SINGLE")
-        animator.add_custom(ScreenshotAnimation(duration=500, window=box))
-        self.add(box, animate=False)
         self.compositor.capture(title=title, filename=filename)

@@ -904,7 +904,7 @@ docs/parser/markup_language.png"
 
             # Macro unsetters are stored with None as their data
             if token.data is None and token.ttype is TokenType.UNSETTER:
-                for item, data in applied_macros:
+                for item, data in applied_macros.copy():
                     macro_match = RE_MACRO.match(item)
                     assert macro_match is not None
 

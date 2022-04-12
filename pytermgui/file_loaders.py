@@ -128,7 +128,7 @@ from abc import abstractmethod, ABC
 
 import json
 
-from . import widgets
+from . import widgets as widgets_m
 from .parser import markup
 from .serializer import Serializer
 
@@ -154,10 +154,10 @@ class WidgetNamespace:
     # but not in the code below. It only seems to happen
     # in certain pylint configs as well.
     config: dict[
-        Type[widgets.Widget], dict[str, Any]  # pylint: disable=undefined-variable
+        Type[widgets_m.Widget], dict[str, Any]  # pylint: disable=undefined-variable
     ]
-    widgets: dict[str, widgets.Widget]
-    boxes: dict[str, widgets.boxes.Box] = field(default_factory=dict)
+    widgets: dict[str, widgets_m.Widget]
+    boxes: dict[str, widgets_m.boxes.Box] = field(default_factory=dict)
 
     @classmethod
     def from_config(cls, data: dict[Any, Any], loader: FileLoader) -> WidgetNamespace:
@@ -183,7 +183,7 @@ class WidgetNamespace:
             }
 
             for category, inner in config.items():
-                value: str | widgets.styles.MarkupFormatter
+                value: str | widgets_m.styles.MarkupFormatter
 
                 if category not in namespace.config[obj]:
                     setattr(obj, category, inner)
@@ -197,7 +197,7 @@ class WidgetNamespace:
 
     @staticmethod
     def _apply_section(
-        widget: Type[widgets.Widget], title: str, section: dict[str, str]
+        widget: Type[widgets_m.Widget], title: str, section: dict[str, str]
     ) -> None:
         """Applies configuration section to the widget."""
 
@@ -208,7 +208,7 @@ class WidgetNamespace:
 
             widget.set_char(key, value)
 
-    def apply_to(self, widget: widgets.Widget) -> None:
+    def apply_to(self, widget: widgets_m.Widget) -> None:
         """Applies namespace config to the widget.
 
         Args:
@@ -216,7 +216,7 @@ class WidgetNamespace:
         """
 
         def _apply_sections(
-            data: dict[str, dict[str, str]], widget: widgets.Widget
+            data: dict[str, dict[str, str]], widget: widgets_m.Widget
         ) -> None:
             """Applies sections from data to the widget."""
 
@@ -245,7 +245,7 @@ class WidgetNamespace:
             for title, section in settings.items():
                 self._apply_section(widget, title, section)
 
-    def __getattr__(self, attr: str) -> widgets.Widget:
+    def __getattr__(self, attr: str) -> widgets_m.Widget:
         """Get widget by name from widget list."""
 
         if attr in self.widgets:
@@ -297,7 +297,7 @@ class FileLoader(ABC):
         if exception is not None:
             raise exception
 
-    def register(self, cls: Type[widgets.Widget]) -> None:
+    def register(self, cls: Type[widgets_m.Widget]) -> None:
         """Registers a widget to the serializer.
 
         Args:
@@ -345,7 +345,7 @@ class FileLoader(ABC):
 
         # Create boxes
         for name, inner in (parsed.get("boxes") or {}).items():
-            self.serializer.register_box(name, widgets.boxes.Box(inner))
+            self.serializer.register_box(name, widgets_m.boxes.Box(inner))
 
         # Create widgets
         for name, inner in (parsed.get("widgets") or {}).items():
