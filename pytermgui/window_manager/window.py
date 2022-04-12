@@ -1,12 +1,20 @@
+"""The Window class, which is an implementation of `pytermgui.widgets.Container` that
+allows for mouse-based moving and resizing."""
+
 from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
 
 from ..widgets import Container
 from ..terminal import terminal
-from ..enums import Overflow, SizePolicy
-from ..widgets import styles as w_styles
+from ..widgets import styles as w_styles, Widget
+from ..enums import Overflow, SizePolicy, CenteringPolicy
+
+if TYPE_CHECKING:
+    from .manager import WindowManager
 
 
-class Window(Container):
+class Window(Container):  # pylint: disable=too-many-instance-attributes
     """A class representing a window.
 
     Windows are essentially fancy `pytermgui.widgets.Container`-s. They build on top of them
@@ -37,8 +45,6 @@ class Window(Container):
     is_dirty = False
     """Control whether the parent manager needs to print this Window."""
 
-    min_width: int | None = None
-
     chars = Container.chars.copy()
 
     styles = w_styles.StyleManager.merge(
@@ -53,13 +59,13 @@ class Window(Container):
             attrs: Attributes that are passed to the constructor.
         """
 
-        self._min_width = None
-        self._auto_min_width = None
+        self._min_width: int | None = None
+        self._auto_min_width: int | None = None
 
         super().__init__(*widgets, **attrs)
 
         self.has_focus: bool = False
-        self.manager: Optional[WindowManager] = None
+        self.manager: "WindowManager" | None = None
 
         # -------------------------  position ----- width x height
         self._restore_data: tuple[tuple[int, int], tuple[int, int]] | None = None
@@ -71,17 +77,23 @@ class Window(Container):
     def min_width(self) -> int | None:
         """Minimum width of the window.
 
-        If set to none, _auto_min_width will be calculated based on the maximum width of inner widgets.
-        This is accurate enough for general use, but tends to lean to the safer side, i.e. it often
-        overshoots the 'real' minimum width possible.
+        If set to none, _auto_min_width will be calculated based on the maximum width of
+        inner widgets.
 
-        If you find this to be the case, **AND** you can ensure that your window will not break, you
-        may set this value manually."""
+        This is accurate enough for general use, but tends to lean to the safer side,
+        i.e. it often overshoots the 'real' minimum width possible.
+
+        If you find this to be the case, **AND** you can ensure that your window will
+        not break, you may set this value manually.
+
+        Returns:
+            The calculated, or given minimum width of this object.
+        """
 
         return self._min_width or self._auto_min_width
 
     @min_width.setter
-    def min_width(self, new: int) -> None:
+    def min_width(self, new: int | None) -> None:
         """Sets a new minimum width."""
 
         self._min_width = new
@@ -110,7 +122,7 @@ class Window(Container):
         """
 
         left, top, right, bottom = new
-        minimum = self.min_width
+        minimum = self.min_width or 0
 
         if right - left < minimum:
             return
@@ -253,9 +265,9 @@ class Window(Container):
         super().center(where, store)
         return self
 
-    def close(self) -> None:
+    def close(self, animate: bool = True) -> None:
         """Instruct window manager to close object"""
 
         assert self.manager is not None
 
-        self.manager.remove(self)
+        self.manager.remove(self, animate=animate)

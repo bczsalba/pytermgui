@@ -1,14 +1,16 @@
+"""The WindowManager class, whos job it is to move, control and update windows,
+while letting `Compositor` draw them."""
+
 from __future__ import annotations
 
-import sys
-import signal
+from typing import Type, Any
 from enum import Enum, auto as _auto
 
-from ..parser import tim
 from ..input import getch
-from ..widgets import Widget
 from ..terminal import terminal
 from ..animations import animator
+from ..widgets import Widget
+from ..widgets.base import BoundCallback
 from ..ansi_interface import MouseAction, MouseEvent
 from ..context_managers import alt_buffer, mouse_handler, MouseTranslator
 
@@ -25,28 +27,36 @@ class Edge(Enum):
     BOTTOM = _auto()
 
 
-class WindowManager(Widget):
+class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
+    """The manager of windows.
+
+    This class can be used, or even subclassed in order to create full-screen applications,
+    using the `pytermgui.window_manager.window.Window` class and the general Widget API.
+    """
+
     is_bindable = True
+
     focusing_actions = (MouseAction.LEFT_CLICK, MouseAction.RIGHT_CLICK)
+    """These mouse actions will focus the window they are acted upon."""
 
-    def __init__(
-        self, *, framerate: int = 60, restrict_within_bounds: bool = True
-    ) -> None:
+    def __init__(self, *, framerate: int = 60) -> None:
+        """Initialize the manager."""
 
+        super().__init__()
         self._is_running = False
         self._windows: list[Window] = []
-        self._drag_target: Edge | None = None
+        self._drag_offsets: tuple[int, int] = (0, 0)
+        self._drag_target: tuple[Window, Edge] | None = None
         self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
 
         self.focused: Window | None = None
         self.compositor = Compositor(self._windows, framerate=framerate)
         self.mouse_translator: MouseTranslator | None = None
-        self.restrict_within_bounds = restrict_within_bounds
+
+        # This isn't quite implemented at the moment.
+        self.restrict_within_bounds = True
 
         terminal.subscribe(terminal.RESIZE, self.on_resize)
-
-        tim.alias("wm-title", "210 bold")
-        tim.alias("wm-section", "157")
 
     def __iadd__(self, other: object) -> WindowManager:
         """Adds a window to the manager."""
@@ -73,7 +83,7 @@ class WindowManager(Widget):
         """Ends context manager."""
 
         # Run the manager if it hasnt been run before.
-        if self.mouse_translator is None:
+        if exception is None and self.mouse_translator is None:
             self.run()
 
         if exception is not None:
@@ -93,10 +103,16 @@ class WindowManager(Widget):
                 break
 
             if self.handle_key(key):
-                self._should_print = True
                 continue
 
             self.process_mouse(key)
+
+    def get_lines(self) -> list[str]:
+        """Gets the empty list."""
+
+        # TODO: Allow using WindowManager as a widget.
+
+        return []
 
     def clear_cache(self, window: Window) -> None:
         """Clears the compositor's cache related to the given window."""
@@ -118,7 +134,7 @@ class WindowManager(Widget):
 
             window.pos = (newx, newy)
 
-        self._should_print = True
+        self.compositor.redraw()
 
     def run(self, mouse_events: list[str] | None = None) -> None:
         """Starts the WindowManager.
@@ -150,7 +166,7 @@ class WindowManager(Widget):
         self.compositor.stop()
         self._is_running = False
 
-    def add(self, window: Window) -> WindowManager:
+    def add(self, window: Window, animate: bool = True) -> WindowManager:
         """Adds a window to the manager."""
 
         original_height = window.height
@@ -169,12 +185,14 @@ class WindowManager(Widget):
             self.focused.handle_mouse(MouseEvent(MouseAction.RELEASE, (0, 0)))
 
         self._windows.insert(0, window)
-        self._should_print = True
         window.manager = self
 
         # New windows take focus-precedence over already
         # existing ones, even if they are modal.
         self.focus(window)
+
+        if not animate:
+            return self
 
         animator.animate(
             window,
@@ -186,7 +204,9 @@ class WindowManager(Widget):
         )
         return self
 
-    def remove(self, window: Window, autostop: bool = True) -> WindowManager:
+    def remove(
+        self, window: Window, autostop: bool = True, animate: bool = True
+    ) -> WindowManager:
         """Removes a window from the manager.
 
         Args:
@@ -195,28 +215,26 @@ class WindowManager(Widget):
                 hits 0.
         """
 
-        def _on_finish(window: Window) -> None:
+        def _on_finish(window: Window) -> bool:
             self._windows.remove(window)
 
             if autostop and len(self._windows) == 0:
                 self.stop()
-                return self
+            else:
+                self.focus(self._windows[0])
 
-            self.focus(self._windows[0])
+            return True
+
+        if not animate:
+            _on_finish(window)
+            return self
 
         animator.animate(
             window,
             "height",
             endpoint=0,
             duration=350,
-            finish_callback=_on_finish,
-        )
-
-        animator.animate(
-            window,
-            "width",
-            endpoint=window.min_width,
-            duration=350,
+            finish_callback=_on_finish,  # type: ignore
         )
 
         return self
@@ -229,10 +247,11 @@ class WindowManager(Widget):
 
         self.focused = window
 
-        self._windows.remove(window)
-        self._windows.insert(0, window)
+        if window is not None:
+            self._windows.remove(window)
+            self._windows.insert(0, window)
 
-        window.focus()
+            window.focus()
 
     def handle_key(self, key: str) -> bool:
         """Processes a keypress.
@@ -258,14 +277,18 @@ class WindowManager(Widget):
 
         return False
 
-    def process_mouse(self, key: str) -> None:
+    # I prefer having the _click, _drag and _release helpers within this function, for
+    # easier readability.
+    def process_mouse(self, key: str) -> None:  # pylint: disable=too-many-statements
         """Processes (potential) mouse input.
 
         Args:
             key: Input to handle.
         """
 
-        def _clamp_pos(pos: int, index: int) -> int:
+        window: Window
+
+        def _clamp_pos(pos: tuple[int, int], index: int) -> int:
             """Clamp a value using index to address x/y & width/height"""
 
             offset = self._drag_offsets[index]
@@ -325,7 +348,7 @@ class WindowManager(Widget):
             if window is not target_window:
                 return False
 
-            left, top, right, bottom = original = window.rect
+            left, top, right, bottom = window.rect
 
             if not window.is_static and edge is Edge.TOP:
                 window.pos = (
@@ -349,14 +372,8 @@ class WindowManager(Widget):
                     window.rect = (left, top, right, pos[1] + 1)
                     handled = True
 
-            # Wipe window from cache
-            # if id(window) in self._window_cache:
-            #     del self._window_cache[id(window)]
-
-            # if id(window) not in self._updated_rects:
-            #     self._updated_rects[id(window)] = []
-
-            # self._updated_rects[id(window)].append(original)
+            if handled:
+                window.is_dirty = True
 
             return handled
 
@@ -385,8 +402,6 @@ class WindowManager(Widget):
             # Ignore null-events
             if event is None:
                 continue
-
-            self._should_print = True
 
             for window in self._windows:
                 contains_pos = window.contains(event.position)

@@ -12,10 +12,11 @@ from typing import Any, Callable, Iterator, cast
 from ..ansi_interface import MouseAction, MouseEvent, clear, reset
 from ..context_managers import cursor_at
 from ..enums import (
-    CenteringPolicy,
     HorizontalAlignment,
-    SizePolicy,
     VerticalAlignment,
+    CenteringPolicy,
+    WidgetChange,
+    SizePolicy,
     Overflow,
 )
 
@@ -203,7 +204,7 @@ class Container(Widget):
         self._box = new
         new.set_chars_of(self)
 
-    def get_change(self) -> bool:
+    def get_change(self) -> WidgetChange | None:
         """Determines whether widget lines changed since the last call to this function."""
 
         change = super().get_change()

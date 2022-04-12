@@ -113,7 +113,7 @@ class Application(ABC):
         """Get window with basic & universal settings applied."""
 
         if "title" not in attrs:
-            attrs["title"] = " [bold wm-title]" + self.title + " "
+            attrs["title"] = " [bold ptg-title]" + self.title + " "
 
         return Window(**attrs)
 
@@ -188,12 +188,12 @@ class GetchApplication(Application):
 
         name = _get_key_name(key)
         items = [
-            "[wm-title]Your output",
+            "[ptg-title]Your output",
             "",
-            {"[wm-section]key": name},
-            {"[wm-section]value:": ascii(key)},
-            {"[wm-section]len()": str(len(key))},
-            {"[wm-section]real_length()": str(real_length(key))},
+            {"[ptg-section]key": name},
+            {"[ptg-section]value:": ascii(key)},
+            {"[ptg-section]len()": str(len(key))},
+            {"[ptg-section]real_length()": str(real_length(key))},
         ]
 
         window.static_width = 40
@@ -215,7 +215,7 @@ class GetchApplication(Application):
     def construct_window(self) -> Window:
         """Constructs an application window."""
 
-        window = self._get_base_window(is_modal=True) + "[wm-title]Press any key..."
+        window = self._get_base_window(is_modal=True) + "[ptg-title]Press any key..."
         window.bind(
             keys.ANY_KEY, self._key_callback, description="Read key & update window"
         )
@@ -321,8 +321,8 @@ class MarkupApplication(Application):
         corners = Container.chars["corner"]
         assert isinstance(corners, list)
         corners = corners.copy()
-        corners[0] += " [wm-title]tokens[/] "
-        corners[1] = " [wm-title]colors[60] " + corners[1]
+        corners[0] += " [ptg-title]tokens[/] "
+        corners[1] = " [ptg-title]colors[60] " + corners[1]
 
         guide = Container().set_char("corner", corners)
 
@@ -417,7 +417,7 @@ class HelperApplication(Application):
 
         window = (
             self._get_base_window(width=50, overflow=Overflow.RESIZE)
-            + "[wm-title]Current bindings"
+            + "[ptg-title]Current bindings"
             + ""
         )
 
@@ -443,7 +443,7 @@ class HelperApplication(Application):
         bindinfo.sort(key=lambda item: real_length(item[0]))
 
         for (key, description) in bindinfo:
-            window += Label(str(key), parent_align=0, style="wm-section")
+            window += Label(str(key), parent_align=0, style="ptg-section")
             window += Label(description, padding=2, parent_align=0)
             window += ""
 
@@ -473,17 +473,15 @@ def run_wm(args: Namespace) -> None:
         manager.bind(
             keys.F11,
             lambda *_: {
-                None
-                if manager.focused is None
-                else manager.focused.set_fullscreen(
-                    not manager.focused.allow_fullscreen
-                )
+                None if manager.focused is None else manager.focused.toggle_fullscreen()
             },
             "Toggles the currently focused window's fullscreen state.",
         )
 
         # Define styles
         tim.alias("ptg-border", "60")
+        tim.alias("ptg-title", "210")
+        tim.alias("ptg-section", "157")
 
         boxes.SINGLE.set_chars_of(Container)
         boxes.DOUBLE.set_chars_of(Window)
