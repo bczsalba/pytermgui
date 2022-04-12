@@ -25,10 +25,10 @@ from ..terminal import terminal
 from ..input import keys
 from . import boxes
 from . import styles as w_styles
-from .base import Widget
+from .base import ScrollableWidget, Widget
 
 
-class Container(Widget):
+class Container(ScrollableWidget):
     """A widget that displays other widgets, stacked vertically."""
 
     styles = w_styles.StyleManager(
@@ -68,8 +68,6 @@ class Container(Widget):
         self._widgets: list[Widget] = []
         self.centered_axis: CenteringPolicy | None = None
 
-        self._scroll_offset = 0
-        self._max_scroll = 0
         self._prev_screen: tuple[int, int] = (0, 0)
         self._has_printed = False
 
@@ -506,8 +504,6 @@ class Container(Widget):
         align, offset = self._get_aligners(self, (borders[0], borders[2]))
 
         overflow = self.overflow
-        # if overflow == Overflow.SCROLL:
-        #     self.width -= self._scrollbar.width
 
         for widget in self._widgets:
             align, offset = self._get_aligners(widget, (borders[0], borders[2]))
@@ -533,23 +529,6 @@ class Container(Widget):
             lines.extend(widget_lines)
 
         if overflow == Overflow.SCROLL:
-            # TODO: Figure out a visual scrollbar
-            #     self.width += self._scrollbar.width
-
-            #     length = len(borders[2])
-            #     start = self._scrollbar.position
-            #     height = self.height - sum(has_top_bottom)
-
-            #     self._scrollbar.height = height
-            #     scrollbar = self._scrollbar.get_lines()
-            #
-            # new_lines = []
-            # for i, line in enumerate(lines[start : start + height]):
-            #     offset = len(line) - length
-            #     new_lines.append(line[:offset] + scrollbar[i] + line[offset:])
-
-            # lines = new_lines
-
             self._max_scroll = len(lines) - self.height + sum(has_top_bottom)
             height = self.height - sum(has_top_bottom)
 
@@ -668,42 +647,6 @@ class Container(Widget):
             widget.select(inner_index)
 
         self.selected_index = index
-
-    def scroll(self, offset: int) -> int:
-        """Scrolls to given offset, returns the new scroll_offset.
-
-        Args:
-            offset: The amount to scroll by. Positive offsets scroll down,
-                negative up.
-
-        Returns:
-            The new scroll offset.
-        """
-
-        self._scroll_offset = min(
-            max(0, self._scroll_offset + offset), self._max_scroll
-        )
-
-        return self._scroll_offset
-
-    def scroll_end(self, end: int) -> int:
-        """Scrolls to either top or bottom end of this object.
-
-        Args:
-            end: The offset to scroll to. 0 goes to the very top, -1 to the
-                very bottom.
-
-        Returns:
-            The new scroll offset.
-        """
-
-        if end == 0:
-            self._scroll_offset = 0
-
-        elif end == -1:
-            self._scroll_offset = self._max_scroll
-
-        return self._scroll_offset
 
     def center(
         self, where: CenteringPolicy | None = None, store: bool = True

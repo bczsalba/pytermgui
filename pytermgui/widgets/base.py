@@ -659,3 +659,60 @@ class Label(Widget):
             lines.append(self.padding * " " + self.non_first_padding * " " + line)
 
         return lines or [""]
+
+
+class ScrollableWidget(Widget):
+    """A widget with some scrolling helper methods.
+
+    This is not an implementation of the scrolling behaviour itself, just the
+    user-facing API for it.
+
+    It provides a `_scroll_offset` attribute, which is an integer describing the current
+    scroll state offset from the top, as well as some methods to modify the state."""
+
+    def __init__(self, **attrs: Any) -> None:
+        """Initializes the scrollable widget."""
+
+        super().__init__(**attrs)
+
+        self._max_scroll = 0
+        self._scroll_offset = 0
+
+    def scroll(self, offset: int) -> int:
+        """Scrolls to given offset, returns the new scroll_offset.
+
+        Args:
+            offset: The amount to scroll by. Positive offsets scroll down,
+                negative up.
+
+        Returns:
+            The new scroll offset.
+        """
+
+        self._scroll_offset = min(
+            max(0, self._scroll_offset + offset), self._max_scroll
+        )
+
+        return self._scroll_offset
+
+    def scroll_end(self, end: int) -> int:
+        """Scrolls to either top or bottom end of this object.
+
+        Args:
+            end: The offset to scroll to. 0 goes to the very top, -1 to the
+                very bottom.
+
+        Returns:
+            The new scroll offset.
+        """
+
+        if end == 0:
+            self._scroll_offset = 0
+
+        elif end == -1:
+            self._scroll_offset = self._max_scroll
+
+        return self._scroll_offset
+
+    def get_lines(self) -> list[str]:
+        ...
