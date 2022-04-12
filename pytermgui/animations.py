@@ -89,7 +89,10 @@ class CustomAnimation:
             The value self.step_callback returns.
         """
 
-        return self.step_callback()
+        if self.step_callback is not None:
+            return self.step_callback()
+
+        return False
 
 
 class Animator:
@@ -120,7 +123,7 @@ class Animator:
             if animation.step():
                 self._animations.remove(animation)
 
-                if isinstance(animation, CustomAnimation):
+                if isinstance(animation, (CustomAnimation)):
                     continue
 
                 finish_callback = animation.callbacks[1]

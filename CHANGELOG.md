@@ -1,3 +1,15 @@
+## [4.3.2] - 2022-04-09
+ 
+### Bugfixes
+- Improve how pixel size is received and fix process hanging when the terminal does not support it
+- Fix stream truncation raising an error on Windows
+
+
+### Additions
+- Add `getch_timeout` method (49ff24445329e6f3581c1cf34c5265225ef765bd) 
+
+
+
 ## [4.3.1] - 2022-04-03
 
 ### Bugfixes
@@ -95,6 +107,7 @@
 
 
 
+[4.3.2]: https://github.com/bczsalba/pytermgui/compare/4.3.1...4.3.2
 [4.3.1]: https://github.com/bczsalba/pytermgui/compare/4.3.0...4.3.1
 [4.3.0]: https://github.com/bczsalba/pytermgui/compare/4.2.0...4.3.0
 [4.2.1]: https://github.com/bczsalba/pytermgui/compare/4.2.0...4.2.1

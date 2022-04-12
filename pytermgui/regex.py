@@ -8,6 +8,7 @@ RE_LINK = re.compile(r"(?:\x1b]8;;(.*?)\x1b\\(.*?)\x1b]8;;\x1b\\)")
 RE_MACRO = re.compile(r"(![a-z0-9_]+)(?:\(([\w\/\.?\-=:]+)\))?")
 RE_MARKUP = re.compile(r"((\\*)\[([a-z0-9!#@_\/\(,\)].*?)\])")
 RE_POSITION = re.compile(r"\x1b\[(\d+);(\d+)H")
+RE_PIXEL_SIZE = re.compile(r"\x1b\[4;([\d]+);([\d]+)t")
 
 RE_256 = re.compile(r"^([\d]{1,3})$")
 RE_HEX = re.compile(r"(?:#)?([0-9a-fA-F]{6})")

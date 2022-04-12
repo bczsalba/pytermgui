@@ -15,8 +15,8 @@ from shutil import get_terminal_size
 from contextlib import contextmanager
 from typing import Any, Callable, TextIO, Generator
 
-from .input import getch
-from .regex import strip_ansi, real_length, has_open_sequence
+from .input import getch_timeout
+from .regex import strip_ansi, real_length, RE_PIXEL_SIZE, has_open_sequence
 
 __all__ = [
     "terminal",
@@ -268,11 +268,13 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             sys.stdout.write("\x1b[14t")
             sys.stdout.flush()
 
-            # TODO: This probably should be error-proofed.
-            output = getch()[4:-1]
-            if ";" in output:
-                size = tuple(int(val) for val in output.split(";"))
-                return size[1], size[0]
+            # Some terminals may not respond to a pixel size query, so we send
+            # a timed-out getch call with a default response of 1280x720.
+            output = getch_timeout(0.01, default="\x1b[4;720;1280t")
+            match = RE_PIXEL_SIZE.match(output)
+
+            if match is not None:
+                return (int(match[2]), int(match[1]))
 
         return (0, 0)
 
@@ -350,7 +352,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         if os.getenv("NO_COLOR") is not None:
             return ColorSystem.NO_COLOR
 
-        term = os.getenv("TERM")
+        term = os.getenv("TERM", "")
         color_term = os.getenv("COLORTERM", "").strip().lower()
 
         if color_term == "":
@@ -482,7 +484,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             self._stream.truncate(0)
 
         except OSError as error:
-            if error.errno != errno.EINVAL:
+            if error.errno != errno.EINVAL and os.name != "nt":
                 raise
 
         self._stream.write("\x1b[2J")

@@ -9,10 +9,10 @@ from typing import Any
 from contextlib import suppress
 
 from . import boxes
-from .layouts import Container
 from ..regex import real_length
 from .base import Label, Widget
 from .interactive import Button
+from .containers import Container
 from ..animations import animator
 from .pixel_matrix import PixelMatrix
 from ..enums import SizePolicy, HorizontalAlignment
