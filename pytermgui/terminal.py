@@ -242,7 +242,6 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         self._stream = stream
         self._recorder: Recorder | None = None
-        self._cursor: tuple[int, int] = self.origin
 
         self.size: tuple[int, int] = self._get_size()
         self.forced_colorsystem: ColorSystem | None = _get_env_colorsys()
@@ -411,7 +410,11 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         self._listeners[event].append(callback)
 
     def write(
-        self, data: str, pos: tuple[int, int] | None = None, flush: bool = False
+        self,
+        data: str,
+        pos: tuple[int, int] | None = None,
+        flush: bool = False,
+        slice_too_long: bool = True,
     ) -> None:
         """Writes the given data to the terminal's stream.
 
@@ -419,6 +422,8 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             data: The data to write.
             pos: Terminal-character space position to write the data to, (x, y).
             flush: If set, `flush` will be called on the stream after reading.
+            slice_too_long: If set, lines that are outside of the terminal will be
+                sliced to fit. Involves a sizable performance hit.
         """
 
         def _slice(line: str, maximum: int) -> str:
@@ -444,21 +449,23 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             self.clear_stream()
 
         if pos is not None:
-            self._cursor = pos
-
             xpos, ypos = pos
 
-            if not self.height + self.origin[1] + 1 > ypos >= 0:
-                return
+            if slice_too_long:
+                if not self.height + self.origin[1] + 1 > ypos >= 0:
+                    return
 
-            maximum = self.width - xpos + self.origin[0]
+                maximum = self.width - xpos + self.origin[0]
 
-            if xpos < self.origin[0]:
-                xpos = self.origin[0]
+                if xpos < self.origin[0]:
+                    xpos = self.origin[0]
 
-            sliced = _slice(data, maximum) if len(data) > maximum else data
+                sliced = _slice(data, maximum) if len(data) > maximum else data
 
-            data = "\x1b[{};{}H".format(*reversed((xpos, ypos))) + sliced + "\x1b[0m"
+                data = f"\x1b[{ypos};{xpos}H{sliced}\x1b[0m"
+
+            else:
+                data = f"\x1b[{ypos};{xpos}H{data}"
 
         self._stream.write(data)
 
@@ -467,11 +474,6 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         if flush:
             self._stream.flush()
-
-        self._cursor = (
-            self._cursor[0] + real_length("".join(data.splitlines())),
-            self._cursor[1] + data.count("\n"),
-        )
 
     def clear_stream(self) -> None:
         """Clears (truncates) the terminal's stream."""

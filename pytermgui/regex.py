@@ -65,7 +65,7 @@ def real_length(text: str) -> int:
     return len(strip_ansi(text))
 
 
-@lru_cache
+@lru_cache(maxsize=1024)
 def has_open_sequence(text: str) -> bool:
     """Figures out if the given text has any unclosed ANSI sequences.
 
@@ -101,17 +101,11 @@ def has_open_sequence(text: str) -> bool:
         if char == "\\" and sequence[-1] == "\x1b":
             open_count -= 1
 
-        if not is_osc:
-            is_osc = sequence[:2] == "\x1b]"
-
-        if not is_sgr:
-            is_sgr = sequence[:2] == "\x1b["
-
-        if not is_apc:
-            is_apc = sequence[:3] == "\x1b_G"
+        is_osc = is_osc or sequence[:2] == "\x1b]"
+        is_sgr = is_sgr or sequence[:2] == "\x1b["
+        is_apc = is_apc or sequence[:3] == "\x1b_G"
 
         sequence += char
-
         if (is_osc or is_apc) and sequence[-2:] == "\x1b\\":
             sequence = ""
             open_count -= 1
