@@ -8,7 +8,7 @@ automatically by the `pytermgui.window_manager.Compositor` on every frame, or ma
 by calling `animator.step` with an elapsed time argument.
 
 You can register animations to the Animator using either its `schedule` method, with
-an already constructed BaseAnimation subclass, or either `Animator.animate_attr` or
+an already constructed `Animation` subclass, or either `Animator.animate_attr` or
 `Animator.animate_float` for an in-place construction of the animation instance.
 """
 
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 else:
     Widget = Any
 
-__all__ = ["Animator", "Animation", "AttrAnimation", "animator"]
+__all__ = ["Animator", "FloatAnimation", "AttrAnimation", "animator", "is_animated"]
 
 
 def _add_flag(target: object, attribute: str) -> None:
@@ -207,20 +207,18 @@ class AttrAnimation(Animation):
     def step(self, elapsed: float) -> bool:
         """Steps forward in the attribute animation."""
 
+        step_finished = False
         state_finished = self._update_state(elapsed)
 
         assert self.start is not None
         updated = self.start + (self.end * self.state)
 
-        if state_finished:
-            return True
-
         setattr(self.target, self.attr, self.value_type(updated))
 
-        if self.on_step is not None and self.on_step(self):
-            return True
+        if not state_finished and self.on_step is not None:
+            step_finished = self.on_step(self)
 
-        return False
+        return step_finished or state_finished
 
     def finish(self) -> None:
         """Deletes `__ptg_animated__` flag, calls `on_finish`."""
@@ -253,7 +251,7 @@ class Animator:
     def step(self, elapsed: float) -> None:
         """Steps the animation forward by the given elapsed time."""
 
-        for animation in self._animations:
+        for animation in self._animations.copy():
             if animation.step(elapsed):
                 self._animations.remove(animation)
                 animation.finish()
