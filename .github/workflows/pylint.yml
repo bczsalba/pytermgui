@@ -1,4 +1,4 @@
-name: Pylint
+name: Lint with Pylint
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Tests
+name: Test PyTermGUI
 
 on:
   workflow_dispatch:
@@ -10,12 +10,12 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    
+   
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
-        
+
     steps:
       - uses: actions/checkout@v2
 
@@ -28,10 +28,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install testfixtures
+          pip install coverage
           pip install pytest
+          pip install pytest-cov
           pip install pyyaml
           pip install .
 
-      - name: Testing code via pytest
+      - name: Run tests with coverage
         run: |
-          pytest tests
+          make test

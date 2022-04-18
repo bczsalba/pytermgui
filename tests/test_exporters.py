@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from random import randint
-
 from testfixtures import compare
 
 import pytermgui
 from pytermgui import tim, DensePixelMatrix, Color, str_to_color
-from pytermgui.terminal import Recorder, ColorSystem, Terminal, terminal
+from pytermgui.terminal import Recorder, Terminal, terminal
 
-from _exporter_targets import HTML_TARGET, SVG_TARGET
+from ._exporter_targets import HTML_TARGET, SVG_TARGET
 
 MATRIX = [
     [

@@ -1,0 +1,13 @@
+[tool.pycodestyle]
+max-line-length = 88
+
+[tool.pylint.messages_control]
+disable = [
+    "fixme"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:"
+]
