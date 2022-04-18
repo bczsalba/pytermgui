@@ -68,7 +68,7 @@ class Compositor:
                 time.sleep(self._frametime - elapsed)
                 continue
 
-            animator.step()
+            animator.step(elapsed)
             self.draw()
 
             last_frame = time.perf_counter()

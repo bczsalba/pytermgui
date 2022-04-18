@@ -8,7 +8,7 @@ from enum import Enum, auto as _auto
 
 from ..input import getch
 from ..terminal import terminal
-from ..animations import animator
+from ..animations import animator, AttrAnimation
 from ..widgets import Widget
 from ..widgets.base import BoundCallback
 from ..ansi_interface import MouseAction, MouseEvent
@@ -171,11 +171,14 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
         original_height = window.height
 
-        def _on_step(window: Widget) -> None:
+        def _on_step(animation: AttrAnimation) -> None:
             """Sets window's height on step, centers it."""
 
-            assert isinstance(window, Window)
+            window = animation.target
+            assert isinstance(window, Window), window
+
             window.height = original_height
+
             if window.centered_axis is not None:
                 window.center()
 
@@ -194,13 +197,13 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         if not animate:
             return self
 
-        animator.animate(
-            window,
-            "width",
-            startpoint=int(window.width * 0.7),
-            endpoint=window.width,
-            duration=150,
-            step_callback=_on_step,
+        animator.animate_attr(
+            target=window,
+            attr="width",
+            start=window.width * 1 / 2,
+            end=window.width,
+            duration=200,
+            on_step=_on_step,
         )
         return self
 
@@ -215,7 +218,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
                 hits 0.
         """
 
-        def _on_finish(window: Window) -> bool:
+        def _on_finish(_: AttrAnimation | None) -> bool:
             self._windows.remove(window)
 
             if autostop and len(self._windows) == 0:
@@ -226,15 +229,15 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
             return True
 
         if not animate:
-            _on_finish(window)
+            _on_finish(None)
             return self
 
-        animator.animate(
-            window,
-            "height",
-            endpoint=0,
-            duration=350,
-            finish_callback=_on_finish,  # type: ignore
+        animator.animate_attr(
+            target=window,
+            attr="height",
+            end=window.height * 1 / 4,
+            duration=200,
+            on_finish=_on_finish,
         )
 
         return self

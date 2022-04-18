@@ -6,8 +6,8 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 from ..widgets import Container
-from ..terminal import terminal
 from ..widgets import styles as w_styles, Widget
+from ..animations import animator, AttrAnimation, is_animated
 from ..enums import Overflow, SizePolicy, CenteringPolicy
 
 if TYPE_CHECKING:
@@ -237,24 +237,78 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
             The same window.
         """
 
-        self.allow_fullscreen = not self.allow_fullscreen
+        if is_animated(self, "width") or is_animated(self, "height"):
+            return self
 
-        if self.allow_fullscreen:
-            self._restore_data = self.pos, (self.width, self.height)
+        allow = not self.allow_fullscreen
+        restore_data = self.pos, (self.width, self.height)
 
-            self.pos = terminal.origin
-            self.allow_fullscreen = True
-            self.size_policy = SizePolicy.FILL
+        duration = 100
+
+        def _on_step(anim: AttrAnimation) -> bool:
+            assert anim.target is self
+
+            if self.centered_axis is not None:
+                self.center()
+
+            return False
+
+        def _on_finish(anim: AttrAnimation) -> None:
+            assert anim.target is self
+
+            self.allow_fullscreen = allow
+            self._restore_data = restore_data if allow else None
+
+        if allow:
+            animator.animate_attr(
+                target=self,
+                attr="width",
+                start=self.width,
+                end=self.terminal.width,
+                on_step=_on_step,
+                on_finish=_on_finish,
+                duration=duration,
+            )
+
+            animator.animate_attr(
+                target=self,
+                attr="height",
+                start=self.height,
+                end=self.terminal.height,
+                on_step=_on_step,
+                on_finish=_on_finish,
+                duration=duration,
+            )
 
         else:
-            assert self._restore_data is not None
-            self.pos, (self.width, self.height) = self._restore_data
-
-            self._restore_data = None
             self.allow_fullscreen = False
-            self.size_policy = SizePolicy.STATIC
+            assert self._restore_data is not None
 
-        self.clear_cache()
+            # pos, (width, height) = self._restore_data
+            self.pos, (self.width, self.height) = self._restore_data
+            self._restore_data = None
+
+            # TODO: The animation sometimes ends a couple of frames early.
+            # animator.animate_attr(
+            #     target=self,
+            #     attr="width",
+            #     start=self.width,
+            #     end=width,
+            #     on_step=_on_step,
+            #     on_finish=_on_finish,
+            #     duration=duration,
+            # )
+
+            # animator.animate_attr(
+            #     target=self,
+            #     attr="height",
+            #     start=self.height,
+            #     end=height,
+            #     on_step=_on_step,
+            #     on_finish=_on_finish,
+            #     duration=duration,
+            # )
+
         return self
 
     def center(

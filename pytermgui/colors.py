@@ -764,9 +764,9 @@ def _get_color_difference(
     delta_blue = blue1 - blue2
 
     return sqrt(
-        (2 + (redmean / 256)) * (delta_red ** 2)
-        + 4 * (delta_green ** 2)
-        + (2 + (255 - redmean) / 256) * (delta_blue ** 2)
+        (2 + (redmean / 256)) * (delta_red**2)
+        + 4 * (delta_green**2)
+        + (2 + (255 - redmean) / 256) * (delta_blue**2)
     )
 
 

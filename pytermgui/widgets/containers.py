@@ -96,6 +96,9 @@ class Container(ScrollableWidget):
     def content_dimensions(self) -> tuple[int, int]:
         """Gets the size (width, height) of the available content area."""
 
+        if not "border" in self.chars:
+            return self.width, self.height
+
         chars = self._get_char("border")
 
         assert isinstance(chars, list)

@@ -46,7 +46,7 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
         self,
         onchange: Callable[[float], Any] | None = None,
         locked: bool = False,
-        **attrs: Any
+        **attrs: Any,
     ) -> None:
         """Initializes a Slider.
 
