@@ -132,6 +132,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         self.pos = (left, top)
         self.width = right - left
         self.height = bottom - top
+
         # Restore original size policy
         self.size_policy = SizePolicy.STATIC
 
@@ -157,7 +158,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
         added = super()._add_widget(other, run_get_lines)
 
-        if self.min_width is None and len(self._widgets) > 0:
+        if len(self._widgets) > 0:
             self._auto_min_width = max(widget.width for widget in self._widgets)
             self._auto_min_width += self.sidelength
 

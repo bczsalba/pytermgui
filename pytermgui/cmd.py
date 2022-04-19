@@ -478,6 +478,20 @@ def run_wm(args: Namespace) -> None:
             "Toggles the currently focused window's fullscreen state.",
         )
 
+        manager.bind(
+            keys.CTRL_W,
+            lambda *_: manager.focused.close() if manager.focused is not None else None,
+            description="Close focused window",
+        )
+
+        manager.bind(
+            "?",
+            lambda *_: manager.add(helper.construct_window()),
+            description="Show all active bindings",
+        )
+
+        manager.bind("*", lambda *_: manager.show_positions())
+
         # Define styles
         tim.alias("ptg-border", "60")
         tim.alias("ptg-title", "210")
@@ -492,23 +506,6 @@ def run_wm(args: Namespace) -> None:
         InputField.styles.cursor = "@72"
 
         helper = HelperApplication(manager)
-
-        # Setup bindings
-        # manager.bind(
-        #     "*", lambda *_: manager.show_targets(), description="Show all mouse targets"
-        # )
-
-        manager.bind(
-            keys.CTRL_W,
-            lambda *_: manager.focused.close() if manager.focused is not None else None,
-            description="Close focused window",
-        )
-
-        manager.bind(
-            "?",
-            lambda *_: manager.add(helper.construct_window()),
-            description="Show all active bindings",
-        )
 
         # Run with a launcher
         if len(sys.argv) == 1:

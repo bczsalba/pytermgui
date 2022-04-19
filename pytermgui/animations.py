@@ -207,18 +207,20 @@ class AttrAnimation(Animation):
     def step(self, elapsed: float) -> bool:
         """Steps forward in the attribute animation."""
 
+        if self._update_state(elapsed):
+            return True
+
         step_finished = False
-        state_finished = self._update_state(elapsed)
 
         assert self.start is not None
         updated = self.start + (self.end * self.state)
 
         setattr(self.target, self.attr, self.value_type(updated))
 
-        if not state_finished and self.on_step is not None:
+        if self.on_step is not None:
             step_finished = self.on_step(self)
 
-        return step_finished or state_finished
+        return step_finished
 
     def finish(self) -> None:
         """Deletes `__ptg_animated__` flag, calls `on_finish`."""

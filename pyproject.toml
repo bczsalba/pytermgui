@@ -8,3 +8,7 @@ exclude_lines = [
     "pragma: no cover",
     "if TYPE_CHECKING:"
 ]
+
+omit = [
+    "pytermgui/cmd.py"
+]

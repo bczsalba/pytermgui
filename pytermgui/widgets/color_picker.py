@@ -146,8 +146,10 @@ class _FadeInButton(Button):
     def remove_from_parent(self, _: Widget) -> None:
         """Removes self from parent, when possible."""
 
-        def _on_finish(self) -> None:
+        def _on_finish(_: object) -> None:
             """Removes button on animation finish."""
+
+            assert isinstance(self.parent, Container)
 
             with suppress(ValueError):
                 self.parent.remove(self)
@@ -199,7 +201,6 @@ class ColorPicker(Container):
         self.chosen = Joiner()
         self._output = Container(self.chosen, "", "", "")
         self._output.height = 7
-        self._output.box = boxes.Box([" ", "x", " "])
 
         if self.show_output:
             self._add_widget(self._output)
@@ -255,6 +256,7 @@ class ColorPicker(Container):
                 ),
             ]
             self._output.set_widgets(lines + [Label(), self.chosen])
+
             return super().get_lines()
 
         return super().get_lines()

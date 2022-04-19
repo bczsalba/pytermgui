@@ -7,9 +7,11 @@ from typing import Type, Any
 from enum import Enum, auto as _auto
 
 from ..input import getch
+from ..regex import real_length
 from ..terminal import terminal
+from ..colors import str_to_color
 from ..animations import animator, AttrAnimation
-from ..widgets import Widget
+from ..widgets import Widget, Container
 from ..widgets.base import BoundCallback
 from ..ansi_interface import MouseAction, MouseEvent
 from ..context_managers import alt_buffer, mouse_handler, MouseTranslator
@@ -452,3 +454,33 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         """
 
         self.compositor.capture(title=title, filename=filename)
+
+    def show_positions(self) -> None:
+        """Shows the positions of each Window's widgets."""
+
+        def _show_positions(widget, color_base: int = 60) -> None:
+            """Show positions of widget."""
+
+            if isinstance(widget, Container):
+                for i, subwidget in enumerate(widget):
+                    _show_positions(subwidget, color_base + i)
+
+                return
+
+            if not widget.is_selectable:
+                return
+
+            debug = widget.debug()
+            color = str_to_color(f"@{color_base}")
+            buff = color(" ", reset=False)
+
+            for i in range(min(widget.width, real_length(debug)) - 1):
+                buff += debug[i]
+
+            self.terminal.write(buff, pos=widget.pos)
+
+        for widget in self._windows:
+            _show_positions(widget)
+        self.terminal.flush()
+
+        getch()
