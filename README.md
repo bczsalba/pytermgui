@@ -28,6 +28,9 @@ pip3 install pytermgui
    <img alt="Twitter" 
         src="https://img.shields.io/twitter/url/https/twitter.com/bczsalba.svg?style=social&label=Follow%20%40bczsalba">
    </a>
+   <a href="https://ko-fi.com/bczsalba" title="Donate to this project using Ko-Fi">
+      <img src="https://img.shields.io/badge/ko--fi%20-donate-%232aabe0" alt="Buy Me A Coffee donate button" />
+   </a>
 </p>
 
 
@@ -199,7 +202,7 @@ As mentioned above, the `ptg` CLI tool is a great example for both the capabilit
 
 ## Documentation!
 
-*Every single* public and non-public name in the library is full documented, using [Google's docstring style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings). If you ever have questions about the library, the documentation should have your answers.
+*Every single* public and non-public name in the library is fully documented, using [Google's docstring style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings). If you ever have questions about the library, the documentation should have your answers.
 
 ## Contributions welcome!
 
