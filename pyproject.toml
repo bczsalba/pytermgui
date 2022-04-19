@@ -1,6 +1,3 @@
-[tool.pycodestyle]
-max-line-length = 88
-
 [tool.pylint.messages_control]
 disable = [
     "fixme"

@@ -3,7 +3,7 @@
 import time
 import colorsys
 from argparse import ArgumentParser, Namespace
-from pytermgui import tim, terminal, ColorSystem, to_html
+from pytermgui import tim, terminal, ColorSystem
 
 
 def _normalize(_rgb: tuple[float, float, float]) -> str:
@@ -57,7 +57,6 @@ def print_colorboxes(args: Namespace) -> None:
         tim.should_cache = False
 
     _buff = _get_colorbox(args.width)
-    _html_buff = ""
     for system in reversed(ColorSystem):
         terminal.forced_colorsystem = system
 
@@ -67,7 +66,7 @@ def print_colorboxes(args: Namespace) -> None:
 
         if not args.no_timings:
             tim.print(
-                f"[dim italic]Rendered in ([blue]cold[/]):"
+                "[dim italic]Rendered in ([blue]cold[/]):"
                 + _highlight(time.time() - start)
             )
 
@@ -76,7 +75,7 @@ def print_colorboxes(args: Namespace) -> None:
             tim.parse(_buff)
 
             tim.print(
-                f"[dim italic]Rendered in ([208]warm[/]):"
+                "[dim italic]Rendered in ([208]warm[/]):"
                 + _highlight(time.time() - warm_start)
             )
             tim.print()
@@ -104,15 +103,15 @@ def main() -> None:
     )
 
     parser.add_argument(
-        "--html", help="Export to HTML file `colorgrids.html`.", action="store_true"
+        "--export", help="Export to SVG file `colorgrids.svg`.", action="store_true"
     )
 
     args = parser.parse_args()
-    if args.html:
+    if args.export:
         with terminal.record() as recording:
             print_colorboxes(args)
 
-        recording.save_html("colorgrids.html")
+        recording.save_svg("colorgrids.svg")
         return
 
     print_colorboxes(args)
