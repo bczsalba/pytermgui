@@ -17,7 +17,7 @@ To modify defaults, use the `defaults` dictionary.
 from __future__ import annotations
 
 from typing import Type
-from enum import IntEnum, auto as _auto
+from enum import Enum, IntEnum, auto as _auto
 
 defaults: dict[IntEnum, Type[IntEnum]] = {}
 
@@ -117,6 +117,22 @@ class Overflow(DefaultEnum):
     # TODO: Implement Overflow.AUTO
     AUTO = 9999
     """NotImplemented"""
+
+
+class WidgetChange(Enum):
+    """The type of change that happened within a widget."""
+
+    LINES = _auto()
+    """The result of `get_lines` has changed, but size changes didn't happen."""
+
+    SIZE = _auto()
+    """Both WIDTH and HEIGHT has changed."""
+
+    WIDTH = _auto()
+    """The width of the widget changed, possibly involving LINES type changes."""
+
+    HEIGHT = _auto()
+    """The height of the widget changed, possibly involving LINES type changes."""
 
 
 defaults[SizePolicy] = SizePolicy.FILL

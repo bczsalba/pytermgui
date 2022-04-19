@@ -13,9 +13,8 @@ of the library you use. I will provide an example of usage for each.
 
 from __future__ import annotations
 
-from typing import Union, Any, Optional
-from random import shuffle
 import sys
+from typing import Any, Optional
 
 from .enums import *
 from .parser import *
@@ -36,7 +35,7 @@ from .input import getch, keys
 from .context_managers import alt_buffer, cursor_at, mouse_handler
 
 # Silence warning if running as standalone module
-if "-m" in sys.argv:
+if "-m" in sys.argv:  # pragma: no cover
     import warnings
 
     warnings.filterwarnings("ignore")

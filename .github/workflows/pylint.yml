@@ -1,4 +1,4 @@
-name: Pylint
+name: Lint with Pylint
 
 on:
   push:
@@ -26,4 +26,4 @@ jobs:
 
       - name: Analysing the code with pylint
         run: |
-          pylint --fail-under 9.9 -d fixme $(git ls-files '*.py' | grep '^pytermgui/')
+          pylint --fail-under 10.0 -d fixme $(git ls-files '*.py' | grep '^pytermgui/')

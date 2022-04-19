@@ -123,7 +123,7 @@ class _FadeInButton(Button):
 
         As this is nothing more than an extension on top of
         `pytermgui.widgets.interactive.Button`, check that documentation
-        for more informationA.
+        for more information.
         """
 
         super().__init__(*args, **attrs)
@@ -133,26 +133,34 @@ class _FadeInButton(Button):
         self._fade_progress = 0
 
         self.get_lines()
-        animator.animate(
-            self, "_fade_progress", startpoint=0, endpoint=self.width, duration=150
+
+        # TODO: Why is that +2 needed?
+        animator.animate_attr(
+            target=self,
+            attr="_fade_progress",
+            start=0,
+            end=self.width + 2,
+            duration=150,
         )
 
     def remove_from_parent(self, _: Widget) -> None:
         """Removes self from parent, when possible."""
 
-        def _on_finish(self) -> None:
+        def _on_finish(_: object) -> None:
             """Removes button on animation finish."""
+
+            assert isinstance(self.parent, Container)
 
             with suppress(ValueError):
                 self.parent.remove(self)
 
-        animator.animate(
-            self,
-            "_fade_progress",
-            startpoint=self.width,
-            endpoint=0,
+        animator.animate_attr(
+            target=self,
+            attr="_fade_progress",
+            start=self.width,
+            end=0,
             duration=150,
-            finish_callback=_on_finish,
+            on_finish=_on_finish,
         )
 
     def get_lines(self) -> list[str]:
@@ -193,7 +201,6 @@ class ColorPicker(Container):
         self.chosen = Joiner()
         self._output = Container(self.chosen, "", "", "")
         self._output.height = 7
-        self._output.box = boxes.Box([" ", "x", " "])
 
         if self.show_output:
             self._add_widget(self._output)
@@ -249,6 +256,7 @@ class ColorPicker(Container):
                 ),
             ]
             self._output.set_widgets(lines + [Label(), self.chosen])
+
             return super().get_lines()
 
         return super().get_lines()

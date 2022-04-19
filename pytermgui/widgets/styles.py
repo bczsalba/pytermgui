@@ -295,6 +295,22 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
 
         raise AttributeError(key, self.data)
 
+    def __call__(
+        self, **styles: str | StyleCall | MarkupFormatter | StyleType
+    ) -> Widget | Type[Widget] | None:
+        """Allows calling the manager and setting its styles.
+
+        For example:
+        ```
+        >>> Button("Hello").styles(label="@60")
+        ```
+        """
+
+        for key, value in styles.items():
+            self._set_as_stylecall(key, value)
+
+        return self.parent
+
 
 CLICKABLE = MarkupFormatter("[@238 72 bold]{item}")
 """Style for inactive clickable things, such as `pytermgui.widgets.Button`"""

@@ -28,7 +28,7 @@ from .ansi_interface import (
     MouseEvent,
 )
 
-from .terminal import terminal
+from .terminal import get_terminal
 
 # This is technically meant to be here, but it has to be in `input.py` due
 # to some package structure issues.
@@ -80,6 +80,8 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
         echo: Whether `unset_echo` should be called on startup.
         cursor: Whether `hide_cursor` should be called on startup.
     """
+
+    terminal = get_terminal()
 
     try:
         set_alt_buffer()

@@ -14,11 +14,11 @@ from typing import Callable, Optional, Type, Iterator, Any, Union
 
 from ..input import keys
 from ..parser import markup
-from ..terminal import terminal
 from ..regex import real_length
 from ..helpers import break_line
 from ..ansi_interface import MouseEvent
-from ..enums import SizePolicy, HorizontalAlignment
+from ..terminal import get_terminal, Terminal
+from ..enums import SizePolicy, HorizontalAlignment, WidgetChange
 
 from . import styles as w_styles
 
@@ -127,7 +127,7 @@ class Widget:
 
         self.width = 1
         self.height = 1
-        self.pos = terminal.origin
+        self.pos = self.terminal.origin
 
         self.depth = 0
 
@@ -142,6 +142,7 @@ class Widget:
         self._serialized_fields = type(self).serialized
         self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
         self._relative_width: float | None = None
+        self._previous_state: tuple[tuple[int, int], list[str]] | None = None
 
         for attr, value in attrs.items():
             setattr(self, attr, value)
@@ -286,6 +287,40 @@ class Widget:
 
         self.size_policy = SizePolicy.RELATIVE
         self._relative_width = min(1.0, value)
+
+    @property
+    def terminal(self) -> Terminal:
+        """Returns the current global terminal instance."""
+
+        return get_terminal()
+
+    def get_change(self) -> WidgetChange | None:
+        """Determines whether widget lines changed since the last call to this function."""
+
+        lines = self.get_lines()
+
+        if self._previous_state is None:
+            self._previous_state = (self.width, self.height), lines
+            return WidgetChange.LINES
+
+        lines = self.get_lines()
+        (old_width, old_height), old_lines = self._previous_state
+
+        self._previous_state = (self.width, self.height), lines
+
+        if old_width != self.width and old_height != self.height:
+            return WidgetChange.SIZE
+
+        if old_width != self.width:
+            return WidgetChange.WIDTH
+
+        if old_height != self.height:
+            return WidgetChange.HEIGHT
+
+        if old_lines != lines:
+            return WidgetChange.LINES
+
+        return None
 
     def contains(self, pos: tuple[int, int]) -> bool:
         """Determines whether widget contains `pos`.

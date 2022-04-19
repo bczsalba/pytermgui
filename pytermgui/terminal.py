@@ -10,15 +10,22 @@ import time
 import errno
 import signal
 from enum import Enum
+from datetime import datetime
 from shutil import get_terminal_size
 from contextlib import contextmanager
-from functools import cached_property
 from typing import Any, Callable, TextIO, Generator
 
 from .input import getch_timeout
-from .regex import strip_ansi, real_length, RE_PIXEL_SIZE
+from .regex import strip_ansi, real_length, RE_PIXEL_SIZE, has_open_sequence
 
-__all__ = ["terminal", "Recorder", "ColorSystem"]
+__all__ = [
+    "terminal",
+    "set_global_terminal",
+    "get_terminal",
+    "Terminal",
+    "Recorder",
+    "ColorSystem",
+]
 
 
 class Recorder:
@@ -82,11 +89,14 @@ class Recorder:
             filename: The file to save to.
         """
 
-        with open(filename, "w") as file:
+        with open(filename, "w", encoding="utf-8") as file:
             file.write(self.export_text())
 
     def save_html(
-        self, filename: str, prefix: str | None = None, inline_styles: bool = False
+        self,
+        filename: str | None = None,
+        prefix: str | None = None,
+        inline_styles: bool = False,
     ) -> None:
         """Exports HTML content to the given file.
 
@@ -97,15 +107,18 @@ class Recorder:
                 extension it will be appended to the end.
         """
 
+        if filename is None:
+            filename = f"PTG_{time.time():%Y-%m-%d %H:%M:%S}.html"
+
         if not filename.endswith(".html"):
             filename += ".html"
 
-        with open(filename, "w") as file:
+        with open(filename, "w", encoding="utf-8") as file:
             file.write(self.export_html(prefix=prefix, inline_styles=inline_styles))
 
     def save_svg(
         self,
-        filename: str,
+        filename: str | None = None,
         prefix: str | None = None,
         inline_styles: bool = False,
         title: str = "PyTermGUI",
@@ -119,10 +132,14 @@ class Recorder:
                 extension it will be appended to the end.
         """
 
+        if filename is None:
+            timeval = datetime.now()
+            filename = f"PTG_{timeval:%Y-%m-%d_%H:%M:%S}.svg"
+
         if not filename.endswith(".svg"):
             filename += ".svg"
 
-        with open(filename, "w") as file:
+        with open(filename, "w", encoding="utf-8") as file:
             file.write(
                 self.export_svg(prefix=prefix, inline_styles=inline_styles, title=title)
             )
@@ -209,15 +226,22 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
     origin: tuple[int, int] = (1, 1)
     """Origin of the internal coordinate system."""
 
-    def __init__(self, stream: TextIO | None = None) -> None:
+    def __init__(
+        self,
+        stream: TextIO | None = None,
+        size: tuple[int, int] | None = None,
+        pixel_size: tuple[int, int] | None = None,
+    ) -> None:
         """Initialize `_Terminal` class."""
 
         if stream is None:
             stream = sys.stdout
 
+        self._size = size
+        self._pixel_size = pixel_size
+
         self._stream = stream
         self._recorder: Recorder | None = None
-        self._cursor: tuple[int, int] = self.origin
 
         self.size: tuple[int, int] = self._get_size()
         self.forced_colorsystem: ColorSystem | None = _get_env_colorsys()
@@ -230,9 +254,15 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         # TODO: Support SIGWINCH on Windows.
 
-    @staticmethod
-    def _get_pixel_size() -> tuple[int, int]:
+        self._diff_buffer = [
+            ["" for _ in range(self.width)] for y in range(self.height)
+        ]
+
+    def _get_pixel_size(self) -> tuple[int, int]:
         """Gets the terminal's size, in pixels."""
+
+        if self._pixel_size is not None:
+            return self._pixel_size
 
         if sys.stdout.isatty():
             sys.stdout.write("\x1b[14t")
@@ -262,6 +292,9 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
     def _get_size(self) -> tuple[int, int]:
         """Gets the screen size with origin substracted."""
+
+        if self._size is not None:
+            return self.size
 
         size = get_terminal_size()
         return (size[0] - self.origin[0], size[1] - self.origin[1])
@@ -309,10 +342,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         self._forced_colorsystem = new
 
-        if hasattr(self, "colorsystem"):
-            del self.colorsystem
-
-    @cached_property
+    @property
     def colorsystem(self) -> ColorSystem:
         """Gets the current terminal's supported color system."""
 
@@ -322,7 +352,11 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         if os.getenv("NO_COLOR") is not None:
             return ColorSystem.NO_COLOR
 
+        term = os.getenv("TERM", "")
         color_term = os.getenv("COLORTERM", "").strip().lower()
+
+        if color_term == "":
+            color_term = term.split("xterm-")[-1]
 
         if color_term in ["24bit", "truecolor"]:
             return ColorSystem.TRUE
@@ -378,7 +412,11 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         self._listeners[event].append(callback)
 
     def write(
-        self, data: str, pos: tuple[int, int] | None = None, flush: bool = False
+        self,
+        data: str,
+        pos: tuple[int, int] | None = None,
+        flush: bool = False,
+        slice_too_long: bool = True,
     ) -> None:
         """Writes the given data to the terminal's stream.
 
@@ -386,26 +424,58 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             data: The data to write.
             pos: Terminal-character space position to write the data to, (x, y).
             flush: If set, `flush` will be called on the stream after reading.
+            slice_too_long: If set, lines that are outside of the terminal will be
+                sliced to fit. Involves a sizable performance hit.
         """
+
+        def _slice(line: str, maximum: int) -> str:
+            length = 0
+            sliced = ""
+            for char in line:
+                sliced += char
+                if char == "\x1b":
+                    continue
+
+                if (
+                    length > maximum
+                    and real_length(sliced) > maximum
+                    and not has_open_sequence(sliced)
+                ):
+                    break
+
+                length += 1
+
+            return sliced
 
         if "\x1b[2J" in data:
             self.clear_stream()
 
         if pos is not None:
-            data = "\x1b[{};{}H".format(*reversed(pos)) + data
+            xpos, ypos = pos
+
+            if slice_too_long:
+                if not self.height + self.origin[1] + 1 > ypos >= 0:
+                    return
+
+                maximum = self.width - xpos + self.origin[0]
+
+                if xpos < self.origin[0]:
+                    xpos = self.origin[0]
+
+                sliced = _slice(data, maximum) if len(data) > maximum else data
+
+                data = f"\x1b[{ypos};{xpos}H{sliced}\x1b[0m"
+
+            else:
+                data = f"\x1b[{ypos};{xpos}H{data}"
+
+        self._stream.write(data)
 
         if self._recorder is not None:
             self._recorder.write(data)
 
-        self._stream.write(data)
-
         if flush:
             self._stream.flush()
-
-        self._cursor = (
-            self._cursor[0] + real_length("".join(data.splitlines())),
-            self._cursor[1] + data.count("\n"),
-        )
 
     def clear_stream(self) -> None:
         """Clears (truncates) the terminal's stream."""
@@ -416,6 +486,8 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         except OSError as error:
             if error.errno != errno.EINVAL and os.name != "nt":
                 raise
+
+        self._stream.write("\x1b[2J")
 
     def print(
         self,
@@ -434,7 +506,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         """
 
-        self.write(sep.join(items) + end, pos=pos, flush=flush)
+        self.write(sep.join(map(str, items)) + end, pos=pos, flush=flush)
 
     def flush(self) -> None:
         """Flushes self._stream."""
@@ -442,5 +514,17 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         self._stream.flush()
 
 
-terminal = Terminal()
+terminal = Terminal()  # pylint: disable=invalid-name
 """Terminal instance that should be used pretty much always."""
+
+
+def set_global_terminal(new: Terminal) -> None:
+    """Sets the terminal instance to be used by the module."""
+
+    globals()["terminal"] = new
+
+
+def get_terminal() -> Terminal:
+    """Gets the default terminal instance used by the module."""
+
+    return terminal

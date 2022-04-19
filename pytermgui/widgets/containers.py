@@ -12,16 +12,16 @@ from typing import Any, Callable, Iterator, cast
 from ..ansi_interface import MouseAction, MouseEvent, clear, reset
 from ..context_managers import cursor_at
 from ..enums import (
-    CenteringPolicy,
     HorizontalAlignment,
-    SizePolicy,
     VerticalAlignment,
+    CenteringPolicy,
+    WidgetChange,
+    SizePolicy,
     Overflow,
 )
 
 from ..exceptions import WidthExceededError
 from ..regex import real_length, strip_markup
-from ..terminal import terminal
 from ..input import keys
 from . import boxes
 from . import styles as w_styles
@@ -66,6 +66,7 @@ class Container(ScrollableWidget):
             self.width = 40
 
         self._widgets: list[Widget] = []
+        self.dirty_widgets: list[Widget] = []
         self.centered_axis: CenteringPolicy | None = None
 
         self._prev_screen: tuple[int, int] = (0, 0)
@@ -89,13 +90,25 @@ class Container(ScrollableWidget):
                 applied.
         """
 
-        chars = self._get_char("border")
-        style = self._get_style("border")
-        if not isinstance(chars, list):
-            return 0
+        return self.width - self.content_dimensions[0]
 
-        left_border, _, right_border, _ = chars
-        return real_length(style(left_border) + style(right_border))
+    @property
+    def content_dimensions(self) -> tuple[int, int]:
+        """Gets the size (width, height) of the available content area."""
+
+        if not "border" in self.chars:
+            return self.width, self.height
+
+        chars = self._get_char("border")
+
+        assert isinstance(chars, list)
+
+        left, top, right, bottom = chars
+
+        return (
+            self.width - real_length(self.styles.border(left + right)),
+            self.height - real_length(self.styles.border(top + bottom)),
+        )
 
     @property
     def selectables(self) -> list[tuple[Widget, int]]:
@@ -191,6 +204,20 @@ class Container(ScrollableWidget):
         assert isinstance(new, boxes.Box)
         self._box = new
         new.set_chars_of(self)
+
+    def get_change(self) -> WidgetChange | None:
+        """Determines whether widget lines changed since the last call to this function."""
+
+        change = super().get_change()
+
+        if change is None:
+            return None
+
+        for widget in self._widgets:
+            if widget.get_change() is not None:
+                self.dirty_widgets.append(widget)
+
+        return change
 
     def __iadd__(self, other: object) -> Container:
         """Adds a new widget, then returns self.
@@ -336,7 +363,7 @@ class Container(ScrollableWidget):
         """
 
         left, right = self.styles.border(borders[0]), self.styles.border(borders[1])
-        char = self._get_style("fill")(" ")
+        char = self.styles.fill(" ")
 
         def _align_left(text: str) -> str:
             """Align line to the left"""
@@ -675,17 +702,17 @@ class Container(ScrollableWidget):
 
         pos = list(self.pos)
         if centerx:
-            pos[0] = (terminal.width - self.width + 2) // 2
+            pos[0] = (self.terminal.width - self.width + 2) // 2
 
         if centery:
-            pos[1] = (terminal.height - self.height + 2) // 2
+            pos[1] = (self.terminal.height - self.height + 2) // 2
 
         self.pos = (pos[0], pos[1])
 
         if store:
             self.centered_axis = where
 
-        self._prev_screen = terminal.size
+        self._prev_screen = self.terminal.size
 
         return self
 
@@ -716,7 +743,12 @@ class Container(ScrollableWidget):
         scrolled_pos[1] += self._scroll_offset
         event.position = (scrolled_pos[0], scrolled_pos[1])
 
+        handled = False
+        remaining_height = self.content_dimensions[1]
         for widget in self._widgets:
+            if remaining_height <= 0:
+                break
+
             if widget.contains(event.position):
                 handled = widget.handle_mouse(event)
                 # This avoids too many branches from pylint.
@@ -728,15 +760,14 @@ class Container(ScrollableWidget):
                     if handled and selectables_index < len(self.selectables):
                         self.select(selectables_index)
 
-                if handled:
-                    return handled
-
                 break
 
             if widget.is_selectable:
                 selectables_index += widget.selectables_length
 
-        if self.overflow == Overflow.SCROLL:
+            remaining_height -= widget.height
+
+        if not handled and self.overflow == Overflow.SCROLL:
             if event.action is MouseAction.SCROLL_UP:
                 self.scroll(-1)
                 return True
@@ -745,7 +776,7 @@ class Container(ScrollableWidget):
                 self.scroll(1)
                 return True
 
-        return False
+        return handled
 
     def execute_binding(self, key: str) -> bool:
         """Executes a binding on self, and then on self._widgets.
@@ -868,14 +899,14 @@ class Container(ScrollableWidget):
         will be centered based on its `centered_axis`.
         """
 
-        if not terminal.size == self._prev_screen:
+        if not self.terminal.size == self._prev_screen:
             clear()
             self.center(self.centered_axis)
 
-        self._prev_screen = terminal.size
+        self._prev_screen = self.terminal.size
 
         if self.allow_fullscreen:
-            self.pos = terminal.origin
+            self.pos = self.terminal.origin
 
         with cursor_at(self.pos) as print_here:
             for line in self.get_lines():
@@ -945,6 +976,12 @@ class Splitter(Container):
             return available, available * char + line
 
         return 0, line + available * char
+
+    @property
+    def content_dimensions(self) -> tuple[int, int]:
+        """Returns the available area for widgets."""
+
+        return self.height, self.width
 
     def get_lines(self) -> list[str]:
         """Join all widgets horizontally."""

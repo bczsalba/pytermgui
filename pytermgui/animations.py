@@ -1,95 +1,232 @@
-"""The module containing all animation-related classes & functions.
+"""All animation-related classes & functions.
 
-This module exports the `animator` name, which is the instance that
-is used by the library.
+The biggest exports are `Animation` and its subclasses, as well as `Animator`. A
+global instance of `Animator` is also exported, under the `animator` name.
+
+These can be used both within a WindowManager context (where stepping is done
+automatically by the `pytermgui.window_manager.Compositor` on every frame, or manually,
+by calling `animator.step` with an elapsed time argument.
+
+You can register animations to the Animator using either its `schedule` method, with
+an already constructed `Animation` subclass, or either `Animator.animate_attr` or
+`Animator.animate_float` for an in-place construction of the animation instance.
 """
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-instance-attributes
 
 from __future__ import annotations
 
-import time
-from dataclasses import dataclass
-from typing import Callable, Union, TYPE_CHECKING, Any
+from enum import Enum
+from dataclasses import dataclass, field
+from typing import Callable, TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .widgets import Widget
 else:
     Widget = Any
 
-AnimationType = Union["Animation", "CustomAnimation"]
-AnimationCallback = Callable[[Widget], Union[bool, None]]
+__all__ = ["Animator", "FloatAnimation", "AttrAnimation", "animator", "is_animated"]
 
-__all__ = ["Animator", "Animation", "CustomAnimation", "animator"]
+
+def _add_flag(target: object, attribute: str) -> None:
+    """Adds attribute to `target.__ptg_animated__`.
+
+    If the list doesn't exist, it is created with the attribute.
+    """
+
+    if not hasattr(target, "__ptg_animated__"):
+        setattr(target, "__ptg_animated__", [])
+
+    animated = getattr(target, "__ptg_animated__")
+    animated.append(attribute)
+
+
+def _remove_flag(target: object, attribute: str) -> None:
+    """Removes attribute from `target.__ptg_animated__`.
+
+    If the animated list is empty, it is `del`-d from the object.
+    """
+
+    animated = getattr(target, "__ptg_animated__", None)
+    if animated is None:
+        raise ValueError(f"Object {target!r} seems to not be animated.")
+
+    animated.remove(attribute)
+    if len(animated) == 0:
+        del target.__dict__["__ptg_animated__"]
+
+
+def is_animated(target: object, attribute: str) -> bool:
+    """Determines whether the given object.attribute is animated.
+
+    This looks for `__ptg_animated__`, and whether it contains the given attribute.
+    """
+
+    if not hasattr(target, "__ptg_animated__"):
+        return False
+
+    animated = getattr(target, "__ptg_animated__")
+
+    return attribute in animated
+
+
+class Direction(Enum):
+    """Animation directions."""
+
+    FORWARD = 1
+    BACKWARD = -1
 
 
 @dataclass
 class Animation:
-    """A single animation.
+    """The baseclass for all animations."""
 
-    The first callback is called after every step, the second is called
-    when the animation finishes.
-    """
+    duration: int
+    direction: Direction
+    loop: bool
 
-    target: Widget
-    attribute: str
-    end: int
-    duration: float
-    callbacks: tuple[AnimationCallback | None, AnimationCallback | None]
-    start: int | None = None
+    on_step: Callable[[Animation], bool] | None
+    on_finish: Callable[[Animation], None] | None
+
+    state: float
+    _remaining: float
 
     def __post_init__(self) -> None:
-        """Set default values."""
+        self.state = 0.0 if self.direction is Direction.FORWARD else 1.0
+        self._remaining = self.duration
 
-        if self.start is None:
-            self.start = getattr(self.target, self.attribute)
+    def _update_state(self, elapsed: float) -> bool:
+        """Updates the internal float state of the animation.
 
-        self.start_time = time.time()
+        Args:
+            elapsed: The time elapsed since last update.
 
-    def _get_factor(self) -> float:
-        """Calculates the factor of change."""
+        Returns:
+            True if the animation deems itself complete, False otherwise.
+        """
 
-        return (time.time() - self.start_time) / self.duration
+        self._remaining -= elapsed * 1000
 
-    def step(self) -> bool:
-        """Steps the animation forward by elapsed time since instantiation."""
+        self.state = (self.duration - self._remaining) / self.duration
 
-        assert self.start is not None
-        if self.duration == 0:
-            setattr(self.target, self.attribute, self.end)
-            return True
+        if self.direction is Direction.BACKWARD:
+            self.state = 1 - self.state
 
-        factor = min(1.0, self._get_factor())
-        value = int(self.start + (self.end - self.start) * factor)
+        if not 0.0 <= self.state <= 1.0:
+            if not self.loop:
+                return True
 
-        setattr(self.target, self.attribute, int(value))
+            self._remaining = self.duration
+            self.direction = Direction(self.direction.value * -1)
+            return False
 
-        step_callback = self.callbacks[0]
-        if step_callback is not None:
-            step_callback(self.target)
+        return False
 
-        return value == self.end
+    def step(self, elapsed: float) -> bool:
+        """Updates animation state.
+
+        This should call `_update_state`, passing in the elapsed value. That call
+        will update the `state` attribute, which can then be used to animate things.
+
+        Args:
+            elapsed: The time elapsed since last update.
+        """
+
+        state_finished = self._update_state(elapsed)
+
+        step_finished = False
+        if not state_finished and self.on_step is not None:
+            step_finished = self.on_step(self)
+
+        return state_finished or step_finished
+
+    def finish(self) -> None:
+        """Finishes and cleans up after the animation.
+
+        Called by `Animator` after `on_step` returns True. Should call `on_finish` if it
+        is not None.
+        """
+
+        if self.on_finish is not None:
+            self.on_finish(self)
 
 
 @dataclass
-class CustomAnimation:
-    """A more customizable animation.
+class FloatAnimation(Animation):
+    """Transitions a floating point number from 0.0 to 1.0.
 
-    Args:
-        step_callback: The function to run on every step call. If this
-            function returns True, the animation stops.
+    Note that this is just a wrapper over the base class, and provides no extra
+    functionality.
     """
 
-    step_callback: Callable[[], bool]
+    duration: int
 
-    def step(self) -> bool:
-        """Steps ahead in the animation.
+    on_step: Callable[[Animation], bool] | None = None
+    on_finish: Callable[[Animation], None] | None = None
 
-        Returns:
-            The value self.step_callback returns.
-        """
+    direction: Direction = Direction.FORWARD
+    loop: bool = False
 
-        return self.step_callback()
+    state: float = field(init=False)
+    _remaining: int = field(init=False)
+
+
+@dataclass
+class AttrAnimation(Animation):
+    """Animates an attribute going from one value to another."""
+
+    target: object = None
+    attr: str = ""
+    value_type: type = int
+    end: int | float = 0
+    start: int | float | None = None
+
+    on_step: Callable[[Animation], bool] | None = None
+    on_finish: Callable[[Animation], None] | None = None
+
+    direction: Direction = Direction.FORWARD
+    loop: bool = False
+
+    state: float = field(init=False)
+    _remaining: int = field(init=False)
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+
+        if self.start is None:
+            self.start = getattr(self.target, self.attr)
+
+        if self.end < self.start:
+            self.start, self.end = self.end, self.start
+            self.direction = Direction.BACKWARD
+
+        self.end -= self.start
+
+        _add_flag(self.target, self.attr)
+
+    def step(self, elapsed: float) -> bool:
+        """Steps forward in the attribute animation."""
+
+        if self._update_state(elapsed):
+            return True
+
+        step_finished = False
+
+        assert self.start is not None
+        updated = self.start + (self.end * self.state)
+
+        setattr(self.target, self.attr, self.value_type(updated))
+
+        if self.on_step is not None:
+            step_finished = self.on_step(self)
+
+        return step_finished
+
+    def finish(self) -> None:
+        """Deletes `__ptg_animated__` flag, calls `on_finish`."""
+
+        _remove_flag(self.target, self.attr)
+        super().finish()
 
 
 class Animator:
@@ -105,7 +242,7 @@ class Animator:
     def __init__(self) -> None:
         """Initializes an animator."""
 
-        self._animations: list[AnimationType] = []
+        self._animations: list[Animation] = []
 
     @property
     def is_active(self) -> bool:
@@ -113,70 +250,54 @@ class Animator:
 
         return len(self._animations) > 0
 
-    def step(self) -> None:
+    def step(self, elapsed: float) -> None:
         """Steps the animation forward by the given elapsed time."""
 
-        for animation in self._animations:
-            if animation.step():
+        for animation in self._animations.copy():
+            if animation.step(elapsed):
                 self._animations.remove(animation)
+                animation.finish()
 
-                if isinstance(animation, CustomAnimation):
-                    continue
+    def schedule(self, animation: Animation) -> None:
+        """Starts an animation on the next step."""
 
-                finish_callback = animation.callbacks[1]
-                if finish_callback is not None:
-                    finish_callback(animation.target)
+        self._animations.append(animation)
 
-    def add_custom(self, custom_animation: CustomAnimation) -> None:
-        """Adds a custom animation.
+    def animate_attr(self, **animation_args: Any) -> AttrAnimation:
+        """Creates and schedules an AttrAnimation.
 
-        See `CustomAnimation` for more details.
+        All arguments are passed to the `AttrAnimation` constructor. `direction`, if
+        given as an integer, will be converted to a `Direction` before being passed.
+
+        Returns:
+            The created animation.
         """
 
-        self._animations.append(custom_animation)
+        if "direction" in animation_args:
+            animation_args["direction"] = Direction(animation_args["direction"])
 
-    def animate(
-        self,
-        widget: Widget,
-        attribute: str,
-        duration: int,
-        endpoint: int,
-        startpoint: int | None = None,
-        step_callback: AnimationCallback | None = None,
-        finish_callback: AnimationCallback | None = None,
-    ) -> None:
-        """Animates a widget attribute change.
+        anim = AttrAnimation(**animation_args)
+        self.schedule(anim)
 
-        It instantiates an Animation with the given attributes. This Animation
-        is then added to the tracked animations.
+        return anim
 
-        Args:
-            widget: The widget to animate.
-            attribute: The widget attribute to change.
-            startpoint: The starting point of the animation. When set, this
-                will be applied to the given widget at animation start. When
-                unset, defaults to getattr(widget, attribute).
-            endpoint: The ending point of the animation. The animation will end
-                once the step function returns the given value.
-            duration: The length of time this animation will take. Given in
-                milliseconds.
-            step_callback: A callable that is called on every step. It is given
-                a reference to the widget assigned to the Animation.
-            finish_callback: A callable that is called when the Animation.step
-                function returns True, e.g. when the animation is finished. It
-                is given a reference to the widget assigned to the Animation.
+    def animate_float(self, **animation_args: Any) -> FloatAnimation:
+        """Creates and schedules an Animation.
+
+        All arguments are passed to the `Animation` constructor. `direction`, if
+        given as an integer, will be converted to a `Direction` before being passed.
+
+        Returns:
+            The created animation.
         """
 
-        self._animations.append(
-            Animation(
-                widget,
-                attribute,
-                start=startpoint,
-                end=endpoint,
-                duration=duration / 1000,
-                callbacks=(step_callback, finish_callback),
-            )
-        )
+        if "direction" in animation_args:
+            animation_args["direction"] = Direction(animation_args["direction"])
+
+        anim = FloatAnimation(**animation_args)
+        self.schedule(anim)
+
+        return anim
 
 
 animator = Animator()

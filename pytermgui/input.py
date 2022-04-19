@@ -7,14 +7,13 @@ Credits:
 """
 
 # pylint doesn't see the C source
-# pylint: disable=c-extension-no-member, no-name-in-module
+# pylint: disable=c-extension-no-member, no-name-in-module, used-before-assignment
 
 from __future__ import annotations
 
 import os
 import sys
 import signal
-from contextlib import contextmanager
 
 from typing import (
     IO,
@@ -29,6 +28,7 @@ from typing import (
 )
 
 from select import select
+from contextlib import contextmanager
 from codecs import getincrementaldecoder
 
 from .exceptions import TimeoutException
@@ -100,6 +100,7 @@ class _GetchUnix:
         buff = ""
         while len(buff) < num:
             char = os.read(sys.stdin.fileno(), 1)
+
             try:
                 buff += self.decode(char)
             except UnicodeDecodeError:

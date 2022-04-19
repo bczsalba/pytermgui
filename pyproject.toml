@@ -1,0 +1,14 @@
+[tool.pylint.messages_control]
+disable = [
+    "fixme"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:"
+]
+
+omit = [
+    "pytermgui/cmd.py"
+]
