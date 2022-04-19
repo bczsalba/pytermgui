@@ -1,3 +1,19 @@
+## [5.0.0] - 2022-04-19
+
+## Refactors
+- **Refactor `window_manager.py` into 3 files under `window_manager` submodule**
+- **Refactor the entire animation system**
+- Move scrolling behaviour into new `ScrollableWidget` class
+- Improve `Terminal` API
+- Rename `widgets/layouts` → `widgets/containers`
+
+
+## Additions
+- Add `StyleManager.__call__` method that sets the given **kwargs keys and values
+- Add (currently unused) `Widget.get\_change` helper
+
+
+
 ## [4.3.2] - 2022-04-09
  
 ### Bugfixes
