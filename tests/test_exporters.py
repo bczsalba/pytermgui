@@ -6,7 +6,10 @@ import pytermgui
 from pytermgui import tim, DensePixelMatrix, Color, str_to_color
 from pytermgui.terminal import Recorder, Terminal, terminal
 
-from ._exporter_targets import HTML_TARGET, SVG_TARGET
+try:
+    from ._exporter_targets import HTML_TARGET, SVG_TARGET
+except ImportError:
+    from _exporter_targets import HTML_TARGET, SVG_TARGET
 
 MATRIX = [
     [
@@ -980,7 +983,7 @@ class SizedTerminal(Terminal):
 
 
 def _generate_stressor(term: Terminal = terminal) -> Recorder:
-    pytermgui.terminal = term
+    pytermgui.set_global_terminal(term)
 
     with term.record() as recording:
         width, height = 30, 30
@@ -1042,3 +1045,19 @@ def test_export_svg():
         print(*_diff(output, SVG_TARGET))
 
     compare(output, SVG_TARGET)
+
+
+def regenerate_targets():
+    Color.default_background = str_to_color("#000000")
+    Color.default_foreground = str_to_color("#ffffff")
+
+    html_target = _generate_stressor().export_html()
+    svg_target = _generate_stressor(SizedTerminal()).export_svg()
+
+    with open("tests/_exporter_targets.py", "w") as f:
+        f.write(f'SVG_TARGET = """\\\n{svg_target}"""\n\n')
+        f.write(f'HTML_TARGET = """\\\n{html_target}"""\n')
+
+
+if __name__ == "__main__":
+    regenerate_targets()
