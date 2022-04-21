@@ -678,7 +678,8 @@ class Label(Widget):
         self.non_first_padding = non_first_padding
         self.width = real_length(value) + self.padding
 
-        self.styles.value = style
+        if style != "":
+            self.styles.value = style
 
     def get_lines(self) -> list[str]:
         """Get lines representing this Label, breaking lines as necessary"""
