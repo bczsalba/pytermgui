@@ -297,7 +297,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             return self.size
 
         size = get_terminal_size()
-        return (size[0] - self.origin[0], size[1] - self.origin[1])
+        return (size[0], size[1])
 
     def _update_size(self, *_: Any) -> None:
         """Resize terminal when SIGWINCH occurs, and call listeners."""

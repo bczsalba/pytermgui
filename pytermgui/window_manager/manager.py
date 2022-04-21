@@ -171,15 +171,11 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
     def add(self, window: Window, animate: bool = True) -> WindowManager:
         """Adds a window to the manager."""
 
-        original_height = window.height
-
         def _on_step(animation: AttrAnimation) -> None:
             """Sets window's height on step, centers it."""
 
             window = animation.target
             assert isinstance(window, Window), window
-
-            window.height = original_height
 
             if window.centered_axis is not None:
                 window.center()
@@ -207,6 +203,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
             duration=200,
             on_step=_on_step,
         )
+
         return self
 
     def remove(
@@ -308,7 +305,9 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
                     index + terminal.margins[start_margin_index],
                     min(
                         pos[index] - offset,
-                        maximum - terminal.margins[start_margin_index + 2],
+                        maximum
+                        - terminal.margins[start_margin_index + 2]
+                        - terminal.origin[index],
                     ),
                 )
 
