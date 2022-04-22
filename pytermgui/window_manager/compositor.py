@@ -88,8 +88,8 @@ class Compositor:
 
         if window.allow_fullscreen:
             window.pos = self.terminal.origin
-            window.width = self.terminal.width + 1
-            window.height = self.terminal.height + 1
+            window.width = self.terminal.width
+            window.height = self.terminal.height
 
         if window.has_focus or window.is_noblur:
             return window.get_lines()
