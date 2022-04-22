@@ -1,0 +1,23 @@
+markup:
+  foreground: '#FFFFFF'
+  background: '@60'
+  accent: '210'
+
+  title: background accent
+
+config:
+  Label:
+    styles:
+      value: foreground background
+
+  Container:
+    styles:
+      fill: foreground background
+      border: foreground background
+      corner: foreground background
+
+  Window:
+    styles:
+      fill: foreground background
+      border: foreground background
+      corner: foreground background
