@@ -922,24 +922,9 @@ class Container(ScrollableWidget):
             __could have been__ used to create this Container.
         """
 
-        out = type(self).__name__ + "("
-        if hasattr(self, "_widgets"):
-            for widget in self._widgets:
-                debuginfo = widget.debug() + ", "
-                if len(out + debuginfo) > 20:
-                    out += "..."
-                    break
-
-                out += debuginfo
-
-            out = out.strip(", ")
-
-            if len(self._widgets) > 0:
-                out += ", "
-
-        out += ")"
-
-        return out
+        return f"{type(self).__name__}(width={self.width}, height={self.height}" + (
+            f", id={self.id}" if self.id is not None else ""
+        )
 
 
 class Splitter(Container):
