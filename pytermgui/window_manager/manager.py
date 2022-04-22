@@ -17,6 +17,7 @@ from ..ansi_interface import MouseAction, MouseEvent
 from ..context_managers import alt_buffer, mouse_handler, MouseTranslator
 
 from .window import Window
+from .layouts import Layout
 from .compositor import Compositor
 
 
@@ -41,10 +42,13 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
     focusing_actions = (MouseAction.LEFT_CLICK, MouseAction.RIGHT_CLICK)
     """These mouse actions will focus the window they are acted upon."""
 
-    def __init__(self, *, framerate: int = 60) -> None:
+    def __init__(
+        self, *, layout_type: Type[Layout] = Layout, framerate: int = 60
+    ) -> None:
         """Initialize the manager."""
 
         super().__init__()
+
         self._is_running = False
         self._windows: list[Window] = []
         self._drag_offsets: tuple[int, int] = (0, 0)
@@ -52,6 +56,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
 
         self.focused: Window | None = None
+        self.layout = layout_type()
         self.compositor = Compositor(self._windows, framerate=framerate)
         self.mouse_translator: MouseTranslator | None = None
 
@@ -136,6 +141,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
             window.pos = (newx, newy)
 
+        self.layout.apply()
         self.compositor.redraw()
 
     def run(self, mouse_events: list[str] | None = None) -> None:
@@ -187,6 +193,9 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
         self._windows.insert(0, window)
         window.manager = self
+
+        if len(self._windows) <= len(self.layout.slots):
+            self.layout.assign(window, index=len(self._windows) - 1)
 
         # New windows take focus-precedence over already
         # existing ones, even if they are modal.
