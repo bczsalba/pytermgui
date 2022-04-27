@@ -20,6 +20,8 @@ class Toggle(Checkbox):
     ) -> None:
         """Initialize object"""
 
+        self.states = states
+
         self.set_char("checked", states[0])
         self.set_char("unchecked", states[1])
 

@@ -106,6 +106,7 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
         """Moves the slider cursor."""
 
         delimiter = self._get_char("delimiter")[0]
+
         if event.action in [MouseAction.LEFT_CLICK, MouseAction.LEFT_DRAG]:
             offset = event.position[0] - self.pos[0] + 1 - real_length(delimiter)
             self.value = max(0, min(offset / self.width, 1.0))
@@ -132,13 +133,17 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
         else:
             filled = self.styles.filled_selected(rail)
 
+            for i, char in enumerate(delimiters):
+                delimiters[i] = self.styles.filled_selected(char)
+
         for i, delimiter in enumerate(delimiters):
             delimiters[i] = self.styles.delimiter(delimiter)
 
-        count = round(self.width * self.value) - 1
+        width = self.width - real_length("".join(delimiters))
+        count = width * self.value - 1
 
         chars = [delimiters[0]]
-        width = self.width - real_length("".join(delimiters))
+
         for i in range(width):
             if i == count and not self.is_locked and self.selected_index is not None:
                 chars.append(cursor)

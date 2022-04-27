@@ -62,7 +62,7 @@ class Container(ScrollableWidget):
         super().__init__(**attrs)
 
         # TODO: This is just a band-aid.
-        if "width" not in attrs:
+        if not any("width" in attr for attr in attrs):
             self.width = 40
 
         self._widgets: list[Widget] = []

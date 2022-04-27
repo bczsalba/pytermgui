@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from collections import UserDict
 from dataclasses import dataclass
-from typing import Callable, Union, List, Type, TYPE_CHECKING
+from typing import Callable, Union, List, Type, TYPE_CHECKING, Any
 
 from ..regex import strip_ansi
 from ..parser import tim, RE_MARKUP
@@ -100,7 +100,7 @@ class MarkupFormatter:
         if self.ensure_strip:
             item = strip_ansi(item)
 
-        return tim.parse(self.markup.format(depth=depth, item=item))
+        return tim.parse(self.markup.format(depth=depth, item=tim.get_markup(item)))
 
     def __str__(self) -> str:
         """Returns __repr__, but with markup escaped."""
@@ -295,9 +295,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
 
         raise AttributeError(key, self.data)
 
-    def __call__(
-        self, **styles: str | StyleCall | MarkupFormatter | StyleType
-    ) -> Widget | Type[Widget] | None:
+    def __call__(self, **styles: str | StyleCall | MarkupFormatter | StyleType) -> Any:
         """Allows calling the manager and setting its styles.
 
         For example:
