@@ -326,17 +326,30 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
             """Process clicking a window."""
 
             left, top, right, bottom = window.rect
+            borders = window.chars.get("border", [" "] * 4)
 
-            if pos[1] == top and left <= pos[0] < right:
+            if real_length(borders[1]) > 0 and pos[1] == top and left <= pos[0] < right:
                 self._drag_target = (window, Edge.TOP)
 
-            elif pos[1] == bottom - 1 and left <= pos[0] < right:
+            elif (
+                real_length(borders[3]) > 0
+                and pos[1] == bottom - 1
+                and left <= pos[0] < right
+            ):
                 self._drag_target = (window, Edge.BOTTOM)
 
-            elif pos[0] == left and top <= pos[1] < bottom:
+            elif (
+                real_length(borders[0]) > 0
+                and pos[0] == left
+                and top <= pos[1] < bottom
+            ):
                 self._drag_target = (window, Edge.LEFT)
 
-            elif pos[0] == right - 1 and top <= pos[1] < bottom:
+            elif (
+                real_length(borders[2]) > 0
+                and pos[0] == right - 1
+                and top <= pos[1] < bottom
+            ):
                 self._drag_target = (window, Edge.RIGHT)
 
             else:
@@ -417,35 +430,17 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
                 continue
 
             for window in self._windows:
-                contains_pos = window.contains(event.position)
-                is_target = (
-                    self._drag_target is not None and self._drag_target[0] is window
-                )
-
-                if not contains_pos and not is_target:
-                    if window.is_modal:
-                        break
-
-                    continue
+                contains = window.contains(event.position)
 
                 if event.action in self.focusing_actions:
                     self.focus(window)
-
-                if window.handle_mouse(event):
-                    break
 
                 if event.action in handlers and handlers[event.action](
                     event.position, window
                 ):
                     break
 
-                if not contains_pos and not window.is_modal:
-                    continue
-
-                self.execute_binding(tuple(event))
-
-                # Break on modal window
-                if window.is_modal or contains_pos:
+                if window.handle_mouse(event) or (contains or window.is_modal):
                     break
 
             # Unset drag_target if no windows received the input
