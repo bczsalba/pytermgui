@@ -127,6 +127,8 @@ class Slot:
 
     content: Widget | None = None
 
+    _restore_data: tuple[int, int, tuple[int, int]] | None = None
+
     def apply(self, position: tuple[int, int]) -> None:
         """Applies the given position & dimension to the content.
 
@@ -137,9 +139,30 @@ class Slot:
         if self.content is None or self.width is None or self.height is None:
             return
 
+        if self._restore_data is None:
+            self._restore_data = (
+                self.content.width,
+                self.content.height,
+                self.content.pos,
+            )
+
         self.content.height = self.height.value
         self.content.width = self.width.value
         self.content.pos = position
+
+    def detach_content(self) -> None:
+        """Detaches content & restores its original state."""
+
+        content = self.content
+        if content is None:
+            raise ValueError(f"No content to detach in {self!r}.")
+
+        assert self._restore_data is not None
+
+        content.width, content.height, content.pos = self._restore_data
+
+        self.content = None
+        self._restore_data = None
 
 
 ROW_BREAK = Slot("Row Break", Static(0), Static(0))
@@ -355,3 +378,15 @@ class Layout:
                 position[0] += slot.width.value
 
             position[1] += max(slot.height.value for slot in row)
+
+    def __getattr__(self, attr: str) -> Slot:
+        """Gets a slot by its (slugified) name."""
+
+        def _snakeify(name: str) -> str:
+            return name.lower().replace(" ", "_")
+
+        for slot in self.slots:
+            if _snakeify(slot.name) == attr:
+                return slot
+
+        raise KeyError(f"Slot with name {attr!r} could not be found.")
