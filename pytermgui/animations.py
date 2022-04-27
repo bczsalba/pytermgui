@@ -135,7 +135,7 @@ class Animation:
         state_finished = self._update_state(elapsed)
 
         step_finished = False
-        if not state_finished and self.on_step is not None:
+        if self.on_step is not None:
             step_finished = self.on_step(self)
 
         return state_finished or step_finished
