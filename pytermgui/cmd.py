@@ -1,545 +1,54 @@
-"""
-The command-line module of the library.
+"""The command-line module of the library.
 
-There are some simple utilities included, and a playground for some
-of the interesting parts of pytermgui.
-
-See `ptg --help` for more information.
+See ptg --help for more information.
 """
 
 from __future__ import annotations
 
 import os
 import sys
-import platform
-import subprocess
-from random import randint
+import random
+from platform import platform
 from itertools import zip_longest
-from abc import ABC, abstractmethod
-from typing import Any, Optional, Type
+from typing import Any, Callable, Iterable
 from argparse import ArgumentParser, Namespace
 
-from . import (
-    __version__,
-    MarkupSyntaxError,
-    WindowManager,
-    ColorPicker,
-    real_length,
-    YamlLoader,
-    get_widget,
-    InputField,
-    Container,
-    Overflow,
-    Splitter,
-    terminal,
-    tim,
-    Window,
-    Button,
-    Label,
-    boxes,
-    keys,
-)
+import pytermgui as ptg
 
-__all__ = ["Application"]
 
+APPLICATION_MAP = {
+    ("TIM Playground", "tim"): lambda *_: TIMWindow(),
+    ("Getch", "getch"): lambda *_: GetchWindow(),
+    ("ColorPicker", "color"): lambda *_: ColorPickerWindow(),
+    # "Inspector": lambda *_: InspectorWindow(),
+}
 
-def _get_key_name(key: str) -> str:
-    """Gets canonical name of a key.
 
-    Arguments:
-        key: The key in question.
+def _app_from_short(short: str) -> Callable[..., AppWindow]:
+    """Finds an AppWindow constructor from its short name."""
 
-    Returns:
-        The canonical-ish name of the key.
-    """
+    for (_, name), constructor in APPLICATION_MAP.items():
+        if name == short:
+            return constructor
 
-    name = keys.get_name(key)
-    if name is not None:
-        return str("keys." + name)
+    raise KeyError(f"No app found for {short!r}")
 
-    return ascii(key)
 
-
-class Application(ABC):
-    """A class representing an application."""
-
-    title: str
-    description: str
-    standalone: bool = False
-
-    def __init__(self, manager: WindowManager) -> None:
-        """Initializes Application.
-
-        Args:
-            manager: The WindowManager instance this application
-                belongs to.
-        """
-
-        self.manager = manager
-
-    @staticmethod
-    def _update_widgets(window: Window, items: list[Any]) -> None:
-        """Update window widgets, using auto() method for each."""
-
-        window.height = 0
-        window.set_widgets([])
-        for item in items:
-            window += item
-
-    @abstractmethod
-    def finish(self, window: Window) -> None:
-        """Prints output information on Application finish.
-
-        This is called by the main method after self.manager exits.
-
-        In order to support `standalone` mode, the Application should
-        call `_request_exit()` once it is done with its duty. This method
-        is called directly after.
-
-        Args:
-            window: The window object calling this method.
-        """
-
-    @abstractmethod
-    def construct_window(self) -> Window:
-        """Constructs an application window."""
-
-    def _request_exit(self) -> None:
-        """Send a request to the manager parent to stop execution."""
-
-        self.manager.stop()
-
-    def _get_base_window(self, **attrs: Any) -> Window:
-        """Get window with basic & universal settings applied."""
-
-        if "title" not in attrs:
-            attrs["title"] = " [bold ptg-title]" + self.title + " "
-
-        return Window(**attrs)
-
-
-class LauncherApplication(Application):
-    """Application that launches other apps."""
-
-    title = "Launcher"
-    description = "Launch other apps"
-
-    def __init__(self, manager: WindowManager, apps: list[Type[Application]]) -> None:
-        """Initialize LauncherApplication.
-
-        Args:
-            manager: The WindowManager instance this application
-                belongs to.
-            apps: A list of Application type objects that this window will contain.
-        """
-
-        super().__init__(manager)
-
-        instantiated_apps: list[Application] = []
-        for app in apps:
-            instantiated_apps.append(app(manager))
-
-        self.apps = instantiated_apps
-
-    def finish(self, _: Window) -> None:
-        """Do nothing on finish."""
-
-    def construct_window(self) -> Window:
-        """Constructs an application window."""
-
-        window = (
-            self._get_base_window(width=40, is_noblur=False, overflow=Overflow.RESIZE)
-            + ""
-        )
-        manager = self.manager
-
-        for app in self.apps:
-            button = Button(
-                app.title, lambda *_, app=app,: manager.add(app.construct_window())
-            )
-            window += button
-
-        window += ""
-        window += Label(
-            "> Choose an app to run, or press for available keybinds.",
-            parent_align=0,
-            style="242 italic",
-        )
-
-        assert isinstance(window, Window)
-        return window
-
-
-class GetchApplication(Application):
-    """Application for the getch() utility."""
-
-    title = "Getch"
-    description = "See your keypresses"
-
-    def _key_callback(self, window: Window, key: str) -> bool:
-        """Edits `window` state if `key` is pressed."""
-
-        # Don't display mouse codes
-        if (
-            self.manager.mouse_translator is not None
-            and self.manager.mouse_translator(key) is not None
-        ):
-            return True
-
-        name = _get_key_name(key)
-        items = [
-            "[ptg-title]Your output",
-            "",
-            {"[ptg-section]key": name},
-            {"[ptg-section]value:": ascii(key)},
-            {"[ptg-section]len()": str(len(key))},
-            {"[ptg-section]real_length()": str(real_length(key))},
-        ]
-
-        window.static_width = 40
-        self._update_widgets(window, items)
-
-        if self.standalone:
-            self._request_exit()
-            return True
-
-        assert window.manager is not None
-        return True
-
-    def finish(self, window: Window) -> None:
-        """Dumps getch() output to stdout on finish."""
-
-        for line in window.get_lines():
-            print(line)
-
-    def construct_window(self) -> Window:
-        """Constructs an application window."""
-
-        window = self._get_base_window(is_modal=True) + "[ptg-title]Press any key..."
-        window.bind(
-            keys.ANY_KEY, self._key_callback, description="Read key & update window"
-        )
-        window.center()
-
-        assert isinstance(window, Window)
-        return window
-
-
-class MarkupApplication(Application):
-    """Application for the markup parsing methods"""
-
-    title = "MarkApp"
-    description = "Play around with markup in this interactive editor."
-
-    @staticmethod
-    def _get_tokens() -> list[Label]:
-        """Gets all tokens using the parser."""
-
-        tokens: list[Label] = []
-        for token in tim.tags:
-            tokens.append(Label(f"[{token}]{token}", parent_align=0))
-
-        return tokens
-
-    @staticmethod
-    def _update_value(output: Label, field: InputField) -> None:
-        """Updates output value.
-
-        This shows parsed markup if parsing succeeded, SyntaxError otherwise."""
-
-        try:
-            tim.parse(field.value)
-            output.value = field.value
-        except MarkupSyntaxError as error:
-            output.value = "[210 bold]SyntaxError:[/] " + error.escape_message()
-
-    @staticmethod
-    def _style_wrapper(_: int, item: str) -> str:
-        """Catches MarkupSyntaxError."""
-
-        try:
-            # TODO: Reintroduce prettify_markup
-
-            # This method *always* returns str, but Mypy doesn't see that.
-            # return str(prettify_markup(item))
-            return item
-
-        except MarkupSyntaxError:
-            return item
-
-    @staticmethod
-    def _define_colors(*_: Any) -> None:
-        """Re-generates colors for guide."""
-
-        def _random_hex() -> str:
-            """Return a random hex number"""
-
-            randcol = lambda: randint(0, 255)
-            return "#" + "".join(f"{randcol():02x}" for _ in range(3))
-
-        tim.alias("demo-255", str(randint(0, 255)))
-        tim.alias("demo-hex", _random_hex())
-        tim.alias("demo-rgb", _random_hex())
-
-    def finish(self, window: Window) -> None:
-        """Dumps output markup to stdout on finish."""
-
-        if window.manager is None:
-            return
-
-        window.manager.stop()
-
-        # This attribute is currently needed for the Application
-        # window to work. Not great architecturally, but I cannot
-        # figure out something better at the moment.
-        print(tim.prettify_markup(window.output_label.value))  # type: ignore
-
-    def construct_window(self) -> Window:
-        """Constructs an application window."""
-
-        def dump(window: Window) -> None:
-            """Dumps lines of window and exits program."""
-
-            with open("dump", "w", encoding="utf8") as file:
-                file.write("\n".join(window.get_lines()))
-
-            sys.exit()
-
-        tokens = self._get_tokens()
-        self._define_colors()
-
-        colors = [
-            "[demo-255]0-255",
-            "[demo-hex]#rrggbb",
-            "[demo-rgb]rrr;ggg;bbb",
-            "",
-            "[inverse demo-255]@0-255",
-            "[inverse demo-hex]@#rrggbb",
-            "[inverse demo-rgb]@rrr;ggg;bbb",
-        ]
-
-        corners = Container.chars["corner"]
-        assert isinstance(corners, list)
-        corners = corners.copy()
-        corners[0] += " [ptg-title]tokens[/] "
-        corners[1] = " [ptg-title]colors[60] " + corners[1]
-
-        guide = Container().set_char("corner", corners)
-
-        for token, color in zip_longest(tokens, colors, fillvalue=""):
-            # Not sure why mypy errors here.
-            guide += {token: color}  # type: ignore
-
-        custom_tags = Container()
-        for tag, _ in sorted(
-            tim.user_tags.items(), key=lambda item: len(item[0] + item[1])
-        ):
-            custom_tags += Label(
-                f"[{tag}]{tag}[/fg /bg /]: [!expand]{tag}",
-                parent_align=0,
-            )
-        guide += custom_tags  # type: ignore
-
-        window = (
-            self._get_base_window(width=65, resizable=True)
-            + Container(Label(parent_align=0, id="output_label"))
-            + guide
-            + Label(
-                "[247 italic]> Tip: Press CTRL_R to randomize colors", parent_align=0
-            )
-            + ""
-            + InputField(id="input_field").set_style("fill", self._style_wrapper)
-        )
-
-        output = get_widget("output_label")
-        assert isinstance(output, Label)
-        field = get_widget("input_field")
-        assert isinstance(field, InputField)
-
-        # See above note on architectural issues
-        window.output_label = output  # type: ignore
-
-        field.bind(
-            keys.ANY_KEY,
-            lambda field, _, output=output: self._update_value(output, field),
-        )
-
-        window.bind(
-            keys.CTRL_R,
-            self._define_colors,
-            description="Randomize colors in the guide",
-        )
-
-        window.bind(
-            keys.CTRL_P,
-            lambda *_: dump(window),
-            description="Dump window lines and exit",
-        )
-
-        if self.standalone:
-            field.bind(keys.RETURN, lambda *_: self._request_exit())
-
-        window.center()
-        window.select(0)
-        return window
-
-
-class ColorPickerApplication(Application):
-    """An application to aid in finding nice xterm-255 colors."""
-
-    title = "ColorPicker"
-    description = "Visually select colors"
-
-    def construct_window(self) -> Window:
-        """Constructs an application Window."""
-
-        window = self._get_base_window()
-        window += ""
-        window += ColorPicker()
-
-        return window.center()
-
-    def finish(self, window: Window) -> None:
-        ...
-
-
-class HelperApplication(Application):
-    """Application class to show all currently-active bindings"""
-
-    title = "Help"
-    description = "See all current bindings"
-
-    def finish(self, window: Window) -> None:
-        """Do nothing on finish"""
-
-    def construct_window(self) -> Window:
-        """Construct an application window"""
-
-        window = (
-            self._get_base_window(width=50, overflow=Overflow.RESIZE)
-            + "[ptg-title]Current bindings"
-            + ""
-        )
-
-        bindings = [
-            (key, description)
-            for key, (_, description) in self.manager.bindings.items()
-        ]
-
-        if self.manager.focused is not None:
-            bindings += [
-                (key, description)
-                for key, (_, description) in self.manager.focused.bindings.items()
-            ]
-
-        # Convert keycode into key name
-        bindinfo: list[tuple[str, str]] = []
-        for binding in bindings:
-            binding_mutable = list(binding)
-            binding_mutable[0] = _get_key_name(str(binding[0])).strip("'")
-            bindinfo.append((str(binding_mutable[0]), str(binding_mutable[1])))
-
-        # Sort keys according to key name length
-        bindinfo.sort(key=lambda item: real_length(item[0]))
-
-        for (key, description) in bindinfo:
-            window += Label(str(key), parent_align=0, style="ptg-section")
-            window += Label(description, padding=2, parent_align=0)
-            window += ""
-
-        window.bind(keys.ESC, lambda *_: window.close())
-
-        return window.center()
-
-
-def run_wm(args: Namespace) -> None:
-    """Runs WindowManager using args."""
-
-    # This is used for finding Application from arguments
-    app_mapping: dict[str, Type[Application]] = {
-        "getch": GetchApplication,
-        "markapp": MarkupApplication,
-        "color": ColorPickerApplication,
-    }
-
-    window: Optional[Window] = None
-
-    with WindowManager() as manager:
-        manager.bind(
-            keys.F12,
-            lambda *_: manager.screenshot(" ".join(["ptg"] + sys.argv[1:])),
-            "Takes a screenshot of the current state, saves it as screenshot.svg.",
-        )
-        manager.bind(
-            keys.F11,
-            lambda *_: {
-                None if manager.focused is None else manager.focused.toggle_fullscreen()
-            },
-            "Toggles the currently focused window's fullscreen state.",
-        )
-
-        manager.bind(
-            keys.CTRL_W,
-            lambda *_: manager.focused.close() if manager.focused is not None else None,
-            description="Close focused window",
-        )
-
-        manager.bind(
-            "?",
-            lambda *_: manager.add(helper.construct_window()),
-            description="Show all active bindings",
-        )
-
-        manager.bind("*", lambda *_: manager.show_positions())
-
-        # Define styles
-        tim.alias("ptg-border", "60")
-        tim.alias("ptg-title", "210")
-        tim.alias("ptg-section", "157")
-
-        boxes.SINGLE.set_chars_of(Container)
-        boxes.DOUBLE.set_chars_of(Window)
-
-        Container.styles.border__corner = "ptg-border"
-        Window.styles.border__corner = "ptg-border"
-        Splitter.styles.separator = "ptg-border"
-        InputField.styles.cursor = "@72"
-
-        helper = HelperApplication(manager)
-
-        # Run with a launcher
-        if len(sys.argv) == 1:
-            launcher = LauncherApplication(manager, list(app_mapping.values()))
-            manager.add(launcher.construct_window())
-
-        # Run as standalone app
-        if args.app:
-            app = app_mapping[args.app.lower()](manager)
-            app.standalone = True
-
-            window = app.construct_window()
-            manager.add(window)
-
-        manager.run()
-
-        # Run finish callback on standalone apps
-        if window is not None:
-            app.finish(window)
-
-
-def main() -> None:
-    """Main method."""
+def process_args(args: list[str] | None = None) -> Namespace:
+    """Processes command line arguments."""
 
     parser = ArgumentParser(
         description="Command line interface & demo for some utilities related to TUI development."
     )
 
+    apps = [short.capitalize() for (_, short), _ in APPLICATION_MAP.items()]
+
     parser.add_argument(
         "--app",
         type=str.lower,
         help="launch an app in standalone mode.",
-        metavar="{Getch, MarkApp, Color}",
-        choices=["getch", "markapp", "color"],
+        metavar=f"{', '.join(apps)}",
+        choices=apps,
     )
 
     parser.add_argument(
@@ -547,7 +56,7 @@ def main() -> None:
     )
 
     parser.add_argument(
-        "-m", "--markapp", help="launch MarkApp in standalone mode", action="store_true"
+        "-t", "--tim", help="launch MarkApp in standalone mode", action="store_true"
     )
 
     parser.add_argument(
@@ -578,83 +87,583 @@ def main() -> None:
         action="store_true",
     )
 
-    args = parser.parse_args()
+    return parser.parse_args(args=args)
+
+
+def screenshot(man: ptg.WindowManager) -> None:
+    """Opens a modal dialogue & saves a screenshot."""
+
+    tempname = ".screenshot_temp.svg"
+
+    def _finish(*_: Any) -> None:
+        """Closes the modal and renames the window."""
+
+        man.remove(window)
+        filename = field.value or "screenshot"
+
+        if not filename.endswith(".svg"):
+            filename += ".svg"
+
+        os.rename(tempname, filename)
+
+        man.toast("[ptg.title]Screenshot saved!", "", f"[ptg.detail]{filename}")
+
+    title = sys.argv[0]
+    field = ptg.InputField(prompt="Save as: ")
+
+    man.screenshot(title=title, filename=tempname)
+
+    window: ptg.Window = man.alert(
+        "[ptg.title]Screenshot taken!", "", ptg.Container(field), "", ["Save!", _finish]
+    )
+
+
+class Dropdown(ptg.Container):
+    """A widget that mimicks the 'dropdown' UI element."""
+
+    def __init__(self, label: str, *items: Any, **attrs: Any) -> None:
+        self.collapsed_height = 0
+
+        self.trigger = ptg.Toggle(
+            (f"▶ {label}", f"▼ {label}"), lambda *_: self.toggle()
+        )
+
+        super().__init__(self.trigger, *items, box="EMPTY", **attrs)
+
+        self.collapsed_height = 1
+        self.overflow = ptg.Overflow.HIDE
+        self.height = self.collapsed_height
+
+        self._is_expanded = False
+
+    def toggle(self) -> Dropdown:
+        """Toggles expanded state.
+
+        Returns:
+            This object.
+        """
+
+        if self.trigger.checked != self._is_expanded:
+            self.trigger.toggle(run_callback=False)
+
+        self._is_expanded = not self._is_expanded
+
+        if self._is_expanded:
+            self.overflow = ptg.Overflow.RESIZE
+        else:
+            self.overflow = ptg.Overflow.HIDE
+            self.height = self.collapsed_height
+
+        return self
+
+    def collapse(self) -> Dropdown:
+        """Collapses the dropdown.
+
+        Does nothing if already collapsed.
+
+        Returns:
+            This object.
+        """
+
+        if self._is_expanded:
+            self.toggle()
+
+        return self
+
+    def expand(self) -> Dropdown:
+        """Expands the dropdown.
+
+        Does nothing if already expanded.
+
+        Returns:
+            This object.
+        """
+
+        if not self._is_expanded:
+            self.toggle()
+
+        return self
+
+
+class AppWindow(ptg.Window):
+    """A generic application window.
+
+    It contains a header with the app's title, as well as some global
+    settings.
+    """
+
+    app_title: str
+
+    is_noblur = True
+    overflow = ptg.Overflow.SCROLL
+    vertical_align = ptg.VerticalAlignment.TOP
+
+    def __init__(self, **attrs: Any) -> None:
+        super().__init__(**attrs)
+
+        bottom = ptg.Container.chars["border"][-1]
+        box = ptg.boxes.Box(
+            [
+                "",
+                " x ",
+                bottom * 3,
+            ]
+        )
+
+        self._add_widget(ptg.Container(f"[ptg.title]{self.app_title}", box=box))
+        self._add_widget("")
+
+
+class GetchWindow(AppWindow):
+    """A window for the Getch utility."""
+
+    app_title = "Getch"
+
+    def __init__(self, **attrs: Any) -> None:
+        super().__init__(**attrs)
+
+        self.bind(ptg.keys.ANY_KEY, self._update)
+
+        self._content = ptg.Container("Press any key...", static_width=60)
+        self._add_widget(self._content)
+
+    def _update(self, _: ptg.Widget, key: str) -> None:
+        """Updates window contents on keypress."""
+
+        self._content.set_widgets([])
+        name = _get_key_name(key)
+
+        if name != ascii(key):
+            name = f"keys.{name}"
+
+        items = [
+            "[ptg.title]Your output",
+            "",
+            {"[ptg.detail]key": name},
+            {"[ptg.detail]value:": ascii(key)},
+            {"[ptg.detail]len()": str(len(key))},
+            {"[ptg.detail]real_length()": str(ptg.real_length(key))},
+        ]
+
+        for item in items:
+            self._content += item
+
+
+class ColorPickerWindow(AppWindow):
+    """A window to pick colors from the xterm-256 palette."""
+
+    app_title = "ColorPicker"
+
+    def __init__(self, **attrs: Any) -> None:
+        super().__init__(**attrs)
+
+        self._add_widget(Dropdown("xterm-256", "", ptg.ColorPicker()).expand())
+
+        self._add_widget("")
+
+        self._add_widget(
+            Dropdown(
+                "RGB & HEX", "", self._create_rgb_picker(), static_width=81
+            ).expand(),
+        )
+
+        self.height = int(self.terminal.height * 2 / 3)
+        self.center()
+
+    @staticmethod
+    def _create_rgb_picker() -> ptg.Container:
+        """Creates the RGB picker 'widget'."""
+
+        root = ptg.Container(static_width=72)
+
+        matrix = ptg.DensePixelMatrix(68, 20)
+        hexdisplay = ptg.Label()
+        rgbdisplay = ptg.Label()
+
+        sliders = [ptg.Slider() for _ in range(3)]
+
+        def _get_rgb() -> tuple[int, int, int]:
+            """Computes the RGB value from the 3 sliders."""
+
+            values = [int(255 * slider.value) for slider in sliders]
+
+            return values[0], values[1], values[2]
+
+        def _update(*_) -> None:
+            """Updates the matrix & displays with the current color."""
+
+            color = ptg.RGBColor.from_rgb(_get_rgb())
+            for row in range(matrix.rows):
+                for col in range(matrix.columns):
+                    matrix[row, col] = color.hex
+
+            hexdisplay.value = f"[ptg.body]{color.hex}"
+            rgbdisplay.value = f"[ptg.body]rgb({', '.join(map(str, color.rgb))})"
+            matrix.build()
+
+        red, green, blue = sliders
+
+        # red.styles.filled_selected__cursor = "red"
+        # green.styles.filled_selected__cursor = "green"
+        # blue.styles.filled_selected__cursor = "blue"
+
+        for slider in sliders:
+            slider.onchange = _update
+
+        root += hexdisplay
+        root += rgbdisplay
+        root += ""
+
+        root += matrix
+        root += ""
+
+        root += red
+        root += green
+        root += blue
+
+        _update()
+        return root
+
+
+class TIMWindow(AppWindow):
+    """An application to play around with TIM."""
+
+    app_title = "TIM Playground"
+
+    def __init__(self, **attrs: Any) -> None:
+        super().__init__(**attrs)
+
+        self._generate_colors()
+
+        self._output = ptg.Label(parent_align=0)
+
+        self._input = ptg.InputField()
+        self._input.styles.value__fill = lambda _, item: item
+
+        self._showcase = self._create_showcase()
+
+        self._input.bind(ptg.keys.ANY_KEY, lambda *_: self._update_output())
+
+        self._add_widget(
+            ptg.Container(
+                ptg.Container(self._output),
+                self._showcase,
+                ptg.Container(self._input),
+                box="EMPTY",
+                static_width=60,
+            )
+        )
+
+        self.bind(ptg.keys.CTRL_R, self._generate_colors)
+
+    @staticmethod
+    def _random_rgb() -> ptg.Color:
+        """Returns a random Color."""
+
+        rgb = tuple(random.randint(0, 255) for _ in range(3))
+
+        return ptg.RGBColor.from_rgb(rgb)  # type: ignore
+
+    def _update_output(self) -> None:
+        """Updates the output field."""
+
+        self._output.value = self._input.value
+
+    def _generate_colors(self, *_) -> None:
+        """Generates self._example_{255,rgb,hex}."""
+
+        ptg.tim.alias("ptg.timwindow.255", str(random.randint(16, 233)))
+        ptg.tim.alias("ptg.timwindow.rgb", ";".join(map(str, self._random_rgb().rgb)))
+        ptg.tim.alias("ptg.timwindow.hex", self._random_rgb().hex)
+
+    @staticmethod
+    def _create_showcase() -> ptg.Container:
+        """Creates the showcase container."""
+
+        def _show_style(name: str) -> str:
+            return f"[{name}]{name}"
+
+        def _create_table(source: Iterable[tuple[str, str]]) -> ptg.Container:
+            root = ptg.Container()
+
+            for left, right in source:
+                row = ptg.Splitter(
+                    ptg.Label(left, parent_align=0), ptg.Label(right, parent_align=2)
+                ).styles(separator="ptg.border")
+
+                row.set_char("separator", f" {ptg.Container.chars['border'][0]}")
+
+                root += row
+
+            return root
+
+        prefix = "ptg.timwindow"
+        tags = [_show_style(style) for style in ptg.tim.tags]
+        colors = [
+            f"[[{prefix}.255]0-255[/]]",
+            f"[[{prefix}.hex]#RRGGBB[/]]",
+            f"[[{prefix}.rgb]RRR;GGG;BBB[/]]",
+            "",
+            f"[[inverse {prefix}.255]@0-255[/]]",
+            f"[[inverse {prefix}.hex]@#RRGGBB[/]]",
+            f"[[inverse {prefix}.rgb]@RRR;GGG;BBB[/]]",
+        ]
+
+        tag_container = _create_table(zip_longest(tags, colors, fillvalue=""))
+        user_container = _create_table(
+            (_show_style(tag), f"[!expand {tag}]{tag}") for tag in ptg.tim.user_tags
+        )
+
+        return ptg.Container(tag_container, user_container, box="EMPTY")
+
+
+def _get_key_name(key: str) -> str:
+    """Gets canonical name of a key.
+
+    Arguments:
+        key: The key in question.
+
+    Returns:
+        The canonical-ish name of the key.
+    """
+
+    name = ptg.keys.get_name(key)
+    if name is not None:
+        return name
+
+    return ascii(key)
+
+
+def _create_header() -> ptg.Window:
+    """Creates an application header window."""
+
+    content = ptg.Splitter("PyTermGUI").styles(fill="ptg.header")
+
+    return ptg.Window(content, box="EMPTY", id="ptg.header", is_persistent=True)
+
+
+def _create_app_picker(manager: ptg.WindowManager) -> ptg.Window:
+    """Creates a dropdown that allows picking between applications."""
+
+    existing_windows: list[ptg.Window] = []
+
+    def _wrap(func: Callable[[ptg.Widget], Any]) -> Callable[[ptg.Widget], Any]:
+        def _inner(caller: ptg.Widget) -> None:
+            dropdown.collapse()
+
+            window: ptg.Window = func(caller)
+            if type(window) in map(type, manager):
+                return
+
+            existing_windows.append(window)
+            manager.add(window, assign="body", animate=False)
+
+            body = manager.layout.body
+
+            body.content = window
+            manager.layout.apply()
+
+        return _inner
+
+    buttons = [
+        ptg.Button(label, _wrap(onclick))
+        for (label, _), onclick in APPLICATION_MAP.items()
+    ]
+
+    dropdown = Dropdown("Applications", *buttons).styles(fill="ptg.footer")
+
+    return ptg.Window(
+        dropdown,
+        box="EMPTY",
+        id="ptg.header",
+        is_persistent=True,
+        overflow=ptg.Overflow.RESIZE,
+    ).styles(fill="ptg.header")
+
+
+def _create_footer(man: ptg.WindowManager) -> ptg.Window:
+    """Creates a footer based on the manager's bindings."""
+
+    content = ptg.Splitter().styles(fill="ptg.footer")
+    for key, (callback, doc) in man.bindings.items():
+        content.lazy_add(
+            ptg.Button(
+                f"{_get_key_name(str(key))} - {doc}",
+                onclick=lambda *_, _callback=callback: _callback(man),
+            )
+        )
+
+    return ptg.Window(content, box="EMPTY", id="ptg.footer", is_persistent=True)
+
+
+def _create_layout() -> ptg.Layout:
+    """Creates the main layout."""
+
+    layout = ptg.Layout()
+
+    layout.add_slot("Header", height=1)
+    layout.add_slot("Applications", width=20)
+    layout.add_break()
+    layout.add_slot("Body")
+    layout.add_break()
+    layout.add_slot("Footer", height=1)
+
+    return layout
+
+
+def _create_aliases() -> None:
+    """Creates all TIM alises used by the `ptg` utility.
+
+    Current aliases:
+    - ptg.title: Used for main titles.
+    - ptg.body: Used for body text.
+    - ptg.detail: Used for highlighting detail inside body text.
+    """
+
+    ptg.tim.alias("ptg.title", "210 bold")
+    ptg.tim.alias("ptg.body", "247")
+    ptg.tim.alias("ptg.detail", "dim")
+    ptg.tim.alias("ptg.accent", "72")
+
+    ptg.tim.alias("ptg.header", "@235 242 bold")
+    ptg.tim.alias("ptg.border", "60")
+    ptg.tim.alias("ptg.footer", "@235")
+
+
+def _configure_widgets() -> None:
+    """Configures default widget attributes."""
+
+    ptg.boxes.Box([" ", " x ", " "]).set_chars_of(ptg.Window)
+    ptg.boxes.SINGLE.set_chars_of(ptg.Container)
+    ptg.boxes.DOUBLE.set_chars_of(ptg.Window)
+
+    ptg.Container.styles = ptg.Window.styles
+
+    ptg.InputField.styles.cursor = "inverse ptg.accent"
+    ptg.Container.styles.border__corner = "ptg.border"
+    ptg.Splitter.set_char("separator", "")
+    ptg.Button.set_char("delimiter", ["  ", "  "])
+
+
+def run_environment(args: Namespace) -> None:
+    """Runs the WindowManager environment.
+
+    Args:
+        args: An argparse namespace containing relevant arguments.
+    """
+
+    def _find_focused(manager: ptg.WindowManager) -> ptg.Window | None:
+        if manager.focused is None:
+            return None
+
+        # Find foremost non-persistent window
+        for window in manager:
+            if window.is_persistent:
+                continue
+
+            return window
+
+        return None
+
+    def _toggle_attachment(manager: ptg.WindowManager) -> None:
+        focused = _find_focused(manager)
+
+        if focused is None:
+            return
+
+        slot = manager.layout.body
+        if slot.content is None:
+            slot.content = focused
+        else:
+            slot.detach_content()
+
+        manager.layout.apply()
+
+    def _close_focused(manager: ptg.WindowManager) -> None:
+        focused = _find_focused(manager)
+
+        if focused is None:
+            return
+
+        focused.close()
+
+    _configure_widgets()
+
+    with ptg.WindowManager() as manager:
+        manager.bind(
+            ptg.keys.CTRL_W,
+            lambda *_: _close_focused(manager),
+            "Close window",
+        )
+        manager.bind(
+            ptg.keys.F12,
+            lambda *_: screenshot(manager),
+            "Screenshot",
+        )
+        manager.bind(
+            ptg.keys.CTRL_F,
+            lambda *_: _toggle_attachment(manager),
+            "Toggle layout",
+        )
+
+        manager.layout = _create_layout()
+
+        manager.add(_create_header(), assign="header", animate=False)
+        manager.add(_create_app_picker(manager), assign="applications", animate=False)
+        manager.add(_create_footer(manager), assign="footer", animate=False)
+
+        if args.app:
+            app = _app_from_short(args.app)
+            manager.add(app(), assign="body", animate=False)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """Runs the program.
+
+    Args:
+        argv: A list of arguments, not included the 0th element pointing to the
+            executable path.
+    """
+
+    def _print_aligned(left: str, right: str | None) -> None:
+        left += ":"
+
+        ptg.tim.print(f"[ptg.detail]{left:<19} [/ptg.detail 157]{right}")
+
+    _create_aliases()
+
+    args = process_args(argv)
 
     if args.size:
-        print(f"{terminal.width}x{terminal.height}")
+        ptg.tim.print(f"{ptg.terminal.width}x{ptg.terminal.height}")
         return
 
     if args.version:
-        no_hash = False
-        try:
-            # Credit to: https://stackoverflow.com/a/21901260
-            git_hash = (
-                subprocess.check_output(
-                    ["git", "rev-parse", "--short", "HEAD"],
-                    cwd=os.path.dirname(os.path.realpath(__file__)),
-                )
-                .decode("ascii")
-                .strip()
-            )
-
-            latest_tag_hash = (
-                subprocess.check_output(
-                    ["git", "rev-parse", "--short", f"v{__version__}"],
-                    cwd=os.path.dirname(os.path.realpath(__file__)),
-                )
-                .decode("ascii")
-                .strip()
-            )
-
-        except Exception:  # pylint: disable=broad-except
-            # Don't display has if we couldn't find it
-            # This is usually the case when installing through PIP.
-            no_hash = True
-            latest_tag_hash = git_hash = "0"
-
-        tim.print(
-            f"[!gradient(60)]PyTermGUI[/!gradient] [bold 204]v{__version__}"
-            + f"{'+' if latest_tag_hash != git_hash else ''}"
+        ptg.tim.print(
+            f"[bold !gradient(210)]PyTermGUI[/ /!gradient] version [157]{ptg.__version__}"
         )
-        tim.print()
-        tim.print(f"[30]Python[/]: [150]{sys.version.split()[0]}")
+        print()
+        ptg.tim.print("[ptg.title]System details:")
 
-        if not no_hash:
-            tim.print(f"[36]Git commit[/]: [186]{git_hash}")
+        _print_aligned("    Python version", sys.version.split()[0])
+        _print_aligned("    $TERM", os.getenv("TERM"))
+        _print_aligned("    $COLORTERM", os.getenv("COLORTERM"))
+        _print_aligned("    Color support", str(ptg.terminal.colorsystem))
+        _print_aligned("    OS Platform", platform())
 
-        colors = ("36", "186") if no_hash else ("42", "222")
-        tim.print(f"[{colors[0]}]Platform[/]: [{colors[1]}]{platform.platform()}")
-
-        return
-
-    if args.file:
-        loader = YamlLoader()
-        with open(args.file, "r", encoding="utf8") as file:
-            namespace = loader.load(file)
-
-        with WindowManager() as manager:
-            for widget in namespace.widgets.values():
-                assert isinstance(widget, Window)
-                manager.add(widget)
-
-            if args.print_only:
-                manager.print()
-                return
-
-            manager.run()
         return
 
     if args.getch:
         args.app = "getch"
 
-    if args.markapp:
-        args.app = "markapp"
+    if args.tim:
+        args.app = "tim"
 
     if args.color:
         args.app = "color"
 
-    run_wm(args)
+    run_environment(args)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

@@ -541,6 +541,8 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
             **attributes: kwargs passed as the new window's attributes.
         """
 
+        # pylint: disable=no-value-for-parameter
+
         toast = Window(*items, is_noblur=True, **attributes)
         target_height = toast.height
         toast.overflow = Overflow.HIDE
@@ -580,6 +582,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         leadup = FloatAnimation(
             duration, on_step=_progressively_show, on_finish=_animate_toast_out
         )
+        # pylint: enable=no-value-for-parameter
 
         self.add(toast.center(), animate=False, assign=False)
         self.focus(toast)
