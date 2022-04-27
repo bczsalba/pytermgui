@@ -7,6 +7,7 @@ from typing import Any, TYPE_CHECKING
 
 from ..widgets import Container
 from ..widgets import styles as w_styles, Widget
+from ..ansi_interface import MouseEvent, MouseAction
 from ..animations import animator, AttrAnimation, is_animated
 from ..enums import Overflow, SizePolicy, CenteringPolicy
 
@@ -43,7 +44,15 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
     """No-resize windows cannot be resized using the mouse."""
 
     is_dirty = False
-    """Control whether the parent manager needs to print this Window."""
+    """Controls whether the window should be redrawn in the next frame."""
+
+    is_persistent = False
+    """Persistent windows will be set noblur automatically, and remain clickable even through
+    modals.
+
+    While the library core doesn't do this for various reasons, it also might be useful to disable
+    some behaviour (e.g. closing) for persistent windows on an implementation level.
+    """
 
     chars = Container.chars.copy()
 
@@ -72,6 +81,9 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
         if self.title != "":
             self.set_title(self.title)
+
+        if self.is_persistent:
+            self.is_noblur = True
 
     @property
     def min_width(self) -> int | None:
@@ -175,6 +187,8 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         """Blurs (unfocuses) this window."""
 
         self.has_focus = False
+        self.select(None)
+        self.handle_mouse(MouseEvent(MouseAction.RELEASE, (0, 0)))
 
     def clear_cache(self) -> None:
         """Clears manager compositor's cached blur state."""

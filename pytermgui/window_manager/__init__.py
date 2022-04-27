@@ -10,6 +10,7 @@ WindowManager is what ties the two together. It manages its list of Windows, tra
 and handles mouse input and more.
 """
 
-from .manager import WindowManager
 from .window import Window
+from .layouts import Layout
 from .compositor import Compositor
+from .manager import WindowManager
