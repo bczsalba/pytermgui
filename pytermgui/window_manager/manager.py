@@ -3,18 +3,19 @@ while letting `Compositor` draw them."""
 
 from __future__ import annotations
 
-from typing import Type, Any
 from enum import Enum, auto as _auto
+from typing import Type, Any, Iterator
 
 from ..input import getch
+from ..enums import Overflow
 from ..regex import real_length
 from ..terminal import terminal
 from ..colors import str_to_color
-from ..animations import animator, AttrAnimation
 from ..widgets import Widget, Container
 from ..widgets.base import BoundCallback
 from ..ansi_interface import MouseAction, MouseEvent
 from ..context_managers import alt_buffer, mouse_handler, MouseTranslator
+from ..animations import animator, AttrAnimation, FloatAnimation, Animation
 
 from .window import Window
 from .layouts import Layout
@@ -99,6 +100,11 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
         return True
 
+    def __iter__(self) -> Iterator[Window]:
+        """Iterates this manager's windows."""
+
+        return iter(self._windows)
+
     def _run_input_loop(self) -> None:
         """The main input loop of the WindowManager."""
 
@@ -174,8 +180,19 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         self.compositor.stop()
         self._is_running = False
 
-    def add(self, window: Window, animate: bool = True) -> WindowManager:
-        """Adds a window to the manager."""
+    def add(
+        self, window: Window, assign: str | bool = True, animate: bool = True
+    ) -> WindowManager:
+        """Adds a window to the manager.
+
+        Args:
+            window: The window to add.
+            assign: The name of the slot the new window should be assigned to, or a
+                boolean. If it is given a str, it is treated as the name of a slot. When
+                given True, the next non-filled slot will be assigned, and when given
+                False no assignment will be done.
+            animate: If set, an animation will be played on the window once it's added.
+        """
 
         def _on_step(animation: AttrAnimation) -> None:
             """Sets window's height on step, centers it."""
@@ -188,14 +205,17 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
             self.clear_cache(window)
 
-        if self.focused is not None:
-            self.focused.handle_mouse(MouseEvent(MouseAction.RELEASE, (0, 0)))
-
         self._windows.insert(0, window)
         window.manager = self
 
-        if len(self._windows) <= len(self.layout.slots):
-            self.layout.assign(window, index=len(self._windows) - 1)
+        if assign:
+            if isinstance(assign, str):
+                getattr(self.layout, assign).content = window
+
+            elif len(self._windows) <= len(self.layout.slots):
+                self.layout.assign(window, index=len(self._windows) - 1)
+
+            self.layout.apply()
 
         # New windows take focus-precedence over already
         # existing ones, even if they are modal.
@@ -216,7 +236,10 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         return self
 
     def remove(
-        self, window: Window, autostop: bool = True, animate: bool = True
+        self,
+        window: Window,
+        autostop: bool = True,
+        animate: bool = True,
     ) -> WindowManager:
         """Removes a window from the manager.
 
@@ -400,6 +423,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
             if handled:
                 window.is_dirty = True
+                self.compositor.set_redraw()
 
             return handled
 
