@@ -511,3 +511,78 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         self.terminal.flush()
 
         getch()
+
+    def alert(self, *items, center: bool = True, **attributes) -> Window:
+        """Creates a modal popup of the given elements and attributes.
+
+        Args:
+            *items: All widget-convertable objects passed as children of the new window.
+            center: If set, `pytermgui.window_manager.window.center` is called on the window.
+            **attributes: kwargs passed as the new window's attributes.
+        """
+
+        window = Window(*items, is_modal=True, **attributes)
+
+        if center:
+            window.center()
+
+        self.add(window, assign=False)
+
+        return window
+
+    def toast(
+        self, *items, duration: int = 300, delay: int = 1000, **attributes
+    ) -> Window:
+        """Creates a Material UI-inspired toast window of the given elements and attributes.
+
+        Args:
+            *items: All widget-convertable objects passed as children of the new window.
+            delay: The amount of time before the window will start animating out.
+            **attributes: kwargs passed as the new window's attributes.
+        """
+
+        toast = Window(*items, is_noblur=True, **attributes)
+        target_height = toast.height
+        toast.overflow = Overflow.HIDE
+
+        def _finish(_: Animation) -> None:
+            self.remove(toast, animate=False)
+
+        def _progressively_show(anim: Animation, invert: bool = False) -> bool:
+            height = int(anim.state * target_height)
+
+            toast.center()
+
+            if invert:
+                toast.height = target_height - 1 - height
+                toast.pos = (toast.pos[0], self.terminal.height - toast.height + 1)
+                return False
+
+            toast.height = height
+            toast.pos = (toast.pos[0], self.terminal.height - toast.height + 1)
+
+            return False
+
+        def _animate_toast_out(_: Animation) -> None:
+            animator.schedule(
+                FloatAnimation(
+                    delay,
+                    on_finish=lambda *_: animator.schedule(
+                        FloatAnimation(
+                            duration,
+                            on_step=lambda anim: _progressively_show(anim, invert=True),
+                            on_finish=_finish,
+                        )
+                    ),
+                )
+            )
+
+        leadup = FloatAnimation(
+            duration, on_step=_progressively_show, on_finish=_animate_toast_out
+        )
+
+        self.add(toast.center(), animate=False, assign=False)
+        self.focus(toast)
+        animator.schedule(leadup)
+
+        return toast
