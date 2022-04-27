@@ -1,5 +1,4 @@
 import pytermgui as ptg
-from pytermgui.pretty import print
 
 from pytermgui.window_manager.layouts import ROW_BREAK, Layout
 
@@ -44,8 +43,8 @@ def header_body_footer_layout() -> Layout:
 
     layout = Layout()
 
-    layout.add_slot("Header Left", width=0.2)
-    layout.add_slot("Header", height=3)
+    # layout.add_slot("Header Left", width=0.2)
+    layout.add_slot("Header", height=1)
 
     layout.add_break()
 
@@ -53,7 +52,7 @@ def header_body_footer_layout() -> Layout:
 
     layout.add_break()
 
-    layout.add_slot("Footer", height=3)
+    layout.add_slot("Footer", height=1)
     layout.add_slot("Footer Right", width=0.1)
 
     return layout
@@ -64,7 +63,7 @@ def complex_layout() -> Layout:
 
     layout = Layout()
     layout.add_slot("Header", height=5)
-    layout.add_slot("Header Left", width=0.2, height=5)
+    layout.add_slot("Header Left", width=0.2)
 
     layout.add_break()
 
@@ -85,6 +84,7 @@ def main() -> None:
 
         manager.layout = complex_layout()
         # manager.layout = header_body_footer_layout()
+        # add_demo(manager)
 
         for slot in manager.layout.slots:
             if slot is ROW_BREAK:
@@ -93,7 +93,10 @@ def main() -> None:
             manager.add(ptg.Window(f"[bold] {slot.name} ", box="DOUBLE"), animate=False)
 
     for row in manager.layout.build_rows():
-        print(row, indent=2)
+        print(row)
+
+    with ptg.alt_buffer():
+        manager.screenshot("Layout example", filename="layouts")
 
 
 def add_demo(manager: ptg.WindowManager):
@@ -111,7 +114,7 @@ def add_demo(manager: ptg.WindowManager):
     # Create body
     body = ptg.Window(
         ptg.ColorPicker(),
-        ptg.Container(ptg.InputField(), static_width=80),
+        ptg.Container(ptg.InputField(), "", ptg.Slider(), static_width=80),
         box="SINGLE",
     )
 
@@ -126,7 +129,7 @@ def add_demo(manager: ptg.WindowManager):
     footer += splitter
     manager.add(footer, animate=False)
 
-    manager.add(ptg.Window())
+    manager.add(ptg.Window("Info", box="EMPTY"))
 
 
 if __name__ == "__main__":
