@@ -43,7 +43,7 @@ class Compositor:
 
         self._previous: PositionedLineList = []
         self._frametime = 0.0
-        self._should_redraw: bool = False
+        self._should_redraw: bool = True
         self._cache: dict[int, list[str]] = {}
 
         self.fps = 0
@@ -193,16 +193,19 @@ class Compositor:
                     lines.append((pos, line))
 
                 window.is_dirty = False
+                continue
 
-            elif change is not None:
+            if change is not None:
                 remaining = window.content_dimensions[1]
-                dirty = [widget for widget in window if widget in window.dirty_widgets]
-                for widget in dirty:
+
+                for widget in window.dirty_widgets:
                     for pos, line in self._iter_positioned(widget, until=remaining):
                         lines.append((pos, line))
+
                     remaining -= widget.height
 
                 window.dirty_widgets = []
+                continue
 
             if window.allow_fullscreen:
                 break
@@ -229,22 +232,21 @@ class Compositor:
                 previous ones, and everything will be redrawn.
         """
 
+        # if self._should_redraw or force:
         lines: PositionedLineList = []
+
         for window in reversed(self._windows):
             lines.extend(self._iter_positioned(window))
 
-        # if self._should_redraw:
-        #   self._should_redraw = False
+        self._should_redraw = False
 
         # else:
-        #   lines = self.composite()
+        # lines = self.composite()
 
         if not force and self._previous == lines:
             return
 
-        buffer = ""
-        for pos, line in lines:
-            buffer += f"\x1b[{pos[1]};{pos[0]}H{line}"
+        buffer = "".join(f"\x1b[{pos[1]};{pos[0]}H{line}" for pos, line in lines)
 
         self.terminal.clear_stream()
         self.terminal.write(buffer)
