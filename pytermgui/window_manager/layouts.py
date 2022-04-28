@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from copy import deepcopy
 from typing import Callable
 from dataclasses import dataclass
 
@@ -155,7 +154,7 @@ class Slot:
 
         content = self.content
         if content is None:
-            raise ValueError(f"No content to detach in {self!r}.")
+            raise AttributeError(f"No content to detach in {self!r}.")
 
         assert self._restore_data is not None
 
@@ -215,11 +214,6 @@ class Layout:
             rows.append(row)
 
         return rows
-
-    def copy(self) -> Layout:
-        """Returns a deepcopy of this layout."""
-
-        return deepcopy(self)
 
     def build_rows(self) -> list[list[Slot]]:
         """Builds a list of slot rows, breaking them & applying automatic dimensions.
@@ -370,9 +364,6 @@ class Layout:
             position[0] = 1
 
             for slot in row:
-                if slot is ROW_BREAK:
-                    continue
-
                 slot.apply((position[0], position[1]))
 
                 position[0] += slot.width.value
@@ -389,4 +380,4 @@ class Layout:
             if _snakeify(slot.name) == attr:
                 return slot
 
-        raise KeyError(f"Slot with name {attr!r} could not be found.")
+        raise AttributeError(f"Slot with name {attr!r} could not be found.")
