@@ -41,7 +41,7 @@ def test_relative():
 
     assert (
         re.match(
-            r"Relative\(value=[\d]+, scale=0\.9, bound=<function Layout.add_slot.<locals>.<lambda> at 0x[0-9a-f]+>\)",
+            r"Relative\(value=[\d]+, scale=0\.9, bound=<function Layout.add_slot.<locals>.<lambda> at 0x[0-9a-fA-F]+>\)",
             str(layout.one.width),
         )
         is not None
