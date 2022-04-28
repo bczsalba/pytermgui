@@ -1,6 +1,9 @@
 [tool.pylint.messages_control]
 disable = [
-    "fixme"
+    "fixme",
+        
+    # If this is a problem, it should occur during runtime
+    "not-callable"
 ]
 
 [tool.coverage.report]
