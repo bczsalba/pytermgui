@@ -107,7 +107,7 @@ class Container(ScrollableWidget):
 
         return (
             self.width - real_length(self.styles.border(left + right)),
-            self.height - real_length(self.styles.border(top + bottom)),
+            self.height - sum(1 if real_length(char) else 0 for char in {top, bottom}),
         )
 
     @property
@@ -743,7 +743,7 @@ class Container(ScrollableWidget):
         handled = False
         for widget in self._widgets:
             if (
-                widget.pos[1] - self.pos[0] - self._scroll_offset
+                widget.pos[1] - self.pos[1] - self._scroll_offset
                 > self.content_dimensions[1]
             ):
                 break
