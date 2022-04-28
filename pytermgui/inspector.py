@@ -203,8 +203,8 @@ class Inspector(Container):
         Note that most of the time, using `inspect` to do this is going to be more
         useful.
 
-        Some styles of the inspector can be changed using the `inspector-name`,
-        `inspector-file` and `inspector-keyword` markup aliases. The rest of the
+        Some styles of the inspector can be changed using the `code.name`,
+        `code.file` and `code.keyword` markup aliases. The rest of the
         highlighting is done using `pprint`, with all of its respective colors.
 
         Args:
@@ -242,7 +242,7 @@ class Inspector(Container):
 
         header = Container(box="SINGLE")
 
-        line = "[inspector-name]"
+        line = "[code.name]"
         if self.target_type is ObjectType.MODULE:
             line += self.target.__name__  # type: ignore
 
@@ -261,7 +261,7 @@ class Inspector(Container):
         except TypeError:
             return header
 
-        header += f"Located in [inspector-file !link(file://{file})]{file}"
+        header += f"Located in [code.file !link(file://{file})]{file}"
 
         return header
 
@@ -275,7 +275,7 @@ class Inspector(Container):
         else:
             name = getattr(target, "__name__", type(target).__name__)
 
-        definition = "[inspector-keyword]"
+        definition = "[code.keyword]"
 
         if self.target_type == ObjectType.LIVE:
             target = type(target)
@@ -287,7 +287,7 @@ class Inspector(Container):
         elif otype == ObjectType.FUNCTION:
             definition += "def "
 
-        definition += "[/ inspector-identifier]" + name + "[/]"
+        definition += "[/ code.identifier]" + name + "[/]"
 
         try:
             definition += self.highlight(str(signature(target))) + ":"  # type: ignore
@@ -354,7 +354,7 @@ class Inspector(Container):
             if real_length(line) > preview.width - preview.sidelength:
                 preview.width = real_length(line) + preview.sidelength
 
-            preview += Label("[pprint-str]" + tim.get_markup(line), parent_align=0)
+            preview += Label("[str]" + tim.get_markup(line), parent_align=0)
 
         return preview
 
@@ -406,7 +406,7 @@ class Inspector(Container):
                 delim = r"\["
 
             pretty = prettify(stripped, indent=0, parse=False)
-            if pretty != f"[pprint-str]'{stripped}'[/]":
+            if pretty != f"[str]'{stripped}'[/]":
                 buff += delim + pretty
                 continue
 

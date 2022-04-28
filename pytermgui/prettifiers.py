@@ -109,7 +109,7 @@ def _prettify_str(target, force_markup=True) -> str:
 
     if buff == "":
         sanitized = target.replace("\x1b", "\\x1b")
-        buff = f"[pprint-str]'{sanitized}'"
+        buff = f"[str]'{sanitized}'"
 
     return buff + "[/]"
 
@@ -127,11 +127,11 @@ def prettify(
     customizable.
 
     The aliases are:
-    - `pprint-str`: Applied to all strings, so long as they do not contain TIM code.
-    - `pprint-int`: Applied to all integers and booleans. The latter are included as
-        they subclass int.
-    - `pprint-type`: Applied to all types.
-    - `pprint-none`: Applied to NoneType. Note that when using `pytermgui.pretty`, a
+    - `str`: Applied to all strings, so long as they do not contain TIM code.
+    - `int`: Applied to all integers and booleans. The latter are included as they
+        subclass int.
+    - `type`: Applied to all types.
+    - `none`: Applied to NoneType. Note that when using `pytermgui.pretty`, a
         single `None` return value will not be printed, only when part of a more
         complex structure.
 
@@ -165,13 +165,13 @@ def prettify(
         buff = _prettify_str(target, force_markup=force_markup)
 
     elif isinstance(target, int):
-        buff = f"[pprint-int]{target}[/]"
+        buff = f"[int]{target}[/]"
 
     elif isinstance(target, type):
-        buff = f"[pprint-type]{target.__name__}[/]"
+        buff = f"[type]{target.__name__}[/]"
 
     elif target is None:
-        buff = f"[pprint-none]{target}[/]"
+        buff = f"[none]{target}[/]"
 
     else:
         try:

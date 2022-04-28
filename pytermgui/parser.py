@@ -542,15 +542,16 @@ docs/parser/markup_language.png"
             self.define("!expand", lambda tag: macro_expand(self, tag))
             self.define("!debug", lambda *args: ",".join(ascii(arg) for arg in args))
 
-        self.alias("pprint-int", "175")
-        self.alias("pprint-str", "142")
-        self.alias("pprint-type", "214")
-        self.alias("pprint-none", "167")
+        self.alias("int", "175")
+        self.alias("str", "142")
+        self.alias("type", "214")
+        self.alias("none", "167")
 
-        self.alias("inspector-name", "pprint-type")
-        self.alias("inspector-keyword", "203")
-        self.alias("inspector-identifier", "109")
-        self.alias("inspector-file", "inspector-identifier")
+        self.alias("code", "")
+        self.alias("code.name", "pprint-type")
+        self.alias("code.keyword", "203")
+        self.alias("code.identifier", "109")
+        self.alias("code.file", "code.identifier")
 
     def _get_color_token(self, tag: str) -> Token | None:
         """Tries to get a color token from the given tag.
