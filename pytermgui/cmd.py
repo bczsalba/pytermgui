@@ -321,7 +321,18 @@ class InspectorWindow(AppWindow):
         self._input = ptg.InputField()
 
         self._output = ptg.Container(
-            relative_width=0.9, height=20, overflow=ptg.Overflow.SCROLL, box="EMPTY"
+            (
+                "[ptg.body]Write valid Python import path (like [italic]pytermgui.inspect[/italic])"
+                + ", then press enter!",
+            ),
+            "",
+            "[dim]|",
+            "[dim]V",
+            relative_width=0.9,
+            height=20,
+            overflow=ptg.Overflow.SCROLL,
+            vertical_align=ptg.VerticalAlignment.BOTTOM,
+            box="EMPTY",
         )
 
         self._input.bind(ptg.keys.ENTER, self._update)
