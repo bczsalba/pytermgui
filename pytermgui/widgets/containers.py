@@ -572,9 +572,6 @@ class Container(ScrollableWidget):
         for widget in self._widgets:
             widget.pos = (widget.pos[0], widget.pos[1] + vertical_offset)
 
-            # TODO: This is wasteful.
-            widget.get_lines()
-
         if has_top_bottom[0]:
             lines.insert(0, _get_border(corners[0], borders[1], corners[1]))
 
@@ -744,9 +741,11 @@ class Container(ScrollableWidget):
         event.position = (scrolled_pos[0], scrolled_pos[1])
 
         handled = False
-        remaining_height = self.content_dimensions[1]
         for widget in self._widgets:
-            if remaining_height <= 0:
+            if (
+                widget.pos[1] - self.pos[0] - self._scroll_offset
+                > self.content_dimensions[1]
+            ):
                 break
 
             if widget.contains(event.position):
@@ -764,8 +763,6 @@ class Container(ScrollableWidget):
 
             if widget.is_selectable:
                 selectables_index += widget.selectables_length
-
-            remaining_height -= widget.height
 
         if not handled and self.overflow == Overflow.SCROLL:
             if event.action is MouseAction.SCROLL_UP:
