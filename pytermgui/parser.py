@@ -548,7 +548,7 @@ docs/parser/markup_language.png"
         self.alias("none", "167")
 
         self.alias("code", "")
-        self.alias("code.name", "pprint-type")
+        self.alias("code.name", "type")
         self.alias("code.keyword", "203")
         self.alias("code.identifier", "109")
         self.alias("code.file", "code.identifier")

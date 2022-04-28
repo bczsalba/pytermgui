@@ -8,6 +8,7 @@ from __future__ import annotations
 import os
 import sys
 import random
+import builtins
 import importlib
 from platform import platform
 from itertools import zip_longest
@@ -358,17 +359,26 @@ class InspectorWindow(AppWindow):
         """
 
         parts = path.split(".")
-        try:
-            obj = importlib.import_module(parts[0])
-        except (ValueError, ModuleNotFoundError):
-            return None
+
+        if parts[0] in dir(builtins):
+            obj = getattr(builtins, parts[0])
+
+        elif parts[0] in dir(ptg):
+            obj = getattr(ptg, parts[0])
+
+        else:
+            try:
+                obj = importlib.import_module(".".join(parts[:-1]))
+            except (ValueError, ModuleNotFoundError) as error:
+                return (
+                    f"Could not import object at path {path!r}: {error}."
+                    + " Maybe try using the --eval flag?"
+                )
 
         try:
-            for part in parts[1:]:
-                obj = getattr(obj, part)
-
+            obj = getattr(obj, parts[-1])
         except AttributeError:
-            return None
+            return obj
 
         return obj
 
@@ -437,11 +447,32 @@ def process_args(argv: list[str] | None = None) -> Namespace:
         action="store_true",
     )
 
-    util_group = parser.add_argument_group("Utilities")
-    util_group.add_argument(
-        "-i", "--inspect", help="Inspect a python importable path.", metavar="path"
+    inspect_group = parser.add_argument_group("Inspection")
+    inspect_group.add_argument(
+        "-i", "--inspect", help="Inspect an object.", metavar="PATH_OR_CODE"
+    )
+    inspect_group.add_argument(
+        "-e",
+        "--eval",
+        help="Evaluate the expression given to `--inspect` instead of treating it as a path.",
+        action="store_true",
     )
 
+    inspect_group.add_argument(
+        "--methods", help="Always show methods when inspecting.", action="store_true"
+    )
+    inspect_group.add_argument(
+        "--dunder",
+        help="Always show __dunder__ methods when inspecting.",
+        action="store_true",
+    )
+    inspect_group.add_argument(
+        "--private",
+        help="Always show _private methods when inspecting.",
+        action="store_true",
+    )
+
+    util_group = parser.add_argument_group("Utilities")
     util_group.add_argument(
         "-s",
         "--size",
@@ -826,10 +857,26 @@ def main(argv: list[str] | None = None) -> None:
         args.app = "color"
 
     if args.inspect:
-        for line in ptg.inspect(
-            InspectorWindow.obj_from_path(args.inspect)
-        ).get_lines():
-            print(line)
+        args.methods = args.methods or None
+        args.dunder = args.dunder or None
+        args.private = args.private or None
+
+        target = (
+            eval(args.inspect)  # pylint: disable=eval-used
+            if args.eval
+            else InspectorWindow.obj_from_path(args.inspect)
+        )
+
+        if not args.eval and isinstance(target, str):
+            args.methods = False
+
+        inspector = ptg.inspect(
+            target,
+            show_methods=args.methods,
+            show_private=args.private,
+            show_dunder=args.dunder,
+        )
+        print(inspector)
 
         return
 

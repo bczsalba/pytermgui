@@ -27,6 +27,7 @@ from inspect import (
     isclass,
     ismodule,
     isfunction,
+    isbuiltin,
     getdoc,
     getfile,
 )
@@ -141,7 +142,7 @@ def inspect(target: object, **inspector_args) -> Inspector:
 
     def _conditionally_overwrite_kwarg(**kwargs) -> None:
         for key, value in kwargs.items():
-            if not key in inspector_args:
+            if inspector_args.get(key) is None:
                 inspector_args[key] = value
 
     if ismodule(target):
@@ -155,14 +156,14 @@ def inspect(target: object, **inspector_args) -> Inspector:
 
     elif isclass(target):
         _conditionally_overwrite_kwarg(
-            show_dunder=True,
+            show_dunder=False,
             show_private=False,
-            show_full_doc=False,
+            show_full_doc=True,
             show_methods=True,
             show_qualname=False,
         )
 
-    elif callable(target):
+    elif callable(target) or isbuiltin(target):
         _conditionally_overwrite_kwarg(
             show_dunder=False,
             show_private=False,
@@ -334,7 +335,9 @@ class Inspector(Container):
             keys = [key for key in keys if not (key.startswith("_") and key[1] != "_")]
 
         if not self.show_methods:
-            keys = [key for key in keys if not callable(getattr(self.target, key))]
+            keys = [
+                key for key in keys if not callable(getattr(self.target, key, None))
+            ]
 
         keys.sort(key=lambda item: callable(getattr(self.target, item, None)))
 
@@ -356,6 +359,7 @@ class Inspector(Container):
 
             preview += Label("[str]" + tim.get_markup(line), parent_align=0)
 
+        preview.width = min(preview.width, self.terminal.width - preview.sidelength)
         return preview
 
     @staticmethod
@@ -447,13 +451,15 @@ class Inspector(Container):
                 continue
 
             # Only show functions if they are not lambdas
-            if isfunction(attr) and not attr.__name__ == "<lambda>":
+            if (isfunction(attr) or callable(attr)) and (
+                hasattr(attr, "__name__") and not attr.__name__ == "<lambda>"
+            ):
                 self.lazy_add(
                     Inspector(
                         box=INDENTED_EMPTY_BOX,
                         show_dunder=self.show_dunder,
                         show_private=self.show_private,
-                        show_full_doc=self.show_full_doc,
+                        show_full_doc=False,
                         show_qualname=self.show_qualname,
                     ).inspect(attr)
                 )
