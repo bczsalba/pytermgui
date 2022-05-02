@@ -13,7 +13,7 @@ SVG_TARGET = """\
         }
         pre {
             font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
-            white-space: pre-wrap;
+            white-space: normal;
         }
         a {
             text-decoration: none;
@@ -23,7 +23,7 @@ SVG_TARGET = """\
             position: relative;
             display: flex;
             flex-direction: column;
-            background-color: #000000;
+            background-color: var(--ptg-background);
             border-radius: 9px;
             outline: 1px solid #484848;
             box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56);
@@ -38,6 +38,7 @@ SVG_TARGET = """\
         #ptg-terminal-body {
             margin: 15px;
             font-size: 15px;
+            overflow: hidden scroll;
         }
         #ptg-terminal-title {
             font-family: sans-serif;

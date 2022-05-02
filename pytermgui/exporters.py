@@ -244,7 +244,12 @@ def _get_spans(  # pylint: disable=too-many-locals
             if css is not None and css not in styles:
                 styles.append(css)
 
-        escaped = escape(styled.plain).replace("{", "{{").replace("}", "}}")
+        escaped = (
+            escape(styled.plain)
+            .replace("{", "{{")
+            .replace("}", "}}")
+            .replace(" ", "&#160;")
+        )
 
         if len(styles) == 0:
             yield f"<span>{escaped}</span>", []
