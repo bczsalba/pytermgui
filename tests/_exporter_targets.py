@@ -12,7 +12,7 @@ SVG_TARGET = """\
             display: inline-block;
         }
         code {
-            font-family: 'Fira Code', monospace;
+            font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
             line-height: 1.2em;
         }
         a {
@@ -555,7 +555,7 @@ HTML_TARGET = """\
             }
             code {
                 font-size: 15px;
-                font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+                font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
                 line-height: 1.2em;
             }
             .ptg-position {

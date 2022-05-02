@@ -32,7 +32,7 @@ HTML_FORMAT = """\
             }}
             code {{
                 font-size: {font_size}px;
-                font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+                font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
                 line-height: 1.2em;
             }}
             .ptg-position {{
@@ -64,7 +64,7 @@ SVG_FORMAT = """\
             display: inline-block;
         }}
         code {{
-            font-family: 'Fira Code', monospace;
+            font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
             line-height: 1.2em;
         }}
         a {{

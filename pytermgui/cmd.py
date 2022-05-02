@@ -503,14 +503,14 @@ def process_args(argv: list[str] | None = None) -> Namespace:
     export_group = parser.add_argument_group("Exporters")
 
     export_group.add_argument(
-        "--svg",
+        "--export-svg",
         help="Export the result of any non-interactive argument as an SVG file.",
-        metavar="FILENAME",
+        metavar="FILE",
     )
     export_group.add_argument(
-        "--html",
+        "--export-html",
         help="Export the result of any non-interactive argument as an HTML file.",
-        metavar="FILENAME",
+        metavar="FILE",
     )
 
     argv = argv or sys.argv[1:]
@@ -939,16 +939,18 @@ def main(argv: list[str] | None = None) -> None:
                 obj = getattr(ptg, name, None)
                 globals()[name] = obj
 
+            globals()["print"] = ptg.terminal.print
+
             exec(args.exec, locals(), globals())  # pylint: disable=exec-used
 
         elif args.file:
             _interpret_file(args)
 
-        if args.svg:
-            recording.save_svg(args.svg)
+        if args.export_svg:
+            recording.save_svg(args.export_svg)
 
-        elif args.html:
-            recording.save_html(args.html)
+        elif args.export_html:
+            recording.save_html(args.export_html)
 
 
 if __name__ == "__main__":
