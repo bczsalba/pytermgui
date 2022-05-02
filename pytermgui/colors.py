@@ -352,8 +352,8 @@ def _get_palette_color(color: Literal["10", "11"]) -> Color:
     """
 
     defaults = {
-        "10": RGBColor.from_rgb((255, 255, 255)),
-        "11": RGBColor.from_rgb((0, 0, 0)),
+        "10": RGBColor.from_rgb((222, 222, 222)),
+        "11": RGBColor.from_rgb((20, 20, 20)),
     }
 
     if not terminal.isatty():

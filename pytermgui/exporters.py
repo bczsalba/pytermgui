@@ -62,7 +62,7 @@ SVG_FORMAT = """\
         }}
         pre {{
             font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
-            white-space: pre-wrap;
+            white-space: normal;
         }}
         a {{
             text-decoration: none;
@@ -72,7 +72,7 @@ SVG_FORMAT = """\
             position: relative;
             display: flex;
             flex-direction: column;
-            background-color: {background};
+            background-color: var(--ptg-background);
             border-radius: 9px;
             outline: 1px solid #484848;
             box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56);
@@ -87,6 +87,7 @@ SVG_FORMAT = """\
         #ptg-terminal-body {{
             margin: 15px;
             font-size: {font_size}px;
+            overflow: hidden scroll;
         }}
         #ptg-terminal-title {{
             font-family: sans-serif;
@@ -214,6 +215,7 @@ def _get_spans(  # pylint: disable=too-many-locals
 
                     position = token.data
                     split = tuple(map(int, position.split(",")))
+
                     adjusted = (
                         _adjust_pos(split[0], CHAR_WIDTH, horizontal_offset),
                         _adjust_pos(split[1], CHAR_HEIGHT, vertical_offset),
