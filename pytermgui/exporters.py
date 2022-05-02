@@ -30,9 +30,10 @@ HTML_FORMAT = """\
                 text-decoration: none;
                 color: inherit;
             }}
-            pre {{
+            code {{
                 font-size: {font_size}px;
                 font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
+                line-height: 1.2em;
             }}
             .ptg-position {{
                 position: absolute;
@@ -42,7 +43,9 @@ HTML_FORMAT = """\
     </head>
     <body>
         <pre class="ptg">
+            <code>
 {content}
+            </code>
         </pre>
     </body>
 </html>"""
@@ -60,9 +63,9 @@ SVG_FORMAT = """\
         span {{
             display: inline-block;
         }}
-        pre {{
-            font-family: Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace;
-            white-space: normal;
+        code {{
+            font-family: 'Fira Code', monospace;
+            line-height: 1.2em;
         }}
         a {{
             text-decoration: none;
@@ -74,7 +77,6 @@ SVG_FORMAT = """\
             flex-direction: column;
             background-color: var(--ptg-background);
             border-radius: 9px;
-            outline: 1px solid #484848;
             box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56);
             width: {margined_width}px;
             height: {margined_height}px;
@@ -88,6 +90,7 @@ SVG_FORMAT = """\
             margin: 15px;
             font-size: {font_size}px;
             overflow: hidden scroll;
+            white-space: normal;
         }}
         #ptg-terminal-title {{
             font-family: sans-serif;
@@ -102,7 +105,7 @@ SVG_FORMAT = """\
         .ptg-position {{
             position: absolute;
         }}
-        {styles}
+{styles}
     </style>
     <foreignObject width="100%" height="100%" x="0" y="0">
         <body xmlns="http://www.w3.org/1999/xhtml">
@@ -115,7 +118,9 @@ SVG_FORMAT = """\
                 </svg>
                 <div id="ptg-terminal-title">{title}</div>
                 <pre id="ptg-terminal-body">
-                    {content}
+                    <code>
+{content}
+                    </code>
                 </pre>
             </div>
         </body>
@@ -125,7 +130,7 @@ SVG_FORMAT = """\
 _STYLE_TO_CSS = {
     "bold": "font-weight: bold",
     "italic": "font-style: italic",
-    "dim": "filter: brightness(70%)",
+    "dim": "opacity: 0.7",
     "underline": "text-decoration: underline",
     "strikethrough": "text-decoration: line-through",
     "overline": "text-decoration: overline",
@@ -300,6 +305,7 @@ def to_html(  # pylint: disable=too-many-arguments, too-many-locals
     vertical_offset: float = 0.0,
     horizontal_offset: float = 0.0,
     formatter: str = HTML_FORMAT,
+    joiner: str = "\n",
 ) -> str:
     """Creates a static HTML representation of the given object.
 
@@ -357,7 +363,7 @@ def to_html(  # pylint: disable=too-many-arguments, too-many-locals
     document = formatter.format(
         foreground=Color.get_default_foreground().hex,
         background=Color.get_default_background().hex if include_background else "",
-        content="\n".join(lines),
+        content=joiner.join(lines),
         styles=stylesheet,
         font_size=FONT_SIZE,
     )
@@ -412,4 +418,5 @@ def to_svg(
         formatter=formatter,
         vertical_offset=5 + MARGIN,
         horizontal_offset=MARGIN,
+        joiner="\n<br />",
     )
