@@ -386,6 +386,8 @@ class InspectorWindow(AppWindow):
         """Updates output with new inspection result."""
 
         obj = self.obj_from_path(self._input.value)
+
+        self._output.vertical_align = ptg.VerticalAlignment.BOTTOM
         self._output.set_widgets([ptg.inspect(obj)])
 
     def on_exit(self) -> None:
@@ -487,11 +489,28 @@ def process_args(argv: list[str] | None = None) -> Namespace:
         action="store_true",
     )
 
+    util_group.add_argument(
+        "--exec", help="Execute some Python code.", const="-", nargs="?"
+    )
+
     util_group.add_argument("-f", "--file", help="Interpret a PTG-YAML file.")
     util_group.add_argument(
         "--print-only",
         help="When interpreting YAML, print the environment without running it interactively.",
         action="store_true",
+    )
+
+    export_group = parser.add_argument_group("Exporters")
+
+    export_group.add_argument(
+        "--svg",
+        help="Export the result of any non-interactive argument as an SVG file.",
+        metavar="FILENAME",
+    )
+    export_group.add_argument(
+        "--html",
+        help="Export the result of any non-interactive argument as an HTML file.",
+        metavar="FILENAME",
     )
 
     argv = argv or sys.argv[1:]
@@ -811,6 +830,73 @@ def run_environment(args: Namespace) -> None:
     window.on_exit()
 
 
+def _print_version() -> None:
+    """Prints version info."""
+
+    def _print_aligned(left: str, right: str | None) -> None:
+        left += ":"
+
+        ptg.tim.print(f"[ptg.detail]{left:<19} [/ptg.detail 157]{right}")
+
+    ptg.tim.print(
+        f"[bold !gradient(210)]PyTermGUI[/ /!gradient] version [157]{ptg.__version__}"
+    )
+    print()
+    ptg.tim.print("[ptg.title]System details:")
+
+    _print_aligned("    Python version", sys.version.split()[0])
+    _print_aligned("    $TERM", os.getenv("TERM"))
+    _print_aligned("    $COLORTERM", os.getenv("COLORTERM"))
+    _print_aligned("    Color support", str(ptg.terminal.colorsystem))
+    _print_aligned("    OS Platform", platform())
+
+
+def _run_inspect(args: Namespace) -> None:
+    """Inspects something in the CLI."""
+
+    args.methods = args.methods or None
+    args.dunder = args.dunder or None
+    args.private = args.private or None
+
+    target = (
+        eval(args.inspect)  # pylint: disable=eval-used
+        if args.eval
+        else InspectorWindow.obj_from_path(args.inspect)
+    )
+
+    if not args.eval and isinstance(target, str):
+        args.methods = False
+
+    inspector = ptg.inspect(
+        target,
+        show_methods=args.methods,
+        show_private=args.private,
+        show_dunder=args.dunder,
+    )
+
+    ptg.terminal.print(inspector)
+
+
+def _interpret_file(args: Namespace) -> None:
+    """Interprets a PTG-YAML file."""
+
+    with ptg.YamlLoader() as loader, open(args.file, "r", encoding="utf-8") as file:
+        namespace = loader.load(file)
+
+    if not args.print_only:
+        with ptg.WindowManager() as manager:
+            for widget in namespace.widgets.values():
+                if not isinstance(widget, ptg.Window):
+                    continue
+
+                manager.add(widget)
+        return
+
+    for widget in namespace.widgets.values():
+        for line in widget.get_lines():
+            ptg.terminal.print(line)
+
+
 def main(argv: list[str] | None = None) -> None:
     """Runs the program.
 
@@ -819,33 +905,9 @@ def main(argv: list[str] | None = None) -> None:
             executable path.
     """
 
-    def _print_aligned(left: str, right: str | None) -> None:
-        left += ":"
-
-        ptg.tim.print(f"[ptg.detail]{left:<19} [/ptg.detail 157]{right}")
-
     _create_aliases()
 
     args = process_args(argv)
-
-    if args.size:
-        ptg.tim.print(f"{ptg.terminal.width}x{ptg.terminal.height}")
-        return
-
-    if args.version:
-        ptg.tim.print(
-            f"[bold !gradient(210)]PyTermGUI[/ /!gradient] version [157]{ptg.__version__}"
-        )
-        print()
-        ptg.tim.print("[ptg.title]System details:")
-
-        _print_aligned("    Python version", sys.version.split()[0])
-        _print_aligned("    $TERM", os.getenv("TERM"))
-        _print_aligned("    $COLORTERM", os.getenv("COLORTERM"))
-        _print_aligned("    Color support", str(ptg.terminal.colorsystem))
-        _print_aligned("    OS Platform", platform())
-
-        return
 
     if args.getch:
         args.app = "getch"
@@ -856,31 +918,37 @@ def main(argv: list[str] | None = None) -> None:
     if args.color:
         args.app = "color"
 
-    if args.inspect:
-        args.methods = args.methods or None
-        args.dunder = args.dunder or None
-        args.private = args.private or None
-
-        target = (
-            eval(args.inspect)  # pylint: disable=eval-used
-            if args.eval
-            else InspectorWindow.obj_from_path(args.inspect)
-        )
-
-        if not args.eval and isinstance(target, str):
-            args.methods = False
-
-        inspector = ptg.inspect(
-            target,
-            show_methods=args.methods,
-            show_private=args.private,
-            show_dunder=args.dunder,
-        )
-        print(inspector)
-
+    if args.app or len(sys.argv) == 1:
+        run_environment(args)
         return
 
-    run_environment(args)
+    with ptg.terminal.record() as recording:
+        if args.size:
+            ptg.tim.print(f"{ptg.terminal.width}x{ptg.terminal.height}")
+
+        elif args.version:
+            _print_version()
+
+        elif args.inspect:
+            _run_inspect(args)
+
+        elif args.exec:
+            args.exec = sys.stdin.read() if args.exec == "-" else args.exec
+
+            for name in dir(ptg):
+                obj = getattr(ptg, name, None)
+                globals()[name] = obj
+
+            exec(args.exec, locals(), globals())  # pylint: disable=exec-used
+
+        elif args.file:
+            _interpret_file(args)
+
+        if args.svg:
+            recording.save_svg(args.svg)
+
+        elif args.html:
+            recording.save_html(args.html)
 
 
 if __name__ == "__main__":
