@@ -714,7 +714,7 @@ class ScrollableWidget(Widget):
         self._max_scroll = 0
         self._scroll_offset = 0
 
-    def scroll(self, offset: int) -> int:
+    def scroll(self, offset: int) -> bool:
         """Scrolls to given offset, returns the new scroll_offset.
 
         Args:
@@ -722,14 +722,16 @@ class ScrollableWidget(Widget):
                 negative up.
 
         Returns:
-            The new scroll offset.
+            True if the scroll offset changed, False otherwise.
         """
+
+        base = self._scroll_offset
 
         self._scroll_offset = min(
             max(0, self._scroll_offset + offset), self._max_scroll
         )
 
-        return self._scroll_offset
+        return base != self._scroll_offset
 
     def scroll_end(self, end: int) -> int:
         """Scrolls to either top or bottom end of this object.
@@ -739,8 +741,10 @@ class ScrollableWidget(Widget):
                 very bottom.
 
         Returns:
-            The new scroll offset.
+            True if the scroll offset changed, False otherwise.
         """
+
+        base = self._scroll_offset
 
         if end == 0:
             self._scroll_offset = 0
@@ -748,7 +752,7 @@ class ScrollableWidget(Widget):
         elif end == -1:
             self._scroll_offset = self._max_scroll
 
-        return self._scroll_offset
+        return base != self._scroll_offset
 
     def get_lines(self) -> list[str]:
         ...

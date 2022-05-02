@@ -330,7 +330,7 @@ class InspectorWindow(AppWindow):
             "[dim]|",
             "[dim]V",
             relative_width=0.9,
-            height=20,
+            height=self.terminal.height - 11,
             overflow=ptg.Overflow.SCROLL,
             vertical_align=ptg.VerticalAlignment.BOTTOM,
             box="EMPTY",
@@ -524,10 +524,12 @@ def screenshot(man: ptg.WindowManager) -> None:
 
     tempname = ".screenshot_temp.svg"
 
+    modal: ptg.Window
+
     def _finish(*_: Any) -> None:
         """Closes the modal and renames the window."""
 
-        man.remove(window)
+        man.remove(modal)
         filename = field.value or "screenshot"
 
         if not filename.endswith(".svg"):
@@ -542,7 +544,7 @@ def screenshot(man: ptg.WindowManager) -> None:
 
     man.screenshot(title=title, filename=tempname)
 
-    window: ptg.Window = man.alert(
+    modal = man.alert(
         "[ptg.title]Screenshot taken!", "", ptg.Container(field), "", ["Save!", _finish]
     )
 

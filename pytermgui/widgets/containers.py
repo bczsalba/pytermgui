@@ -766,12 +766,10 @@ class Container(ScrollableWidget):
 
         if not handled and self.overflow == Overflow.SCROLL:
             if event.action is MouseAction.SCROLL_UP:
-                self.scroll(-1)
-                return True
+                return self.scroll(-1)
 
             if event.action is MouseAction.SCROLL_DOWN:
-                self.scroll(1)
-                return True
+                return self.scroll(1)
 
         return handled
 
