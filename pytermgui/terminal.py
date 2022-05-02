@@ -229,6 +229,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         stream: TextIO | None = None,
+        *,
         size: tuple[int, int] | None = None,
         pixel_size: tuple[int, int] | None = None,
     ) -> None:
@@ -239,8 +240,8 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         self._size = size
         self._pixel_size = pixel_size
+        self._stream = stream or sys.stdout
 
-        self._stream = stream
         self._recorder: Recorder | None = None
 
         self.size: tuple[int, int] = self._get_size()
@@ -264,7 +265,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         if self._pixel_size is not None:
             return self._pixel_size
 
-        if sys.stdout.isatty():
+        if self.isatty():
             sys.stdout.write("\x1b[14t")
             sys.stdout.flush()
 
@@ -380,6 +381,25 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         finally:
             self._recorder = None
 
+    @contextmanager
+    def no_record(self) -> Generator[None, None, None]:
+        """Pauses recording for the duration of the context."""
+
+        recorder = self._recorder
+
+        try:
+            self._recorder = None
+            yield
+
+        finally:
+            self._recorder = recorder
+
+    @staticmethod
+    def isatty() -> bool:
+        """Returns whether sys.stdin is a tty."""
+
+        return sys.stdin.isatty()
+
     def replay(self, recorder: Recorder) -> None:
         """Replays a recording."""
 
@@ -390,11 +410,6 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
             self.write(data, flush=True)
             last_time = delay
-
-    def isatty(self) -> bool:
-        """Returns whether self._stream is a tty."""
-
-        return self._stream.isatty()
 
     def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
         """Subcribes a callback to be called when event occurs.

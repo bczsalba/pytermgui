@@ -138,12 +138,13 @@ def install(
         sys.displayhook = _hook
 
     if not NO_WELCOME:
-        print()
-        tim.print("[113 bold]Successfully set up prettification!")
-        tim.print("[245 italic]> All function returns will now be pretty-printed,")
-        print()
-        pprint("[245 italic]Including [/italic 210]Markup!")
-        print()
+        with get_terminal().no_record():
+            print()
+            tim.print("[113 bold]Successfully set up prettification!")
+            tim.print("[245 italic]> All function returns will now be pretty-printed,")
+            print()
+            pprint("[245 italic]Including [/italic 210]Markup!")
+            print()
 
     get_terminal().displayhook_installed = True
 
