@@ -446,6 +446,21 @@ class MouseEvent:
 
         return self
 
+    def is_scroll(self) -> bool:
+        """Returns True if event.action is one of the scrolling actions."""
+
+        return self.action in {MouseAction.SCROLL_DOWN, MouseAction.SCROLL_UP}
+
+    def is_primary(self) -> bool:
+        """Returns True if event.action is one of the primary (left-button) actions."""
+
+        return self.action in {MouseAction.LEFT_CLICK, MouseAction.LEFT_DRAG}
+
+    def is_secondary(self) -> bool:
+        """Returns True if event.action is one of the secondary (secondary-button) actions."""
+
+        return self.action in {MouseAction.RIGHT_CLICK, MouseAction.RIGHT_DRAG}
+
 
 def report_mouse(
     event: str, method: Optional[str] = "decimal_xterm", stop: bool = False
