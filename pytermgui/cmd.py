@@ -552,14 +552,32 @@ def screenshot(man: ptg.WindowManager) -> None:
 class Dropdown(ptg.Container):
     """A widget that mimicks the 'dropdown' UI element."""
 
-    def __init__(self, label: str, *items: Any, **attrs: Any) -> None:
+    is_bindable = True
+
+    def __init__(
+        self, label: str, *items: Any, keyboard: bool = False, **attrs: Any
+    ) -> None:
         self.collapsed_height = 0
 
-        self.trigger = ptg.Toggle(
-            (f"▶ {label}", f"▼ {label}"), lambda *_: self.toggle()
-        )
+        if keyboard:
+            bind = label[0]
+            self.trigger = ptg.Toggle(
+                (f"▶ ({bind}){label[1:]}", f"▼ ({bind}){label[1:]}"),
+                lambda *_: self.toggle(),
+            )
+        else:
+            self.trigger = ptg.Toggle(
+                (f"▶ {label}", f"▼ {label}"), lambda *_: self.toggle()
+            )
 
         super().__init__(self.trigger, *items, box="EMPTY", **attrs)
+
+        if keyboard:
+            self.bind(
+                getattr(ptg.keys, f"CTRL_{bind}"),
+                lambda *_: self.trigger.toggle(),
+                "Open dropdown",
+            )
 
         self.collapsed_height = 1
         self.overflow = ptg.Overflow.HIDE
@@ -636,9 +654,8 @@ def _get_key_name(key: str) -> str:
 def _create_header() -> ptg.Window:
     """Creates an application header window."""
 
-    content = ptg.Splitter(ptg.Label("PyTermGUI", parent_align=0, padding=2)).styles(
-        fill="ptg.header"
-    )
+    content = ptg.Splitter(ptg.Label("PyTermGUI", parent_align=0, padding=2))
+    content.styles.fill = "ptg.header"
 
     return ptg.Window(content, box="EMPTY", id="ptg.header", is_persistent=True)
 
@@ -671,7 +688,9 @@ def _create_app_picker(manager: ptg.WindowManager) -> ptg.Window:
         for (label, _), app in APPLICATION_MAP.items()
     ]
 
-    dropdown = Dropdown("Applications", *buttons).styles(fill="ptg.footer")
+    dropdown = Dropdown("Applications", *buttons, keyboard=True).styles(
+        fill="ptg.footer"
+    )
 
     return ptg.Window(
         dropdown,
@@ -687,6 +706,9 @@ def _create_footer(man: ptg.WindowManager) -> ptg.Window:
 
     content = ptg.Splitter().styles(fill="ptg.footer")
     for key, (callback, doc) in man.bindings.items():
+        if doc == f"Binding of {key} to {callback}":
+            continue
+
         content.lazy_add(
             ptg.Button(
                 f"{_get_key_name(str(key))} - {doc}",
@@ -793,6 +815,8 @@ def run_environment(args: Namespace) -> None:
 
     window: AppWindow | None = None
     with ptg.WindowManager() as manager:
+        app_picker = _create_app_picker(manager)
+
         manager.bind(
             ptg.keys.CTRL_W,
             lambda *_: _close_focused(manager),
@@ -809,13 +833,19 @@ def run_environment(args: Namespace) -> None:
             "Toggle layout",
         )
 
+        manager.bind(
+            ptg.keys.CTRL_A,
+            lambda *_: {
+                manager.focus(app_picker),  # type: ignore
+                app_picker.execute_binding(ptg.keys.CTRL_A),
+            },
+        )
+
         if not args.app:
             manager.layout = _create_layout()
 
             manager.add(_create_header(), assign="header", animate=False)
-            manager.add(
-                _create_app_picker(manager), assign="applications", animate=False
-            )
+            manager.add(app_picker, assign="applications", animate=False)
             manager.add(_create_footer(manager), assign="footer", animate=False)
 
         else:
