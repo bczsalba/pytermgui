@@ -342,6 +342,11 @@ class Token:
                 self.data, self.name = link_match.groups()
                 self.ttype = TokenType.LINK
 
+        if self.ttype is TokenType.ESCAPED:
+            assert isinstance(self.data, str)
+
+            self.name = self.data[1:]
+
     def __eq__(self, other: object) -> bool:
         """Checks equality with `other`."""
 
@@ -625,7 +630,7 @@ docs/parser/markup_language.png"
 
             if not escapes == "" and len(escapes) % 2 == 1:
                 cursor = end
-                yield Token(ttype=TokenType.ESCAPED, data=full[len(escapes) :])
+                yield Token(ttype=TokenType.ESCAPED, data=full[len(escapes) - 1 :])
                 continue
 
             for tag in tag_text.split():
@@ -968,6 +973,12 @@ docs/parser/markup_language.png"
                 assert isinstance(token.data, str)
                 out += token.data
                 current_tags = []
+                continue
+
+            if token.ttype is TokenType.ESCAPED:
+                assert isinstance(token.data, str)
+
+                current_tags.append(token.data)
                 continue
 
             current_tags.append(token.name)
