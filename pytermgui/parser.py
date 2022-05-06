@@ -797,9 +797,9 @@ docs/parser/markup_language.png"
                 assert isinstance(token.data, Color)
 
                 if token.data.background:
-                    return self.unsetters["/fg"]
+                    return self.unsetters["/bg"]
 
-                return self.unsetters["/bg"]
+                return self.unsetters["/fg"]
 
             name = f"/{token.name}"
             if not name in self.unsetters:
