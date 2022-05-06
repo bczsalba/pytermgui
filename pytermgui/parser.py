@@ -931,7 +931,7 @@ docs/parser/markup_language.png"
             if token.sequence is None:
                 applied = sequence
                 for item in previous_sequence.split("\x1b"):
-                    if item == "":
+                    if item == "" or item[1:-1] in self.unsetters.values():
                         continue
 
                     item = f"\x1b{item}"
