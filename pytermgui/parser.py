@@ -904,6 +904,7 @@ docs/parser/markup_language.png"
             if token.ttype == TokenType.UNSETTER and token.data == "0":
                 out += "\033[0m"
                 sequence = ""
+                applied_macros = []
                 continue
 
             previous_token = token
