@@ -400,28 +400,59 @@ class StyledText(str):
     value: str
     """The underlying, ANSI-inclusive string value."""
 
-    plain: str
-    """The string value with no ANSI sequences."""
-
-    tokens: list[Token]
-    """The list of tokens that make up this string."""
+    _plain: str | None = None
+    _tokens: list[Token] | None = None
 
     def __new__(cls, value: str = ""):
         """Creates a StyledText, gets markup tags."""
 
         obj = super().__new__(cls, value)
         obj.value = value
-        obj.tokens = list(tim.tokenize_ansi(value))
 
-        obj.plain = ""
-        for token in obj.tokens:
+        return obj
+
+    def _generate_tokens(self) -> None:
+        """Generates self._tokens & self._plain."""
+
+        self._tokens = list(tim.tokenize_ansi(self.value))
+
+        self._plain = ""
+        for token in self._tokens:
             if token.ttype is not TokenType.PLAIN:
                 continue
 
             assert isinstance(token.data, str)
-            obj.plain += token.data
+            self._plain += token.data
 
-        return obj
+    @property
+    def tokens(self) -> list[Token]:
+        """Returns all markup tokens of this object.
+
+        Generated on-demand, at the first call to this or the self.plain
+        property.
+        """
+
+        if self._tokens is not None:
+            return self._tokens
+
+        self._generate_tokens()
+        assert self._tokens is not None
+        return self._tokens
+
+    @property
+    def plain(self) -> str:
+        """Returns the value of this object, with no ANSI sequences.
+
+        Generated on-demand, at the first call to this or the self.tokens
+        property.
+        """
+
+        if self._plain is not None:
+            return self._plain
+
+        self._generate_tokens()
+        assert self._plain is not None
+        return self._plain
 
     def plain_index(self, index: int | None) -> int | None:
         """Finds given index inside plain text."""
