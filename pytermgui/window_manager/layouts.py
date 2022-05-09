@@ -176,7 +176,10 @@ class Layout:
     of the terminal's width, or `ROW_BREAK` is encountered.
     """
 
-    def __init__(self) -> None:
+    name: str
+
+    def __init__(self, name: str = "Layout") -> None:
+        self.name = name
         self.slots: list[Slot] = []
 
     @property
