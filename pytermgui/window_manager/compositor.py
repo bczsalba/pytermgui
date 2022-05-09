@@ -8,9 +8,7 @@ import time
 from threading import Thread
 from typing import Iterator, List, Tuple
 
-from ..parser import tim
 from ..widgets import Widget
-from ..regex import strip_ansi
 from ..enums import WidgetChange
 from ..animations import animator
 from ..terminal import get_terminal, Terminal
@@ -80,47 +78,51 @@ class Compositor:
                 fps_start_time = last_frame
                 framecount = 0
 
-    def _get_lines(self, window: Window) -> list[str]:
-        """Gets lines from the window, caching when possible.
+    # NOTE: This is not needed at the moment, but might be at some point soon.
+    # def _get_lines(self, window: Window) -> list[str]:
+    #     """Gets lines from the window, caching when possible.
 
-        This also applies the blurred style of the window, if it has no focus.
-        """
+    #     This also applies the blurred style of the window, if it has no focus.
+    #     """
 
-        if window.allow_fullscreen:
-            window.pos = self.terminal.origin
-            window.width = self.terminal.width
-            window.height = self.terminal.height
+    #     if window.allow_fullscreen:
+    #         window.pos = self.terminal.origin
+    #         window.width = self.terminal.width
+    #         window.height = self.terminal.height
 
-        if window.has_focus or window.is_noblur:
-            return window.get_lines()
+    #     return window.get_lines()
 
-        _id = id(window)
-        if not window.is_dirty and _id in self._cache:
-            return self._cache[_id]
+    #     if window.has_focus or window.is_noblur:
+    #         return window.get_lines()
 
-        lines: list[str] = []
-        for line in window.get_lines():
-            if not window.has_focus:
-                line = tim.parse("[239]" + strip_ansi(line))
+    #     _id = id(window)
+    #     if not window.is_dirty and _id in self._cache:
+    #         return self._cache[_id]
 
-            lines.append(line)
+    #     lines: list[str] = []
+    #     for line in window.get_lines():
+    #         if not window.has_focus:
+    #             line = tim.parse("[239]" + strip_ansi(line).replace("[", r"\["))
 
-        self._cache[_id] = lines
-        return lines
+    #         lines.append(line)
 
+    #     self._cache[_id] = lines
+    #     return lines
+
+    @staticmethod
     def _iter_positioned(
-        self, widget: Widget, until: int | None = None
+        widget: Widget, until: int | None = None
     ) -> Iterator[tuple[tuple[int, int], str]]:
         """Iterates through (pos, line) tuples from widget.get_lines()."""
 
-        get_lines = widget.get_lines
-        if isinstance(widget, Window):
-            get_lines = lambda *_: self._get_lines(widget)  # type: ignore
+        # get_lines = widget.get_lines
+        # if isinstance(widget, Window):
+        #     get_lines = lambda *_: self._get_lines(widget)  # type: ignore
 
         if until is None:
             until = widget.height
 
-        for i, line in enumerate(get_lines()):
+        for i, line in enumerate(widget.get_lines()):
             if i >= until:
                 break
 

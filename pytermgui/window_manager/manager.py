@@ -531,7 +531,12 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         return window
 
     def toast(
-        self, *items, duration: int = 300, delay: int = 1000, **attributes
+        self,
+        *items,
+        offset: int = 0,
+        duration: int = 300,
+        delay: int = 1000,
+        **attributes,
     ) -> Window:
         """Creates a Material UI-inspired toast window of the given elements and attributes.
 
@@ -544,6 +549,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         # pylint: disable=no-value-for-parameter
 
         toast = Window(*items, is_noblur=True, **attributes)
+
         target_height = toast.height
         toast.overflow = Overflow.HIDE
 
@@ -557,11 +563,14 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
             if invert:
                 toast.height = target_height - 1 - height
-                toast.pos = (toast.pos[0], self.terminal.height - toast.height + 1)
+                toast.pos = (
+                    toast.pos[0],
+                    self.terminal.height - toast.height + 1 - offset,
+                )
                 return False
 
             toast.height = height
-            toast.pos = (toast.pos[0], self.terminal.height - toast.height + 1)
+            toast.pos = (toast.pos[0], self.terminal.height - toast.height + 1 - offset)
 
             return False
 
@@ -582,6 +591,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         leadup = FloatAnimation(
             duration, on_step=_progressively_show, on_finish=_animate_toast_out
         )
+
         # pylint: enable=no-value-for-parameter
 
         self.add(toast.center(), animate=False, assign=False)

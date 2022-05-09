@@ -40,7 +40,6 @@ class AppWindow(ptg.Window):
     standalone: bool
     """Whether this app was launched directly from the CLI."""
 
-    is_noblur = True
     overflow = ptg.Overflow.SCROLL
     vertical_align = ptg.VerticalAlignment.TOP
 
@@ -50,7 +49,7 @@ class AppWindow(ptg.Window):
         self.standalone = bool(getattr(args, self.app_id, None))
 
         bottom = ptg.Container.chars["border"][-1]
-        box = ptg.boxes.Box(
+        header_box = ptg.boxes.Box(
             [
                 "",
                 " x ",
@@ -58,7 +57,7 @@ class AppWindow(ptg.Window):
             ]
         )
 
-        self._add_widget(ptg.Container(f"[ptg.title]{self.app_title}", box=box))
+        self._add_widget(ptg.Container(f"[ptg.title]{self.app_title}", box=header_box))
         self._add_widget("")
 
     def on_exit(self) -> None:
@@ -94,13 +93,19 @@ class GetchWindow(AppWindow):
         if name != ascii(key):
             name = f"keys.{name}"
 
+        style = ptg.HighlighterStyle(ptg.highlight_python)
+
         items = [
             "[ptg.title]Your output",
             "",
-            {"[ptg.detail]key": name},
-            {"[ptg.detail]value:": ascii(key)},
-            {"[ptg.detail]len()": str(len(key))},
-            {"[ptg.detail]real_length()": str(ptg.real_length(key))},
+            {"[ptg.detail]key": ptg.Label(name, style=style)},
+            {"[ptg.detail]value:": ptg.Label(ascii(key), style=style)},
+            {"[ptg.detail]len()": ptg.Label(str(len(key)), style=style)},
+            {
+                "[ptg.detail]real_length()": ptg.Label(
+                    str(ptg.real_length(key)), style=style
+                )
+            },
         ]
 
         for item in items:
@@ -129,10 +134,10 @@ class ColorPickerWindow(AppWindow):
         self._chosen_rgb = ptg.str_to_color("black")
 
         self._colorpicker = ptg.ColorPicker()
-        self._add_widget(Dropdown("xterm-256", "", self._colorpicker).expand())
+        self._add_widget(ptg.Collapsible("xterm-256", "", self._colorpicker).expand())
         self._add_widget("")
         self._add_widget(
-            Dropdown(
+            ptg.Collapsible(
                 "RGB & HEX", "", self._create_rgb_picker(), static_width=81
             ).expand(),
         )
@@ -323,14 +328,14 @@ class InspectorWindow(AppWindow):
 
         self._output = ptg.Container(
             (
-                "[ptg.body]Write valid Python import path (like [italic]pytermgui.inspect[/italic])"
+                "[ptg.body]Write valid Python import path"
+                + " (like [italic]pytermgui.inspect[/italic])"
                 + ", then press enter!",
             ),
             "",
-            "[dim]|",
             "[dim]V",
             relative_width=0.9,
-            height=self.terminal.height - 11,
+            height=self.terminal.height - 12,
             overflow=ptg.Overflow.SCROLL,
             vertical_align=ptg.VerticalAlignment.BOTTOM,
             box="EMPTY",
@@ -387,7 +392,7 @@ class InspectorWindow(AppWindow):
 
         obj = self.obj_from_path(self._input.value)
 
-        self._output.vertical_align = ptg.VerticalAlignment.BOTTOM
+        self._output.vertical_align = ptg.VerticalAlignment.CENTER
         self._output.set_widgets([ptg.inspect(obj)])
 
     def on_exit(self) -> None:
@@ -549,91 +554,6 @@ def screenshot(man: ptg.WindowManager) -> None:
     )
 
 
-class Dropdown(ptg.Container):
-    """A widget that mimicks the 'dropdown' UI element."""
-
-    is_bindable = True
-
-    def __init__(
-        self, label: str, *items: Any, keyboard: bool = False, **attrs: Any
-    ) -> None:
-        self.collapsed_height = 0
-
-        if keyboard:
-            bind = label[0]
-            self.trigger = ptg.Toggle(
-                (f"▶ ({bind}){label[1:]}", f"▼ ({bind}){label[1:]}"),
-                lambda *_: self.toggle(),
-            )
-        else:
-            self.trigger = ptg.Toggle(
-                (f"▶ {label}", f"▼ {label}"), lambda *_: self.toggle()
-            )
-
-        super().__init__(self.trigger, *items, box="EMPTY", **attrs)
-
-        if keyboard:
-            self.bind(
-                getattr(ptg.keys, f"CTRL_{bind}"),
-                lambda *_: self.trigger.toggle(),
-                "Open dropdown",
-            )
-
-        self.collapsed_height = 1
-        self.overflow = ptg.Overflow.HIDE
-        self.height = self.collapsed_height
-
-        self._is_expanded = False
-
-    def toggle(self) -> Dropdown:
-        """Toggles expanded state.
-
-        Returns:
-            This object.
-        """
-
-        if self.trigger.checked != self._is_expanded:
-            self.trigger.toggle(run_callback=False)
-
-        self._is_expanded = not self._is_expanded
-
-        if self._is_expanded:
-            self.overflow = ptg.Overflow.RESIZE
-        else:
-            self.overflow = ptg.Overflow.HIDE
-            self.height = self.collapsed_height
-
-        return self
-
-    def collapse(self) -> Dropdown:
-        """Collapses the dropdown.
-
-        Does nothing if already collapsed.
-
-        Returns:
-            This object.
-        """
-
-        if self._is_expanded:
-            self.toggle()
-
-        return self
-
-    def expand(self) -> Dropdown:
-        """Expands the dropdown.
-
-        Does nothing if already expanded.
-
-        Returns:
-            This object.
-        """
-
-        if not self._is_expanded:
-            self.toggle()
-
-        return self
-
-
 def _get_key_name(key: str) -> str:
     """Gets canonical name of a key.
 
@@ -688,7 +608,7 @@ def _create_app_picker(manager: ptg.WindowManager) -> ptg.Window:
         for (label, _), app in APPLICATION_MAP.items()
     ]
 
-    dropdown = Dropdown("Applications", *buttons, keyboard=True).styles(
+    dropdown = ptg.Collapsible("Applications", *buttons, keyboard=True).styles(
         fill="ptg.footer"
     )
 
@@ -741,6 +661,11 @@ def _create_aliases() -> None:
     - ptg.title: Used for main titles.
     - ptg.body: Used for body text.
     - ptg.detail: Used for highlighting detail inside body text.
+    - ptg.accent: Used as an accent color in various places.
+    - ptg.header: Used for the header bar.
+    - ptg.footer: Used for the footer bar.
+    - ptg.border: Used for focused window borders & corners.
+    - ptg.border_blurred: Used for non-focused window borders & corners.
     """
 
     ptg.tim.alias("ptg.title", "210 bold")
@@ -749,8 +674,10 @@ def _create_aliases() -> None:
     ptg.tim.alias("ptg.accent", "72")
 
     ptg.tim.alias("ptg.header", "@235 242 bold")
-    ptg.tim.alias("ptg.border", "60")
     ptg.tim.alias("ptg.footer", "@235")
+
+    ptg.tim.alias("ptg.border", "60")
+    ptg.tim.alias("ptg.border_blurred", "#373748")
 
 
 def _configure_widgets() -> None:
@@ -760,13 +687,17 @@ def _configure_widgets() -> None:
     ptg.boxes.SINGLE.set_chars_of(ptg.Container)
     ptg.boxes.DOUBLE.set_chars_of(ptg.Window)
 
-    ptg.Container.styles = ptg.Window.styles
-
     ptg.InputField.styles.cursor = "inverse ptg.accent"
     ptg.InputField.styles.fill = "245"
     ptg.Container.styles.border__corner = "ptg.border"
     ptg.Splitter.set_char("separator", "")
     ptg.Button.set_char("delimiter", ["  ", "  "])
+
+    ptg.Window.styles.border__corner = "ptg.border"
+    ptg.Window.set_focus_styles(
+        focused=("ptg.border", "ptg.border"),
+        blurred=("ptg.border_blurred", "ptg.border_blurred"),
+    )
 
 
 def run_environment(args: Namespace) -> None:
@@ -822,11 +753,11 @@ def run_environment(args: Namespace) -> None:
             lambda *_: _close_focused(manager),
             "Close window",
         )
-        manager.bind(
-            ptg.keys.F12,
-            lambda *_: screenshot(manager),
-            "Screenshot",
-        )
+        # manager.bind(
+        #     ptg.keys.F12,
+        #     lambda *_: screenshot(manager),
+        #     "Screenshot",
+        # )
         manager.bind(
             ptg.keys.CTRL_F,
             lambda *_: _toggle_attachment(manager),
@@ -847,6 +778,12 @@ def run_environment(args: Namespace) -> None:
             manager.add(_create_header(), assign="header", animate=False)
             manager.add(app_picker, assign="applications", animate=False)
             manager.add(_create_footer(manager), assign="footer", animate=False)
+
+            manager.toast(
+                f"[ptg.title]Welcome to the {_title()} [ptg.title]CLI!",
+                offset=ptg.terminal.height // 2 - 3,
+                delay=1000,
+            )
 
         else:
             manager.layout.add_slot("Body")

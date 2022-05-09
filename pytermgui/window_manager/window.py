@@ -8,7 +8,6 @@ from typing import Any, TYPE_CHECKING
 from ..widgets import Container
 from ..widgets import styles as w_styles, Widget
 from ..ansi_interface import MouseEvent, MouseAction
-from ..animations import animator, AttrAnimation, is_animated
 from ..enums import Overflow, SizePolicy, CenteringPolicy
 
 if TYPE_CHECKING:
@@ -24,9 +23,6 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
     is_bindable = True
     overflow = Overflow.HIDE
-
-    allow_fullscreen = False
-    """When a window is allowed fullscreen its manager will try to set it so before each frame."""
 
     title = ""
     """Title shown in left-top corner."""
@@ -56,8 +52,14 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
     chars = Container.chars.copy()
 
-    styles = w_styles.StyleManager.merge(
-        Container.styles, title=w_styles.MarkupFormatter("[wm-title]{item}")
+    styles = w_styles.StyleManager(
+        border=w_styles.FOREGROUND,
+        corner=w_styles.FOREGROUND,
+        fill="",
+        border_focused=w_styles.FOREGROUND,
+        corner_focused=w_styles.FOREGROUND,
+        border_blurred="238",
+        corner_blurred="238",
     )
 
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
@@ -71,9 +73,14 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         self._min_width: int | None = None
         self._auto_min_width: int | None = None
 
+        self.styles.border_focused = type(self).styles.border
+        self.styles.corner_focused = type(self).styles.corner
+
         super().__init__(*widgets, **attrs)
 
         self.has_focus: bool = False
+        # self.blur()
+
         self.manager: "WindowManager" | None = None
 
         # -------------------------  position ----- width x height
@@ -178,10 +185,31 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
         return added
 
+    @classmethod
+    def set_focus_styles(
+        cls,
+        *,
+        focused: tuple[w_styles.StyleValue, w_styles.StyleValue],
+        blurred: tuple[w_styles.StyleValue, w_styles.StyleValue],
+    ) -> None:
+        """Sets focused & blurred border & corner styles.
+
+        Args:
+            focused: A tuple of border_focused, corner_focused styles.
+            blurred: A tuple of border_blurred, corner_blurred styles.
+        """
+
+        cls.styles.border_focused, cls.styles.corner_focused = focused
+        cls.styles.border_blurred, cls.styles.corner_blurred = blurred
+
     def focus(self) -> None:
         """Focuses this window."""
 
         self.has_focus = True
+
+        if not self.is_noblur:
+            self.styles.border = self.styles.border_focused
+            self.styles.corner = self.styles.corner_focused
 
     def blur(self) -> None:
         """Blurs (unfocuses) this window."""
@@ -189,6 +217,10 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         self.has_focus = False
         self.select(None)
         self.handle_mouse(MouseEvent(MouseAction.RELEASE, (0, 0)))
+
+        if not self.is_noblur:
+            self.styles.border = self.styles.border_blurred
+            self.styles.corner = self.styles.corner_blurred
 
     def clear_cache(self) -> None:
         """Clears manager compositor's cached blur state."""
@@ -241,90 +273,6 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
             corners[position] = title + current
 
         self.set_char("corner", corners)
-
-    def toggle_fullscreen(self) -> Window:
-        """Sets window to fullscreen.
-
-        Args:
-            value: Whether fullscreen should be set or unset.
-
-        Returns:
-            The same window.
-        """
-
-        if is_animated(self, "width") or is_animated(self, "height"):
-            return self
-
-        allow = not self.allow_fullscreen
-        restore_data = self.pos, (self.width, self.height)
-
-        duration = 100
-
-        def _on_step(anim: AttrAnimation) -> bool:
-            assert anim.target is self
-
-            if self.centered_axis is not None:
-                self.center()
-
-            return False
-
-        def _on_finish(anim: AttrAnimation) -> None:
-            assert anim.target is self
-
-            self.allow_fullscreen = allow
-            self._restore_data = restore_data if allow else None
-
-        if allow:
-            animator.animate_attr(
-                target=self,
-                attr="width",
-                start=self.width,
-                end=self.terminal.width,
-                on_step=_on_step,
-                on_finish=_on_finish,
-                duration=duration,
-            )
-
-            animator.animate_attr(
-                target=self,
-                attr="height",
-                start=self.height,
-                end=self.terminal.height,
-                on_step=_on_step,
-                on_finish=_on_finish,
-                duration=duration,
-            )
-
-        else:
-            self.allow_fullscreen = False
-            assert self._restore_data is not None
-
-            # pos, (width, height) = self._restore_data
-            self.pos, (self.width, self.height) = self._restore_data
-            self._restore_data = None
-
-            # TODO: The animation sometimes ends a couple of frames early.
-            # animator.animate_attr(
-            #     target=self,
-            #     attr="width",
-            #     start=self.width,
-            #     end=width,
-            #     on_step=_on_step,
-            #     on_finish=_on_finish,
-            #     duration=duration,
-            # )
-
-            # animator.animate_attr(
-            #     target=self,
-            #     attr="height",
-            #     start=self.height,
-            #     end=height,
-            #     on_step=_on_step,
-            #     on_finish=_on_finish,
-            #     duration=duration,
-            # )
-
-        return self
 
     def center(
         self, where: CenteringPolicy | None = None, store: bool = True
