@@ -287,6 +287,35 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
             window.focus()
 
+    def focus_next(self) -> Window | None:
+        """Focuses the next window in focus order, looping to first at the end."""
+
+        if self.focused is None:
+            self.focus(self._windows[0])
+            return self.focused
+
+        index = self._windows.index(self.focused)
+        if index == len(self._windows) - 1:
+            index = 0
+
+        window = self._windows[index]
+        traversed = 0
+        while window.is_persistent or window is self.focused:
+            index += 1
+
+            if index >= len(self._windows):
+                index = 0
+
+            window = self._windows[index]
+
+            traversed += 1
+            if traversed >= len(self._windows):
+                return self.focused
+
+        self.focus(self._windows[index])
+
+        return self.focused
+
     def handle_key(self, key: str) -> bool:
         """Processes a keypress.
 

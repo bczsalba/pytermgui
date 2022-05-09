@@ -771,6 +771,10 @@ def run_environment(args: Namespace) -> None:
                 app_picker.execute_binding(ptg.keys.CTRL_A),
             },
         )
+        manager.bind(
+            ptg.keys.ALT + ptg.keys.TAB,
+            lambda *_: manager.focus_next(),
+        )
 
         if not args.app:
             manager.layout = _create_layout()
@@ -782,7 +786,7 @@ def run_environment(args: Namespace) -> None:
             manager.toast(
                 f"[ptg.title]Welcome to the {_title()} [ptg.title]CLI!",
                 offset=ptg.terminal.height // 2 - 3,
-                delay=1000,
+                delay=700,
             )
 
         else:
