@@ -5,9 +5,11 @@ from pytermgui.window_manager.layouts import ROW_BREAK, Layout
 
 fg = "#B7B6A4"
 bg = "#A5A48D"
+bg_blur = "#505049"
 
-ptg.Window.is_noblur = True
+# ptg.Window.is_noblur = True
 ptg.Window.styles.border__corner = f"{bg}"
+ptg.Window.set_focus_styles(focused=("bg", "bg"), blurred=(f"{bg_blur}", f"{bg_blur}"))
 ptg.Label.styles.value__fill = f"@{bg} #5B5948"
 
 ptg.Splitter.set_char("separator", " ")
