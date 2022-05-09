@@ -28,6 +28,7 @@ from .animations import *
 from .serializer import *
 from .exceptions import *
 from .prettifiers import *
+from .highlighters import *
 from .file_loaders import *
 from .ansi_interface import *
 from .window_manager import *

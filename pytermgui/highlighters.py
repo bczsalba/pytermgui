@@ -9,6 +9,12 @@ from typing import Pattern, Match, Protocol
 
 from .regex import RE_MARKUP
 
+__all__ = [
+    "Highlighter",
+    "RegexHighlighter",
+    "highlight_python",
+]
+
 
 class Highlighter(Protocol):  # pylint: disable=too-few-public-methods
     """The protocol for highlighters."""
