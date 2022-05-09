@@ -12,6 +12,7 @@ from . import boxes
 from ..regex import real_length
 from .base import Label, Widget
 from .interactive import Button
+from ..colors import str_to_color
 from .containers import Container
 from ..animations import animator
 from .pixel_matrix import PixelMatrix
@@ -200,7 +201,6 @@ class ColorPicker(Container):
 
         self.chosen = Joiner()
         self._output = Container(self.chosen, "", "", "")
-        self._output.height = 7
 
         if self.show_output:
             self._add_widget(self._output)
@@ -248,12 +248,21 @@ class ColorPicker(Container):
             if len(color) == 0:
                 return super().get_lines()
 
+            color_obj = str_to_color(color)
+            rgb = color_obj.rgb
+            hex_ = color_obj.hex
             lines: list[Widget] = [
                 Label(f"[black @{color}] {color} [/ {color}] {color}"),
                 Label(
                     f"[{color} bold]Here[/bold italic] is "
                     + "[/italic underline]some[/underline dim] example[/dim] text"
                 ),
+                Label(),
+                Label(
+                    f"RGB: [{';'.join(map(str, rgb))}]"
+                    + f"rgb({rgb[0]:>3}, {rgb[1]:>3}, {rgb[2]:>3})"
+                ),
+                Label(f"HEX: [{hex_}]{hex_}"),
             ]
             self._output.set_widgets(lines + [Label(), self.chosen])
 

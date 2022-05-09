@@ -28,6 +28,7 @@ class Button(Widget):
         label: str = "Button",
         onclick: Optional[Callable[[Button], Any]] = None,
         padding: int = 0,
+        centered: bool = False,
         **attrs: Any,
     ) -> None:
         """Initialize object"""
@@ -37,6 +38,7 @@ class Button(Widget):
         self.label = label
         self.onclick = onclick
         self.padding = padding
+        self.centered = centered
         self._selectables_length = 1
 
     def handle_mouse(self, event: MouseEvent) -> bool:
@@ -71,13 +73,21 @@ class Button(Widget):
         assert isinstance(delimiters, list) and len(delimiters) == 2
         left, right = delimiters
 
-        word: str = markup.parse(left + self.label + right)
+        label = self.label
+        if len(self.label) > self.width:
+            label = self.label[:-3] + "..."
+
+        elif self.centered:
+            label = self.label.center(
+                self.width - real_length(left + right) - self.padding
+            )
+
+        word: str = markup.parse(left + label + right)
         if self.selected_index is None:
             word = self.styles.label(word)
         else:
             word = self.styles.highlight(word)
 
         line = StyledText(word + self.padding * " ")
-        self.width = real_length(line)
 
         return [line]

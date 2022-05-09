@@ -6,7 +6,7 @@ that represents that "deep" the Widget is within the hierarchy, and
 `item` is the string that the style is applied to.
 """
 
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument, too-many-instance-attributes
 
 from __future__ import annotations
 

@@ -917,8 +917,10 @@ class Container(ScrollableWidget):
             __could have been__ used to create this Container.
         """
 
-        return f"{type(self).__name__}(width={self.width}, height={self.height}" + (
-            f", id={self.id}" if self.id is not None else ""
+        return (
+            f"{type(self).__name__}(width={self.width}, height={self.height}"
+            + (f", id={self.id}" if self.id is not None else "")
+            + ")"
         )
 
 

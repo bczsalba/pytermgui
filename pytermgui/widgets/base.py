@@ -75,7 +75,7 @@ def _set_obj_or_cls_char(
     return obj_or_cls
 
 
-class Widget:
+class Widget:  # pylint: disable=too-many-public-methods
     """The base of the Widget system"""
 
     set_style = classmethod(_set_obj_or_cls_style)
@@ -524,6 +524,11 @@ class Widget:
 
         self._bindings[key] = (action, description)
 
+    def unbind(self, key: str) -> None:
+        """Unbinds the given key."""
+
+        del self._bindings[key]
+
     def execute_binding(self, key: Any) -> bool:
         """Executes a binding belonging to key, when present.
 
@@ -654,7 +659,7 @@ class Label(Widget):
     def __init__(
         self,
         value: str = "",
-        style: str | w_styles.StyleCall = "",
+        style: str | w_styles.StyleValue = "",
         padding: int = 0,
         non_first_padding: int = 0,
         **attrs: Any,
