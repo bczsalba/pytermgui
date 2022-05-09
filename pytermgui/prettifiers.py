@@ -4,12 +4,11 @@ The main export here is `prettify`. It uses `pytermgui.parser.tim`, and all of i
 markup magic to create prettier representations of whatever is given.
 """
 
-import builtins
 from typing import Any
 from collections import UserDict, UserList
 
-from .parser import RE_ANSI, RE_MARKUP, tim
-from .exceptions import MarkupSyntaxError, AnsiSyntaxError
+from .parser import RE_MARKUP, tim
+from .highlighters import highlight_python
 
 
 __all__ = ["prettify"]
@@ -17,104 +16,9 @@ __all__ = ["prettify"]
 CONTAINER_TYPES = (list, dict, set, tuple, UserDict, UserList)
 
 
-def _prettify_container(
-    target, indent: int, expand_all: bool, force_markup: bool
-) -> str:
-    """Prettifies a builtin container.
-
-    All arguments are analogous to `prettify`.
-
-    Returns:
-        Pretty string markup.
-    """
-
-    if len(target) < 2 and not expand_all:
-        indent = 0
-
-    chars = str(target)[0], str(target)[-1]
-    buff = chars[0]
-
-    indent_str = ("\n" if indent > 0 else "") + indent * " "
-
-    if isinstance(target, (dict, UserDict)):
-        for i, (key, value) in enumerate(target.items()):
-            if i > 0:
-                buff += ", "
-
-            buff += indent_str
-            buff += prettify(key, indent=0, parse=False) + ": "
-
-            pretty = prettify(
-                value,
-                indent=indent,
-                expand_all=expand_all,
-                force_markup=force_markup,
-                parse=False,
-            )
-
-            lines = pretty.splitlines()
-            buff += lines[0]
-            for line in lines[1:]:
-                buff += indent_str + line
-
-    else:
-        for i, item in enumerate(target):
-            if i > 0:
-                buff += ", "
-
-            pretty = prettify(
-                item,
-                indent=indent,
-                expand_all=expand_all,
-                force_markup=force_markup,
-                parse=False,
-            )
-
-            for line in pretty.splitlines():
-                buff += indent_str + line
-
-    if indent > 0:
-        buff += ",\n"
-
-    return buff + chars[1]
-
-
-def _prettify_str(target, force_markup=True) -> str:
-    """Prettifies a string.
-
-    All arguments are analogous to `prettify`.
-
-    Returns:
-        Pretty string markup.
-    """
-
-    buff = ""
-    if len(RE_ANSI.findall(target)) > 0:
-        if not force_markup:
-            return target
-
-        target = tim.get_markup(target)
-
-    old_raise_markup = tim.raise_unknown_markup
-    tim.raise_unknown_markup = True
-
-    if len(RE_MARKUP.findall(target)) > 0:
-        try:
-            buff = "'" + tim.get_markup(tim.prettify_markup(target)) + "'"
-
-        except MarkupSyntaxError:
-            target = target.replace("[", r"\[")
-
-    tim.raise_unknown_markup = old_raise_markup
-
-    if buff == "":
-        sanitized = target.replace("\x1b", "\\x1b")
-        buff = f"[str]'{sanitized}'"
-
-    return buff + "[/]"
-
-
-def prettify(
+# Note: This function can be optimized in a lot of ways, primarily the way containers
+#       are treated.
+def prettify(  # pylint: disable=too-many-branches
     target: Any,
     indent: int = 2,
     force_markup: bool = False,
@@ -152,40 +56,73 @@ def prettify(
         A pretty string of the given target.
     """
 
-    if target in dir(builtins) and not target.startswith("__"):
-        target = builtins.__dict__[target]
+    if isinstance(target, str):
+        if RE_MARKUP.match(target) is not None:
+            if parse:
+                return f'"{tim.prettify_markup(target)}"'
 
-    buff = ""
+            return target + "[/]"
+
+        target = repr(target)
+
     if isinstance(target, CONTAINER_TYPES):
-        buff = _prettify_container(
-            target, indent=indent, expand_all=expand_all, force_markup=force_markup
-        )
+        if len(target) < 2 and not expand_all:
+            indent = 0
 
-    elif isinstance(target, str):
-        buff = _prettify_str(target, force_markup=force_markup)
+        indent_str = ("\n" if indent > 0 else "") + indent * " "
 
-    elif isinstance(target, int):
-        buff = f"[int]{target}[/]"
+        chars = str(target)[0], str(target)[-1]
+        buff = chars[0]
 
-    elif isinstance(target, type):
-        buff = f"[type]{target.__name__}[/]"
+        if isinstance(target, (dict, UserDict)):
+            for i, (key, value) in enumerate(target.items()):
+                if i > 0:
+                    buff += ", "
 
-    elif target is None:
-        buff = f"[none]{target}[/]"
+                buff += indent_str + highlight_python(f"{key!r}: ")
 
-    else:
-        try:
-            iterator = iter(target)
-        except TypeError:
-            return str(target)
+                pretty = prettify(
+                    value,
+                    indent=indent,
+                    expand_all=expand_all,
+                    force_markup=force_markup,
+                    parse=False,
+                )
 
-        for inner in iterator:
-            buff += prettify(inner, parse=False)
+                lines = pretty.splitlines()
+                buff += lines[0]
 
-    if parse:
-        try:
-            return tim.parse(buff)
-        except (AnsiSyntaxError, MarkupSyntaxError):
-            pass
+                for line in lines[1:]:
+                    buff += indent_str + line
 
-    return str(buff) or str(target)
+        else:
+            for i, value in enumerate(target):
+                if i > 0:
+                    buff += ", "
+
+                pretty = prettify(
+                    value,
+                    indent=indent,
+                    expand_all=expand_all,
+                    force_markup=force_markup,
+                    parse=False,
+                )
+
+                lines = pretty.splitlines()
+
+                for line in lines:
+                    buff += indent_str + line
+
+        if indent > 0:
+            buff += "\n"
+
+        buff += chars[1]
+
+        if force_markup:
+            return buff
+
+        return tim.parse(buff)
+
+    buff = highlight_python(str(target))
+
+    return tim.parse(buff) if parse else buff

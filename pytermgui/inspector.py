@@ -35,6 +35,7 @@ from inspect import (
 from .parser import tim
 from .terminal import terminal
 from .prettifiers import prettify
+from .highlighters import highlight_python
 from .regex import real_length, RE_MARKUP
 from .widgets import Widget, Container, Label, boxes
 
@@ -291,7 +292,7 @@ class Inspector(Container):
         definition += "[/ code.identifier]" + name + "[/]"
 
         try:
-            definition += self.highlight(str(signature(target))) + ":"  # type: ignore
+            definition += self.highlight(str(signature(target)) + ":")  # type: ignore
 
         except (TypeError, ValueError):
             definition += "(...)"
@@ -405,18 +406,15 @@ class Inspector(Container):
         buff = ""
         for (delim, word) in _split(text):
             stripped = word.strip("'")
+            highlighted = highlight_python(stripped)
 
-            if delim == "[":
-                delim = r"\["
-
-            pretty = prettify(stripped, indent=0, parse=False)
-            if pretty != f"[str]'{stripped}'[/]":
-                buff += delim + pretty
+            if highlighted != stripped:
+                buff += delim + stripped
                 continue
 
-            buff += delim + word
+            buff += delim + stripped
 
-        return buff
+        return highlight_python(buff)
 
     def inspect(self, target: object) -> Inspector:
         """Inspects a given object, and sets self.target to it.

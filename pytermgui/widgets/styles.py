@@ -16,9 +16,11 @@ from typing import Callable, Union, List, Type, TYPE_CHECKING, Any
 
 from ..regex import strip_ansi
 from ..parser import tim, RE_MARKUP
+from ..highlighters import Highlighter
 
 __all__ = [
     "MarkupFormatter",
+    "HighlighterStyle",
     "StyleCall",
     "StyleType",
     "StyleManager",
@@ -37,6 +39,8 @@ if TYPE_CHECKING:
 StyleType = Callable[[int, str], str]
 DepthlessStyleType = Callable[[str], str]
 CharType = Union[List[str], str]
+
+StyleValue = Union[str, "MarkupFormatter", "HighlighterStyle", "StyleCall", StyleType]
 
 
 @dataclass
@@ -76,7 +80,7 @@ class StyleCall:
 
 @dataclass
 class MarkupFormatter:
-    """A style-factory that formats depth & item into the given markup on call.
+    """A style that formats depth & item into the given markup on call.
 
     Useful in Widget styles, such as:
 
@@ -106,6 +110,21 @@ class MarkupFormatter:
         """Returns __repr__, but with markup escaped."""
 
         return self.__repr__().replace("[", r"\[")
+
+
+@dataclass
+class HighlighterStyle:
+    """A style that highlights the items given to it.
+
+    See `pytermgui.highlighters` for more information.
+    """
+
+    highlighter: Highlighter
+
+    def __call__(self, _: int, item: str) -> str:
+        """Highlights the given string."""
+
+        return tim.parse(self.highlighter(item))
 
 
 # There is only a single ancestor here.
@@ -227,9 +246,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
 
         return type(self)(parent, **self.data)
 
-    def _set_as_stylecall(
-        self, key: str, item: str | StyleCall | MarkupFormatter | StyleType
-    ) -> None:
+    def _set_as_stylecall(self, key: str, item: StyleValue) -> None:
         """Sets `self.data[key]` as a `StyleCall` of the given item.
 
         If the item is a string, it will be expanded into a `MarkupFormatter` before
@@ -245,9 +262,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
 
         self.data[key] = StyleCall(self.parent, item)
 
-    def __setitem__(
-        self, key: str, value: str | MarkupFormatter | StyleCall | StyleType
-    ) -> None:
+    def __setitem__(self, key: str, value: StyleValue) -> None:
         """Sets an item in `self.data`.
 
         If the item is a string, it will be expanded into a `MarkupFormatter` before
@@ -256,9 +271,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
 
         self._set_as_stylecall(key, value)
 
-    def __setattr__(
-        self, key: str, value: str | MarkupFormatter | StyleCall | StyleType
-    ) -> None:
+    def __setattr__(self, key: str, value: StyleValue) -> None:
         """Sets an attribute.
 
         It first looks if it can set inside self.data, and defaults back to
@@ -295,7 +308,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
 
         raise AttributeError(key, self.data)
 
-    def __call__(self, **styles: str | StyleCall | MarkupFormatter | StyleType) -> Any:
+    def __call__(self, **styles: StyleValue) -> Any:
         """Allows calling the manager and setting its styles.
 
         For example:
