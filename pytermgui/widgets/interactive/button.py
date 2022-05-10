@@ -6,9 +6,9 @@ from __future__ import annotations
 from typing import Any, Callable, Optional
 
 from ...ansi_interface import MouseAction, MouseEvent
-from ...parser import markup, StyledText
-from ...regex import real_length
 from .. import styles as w_styles
+from ...regex import real_length
+from ...parser import StyledText
 from ...input import keys
 from ..base import Widget
 
@@ -34,12 +34,15 @@ class Button(Widget):
         """Initialize object"""
 
         super().__init__(**attrs)
+        self._selectables_length = 1
+
+        if not any("width" in attr for attr in attrs):
+            self.width = len(label)
 
         self.label = label
         self.onclick = onclick
         self.padding = padding
         self.centered = centered
-        self._selectables_length = 1
 
     def handle_mouse(self, event: MouseEvent) -> bool:
         """Handle a mouse event"""
@@ -71,23 +74,24 @@ class Button(Widget):
 
         delimiters = self._get_char("delimiter")
         assert isinstance(delimiters, list) and len(delimiters) == 2
+
         left, right = delimiters
+        left = left.replace("[", r"\[")
+        delim_len = real_length(left + right)
 
         label = self.label
         if len(self.label) > self.width:
-            label = self.label[:-3] + "..."
+            sli = max(self.width - delim_len - 3 - self.padding, 0)
+            label = self.label[:sli] + "..."
 
         elif self.centered:
-            label = self.label.center(
-                self.width - real_length(left + right) - self.padding
-            )
+            label = self.label.center(self.width)
 
-        word: str = markup.parse(left + label + right)
         if self.selected_index is None:
-            word = self.styles.label(word)
+            style = self.styles.label
         else:
-            word = self.styles.highlight(word)
+            style = self.styles.highlight
 
-        line = StyledText(word + self.padding * " ")
+        line = StyledText(style(left + label + right + self.padding * " "))
 
         return [line]
