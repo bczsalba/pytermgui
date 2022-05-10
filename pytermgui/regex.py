@@ -21,6 +21,7 @@ __all__ = [
 ]
 
 
+@lru_cache
 def strip_ansi(text: str) -> str:
     """Removes ANSI sequences from text.
 
@@ -37,6 +38,7 @@ def strip_ansi(text: str) -> str:
     return RE_ANSI.sub("", text)
 
 
+@lru_cache
 def strip_markup(text: str) -> str:
     """Removes markup tags from text.
 
