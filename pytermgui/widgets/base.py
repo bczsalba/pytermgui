@@ -690,7 +690,12 @@ class Label(Widget):
         """Get lines representing this Label, breaking lines as necessary"""
 
         lines = []
-        broken = break_line(self.styles.value(self.value), self.width)
+        limit = self.width - self.padding
+        broken = break_line(
+            self.styles.value(self.value),
+            limit=limit,
+            non_first_limit=limit - self.non_first_padding,
+        )
 
         for i, line in enumerate(broken):
             if i == 0:

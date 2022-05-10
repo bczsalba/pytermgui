@@ -263,7 +263,7 @@ class Inspector(Container):
         except TypeError:
             return header
 
-        header += f"Located in [code.file !link(file://{file})]{file}"
+        header += f"Located in [code.file !link(file://{file})]{file}[/]"
 
         return header
 
@@ -306,6 +306,7 @@ class Inspector(Container):
             return
 
         doc = getdoc(self.target)
+
         if doc is None:
             return
 
