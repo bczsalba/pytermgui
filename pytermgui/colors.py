@@ -394,8 +394,8 @@ class Color:
 
     system: ColorSystem = field(init=False)
 
-    default_foreground: Color | None = None
-    default_background: Color | None = None
+    default_foreground: Color | None = field(default=None, repr=False)
+    default_background: Color | None = field(default=None, repr=False)
 
     _luminance: float | None = field(init=False, default=None, repr=False)
     _brightness: float | None = field(init=False, default=None, repr=False)
