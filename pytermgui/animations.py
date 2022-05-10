@@ -112,7 +112,9 @@ class Animation:
         if self.direction is Direction.BACKWARD:
             self.state = 1 - self.state
 
-        if not 0.0 <= self.state <= 1.0:
+        self.state = min(self.state, 1.0)
+
+        if not 0.0 <= self.state < 1.0:
             if not self.loop:
                 return True
 
@@ -207,8 +209,7 @@ class AttrAnimation(Animation):
     def step(self, elapsed: float) -> bool:
         """Steps forward in the attribute animation."""
 
-        if self._update_state(elapsed):
-            return True
+        state_finished = self._update_state(elapsed)
 
         step_finished = False
 
@@ -220,7 +221,7 @@ class AttrAnimation(Animation):
         if self.on_step is not None:
             step_finished = self.on_step(self)
 
-        return step_finished
+        return state_finished or step_finished
 
     def finish(self) -> None:
         """Deletes `__ptg_animated__` flag, calls `on_finish`."""
