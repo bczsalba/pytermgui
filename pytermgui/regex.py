@@ -50,6 +50,7 @@ def strip_markup(text: str) -> str:
     return RE_MARKUP.sub("", text)
 
 
+@lru_cache(maxsize=1024)
 def real_length(text: str) -> int:
     """Gets the display-length of text.
 
