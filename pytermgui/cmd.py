@@ -84,6 +84,10 @@ class GetchWindow(AppWindow):
         self._content = ptg.Container("Press any key...", static_width=50)
         self._add_widget(self._content)
 
+        self.width = int(self.terminal.width * 2 / 3)
+        self.height = int(self.terminal.height * 2 / 3)
+        self.center()
+
     def _update(self, _: ptg.Widget, key: str) -> None:
         """Updates window contents on keypress."""
 
@@ -142,6 +146,7 @@ class ColorPickerWindow(AppWindow):
             ).expand(),
         )
 
+        self.width = int(self.terminal.width * 2 / 3)
         self.height = int(self.terminal.height * 2 / 3)
         self.center()
 
@@ -250,6 +255,12 @@ class TIMWindow(AppWindow):
 
         self.bind(ptg.keys.CTRL_R, self._generate_colors)
 
+        self.width = int(self.terminal.width * 2 / 3)
+        self.height = int(self.terminal.height * 2 / 3)
+        self.center()
+
+        self.select(0)
+
     @staticmethod
     def _random_rgb() -> ptg.Color:
         """Returns a random Color."""
@@ -324,22 +335,10 @@ class InspectorWindow(AppWindow):
     def __init__(self, args: Namespace | None = None, **attrs: Any) -> None:
         super().__init__(args, **attrs)
 
-        self._input = ptg.InputField()
+        self._input = ptg.InputField(value="boxes.Box")
 
-        self._output = ptg.Container(
-            (
-                "[ptg.body]Write valid Python import path"
-                + " (like [italic]pytermgui.inspect[/italic])"
-                + ", then press enter!",
-            ),
-            "",
-            "[dim]V",
-            relative_width=0.9,
-            height=self.terminal.height - 12,
-            overflow=ptg.Overflow.SCROLL,
-            vertical_align=ptg.VerticalAlignment.BOTTOM,
-            box="EMPTY",
-        )
+        self._output = ptg.Container(box="EMPTY")
+        self._update()
 
         self._input.bind(ptg.keys.ENTER, self._update)
 
@@ -347,10 +346,16 @@ class InspectorWindow(AppWindow):
             ptg.Container(
                 self._output,
                 "",
-                ptg.Container(self._input, relative_width=0.9),
+                ptg.Container(self._input),
                 box="EMPTY",
             )
         )
+
+        self.width = int(self.terminal.width * 2 / 3)
+        self.height = int(self.terminal.height * 2 / 3)
+        self.center()
+
+        self.select(0)
 
     @staticmethod
     def obj_from_path(path: str) -> object | None:
@@ -594,7 +599,7 @@ def _create_app_picker(manager: ptg.WindowManager) -> ptg.Window:
                 return
 
             existing_windows.append(window)
-            manager.add(window, assign="body", animate=False)
+            manager.add(window, assign="body")
 
             body = manager.layout.body
 
@@ -779,9 +784,9 @@ def run_environment(args: Namespace) -> None:
         if not args.app:
             manager.layout = _create_layout()
 
-            manager.add(_create_header(), assign="header", animate=False)
-            manager.add(app_picker, assign="applications", animate=False)
-            manager.add(_create_footer(manager), assign="footer", animate=False)
+            manager.add(_create_header(), assign="header")
+            manager.add(app_picker, assign="applications")
+            manager.add(_create_footer(manager), assign="footer")
 
             manager.toast(
                 f"[ptg.title]Welcome to the {_title()} [ptg.title]CLI!",
@@ -794,7 +799,7 @@ def run_environment(args: Namespace) -> None:
 
             app = _app_from_short(args.app)
             window = app(args)
-            manager.add(window, assign="body", animate=False)
+            manager.add(window, assign="body")
 
     window = window or manager.focused  # type: ignore
     if window is None or not isinstance(window, AppWindow):
