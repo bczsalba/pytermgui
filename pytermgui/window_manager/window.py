@@ -79,7 +79,6 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         super().__init__(*widgets, **attrs)
 
         self.has_focus: bool = False
-        # self.blur()
 
         self.manager: "WindowManager" | None = None
 

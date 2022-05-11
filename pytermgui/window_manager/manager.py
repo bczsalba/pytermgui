@@ -22,6 +22,16 @@ from .layouts import Layout
 from .compositor import Compositor
 
 
+def _center_during_animation(animation: AttrAnimation) -> None:
+    """Centers a window, when applicable, while animating."""
+
+    window = animation.target
+    assert isinstance(window, Window), window
+
+    if window.centered_axis is not None:
+        window.center()
+
+
 class Edge(Enum):
     """Enum for window edges."""
 
@@ -194,17 +204,6 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
             animate: If set, an animation will be played on the window once it's added.
         """
 
-        def _on_step(animation: AttrAnimation) -> None:
-            """Sets window's height on step, centers it."""
-
-            window = animation.target
-            assert isinstance(window, Window), window
-
-            if window.centered_axis is not None:
-                window.center()
-
-            self.clear_cache(window)
-
         self._windows.insert(0, window)
         window.manager = self
 
@@ -224,14 +223,15 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         if not animate:
             return self
 
-        animator.animate_attr(
-            target=window,
-            attr="width",
-            start=window.width * 1 / 2,
-            end=window.width,
-            duration=200,
-            on_step=_on_step,
-        )
+        if window.height > 1:
+            animator.animate_attr(
+                target=window,
+                attr="height",
+                start=0,
+                end=window.height,
+                duration=300,
+                on_step=_center_during_animation,
+            )
 
         return self
 
@@ -266,8 +266,9 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         animator.animate_attr(
             target=window,
             attr="height",
-            end=window.height * 1 / 4,
-            duration=200,
+            end=0,
+            duration=300,
+            on_step=_center_during_animation,
             on_finish=_on_finish,
         )
 
