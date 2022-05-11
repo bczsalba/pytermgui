@@ -277,25 +277,22 @@ class Inspector(Container):
         else:
             name = getattr(target, "__name__", type(target).__name__)
 
-        definition = "[code.keyword]"
-
         if self.target_type == ObjectType.LIVE:
             target = type(target)
 
         otype = _determine_type(target)
         if otype == ObjectType.CLASS:
-            definition += "class "
+            keyword = "class "
 
         elif otype == ObjectType.FUNCTION:
-            definition += "def "
-
-        definition += "[/ code.identifier]" + name + "[/]"
+            keyword = "def "
 
         try:
-            definition += self.highlight(str(signature(target)) + ":")  # type: ignore
+            assert callable(target)
+            definition = self.highlight(keyword + name + str(signature(target)) + ":")
 
-        except (TypeError, ValueError):
-            definition += "(...)"
+        except (TypeError, ValueError, AssertionError):
+            definition = self.highlight(keyword + name + "(...)")
 
         return Label(definition, parent_align=0, non_first_padding=4)
 

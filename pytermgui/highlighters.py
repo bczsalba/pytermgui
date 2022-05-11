@@ -117,7 +117,7 @@ highlight_python = RegexHighlighter(
         ("comment", "(#.*)"),
         ("keyword", rf"(\b)({_KEYWORD_NAMES}+)\b"),
         ("builtin", rf"\b(?<!\.)({_BUILTIN_NAMES})\b"),
-        ("identifier", r"([^ \.\(]+)(?=\()"),
+        ("identifier", r"([^ \.]+)(?=\()"),
         ("global", r"(?<=\b)([A-Z]\w+)"),
         ("number", r"((?:0x[\da-zA-Z]+)|(?:\d+))"),
     ],
