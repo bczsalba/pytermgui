@@ -11,7 +11,7 @@ that represents that "deep" the Widget is within the hierarchy, and
 from __future__ import annotations
 
 from collections import UserDict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable, Union, List, Type, TYPE_CHECKING, Any
 
 from ..regex import strip_ansi
@@ -95,8 +95,9 @@ class MarkupFormatter:
     """
 
     markup: str
-    ensure_reset: bool = True
     ensure_strip: bool = False
+
+    _markup_cache: dict[str, str] = field(init=False, default_factory=dict)
 
     def __call__(self, depth: int, item: str) -> str:
         """StyleType: Format depth & item into given markup template"""
@@ -104,7 +105,15 @@ class MarkupFormatter:
         if self.ensure_strip:
             item = strip_ansi(item)
 
-        return tim.parse(self.markup.format(depth=depth, item=tim.get_markup(item)))
+        if item in self._markup_cache:
+            item = self._markup_cache[item]
+
+        else:
+            original = item
+            item = tim.get_markup(item)
+            self._markup_cache[original] = item
+
+        return tim.parse(self.markup.format(depth=depth, item=item))
 
     def __str__(self) -> str:
         """Returns __repr__, but with markup escaped."""
