@@ -219,6 +219,7 @@ class AttrAnimation(Animation):
             step_finished = self.on_step(self)
 
         if step_finished or state_finished:
+            setattr(self.target, self.attr, self.value_type(self.end))
             return True
 
         setattr(self.target, self.attr, self.value_type(updated))
