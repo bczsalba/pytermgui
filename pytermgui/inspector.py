@@ -281,6 +281,8 @@ class Inspector(Container):
             target = type(target)
 
         otype = _determine_type(target)
+
+        keyword = ""
         if otype == ObjectType.CLASS:
             keyword = "class "
 
