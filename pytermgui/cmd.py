@@ -499,6 +499,13 @@ def process_args(argv: list[str] | None = None) -> Namespace:
     )
 
     util_group.add_argument(
+        "--highlight",
+        help="Highlight some python-like code syntax.",
+        const="-",
+        nargs="?",
+    )
+
+    util_group.add_argument(
         "--exec", help="Execute some Python code.", const="-", nargs="?"
     )
 
@@ -886,14 +893,11 @@ def main(argv: list[str] | None = None) -> None:
 
     args = process_args(argv)
 
-    if args.getch:
-        args.app = "getch"
-
-    if args.tim:
-        args.app = "tim"
-
-    if args.color:
-        args.app = "color"
+    args.app = args.app or (
+        "getch"
+        if args.getch
+        else ("tim" if args.tim else ("color" if args.color else None))
+    )
 
     if args.app or len(sys.argv) == 1:
         run_environment(args)
@@ -919,6 +923,11 @@ def main(argv: list[str] | None = None) -> None:
             globals()["print"] = ptg.terminal.print
 
             exec(args.exec, locals(), globals())  # pylint: disable=exec-used
+
+        elif args.highlight:
+            text = sys.stdin.read() if args.highlight == "-" else args.highlight
+
+            ptg.tim.print(ptg.highlight_python(text))
 
         elif args.file:
             _interpret_file(args)
