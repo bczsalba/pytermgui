@@ -120,7 +120,6 @@ class Animation:
 
             self._remaining = self.duration
             self.direction = Direction(self.direction.value * -1)
-            return False
 
         return False
 
@@ -216,12 +215,15 @@ class AttrAnimation(Animation):
         assert self.start is not None
         updated = self.start + (self.end * self.state)
 
-        setattr(self.target, self.attr, self.value_type(updated))
-
         if self.on_step is not None:
             step_finished = self.on_step(self)
 
-        return state_finished or step_finished
+        if step_finished or state_finished:
+            return True
+
+        setattr(self.target, self.attr, self.value_type(updated))
+
+        return False
 
     def finish(self) -> None:
         """Deletes `__ptg_animated__` flag, calls `on_finish`."""
