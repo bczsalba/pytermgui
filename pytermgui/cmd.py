@@ -60,6 +60,13 @@ class AppWindow(ptg.Window):
         self._add_widget(ptg.Container(f"[ptg.title]{self.app_title}", box=header_box))
         self._add_widget("")
 
+    def setup(self) -> None:
+        """Centers window, sets its width & height."""
+
+        self.width = int(self.terminal.width * 2 / 3)
+        self.height = int(self.terminal.height * 2 / 3)
+        self.center(store=False)
+
     def on_exit(self) -> None:
         """Called on application exit.
 
@@ -84,9 +91,7 @@ class GetchWindow(AppWindow):
         self._content = ptg.Container("Press any key...", static_width=50)
         self._add_widget(self._content)
 
-        self.width = int(self.terminal.width * 2 / 3)
-        self.height = int(self.terminal.height * 2 / 3)
-        self.center()
+        self.setup()
 
     def _update(self, _: ptg.Widget, key: str) -> None:
         """Updates window contents on keypress."""
@@ -146,9 +151,7 @@ class ColorPickerWindow(AppWindow):
             ).expand(),
         )
 
-        self.width = int(self.terminal.width * 2 / 3)
-        self.height = int(self.terminal.height * 2 / 3)
-        self.center()
+        self.setup()
 
     def _create_rgb_picker(self) -> ptg.Container:
         """Creates the RGB picker 'widget'."""
@@ -255,9 +258,7 @@ class TIMWindow(AppWindow):
 
         self.bind(ptg.keys.CTRL_R, self._generate_colors)
 
-        self.width = int(self.terminal.width * 2 / 3)
-        self.height = int(self.terminal.height * 2 / 3)
-        self.center()
+        self.setup()
 
         self.select(0)
 
@@ -351,9 +352,7 @@ class InspectorWindow(AppWindow):
             )
         )
 
-        self.width = int(self.terminal.width * 2 / 3)
-        self.height = int(self.terminal.height * 2 / 3)
-        self.center()
+        self.setup()
 
         self.select(0)
 
