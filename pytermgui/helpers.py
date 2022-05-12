@@ -105,7 +105,10 @@ def break_line(
 
         if token.sequence == "\x1b[0m":
             sequences = "\x1b[0m"
-            current += sequences
+
+            if len(current) > 0:
+                current += sequences
+
             continue
 
         sequences += token.sequence
@@ -114,7 +117,7 @@ def break_line(
     if current == "":
         return
 
-    if sequences != "":
+    if sequences != "" and not current.endswith("\x1b[0m"):
         current += "\x1b[0m"
 
     yield current

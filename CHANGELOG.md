@@ -1,6 +1,39 @@
+## [6.0.0] - 2022-05-12
+
+### Removals
+- **Remove `Window.allow_fullscreen`, `Window.toggle_fullscreen`**
+
+
+### Refactors
+- **Add new, customizable window blur styles**
+- **Rename all builtin aliases to follow the `domain.item` naming scheme**
+- Implement a new, much faster and `\n` supporting `break_line` function
+- Improve animation stability
+- Start caching `real_length`, `strip_markup` & `strip_ansi` results
+- Refactor `StyledText` to only tokenize on-demand
+- Rewrite the pattern used to match markup to improve how escapes are handled
+- Introduce new, layout based CLI with an RGB colorpicker & inspector
+
+
+### Additions
+- Add `Collapsible` widget (114da3a3d769d6abd72a8727ed036b1e947c0a23)
+- Add new `highlighters` module with `RegexHighlighter` class
+- Add `is_scroll, `is_primary` & `is_secondary` helpers to MouseEvent`
+- Add `Terminal.no_record` context
+- Add `WindowManager.alert` and `WindowManager.float` methods
+- Add layout `assign` parameter to `WindowManager.add`
+- Add window manager `Layout` class
+
+
+### Bugfixes
+- Fix overly greedy optimization in `MarkupLanguage.parse` getting rid of important unsetters
+- Fix `/` not being handled properly in various places
+
+
+
 ## [5.0.0] - 2022-04-19
 
-## Refactors
+### Refactors
 - **Refactor `window_manager.py` into 3 files under `window_manager` submodule**
 - **Refactor the entire animation system**
 - Move scrolling behaviour into new `ScrollableWidget` class
@@ -8,9 +41,9 @@
 - Rename `widgets/layouts` → `widgets/containers`
 
 
-## Additions
-- Add `StyleManager.__call__` method that sets the given **kwargs keys and values
-- Add (currently unused) `Widget.get\_change` helper
+### Additions
+- Add `StyleManager.__call__` method that sets the given \**kwargs keys and values
+- Add (currently unused) `Widget.get_change` helper
 
 
 
@@ -22,7 +55,7 @@
 
 
 ### Additions
-- Add `getch_timeout` method (49ff24445329e6f3581c1cf34c5265225ef765bd) 
+- Add `getch_timeout` method
 
 
 
@@ -32,7 +65,6 @@
 - Fix #45 by catching `errno.EINVAL` on stream truncation
 - Fix `Container` first lines sometimes having wrong indentations in SVG exports
 - Fix `Helpers` app not showing any bindings
-
 
 
 
@@ -123,6 +155,8 @@
 
 
 
+[6.0.0]: https://github.com/bczsalba/pytermgui/compare/5.0.0...6.0.0
+[5.0.0]: https://github.com/bczsalba/pytermgui/compare/4.3.2...5.0.0
 [4.3.2]: https://github.com/bczsalba/pytermgui/compare/4.3.1...4.3.2
 [4.3.1]: https://github.com/bczsalba/pytermgui/compare/4.3.0...4.3.1
 [4.3.0]: https://github.com/bczsalba/pytermgui/compare/4.2.0...4.3.0

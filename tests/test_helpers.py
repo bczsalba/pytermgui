@@ -15,7 +15,7 @@ def test_break_fancy():
         "\x1b[38;5;141m\x1b[1mHel\x1b[0m",
         "\x1b[38;5;141m\x1b[1mlo \x1b[0m",
         "\x1b[38;5;141m\x1b[1mthe\x1b[0m",
-        "\x1b[38;5;141m\x1b[1mre\x1b[3m\x1b[38;5;4m \x1b[0m",
+        "\x1b[38;5;141m\x1b[1mre\x1b[0m\x1b[3m\x1b[38;5;4m \x1b[0m",
         "\x1b[0m\x1b[3m\x1b[38;5;4mwha\x1b[0m",
         "\x1b[0m\x1b[3m\x1b[38;5;4mts \x1b[0m",
         "\x1b[0m\x1b[3m\x1b[38;5;4mup\x1b[38;5;6m\x1b[1m?\x1b[0m",
