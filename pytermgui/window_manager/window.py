@@ -257,7 +257,6 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
         self.title = title
 
-        title = "[wm-title]" + title
         if pad:
             title = " " + title + " "
 
