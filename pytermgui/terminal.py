@@ -295,7 +295,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         """Gets the screen size with origin substracted."""
 
         if self._size is not None:
-            return self.size
+            return self._size
 
         size = get_terminal_size()
         return (size[0], size[1])
