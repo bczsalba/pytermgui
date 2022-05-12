@@ -500,13 +500,20 @@ def process_args(argv: list[str] | None = None) -> Namespace:
 
     util_group.add_argument(
         "--highlight",
-        help="Highlight some python-like code syntax.",
+        help=(
+            "Highlight some python-like code syntax."
+            + " No argument or '-' will read STDIN."
+        ),
+        metavar="SYNTAX",
         const="-",
         nargs="?",
     )
 
     util_group.add_argument(
-        "--exec", help="Execute some Python code.", const="-", nargs="?"
+        "--exec",
+        help="Execute some Python code. No argument or '-' will read STDIN.",
+        const="-",
+        nargs="?",
     )
 
     util_group.add_argument("-f", "--file", help="Interpret a PTG-YAML file.")
