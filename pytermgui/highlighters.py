@@ -5,7 +5,7 @@ import re
 import keyword
 import builtins
 from dataclasses import dataclass, field
-from typing import Pattern, Match, Protocol
+from typing import Pattern, Match, Protocol, Callable
 
 from .regex import RE_MARKUP
 
@@ -56,7 +56,23 @@ class RegexHighlighter(Highlighter):
     """
 
     styles: list[tuple[str, str]]
+    """A list of tuples of (style_alias, pattern_str)."""
+
     prefix: str = ""
+    """Some string to insert before each style alias."""
+
+    pre_formatter: Callable[[str], str] | None = None
+    """A callable that formats the input string, before any highlighting is done to it."""
+
+    match_formatter: Callable[[Match, str], str] | None = None
+    """A callable of (match, content) that gets called on every match.
+
+    Its return value will be used as the content that the already set highlighting will apply
+    to. Useful to trim text, or apply other transformations before inserting it back.
+    """
+
+    re_flags: int = 0
+    """All regex flags to apply when compiling the generated pattern, OR-d (|) together."""
 
     _pattern: Pattern = field(init=False)
     _highlight_cache: dict[str, str] = field(init=False, default_factory=dict)
@@ -70,12 +86,15 @@ class RegexHighlighter(Highlighter):
             pattern += f"(?P<{name}>{ptrn})|"
             names.append(name)
 
-        pattern = pattern.rstrip("|")
+        pattern = pattern[:-1]
 
-        self._pattern = re.compile(pattern)
+        self._pattern = re.compile(pattern, flags=self.re_flags)
 
     def __call__(self, text: str, cache: bool = True) -> str:
         """Highlights the given text, using the combined regex pattern."""
+
+        if self.pre_formatter is not None:
+            text = self.pre_formatter(text)
 
         if cache and text in self._highlight_cache:
             return self._highlight_cache[text]
@@ -94,6 +113,9 @@ class RegexHighlighter(Highlighter):
             if name == "str":
                 if len(RE_MARKUP.findall(content)) > 0:
                     content = content.replace("[", r"\[")
+
+            if self.match_formatter is not None:
+                content = self.match_formatter(matchobj, content)
 
             tag = f"{self.prefix}{name}"
             style = f"[{tag}]{{}}[/{tag}]"
