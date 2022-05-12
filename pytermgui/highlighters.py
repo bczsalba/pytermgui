@@ -117,6 +117,9 @@ class RegexHighlighter(Highlighter):
             if self.match_formatter is not None:
                 content = self.match_formatter(matchobj, content)
 
+                if content == "":
+                    return ""
+
             tag = f"{self.prefix}{name}"
             style = f"[{tag}]{{}}[/{tag}]"
 

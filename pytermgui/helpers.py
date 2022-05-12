@@ -105,6 +105,7 @@ def break_line(
 
         if token.sequence == "\x1b[0m":
             sequences = "\x1b[0m"
+            current += sequences
             continue
 
         sequences += token.sequence

@@ -1122,6 +1122,9 @@ docs/parser/markup_language.png"
             in_sequence = True
 
             if token.ttype is TokenType.UNSETTER:
+                if token.name == "/":
+                    applied_macros = []
+
                 name = token.name[1:]
 
                 if name in self.macros:
