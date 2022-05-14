@@ -31,7 +31,9 @@ except NameError:
     BaseFormatter = object
 
 
-NO_WELCOME = os.getenv("PTG_SILENCE_PRETTY") is not None
+NO_WELCOME = (
+    os.getenv("PTG_SILENCE_PRETTY") is not None or not get_terminal().is_interactive()
+)
 
 __all__ = ["pprint", "install"]
 

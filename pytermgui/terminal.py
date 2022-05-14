@@ -400,6 +400,12 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         return sys.stdin.isatty()
 
+    @staticmethod
+    def is_interactive() -> bool:
+        """Returns whether we are running in some sort of REPL."""
+
+        return hasattr(sys, "ps1")
+
     def replay(self, recorder: Recorder) -> None:
         """Replays a recording."""
 
