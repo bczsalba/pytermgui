@@ -572,6 +572,9 @@ class Container(ScrollableWidget):
         for widget in self._widgets:
             widget.pos = (widget.pos[0], widget.pos[1] + vertical_offset)
 
+            if widget.is_selectable:
+                widget.get_lines()
+
         if has_top_bottom[0]:
             lines.insert(0, _get_border(corners[0], borders[1], corners[1]))
 
