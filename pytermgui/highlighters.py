@@ -133,12 +133,14 @@ class RegexHighlighter(Highlighter):
 
 _BUILTIN_NAMES = "|".join(f"(?:{item})" for item in dir(builtins))
 _KEYWORD_NAMES = "|".join(f"(?:{keyw})" for keyw in keyword.kwlist)
-_STR_DELIMS = "|".join(('(?:"|("""))', "(?:'|('''))"))
 
 highlight_python = RegexHighlighter(
     prefix="code.",
     styles=[
-        ("str", rf"[frbu]*?(?P<str_start>(?:{_STR_DELIMS})).+(?P=str_start)"),
+        (
+            "str",
+            r"([frbu]*(\".*?(?<!\\)\")|(\'.*?(?<!\\)\'))",
+        ),
         ("comment", "(#.*)"),
         ("keyword", rf"(\b)({_KEYWORD_NAMES}+)\b"),
         ("builtin", rf"\b(?<!\.)({_BUILTIN_NAMES})\b"),
