@@ -302,13 +302,12 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         window = self._windows[index]
         traversed = 0
         while window.is_persistent or window is self.focused:
-            index += 1
-
             if index >= len(self._windows):
                 index = 0
 
             window = self._windows[index]
 
+            index += 1
             traversed += 1
             if traversed >= len(self._windows):
                 return self.focused
