@@ -94,6 +94,7 @@ class Animation:
     def __post_init__(self) -> None:
         self.state = 0.0 if self.direction is Direction.FORWARD else 1.0
         self._remaining = self.duration
+        self._is_paused = False
 
     def _update_state(self, elapsed: float) -> bool:
         """Updates the internal float state of the animation.
@@ -104,6 +105,9 @@ class Animation:
         Returns:
             True if the animation deems itself complete, False otherwise.
         """
+
+        if self._is_paused:
+            return False
 
         self._remaining -= elapsed * 1000
 
@@ -122,6 +126,16 @@ class Animation:
             self.direction = Direction(self.direction.value * -1)
 
         return False
+
+    def pause(self, setting: bool = True) -> None:
+        """Pauses the animation."""
+
+        self._is_paused = setting
+
+    def resume(self) -> None:
+        """Resumes the animation."""
+
+        self.pause(False)
 
     def step(self, elapsed: float) -> bool:
         """Updates animation state.
@@ -246,6 +260,11 @@ class Animator:
         """Initializes an animator."""
 
         self._animations: list[Animation] = []
+
+    def __contains__(self, item: object) -> bool:
+        """Returns whether the item is inside _animations."""
+
+        return item in self._animations
 
     @property
     def is_active(self) -> bool:
