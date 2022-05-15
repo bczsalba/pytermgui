@@ -580,6 +580,7 @@ docs/parser/markup_language.png"
 
         self.alias("code", "dim @black")
         self.alias("code.str", "142")
+        self.alias("code.multiline_str", "code.str")
         self.alias("code.none", "167")
         self.alias("code.global", "214")
         self.alias("code.number", "175")

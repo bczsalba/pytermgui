@@ -110,7 +110,7 @@ class RegexHighlighter(Highlighter):
             content = groups.get(str(name), None)
 
             # Literalize "[" characters to avoid TIM parsing them
-            if name == "str":
+            if name in ["str", "multiline_str"]:
                 if len(RE_MARKUP.findall(content)) > 0:
                     content = content.replace("[", r"\[")
 
@@ -137,6 +137,7 @@ _KEYWORD_NAMES = "|".join(f"(?:{keyw})" for keyw in keyword.kwlist)
 highlight_python = RegexHighlighter(
     prefix="code.",
     styles=[
+        ("multiline_str", r"([frbu]*)\"{3}([\s\S]*?)(?<!\\)\"{3}"),
         (
             "str",
             r"([frbu]*(\".*?(?<!\\)\")|(\'.*?(?<!\\)\'))",
