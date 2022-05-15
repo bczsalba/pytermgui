@@ -728,6 +728,24 @@ docs/parser/markup_language.png"
 
             return None
 
+        def _generate_color(
+            parts: list[str], code: str
+        ) -> tuple[str, TokenType, Color]:
+            """Generates a color token."""
+
+            data: Color
+            if len(parts) == 1:
+                data = StandardColor.from_ansi(code)
+                name = data.name
+                ttype = TokenType.COLOR
+
+            else:
+                data = str_to_color(code)
+                name = data.name
+                ttype = TokenType.COLOR
+
+            return name, ttype, data
+
         end = 0
         start = 0
         cursor = 0
@@ -770,14 +788,7 @@ docs/parser/markup_language.png"
             # Colors
             if ttype is None:
                 with suppress(ColorSyntaxError):
-                    if len(parts) == 1:
-                        data = StandardColor.from_ansi(code)
-                        name = data.name
-                        ttype = TokenType.COLOR
-                    else:
-                        data = str_to_color(code)
-                        name = data.name
-                        ttype = TokenType.COLOR
+                    name, ttype, data = _generate_color(parts, code)
 
             if name is None or ttype is None or data is None:
                 if len(parts) != 2:

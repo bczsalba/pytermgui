@@ -37,6 +37,7 @@ __all__ = [
     "str_to_color",
     "Color",
     "IndexedColor",
+    "StandardColor",
     "RGBColor",
     "HEXColor",
 ]
@@ -617,6 +618,21 @@ class StandardColor(IndexedColor):
 
     system = ColorSystem.STANDARD
 
+    @property
+    def name(self) -> str:
+        """Returns the markup-compatible name for this color."""
+
+        index = name = int(self.value)
+
+        # Normal colors
+        if 30 <= index <= 47:
+            name -= 30
+
+        elif 90 <= index <= 107:
+            name -= 82
+
+        return ("@" if self.background else "") + str(name)
+
     @classmethod
     def from_ansi(cls, code: str) -> StandardColor:
         """Creates a standard color from the given ANSI code.
@@ -624,7 +640,24 @@ class StandardColor(IndexedColor):
         These codes have to be a digit ranging between 31 and 47.
         """
 
-        return cls(str(int(code) - 30))
+        if not code.isdigit():
+            raise ColorSyntaxError(
+                f"Standard color codes must be digits, not {code!r}."
+            )
+
+        code_int = int(code)
+
+        if not 30 <= code_int <= 47 and not 90 <= code_int <= 107:
+            raise ColorSyntaxError(
+                f"Standard color codes must be in the range ]30;47[ or ]90;107[, got {code_int!r}."
+            )
+
+        is_background = 40 <= code_int <= 47 or 100 <= code_int <= 107
+
+        if is_background:
+            code_int -= 10
+
+        return cls(str(code_int), background=is_background)
 
     @classmethod
     def from_rgb(cls, rgb: tuple[int, int, int]) -> StandardColor:
@@ -643,6 +676,12 @@ class StandardColor(IndexedColor):
 
         # Find the least-different color in the table
         index = min(range(16), key=lambda i: _get_color_difference(rgb, COLOR_TABLE[i]))
+
+        if index > 7:
+            index += 82
+        else:
+            index += 30
+
         color = cls(str(index))
 
         _COLOR_MATCH_CACHE[rgb] = color
@@ -654,12 +693,6 @@ class StandardColor(IndexedColor):
         r"""Returns an ANSI sequence representing this color."""
 
         index = int(self.value)
-
-        if index <= 7:
-            index += 30
-
-        else:
-            index = index + 82
 
         if self.background:
             index += 10

@@ -1,6 +1,7 @@
 from pytermgui import (
     str_to_color,
     IndexedColor,
+    StandardColor,
     RGBColor,
     HEXColor,
     terminal,
@@ -46,7 +47,8 @@ def test_fg_named():
     with set_colorsystem(terminal, ColorSystem.STANDARD):
         color = str_to_color("green")
 
-        assert isinstance(color, IndexedColor)
+        assert isinstance(color, StandardColor)
+        assert not color.background
         assert color.name == "2"
         assert color.sequence == "\x1b[32m"
 
