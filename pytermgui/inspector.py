@@ -20,7 +20,7 @@ docstring, and also use the method's fully qualified name.
 from __future__ import annotations
 
 from enum import Enum, auto as _auto
-from typing import Any, Iterator
+from typing import Any
 
 from inspect import (
     signature,
@@ -298,26 +298,30 @@ class Inspector(Container):
 
         return Label(definition, parent_align=0, non_first_padding=4)
 
-    def _get_docs(self, padding: int) -> Iterator[Label]:
+    def _get_docs(self, padding: int) -> Label:
         """Returns a list of Labels of the object's documentation."""
 
+        default = Label("...", style="102")
         if self.target.__doc__ is None:
-            return
+            return default
 
         doc = getdoc(self.target)
 
         if doc is None:
-            return
+            return default
 
-        for i, line in enumerate(doc.splitlines()):
-            if i == 1 and not self.show_full_doc:
-                return
+        lines = doc.splitlines()
+        if not self.show_full_doc and len(lines) > 0:
+            lines = [lines[0]]
 
-            line = line.replace("[", r"\[")
+        trimmed = "\n".join(lines)
 
-            yield Label(
-                "[102]" + line, parent_align=0, padding=padding, non_first_padding=4
-            )
+        return Label(
+            trimmed.replace("[", r"\["),
+            style="102",
+            parent_align=0,
+            padding=padding,
+        )
 
     def _get_keys(self) -> list[str]:
         """Gets all inspectable keys of an object.
@@ -436,8 +440,7 @@ class Inspector(Container):
 
         padding = 0 if self.target_type is ObjectType.MODULE else 4
 
-        for item in self._get_docs(padding):
-            self.lazy_add(item)
+        self.lazy_add(self._get_docs(padding))
 
         keys = self._get_keys()
 
