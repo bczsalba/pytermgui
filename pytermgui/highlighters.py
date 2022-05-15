@@ -147,6 +147,6 @@ highlight_python = RegexHighlighter(
         ("builtin", rf"\b(?<!\.)({_BUILTIN_NAMES})\b"),
         ("identifier", r"([^ \.=]+)(?=\()"),
         ("global", r"(?<=\b)([A-Z]\w+)"),
-        ("number", r"((?:0x[\da-zA-Z]+)|(?:\d+))"),
+        ("number", r"(?<=\b)((?:0x[\da-zA-Z]+)|(?:\d+))"),
     ],
 )
