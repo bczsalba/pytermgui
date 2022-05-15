@@ -98,7 +98,7 @@ def main(argv: list[str] | None = None) -> None:
         # Since header is the first defined slot, this will assign to the correct place
         manager.add(header)
 
-        footer = ptg.Window(ptg.Button("Quit", lambda *_: manager.exit()), box="EMPTY")
+        footer = ptg.Window(ptg.Button("Quit", lambda *_: manager.stop()), box="EMPTY")
 
         # Since the second slot, body was not assigned to, we need to manually assign
         # to "footer"
