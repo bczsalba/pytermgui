@@ -618,6 +618,15 @@ class StandardColor(IndexedColor):
     system = ColorSystem.STANDARD
 
     @classmethod
+    def from_ansi(cls, code: str) -> StandardColor:
+        """Creates a standard color from the given ANSI code.
+
+        These codes have to be a digit ranging between 31 and 47.
+        """
+
+        return cls(str(int(code) - 30))
+
+    @classmethod
     def from_rgb(cls, rgb: tuple[int, int, int]) -> StandardColor:
         """Creates a color with the closest-matching xterm index, based on rgb.
 

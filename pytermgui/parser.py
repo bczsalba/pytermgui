@@ -118,7 +118,7 @@ from enum import Enum, auto as _auto
 from typing import Iterator, Callable, Tuple, List
 
 from .terminal import get_terminal
-from .colors import str_to_color, Color
+from .colors import str_to_color, Color, StandardColor
 from .regex import RE_ANSI, RE_MARKUP, RE_MACRO, RE_LINK
 from .exceptions import MarkupSyntaxError, ColorSyntaxError, AnsiSyntaxError
 
@@ -770,9 +770,14 @@ docs/parser/markup_language.png"
             # Colors
             if ttype is None:
                 with suppress(ColorSyntaxError):
-                    data = str_to_color(code)
-                    name = data.name
-                    ttype = TokenType.COLOR
+                    if len(parts) == 1:
+                        data = StandardColor.from_ansi(code)
+                        name = data.name
+                        ttype = TokenType.COLOR
+                    else:
+                        data = str_to_color(code)
+                        name = data.name
+                        ttype = TokenType.COLOR
 
             if name is None or ttype is None or data is None:
                 if len(parts) != 2:
@@ -908,9 +913,10 @@ docs/parser/markup_language.png"
             if not isinstance(new.data, Color) or not isinstance(previous.data, Color):
                 return False
 
-            return previous.data.background == new.data.background and type(
-                previous
-            ) is type(new)
+            return (
+                type(previous) is type(new)
+                and previous.data.background == new.data.background
+            )
 
         if (
             self.should_cache
@@ -963,12 +969,14 @@ docs/parser/markup_language.png"
 
             if token.sequence is None:
                 applied = sequence
-                for item in previous_sequence.split("\x1b"):
-                    if item == "" or item[1:-1] in self.unsetters.values():
-                        continue
 
-                    item = f"\x1b{item}"
-                    applied = applied.replace(item, "")
+                if not out.endswith("\x1b[0m"):
+                    for item in previous_sequence.split("\x1b"):
+                        if item == "" or item[1:-1] in self.unsetters.values():
+                            continue
+
+                        item = f"\x1b{item}"
+                        applied = applied.replace(item, "")
 
                 out += applied + _apply_macros(token.name)
                 previous_sequence = sequence
