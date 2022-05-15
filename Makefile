@@ -15,6 +15,9 @@ format:
 lint:
 	pylint $(PROJECT)
 
+type:
+	mypy $(PROJECT)
+
 list-todo:
 	python3 utils/list_todos.py "`grep -rnw . -e '# TODO'`"
 
@@ -24,7 +27,7 @@ test:
 cover:
 	coverage html
 
-test-cover:
+test-cov:
 	make test cover
 
 docs:
