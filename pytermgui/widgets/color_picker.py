@@ -205,6 +205,12 @@ class ColorPicker(Container):
         if self.show_output:
             self._add_widget(self._output)
 
+    @property
+    def selectables_length(self) -> int:
+        """Returns either the button count or 1."""
+
+        return max(super().selectables_length, 1)
+
     def handle_mouse(self, event: MouseEvent) -> bool:
         """Handles mouse events.
 
