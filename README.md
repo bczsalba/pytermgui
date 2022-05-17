@@ -89,34 +89,41 @@ Under the hood it calls `tim.setup_displayhook()` with no arguments. For more gr
 
 PyTermGUI offers an `Inspector` widget, as well as a higher level wrapper function, `inspect` that can be used to see detailed & pretty information on any Python object, including its documentation, methods, clickable hyperlink to its source & more!
 
-```python3
->>> from pytermgui import inspect, Container
->>> inspect(Container.scroll_end)
-```
+It can be used programatically using the `ptg.inspect` name, or from the cli by running `ptg -i <import_path>`. You can also use the `-e` flag to inspect the result of an expression after executing it.
+
+**Pro Tip**: All `PyTermGUI` objects are included in the CLI inspection namespace, so you can use `Container` instead of `pytermgui.Container`.
+
 
 ![inspect example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/inspect.png)
 
-See the [docs](https://ptg.bczsalba.com/pytermgui/inspector.html) or `inspect(inspect)` for more info!
+See the [docs](https://ptg.bczsalba.com/pytermgui/inspector.html) or `ptg -i inspect` for more info!
 
 
-### Fully featured TUIs
+### Creating useful and beautiful TUIs, quickly
 
-You can check out an example TUI built into the library itself using the `ptg` command! It features some utility applications for PyTermGUI, such as an `xterm-256` colorpicker, a TIM sandbox and a simple key-getter.
+You can check out an example TUI built into the library itself using the `ptg` command! It features some utility applications for PyTermGUI, such as an `xterm-256` & rgb colorpicker, a TIM sandbox, an inspector and a simple key-getter.
 
-You can also follow a how-to guide on creating a simple application in the [docs](https://ptg.bczsalba.com/pytermgui.html).
-
-Our [WindowManager](https://ptg.bczsalba.com/pytermgui/window_manager.html) implementation lets you create desktop-like interfaces, including mouse support, draggable, resizable and fullscreen-capable windows, animations and more!
+You can also follow a how-to guide on creating a simple application in the [docs](https://ptg.bczsalba.com/pytermgui.html), or look at some [examples](https://github.com/bczsalba/pytermgui/tree/master/examples).
 
 ![TUI example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/tui.png)
 
 
-### High factor of compatibility
+### Compatibility
 
 Using some color math, PyTermGUI provides graceful color degradation from RGB all the way to the standard, `xterm-16` colors. This allows you to write your program with the exact colors you want, and let the library worry about the end-user's terminal capabilities.
 
 <p align="center">
 <img alt="Graceful degradation" src="https://github.com/bczsalba/pytermgui/raw/master/assets/readme/degradation.png">
 </p>
+
+
+### NO_COLOR=1 support that doesn't suck
+
+Most libraries completely omit colors when [NO_COLOR](https://no-color.org) is set. This _works_ but completely kills legibility since it doesn't keep any contrast. PyTermGUI uses a human-vision based lightness model to convert any color into a greyscale variant, so your interface will remain usable even with no colors available.
+
+It also happens to be a great way to test contrast between colors while making a new TUI. If differences between elements aren't obvious in `NO_COLOR=1`, they won't be obvious in normal colors.
+
+![NO_COLOR example](https://github.com/bczsalba/pytermgui/raw/master/assets/no_color.png)
 
 
 ## No constraints
@@ -198,6 +205,8 @@ For completeness' sake, here is the `Window` we just created:
 ## The `ptg` command line utility
 
 As mentioned above, the `ptg` CLI tool is a great example for both the capabilities of the library and how to make use of it. It also provides some simpler helpers, such as `--size` to retrieve your terminal dimensions, and the `--file` argument which allows you to load and play around with a PTG YAML file.
+
+See `ptg -h` for more info.
 
 
 ## Documentation!
