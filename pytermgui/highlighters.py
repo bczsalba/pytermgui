@@ -130,6 +130,21 @@ class RegexHighlighter(Highlighter):
 
         return text
 
+    def __fancy_repr__(self) -> Generator[str | dict[str, str | bool]]:
+        """Yields some fancy looking repl text."""
+
+        preview = self("highlight_python()") + "\x1b[0m"
+        pattern = self._pattern.pattern
+
+        if len(pattern) > 40:
+            pattern = pattern[:38] + "..."
+
+        yield f"<{type(self).__name__} pattern: {pattern!r}, preview: "
+
+        yield {"text": str(preview), "highlight": False}
+
+        yield ">"
+
 
 _BUILTIN_NAMES = "|".join(f"(?:{item})" for item in dir(builtins))
 _KEYWORD_NAMES = "|".join(f"(?:{keyw})" for keyw in keyword.kwlist)
@@ -143,7 +158,7 @@ highlight_python = RegexHighlighter(
             r"([frbu]*(\".*?(?<!\\)\")|(\'.*?(?<!\\)\'))",
         ),
         ("comment", "(#.*)"),
-        ("keyword", rf"(\b)({_KEYWORD_NAMES}+)\b"),
+        ("keyword", rf"\b(?<![\.\-])()({_KEYWORD_NAMES}+)\b"),
         ("builtin", rf"\b(?<!\.)({_BUILTIN_NAMES})\b"),
         ("identifier", r"([^ \.=]+)(?=\()"),
         ("global", r"(?<=\b)([A-Z]\w+)"),

@@ -166,7 +166,7 @@ def prettify(  # pylint: disable=too-many-branches
 
         return tim.parse(buff)
 
-    if hasattr(target, "__fancy_repr__"):
+    if hasattr(target, "__fancy_repr__") and not isinstance(target, type):
         buff = _build_fancy_repr(target)
 
     else:
