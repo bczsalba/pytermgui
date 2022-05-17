@@ -1,3 +1,21 @@
+## [6.1.0] - 2022-05-17
+
+## Additions
+- Introduce `__fancy_repl__` protocol
+- Add `Color` format specifiers
+- Add `Animation.pause` & `Animation.unpause`
+
+
+## Bugfixes
+- Fix scrolled widgets not getting positioned correctly
+- Fix an issue with 2-bit colors being interpreted as 8-bit ones
+
+
+## Refactors
+- Improve `highlight_python` vs string
+
+
+
 ## [6.0.0] - 2022-05-12
 
 ### Removals
@@ -155,6 +173,7 @@
 
 
 
+[6.0.0]: https://github.com/bczsalba/pytermgui/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/bczsalba/pytermgui/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/bczsalba/pytermgui/compare/4.3.2...5.0.0
 [4.3.2]: https://github.com/bczsalba/pytermgui/compare/4.3.1...4.3.2
