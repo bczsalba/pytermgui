@@ -27,6 +27,7 @@ from .exporters import *
 from .animations import *
 from .serializer import *
 from .exceptions import *
+from .fancy_repr import *
 from .prettifiers import *
 from .highlighters import *
 from .file_loaders import *

@@ -19,6 +19,7 @@ from functools import lru_cache, cached_property
 from typing import TYPE_CHECKING, Type, Literal, Generator
 
 from .input import getch
+from .fancy_repr import FancyYield
 from .color_table import COLOR_TABLE
 from .exceptions import ColorSyntaxError
 from .terminal import terminal, ColorSystem
@@ -337,7 +338,7 @@ class IndexedColor(Color):
                 f"IndexedColor value has to fit in range 0-255, got {self.value!r}."
             )
 
-    def __fancy_repr__(self) -> Generator[str | dict[str, str | bool], None, None]:
+    def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         """Yields a fancy looking string."""
 
         yield f"<{type(self).__name__} value: {self.value}, preview: "
@@ -518,7 +519,7 @@ class RGBColor(Color):
         rgb = tuple(int(num) for num in self.value.split(";"))
         self._rgb = rgb[0], rgb[1], rgb[2]
 
-    def __fancy_repr__(self) -> Generator[str | dict[str, str | bool], None, None]:
+    def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         """Yields a fancy looking string."""
 
         yield (

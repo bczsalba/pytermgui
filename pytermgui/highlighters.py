@@ -1,13 +1,17 @@
 """This module provides the `Highlighter` class, and some pre-configured instances."""
 
 from __future__ import annotations
+
 import re
 import keyword
 import builtins
 from dataclasses import dataclass, field
-from typing import Pattern, Match, Protocol, Callable
+from typing import Pattern, Match, Protocol, Callable, Generator, TYPE_CHECKING
 
 from .regex import RE_MARKUP
+
+if TYPE_CHECKING:
+    from .fancy_repr import FancyYield
 
 __all__ = [
     "Highlighter",
@@ -130,7 +134,7 @@ class RegexHighlighter(Highlighter):
 
         return text
 
-    def __fancy_repr__(self) -> Generator[str | dict[str, str | bool]]:
+    def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         """Yields some fancy looking repl text."""
 
         preview = self("highlight_python()") + "\x1b[0m"

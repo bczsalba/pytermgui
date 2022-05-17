@@ -7,56 +7,16 @@ markup magic to create prettier representations of whatever is given.
 from __future__ import annotations
 
 from collections import UserDict, UserList
-from typing import Any, Protocol, Generator
+from typing import Any
 
 from .parser import RE_MARKUP, tim
 from .highlighters import highlight_python
+from .fancy_repr import supports_fancy_repr, build_fancy_repr
 
 
 __all__ = ["prettify"]
 
 CONTAINER_TYPES = (list, dict, set, tuple, UserDict, UserList)
-
-
-class SupportsFancyRepr(Protocol):  # pylint: disable=too-few-public-methods
-    """An object that supports the `__fancy_repr__` dunder."""
-
-    def __fancy_repr__(self) -> Generator[str | dict[str, str | bool], None, None]:
-        """Yields some fancy text.
-
-        Each value yielded can be one of two types. If a dictionary is yielded,
-        it will be assumed to have `text` and `highlight` fields. `text` will be
-        the string included in the repr, and `highlight` will be a boolean describing
-        whether the part should be highlighted. At the moment highlighting is done by
-        `highlight_python`, but this might be configurable once more highlighters are
-        available.
-
-        If a `str` is yielded, it is assumed to be a shorthand for:
-
-            {"text": <your_text>, "highlight": True}
-        """
-
-
-def _build_fancy_repr(obj: SupportsFancyRepr) -> str:
-    """Interprets objects with the `__fancy_repr__` protocol."""
-
-    output = ""
-    for item in obj.__fancy_repr__():
-        if isinstance(item, str):
-            output += highlight_python(item)
-            continue
-
-        text = item["text"]
-        assert isinstance(text, str)
-
-        highlight = item["highlight"]
-
-        if highlight:
-            text = highlight_python(text)
-
-        output += text
-
-    return output
 
 
 # Note: This function can be optimized in a lot of ways, primarily the way containers
@@ -166,8 +126,8 @@ def prettify(  # pylint: disable=too-many-branches
 
         return tim.parse(buff)
 
-    if hasattr(target, "__fancy_repr__") and not isinstance(target, type):
-        buff = _build_fancy_repr(target)
+    if supports_fancy_repr(target):
+        buff = build_fancy_repr(target)
 
     else:
         buff = highlight_python(str(target))
