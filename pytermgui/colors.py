@@ -388,6 +388,20 @@ class Color:
     Args:
         value: The data contained within this color.
         background: Whether this color will represent a color.
+
+    These colors are all formattable. There are currently 2 'spec' strings:
+    - f"{my_color:tim}" -> Returns self.markup
+    - f"{my_color:seq}" -> Returns self.sequence
+
+    They can thus be used in TIM strings:
+
+        >>> ptg.tim.parse("[{my_color:tim}]Hello")
+        '[<my_color.markup>]Hello'
+
+    And in normal, ANSI coded strings:
+
+        >>> "{my_color:seq}Hello"
+        '<my_color.sequence>Hello'
     """
 
     value: str
@@ -401,6 +415,17 @@ class Color:
     _luminance: float | None = field(init=False, default=None, repr=False)
     _brightness: float | None = field(init=False, default=None, repr=False)
     _rgb: tuple[int, int, int] | None = field(init=False, default=None, repr=False)
+
+    def __format__(self, spec: str) -> str:
+        """Formats the color by the given specification."""
+
+        if spec == "tim":
+            return self.markup
+
+        if spec == "seq":
+            return self.sequence
+
+        return repr(self)
 
     @classmethod
     def from_rgb(cls, rgb: tuple[int, int, int]) -> Color:
@@ -417,6 +442,12 @@ class Color:
         """Returns the ANSI sequence representation of the color."""
 
         raise NotImplementedError
+
+    @cached_property
+    def markup(self) -> str:
+        """Returns the TIM representation of this color."""
+
+        return ("@" if self.background else "") + self.value
 
     @cached_property
     def rgb(self) -> tuple[int, int, int]:
@@ -737,11 +768,41 @@ class RGBColor(Color):
         rgb = tuple(int(num) for num in self.value.split(";"))
         self._rgb = rgb[0], rgb[1], rgb[2]
 
+    def __fancy_repr__(self) -> Generator[str | dict[str, str | bool], None, None]:
+        """Yields a fancy looking string."""
+
+        yield (
+            f"<{type(self).__name__} red: {self.red}, green: {self.green},"
+            + f" blue: {self.blue}, preview: "
+        )
+
+        yield {"text": f"{self:seq}{PREVIEW_CHAR}\x1b[0m", "highlight": False}
+
+        yield ">"
+
     @classmethod
     def from_rgb(cls, rgb: tuple[int, int, int]) -> RGBColor:
         """Returns an `RGBColor` from the given triplet."""
 
         return cls(";".join(map(str, rgb)))
+
+    @cached_property
+    def red(self) -> int:
+        """Returns the red component of this color."""
+
+        return self.rgb[0]
+
+    @cached_property
+    def green(self) -> int:
+        """Returns the green component of this color."""
+
+        return self.rgb[1]
+
+    @cached_property
+    def blue(self) -> int:
+        """Returns the blue component of this color."""
+
+        return self.rgb[2]
 
     @property
     def sequence(self) -> str:
@@ -779,6 +840,24 @@ class HEXColor(RGBColor):
 
         assert len(self._rgb) == 3
 
+    @property
+    def red(self) -> int:
+        """Returns the red component of this color."""
+
+        return int(self.value[1:3])
+
+    @property
+    def green(self) -> int:
+        """Returns the green component of this color."""
+
+        return int(self.value[3:5])
+
+    @property
+    def blue(self) -> int:
+        """Returns the blue component of this color."""
+
+        return int(self.value[5:7])
+
 
 SYSTEM_TO_TYPE: dict[ColorSystem, Type[Color]] = {
     ColorSystem.NO_COLOR: GreyscaleRampColor,
@@ -806,9 +885,9 @@ def _get_color_difference(
     delta_blue = blue1 - blue2
 
     return sqrt(
-        (2 + (redmean / 256)) * (delta_red**2)
-        + 4 * (delta_green**2)
-        + (2 + (255 - redmean) / 256) * (delta_blue**2)
+        (2 + (redmean / 256)) * (delta_red ** 2)
+        + 4 * (delta_green ** 2)
+        + (2 + (255 - redmean) / 256) * (delta_blue ** 2)
     )
 
 
