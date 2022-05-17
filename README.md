@@ -243,9 +243,9 @@ The `examples/` directory contains some nice showcases of the library. Here are 
 
 ### The TIM playground app
 
-> Note: Use `ptg --markapp` to try
+> Note: Use `ptg -t` to try
 
-[![markapp](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/demos/markapp.png)](pytermgui/cmd.py)
+[![TIM](https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/demos/timwin.png)](pytermgui/cmd.py)
 
 ### A simple window manager demo in 13 lines of code, lifted from the docs
 
