@@ -1,7 +1,7 @@
 ## [6.1.0] - 2022-05-17
 
 ## Additions
-- Introduce `__fancy_repl__` protocol
+- Introduce `__fancy_repr__` protocol
 - Add `Color` format specifiers
 - Add `Animation.pause` & `Animation.unpause`
 
