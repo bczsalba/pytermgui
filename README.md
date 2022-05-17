@@ -123,7 +123,7 @@ Most libraries completely omit colors when [NO_COLOR](https://no-color.org) is s
 
 It also happens to be a great way to test contrast between colors while making a new TUI. If differences between elements aren't obvious in `NO_COLOR=1`, they won't be obvious in normal colors.
 
-![NO_COLOR example](https://github.com/bczsalba/pytermgui/raw/master/assets/no_color.png)
+![NO_COLOR example](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/no_color.png)
 
 
 ## No constraints
