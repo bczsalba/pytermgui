@@ -69,10 +69,6 @@ def pprint(
 
     pretty = []
     for item in items:
-        if hasattr(item, "get_lines"):
-            pretty.append("\n".join(item.get_lines()))
-            continue
-
         pretty.append(
             prettify(
                 item,

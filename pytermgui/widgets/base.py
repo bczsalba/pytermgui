@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from inspect import signature
-from typing import Callable, Optional, Type, Iterator, Any, Union
+from typing import Callable, Optional, Type, Iterator, Any, Union, Generator
 
 from ..input import keys
 from ..parser import markup
@@ -155,6 +155,13 @@ class Widget:  # pylint: disable=too-many-public-methods
         """
 
         return self.debug()
+
+    def __fancy_repr__(self) -> Generator[str, None, None]:
+        """Yields the repr of this object, then a preview of it."""
+
+        yield self.debug()
+        yield "\n\n"
+        yield {"text": "\n".join(self.get_lines()), "highlight": False}
 
     def __iter__(self) -> Iterator[Widget]:
         """Return self for iteration"""
