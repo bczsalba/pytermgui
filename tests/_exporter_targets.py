@@ -203,7 +203,7 @@ SVG_TARGET = """\
     </style>
     <rect x="50" y="20"
         rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round"
-        width="784.0" height="529.375" fill="#000000" />
+        width="799.6800000000001" height="529.375" fill="#000000" />
     <circle cx="65" cy="35" r="6" fill="#ff6159"/>
     <circle cx="85" cy="35" r="6" fill="#ffbd2e"/>
     <circle cx="105" cy="35" r="6" fill="#28c941"/>
