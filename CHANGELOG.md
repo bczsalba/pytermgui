@@ -1,17 +1,34 @@
+## [6.2.0] - 2022-05-24
+
+### Bugfixes
+- Fix `StandardColor` HEX and RGB being indexed from the wrong pool
+- Fix overly greedy ~~yeeting~~ optimization of `ttype=POSITION` tokens
+- Fix `ttype=POSITION` tokens acting unpredictably when multiple were present in a string
+
+
+### Additions
+- Add `WindowManager.autorun` attribute
+
+
+### Refactors
+- Implement usage of SVG tags when exporting
+
+
+
 ## [6.1.0] - 2022-05-17
 
-## Additions
+### Additions
 - Introduce `__fancy_repr__` protocol
 - Add `Color` format specifiers
 - Add `Animation.pause` & `Animation.unpause`
 
 
-## Bugfixes
+### Bugfixes
 - Fix scrolled widgets not getting positioned correctly
 - Fix an issue with 2-bit colors being interpreted as 8-bit ones
 
 
-## Refactors
+### Refactors
 - Improve `highlight_python` vs string
 
 
@@ -173,7 +190,8 @@
 
 
 
-[6.0.0]: https://github.com/bczsalba/pytermgui/compare/6.0.0...6.1.0
+[6.2.0]: https://github.com/bczsalba/pytermgui/compare/6.1.0...6.2.0
+[6.1.0]: https://github.com/bczsalba/pytermgui/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/bczsalba/pytermgui/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/bczsalba/pytermgui/compare/4.3.2...5.0.0
 [4.3.2]: https://github.com/bczsalba/pytermgui/compare/4.3.1...4.3.2

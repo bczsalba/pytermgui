@@ -541,7 +541,7 @@ def to_svg(  # pylint: disable=too-many-locals
         # Dimensions
         total_width=terminal_width + 2 * SVG_MARGIN_LEFT,
         total_height=terminal_height + 2 * SVG_MARGIN_TOP,
-        terminal_width=terminal_width,
+        terminal_width=terminal_width * 1.02,
         terminal_height=terminal_height - 15,
         # Styles
         background=default_back,
