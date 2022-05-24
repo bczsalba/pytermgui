@@ -16,6 +16,9 @@ CHAR_WIDTH = 0.62
 CHAR_HEIGHT = 1.15
 FONT_SIZE = 15
 
+FONT_WIDTH = FONT_SIZE * CHAR_WIDTH
+FONT_HEIGHT = FONT_SIZE * CHAR_HEIGHT
+
 HTML_FORMAT = """\
 <html>
     <head>
@@ -50,81 +53,38 @@ HTML_FORMAT = """\
     </body>
 </html>"""
 
-SVG_FORMAT = """\
-<svg width="{total_width}" height="{total_height}" viewBox="0 0 {total_width} {total_height}"
-     xmlns="http://www.w3.org/2000/svg">
-    <style>
-        body {{
-            --ptg-background: {background};
-            --ptg-foreground: {foreground};
-            color: var(--ptg-foreground);
-            margin: {body_margin}px;
-        }}
-        span {{
-            display: inline-block;
-        }}
-        code {{
+SVG_MARGIN_LEFT = 50
+TEXT_MARGIN_LEFT = 20
+
+TEXT_MARGIN_TOP = 35
+SVG_MARGIN_TOP = 20
+
+SVG_FORMAT = f"""\
+<svg width="{{total_width}}" height="{{total_height}}"
+    viewBox="0 0 {{total_width}} {{total_height}}" xmlns="http://www.w3.org/2000/svg">
+    <style type="text/css">
+        text {{{{
+            font-size: {FONT_SIZE}px;
             font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
-            line-height: 1.2em;
-        }}
-        a {{
-            text-decoration: none;
-            color: inherit;
-        }}
-        #ptg-terminal {{
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--ptg-background);
-            border-radius: 9px;
-            box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56);
-            width: {margined_width}px;
-            height: {margined_height}px;
-        }}
-        #ptg-terminal-navbuttons {{
-            position: absolute;
-            top: 8px;
-            left: 8px;
-        }}
-        #ptg-terminal-body {{
-            margin: 15px;
-            font-size: {font_size}px;
-            overflow: hidden scroll;
-            white-space: normal;
-        }}
-        #ptg-terminal-title {{
-            font-family: sans-serif;
-            font-size: 12px;
+        }}}}
+
+        .{{prefix}}-title {{{{
+            /*font-family: 'arial';*/
+            fill: #94999A;
+            font-size: 13px;
             font-weight: bold;
-            color: #95989b;
-            margin-top: 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }}
-        .ptg-position {{
-            position: absolute;
-        }}
-{styles}
+        }}}}
+{{stylesheet}}
     </style>
-    <foreignObject width="100%" height="100%" x="0" y="0">
-        <body xmlns="http://www.w3.org/1999/xhtml">
-            <div id="ptg-terminal">
-                <svg id="ptg-terminal-navbuttons" width="90" height="21"
-                  viewBox="0 0 90 21" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="8" cy="6" r="6" fill="#ff6159"/>
-                    <circle cx="28" cy="6" r="6" fill="#ffbd2e"/>
-                    <circle cx="48" cy="6" r="6" fill="#28c941"/>
-                </svg>
-                <div id="ptg-terminal-title">{title}</div>
-                <pre id="ptg-terminal-body">
-                    <code>
-{content}
-                    </code>
-                </pre>
-            </div>
-        </body>
-    </foreignObject>
+    <rect x="{SVG_MARGIN_LEFT}" y="{SVG_MARGIN_TOP}"
+        rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round"
+        width="{{terminal_width}}" height="{{terminal_height}}" fill="{{background}}" />
+    <circle cx="{SVG_MARGIN_LEFT+15}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ff6159"/>
+    <circle cx="{SVG_MARGIN_LEFT+35}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ffbd2e"/>
+    <circle cx="{SVG_MARGIN_LEFT+55}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#28c941"/>
+    <text x="{{title_x}}" y="{{title_y}}" text-anchor="middle"
+        class="{{prefix}}-title">{{title}}</text>
+{{code}}
 </svg>"""
 
 _STYLE_TO_CSS = {
@@ -371,7 +331,72 @@ def to_html(  # pylint: disable=too-many-arguments, too-many-locals
     return document
 
 
-def to_svg(
+def _escape_text(text: str) -> str:
+    """Escapes HTML and replaces ' ' with &nbsp;."""
+
+    return escape(text).replace(" ", "&#160;")
+
+
+def _handle_tokens_svg(
+    text: StyledText, default_fore: str
+) -> tuple[tuple[int, int] | None, str | None, list[str]]:
+    """Builds CSS styles that apply to the text."""
+
+    default = f"fill:{default_fore}"
+    styles = [default]
+    back = pos = None
+
+    for token in text.tokens:
+        if token.ttype is TokenType.POSITION:
+            assert isinstance(token.data, str)
+            mapped = tuple(map(int, token.data.split(";")))
+            pos = mapped[0], mapped[1]
+            continue
+
+        if token.ttype is TokenType.COLOR:
+            color = token.data
+            assert isinstance(color, Color)
+
+            if color.background:
+                back = color.hex
+                continue
+
+            styles.remove(default)
+            styles.append(f"fill:{color.hex}")
+            continue
+
+        css = token_to_css(token)
+
+        if css != "":
+            styles.append(css)
+
+    return pos, back, styles
+
+
+def _slugify(text: str) -> str:
+    """Turns the given text into a slugified form."""
+
+    return text.replace(" ", "-").replace("_", "-")
+
+
+def _make_tag(tagname: str, content: str = "", **attrs) -> str:
+    """Creates a tag."""
+
+    tag = f"<{tagname} "
+
+    for key, value in attrs.items():
+        if key == "raw":
+            tag += " " + value
+            continue
+
+        tag += f"{_slugify(key)}='{value}' "
+
+    tag += f">{content}</{tagname}>"
+
+    return tag
+
+
+def to_svg(  # pylint: disable=too-many-locals
     obj: Widget | StyledText | str,
     prefix: str | None = None,
     inline_styles: bool = False,
@@ -395,28 +420,117 @@ def to_svg(
             to see all of its arguments.
     """
 
+    if prefix is None:
+        prefix = "ptg"
+
     terminal = get_terminal()
-    width = terminal.width * FONT_SIZE * CHAR_WIDTH + MARGIN + 10
-    height = terminal.height * FONT_SIZE * CHAR_HEIGHT + 105
+    default_fore = Color.get_default_foreground().hex
+    default_back = Color.get_default_background().hex
 
-    formatter = formatter.replace("{body_margin}", str(BODY_MARGIN))
+    text = ""
 
-    total_width = width + 2 * MARGIN + 2 * BODY_MARGIN
-    formatter = formatter.replace("{total_width}", str(total_width))
+    lines = 1
+    cursor_x = cursor_y = 0.0
+    document_styles: list[list[str]] = []
 
-    total_height = height + 2 * MARGIN + 2 * BODY_MARGIN
-    formatter = formatter.replace("{total_height}", str(total_height))
+    if isinstance(obj, Widget):
+        obj = "\n".join(obj.get_lines())
 
-    formatter = formatter.replace("{margined_width}", str(width))
-    formatter = formatter.replace("{margined_height}", str(height))
-    formatter = formatter.replace("{title}", title)
+    for plain in tim.get_styled_plains(obj):
+        should_newline = False
 
-    return to_html(
-        obj,
+        pos, back, styles = _handle_tokens_svg(plain, default_fore)
+
+        index = _generate_index_in(document_styles, styles)
+
+        if index == len(document_styles):
+            document_styles.append(styles)
+
+        style_attr = (
+            f"style='{';'.join(styles)}'"
+            if inline_styles
+            else f"class='{_get_cls(prefix, index)}'"
+        )
+
+        # Manual positioning
+        # TODO: This isn't fully accurate rn, for some reason.
+        if pos is not None:
+            cursor_x = round(pos[0] * FONT_WIDTH)
+            cursor_y = round(pos[1] * FONT_HEIGHT)
+
+        for line in plain.plain.splitlines():
+            text_len = len(line) * FONT_WIDTH
+
+            if should_newline:
+                cursor_y += FONT_HEIGHT
+                cursor_x = 0
+
+                lines += 1
+                if lines > terminal.height:
+                    break
+
+            if back is not None:
+                text += _make_tag(
+                    "rect",
+                    x=cursor_x,
+                    y=cursor_y,
+                    width=text_len * 1.015,
+                    height=FONT_HEIGHT * 1.015,
+                    fill=back,
+                )
+
+            text += _make_tag(
+                "text",
+                _escape_text(line),
+                x=cursor_x,
+                y=cursor_y + FONT_SIZE,
+                textLength=text_len,
+                raw=style_attr,
+            )
+
+            cursor_x += text_len
+            should_newline = True
+
+        if lines > terminal.height:
+            break
+
+        if plain.plain.endswith("\n"):
+            cursor_y += FONT_HEIGHT
+            cursor_x = 0
+
+            lines += 1
+
+    output = (
+        _make_tag(
+            "g",
+            text,
+            transform=(
+                f"translate({TEXT_MARGIN_LEFT + SVG_MARGIN_LEFT}, "
+                + f"{TEXT_MARGIN_TOP + SVG_MARGIN_TOP})"
+            ),
+        )
+        + "\n"
+    )
+
+    stylesheet = "" if inline_styles else _generate_stylesheet(document_styles, prefix)
+
+    terminal_width = terminal.width * FONT_WIDTH + 2 * TEXT_MARGIN_LEFT
+    terminal_height = terminal.height * FONT_HEIGHT + 2 * TEXT_MARGIN_TOP
+
+    return formatter.format(
+        # Dimensions
+        total_width=terminal_width + 2 * SVG_MARGIN_LEFT,
+        total_height=terminal_height + 2 * SVG_MARGIN_TOP,
+        terminal_width=terminal_width,
+        terminal_height=terminal_height,
+        # Styles
+        background=default_back,
+        stylesheet=stylesheet,
+        # Title information
+        title=title,
+        title_x=terminal_width // 2 + 30,
+        title_y=SVG_MARGIN_TOP + FONT_HEIGHT,
+        # Code
+        code=output,
         prefix=prefix,
-        inline_styles=inline_styles,
-        formatter=formatter,
-        vertical_offset=5 + MARGIN,
-        horizontal_offset=MARGIN,
-        joiner="\n<br />",
     )
