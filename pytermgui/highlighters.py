@@ -144,14 +144,15 @@ class RegexHighlighter(Highlighter):
             pattern = pattern[:38] + "..."
 
         yield f"<{type(self).__name__} pattern: {pattern!r}, preview: "
-
         yield {"text": str(preview), "highlight": False}
 
         yield ">"
 
 
 _BUILTIN_NAMES = "|".join(f"(?:{item})" for item in dir(builtins))
-_KEYWORD_NAMES = "|".join(f"(?:{keyw})" for keyw in keyword.kwlist)
+_KEYWORD_NAMES = "|".join(
+    f"(?:{keyw})" for keyw in keyword.kwlist + ["builtin", "function", "module"]
+)
 
 highlight_python = RegexHighlighter(
     prefix="code.",
