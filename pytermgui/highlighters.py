@@ -34,7 +34,7 @@ class Highlighter(Protocol):  # pylint: disable=too-few-public-methods
 
 
 @dataclass
-class RegexHighlighter(Highlighter):
+class RegexHighlighter:
     """A class to highlight strings using regular expressions.
 
     This class must be provided with a list of styles. These styles are really just a
