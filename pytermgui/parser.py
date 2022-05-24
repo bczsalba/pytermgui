@@ -1243,6 +1243,13 @@ docs/parser/markup_language.png"
 
             return styles
 
+        def _pop_position(styles: list[Token]) -> list[Token]:
+            for token in styles.copy():
+                if token.ttype is TokenType.POSITION:
+                    styles.remove(token)
+
+            return styles
+
         styles: list[Token] = []
         for token in self.tokenize_ansi(text):
             if token.ttype is TokenType.COLOR:
@@ -1268,6 +1275,7 @@ docs/parser/markup_language.png"
             if token.ttype is TokenType.PLAIN:
                 assert isinstance(token.data, str)
                 yield StyledText(_apply_styles(styles, token.data))
+                styles = _pop_position(styles)
                 continue
 
             if token.ttype is TokenType.UNSETTER:
