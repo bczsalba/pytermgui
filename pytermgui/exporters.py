@@ -67,6 +67,7 @@ SVG_FORMAT = f"""\
         text {{{{
             font-size: {FONT_SIZE}px;
             font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
+            alignment-baseline: text-after-edge;
         }}}}
 
         .{{prefix}}-title {{{{
@@ -421,6 +422,15 @@ def to_svg(  # pylint: disable=too-many-locals
             to see all of its arguments.
     """
 
+    def _is_block(text: str) -> bool:
+        """Determines whether the given text only contains block characters.
+
+        These characters reside in the unicode range of 9600-9631, which is what we test
+        against.
+        """
+
+        return all(9600 <= ord(char) <= 9631 for char in text)
+
     if prefix is None:
         prefix = "ptg"
 
@@ -434,11 +444,17 @@ def to_svg(  # pylint: disable=too-many-locals
     cursor_x = cursor_y = 0.0
     document_styles: list[list[str]] = []
 
+    # We manually set all text to have an alignment-baseline of
+    # text-after-edge to avoid block characters rendering in the
+    # wrong place (not at the top of their "box"), but with that
+    # our background rects will be rendered in the wrong place too,
+    # so this is used to offset that.
+    baseline_offset = 0.17 * FONT_HEIGHT
+
     if isinstance(obj, Widget):
         obj = "\n".join(obj.get_lines())
 
     for plain in tim.get_styled_plains(obj):
-
         should_newline = False
 
         pos, back, styles = _handle_tokens_svg(plain, default_fore)
@@ -473,7 +489,7 @@ def to_svg(  # pylint: disable=too-many-locals
             text += _make_tag(
                 "rect",
                 x=cursor_x,
-                y=cursor_y,
+                y=cursor_y - (baseline_offset if not _is_block(line) else 0),
                 fill=back or default_back,
                 width=text_len * 1.02,
                 height=FONT_HEIGHT,
