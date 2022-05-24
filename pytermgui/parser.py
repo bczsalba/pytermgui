@@ -1213,7 +1213,7 @@ docs/parser/markup_language.png"
             """Removes an unsetter from the list, returns the new list."""
 
             if token.name == "/":
-                return []
+                return list(filter(lambda tkn: tkn.ttype is TokenType.POSITION, styles))
 
             target_name = token.name[1:]
             for style in styles:
