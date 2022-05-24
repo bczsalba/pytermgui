@@ -363,26 +363,34 @@ class Container(ScrollableWidget):
         """
 
         left, right = self.styles.border(borders[0]), self.styles.border(borders[1])
-        char = self.styles.fill(" ")
+        char = " "
+
+        fill = self.styles.fill
 
         def _align_left(text: str) -> str:
             """Align line to the left"""
 
             padding = self.width - real_length(left + right) - real_length(text)
-            return left + text + padding * char + right
+            return left + fill(text) + fill(padding * char) + right
 
         def _align_center(text: str) -> str:
             """Align line to the center"""
 
             total = self.width - real_length(left + right) - real_length(text)
             padding, offset = divmod(total, 2)
-            return left + (padding + offset) * char + text + padding * char + right
+            return (
+                left
+                + fill((padding + offset) * char)
+                + text
+                + fill(padding * char)
+                + right
+            )
 
         def _align_right(text: str) -> str:
             """Align line to the right"""
 
             padding = self.width - real_length(left + right) - real_length(text)
-            return left + padding * char + text + right
+            return left + fill(padding * char + text) + right
 
         if widget.parent_align == HorizontalAlignment.CENTER:
             total = self.width - real_length(left + right) - widget.width
