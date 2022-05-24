@@ -200,7 +200,7 @@ class Color:
 
         return self._rgb
 
-    @cached_property
+    @property
     def hex(self) -> str:
         """Returns CSS-like HEX representation of this color."""
 
@@ -480,6 +480,22 @@ class StandardColor(IndexedColor):
             index += 10
 
         return f"\x1b[{index}m"
+
+    @cached_property
+    def rgb(self) -> tuple[int, int, int]:
+        """Returns an RGB representation of this color."""
+
+        index = int(self.value)
+
+        if 30 <= index <= 47:
+            index -= 30
+
+        elif 90 <= index <= 107:
+            index -= 82
+
+        rgb = COLOR_TABLE[index]
+
+        return (rgb[0], rgb[1], rgb[2])
 
 
 class GreyscaleRampColor(IndexedColor):
