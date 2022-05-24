@@ -18,7 +18,7 @@ CHAR_HEIGHT = 1.15
 FONT_SIZE = 15
 
 FONT_WIDTH = FONT_SIZE * CHAR_WIDTH
-FONT_HEIGHT = FONT_SIZE * CHAR_HEIGHT
+FONT_HEIGHT = FONT_SIZE * CHAR_HEIGHT * 1.1
 
 HTML_FORMAT = """\
 <html>
@@ -471,15 +471,14 @@ def to_svg(  # pylint: disable=too-many-locals
                 if lines > terminal.height:
                     break
 
-            if back is not None:
-                text += _make_tag(
-                    "rect",
-                    x=cursor_x,
-                    y=cursor_y,
-                    fill=back,
-                    width=text_len * 1.02,
-                    height=FONT_HEIGHT * 1.2,
-                )
+            text += _make_tag(
+                "rect",
+                x=cursor_x,
+                y=cursor_y,
+                fill=back or default_back,
+                width=text_len * 1.02,
+                height=FONT_HEIGHT,
+            )
 
             text += _make_tag(
                 "text",
