@@ -16,8 +16,8 @@ from ..input import keys
 from ..parser import markup
 from ..regex import real_length
 from ..helpers import break_line
-from ..ansi_interface import MouseEvent
 from ..terminal import get_terminal, Terminal
+from ..ansi_interface import MouseEvent, reset
 from ..enums import SizePolicy, HorizontalAlignment, WidgetChange
 
 from . import styles as w_styles
@@ -161,7 +161,10 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         yield self.debug()
         yield "\n\n"
-        yield {"text": "\n".join(self.get_lines()), "highlight": False}
+        yield {
+            "text": "\n".join((line + reset() for line in self.get_lines())),
+            "highlight": False,
+        }
 
     def __iter__(self) -> Iterator[Widget]:
         """Return self for iteration"""
