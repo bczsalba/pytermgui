@@ -1,4 +1,8 @@
-"""This module provides various methods and utilities to turn TIM into HTML."""
+"""This module provides various methods and utilities to turn TIM into HTML & SVG."""
+
+# TODO: The HTML and SVG implementations are completely independent at the moment,
+#       which is pretty annoying to maintain. It would be great to consolidate them
+#       at some point.
 
 from __future__ import annotations
 

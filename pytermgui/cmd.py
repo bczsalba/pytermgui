@@ -772,11 +772,11 @@ def run_environment(args: Namespace) -> None:
             lambda *_: _close_focused(manager),
             "Close window",
         )
-        # manager.bind(
-        #     ptg.keys.F12,
-        #     lambda *_: screenshot(manager),
-        #     "Screenshot",
-        # )
+        manager.bind(
+            ptg.keys.F12,
+            lambda *_: screenshot(manager),
+            "Screenshot",
+        )
         manager.bind(
             ptg.keys.CTRL_F,
             lambda *_: _toggle_attachment(manager),
