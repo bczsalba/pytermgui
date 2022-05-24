@@ -54,7 +54,11 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
     """These mouse actions will focus the window they are acted upon."""
 
     def __init__(
-        self, *, layout_type: Type[Layout] = Layout, framerate: int = 60
+        self,
+        *,
+        autorun: bool = True,
+        layout_type: Type[Layout] = Layout,
+        framerate: int = 60,
     ) -> None:
         """Initialize the manager."""
 
@@ -67,6 +71,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
 
         self.focused: Window | None = None
+        self.autorun = autorun
         self.layout = layout_type()
         self.compositor = Compositor(self._windows, framerate=framerate)
         self.mouse_translator: MouseTranslator | None = None
@@ -101,7 +106,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         """Ends context manager."""
 
         # Run the manager if it hasnt been run before.
-        if exception is None and self.mouse_translator is None:
+        if self.autorun and exception is None and self.mouse_translator is None:
             self.run()
 
         if exception is not None:
