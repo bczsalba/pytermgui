@@ -1,3 +1,14 @@
+## [6.2.1] - 2022-05-25
+
+### Bugfixes
+- Fix `\n` being escaped when highlighting python
+
+
+### Refactors
+- Add `WindowManager.autorun` class attribute
+
+
+
 ## [6.2.0] - 2022-05-24
 
 ### Bugfixes
@@ -190,6 +201,7 @@
 
 
 
+[6.2.0]: https://github.com/bczsalba/pytermgui/compare/6.2.0...6.2.1
 [6.2.0]: https://github.com/bczsalba/pytermgui/compare/6.1.0...6.2.0
 [6.1.0]: https://github.com/bczsalba/pytermgui/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/bczsalba/pytermgui/compare/5.0.0...6.0.0
