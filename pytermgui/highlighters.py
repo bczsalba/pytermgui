@@ -118,6 +118,8 @@ class RegexHighlighter:
                 if len(RE_MARKUP.findall(content)) > 0:
                     content = content.replace("[", r"\[")
 
+                content = content.replace("\\n", "\n")
+
             if self.match_formatter is not None:
                 content = self.match_formatter(matchobj, content)
 
