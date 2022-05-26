@@ -1,3 +1,15 @@
+## [6.2.2] - 2022-05-26
+
+### Bugfixes
+- Fix text being misaligned in both Firefox and Safari 
+
+
+## Refactors
+- Reduce redundancy in SVG export dimensions
+
+
+
+
 ## [6.2.1] - 2022-05-25
 
 ### Bugfixes
