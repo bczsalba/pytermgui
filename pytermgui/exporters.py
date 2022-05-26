@@ -394,6 +394,9 @@ def _make_tag(tagname: str, content: str = "", **attrs) -> str:
             tag += " " + value
             continue
 
+        if isinstance(value, float):
+            value = round(value, 2)
+
         tag += f"{_slugify(key)}='{value}' "
 
     tag += f">{content}</{tagname}>"
