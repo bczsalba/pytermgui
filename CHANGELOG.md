@@ -4,7 +4,7 @@
 - Fix text being misaligned in both Firefox and Safari 
 
 
-## Refactors
+### Refactors
 - Reduce redundancy in SVG export dimensions
 
 
@@ -213,7 +213,8 @@
 
 
 
-[6.2.0]: https://github.com/bczsalba/pytermgui/compare/6.2.0...6.2.1
+[6.2.2]: https://github.com/bczsalba/pytermgui/compare/6.2.1...6.2.2
+[6.2.1]: https://github.com/bczsalba/pytermgui/compare/6.2.0...6.2.1
 [6.2.0]: https://github.com/bczsalba/pytermgui/compare/6.1.0...6.2.0
 [6.1.0]: https://github.com/bczsalba/pytermgui/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/bczsalba/pytermgui/compare/5.0.0...6.0.0
