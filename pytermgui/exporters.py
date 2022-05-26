@@ -71,7 +71,6 @@ SVG_FORMAT = f"""\
         text {{{{
             font-size: {FONT_SIZE}px;
             font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
-            alignment-baseline: text-after-edge;
         }}}}
 
         .{{prefix}}-title {{{{
@@ -502,6 +501,7 @@ def to_svg(  # pylint: disable=too-many-locals
             text += _make_tag(
                 "text",
                 _escape_text(line),
+                dy="-0.25em",
                 x=cursor_x,
                 y=cursor_y + FONT_SIZE,
                 textLength=text_len,
