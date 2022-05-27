@@ -33,7 +33,6 @@ from inspect import (
 )
 
 from .parser import tim
-from .terminal import terminal
 from .prettifiers import prettify
 from .highlighters import highlight_python
 from .regex import real_length, RE_MARKUP
@@ -224,7 +223,8 @@ class Inspector(Container):
 
         super().__init__(**attrs)
 
-        self.width = terminal.width
+        self.width = self.terminal.width
+
         self.show_private = show_private
         self.show_dunder = show_dunder
         self.show_methods = show_methods
@@ -484,7 +484,7 @@ class Inspector(Container):
     def debug(self) -> str:
         """Returns identifiable information used in repr."""
 
-        if terminal.is_interactive and not terminal.displayhook_installed:
+        if self.terminal.is_interactive and not self.terminal.displayhook_installed:
             return "\n".join(self.get_lines())
 
         return Widget.debug(self)
