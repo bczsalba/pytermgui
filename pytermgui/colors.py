@@ -611,19 +611,19 @@ class HEXColor(RGBColor):
     def red(self) -> int:
         """Returns the red component of this color."""
 
-        return int(self.value[1:3])
+        return hex(int(self.value[1:3], base=16))
 
     @property
     def green(self) -> int:
         """Returns the green component of this color."""
 
-        return int(self.value[3:5])
+        return hex(int(self.value[3:5], base=16))
 
     @property
     def blue(self) -> int:
         """Returns the blue component of this color."""
 
-        return int(self.value[5:7])
+        return hex(int(self.value[5:7], base=16))
 
 
 SYSTEM_TO_TYPE: dict[ColorSystem, Type[Color]] = {
