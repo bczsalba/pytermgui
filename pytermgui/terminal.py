@@ -17,6 +17,7 @@ from functools import cached_property
 from typing import Any, Callable, TextIO, Generator
 
 from .input import getch_timeout
+from .fancy_repr import FancyYield
 from .regex import strip_ansi, real_length, RE_PIXEL_SIZE, has_open_sequence
 
 __all__ = [
@@ -256,6 +257,13 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         self._diff_buffer = [
             ["" for _ in range(self.width)] for y in range(self.height)
         ]
+
+    def __fancy_repr__(self) -> FancyYield:
+        """Returns a cool looking repr."""
+
+        name = type(self).__name__
+
+        yield f"<{name} stream={self._stream} size={self.size}>"
 
     @cached_property
     def resolution(self) -> tuple[int, int]:
