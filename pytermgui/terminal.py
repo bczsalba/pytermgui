@@ -13,6 +13,7 @@ from enum import Enum
 from datetime import datetime
 from shutil import get_terminal_size
 from contextlib import contextmanager
+from functools import cached_property
 from typing import Any, Callable, TextIO, Generator
 
 from .input import getch_timeout
@@ -231,22 +232,19 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         stream: TextIO | None = None,
         *,
         size: tuple[int, int] | None = None,
-        pixel_size: tuple[int, int] | None = None,
     ) -> None:
-        """Initialize `_Terminal` class."""
+        """Initialize `Terminal` class."""
 
         if stream is None:
             stream = sys.stdout
 
         self._size = size
-        self._pixel_size = pixel_size
         self._stream = stream or sys.stdout
 
         self._recorder: Recorder | None = None
 
         self.size: tuple[int, int] = self._get_size()
         self.forced_colorsystem: ColorSystem | None = _get_env_colorsys()
-        self.pixel_size: tuple[int, int] = self._get_pixel_size()
 
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
@@ -259,11 +257,12 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             ["" for _ in range(self.width)] for y in range(self.height)
         ]
 
-    def _get_pixel_size(self) -> tuple[int, int]:
-        """Gets the terminal's size, in pixels."""
+    @cached_property
+    def resolution(self) -> tuple[int, int]:
+        """Returns the terminal's pixel based resolution.
 
-        if self._pixel_size is not None:
-            return self._pixel_size
+        Only evaluated on demand.
+        """
 
         if self.isatty():
             sys.stdout.write("\x1b[14t")
@@ -271,13 +270,22 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
             # Some terminals may not respond to a pixel size query, so we send
             # a timed-out getch call with a default response of 1280x720.
-            output = getch_timeout(0.01, default="\x1b[4;720;1280t")
+            output = getch_timeout(0.1, default="\x1b[4;720;1280t")
             match = RE_PIXEL_SIZE.match(output)
 
             if match is not None:
                 return (int(match[2]), int(match[1]))
 
         return (0, 0)
+
+    @property
+    def pixel_size(self) -> tuple[int, int]:
+        """DEPRECATED: Returns the terminal's pixel resolution.
+
+        Prefer terminal.resolution.
+        """
+
+        return self.resolution
 
     def _call_listener(self, event: int, data: Any) -> None:
         """Calls callbacks for event.
@@ -303,8 +311,9 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
     def _update_size(self, *_: Any) -> None:
         """Resize terminal when SIGWINCH occurs, and call listeners."""
 
+        del self.pixel_size
         self.size = self._get_size()
-        self.pixel_size = self._get_pixel_size()
+
         self._call_listener(self.RESIZE, self.size)
 
         # Wipe the screen in case anything got messed up
