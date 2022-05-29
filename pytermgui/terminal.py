@@ -72,6 +72,7 @@ class Recorder:
         prefix: str | None = None,
         inline_styles: bool = False,
         title: str = "PyTermGUI",
+        chrome: bool = True,
     ) -> str:
         """Exports current content as SVG.
 
@@ -81,7 +82,11 @@ class Recorder:
         from .exporters import to_svg  # pylint: disable=import-outside-toplevel
 
         return to_svg(
-            self._content, prefix=prefix, inline_styles=inline_styles, title=title
+            self._content,
+            prefix=prefix,
+            inline_styles=inline_styles,
+            title=title,
+            chrome=chrome,
         )
 
     def save_plain(self, filename: str) -> None:
@@ -99,6 +104,7 @@ class Recorder:
         filename: str | None = None,
         prefix: str | None = None,
         inline_styles: bool = False,
+        chrome: bool = True,
     ) -> None:
         """Exports HTML content to the given file.
 
@@ -116,7 +122,11 @@ class Recorder:
             filename += ".html"
 
         with open(filename, "w", encoding="utf-8") as file:
-            file.write(self.export_html(prefix=prefix, inline_styles=inline_styles))
+            file.write(
+                self.export_html(
+                    prefix=prefix, inline_styles=inline_styles, chrome=chrome
+                )
+            )
 
     def save_svg(
         self,
@@ -319,7 +329,9 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
     def _update_size(self, *_: Any) -> None:
         """Resize terminal when SIGWINCH occurs, and call listeners."""
 
-        del self.pixel_size
+        if hasattr(self, "resolution"):
+            del self.resolution
+
         self.size = self._get_size()
 
         self._call_listener(self.RESIZE, self.size)

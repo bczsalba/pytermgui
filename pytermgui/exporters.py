@@ -81,12 +81,16 @@ SVG_FORMAT = f"""\
         }}}}
 {{stylesheet}}
     </style>
-    <rect x="{SVG_MARGIN_LEFT}" y="{SVG_MARGIN_TOP}"
-        rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round"
-        width="{{terminal_width}}" height="{{terminal_height}}" fill="{{background}}" />
-    <circle cx="{SVG_MARGIN_LEFT+15}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ff6159"/>
-    <circle cx="{SVG_MARGIN_LEFT+35}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ffbd2e"/>
-    <circle cx="{SVG_MARGIN_LEFT+55}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#28c941"/>
+    <rect visibility="{{back_visibility}}" width="{{total_width}}" height="{{total_height}}"
+        fill="{{background}}" />
+    <g visibility="{{chrome_visibility}}">
+        <rect x="{SVG_MARGIN_LEFT}" y="{SVG_MARGIN_TOP}"
+            rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round"
+            width="{{terminal_width}}" height="{{terminal_height}}" fill="{{background}}" />
+        <circle cx="{SVG_MARGIN_LEFT+15}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ff6159"/>
+        <circle cx="{SVG_MARGIN_LEFT+35}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ffbd2e"/>
+        <circle cx="{SVG_MARGIN_LEFT+55}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#28c941"/>
+    </g>
     <text x="{{title_x}}" y="{{title_y}}" text-anchor="middle"
         class="{{prefix}}-title">{{title}}</text>
 {{code}}
@@ -410,6 +414,7 @@ def to_svg(  # pylint: disable=too-many-locals
     inline_styles: bool = False,
     title: str = "PyTermGUI",
     formatter: str = SVG_FORMAT,
+    chrome: bool = True,
 ) -> str:
     """Creates an SVG screenshot of the given object.
 
@@ -523,17 +528,21 @@ def to_svg(  # pylint: disable=too-many-locals
 
             lines += 1
 
-    output = (
-        _make_tag(
-            "g",
-            text,
-            transform=(
-                f"translate({TEXT_MARGIN_LEFT + SVG_MARGIN_LEFT}, "
-                + f"{TEXT_MARGIN_TOP + SVG_MARGIN_TOP})"
-            ),
+    if chrome:
+        transform = (
+            f"translate({TEXT_MARGIN_LEFT + SVG_MARGIN_LEFT}, "
+            + f"{TEXT_MARGIN_TOP + SVG_MARGIN_TOP})"
         )
-        + "\n"
-    )
+        chrome_visibility = "visible"
+        back_visibility = "hidden"
+
+    else:
+        transform = "translate(16, 16)"
+
+        chrome_visibility = "hidden"
+        back_visibility = "visible"
+
+    output = _make_tag("g", text, transform=transform) + "\n"
 
     stylesheet = "" if inline_styles else _generate_stylesheet(document_styles, prefix)
 
@@ -556,4 +565,6 @@ def to_svg(  # pylint: disable=too-many-locals
         # Code
         code=output,
         prefix=prefix,
+        chrome_visibility=chrome_visibility,
+        back_visibility=back_visibility,
     )
