@@ -90,9 +90,9 @@ SVG_FORMAT = f"""\
         <circle cx="{SVG_MARGIN_LEFT+15}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ff6159"/>
         <circle cx="{SVG_MARGIN_LEFT+35}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ffbd2e"/>
         <circle cx="{SVG_MARGIN_LEFT+55}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#28c941"/>
+        <text x="{{title_x}}" y="{{title_y}}" text-anchor="middle"
+            class="{{prefix}}-title">{{title}}</text>
     </g>
-    <text x="{{title_x}}" y="{{title_y}}" text-anchor="middle"
-        class="{{prefix}}-title">{{title}}</text>
 {{code}}
 </svg>"""
 
