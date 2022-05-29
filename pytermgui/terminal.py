@@ -104,7 +104,6 @@ class Recorder:
         filename: str | None = None,
         prefix: str | None = None,
         inline_styles: bool = False,
-        chrome: bool = True,
     ) -> None:
         """Exports HTML content to the given file.
 
@@ -122,16 +121,13 @@ class Recorder:
             filename += ".html"
 
         with open(filename, "w", encoding="utf-8") as file:
-            file.write(
-                self.export_html(
-                    prefix=prefix, inline_styles=inline_styles, chrome=chrome
-                )
-            )
+            file.write(self.export_html(prefix=prefix, inline_styles=inline_styles))
 
-    def save_svg(
+    def save_svg(  # pylint: disable=too-many-arguments
         self,
         filename: str | None = None,
         prefix: str | None = None,
+        chrome: bool = True,
         inline_styles: bool = False,
         title: str = "PyTermGUI",
     ) -> None:
@@ -153,7 +149,12 @@ class Recorder:
 
         with open(filename, "w", encoding="utf-8") as file:
             file.write(
-                self.export_svg(prefix=prefix, inline_styles=inline_styles, title=title)
+                self.export_svg(
+                    prefix=prefix,
+                    inline_styles=inline_styles,
+                    title=title,
+                    chrome=chrome,
+                )
             )
 
 

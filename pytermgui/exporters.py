@@ -408,13 +408,15 @@ def _make_tag(tagname: str, content: str = "", **attrs) -> str:
     return tag
 
 
-def to_svg(  # pylint: disable=too-many-locals
+# This is a bit of a beast of a function, but it does the job and IMO reducing it
+# into parts would just make our lives more complicated.
+def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
     obj: Widget | StyledText | str,
     prefix: str | None = None,
+    chrome: bool = True,
     inline_styles: bool = False,
     title: str = "PyTermGUI",
     formatter: str = SVG_FORMAT,
-    chrome: bool = True,
 ) -> str:
     """Creates an SVG screenshot of the given object.
 
@@ -426,6 +428,8 @@ def to_svg(  # pylint: disable=too-many-locals
         obj: The object to represent. Takes either a Widget or some markup text.
         prefix: The prefix included in the generated classes, e.g. instead of `ptg-0`,
             you would get `ptg-my-prefix-0`.
+        chrome: Sets the visibility of the window "chrome", e.g. the part of the SVG
+            that mimicks the outside border of a terminal.
         inline_styles: If set, styles will be set for each span using the inline `style`
             argument, otherwise a full style section is constructed.
         title: A string to display in the top bar of the fake terminal.
@@ -442,8 +446,7 @@ def to_svg(  # pylint: disable=too-many-locals
 
         return all(9600 <= ord(char) <= 9631 for char in text)
 
-    if prefix is None:
-        prefix = "ptg"
+    prefix = prefix if prefix is not None else "ptg"
 
     terminal = get_terminal()
     default_fore = Color.get_default_foreground().hex
@@ -533,6 +536,7 @@ def to_svg(  # pylint: disable=too-many-locals
             f"translate({TEXT_MARGIN_LEFT + SVG_MARGIN_LEFT}, "
             + f"{TEXT_MARGIN_TOP + SVG_MARGIN_TOP})"
         )
+
         chrome_visibility = "visible"
         back_visibility = "hidden"
 
