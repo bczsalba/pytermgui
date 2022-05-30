@@ -110,18 +110,18 @@ by calling `MarkupLanguage.alias`. For defining custom macros, you can use
 
 from __future__ import annotations
 
-from random import shuffle
+from argparse import ArgumentParser
 from contextlib import suppress
 from dataclasses import dataclass
-from argparse import ArgumentParser
-from enum import Enum, auto as _auto
-from typing import Iterator, Callable, Tuple, List
+from enum import Enum
+from enum import auto as _auto
+from random import shuffle
+from typing import Callable, Iterator, List, Tuple
 
+from .colors import Color, StandardColor, str_to_color
+from .exceptions import AnsiSyntaxError, ColorSyntaxError, MarkupSyntaxError
+from .regex import RE_ANSI, RE_LINK, RE_MACRO, RE_MARKUP
 from .terminal import get_terminal
-from .colors import str_to_color, Color, StandardColor
-from .regex import RE_ANSI, RE_MARKUP, RE_MACRO, RE_LINK
-from .exceptions import MarkupSyntaxError, ColorSyntaxError, AnsiSyntaxError
-
 
 __all__ = [
     "StyledText",

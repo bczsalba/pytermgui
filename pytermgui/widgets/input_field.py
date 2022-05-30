@@ -1,16 +1,16 @@
 """This module contains the `InputField` class."""
 
 from __future__ import annotations
-from typing import Any
 
 import string
+from typing import Any
 
-from ...ansi_interface import MouseAction, MouseEvent
-from ...input import keys
-from ...enums import HorizontalAlignment
-from ...regex import real_length
-from .. import styles as w_styles
-from ..base import Label
+from ..ansi_interface import MouseAction, MouseEvent
+from ..enums import HorizontalAlignment
+from ..input import keys
+from ..regex import real_length
+from . import styles as w_styles
+from .base import Label
 
 
 class InputField(Label):

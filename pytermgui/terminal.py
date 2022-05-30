@@ -4,21 +4,21 @@
 
 from __future__ import annotations
 
+import errno
 import os
+import signal
 import sys
 import time
-import errno
-import signal
-from enum import Enum
-from datetime import datetime
-from shutil import get_terminal_size
 from contextlib import contextmanager
+from datetime import datetime
+from enum import Enum
 from functools import cached_property
-from typing import Any, Callable, TextIO, Generator
+from shutil import get_terminal_size
+from typing import Any, Callable, Generator, TextIO
 
-from .input import getch_timeout
 from .fancy_repr import FancyYield
-from .regex import strip_ansi, real_length, RE_PIXEL_SIZE, has_open_sequence
+from .input import getch_timeout
+from .regex import RE_PIXEL_SIZE, has_open_sequence, real_length, strip_ansi
 
 __all__ = [
     "terminal",

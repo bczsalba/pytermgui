@@ -12,17 +12,16 @@ from typing import Any, Callable, Iterator, cast
 from ..ansi_interface import MouseAction, MouseEvent, clear, reset
 from ..context_managers import cursor_at
 from ..enums import (
-    HorizontalAlignment,
-    VerticalAlignment,
     CenteringPolicy,
-    WidgetChange,
-    SizePolicy,
+    HorizontalAlignment,
     Overflow,
+    SizePolicy,
+    VerticalAlignment,
+    WidgetChange,
 )
-
 from ..exceptions import WidthExceededError
-from ..regex import real_length, strip_markup
 from ..input import keys
+from ..regex import real_length, strip_markup
 from . import boxes
 from . import styles as w_styles
 from .base import ScrollableWidget, Widget

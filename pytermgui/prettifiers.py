@@ -9,10 +9,9 @@ from __future__ import annotations
 from collections import UserDict, UserList
 from typing import Any
 
-from .parser import RE_MARKUP, tim
+from .fancy_repr import build_fancy_repr, supports_fancy_repr
 from .highlighters import highlight_python
-from .fancy_repr import supports_fancy_repr, build_fancy_repr
-
+from .parser import RE_MARKUP, tim
 
 __all__ = ["prettify"]
 

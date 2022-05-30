@@ -6,11 +6,10 @@ uses `Widget.serialize` for each widget.
 from __future__ import annotations
 
 import json
-from typing import Any, Type, IO, Dict, Callable
+from typing import IO, Any, Callable, Dict, Type
 
 from . import widgets
 from .parser import markup
-
 from .widgets import CharType
 from .widgets.base import Widget
 from .window_manager import Window

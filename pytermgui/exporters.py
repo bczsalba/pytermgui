@@ -10,9 +10,9 @@ from html import escape
 from typing import Iterator
 
 from .colors import Color
-from .widgets import Widget
+from .parser import StyledText, Token, TokenType, tim
 from .terminal import get_terminal
-from .parser import Token, TokenType, StyledText, tim
+from .widgets import Widget
 
 MARGIN = 15
 BODY_MARGIN = 70

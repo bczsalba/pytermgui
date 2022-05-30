@@ -3,23 +3,23 @@ while letting `Compositor` draw them."""
 
 from __future__ import annotations
 
-from enum import Enum, auto as _auto
-from typing import Type, Any, Iterator
+from enum import Enum
+from enum import auto as _auto
+from typing import Any, Iterator, Type
 
-from ..input import getch
+from ..animations import Animation, AttrAnimation, FloatAnimation, animator
+from ..ansi_interface import MouseAction, MouseEvent
+from ..colors import str_to_color
+from ..context_managers import MouseTranslator, alt_buffer, mouse_handler
 from ..enums import Overflow
+from ..input import getch
 from ..regex import real_length
 from ..terminal import terminal
-from ..colors import str_to_color
-from ..widgets import Widget, Container
+from ..widgets import Container, Widget
 from ..widgets.base import BoundCallback
-from ..ansi_interface import MouseAction, MouseEvent
-from ..context_managers import alt_buffer, mouse_handler, MouseTranslator
-from ..animations import animator, AttrAnimation, FloatAnimation, Animation
-
-from .window import Window
-from .layouts import Layout
 from .compositor import Compositor
+from .layouts import Layout
+from .window import Window
 
 
 def _center_during_animation(animation: AttrAnimation) -> None:

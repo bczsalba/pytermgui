@@ -5,14 +5,14 @@ See ptg --help for more information.
 
 from __future__ import annotations
 
-import os
-import sys
-import random
 import builtins
 import importlib
-from platform import platform
-from itertools import zip_longest
+import os
+import random
+import sys
 from argparse import ArgumentParser, Namespace
+from itertools import zip_longest
+from platform import platform
 from typing import Any, Callable, Iterable, Type
 
 import pytermgui as ptg

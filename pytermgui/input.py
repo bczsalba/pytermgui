@@ -12,24 +12,22 @@ Credits:
 from __future__ import annotations
 
 import os
-import sys
 import signal
-
+import sys
+from codecs import getincrementaldecoder
+from contextlib import contextmanager
+from select import select
 from typing import (
     IO,
     Any,
-    Union,
     AnyStr,
-    Optional,
-    KeysView,
     Generator,
     ItemsView,
+    KeysView,
+    Optional,
+    Union,
     ValuesView,
 )
-
-from select import select
-from contextlib import contextmanager
-from codecs import getincrementaldecoder
 
 from .exceptions import TimeoutException
 

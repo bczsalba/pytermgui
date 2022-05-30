@@ -12,11 +12,11 @@ from __future__ import annotations
 
 from collections import UserDict
 from dataclasses import dataclass, field
-from typing import Callable, Union, List, Type, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable, List, Type, Union
 
-from ..regex import strip_ansi
-from ..parser import tim, RE_MARKUP
 from ..highlighters import Highlighter
+from ..parser import RE_MARKUP, tim
+from ..regex import strip_ansi
 
 __all__ = [
     "MarkupFormatter",

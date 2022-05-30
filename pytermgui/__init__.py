@@ -16,25 +16,25 @@ from __future__ import annotations
 import sys
 from typing import Any, Optional
 
-from .enums import *
-from .parser import *
-from .colors import *
-from .widgets import *
-from .helpers import *
-from .terminal import *
-from .inspector import *
-from .exporters import *
 from .animations import *
-from .serializer import *
-from .exceptions import *
-from .fancy_repr import *
-from .prettifiers import *
-from .highlighters import *
-from .file_loaders import *
 from .ansi_interface import *
-from .window_manager import *
-from .input import getch, keys
+from .colors import *
 from .context_managers import alt_buffer, cursor_at, mouse_handler
+from .enums import *
+from .exceptions import *
+from .exporters import *
+from .fancy_repr import *
+from .file_loaders import *
+from .helpers import *
+from .highlighters import *
+from .input import getch, keys
+from .inspector import *
+from .parser import *
+from .prettifiers import *
+from .serializer import *
+from .terminal import *
+from .widgets import *
+from .window_manager import *
 
 # Silence warning if running as standalone module
 if "-m" in sys.argv:  # pragma: no cover

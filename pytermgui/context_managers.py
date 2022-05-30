@@ -8,31 +8,30 @@ most things are nicer-packaged combinations to already available methods from
 
 from __future__ import annotations
 
-from os import name
 from contextlib import contextmanager
-from typing import Callable, Generator, Any, Union, List
+from os import name
+from typing import Any, Callable, Generator, List, Union
 
 from .ansi_interface import (
-    save_cursor,
-    restore_cursor,
-    print_to,
-    show_cursor,
-    hide_cursor,
-    set_echo,
-    unset_echo,
-    set_alt_buffer,
-    unset_alt_buffer,
-    cursor_up,
-    report_mouse,
-    translate_mouse,
     MouseEvent,
+    cursor_up,
+    hide_cursor,
+    print_to,
+    report_mouse,
+    restore_cursor,
+    save_cursor,
+    set_alt_buffer,
+    set_echo,
+    show_cursor,
+    translate_mouse,
+    unset_alt_buffer,
+    unset_echo,
 )
-
-from .terminal import get_terminal
 
 # This is technically meant to be here, but it has to be in `input.py` due
 # to some package structure issues.
 from .input import timeout  # pylint: disable=unused-import
+from .terminal import get_terminal
 
 # TODO: Move this absolute beast to a types submodule
 MouseTranslator = Callable[[str], Union[List[Union[MouseEvent, None]], None]]

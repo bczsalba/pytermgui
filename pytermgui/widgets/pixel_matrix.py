@@ -5,10 +5,10 @@ pixel-based data.
 
 from __future__ import annotations
 
-from .base import Widget
+from ..ansi_interface import MouseAction, MouseEvent
 from ..parser import markup
 from ..regex import real_length
-from ..ansi_interface import MouseEvent, MouseAction
+from .base import Widget
 
 __all__ = [
     "PixelMatrix",

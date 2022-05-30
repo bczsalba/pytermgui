@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Iterator
 
-from .colors import Color
 from .ansi_interface import reset
-from .parser import markup, TokenType, Token
+from .colors import Color
+from .parser import Token, TokenType, markup
 
 __all__ = [
     "get_applied_sequences",

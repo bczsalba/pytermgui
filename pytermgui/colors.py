@@ -13,17 +13,17 @@ from __future__ import annotations
 
 import re
 import sys
-from math import sqrt  # pylint: disable=no-name-in-module
 from dataclasses import dataclass, field
-from functools import lru_cache, cached_property
-from typing import TYPE_CHECKING, Type, Literal, Generator
+from functools import cached_property, lru_cache
+from math import sqrt  # pylint: disable=no-name-in-module
+from typing import TYPE_CHECKING, Generator, Literal, Type
 
-from .input import getch
-from .fancy_repr import FancyYield
+from .ansi_interface import reset as reset_style
 from .color_table import COLOR_TABLE
 from .exceptions import ColorSyntaxError
-from .terminal import terminal, ColorSystem
-from .ansi_interface import reset as reset_style
+from .fancy_repr import FancyYield
+from .input import getch
+from .terminal import ColorSystem, terminal
 
 if TYPE_CHECKING:
     # This cyclic won't be relevant while type checking.
@@ -553,19 +553,19 @@ class RGBColor(Color):
 
         return cls(";".join(map(str, rgb)))
 
-    @cached_property
+    @property
     def red(self) -> int:
         """Returns the red component of this color."""
 
         return self.rgb[0]
 
-    @cached_property
+    @property
     def green(self) -> int:
         """Returns the green component of this color."""
 
         return self.rgb[1]
 
-    @cached_property
+    @property
     def blue(self) -> int:
         """Returns the blue component of this color."""
 
@@ -652,9 +652,9 @@ def _get_color_difference(
     delta_blue = blue1 - blue2
 
     return sqrt(
-        (2 + (redmean / 256)) * (delta_red ** 2)
-        + 4 * (delta_green ** 2)
-        + (2 + (255 - redmean) / 256) * (delta_blue ** 2)
+        (2 + (redmean / 256)) * (delta_red**2)
+        + 4 * (delta_green**2)
+        + (2 + (255 - redmean) / 256) * (delta_blue**2)
     )
 
 

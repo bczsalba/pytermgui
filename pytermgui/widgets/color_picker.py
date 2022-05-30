@@ -5,19 +5,19 @@ To test out the widget, run `ptg --color`!
 
 from __future__ import annotations
 
-from typing import Any
 from contextlib import suppress
+from typing import Any
 
-from . import boxes
-from ..regex import real_length
-from .base import Label, Widget
-from .interactive import Button
-from ..colors import str_to_color
-from .containers import Container
 from ..animations import animator
-from .pixel_matrix import PixelMatrix
-from ..enums import SizePolicy, HorizontalAlignment
 from ..ansi_interface import MouseAction, MouseEvent
+from ..colors import str_to_color
+from ..enums import HorizontalAlignment, SizePolicy
+from ..regex import real_length
+from . import boxes
+from .base import Label, Widget
+from .button import Button
+from .containers import Container
+from .pixel_matrix import PixelMatrix
 
 
 def _get_xterm_matrix() -> list[list[str]]:

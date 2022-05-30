@@ -10,16 +10,15 @@ from __future__ import annotations
 
 from copy import deepcopy
 from inspect import signature
-from typing import Callable, Optional, Type, Iterator, Any, Union, Generator
+from typing import Any, Callable, Generator, Iterator, Optional, Type, Union
 
+from ..ansi_interface import MouseEvent, reset
+from ..enums import HorizontalAlignment, SizePolicy, WidgetChange
+from ..helpers import break_line
 from ..input import keys
 from ..parser import markup
 from ..regex import real_length
-from ..helpers import break_line
-from ..terminal import get_terminal, Terminal
-from ..ansi_interface import MouseEvent, reset
-from ..enums import SizePolicy, HorizontalAlignment, WidgetChange
-
+from ..terminal import Terminal, get_terminal
 from . import styles as w_styles
 
 __all__ = ["Widget", "Label"]

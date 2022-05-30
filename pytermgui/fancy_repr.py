@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Protocol, Generator, Dict, Union
+from typing import Dict, Generator, Protocol, Union
 
 from .highlighters import highlight_python
 

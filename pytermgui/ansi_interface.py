@@ -14,11 +14,12 @@ Credits:
 from __future__ import annotations
 
 import re
-
-from typing import Optional, Any, Union, Pattern
 from dataclasses import dataclass, fields
-from enum import Enum, auto as _auto
-from os import name as _name, system
+from enum import Enum
+from enum import auto as _auto
+from os import name as _name
+from os import system
+from typing import Any, Optional, Pattern, Union
 
 from .input import getch
 from .terminal import terminal

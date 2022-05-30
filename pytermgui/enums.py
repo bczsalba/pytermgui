@@ -16,8 +16,9 @@ To modify defaults, use the `defaults` dictionary.
 
 from __future__ import annotations
 
+from enum import Enum, IntEnum
+from enum import auto as _auto
 from typing import Type
-from enum import Enum, IntEnum, auto as _auto
 
 defaults: dict[IntEnum, Type[IntEnum]] = {}
 

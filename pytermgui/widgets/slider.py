@@ -1,13 +1,14 @@
 """This module contains the `Slider` class."""
 
 from __future__ import annotations
+
 from typing import Any, Callable
 
-from ...ansi_interface import MouseAction, MouseEvent
-from ...input import keys
-from ...regex import real_length
-from .. import styles as w_styles
-from ..base import Widget
+from ..ansi_interface import MouseAction, MouseEvent
+from ..input import keys
+from ..regex import real_length
+from . import styles as w_styles
+from .base import Widget
 
 FILLED_SELECTED_STYLE = w_styles.MarkupFormatter("[72]{item}")
 FILLED_UNSELECTED_STYLE = w_styles.MarkupFormatter("[247]{item}")

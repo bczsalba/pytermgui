@@ -16,9 +16,9 @@ an already constructed `Animation` subclass, or either `Animator.animate_attr` o
 
 from __future__ import annotations
 
-from enum import Enum
 from dataclasses import dataclass, field
-from typing import Callable, TYPE_CHECKING, Any
+from enum import Enum
+from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
     from .widgets import Widget

@@ -4,11 +4,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..input import keys
 from ..enums import Overflow
-from .interactive import Toggle
+from ..input import keys
 from .containers import Container
-
+from .toggle import Toggle
 
 __all__ = ["Collapsible"]
 

@@ -5,12 +5,12 @@ from __future__ import annotations
 
 from typing import Any, Callable, Optional
 
-from ...ansi_interface import MouseAction, MouseEvent
-from .. import styles as w_styles
-from ...regex import real_length
-from ...parser import StyledText
-from ...input import keys
-from ..base import Widget
+from ..ansi_interface import MouseAction, MouseEvent
+from ..input import keys
+from ..parser import StyledText
+from ..regex import real_length
+from . import styles as w_styles
+from .base import Widget
 
 
 class Button(Widget):

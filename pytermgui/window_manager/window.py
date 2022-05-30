@@ -3,12 +3,12 @@ allows for mouse-based moving and resizing."""
 
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from ..widgets import Container
-from ..widgets import styles as w_styles, Widget
-from ..ansi_interface import MouseEvent, MouseAction
-from ..enums import Overflow, SizePolicy, CenteringPolicy
+from ..ansi_interface import MouseAction, MouseEvent
+from ..enums import CenteringPolicy, Overflow, SizePolicy
+from ..widgets import Container, Widget
+from ..widgets import styles as w_styles
 
 if TYPE_CHECKING:
     from .manager import WindowManager

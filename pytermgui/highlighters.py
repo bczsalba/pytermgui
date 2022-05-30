@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import re
-import keyword
 import builtins
+import keyword
+import re
 from dataclasses import dataclass, field
-from typing import Pattern, Match, Protocol, Callable, Generator, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Generator, Match, Pattern, Protocol
 
 from .regex import RE_MARKUP
 

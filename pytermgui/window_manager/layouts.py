@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Callable
 from dataclasses import dataclass
+from typing import Callable
 
-from ..widgets import Widget
 from ..terminal import Terminal, get_terminal
+from ..widgets import Widget
 
 
 class Dimension:

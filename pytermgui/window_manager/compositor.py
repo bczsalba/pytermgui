@@ -8,11 +8,10 @@ import time
 from threading import Thread
 from typing import Iterator, List, Tuple
 
-from ..widgets import Widget
-from ..enums import WidgetChange
 from ..animations import animator
-from ..terminal import get_terminal, Terminal
-
+from ..enums import WidgetChange
+from ..terminal import Terminal, get_terminal
+from ..widgets import Widget
 from .window import Window
 
 PositionedLineList = List[Tuple[Tuple[int, int], str]]

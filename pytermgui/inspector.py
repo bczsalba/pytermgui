@@ -19,24 +19,16 @@ docstring, and also use the method's fully qualified name.
 
 from __future__ import annotations
 
-from enum import Enum, auto as _auto
+from enum import Enum
+from enum import auto as _auto
+from inspect import getdoc, getfile, isbuiltin, isclass, isfunction, ismodule, signature
 from typing import Any
 
-from inspect import (
-    signature,
-    isclass,
-    ismodule,
-    isfunction,
-    isbuiltin,
-    getdoc,
-    getfile,
-)
-
+from .highlighters import highlight_python
 from .parser import tim
 from .prettifiers import prettify
-from .highlighters import highlight_python
-from .regex import real_length, RE_MARKUP
-from .widgets import Widget, Container, Label, boxes
+from .regex import RE_MARKUP, real_length
+from .widgets import Container, Label, Widget, boxes
 
 try:
     from typing import get_origin  # pylint: disable=ungrouped-imports

@@ -51,24 +51,27 @@ with ptg.alt_buffer():
 
 <p style="text-align: center">
  <img
-  src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/widgets/demo.png"
-  width=100%>
-</p>
-"""
+  src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/
+  widgets/demo.png" width=100%>
+</p>"""
 
 from __future__ import annotations
 
-from typing import Optional, Union, Type
+from typing import Optional, Type, Union
 
 from . import boxes
-
 from .base import *
-from .styles import *
-from .containers import *
-from .interactive import *
+from .button import Button
+from .checkbox import Checkbox
 from .collapsible import *
-from .pixel_matrix import *
 from .color_picker import ColorPicker
+from .containers import *
+from .input_field import InputField
+from .keyboard_button import KeyboardButton
+from .pixel_matrix import *
+from .slider import Slider
+from .styles import *
+from .toggle import Toggle
 
 WidgetType = Union[Widget, Type[Widget]]
 

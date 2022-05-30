@@ -10,9 +10,9 @@ Usage:
 
 from __future__ import annotations
 
+import builtins
 import os
 import sys
-import builtins
 from typing import Any
 
 from .parser import tim

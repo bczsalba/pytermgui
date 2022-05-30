@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Callable, Any
+from typing import Any, Callable
 
-from ...input import keys
+from ..input import keys
 from .button import Button
 
 

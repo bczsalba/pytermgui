@@ -18,8 +18,8 @@ from __future__ import annotations
 
 from typing import Tuple
 
-from .base import WidgetType
 from ..regex import real_length
+from .base import WidgetType
 
 
 class Box:
