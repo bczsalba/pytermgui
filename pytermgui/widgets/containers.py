@@ -370,7 +370,7 @@ class Container(ScrollableWidget):
             """Align line to the left"""
 
             padding = self.width - real_length(left + right) - real_length(text)
-            return left + fill(text) + fill(padding * char) + right
+            return left + text + fill(padding * char) + right
 
         def _align_center(text: str) -> str:
             """Align line to the center"""
@@ -389,7 +389,7 @@ class Container(ScrollableWidget):
             """Align line to the right"""
 
             padding = self.width - real_length(left + right) - real_length(text)
-            return left + fill(padding * char + text) + right
+            return left + fill(padding * char) + text + right
 
         if widget.parent_align == HorizontalAlignment.CENTER:
             total = self.width - real_length(left + right) - widget.width
@@ -539,6 +539,8 @@ class Container(ScrollableWidget):
 
         overflow = self.overflow
 
+        self.positioned_line_buffer = []
+
         for widget in self._widgets:
             align, offset = self._get_aligners(widget, (borders[0], borders[2]))
 
@@ -561,6 +563,9 @@ class Container(ScrollableWidget):
                 widget_lines.append(align(line))
 
             lines.extend(widget_lines)
+
+            self.positioned_line_buffer.extend(widget.positioned_line_buffer)
+            widget.positioned_line_buffer = []
 
         if overflow == Overflow.SCROLL:
             self._max_scroll = len(lines) - self.height + sum(has_top_bottom)

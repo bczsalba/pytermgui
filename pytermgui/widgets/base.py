@@ -143,6 +143,8 @@ class Widget:  # pylint: disable=too-many-public-methods
         self._relative_width: float | None = None
         self._previous_state: tuple[tuple[int, int], list[str]] | None = None
 
+        self.positioned_line_buffer: list[tuple[tuple[int, int], str]] = []
+
         for attr, value in attrs.items():
             setattr(self, attr, value)
 
