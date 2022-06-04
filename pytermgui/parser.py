@@ -115,6 +115,7 @@ from contextlib import suppress
 from dataclasses import dataclass
 from enum import Enum
 from enum import auto as _auto
+from functools import cached_property
 from random import shuffle
 from typing import Callable, Iterator, List, Tuple
 
@@ -358,7 +359,7 @@ class Token:
 
         return other.data == self.data and other.ttype is self.ttype
 
-    @property
+    @cached_property
     def sequence(self) -> str | None:
         """Returns the ANSI sequence this token represents."""
 
