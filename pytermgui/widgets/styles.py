@@ -7,6 +7,7 @@ that represents that "deep" the Widget is within the hierarchy, and
 """
 
 # pylint: disable=unused-argument, too-many-instance-attributes
+# pylint: disable=unnecessary-lambda-assignment
 
 from __future__ import annotations
 
