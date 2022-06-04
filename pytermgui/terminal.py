@@ -269,7 +269,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             ["" for _ in range(self.width)] for y in range(self.height)
         ]
 
-    def __fancy_repr__(self) -> FancyYield:
+    def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         """Returns a cool looking repr."""
 
         name = type(self).__name__

@@ -51,7 +51,7 @@ class ParserSyntaxError(Exception):
         start, end = self._delimiters
         full = start + self.tag + end
 
-        escaped_context = ascii(self.context).strip("'")
+        escaped_context = ascii(self.context).strip("'")[:50]
         highlighted = escaped_context.replace(
             full, "\x1b[31m\x1b[1m" + full + "\x1b[0m", 1
         )

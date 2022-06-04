@@ -153,7 +153,7 @@ class RegexHighlighter:
 
 _BUILTIN_NAMES = "|".join(f"(?:{item})" for item in dir(builtins))
 _KEYWORD_NAMES = "|".join(
-    f"(?:{keyw})" for keyw in keyword.kwlist + ["builtin", "function", "module"]
+    f"(?:{keyw})" for keyw in list(keyword.kwlist) + ["builtin", "function", "module"]
 )
 
 highlight_python = RegexHighlighter(

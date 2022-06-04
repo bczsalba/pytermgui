@@ -554,19 +554,19 @@ class RGBColor(Color):
         return cls(";".join(map(str, rgb)))
 
     @property
-    def red(self) -> int:
+    def red(self) -> int | str:
         """Returns the red component of this color."""
 
         return self.rgb[0]
 
     @property
-    def green(self) -> int:
+    def green(self) -> int | str:
         """Returns the green component of this color."""
 
         return self.rgb[1]
 
     @property
-    def blue(self) -> int:
+    def blue(self) -> int | str:
         """Returns the blue component of this color."""
 
         return self.rgb[2]
@@ -608,19 +608,19 @@ class HEXColor(RGBColor):
         assert len(self._rgb) == 3
 
     @property
-    def red(self) -> int:
+    def red(self) -> str:
         """Returns the red component of this color."""
 
         return hex(int(self.value[1:3], base=16))
 
     @property
-    def green(self) -> int:
+    def green(self) -> str:
         """Returns the green component of this color."""
 
         return hex(int(self.value[3:5], base=16))
 
     @property
-    def blue(self) -> int:
+    def blue(self) -> str:
         """Returns the blue component of this color."""
 
         return hex(int(self.value[5:7], base=16))
