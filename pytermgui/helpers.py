@@ -7,6 +7,7 @@ from typing import Iterator
 from .ansi_interface import reset
 from .colors import Color
 from .parser import Token, TokenType, markup
+from .regex import real_length
 
 __all__ = [
     "get_applied_sequences",
@@ -56,7 +57,7 @@ def get_applied_sequences(text: str) -> str:
 
 
 def break_line(
-    line: str, limit: int, non_first_limit: int | None = None
+    line: str, limit: int, non_first_limit: int | None = None, fill: str | None = None
 ) -> Iterator[str]:
     """Breaks a line into a `list[str]` with maximum `limit` length per line.
 
@@ -75,6 +76,17 @@ def break_line(
             to `limit`.
     """
 
+    if line in ["", "\x1b[0m"]:
+        yield ""
+        return
+
+    def _pad(line: str) -> str:
+        if fill is None:
+            return line
+
+        count = limit - real_length(line)
+        return line + count * fill
+
     used = 0
     current = ""
     sequences = ""
@@ -90,7 +102,7 @@ def break_line(
                     if sequences != "":
                         current += "\x1b[0m"
 
-                    yield current
+                    yield _pad(current)
 
                     current = sequences
                     used = 0
@@ -120,4 +132,4 @@ def break_line(
     if sequences != "" and not current.endswith("\x1b[0m"):
         current += "\x1b[0m"
 
-    yield current
+    yield _pad(current)
