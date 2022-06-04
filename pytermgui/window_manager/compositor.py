@@ -129,6 +129,11 @@ class Compositor:
 
             yield (pos, line)
 
+        for i, (pos, line) in enumerate(widget.positioned_line_buffer.copy()):
+            yield (pos, line)
+
+            widget.positioned_line_buffer.remove((pos, line))
+
     @property
     def framerate(self) -> int:
         """The framerate the draw loop runs at.

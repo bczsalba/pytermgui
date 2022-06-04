@@ -3,76 +3,94 @@
 from __future__ import annotations
 
 import string
-from typing import Any
+from collections.abc import Iterable
+from dataclasses import dataclass
+from typing import Any, Iterator
 
 from ..ansi_interface import MouseAction, MouseEvent
 from ..enums import HorizontalAlignment
+from ..helpers import break_line
 from ..input import keys
-from ..regex import real_length
 from . import styles as w_styles
-from .base import Label
+from .base import Widget
 
 
-class InputField(Label):
-    """An element to display user input
+@dataclass
+class Cursor(Iterable):
+    """A simple dataclass representing the InputField's cursor."""
 
-    This class does NOT read input. To use this widget, send it
-    user data gathered by `pytermgui.input.getch` or other means.
+    row: int
+    col: int
 
-    Args:
-        value: The default value of this InputField.
-        prompt: Text to display to the left of the field.
-        expect: Type object that all input should match. This type
-              is called on each new key, and if a `ValueError` is
-              raised the key is discarded. The `value` attribute
-              is also converted using this type.
+    def __iadd__(self, difference: tuple[int, int]) -> Cursor:
+        """Move the cursor by the difference."""
 
-    Example of usage:
+        row, col = difference
 
-    ```python3
-    import pytermgui as ptg
+        self.row += row
+        self.col += col
 
-    field = ptg.InputField()
+        return self
 
-    root = ptg.Container(
-        "[210 bold]This is an InputField!",
-        field,
-    )
+    def __iter__(self) -> Iterator[int]:
+        return iter((self.row, self.col))
 
-    while True:
-        key = getch()
+    def __len__(self) -> int:
+        return 2
 
-        # Send key to field
-        field.handle_key(key)
-        root.print()
-    ```
-    """
+
+class InputField(Widget):  # pylint: disable=too-many-instance-attributes
+    """An element to display user input"""
 
     styles = w_styles.StyleManager(
-        value=w_styles.FOREGROUND,
-        cursor=w_styles.MarkupFormatter("[inverse]{item}"),
-        fill=w_styles.MarkupFormatter("[@243]{item}"),
+        value="",
+        cursor="dim inverse",
     )
+
+    keys = {
+        "move_left": {keys.LEFT},
+        "move_right": {keys.RIGHT},
+        "move_up": {keys.UP},
+        "move_down": {keys.DOWN},
+        "select_left": {keys.SHIFT_LEFT},
+        "select_right": {keys.SHIFT_RIGHT},
+        "select_up": {keys.SHIFT_UP},
+        "select_down": {keys.SHIFT_DOWN},
+    }
+
+    parent_align = HorizontalAlignment.LEFT
 
     is_bindable = True
 
     def __init__(
         self,
         value: str = "",
-        prompt: str = "",
-        expect: type | None = None,
+        *,
+        tablength: int = 4,
+        multiline: bool = False,
+        cursor: Cursor | None = None,
         **attrs: Any,
     ) -> None:
         """Initialize object"""
 
-        super().__init__(prompt + value, **attrs)
+        super().__init__(**attrs)
 
-        self.parent_align = HorizontalAlignment.LEFT
+        if "width" not in attrs:
+            self.width = len(value)
 
-        self.value = value
-        self.prompt = prompt
-        self.cursor = real_length(self.value)
-        self.expect = expect
+        self.height = 1
+        self.tablength = tablength
+        self.multiline = multiline
+
+        self.cursor = cursor or Cursor(0, 0)
+
+        self._lines = value.splitlines() or [""]
+        self._selection_length = 1
+
+        self._styled_cache: list[str] | None = self._style_and_break_lines()
+
+        self._cached_state: int = self.width
+        self._drag_start: tuple[int, int] | None = None
 
     @property
     def selectables_length(self) -> int:
@@ -81,134 +99,337 @@ class InputField(Label):
         return 1
 
     @property
-    def cursor(self) -> int:
-        """Get cursor"""
+    def value(self) -> str:
+        """Returns the internal value of this field."""
 
-        return self._cursor
+        return "\n".join(self._lines)
 
-    @cursor.setter
-    def cursor(self, value: int) -> None:
-        """Set cursor as an always-valid value"""
+    @property
+    def selection(self) -> str:
+        """Returns the currently selected span of text."""
 
-        self._cursor = max(0, min(value, real_length(str(self.value))))
+        start, end = sorted([self.cursor.col, self.cursor.col + self._selection_length])
+        return self._lines[self.cursor.row][start:end]
 
-    def handle_key(self, key: str) -> bool:
-        """Handle keypress, return True if success, False if failure"""
+    def _cache_is_valid(self) -> bool:
+        """Determines if the styled line cache is still usable."""
 
-        def _run_callback() -> None:
-            """Call callback if `keys.ANY_KEY` is bound"""
+        return self.width == self._cached_state
 
-            if keys.ANY_KEY in self._bindings:
-                method, _ = self._bindings[keys.ANY_KEY]
-                method(self, key)
+    def _style_and_break_lines(self) -> list[str]:
+        """Styles and breaks self._lines."""
+
+        value = self.value
+        style = self.styles.value
+
+        # TODO: This is done line-by-line due to parser performance problems.
+        #       These should be resolved in the upcoming parser refactor.
+        document = [style(line) for line in value.splitlines()]
+        # document = style(value).splitlines()
+
+        lines: list[str] = []
+        width = self.width
+        extend = lines.extend
+
+        for line in document:
+            extend(break_line(line.replace("\n", "\\n"), width, fill=" "))
+            extend("")
+
+        return lines
+
+    def update_selection(self, count: int, correct_zero_length: bool = True) -> None:
+        """Updates the selection state.
+
+        Args:
+            count: How many characters the cursor should change by. Negative for
+                selecting leftward, positive for right.
+            correct_zero_length: If set, when the selection length is 0 both the cursor
+                and the selection length are manipulated to keep the original selection
+                start while moving the selection in more of the way the user might
+                expect.
+        """
+
+        self._selection_length += count
+
+        if correct_zero_length and abs(self._selection_length) == 0:
+            self._selection_length += 2 if count > 0 else -2
+            self.move_cursor((0, (-1 if count > 0 else 1)))
+
+    def delete_back(self, count: int = 1) -> str:
+        """Deletes `count` characters from the cursor, backwards.
+
+        Args:
+            count: How many characters should be deleted.
+
+        Returns:
+            The deleted string.
+        """
+
+        row, col = self.cursor
+
+        if len(self._lines) <= row:
+            return ""
+
+        line = self._lines[row]
+
+        start, end = sorted([col, col - count])
+        start = max(0, start)
+        self._lines[row] = line[:start] + line[end:]
+
+        self._styled_cache = None
+
+        if self._lines[row] == "":
+            self.move_cursor((-1, len(self._lines[row - 1])))
+
+            return self._lines.pop(row)
+
+        if count > 0:
+            self.move_cursor((0, -count))
+
+        return line[col - count : col]
+
+    def insert_text(self, text: str) -> None:
+        """Inserts text at the cursor location."""
+
+        row, col = self.cursor
+
+        if len(self._lines) <= row:
+            self._lines.insert(row, "")
+
+        line = self._lines[row]
+
+        self._lines[row] = line[:col] + text + line[col:]
+        self.move_cursor((0, len(text)))
+
+        self._styled_cache = None
+
+    def handle_action(self, action: str) -> bool:
+        """Handles some action.
+
+        This will be expanded in the future to allow using all behaviours with
+        just their actions.
+        """
+
+        cursors = {
+            "move_left": (0, -1),
+            "move_right": (0, 1),
+            "move_up": (-1, 0),
+            "move_down": (1, 0),
+        }
+
+        if action.startswith("move_"):
+            row, col = cursors[action]
+
+            if self.cursor.row + row > len(self._lines):
+                self._lines.append("")
+
+            col += self._selection_length
+            if self._selection_length > 0:
+                col -= 1
+
+            self._selection_length = 1
+            self.move_cursor((row, col))
+            return True
+
+        if action.startswith("select_"):
+            if action == "select_right":
+                self.update_selection(1)
+
+            elif action == "select_left":
+                self.update_selection(-1)
+
+            return True
+
+        return False
+
+    # TODO: This could probably be simplified by a wider adoption of the action pattern.
+    def handle_key(  # pylint: disable=too-many-return-statements, too-many-branches
+        self, key: str
+    ) -> bool:
+        """Adds text to the field, or moves the cursor."""
 
         if self.execute_binding(key):
             return True
 
+        for name, options in self.keys.items():
+            if (
+                name.rsplit("_", maxsplit=1)[-1] in ("up", "down")
+                and not self.multiline
+            ):
+                continue
+
+            if key in options:
+                return self.handle_action(name)
+
         if key == keys.TAB:
-            return False
+            if not self.multiline:
+                return False
 
-        if key == keys.BACKSPACE and self.cursor > 0:
-            self.value = str(self.value)
-            left = self.value[: self.cursor - 1]
-            right = self.value[self.cursor :]
-            self.value = left + right
+            for _ in range(self.tablength):
+                self.handle_key(" ")
 
-            self.cursor -= 1
+            return True
 
-            _run_callback()
-
-        elif key in [keys.LEFT, keys.CTRL_B]:
-            self.cursor -= 1
-
-        elif key in [keys.RIGHT, keys.CTRL_F]:
-            self.cursor += 1
-
-        # Ignore unhandled non-printing keys
-        elif key == keys.ENTER or key not in string.printable:
-            return False
-
-        # Add character
-        else:
-            if self.expect is not None:
-                try:
-                    self.expect(key)
-                except ValueError:
+        if key in string.printable and key not in "\x0c\x0b":
+            if key == keys.ENTER:
+                if not self.multiline:
                     return False
 
-            self.value = str(self.value)
+                line = self._lines[self.cursor.row]
+                left, right = line[: self.cursor.col], line[self.cursor.col :]
 
-            left = self.value[: self.cursor] + key
-            right = self.value[self.cursor :]
+                self._lines[self.cursor.row] = left
+                self._lines.insert(self.cursor.row + 1, right)
 
-            self.value = left + right
-            self.cursor += len(key)
-            _run_callback()
+                self.move_cursor((1, -self.cursor.col))
+                self._styled_cache = None
 
-        if self.expect is not None and self.value != "":
-            self.value = self.expect(self.value)
+            else:
+                self.insert_text(key)
 
-        return True
+            return True
+
+        if key == keys.BACKSPACE:
+            if self._selection_length == 1:
+                self.delete_back(1)
+            else:
+                self.delete_back(-self._selection_length)
+
+            # self.handle_action("move_left")
+
+            # if self._selection_length == 1:
+
+            self._selection_length = 1
+            self._styled_cache = None
+
+            return True
+
+        return False
 
     def handle_mouse(self, event: MouseEvent) -> bool:
-        """Handle mouse events"""
+        """Allows point-and-click selection."""
 
-        # Ignore mouse release events
-        if event.action is MouseAction.RELEASE:
-            return True
+        x_offset = event.position[0] - self.pos[0]
+        y_offset = event.position[1] - self.pos[1]
 
         # Set cursor to mouse location
         if event.action is MouseAction.LEFT_CLICK:
-            self.cursor = event.position[0] - self.pos[0]
+            line = self._lines[y_offset]
+            self.move_cursor((y_offset, min(len(line), x_offset)), absolute=True)
+
+            self._drag_start = (x_offset, y_offset)
+            self._selection_length = 1
+
+            return True
+
+        # Select text using dragging the mouse
+        if event.action is MouseAction.LEFT_DRAG:
+            assert self._drag_start is not None
+
+            change = x_offset - self._drag_start[0]
+            self.update_selection(
+                change - self._selection_length + 1, correct_zero_length=False
+            )
+
             return True
 
         return super().handle_mouse(event)
 
-    def get_lines(self) -> list[str]:
-        """Get lines of object"""
+    def move_cursor(self, new: tuple[int, int], *, absolute: bool = False) -> None:
+        """Moves the cursor, then possible re-positions it to a valid location.
 
-        # Cache value to be reset later
-        old = self.value
+        Args:
+            new: The new set of (y, x) positions to use.
+            absolute: If set, `new` will be interpreted as absolute coordinates,
+                instead of being added on top of the current ones.
+        """
 
-        # Stringify value in case `expect` is set
-        self.value = str(self.value)
+        if len(self._lines) == 0:
+            return
 
-        # Create sides separated by cursor
-        left = self.styles.fill(self.value[: self.cursor])
-        right = self.styles.fill(self.value[self.cursor + 1 :])
-
-        # Assign cursor character
-        if self.selected_index is None:
-            if len(self.value) <= self.cursor:
-                cursor_char = ""
-
-            else:
-                cursor_char = self.styles.fill(self.value[self.cursor])
-
-        # These errors are really weird, as there is nothing different with
-        # styles.cursor compared to others, which pass just fine.
-        elif len(self.value) > self.cursor:
-            cursor_char = self.styles.cursor(  # pylint: disable=not-callable
-                self.value[self.cursor]
-            )
+        if absolute:
+            new_y, new_x = new
+            self.cursor.row = new_y
+            self.cursor.col = new_x
 
         else:
-            cursor_char = self.styles.cursor(" ")  # pylint: disable=not-callable
+            self.cursor += new
 
-        # Set new value, get lines using it
-        self.value = self.prompt
+        self.cursor.row = max(0, min(self.cursor.row, len(self._lines) - 1))
+        row, col = self.cursor
 
-        if len(self.prompt) > 0:
-            self.value += " "
+        line = self._lines[row]
 
-        self.value += left + cursor_char + right
+        # Going left, possibly upwards
+        if col < 0:
+            if row <= 0:
+                self.cursor.col = 0
 
-        lines = super().get_lines()
+            else:
+                self.cursor.row -= 1
+                line = self._lines[self.cursor.row]
+                self.cursor.col = len(line)
 
-        # Set old value
-        self.value = old
+        # Going right, possibly downwards
+        elif col > len(line) and line != "":
+            if len(self._lines) > row + 1:
+                self.cursor.row += 1
+                self.cursor.col = 0
 
-        return [
-            line + self.styles.fill((self.width - real_length(line)) * " ")
-            for line in lines
-        ]
+            line = self._lines[self.cursor.row]
+
+        self.cursor.col = max(0, min(self.cursor.col, len(line)))
+
+    def get_lines(self) -> list[str]:
+        """Builds the input field's lines."""
+
+        style = self.styles.value
+
+        if not self._cache_is_valid() or self._styled_cache is None:
+            self._styled_cache = self._style_and_break_lines()
+
+        lines = self._styled_cache
+
+        row, col = self.cursor
+
+        if len(self._lines) == 0:
+            line = " "
+        else:
+            line = self._lines[row]
+
+        start = col
+        cursor_char = " "
+        if len(line) > col:
+            start = col
+            end = col + self._selection_length
+            start, end = sorted([start, end])
+
+            try:
+                cursor_char = line[start:end]
+            except IndexError as error:
+                raise ValueError(f"Invalid index in {line!r}: {col}") from error
+
+        style_cursor = style if self.selected_index is None else self.styles.cursor
+
+        # TODO: This is horribly hackish, but is the only way to "get around" the
+        #       limits of the current scrolling techniques. Should be refactored
+        #       once a better solution is available
+        if self.parent is not None:
+            offset = 0
+            parent = self.parent
+            while hasattr(parent, "parent"):
+                offset += getattr(parent, "_scroll_offset")
+
+                parent = parent.parent  # type: ignore
+
+            offset_row = self.pos[1] - offset + row
+            position = (self.pos[0] + start, offset_row)
+
+            self.positioned_line_buffer.append(
+                (position, style_cursor(cursor_char))  # type: ignore
+            )
+
+        lines = lines or [""]
+        self.height = len(lines)
+
+        return lines
