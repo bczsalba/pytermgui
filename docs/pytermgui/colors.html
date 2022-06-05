@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.0.0"/>
+    <meta name="generator" content="pdoc 12.0.1"/>
     <title>pytermgui.colors API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -239,17 +239,17 @@ answers I've ever bumped into.</p>
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">import</span> <span class="nn">re</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">import</span> <span class="nn">sys</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>  <span class="c1"># pylint: disable=no-name-in-module</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span><span class="p">,</span> <span class="n">cached_property</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Generator</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span><span class="p">,</span> <span class="n">lru_cache</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>  <span class="c1"># pylint: disable=no-name-in-module</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Type</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="kn">from</span> <span class="nn">.fancy_repr</span> <span class="kn">import</span> <span class="n">FancyYield</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="kn">from</span> <span class="nn">.color_table</span> <span class="kn">import</span> <span class="n">COLOR_TABLE</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ColorSyntaxError</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">terminal</span><span class="p">,</span> <span class="n">ColorSystem</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="kn">from</span> <span class="nn">.ansi_interface</span> <span class="kn">import</span> <span class="n">reset</span> <span class="k">as</span> <span class="n">reset_style</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">from</span> <span class="nn">.ansi_interface</span> <span class="kn">import</span> <span class="n">reset</span> <span class="k">as</span> <span class="n">reset_style</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="kn">from</span> <span class="nn">.color_table</span> <span class="kn">import</span> <span class="n">COLOR_TABLE</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ColorSyntaxError</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="kn">from</span> <span class="nn">.fancy_repr</span> <span class="kn">import</span> <span class="n">FancyYield</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">ColorSystem</span><span class="p">,</span> <span class="n">terminal</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="c1"># This cyclic won&#39;t be relevant while type checking.</span>
@@ -779,20 +779,20 @@ answers I've ever bumped into.</p>
 </span><span id="L-553"><a href="#L-553"><span class="linenos">553</span></a>
 </span><span id="L-554"><a href="#L-554"><span class="linenos">554</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">rgb</span><span class="p">)))</span>
 </span><span id="L-555"><a href="#L-555"><span class="linenos">555</span></a>
-</span><span id="L-556"><a href="#L-556"><span class="linenos">556</span></a>    <span class="nd">@cached_property</span>
-</span><span id="L-557"><a href="#L-557"><span class="linenos">557</span></a>    <span class="k">def</span> <span class="nf">red</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-556"><a href="#L-556"><span class="linenos">556</span></a>    <span class="nd">@property</span>
+</span><span id="L-557"><a href="#L-557"><span class="linenos">557</span></a>    <span class="k">def</span> <span class="nf">red</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-558"><a href="#L-558"><span class="linenos">558</span></a>        <span class="sd">&quot;&quot;&quot;Returns the red component of this color.&quot;&quot;&quot;</span>
 </span><span id="L-559"><a href="#L-559"><span class="linenos">559</span></a>
 </span><span id="L-560"><a href="#L-560"><span class="linenos">560</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="L-561"><a href="#L-561"><span class="linenos">561</span></a>
-</span><span id="L-562"><a href="#L-562"><span class="linenos">562</span></a>    <span class="nd">@cached_property</span>
-</span><span id="L-563"><a href="#L-563"><span class="linenos">563</span></a>    <span class="k">def</span> <span class="nf">green</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-562"><a href="#L-562"><span class="linenos">562</span></a>    <span class="nd">@property</span>
+</span><span id="L-563"><a href="#L-563"><span class="linenos">563</span></a>    <span class="k">def</span> <span class="nf">green</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-564"><a href="#L-564"><span class="linenos">564</span></a>        <span class="sd">&quot;&quot;&quot;Returns the green component of this color.&quot;&quot;&quot;</span>
 </span><span id="L-565"><a href="#L-565"><span class="linenos">565</span></a>
 </span><span id="L-566"><a href="#L-566"><span class="linenos">566</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </span><span id="L-567"><a href="#L-567"><span class="linenos">567</span></a>
-</span><span id="L-568"><a href="#L-568"><span class="linenos">568</span></a>    <span class="nd">@cached_property</span>
-</span><span id="L-569"><a href="#L-569"><span class="linenos">569</span></a>    <span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-568"><a href="#L-568"><span class="linenos">568</span></a>    <span class="nd">@property</span>
+</span><span id="L-569"><a href="#L-569"><span class="linenos">569</span></a>    <span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-570"><a href="#L-570"><span class="linenos">570</span></a>        <span class="sd">&quot;&quot;&quot;Returns the blue component of this color.&quot;&quot;&quot;</span>
 </span><span id="L-571"><a href="#L-571"><span class="linenos">571</span></a>
 </span><span id="L-572"><a href="#L-572"><span class="linenos">572</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -834,22 +834,22 @@ answers I've ever bumped into.</p>
 </span><span id="L-608"><a href="#L-608"><span class="linenos">608</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rgb</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
 </span><span id="L-609"><a href="#L-609"><span class="linenos">609</span></a>
 </span><span id="L-610"><a href="#L-610"><span class="linenos">610</span></a>    <span class="nd">@property</span>
-</span><span id="L-611"><a href="#L-611"><span class="linenos">611</span></a>    <span class="k">def</span> <span class="nf">red</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-611"><a href="#L-611"><span class="linenos">611</span></a>    <span class="k">def</span> <span class="nf">red</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-612"><a href="#L-612"><span class="linenos">612</span></a>        <span class="sd">&quot;&quot;&quot;Returns the red component of this color.&quot;&quot;&quot;</span>
 </span><span id="L-613"><a href="#L-613"><span class="linenos">613</span></a>
-</span><span id="L-614"><a href="#L-614"><span class="linenos">614</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+</span><span id="L-614"><a href="#L-614"><span class="linenos">614</span></a>        <span class="k">return</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 </span><span id="L-615"><a href="#L-615"><span class="linenos">615</span></a>
 </span><span id="L-616"><a href="#L-616"><span class="linenos">616</span></a>    <span class="nd">@property</span>
-</span><span id="L-617"><a href="#L-617"><span class="linenos">617</span></a>    <span class="k">def</span> <span class="nf">green</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-617"><a href="#L-617"><span class="linenos">617</span></a>    <span class="k">def</span> <span class="nf">green</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-618"><a href="#L-618"><span class="linenos">618</span></a>        <span class="sd">&quot;&quot;&quot;Returns the green component of this color.&quot;&quot;&quot;</span>
 </span><span id="L-619"><a href="#L-619"><span class="linenos">619</span></a>
-</span><span id="L-620"><a href="#L-620"><span class="linenos">620</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+</span><span id="L-620"><a href="#L-620"><span class="linenos">620</span></a>        <span class="k">return</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 </span><span id="L-621"><a href="#L-621"><span class="linenos">621</span></a>
 </span><span id="L-622"><a href="#L-622"><span class="linenos">622</span></a>    <span class="nd">@property</span>
-</span><span id="L-623"><a href="#L-623"><span class="linenos">623</span></a>    <span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-623"><a href="#L-623"><span class="linenos">623</span></a>    <span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-624"><a href="#L-624"><span class="linenos">624</span></a>        <span class="sd">&quot;&quot;&quot;Returns the blue component of this color.&quot;&quot;&quot;</span>
 </span><span id="L-625"><a href="#L-625"><span class="linenos">625</span></a>
-</span><span id="L-626"><a href="#L-626"><span class="linenos">626</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
+</span><span id="L-626"><a href="#L-626"><span class="linenos">626</span></a>        <span class="k">return</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 </span><span id="L-627"><a href="#L-627"><span class="linenos">627</span></a>
 </span><span id="L-628"><a href="#L-628"><span class="linenos">628</span></a>
 </span><span id="L-629"><a href="#L-629"><span class="linenos">629</span></a><span class="n">SYSTEM_TO_TYPE</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">ColorSystem</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Color</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
@@ -878,9 +878,9 @@ answers I've ever bumped into.</p>
 </span><span id="L-652"><a href="#L-652"><span class="linenos">652</span></a>    <span class="n">delta_blue</span> <span class="o">=</span> <span class="n">blue1</span> <span class="o">-</span> <span class="n">blue2</span>
 </span><span id="L-653"><a href="#L-653"><span class="linenos">653</span></a>
 </span><span id="L-654"><a href="#L-654"><span class="linenos">654</span></a>    <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span>
-</span><span id="L-655"><a href="#L-655"><span class="linenos">655</span></a>        <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">redmean</span> <span class="o">/</span> <span class="mi">256</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta_red</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-</span><span id="L-656"><a href="#L-656"><span class="linenos">656</span></a>        <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta_green</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-</span><span id="L-657"><a href="#L-657"><span class="linenos">657</span></a>        <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="n">redmean</span><span class="p">)</span> <span class="o">/</span> <span class="mi">256</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta_blue</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+</span><span id="L-655"><a href="#L-655"><span class="linenos">655</span></a>        <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">redmean</span> <span class="o">/</span> <span class="mi">256</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta_red</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="L-656"><a href="#L-656"><span class="linenos">656</span></a>        <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta_green</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="L-657"><a href="#L-657"><span class="linenos">657</span></a>        <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="n">redmean</span><span class="p">)</span> <span class="o">/</span> <span class="mi">256</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta_blue</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 </span><span id="L-658"><a href="#L-658"><span class="linenos">658</span></a>    <span class="p">)</span>
 </span><span id="L-659"><a href="#L-659"><span class="linenos">659</span></a>
 </span><span id="L-660"><a href="#L-660"><span class="linenos">660</span></a>
@@ -1079,7 +1079,7 @@ answers I've ever bumped into.</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">foreground</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">text</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span>,</span><span class="param">	<span class="n">reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">foreground</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">text</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span>,</span><span class="param">	<span class="n">reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="foreground-view-source"><span>View Source</span></label>
 
@@ -1136,7 +1136,7 @@ str formats.</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">background</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">text</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span>,</span><span class="param">	<span class="n">reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">background</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">text</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span>,</span><span class="param">	<span class="n">reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="background-view-source"><span>View Source</span></label>
 
@@ -1194,7 +1194,7 @@ str formats.</li>
                     <div class="decorator">@lru_cache(maxsize=None)</div>
 
         <span class="def">def</span>
-        <span class="name">str_to_color</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">text</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">is_background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">localize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">use_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span>:</span></span>
+        <span class="name">str_to_color</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">text</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">is_background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">localize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">use_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span>:</span></span>
 
                 <label class="view-source-button" for="str_to_color-view-source"><span>View Source</span></label>
 
@@ -1562,7 +1562,7 @@ Mostly used internally, when set will take precedence over syntax of leading
                             <div id="Color.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Color</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">value</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_foreground</span><span class="p">:</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">default_background</span><span class="p">:</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Color</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">value</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_foreground</span><span class="p">:</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">default_background</span><span class="p">:</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1610,7 +1610,7 @@ Mostly used internally, when set will take precedence over syntax of leading
                     <div class="decorator">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">from_rgb</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span>:</span></span>
+        <span class="name">from_rgb</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span>:</span></span>
 
                 <label class="view-source-button" for="Color.from_rgb-view-source"><span>View Source</span></label>
 
@@ -1697,7 +1697,7 @@ Mostly used internally, when set will take precedence over syntax of leading
                     <div class="decorator">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">get_default_foreground</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span></span><span class="return-annotation">) -> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span>:</span></span>
+        <span class="name">get_default_foreground</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span></span><span class="return-annotation">) -> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span>:</span></span>
 
                 <label class="view-source-button" for="Color.get_default_foreground-view-source"><span>View Source</span></label>
 
@@ -1725,7 +1725,7 @@ Mostly used internally, when set will take precedence over syntax of leading
                     <div class="decorator">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">get_default_background</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span></span><span class="return-annotation">) -> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span>:</span></span>
+        <span class="name">get_default_background</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span></span><span class="return-annotation">) -> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span>:</span></span>
 
                 <label class="view-source-button" for="Color.get_default_background-view-source"><span>View Source</span></label>
 
@@ -1795,7 +1795,7 @@ Mostly used internally, when set will take precedence over syntax of leading
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_localized</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span>:</span></span>
+        <span class="name">get_localized</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span>:</span></span>
 
                 <label class="view-source-button" for="Color.get_localized-view-source"><span>View Source</span></label>
 
@@ -1926,7 +1926,7 @@ terminal.</p>
                             <div id="IndexedColor.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">IndexedColor</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">value</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_foreground</span><span class="p">:</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">default_background</span><span class="p">:</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">IndexedColor</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">value</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_foreground</span><span class="p">:</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">default_background</span><span class="p">:</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1952,7 +1952,7 @@ terminal.</p>
                     <div class="decorator">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">from_rgb</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">IndexedColor</span>:</span></span>
+        <span class="name">from_rgb</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n"><a href="#IndexedColor">pytermgui.colors.IndexedColor</a></span>:</span></span>
 
                 <label class="view-source-button" for="IndexedColor.from_rgb-view-source"><span>View Source</span></label>
 
@@ -2187,7 +2187,7 @@ terminal.</p>
                     <div class="decorator">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">from_ansi</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">code</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">StandardColor</span>:</span></span>
+        <span class="name">from_ansi</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">code</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n"><a href="#StandardColor">pytermgui.colors.StandardColor</a></span>:</span></span>
 
                 <label class="view-source-button" for="StandardColor.from_ansi-view-source"><span>View Source</span></label>
 
@@ -2234,7 +2234,7 @@ terminal.</p>
                     <div class="decorator">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">from_rgb</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">StandardColor</span>:</span></span>
+        <span class="name">from_rgb</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n"><a href="#StandardColor">pytermgui.colors.StandardColor</a></span>:</span></span>
 
                 <label class="view-source-button" for="StandardColor.from_rgb-view-source"><span>View Source</span></label>
 
@@ -2379,20 +2379,20 @@ terminal.</p>
 </span><span id="RGBColor-554"><a href="#RGBColor-554"><span class="linenos">554</span></a>
 </span><span id="RGBColor-555"><a href="#RGBColor-555"><span class="linenos">555</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">rgb</span><span class="p">)))</span>
 </span><span id="RGBColor-556"><a href="#RGBColor-556"><span class="linenos">556</span></a>
-</span><span id="RGBColor-557"><a href="#RGBColor-557"><span class="linenos">557</span></a>    <span class="nd">@cached_property</span>
-</span><span id="RGBColor-558"><a href="#RGBColor-558"><span class="linenos">558</span></a>    <span class="k">def</span> <span class="nf">red</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="RGBColor-557"><a href="#RGBColor-557"><span class="linenos">557</span></a>    <span class="nd">@property</span>
+</span><span id="RGBColor-558"><a href="#RGBColor-558"><span class="linenos">558</span></a>    <span class="k">def</span> <span class="nf">red</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="RGBColor-559"><a href="#RGBColor-559"><span class="linenos">559</span></a>        <span class="sd">&quot;&quot;&quot;Returns the red component of this color.&quot;&quot;&quot;</span>
 </span><span id="RGBColor-560"><a href="#RGBColor-560"><span class="linenos">560</span></a>
 </span><span id="RGBColor-561"><a href="#RGBColor-561"><span class="linenos">561</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="RGBColor-562"><a href="#RGBColor-562"><span class="linenos">562</span></a>
-</span><span id="RGBColor-563"><a href="#RGBColor-563"><span class="linenos">563</span></a>    <span class="nd">@cached_property</span>
-</span><span id="RGBColor-564"><a href="#RGBColor-564"><span class="linenos">564</span></a>    <span class="k">def</span> <span class="nf">green</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="RGBColor-563"><a href="#RGBColor-563"><span class="linenos">563</span></a>    <span class="nd">@property</span>
+</span><span id="RGBColor-564"><a href="#RGBColor-564"><span class="linenos">564</span></a>    <span class="k">def</span> <span class="nf">green</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="RGBColor-565"><a href="#RGBColor-565"><span class="linenos">565</span></a>        <span class="sd">&quot;&quot;&quot;Returns the green component of this color.&quot;&quot;&quot;</span>
 </span><span id="RGBColor-566"><a href="#RGBColor-566"><span class="linenos">566</span></a>
 </span><span id="RGBColor-567"><a href="#RGBColor-567"><span class="linenos">567</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </span><span id="RGBColor-568"><a href="#RGBColor-568"><span class="linenos">568</span></a>
-</span><span id="RGBColor-569"><a href="#RGBColor-569"><span class="linenos">569</span></a>    <span class="nd">@cached_property</span>
-</span><span id="RGBColor-570"><a href="#RGBColor-570"><span class="linenos">570</span></a>    <span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="RGBColor-569"><a href="#RGBColor-569"><span class="linenos">569</span></a>    <span class="nd">@property</span>
+</span><span id="RGBColor-570"><a href="#RGBColor-570"><span class="linenos">570</span></a>    <span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="RGBColor-571"><a href="#RGBColor-571"><span class="linenos">571</span></a>        <span class="sd">&quot;&quot;&quot;Returns the blue component of this color.&quot;&quot;&quot;</span>
 </span><span id="RGBColor-572"><a href="#RGBColor-572"><span class="linenos">572</span></a>
 </span><span id="RGBColor-573"><a href="#RGBColor-573"><span class="linenos">573</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -2418,7 +2418,7 @@ terminal.</p>
                             <div id="RGBColor.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">RGBColor</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">value</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_foreground</span><span class="p">:</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">default_background</span><span class="p">:</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">RGBColor</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">value</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_foreground</span><span class="p">:</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">default_background</span><span class="p">:</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -2444,7 +2444,7 @@ terminal.</p>
                     <div class="decorator">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">from_rgb</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">RGBColor</span>:</span></span>
+        <span class="name">from_rgb</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">rgb</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n"><a href="#RGBColor">pytermgui.colors.RGBColor</a></span>:</span></span>
 
                 <label class="view-source-button" for="RGBColor.from_rgb-view-source"><span>View Source</span></label>
 
@@ -2465,7 +2465,7 @@ terminal.</p>
                             </div>
                             <div id="RGBColor.red" class="classattr">
                                 <div class="attr variable">
-            <span class="name">red</span><span class="annotation">: int</span>
+            <span class="name">red</span><span class="annotation">: int | str</span>
 
         
     </div>
@@ -2478,7 +2478,7 @@ terminal.</p>
                             </div>
                             <div id="RGBColor.green" class="classattr">
                                 <div class="attr variable">
-            <span class="name">green</span><span class="annotation">: int</span>
+            <span class="name">green</span><span class="annotation">: int | str</span>
 
         
     </div>
@@ -2491,7 +2491,7 @@ terminal.</p>
                             </div>
                             <div id="RGBColor.blue" class="classattr">
                                 <div class="attr variable">
-            <span class="name">blue</span><span class="annotation">: int</span>
+            <span class="name">blue</span><span class="annotation">: int | str</span>
 
         
     </div>
@@ -2572,22 +2572,22 @@ terminal.</p>
 </span><span id="HEXColor-609"><a href="#HEXColor-609"><span class="linenos">609</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rgb</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
 </span><span id="HEXColor-610"><a href="#HEXColor-610"><span class="linenos">610</span></a>
 </span><span id="HEXColor-611"><a href="#HEXColor-611"><span class="linenos">611</span></a>    <span class="nd">@property</span>
-</span><span id="HEXColor-612"><a href="#HEXColor-612"><span class="linenos">612</span></a>    <span class="k">def</span> <span class="nf">red</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="HEXColor-612"><a href="#HEXColor-612"><span class="linenos">612</span></a>    <span class="k">def</span> <span class="nf">red</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="HEXColor-613"><a href="#HEXColor-613"><span class="linenos">613</span></a>        <span class="sd">&quot;&quot;&quot;Returns the red component of this color.&quot;&quot;&quot;</span>
 </span><span id="HEXColor-614"><a href="#HEXColor-614"><span class="linenos">614</span></a>
-</span><span id="HEXColor-615"><a href="#HEXColor-615"><span class="linenos">615</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+</span><span id="HEXColor-615"><a href="#HEXColor-615"><span class="linenos">615</span></a>        <span class="k">return</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 </span><span id="HEXColor-616"><a href="#HEXColor-616"><span class="linenos">616</span></a>
 </span><span id="HEXColor-617"><a href="#HEXColor-617"><span class="linenos">617</span></a>    <span class="nd">@property</span>
-</span><span id="HEXColor-618"><a href="#HEXColor-618"><span class="linenos">618</span></a>    <span class="k">def</span> <span class="nf">green</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="HEXColor-618"><a href="#HEXColor-618"><span class="linenos">618</span></a>    <span class="k">def</span> <span class="nf">green</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="HEXColor-619"><a href="#HEXColor-619"><span class="linenos">619</span></a>        <span class="sd">&quot;&quot;&quot;Returns the green component of this color.&quot;&quot;&quot;</span>
 </span><span id="HEXColor-620"><a href="#HEXColor-620"><span class="linenos">620</span></a>
-</span><span id="HEXColor-621"><a href="#HEXColor-621"><span class="linenos">621</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+</span><span id="HEXColor-621"><a href="#HEXColor-621"><span class="linenos">621</span></a>        <span class="k">return</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 </span><span id="HEXColor-622"><a href="#HEXColor-622"><span class="linenos">622</span></a>
 </span><span id="HEXColor-623"><a href="#HEXColor-623"><span class="linenos">623</span></a>    <span class="nd">@property</span>
-</span><span id="HEXColor-624"><a href="#HEXColor-624"><span class="linenos">624</span></a>    <span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="HEXColor-624"><a href="#HEXColor-624"><span class="linenos">624</span></a>    <span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="HEXColor-625"><a href="#HEXColor-625"><span class="linenos">625</span></a>        <span class="sd">&quot;&quot;&quot;Returns the blue component of this color.&quot;&quot;&quot;</span>
 </span><span id="HEXColor-626"><a href="#HEXColor-626"><span class="linenos">626</span></a>
-</span><span id="HEXColor-627"><a href="#HEXColor-627"><span class="linenos">627</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
+</span><span id="HEXColor-627"><a href="#HEXColor-627"><span class="linenos">627</span></a>        <span class="k">return</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -2598,7 +2598,7 @@ terminal.</p>
                             <div id="HEXColor.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">HEXColor</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">value</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_foreground</span><span class="p">:</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">default_background</span><span class="p">:</span> <span class="n">pytermgui</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">HEXColor</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">value</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">default_foreground</span><span class="p">:</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">default_background</span><span class="p">:</span> <span class="n"><a href="#Color">pytermgui.colors.Color</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -2620,7 +2620,7 @@ terminal.</p>
                             </div>
                             <div id="HEXColor.red" class="classattr">
                                 <div class="attr variable">
-            <span class="name">red</span><span class="annotation">: int</span>
+            <span class="name">red</span><span class="annotation">: str</span>
 
         
     </div>
@@ -2633,7 +2633,7 @@ terminal.</p>
                             </div>
                             <div id="HEXColor.green" class="classattr">
                                 <div class="attr variable">
-            <span class="name">green</span><span class="annotation">: int</span>
+            <span class="name">green</span><span class="annotation">: str</span>
 
         
     </div>
@@ -2646,7 +2646,7 @@ terminal.</p>
                             </div>
                             <div id="HEXColor.blue" class="classattr">
                                 <div class="attr variable">
-            <span class="name">blue</span><span class="annotation">: int</span>
+            <span class="name">blue</span><span class="annotation">: str</span>
 
         
     </div>
