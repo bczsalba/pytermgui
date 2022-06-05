@@ -74,7 +74,7 @@ SVG_FORMAT = f"""\
         }}}}
 
         .{{prefix}}-title {{{{
-            /*font-family: 'arial';*/
+            font-family: 'arial';
             fill: #94999A;
             font-size: 13px;
             font-weight: bold;
@@ -482,9 +482,9 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
             document_styles.append(styles)
 
         style_attr = (
-            f"style='{';'.join(styles)}'"
+            f"class='{prefix}' style='{';'.join(styles)}'"
             if inline_styles
-            else f"class='{_get_cls(prefix, index)}'"
+            else f"class='{prefix} {_get_cls(prefix, index)}'"
         )
 
         # Manual positioning
@@ -515,7 +515,6 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
             text += _make_tag(
                 "text",
                 _escape_text(line),
-                cls=prefix,
                 dy="-0.25em",
                 x=cursor_x,
                 y=cursor_y + FONT_SIZE,
