@@ -1,3 +1,22 @@
+## [6.3.0] - 2022-06-05
+
+## Refactors
+- Refactor `InputField`
+- Start caching `Token.sequence` to improve performance
+- Start lazy-evaluating terminal resolution
+
+
+## Bugfixes
+- Use `SVG` export prefix as the class of the `text` elements
+- Fix `Inspector` not resizing to custom global terminals
+
+
+## Additions
+- Add `break_line` `fill` argument
+- Add `chrome` SVG argument
+
+
+
 ## [6.2.2] - 2022-05-26
 
 ### Bugfixes
@@ -213,6 +232,7 @@
 
 
 
+[6.2.2]: https://github.com/bczsalba/pytermgui/compare/6.2.2...6.3.0
 [6.2.2]: https://github.com/bczsalba/pytermgui/compare/6.2.1...6.2.2
 [6.2.1]: https://github.com/bczsalba/pytermgui/compare/6.2.0...6.2.1
 [6.2.0]: https://github.com/bczsalba/pytermgui/compare/6.1.0...6.2.0
