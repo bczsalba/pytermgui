@@ -503,7 +503,11 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
                 ):
                     break
 
-                if window.handle_mouse(event) or (contains or window.is_modal):
+                if contains:
+                    window.handle_mouse(event)
+                    break
+
+                if window.is_modal:
                     break
 
             # Unset drag_target if no windows received the input
