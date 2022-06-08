@@ -12,7 +12,7 @@ from copy import deepcopy
 from inspect import signature
 from typing import Any, Callable, Generator, Iterator, Optional, Type, Union
 
-from ..ansi_interface import MouseEvent, reset
+from ..ansi_interface import MouseAction, MouseEvent, reset
 from ..enums import HorizontalAlignment, SizePolicy, WidgetChange
 from ..helpers import break_line
 from ..input import keys
@@ -354,15 +354,48 @@ class Widget:  # pylint: disable=too-many-public-methods
         return left <= pos[0] < right and top <= pos[1] < bottom
 
     def handle_mouse(self, event: MouseEvent) -> bool:
-        """Handles a mouse event, returning its success.
+        """Tries to call the most specific mouse handler function available.
+
+        This function looks for a set of mouse action handlers. Each handler follows
+        the format
+
+            on_{event_name}
+
+        For example, the handler triggered on MouseAction.LEFT_CLICK would be
+        `on_left_click`. If no handler is found nothing is done.
+
+        You can also define more general handlers, for example to group left & right
+        clicks you can use `on_click`, and to catch both up and down scroll you can use
+        `on_scroll`. General handlers are only used if they are the most specific ones,
+        i.e. there is no "specific" handler.
 
         Args:
-            event: Object containing mouse event to handle.
+            event: The event to handle.
 
         Returns:
-            A boolean describing whether the mouse input was handled."""
+            True if the event was successfully handled, False if no handler was
+            found or it returned False.
+        """
 
-        return False and hasattr(self, event)
+        name_map: dict[MouseAction, set[str]] = {
+            MouseAction.HOVER: ("hover",),
+            MouseAction.RELEASE: ("release",),
+            MouseAction.LEFT_CLICK: ("left_click", "click"),
+            MouseAction.RIGHT_CLICK: ("right_click", "click"),
+            MouseAction.LEFT_DRAG: ("left_drag", "drag"),
+            MouseAction.RIGHT_DRAG: ("right_drag", "drag"),
+            MouseAction.SCROLL_UP: ("scroll_up", "scroll"),
+            MouseAction.SCROLL_DOWN: ("scroll_down", "scroll"),
+        }
+
+        possible_names = name_map[event.action]
+        for name in possible_names:
+            if hasattr(self, f"on_{name}"):
+                handle = getattr(self, f"on_{name}")
+
+                return handle(event)
+
+        return False
 
     def handle_key(self, key: str) -> bool:
         """Handles a mouse event, returning its success.

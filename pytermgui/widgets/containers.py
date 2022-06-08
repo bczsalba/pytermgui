@@ -77,7 +77,7 @@ class Container(ScrollableWidget):
         if "box" in attrs:
             self.box = attrs["box"]
 
-        self._drag_target: Widget | None = None
+        self._mouse_target: Widget | None = None
 
     @property
     def sidelength(self) -> int:
@@ -738,17 +738,13 @@ class Container(ScrollableWidget):
             A boolean showing whether the event was handled.
         """
 
-        if event.action is MouseAction.RELEASE:
-            # Force RELEASE event to be sent
-            if self._drag_target is not None:
-                self._drag_target.handle_mouse(
-                    MouseEvent(MouseAction.RELEASE, event.position)
-                )
+        if super().handle_mouse(event):
+            return True
 
-            self._drag_target = None
+        if event.action is MouseAction.RELEASE and self._mouse_target is not None:
+            return self._mouse_target.handle_mouse(event)
 
-        if self._drag_target is not None:
-            return self._drag_target.handle_mouse(event)
+        release = MouseEvent(MouseAction.RELEASE, event.position)
 
         selectables_index = 0
         scrolled_pos = list(event.position)
@@ -765,14 +761,16 @@ class Container(ScrollableWidget):
 
             if widget.contains(event.position):
                 handled = widget.handle_mouse(event)
-                # This avoids too many branches from pylint.
                 selectables_index += widget.selected_index or 0
 
                 if event.action is MouseAction.LEFT_CLICK:
-                    self._drag_target = widget
-
                     if handled and selectables_index < len(self.selectables):
                         self.select(selectables_index)
+
+                if self._mouse_target is not None and self._mouse_target is not widget:
+                    self._mouse_target.handle_mouse(release)
+
+                self._mouse_target = widget
 
                 break
 
@@ -786,7 +784,7 @@ class Container(ScrollableWidget):
             if event.action is MouseAction.SCROLL_DOWN:
                 return self.scroll(1)
 
-        return handled
+        return handled or super().handle_mouse(event)
 
     def execute_binding(self, key: str) -> bool:
         """Executes a binding on self, and then on self._widgets.

@@ -68,8 +68,6 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
         self._is_running = False
         self._windows: list[Window] = []
-        self._drag_offsets: tuple[int, int] = (0, 0)
-        self._drag_target: tuple[Window, Edge] | None = None
         self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
 
         self.focused: Window | None = None
@@ -80,6 +78,10 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         self.layout = layout_type()
         self.compositor = Compositor(self._windows, framerate=framerate)
         self.mouse_translator: MouseTranslator | None = None
+
+        self._mouse_target: Window | None = None
+        self._drag_offsets: tuple[int, int] = (0, 0)
+        self._drag_target: tuple[Window, Edge] | None = None
 
         # This isn't quite implemented at the moment.
         self.restrict_within_bounds = True
@@ -504,6 +506,12 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
                     break
 
                 if contains:
+                    if self._mouse_target is not None:
+                        self._mouse_target.handle_mouse(
+                            MouseEvent(MouseAction.RELEASE, event.position)
+                        )
+
+                    self._mouse_target = window
                     window.handle_mouse(event)
                     break
 
