@@ -1027,6 +1027,7 @@ class Splitter(Container):
         for horizontal in zip_longest(*vertical_lines, fillvalue=" " * target_width):
             lines.append((reset() + separator).join(horizontal))
 
+        self.height = max(widget.height for widget in self)
         return lines
 
     def debug(self) -> str:
