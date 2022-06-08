@@ -16,7 +16,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, fields
 from enum import Enum
-from enum import auto as _auto
 from os import name as _name
 from os import system
 from typing import Any, Optional, Pattern, Union
@@ -378,30 +377,30 @@ def unset_echo() -> None:
 class MouseAction(Enum):
     """An enumeration of all the polled mouse actions"""
 
-    LEFT_CLICK = _auto()
+    LEFT_CLICK = "left_click"
     """Start of a left button action sequence."""
 
-    LEFT_DRAG = _auto()
+    LEFT_DRAG = "left_drag"
     """Mouse moved while left button was held down."""
 
-    RIGHT_CLICK = _auto()
+    RIGHT_CLICK = "right_click"
     """Start of a right button action sequence."""
 
-    RIGHT_DRAG = _auto()
+    RIGHT_DRAG = "right_drag"
     """Mouse moved while right button was held down."""
 
-    SCROLL_UP = _auto()
+    SCROLL_UP = "scroll_up"
     """Mouse wheel or touchpad scroll upwards."""
 
-    SCROLL_DOWN = _auto()
+    SCROLL_DOWN = "scroll_down"
     """Mouse wheel or touchpad scroll downwards."""
 
-    HOVER = _auto()
+    HOVER = "hover"
     """Mouse moved without clicking."""
 
     # TODO: Support left & right mouse release separately, without breaking
     #       current API.
-    RELEASE = _auto()
+    RELEASE = "release"
     """Mouse button released; end of any and all mouse action sequences."""
 
 

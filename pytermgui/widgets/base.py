@@ -377,18 +377,20 @@ class Widget:  # pylint: disable=too-many-public-methods
             found or it returned False.
         """
 
-        name_map: dict[MouseAction, set[str]] = {
-            MouseAction.HOVER: ("hover",),
-            MouseAction.RELEASE: ("release",),
-            MouseAction.LEFT_CLICK: ("left_click", "click"),
-            MouseAction.RIGHT_CLICK: ("right_click", "click"),
-            MouseAction.LEFT_DRAG: ("left_drag", "drag"),
-            MouseAction.RIGHT_DRAG: ("right_drag", "drag"),
-            MouseAction.SCROLL_UP: ("scroll_up", "scroll"),
-            MouseAction.SCROLL_DOWN: ("scroll_down", "scroll"),
-        }
+        def _get_names(action: MouseAction) -> tuple[str]:
+            if action.value in ["hover", "release"]:
+                return (action.value,)
 
-        possible_names = name_map[event.action]
+            parts = action.value.split("_")
+
+            # left click & right click
+            if parts[0] in ["left", "right"]:
+                return (action.value, parts[1])
+
+            # scroll up & down
+            return (action.value, parts[0])
+
+        possible_names = _get_names(event.action)
         for name in possible_names:
             if hasattr(self, f"on_{name}"):
                 handle = getattr(self, f"on_{name}")
