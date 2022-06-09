@@ -521,6 +521,12 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
             # Unset drag_target if no windows received the input
             else:
                 self._drag_target = None
+                if self._mouse_target is not None:
+                    self._mouse_target.handle_mouse(
+                        MouseEvent(MouseAction.RELEASE, event.position)
+                    )
+
+                self._mouse_target = None
 
     def screenshot(self, title: str, filename: str = "screenshot.svg") -> None:
         """Takes a screenshot of the current state.
