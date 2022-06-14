@@ -729,14 +729,37 @@ class Container(ScrollableWidget):
         return self
 
     def handle_mouse(self, event: MouseEvent) -> bool:
-        """Applies a mouse event on all children.
+        """Handles mouse events.
+
+        This, like all mouse handlers should, calls super()'s implementation first,
+        to allow usage of `on_{event}`-type callbacks. After that, it tries to find
+        a target widget within itself to handle the event.
+
+        Each handler will return a boolean. This boolean is then used to figure out
+        whether the targeted widget should be "sticky", i.e. a slider. Returning
+        True will set that widget as the current mouse target, and all mouse events will
+        be sent to it as long as it returns True.
 
         Args:
-            event: The event to handle
+            event: The event to handle.
 
         Returns:
-            A boolean showing whether the event was handled.
+            A boolean describing the success of handling the event.
         """
+
+        def _handle_scrolling() -> bool:
+            """Scrolls the container."""
+
+            if self.overflow != Overflow.SCROLL:
+                return False
+
+            if event.action is MouseAction.SCROLL_UP:
+                return self.scroll(-1)
+
+            if event.action is MouseAction.SCROLL_DOWN:
+                return self.scroll(1)
+
+            return False
 
         if super().handle_mouse(event):
             return True
@@ -744,12 +767,20 @@ class Container(ScrollableWidget):
         if event.action is MouseAction.RELEASE and self._mouse_target is not None:
             return self._mouse_target.handle_mouse(event)
 
+        if (
+            self._mouse_target is not None
+            and (
+                event.action.value.endswith("drag")
+                or event.action.value.startswith("scroll")
+            )
+            and self._mouse_target.handle_mouse(event)
+        ):
+            return True
+
         release = MouseEvent(MouseAction.RELEASE, event.position)
 
         selectables_index = 0
-        scrolled_pos = list(event.position)
-        scrolled_pos[1] += self._scroll_offset
-        event.position = (scrolled_pos[0], scrolled_pos[1])
+        event.position = (event.position[0], event.position[1] + self._scroll_offset)
 
         handled = False
         for widget in self._widgets:
@@ -763,6 +794,7 @@ class Container(ScrollableWidget):
                 handled = widget.handle_mouse(event)
                 selectables_index += widget.selected_index or 0
 
+                # TODO: This really should be customizable somehow.
                 if event.action is MouseAction.LEFT_CLICK:
                     if handled and selectables_index < len(self.selectables):
                         self.select(selectables_index)
@@ -777,14 +809,9 @@ class Container(ScrollableWidget):
             if widget.is_selectable:
                 selectables_index += widget.selectables_length
 
-        if not handled and self.overflow == Overflow.SCROLL:
-            if event.action is MouseAction.SCROLL_UP:
-                return self.scroll(-1)
+        handled = handled or _handle_scrolling()
 
-            if event.action is MouseAction.SCROLL_DOWN:
-                return self.scroll(1)
-
-        return handled or super().handle_mouse(event)
+        return handled
 
     def execute_binding(self, key: str) -> bool:
         """Executes a binding on self, and then on self._widgets.
