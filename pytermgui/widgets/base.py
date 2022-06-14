@@ -377,7 +377,7 @@ class Widget:  # pylint: disable=too-many-public-methods
             found or it returned False.
         """
 
-        def _get_names(action: MouseAction) -> tuple[str]:
+        def _get_names(action: MouseAction) -> tuple[str, ...]:
             if action.value in ["hover", "release"]:
                 return (action.value,)
 

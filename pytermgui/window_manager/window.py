@@ -244,7 +244,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
         return left <= pos[0] < right and top <= pos[1] < bottom
 
-    def set_title(self, title: str, position: int = 0, pad: bool = True) -> None:
+    def set_title(self, title: str, position: int = 0, pad: bool = True) -> Window:
         """Sets the window's title.
 
         Args:
@@ -271,6 +271,8 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
             corners[position] = title + current
 
         self.set_char("corner", corners)
+
+        return self
 
     def center(
         self, where: CenteringPolicy | None = None, store: bool = True
