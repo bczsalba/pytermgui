@@ -1,17 +1,33 @@
+## [6.4.0] - 2022-06-14
+
+### Additions
+- Add hover highlighting for `Button`
+
+
+### Bugfixes
+- Fix Splitters only sending mouse events on the first row of height
+
+
+### Refactors
+- Implement semantic mouse handlers
+- Improve mouse input cascade logic
+
+
+
 ## [6.3.0] - 2022-06-05
 
-## Refactors
+### Refactors
 - Refactor `InputField`
 - Start caching `Token.sequence` to improve performance
 - Start lazy-evaluating terminal resolution
 
 
-## Bugfixes
+### Bugfixes
 - Use `SVG` export prefix as the class of the `text` elements
 - Fix `Inspector` not resizing to custom global terminals
 
 
-## Additions
+### Additions
 - Add `break_line` `fill` argument
 - Add `chrome` SVG argument
 
@@ -232,7 +248,8 @@
 
 
 
-[6.2.2]: https://github.com/bczsalba/pytermgui/compare/6.2.2...6.3.0
+[6.4.0]: https://github.com/bczsalba/pytermgui/compare/6.0.0...6.4.0
+[6.3.0]: https://github.com/bczsalba/pytermgui/compare/6.2.2...6.3.0
 [6.2.2]: https://github.com/bczsalba/pytermgui/compare/6.2.1...6.2.2
 [6.2.1]: https://github.com/bczsalba/pytermgui/compare/6.2.0...6.2.1
 [6.2.0]: https://github.com/bczsalba/pytermgui/compare/6.1.0...6.2.0
