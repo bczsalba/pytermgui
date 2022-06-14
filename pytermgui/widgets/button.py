@@ -19,6 +19,7 @@ class Button(Widget):
     styles = w_styles.StyleManager(
         label=w_styles.CLICKABLE,
         highlight=w_styles.CLICKED,
+        _current=None,
     )
 
     chars: dict[str, w_styles.CharType] = {"delimiter": ["[ ", " ]"]}
@@ -44,8 +45,25 @@ class Button(Widget):
         self.padding = padding
         self.centered = centered
 
+        self.styles["_current"] = self.styles.label
+
+    def on_hover(self, _) -> bool:
+        """Sets highlight style when hovering."""
+
+        self.styles["_current"] = self.styles.highlight
+        return False
+
+    def on_release(self, _) -> bool:
+        """Sets normal style when no longer hovering."""
+
+        self.styles["_current"] = self.styles.label
+        return False
+
     def handle_mouse(self, event: MouseEvent) -> bool:
-        """Handle a mouse event"""
+        """Handles a mouse event"""
+
+        if super().handle_mouse(event):
+            return True
 
         if event.action == MouseAction.LEFT_CLICK:
             self.selected_index = 0
@@ -58,7 +76,7 @@ class Button(Widget):
             self.selected_index = None
             return True
 
-        return super().handle_mouse(event)
+        return False
 
     def handle_key(self, key: str) -> bool:
         """Handles a keypress"""
@@ -88,7 +106,7 @@ class Button(Widget):
             label = self.label.center(self.width)
 
         if self.selected_index is None:
-            style = self.styles.label
+            style = self.styles["_current"]
         else:
             style = self.styles.highlight
 
