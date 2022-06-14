@@ -744,7 +744,9 @@ class Container(ScrollableWidget):
             event: The event to handle.
 
         Returns:
-            A boolean describing the success of handling the event.
+            Whether the parent of this widget should treat it as one to "stick" events
+            to, e.g. to keep sending mouse events to it. One can "unstick" a widget by
+            returning False in the handler.
         """
 
         def _handle_scrolling() -> bool:

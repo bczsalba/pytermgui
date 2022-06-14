@@ -373,8 +373,9 @@ class Widget:  # pylint: disable=too-many-public-methods
             event: The event to handle.
 
         Returns:
-            True if the event was successfully handled, False if no handler was
-            found or it returned False.
+            Whether the parent of this widget should treat it as one to "stick" events
+            to, e.g. to keep sending mouse events to it. One can "unstick" a widget by
+            returning False in the handler.
         """
 
         def _get_names(action: MouseAction) -> tuple[str, ...]:
