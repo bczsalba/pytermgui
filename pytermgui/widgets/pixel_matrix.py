@@ -5,7 +5,7 @@ pixel-based data.
 
 from __future__ import annotations
 
-from ..ansi_interface import MouseAction, MouseEvent
+from ..ansi_interface import MouseEvent
 from ..parser import markup
 from ..regex import real_length
 from .base import Widget
@@ -96,22 +96,16 @@ class PixelMatrix(Widget):
         self.static_width = max(real_length(line) for line in lines)
         self.height = len(lines)
 
-    def handle_mouse(self, event: MouseEvent) -> bool:
-        """Handles a mouse event.
+    def on_hover(self, event: MouseEvent) -> bool:
+        """Sets `selected_pixel` to the current pixel."""
 
-        On hover, the `selected_pixel` attribute is set to the current pixel.
-        """
+        xoffset = event.position[0] - self.pos[0]
+        yoffset = event.position[1] - self.pos[1]
 
-        if event.action is MouseAction.HOVER:
-            xoffset = event.position[0] - self.pos[0]
-            yoffset = event.position[1] - self.pos[1]
+        color = self._matrix[yoffset][xoffset // 2]
 
-            color = self._matrix[yoffset][xoffset // 2]
-
-            self.selected_pixel = ((xoffset // 2, yoffset), color)
-            return True
-
-        return False
+        self.selected_pixel = ((xoffset // 2, yoffset), color)
+        return True
 
     def get_lines(self) -> list[str]:
         """Returns lines built by the `build` method."""
