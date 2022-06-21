@@ -11,7 +11,7 @@ RE_POSITION = re.compile(r"\x1b\[(\d+);(\d+)H")
 RE_PIXEL_SIZE = re.compile(r"\x1b\[4;([\d]+);([\d]+)t")
 
 RE_256 = re.compile(r"^([\d]{1,3})$")
-RE_HEX = re.compile(r"(?:#)?([0-9a-fA-F]{6})")
+RE_HEX = re.compile(r"#?([0-9a-fA-F]{6})")
 RE_RGB = re.compile(r"(\d{1,3};\d{1,3};\d{1,3})")
 
 __all__ = [

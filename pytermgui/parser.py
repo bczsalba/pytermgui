@@ -242,7 +242,7 @@ def _apply_colors(colors: list[str] | list[int], item: str) -> str:
 def macro_rainbow(item: str) -> str:
     """Creates rainbow-colored text."""
 
-    colors = ["red", "208", "yellow", "green", "brightblue", "blue", "93"]
+    colors = ["red", "208", "yellow", "green", "bright-blue", "blue", "93"]
 
     return _apply_colors(colors, item)
 

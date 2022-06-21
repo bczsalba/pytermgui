@@ -19,7 +19,7 @@ from math import sqrt  # pylint: disable=no-name-in-module
 from typing import TYPE_CHECKING, Generator, Literal, Type
 
 from .ansi_interface import reset as reset_style
-from .color_table import COLOR_TABLE
+from .color_info import COLOR_TABLE, CSS_COLORS
 from .exceptions import ColorSyntaxError
 from .fancy_repr import FancyYield
 from .input import getch
@@ -74,7 +74,10 @@ XTERM_NAMED_COLORS = {
     16: "bright-white",
 }
 
-NAMED_COLORS = {**{color: str(index) for index, color in XTERM_NAMED_COLORS.items()}}
+NAMED_COLORS = {
+    **CSS_COLORS,
+    **{color: str(index) for index, color in XTERM_NAMED_COLORS.items()},
+}
 
 _COLOR_CACHE: dict[str, Color] = {}
 _COLOR_MATCH_CACHE: dict[tuple[float, float, float], Color] = {}
