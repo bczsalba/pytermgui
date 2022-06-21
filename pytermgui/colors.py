@@ -690,6 +690,9 @@ def str_to_color(
     def _trim_code(code: str) -> str:
         """Trims the given color code."""
 
+        if not all(char.isdigit() or char in "m;" for char in code):
+            return code
+
         is_background = code.startswith("48;")
 
         if (code.startswith("38;5;") or code.startswith("48;5;")) or (
