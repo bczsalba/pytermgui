@@ -1,10 +1,12 @@
 [tool.pylint.messages_control]
 disable = [
     "fixme",
-        
     # If this is a problem, it should occur during runtime
     "not-callable"
 ]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "ex", "Run", "_", "x" ,"y"]
 
 [tool.coverage.report]
 exclude_lines = [
