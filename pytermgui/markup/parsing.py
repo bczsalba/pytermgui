@@ -89,6 +89,15 @@ def tokenize_markup(text: str) -> Iterator[Token]:
         if tag.startswith("~"):
             return HLinkToken(tag[1:])
 
+        if tag.startswith("(") and tag.endswith(")"):
+            values = tag[1:-1].split(";")
+            if len(values) != 2:
+                raise ValueError(
+                    f"Cursor tags must have exactly 2 values delimited by `;`, got {tag!r}."
+                )
+
+            return CursorToken(tag[1:-1], *map(int, values))
+
         token: Token
         try:
             token = ColorToken(tag, str_to_color(tag))
@@ -266,6 +275,12 @@ def parse_clear(token: ClearToken, _: ContextDict) -> str:
     return f"\x1b[{index}m"
 
 
+def parse_cursor(token: CursorToken, _: ContextDict) -> str:
+    ypos, xpos = map(lambda i: "" if i is None else i, token)
+
+    return f"\x1b[{ypos};{xpos}H"
+
+
 def optimize_tokens(tokens: Iterator[Token]) -> Iterator[Token]:
     previous = []
     current_tag_group = []
@@ -373,6 +388,7 @@ PARSERS = {
     MacroToken: parse_macro,
     AliasToken: parse_alias,
     ClearToken: parse_clear,
+    CursorToken: parse_cursor,
 }
 
 
