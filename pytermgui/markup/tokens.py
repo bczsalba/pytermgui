@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import Iterator
 
 from ..colors import Color
 
@@ -158,3 +161,25 @@ class HLinkToken(Token):
     @property
     def markup(self) -> str:
         return f"~{self.value}"
+
+
+@dataclass(frozen=True, repr=False)
+class CursorToken(Token):
+    __slots__ = ("value", "y", "x")
+
+    value: str
+    y: int | None
+    x: int | None
+
+    def __iter__(self) -> Iterator[int]:
+        return iter((self.y, self.x))
+
+    def __repr__(self) -> str:
+        return f"<{type(self).__name__} position: {(';'.join(map(str, self)))}>"
+
+    def __fancy_repr__(self) -> str:
+        yield self.__repr__()
+
+    @property
+    def markup(self) -> str:
+        return f"({self.value})"
