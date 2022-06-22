@@ -5,11 +5,12 @@ from warnings import filterwarnings, warn
 
 from ..colors import str_to_color
 from ..exceptions import ColorSyntaxError
-from ..regex import RE_MACRO, RE_MARKUP
+from ..regex import RE_ANSI, RE_MACRO, RE_MARKUP, RE_POSITION
 from .tokens import (
     AliasToken,
     ClearToken,
     ColorToken,
+    CursorToken,
     HLinkToken,
     MacroToken,
     PlainToken,
@@ -34,6 +35,8 @@ STYLES = {
     "overline": "53",
 }
 
+REVERSE_STYLES = {value: key for key, value in STYLES.items()}
+
 CLEARERS = {
     "/": "0",
     "/bold": "22",
@@ -49,6 +52,8 @@ CLEARERS = {
     "/bg": "49",
     "/overline": "54",
 }
+
+REVERSE_CLEARERS = {value: key for key, value in CLEARERS.items()}
 
 LINK_TEMPLATE = "\x1b]8;;{uri}\x1b\\{label}\x1b]8;;\x1b\\"
 
@@ -136,7 +141,75 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
 
 def tokenize_ansi(text: str) -> list[Token]:
-    ...
+    def _is_256(code: str) -> bool:
+        return code.startswith("38;5;") or code.startswith("48;5;")
+
+    def _is_rgb(code: str) -> bool:
+        return code.startswith("38;2;") or code.startswith("48;2;")
+
+    def _is_std(code: str) -> bool:
+        return code.isdigit() and (30 <= int(code) <= 47 or 90 <= int(code) <= 107)
+
+    cursor = 0
+    for matchobj in RE_ANSI.finditer(text):
+        full, content, *_ = matchobj.groups()
+
+        start, end = matchobj.span()
+
+        if cursor < start:
+            yield PlainToken(text[cursor:start])
+
+        cursor = end
+
+        code = ""
+
+        # Position
+        posmatch = RE_POSITION.match(full)
+        if posmatch is not None:
+            ypos, xpos = posmatch.groups()
+            if not ypos and not xpos:
+                raise ValueError(
+                    f"Cannot parse cursor when no position is supplied. Match: {posmatch!r}"
+                )
+
+            yield CursorToken(content, ypos or None, xpos or None)
+            continue
+
+        # TODO: Links could also be parsed, though not sure how useful that would be.
+
+        stylestream: list[Token] = []
+
+        for part in reversed(content.split(";")):
+            code = part + (";" if code != "" else "") + code
+
+            # Style
+            if code in REVERSE_STYLES:
+                stylestream.append(StyleToken(REVERSE_STYLES[code]))
+                code = ""
+                continue
+
+            if code in REVERSE_CLEARERS:
+                stylestream.append(ClearToken(REVERSE_CLEARERS[code]))
+                code = ""
+                continue
+
+            if not _is_256(code) and not _is_rgb(code) and not _is_std(code):
+                continue
+
+            # Color
+            try:
+                color = str_to_color(code)
+                code = ""
+                stylestream.append(ColorToken(code, color))
+
+            except ColorSyntaxError as error:
+                raise ValueError(f"Cannot parse {code!r}.") from error
+
+        yield from reversed(stylestream)
+
+    remaining = text[cursor:]
+    if len(remaining) > 0:
+        yield PlainToken(remaining)
 
 
 def eval_alias(text: str, context: ContextDict) -> str:
