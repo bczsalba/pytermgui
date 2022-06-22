@@ -8,7 +8,7 @@ from ..regex import RE_MACRO
 from ..terminal import terminal
 from .aliases import apply_default_aliases
 from .macros import apply_default_macros
-from .parsing import ContextDict, eval_alias, parse
+from .parsing import ContextDict, eval_alias, parse, tokenize_ansi, tokens_to_markup
 
 
 class MarkupLanguage:
@@ -97,6 +97,10 @@ class MarkupLanguage:
         self._cache[key] = output
 
         return output
+
+    # TODO: This should be deprecated.
+    def get_markup(self, text: str) -> str:
+        return tokens_to_markup(tokenize_ansi(text))
 
     def print(
         self,
