@@ -114,7 +114,7 @@ class RegexHighlighter:
             content = groups.get(str(name), None)
 
             # Literalize "[" characters to avoid TIM parsing them
-            if name in ["str", "multiline_str"]:
+            if name in ["str", "multiline_str", "comment"]:
                 if len(RE_MARKUP.findall(content)) > 0:
                     content = content.replace("[", r"\[")
 

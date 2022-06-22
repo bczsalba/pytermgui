@@ -99,7 +99,6 @@ def _apply_colors(colors: list[str] | list[int], item: str) -> str:
 
     out = ""
     current_block = 0
-    item = item.replace("[", r"\[")
     for i, char in enumerate(item):
         if i % blocksize == 0 and current_block < len(colors):
             out += f"[{colors[current_block]}]"
