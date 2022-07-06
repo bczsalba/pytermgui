@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from io import StringIO
 from typing import Callable
 
@@ -8,7 +9,21 @@ from ..regex import RE_MACRO
 from ..terminal import terminal
 from .aliases import apply_default_aliases
 from .macros import apply_default_macros
-from .parsing import ContextDict, eval_alias, parse, tokenize_ansi, tokens_to_markup
+from .parsing import (
+    PARSERS,
+    ContextDict,
+    eval_alias,
+    parse,
+    tokenize_ansi,
+    tokenize_markup,
+    tokens_to_markup,
+)
+
+__all__ = [
+    "MarkupLanguage",
+    "StyledText",
+    "tim",
+]
 
 
 class MarkupLanguage:
@@ -74,7 +89,7 @@ class MarkupLanguage:
     def parse(
         self,
         text: str,
-        optimize: bool = True,
+        optimize: bool = False,
         append_reset: bool = True,
     ) -> str:
 
@@ -102,6 +117,10 @@ class MarkupLanguage:
     def get_markup(self, text: str) -> str:
         return tokens_to_markup(tokenize_ansi(text))
 
+    # TODO: This should be deprecated.
+    def get_styled_plains(self, text: str) -> Generator[StyledText, None, None]:
+        yield from StyledText.yield_from_ansi(text)
+
     def print(
         self,
         *items,
@@ -121,3 +140,57 @@ class MarkupLanguage:
 
 
 tim = MarkupLanguage()
+
+
+@dataclass(frozen=True)
+class StyledText:
+    """An ANSI style-infused string.
+
+    This is a sort of helper to handle ANSI texts in a more semantic manner. It
+    keeps track of a sequence and a plain part.
+
+    Calling `len()` will return the length of the printable, non-ANSI part, and
+    indexing will return the characters at the given slice, but also include the
+    sequences that are applied to them.
+
+    To generate StyledText-s, it is recommended to use the `StyledText.yield_from_ansi`
+    classmethod.
+    """
+
+    __slots__ = ("value", "sequences")
+
+    sequences: str
+    value: str
+
+    @classmethod
+    def yield_from_ansi(self, text: str) -> Generator[StyledText, None, None]:
+        """Yields StyledTexts from an ANSI coded string.
+
+        A new StyledText will be created each time a non-plain token follows a
+        plain token, thus all texts will represent a single (ANSI)PLAIN group
+        of characters.
+        """
+
+        parsers = PARSERS
+
+        def _parse(token: Token) -> str:
+            return parsers[type(token)](token, {})
+
+        tokens = []
+
+        for token in tokenize_ansi(text):
+            if token.is_plain():
+                yield StyledText(token.value, "".join(_parse(tkn) for tkn in tokens))
+                tokens = []
+                continue
+
+            tokens.append(token)
+
+    def __len__(self) -> int:
+        return len(self.value)
+
+    def __str__(self) -> str:
+        return self.sequences + self.value
+
+    def __getitem__(self, sli: int | slice) -> str:
+        return self.sequences + self.value[sli]
