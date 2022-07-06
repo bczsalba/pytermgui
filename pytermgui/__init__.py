@@ -29,7 +29,7 @@ from .helpers import *
 from .highlighters import *
 from .input import getch, keys
 from .inspector import *
-from .parser import *
+from .markup import *
 from .prettifiers import *
 from .serializer import *
 from .terminal import *

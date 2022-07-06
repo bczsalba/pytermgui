@@ -15,7 +15,7 @@ import os
 import sys
 from typing import Any
 
-from .parser import tim
+from .markup import tim
 from .prettifiers import prettify
 from .terminal import get_terminal
 

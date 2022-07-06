@@ -16,7 +16,7 @@ from ..ansi_interface import MouseAction, MouseEvent, reset
 from ..enums import HorizontalAlignment, SizePolicy, WidgetChange
 from ..helpers import break_line
 from ..input import keys
-from ..parser import markup
+from ..markup import get_markup, tim
 from ..regex import real_length
 from ..terminal import Terminal, get_terminal
 from . import styles as w_styles
@@ -455,9 +455,9 @@ class Widget:  # pylint: disable=too-many-public-methods
             if style:
                 style_call = self._get_style(key)
                 if isinstance(value, list):
-                    out[key] = [markup.get_markup(style_call(char)) for char in value]
+                    out[key] = [get_markup(style_call(char)) for char in value]
                 else:
-                    out[key] = markup.get_markup(style_call(value))
+                    out[key] = get_markup(style_call(value))
 
                 continue
 
@@ -469,11 +469,9 @@ class Widget:  # pylint: disable=too-many-public-methods
             style_call = self._get_style(key)
 
             if isinstance(value, list):
-                out["chars"][key] = [
-                    markup.get_markup(style_call(char)) for char in value
-                ]
+                out["chars"][key] = [get_markup(style_call(char)) for char in value]
             else:
-                out["chars"][key] = markup.get_markup(style_call(value))
+                out["chars"][key] = get_markup(style_call(value))
 
         return out
 

@@ -11,7 +11,8 @@ from typing import Any
 
 from .fancy_repr import build_fancy_repr, supports_fancy_repr
 from .highlighters import highlight_python
-from .parser import RE_MARKUP, tim
+from .markup import tim
+from .regex import RE_MARKUP
 
 __all__ = ["prettify"]
 

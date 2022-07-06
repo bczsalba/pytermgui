@@ -16,8 +16,8 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable, List, Type, Union
 
 from ..highlighters import Highlighter
-from ..parser import RE_MARKUP, tim
-from ..regex import strip_ansi
+from ..markup import get_markup, tim
+from ..regex import RE_MARKUP, strip_ansi
 
 __all__ = [
     "MarkupFormatter",
@@ -111,7 +111,7 @@ class MarkupFormatter:
 
         else:
             original = item
-            item = tim.get_markup(item)
+            item = get_markup(item)
             self._markup_cache[original] = item
 
         return tim.parse(self.markup.format(depth=depth, item=item))

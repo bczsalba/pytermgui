@@ -10,7 +10,7 @@ from html import escape
 from typing import Iterator
 
 from .colors import Color
-from .parser import StyledText, Token, TokenType, tim
+from .markup import StyledText, Token, tim
 from .terminal import get_terminal
 from .widgets import Widget
 

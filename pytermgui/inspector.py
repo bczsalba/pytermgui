@@ -25,7 +25,7 @@ from inspect import getdoc, getfile, isbuiltin, isclass, isfunction, ismodule, s
 from typing import Any
 
 from .highlighters import highlight_python
-from .parser import tim
+from .markup import tim
 from .prettifiers import prettify
 from .regex import RE_MARKUP, real_length
 from .widgets import Container, Label, Widget, boxes
@@ -255,7 +255,7 @@ class Inspector(Container):
         except TypeError:
             return header
 
-        header += f"Located in [code.file !link(file://{file})]{file}[/]"
+        header += f"Located in [code.file ~file://{file}]{file}[/]"
 
         return header
 

@@ -6,7 +6,8 @@ from typing import Iterator
 
 from .ansi_interface import reset
 from .colors import Color
-from .parser import Token, TokenType, markup
+from .markup import Token, tim, tokenize_ansi
+from .markup.parsing import LINK_TEMPLATE, PARSERS
 from .regex import real_length
 
 __all__ = [
@@ -27,7 +28,7 @@ def get_applied_sequences(text: str) -> str:
 
     tokens: list[Token] = []
     reset_char = reset()
-    for token in markup.tokenize_ansi(text):
+    for token in tim.tokenize_ansi(text):
         if not token.ttype is TokenType.UNSETTER:
             tokens.append(token)
             continue
@@ -80,12 +81,18 @@ def break_line(
         yield ""
         return
 
-    def _pad(line: str) -> str:
+    def _pad_and_link(line: str, link: str | None) -> str | bool:
+        count = limit - real_length(line)
+
+        if link is not None:
+            line = LINK_TEMPLATE.format(uri=link, label=line)
+
         if fill is None:
             return line
 
-        count = limit - real_length(line)
-        return line + count * fill
+        line += count * fill
+
+        return line
 
     used = 0
     current = ""
@@ -94,15 +101,18 @@ def break_line(
     if non_first_limit is None:
         non_first_limit = limit
 
-    for token in markup.tokenize_ansi(line):
-        if token.sequence is None:
-            assert isinstance(token.data, str)
-            for char in token.data:
+    parsers = PARSERS
+    link = None
+
+    for token in tokenize_ansi(line):
+        if token.is_plain():
+            for char in token.value:
                 if char == "\n" or used >= limit:
                     if sequences != "":
                         current += "\x1b[0m"
 
-                    yield _pad(current)
+                    yield _pad_and_link(current, link)
+                    link = None
 
                     current = sequences
                     used = 0
@@ -113,9 +123,16 @@ def break_line(
                     current += char
                     used += 1
 
+            # If the link wasn't yielded along with its token, remove and add it
+            # to current manually.
+            if link is not None:
+                current = current[: -len(token.value)]
+                current += LINK_TEMPLATE.format(uri=link, label=token.value)
+                link = None
+
             continue
 
-        if token.sequence == "\x1b[0m":
+        if token.value == "/":
             sequences = "\x1b[0m"
 
             if len(current) > 0:
@@ -123,8 +140,13 @@ def break_line(
 
             continue
 
-        sequences += token.sequence
-        current += token.sequence
+        if token.is_hyperlink():
+            link = token.value
+            continue
+
+        sequence = parsers[type(token)](token, {})
+        sequences += sequence
+        current += sequence
 
     if current == "":
         return
@@ -132,4 +154,4 @@ def break_line(
     if sequences != "" and not current.endswith("\x1b[0m"):
         current += "\x1b[0m"
 
-    yield _pad(current)
+    yield _pad_and_link(current, link)

@@ -6,7 +6,7 @@ pixel-based data.
 from __future__ import annotations
 
 from ..ansi_interface import MouseEvent
-from ..parser import markup
+from ..markup import tim
 from ..regex import real_length
 from .base import Widget
 
@@ -129,7 +129,7 @@ class PixelMatrix(Widget):
                 else:
                     line += "[/]  "
 
-            lines.append(markup.parse(line))
+            lines.append(tim.parse(line))
 
         self._lines = lines
         self._update_dimensions(lines)
@@ -198,13 +198,13 @@ class DensePixelMatrix(PixelMatrix):
                     continue
 
                 if bottom == "":
-                    line += markup.parse(f"[{top}]▀")
+                    line += tim.parse(f"[{top}]▀")
                     continue
 
                 markup_str = "@" + top + " " if len(top) > 0 else ""
 
                 markup_str += bottom
-                line += markup.parse(f"[{markup_str}]▄")
+                line += tim.parse(f"[{markup_str}]▄")
 
             lines.append(line)
             lines_to_zip = []
