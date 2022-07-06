@@ -5,7 +5,9 @@ from warnings import filterwarnings, warn
 
 from ..colors import str_to_color
 from ..exceptions import ColorSyntaxError
-from ..regex import RE_ANSI, RE_MACRO, RE_MARKUP, RE_POSITION
+from ..regex import RE_ANSI_NEW as RE_ANSI
+from ..regex import RE_MACRO, RE_MARKUP, RE_POSITION
+from .style_maps import CLEARERS, REVERSE_CLEARERS, REVERSE_STYLES, STYLES
 from .tokens import (
     AliasToken,
     ClearToken,
@@ -22,40 +24,19 @@ from .tokens import (
 
 filterwarnings("always")
 
-STYLES = {
-    "bold": "1",
-    "dim": "2",
-    "italic": "3",
-    "underline": "4",
-    "blink": "5",
-    "blink2": "6",
-    "inverse": "7",
-    "invisible": "8",
-    "strikethrough": "9",
-    "overline": "53",
-}
-
-REVERSE_STYLES = {value: key for key, value in STYLES.items()}
-
-CLEARERS = {
-    "/": "0",
-    "/bold": "22",
-    "/dim": "22",
-    "/italic": "23",
-    "/underline": "24",
-    "/blink": "25",
-    "/blink2": "26",
-    "/inverse": "27",
-    "/invisible": "28",
-    "/strikethrough": "29",
-    "/fg": "39",
-    "/bg": "49",
-    "/overline": "54",
-}
-
-REVERSE_CLEARERS = {value: key for key, value in CLEARERS.items()}
 
 LINK_TEMPLATE = "\x1b]8;;{uri}\x1b\\{label}\x1b]8;;\x1b\\"
+
+__all__ = [
+    "ContextDict",
+    "tokenize_markup",
+    "tokenize_ansi",
+    "optimize_tokens",
+    "optimize_markup",
+    "tokens_to_markup",
+    "get_markup",
+    "parse",
+]
 
 
 class ContextDict(TypedDict):
@@ -150,20 +131,25 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
 
 def tokenize_ansi(text: str) -> list[Token]:
-    def _is_256(code: str) -> bool:
-        return code.startswith("38;5;") or code.startswith("48;5;")
-
-    def _is_rgb(code: str) -> bool:
-        return code.startswith("38;2;") or code.startswith("48;2;")
-
-    def _is_std(code: str) -> bool:
-        return code.isdigit() and (30 <= int(code) <= 47 or 90 <= int(code) <= 107)
-
     cursor = 0
-    for matchobj in RE_ANSI.finditer(text):
-        full, content, *_ = matchobj.groups()
+    link = None
 
+    for matchobj in RE_ANSI.finditer(text):
         start, end = matchobj.span()
+
+        csi = matchobj.groups()[0:2]
+        link_osc = matchobj.groups()[2:4]
+
+        if link_osc != (None, None):
+            cursor = end
+            uri, label = link_osc
+
+            yield HLinkToken(uri)
+            yield PlainToken(label)
+
+            continue
+
+        full, content = csi
 
         if cursor < start:
             yield PlainToken(text[cursor:start])
@@ -174,6 +160,7 @@ def tokenize_ansi(text: str) -> list[Token]:
 
         # Position
         posmatch = RE_POSITION.match(full)
+
         if posmatch is not None:
             ypos, xpos = posmatch.groups()
             if not ypos and not xpos:
@@ -184,37 +171,54 @@ def tokenize_ansi(text: str) -> list[Token]:
             yield CursorToken(content, ypos or None, xpos or None)
             continue
 
-        # TODO: Links could also be parsed, though not sure how useful that would be.
+        parts = content.split(";")
+        length = len(parts)
 
-        stylestream: list[Token] = []
+        state = None
+        color_code = ""
+        for i, part in enumerate(parts):
+            if state is None:
+                if part in REVERSE_STYLES:
+                    yield StyleToken(REVERSE_STYLES[part])
+                    continue
 
-        for part in reversed(content.split(";")):
-            code = part + (";" if code != "" else "") + code
+                if part in REVERSE_CLEARERS:
+                    yield ClearToken(REVERSE_CLEARERS[part])
+                    continue
 
-            # Style
-            if code in REVERSE_STYLES:
-                stylestream.append(StyleToken(REVERSE_STYLES[code]))
-                code = ""
+                if part in ("38", "48"):
+                    state = "COLOR"
+                    color_code += part + ";"
+                    continue
+
+                # standard colors
+                try:
+                    yield ColorToken(part, str_to_color(part))
+                    continue
+                except ColorSyntaxError:
+                    raise ValueError(f"Que eso {part!r}?")
+
+            if state != "COLOR":
                 continue
 
-            if code in REVERSE_CLEARERS:
-                stylestream.append(ClearToken(REVERSE_CLEARERS[code]))
-                code = ""
+            color_code += part + ";"
+
+            # Ignore incomplete RGB colors
+            if (
+                color_code.startswith(("38;2;", "48;2;"))
+                and len(color_code.split(";")) != 6
+            ):
                 continue
 
-            if not _is_256(code) and not _is_rgb(code) and not _is_std(code):
-                continue
-
-            # Color
             try:
-                color = str_to_color(code)
-                code = ""
-                stylestream.append(ColorToken(code, color))
+                code = color_code.rstrip(";")
+                yield ColorToken(code, str_to_color(code))
 
-            except ColorSyntaxError as error:
-                raise ValueError(f"Cannot parse {code!r}.") from error
+            except ColorSyntaxError:
+                continue
 
-        yield from reversed(stylestream)
+            state = None
+            color_code = ""
 
     remaining = text[cursor:]
     if len(remaining) > 0:
@@ -356,7 +360,7 @@ def optimize_tokens(tokens: Iterator[Token]) -> Iterator[Token]:
     yield from _diff_previous()
 
 
-def tokens_to_markup(tokens: list[Token]) -> str:
+def tokens_to_markup(tokens: Iterator[Token]) -> str:
     tags = []
     markup = ""
 
@@ -375,6 +379,10 @@ def tokens_to_markup(tokens: list[Token]) -> str:
         markup += f"[{' '.join(tag.markup for tag in tags)}]"
 
     return markup
+
+
+def get_markup(text: str) -> str:
+    return tokens_to_markup(tokenize_ansi(text))
 
 
 def optimize_markup(markup: str) -> str:
@@ -482,12 +490,12 @@ def parse(
 
     for token in tokens:
         if token.is_plain():
-            part = segment + _apply_macros(
+            value = _apply_macros(
                 token.value, (parse_macro(macro, context) for macro in macros)
             )
 
-            output += (
-                part if link is None else LINK_TEMPLATE.format(uri=link, label=part)
+            output += segment + (
+                value if link is None else LINK_TEMPLATE.format(uri=link, label=value)
             )
 
             segment = ""
