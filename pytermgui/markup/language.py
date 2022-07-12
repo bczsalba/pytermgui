@@ -195,7 +195,7 @@ class StyledText:
     def first_of(cls, text: str) -> StyledText | None:
         """Returns the first element of cls.yield_from_ansi(text)."""
 
-        for item in cls.yield_from_ansi(text):
+        for item in cls.group_styles(text):
             return item
 
         return None
