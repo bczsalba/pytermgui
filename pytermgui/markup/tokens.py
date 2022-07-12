@@ -31,7 +31,7 @@ class Token:
         return isinstance(other, type(self)) and other.value == self.value
 
     def __repr__(self) -> str:
-        return f"<{type(self).__name__} markup: '[{self.markup}]'>"
+        return f"<{type(self).__name__} markup: '{self.markup}'>"
 
     def __fancy_repr__(self) -> str:
         yield f"<{type(self).__name__} markup: "
@@ -122,6 +122,11 @@ class ClearToken(Token):
             "highlight": False,
         }
         yield ">"
+
+    def __eq__(self, other: object) -> bool:
+        return super().__eq__(other) or all(
+            obj.markup in ["/dim", "/bold"] for obj in [self, other]
+        )
 
     def targets(self, token: Token) -> bool:
         if token.is_clear():
