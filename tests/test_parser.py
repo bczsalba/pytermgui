@@ -1,7 +1,67 @@
-from pytermgui import tim, StyledText, pretty
-from pytermgui.parser import Token, TokenType, STYLE_MAP, StyledText
-from pytermgui.colors import str_to_color
+from __future__ import annotations
 
+import pytest
+import random
+import string
+from itertools import zip_longest
+
+from pytermgui import tim, StyledText, tokens_to_markup, tokenize_ansi, pretty
+from pytermgui.colors import str_to_color, Color
+from pytermgui.markup import Token, StyledText, tokens as tkns
+from pytermgui.markup.style_maps import CLEARERS, STYLES
+
+
+def random_plain() -> tkns.PlainToken:
+    value = "".join(random.choices(string.ascii_letters, k=5))
+    value = (
+        value.replace("\n", " ")
+        .replace("\r", " ")
+        .replace("\x0b", " ")
+        .replace("\x0c", " ")
+    )
+
+    return tkns.PlainToken(value[: random.randint(1, len(value) - 1)])
+
+
+def random_color() -> tkns.ColorToken:
+    background = random.randint(0, 1)
+
+    def _random_std() -> Color:
+        value = str(random.randint(0, 16))
+
+        if background:
+            value = "@" + value
+
+        return value, str_to_color(value)
+
+    def _random_256() -> Color:
+        value = str(random.randint(0, 256))
+
+        if background:
+            value = "@" + value
+
+        return value, str_to_color(value)
+
+    def _random_rgb() -> Color:
+        value = ";".join(map(str, (random.randint(0, 256) for _ in range(3))))
+
+        if background:
+            value = "@" + value
+
+        return value, str_to_color(value)
+
+    generators = [_random_std, _random_256, _random_rgb]
+
+    generate = random.choice(generators)
+    return tkns.ColorToken(*generate())
+
+
+def random_style() -> tkns.StyleToken:
+    return tkns.StyleToken(random.choice(list(STYLES.keys())))
+
+
+def random_clear() -> tkns.ClearToken:
+    return tkns.ClearToken(random.choice(list(CLEARERS.keys())))
 
 class TestParser:
     def test_return_type(self):

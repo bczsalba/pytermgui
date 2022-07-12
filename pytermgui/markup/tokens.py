@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import Iterator, TypeVar
 
 from ..colors import Color, str_to_color
-from .style_maps import CLEARERS, STYLES
 
 __all__ = [
     "Token",
@@ -18,9 +17,6 @@ __all__ = [
     "MacroToken",
     "HLinkToken",
     "CursorToken",
-    "random_plain",
-    "random_style",
-    "random_clear",
 ]
 
 
@@ -83,18 +79,6 @@ class PlainToken(Token):
         yield f"<{type(self).__name__} markup: {self.markup!r}>"
 
 
-def random_plain() -> PlainToken:
-    value = "".join(random.choices(string.ascii_letters, k=5))
-    value = (
-        value.replace("\n", " ")
-        .replace("\r", " ")
-        .replace("\x0b", " ")
-        .replace("\x0c", " ")
-    )
-
-    return PlainToken(value[: random.randint(0, len(value) - 1)])
-
-
 @dataclass(frozen=True, repr=False)
 class ColorToken(Token):
     __slots__ = ("value",)
@@ -117,58 +101,11 @@ class ColorToken(Token):
         return self.color.markup
 
 
-def random_color() -> PlainToken:
-    background = random.randint(0, 1)
-
-    def _random_std() -> Color:
-        value = str(random.randint(0, 16))
-
-        if background:
-            value = "@" + value
-
-        return value, str_to_color(value)
-
-    def _random_256() -> Color:
-        value = str(random.randint(0, 256))
-
-        if background:
-            value = "@" + value
-
-        return value, str_to_color(value)
-
-    def _random_rgb() -> Color:
-        value = ";".join(map(str, (random.randint(0, 256) for _ in range(3))))
-
-        if background:
-            value = "@" + value
-
-        return value, str_to_color(value)
-
-    def _random_hex() -> str:
-        _, color = _random_rgb()
-
-        return color.hex, str_to_color(color.hex)
-
-    generators = [
-        _random_std,
-        _random_256,
-        _random_rgb,
-        _random_hex,
-    ]
-
-    generate = random.choice(generators)
-    return ColorToken(*generate())
-
-
 @dataclass(frozen=True, repr=False)
 class StyleToken(Token):
     __slots__ = ("value",)
 
     value: str
-
-
-def random_style() -> Token:
-    return StyleToken(random.choice(list(STYLES.keys())))
 
 
 @dataclass(frozen=True, repr=False)
@@ -203,10 +140,6 @@ class ClearToken(Token):
             return True
 
         return self.value == "/bg" and token.color.background
-
-
-def random_clear() -> Token:
-    return ClearToken(random.choice(list(CLEARERS.keys())))
 
 
 @dataclass(frozen=True, repr=False)
