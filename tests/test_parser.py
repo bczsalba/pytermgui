@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-import pytest
 import random
 import string
 from itertools import zip_longest
 
-from pytermgui import tim, StyledText, tokens_to_markup, tokenize_ansi, pretty
-from pytermgui.colors import str_to_color, Color
-from pytermgui.markup import Token, StyledText, tokens as tkns
+import pytest
+
+from pytermgui import StyledText, pretty, tim, tokenize_ansi, tokens_to_markup
+from pytermgui.colors import Color, str_to_color
+from pytermgui.markup import StyledText, Token
+from pytermgui.markup import tokens as tkns
 from pytermgui.markup.style_maps import CLEARERS, STYLES
 
 
@@ -63,25 +65,35 @@ def random_style() -> tkns.StyleToken:
 def random_clear() -> tkns.ClearToken:
     return tkns.ClearToken(random.choice(list(CLEARERS.keys())))
 
+
+def random_cursor() -> tkns.CursorToken:
+    pos = tuple(map(str, (random.randint(0, 24), random.randint(0, 80))))
+    return tkns.CursorToken(f"{pos[0]};{pos[1]}", pos[0], pos[1])
+
+
+def random_hlink() -> tkns.HLinkToken:
+    return tkns.HLinkToken("".join(random.choices(string.ascii_letters, k=20)))
+
+
 class TestParser:
-    def test_return_type(self):
-        assert isinstance(tim.parse(""), StyledText)
-
     def test_length(self):
-        output = tim.parse("[141 @61 bold]One[inverse /bold]Other")
+        output = StyledText.first_of(tim.parse("[141 @61 bold]One"))
+        print(output)
 
-        assert len(output) == len(output.plain) == len("OneOther")
+        assert len(output) == len(output.plain) == len("One")
 
     def test_styledtext_index(self):
-        text = tim.parse("[141 @61 bold]Test")
-        assert text[1] == "e", ascii(text[1])
+        text = StyledText.first_of(tim.parse("[141 @61 bold]Test"))
+        assert text[1] == "\x1b[38;5;141m\x1b[48;5;61m\x1b[1me", ascii(text[1])
 
     def test_sequence_redundancy(self):
-        output = tim.parse("[123 245]Test[yellow]")
-        assert output == tim.parse("[245]Test"), tim.prettify(output)
+        output = tim.parse(
+            "[123 245 bold /bold italic]Test", append_reset=False, optimize=True
+        )
+        assert output == "\x1b[38;5;245m\x1b[3mTest", repr(output)
 
     def test_get_markup(self):
-        base = "[141 @61 bold]Hello"
+        base = "[141 @61 bold]Hello[/]"
         ansi = tim.parse("[141 @61 bold]Hello")
         markup = tim.get_markup(ansi)
         assert base == markup
@@ -90,8 +102,9 @@ class TestParser:
         assert (
             tim.parse("[141 @61 bold !upper]Hello")
             == "\x1b[38;5;141m\x1b[48;5;61m\x1b[1mHELLO\x1b[0m"
-        )
+        ), repr(tim.parse("[141 @61 bold !upper]Hello"))
 
+    @pytest.mark.skip(reason="Markup prettification is currently not implemented.")
     def test_pretty_markup(self):
         markup = "[141 bold]Hello[/bold /fg dim italic]There[/]"
         assert StyledText(tim.prettify_markup(markup)).plain == markup
@@ -104,7 +117,7 @@ class TestFunctionality:
 
     def test_define(self):
         tim.define("!upper", lambda item: item.upper())
-        assert tim.parse("[!upper]test") == "TEST"
+        assert tim.parse("[!upper]test", append_reset=False) == "TEST"
         assert tim.parse("[!upper 141]test") == tim.parse("[141]TEST")
 
     def test_pprint_works(self):
@@ -115,53 +128,35 @@ class TestFunctionality:
         pretty.install()
 
 
-class TestTokens:
-    def test_plain(self):
-        token = Token(ttype=TokenType.PLAIN, data="Plain")
-        assert token.name == "Plain"
-        assert token.sequence is None
+def test_random_tokens() -> None:
+    def _get_next(previous: tkns.Token | None) -> tkns.Token:
+        generators = [
+            random_plain,
+            random_color,
+            random_style,
+            random_clear,
+        ]
 
-    def test_style(self):
-        for name, index in STYLE_MAP.items():
-            token = Token(ttype=TokenType.STYLE, data=index)
-            assert token.name == index
-            assert token.sequence == f"\x1b[{index}m"
+        if previous is not None and (previous.is_plain() or previous.is_hyperlink()):
+            generators.remove(random_plain)
 
-    def test_macro(self):
-        token = list(tim.tokenize_markup("[!gradient(60)]Test"))[0]
-        assert token.name == "!gradient(60)"
-        assert token.ttype is TokenType.MACRO
-        assert token.data == (tim.macros["!gradient"], ["60"])
+        return random.choice(generators)()
 
-    def test_unsetter(self):
-        token = list(tim.tokenize_markup(r"\[bold]Test"))[0]
-        assert token.name == token.data == "[bold]"
-        assert token.ttype is TokenType.ESCAPED
+    tokens = []
+    previous = None
+    for _ in range(50):
+        previous = _get_next(previous)
+        tokens.append(previous)
 
-    def test_fg_8bit(self):
-        token = Token(ttype=TokenType.COLOR, data=str_to_color("141"))
-        assert token.sequence == "\x1b[38;5;141m"
+    markup = tokens_to_markup(tokens)
+    ansi = tim.parse(markup, append_reset=False)
 
-    def test_bg_8bit(self):
-        token = Token(ttype=TokenType.COLOR, data=str_to_color("@141"))
-        assert token.sequence == "\x1b[48;5;141m"
+    reverse = list(tokenize_ansi(ansi))
 
-    def test_fg_rgb(self):
-        token = Token(ttype=TokenType.COLOR, data=str_to_color("000;111;222"))
-        assert token.sequence == "\x1b[38;2;0;111;222m"
+    for expected, real in zip_longest(tokens, reverse, fillvalue=None):
+        if expected != real:
+            print(expected, real, sep=" != ")
 
-    def test_bg_rgb(self):
-        token = Token(ttype=TokenType.COLOR, data=str_to_color("@123;61;231"))
-        assert token.sequence == "\x1b[48;2;123;61;231m"
+        assert expected == real, f"Expected {expected}, got {real}"
 
-    def test_fg_hex(self):
-        token = list(tim.tokenize_markup("[#14C353]Test"))[0]
-        assert token.sequence == "\x1b[38;2;20;195;83m"
-
-    def test_bg_hex(self):
-        token = list(tim.tokenize_markup("[@#FAC324]Test"))[0]
-        assert token.sequence == "\x1b[48;2;250;195;36m"
-
-    def test_unsetter(self):
-        token = Token(ttype=TokenType.UNSETTER, name="/inverse", data="27")
-        assert token.sequence == "\x1b[27m"
+    assert tokens == reverse
