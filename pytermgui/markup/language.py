@@ -119,7 +119,7 @@ class MarkupLanguage:
 
     # TODO: This should be deprecated.
     def get_styled_plains(self, text: str) -> Generator[StyledText, None, None]:
-        yield from StyledText.yield_from_ansi(text)
+        yield from StyledText.group_styles(text)
 
     def print(
         self,
@@ -157,13 +157,14 @@ class StyledText:
     classmethod.
     """
 
-    __slots__ = ("value", "sequences")
+    __slots__ = ("plain", "sequences", "tokens")
 
     sequences: str
-    value: str
+    plain: str
+    tokens: list[Token]
 
-    @classmethod
-    def yield_from_ansi(self, text: str) -> Generator[StyledText, None, None]:
+    @staticmethod
+    def group_styles(text: str) -> Generator[StyledText, None, None]:
         """Yields StyledTexts from an ANSI coded string.
 
         A new StyledText will be created each time a non-plain token follows a
@@ -180,17 +181,30 @@ class StyledText:
 
         for token in tokenize_ansi(text):
             if token.is_plain():
-                yield StyledText(token.value, "".join(_parse(tkn) for tkn in tokens))
+                yield StyledText(
+                    "".join(_parse(tkn) for tkn in tokens),
+                    token.value,
+                    tokens + [token],
+                )
                 tokens = []
                 continue
 
             tokens.append(token)
 
+    @classmethod
+    def first_of(cls, text: str) -> StyledText | None:
+        """Returns the first element of cls.yield_from_ansi(text)."""
+
+        for item in cls.yield_from_ansi(text):
+            return item
+
+        return None
+
     def __len__(self) -> int:
-        return len(self.value)
+        return len(self.plain)
 
     def __str__(self) -> str:
-        return self.sequences + self.value
+        return self.sequences + self.plain
 
     def __getitem__(self, sli: int | slice) -> str:
-        return self.sequences + self.value[sli]
+        return self.sequences + self.plain[sli]
