@@ -165,7 +165,7 @@ def _get_spans(  # pylint: disable=too-many-locals
 
     position = None
 
-    for styled in tim.get_styled_plains(line):
+    for span in StyledText.group_styles(line):
         styles = []
         if include_background:
             styles.append("background-color: var(--ptg-background)")
@@ -173,23 +173,17 @@ def _get_spans(  # pylint: disable=too-many-locals
         has_link = False
         has_inverse = False
 
-        for token in sorted(
-            styled.tokens, key=lambda token: token.ttype is TokenType.COLOR
-        ):
-            if token.ttype is TokenType.PLAIN:
+        for token in sorted(span.tokens, key=lambda token: token.is_color()):
+            if token.is_plain():
                 continue
 
-            if token.ttype is TokenType.POSITION:
-                assert isinstance(token.data, str)
-
-                if token.data != position:
+            if token.is_cursor():
+                if token.value != position:
                     # Yield closer if there is already an active positioner
                     if position is not None:
                         yield "</div>", []
 
-                    position = token.data
-                    split = tuple(map(int, position.split(",")))
-
+                    split = map(int, (token.x, token.y))
                     adjusted = (
                         _adjust_pos(split[0], CHAR_WIDTH, horizontal_offset),
                         _adjust_pos(split[1], CHAR_HEIGHT, vertical_offset),
@@ -200,11 +194,13 @@ def _get_spans(  # pylint: disable=too-many-locals
                         + f" style='left: {adjusted[0]}em; top: {adjusted[1]}em'>"
                     ), []
 
-            elif token.ttype is TokenType.LINK:
-                has_link = True
-                yield f"<a href='{token.data}'>", []
+                    position = token.value
 
-            elif token.ttype is TokenType.STYLE and token.name == "inverse":
+            elif token.is_hyperlink():
+                has_link = True
+                yield f"<a href='{token.value}'>", []
+
+            elif token.is_style() and token.value == "inverse":
                 has_inverse = True
 
                 # Add default inverted colors, in case the text doesn't have any
@@ -219,7 +215,7 @@ def _get_spans(  # pylint: disable=too-many-locals
                 styles.append(css)
 
         escaped = (
-            escape(styled.plain)
+            escape(span.plain)
             .replace("{", "{{")
             .replace("}", "}}")
             .replace(" ", "&#160;")
@@ -244,9 +240,8 @@ def token_to_css(token: Token, invert: bool = False) -> str:
             are flipped.
     """
 
-    if token.ttype is TokenType.COLOR:
-        color = token.data
-        assert isinstance(color, Color)
+    if token.is_color():
+        color = token.color
 
         style = "color:" + color.hex
 
@@ -258,8 +253,8 @@ def token_to_css(token: Token, invert: bool = False) -> str:
 
         return style
 
-    if token.ttype is TokenType.STYLE and token.name in _STYLE_TO_CSS:
-        return _STYLE_TO_CSS[token.name]
+    if token.is_style() and token.value in _STYLE_TO_CSS:
+        return _STYLE_TO_CSS[token.value]
 
     return ""
 
@@ -356,15 +351,13 @@ def _handle_tokens_svg(
     back = pos = None
 
     for token in text.tokens:
-        if token.ttype is TokenType.POSITION:
-            assert isinstance(token.data, str)
-            mapped = tuple(map(int, token.data.split(",")))
+        if token.is_cursor():
+            mapped = map(int, (token.x, token.y))
             pos = mapped[0], mapped[1]
             continue
 
-        if token.ttype is TokenType.COLOR:
-            color = token.data
-            assert isinstance(color, Color)
+        if token.is_color():
+            color = token.color
 
             if color.background:
                 back = color.hex
