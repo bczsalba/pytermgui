@@ -211,7 +211,16 @@ def tokenize_ansi(text: str) -> list[Token]:
                 continue
 
             try:
-                code = color_code.rstrip(";")
+                code = color_code
+
+                if code.startswith(("38;2;", "48;2;", "38;5;", "48;5;")):
+                    stripped = code[5:-1]
+
+                    if code.startswith("4"):
+                        stripped = "@" + stripped
+
+                    code = stripped
+
                 yield ColorToken(code, str_to_color(code))
 
             except ColorSyntaxError:
@@ -521,7 +530,7 @@ def parse(
                     found = True
                     break
 
-            if found:
+            if found and token.value != "/":
                 continue
 
             if token.value.startswith("/!"):
