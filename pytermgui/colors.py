@@ -27,7 +27,7 @@ from .terminal import ColorSystem, terminal
 
 if TYPE_CHECKING:
     # This cyclic won't be relevant while type checking.
-    from .parser import StyledText  # pylint: disable=cyclic-import
+    from .markup import StyledText  # pylint: disable=cyclic-import
 
 __all__ = [
     "COLOR_TABLE",
@@ -291,17 +291,13 @@ class Color:
         return self._brightness
 
     def __call__(self, text: str, reset: bool = True) -> StyledText:
-        """Colors the given string, returning a `pytermgui.parser.StyledText`."""
-
-        # We import this here as toplevel would cause circular imports, and it won't
-        # be used until this method is called anyways.
-        from .parser import StyledText  # pylint: disable=import-outside-toplevel
+        """Colors the given string."""
 
         buff = self.sequence + text
         if reset:
             buff += reset_style()
 
-        return StyledText(buff)
+        return buff
 
     def get_localized(self) -> Color:
         """Creates a terminal-capability local Color instance.
