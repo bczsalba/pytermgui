@@ -11,7 +11,9 @@ good-names = ["i", "j", "k", "ex", "Run", "_", "x" ,"y"]
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",
-    "if TYPE_CHECKING:"
+    "if TYPE_CHECKING:",
+    "def __fancy_repr__",
+    "def __repr__",
 ]
 
 omit = [
