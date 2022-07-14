@@ -166,6 +166,22 @@ class StyledText:
     tokens: list[Token]
     link: str | None
 
+    # TODO: These attributes could be added in the future, though doing so would cement
+    #       StyledText-s only ever being created by `group_styles`.
+    #
+    #       Maybe we could add a `styled_text.as_bold()`, `as_color()` type API? We would
+    #       still need to somehow default the attributes somehow, which could then be done
+    #       with a helper function?
+    #
+    # foreground: Color | None
+    # background: Color | None
+    # bold: bool
+    # dim: bool
+    # italic: bool
+    # underline: bool
+    # strikethrough: bool
+    # inverse: bool
+
     @staticmethod
     def group_styles(text: str) -> Generator[StyledText, None, None]:
         """Yields StyledTexts from an ANSI coded string.

@@ -118,7 +118,7 @@ class ClearToken(Token):
         target = self.markup[1:]
         yield f"<{type(self).__name__} markup: "
         yield {
-            "text": f"[210 strikethrough]/[/fg {target}]{target}[/{target} /]",
+            "text": f"[210 strikethrough]/[/fg]{target}[/]",
             "highlight": False,
         }
         yield ">"
