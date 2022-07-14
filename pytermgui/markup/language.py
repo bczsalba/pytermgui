@@ -18,6 +18,7 @@ from .parsing import (
     tokenize_markup,
     tokens_to_markup,
 )
+from .tokens import PlainToken, Token
 
 __all__ = [
     "MarkupLanguage",
@@ -57,6 +58,7 @@ class MarkupLanguage:
         self._macros[name] = method
 
     def alias(self, name: str, value: str, *, generate_unsetter: bool = True) -> None:
+        print("ALIASING", name, value)
         value = eval_alias(value, self.context)
 
         def _generate_unsetter() -> str:
@@ -157,11 +159,12 @@ class StyledText:
     classmethod.
     """
 
-    __slots__ = ("plain", "sequences", "tokens")
+    __slots__ = ("plain", "sequences", "tokens", "link")
 
     sequences: str
     plain: str
     tokens: list[Token]
+    link: str | None
 
     @staticmethod
     def group_styles(text: str) -> Generator[StyledText, None, None]:
@@ -173,8 +176,18 @@ class StyledText:
         """
 
         parsers = PARSERS
+        link = None
 
         def _parse(token: Token) -> str:
+            nonlocal link
+
+            if token.is_hyperlink():
+                link = token
+                return ""
+
+            if link is not None and token.is_clear() and token.targets(link):
+                link = None
+
             return parsers[type(token)](token, {})
 
         tokens = []
@@ -185,11 +198,22 @@ class StyledText:
                     "".join(_parse(tkn) for tkn in tokens),
                     token.value,
                     tokens + [token],
+                    link.value if link is not None else None,
                 )
                 tokens = []
                 continue
 
             tokens.append(token)
+
+        if len(tokens) > 0:
+            token = PlainToken("")
+
+            yield StyledText(
+                "".join(_parse(tkn) for tkn in tokens),
+                token.value,
+                tokens + [token],
+                link.value if link is not None else None,
+            )
 
     @classmethod
     def first_of(cls, text: str) -> StyledText | None:
