@@ -183,7 +183,7 @@ def _get_spans(  # pylint: disable=too-many-locals
                     if position is not None:
                         yield "</div>", []
 
-                    split = map(int, (token.x, token.y))
+                    split = tuple(map(int, (token.x, token.y)))
                     adjusted = (
                         _adjust_pos(split[0], CHAR_WIDTH, horizontal_offset),
                         _adjust_pos(split[1], CHAR_HEIGHT, vertical_offset),
@@ -346,13 +346,12 @@ def _handle_tokens_svg(
 ) -> tuple[tuple[int, int] | None, str | None, list[str]]:
     """Builds CSS styles that apply to the text."""
 
-    default = f"fill:{default_fore}"
-    styles = [default]
+    styles = []
     back = pos = None
 
     for token in text.tokens:
         if token.is_cursor():
-            mapped = map(int, (token.x, token.y))
+            mapped = tuple(map(int, (token.x, token.y)))
             pos = mapped[0], mapped[1]
             continue
 
@@ -363,16 +362,29 @@ def _handle_tokens_svg(
                 back = color.hex
                 continue
 
-            styles.remove(default)
-            styles.append(f"fill:{color.hex}")
+            style = f"fill:{color.hex}"
+
+            if (token, style) not in styles:
+                styles.append((token, style))
+
             continue
+
+        if token.is_clear():
+            for i, (target, _) in enumerate(styles):
+                if token.targets(target):
+                    styles.pop(i)
 
         css = token_to_css(token)
 
         if css != "":
-            styles.append(css)
+            styles.append((token, css))
 
-    return pos, back, styles
+    css_styles = [value for _, value in styles]
+
+    if css_styles == []:
+        css_styles.append(f"fill:{default_fore}")
+
+    return pos, back, css_styles
 
 
 def _slugify(text: str) -> str:
