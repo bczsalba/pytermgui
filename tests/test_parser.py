@@ -29,7 +29,7 @@ def random_color() -> tkns.ColorToken:
     background = random.randint(0, 1)
 
     def _random_std() -> Color:
-        value = str(random.randint(0, 16))
+        value = str(random.randint(0, 15))
 
         if background:
             value = "@" + value
@@ -37,7 +37,7 @@ def random_color() -> tkns.ColorToken:
         return value, str_to_color(value)
 
     def _random_256() -> Color:
-        value = str(random.randint(0, 256))
+        value = str(random.randint(0, 255))
 
         if background:
             value = "@" + value
@@ -149,6 +149,7 @@ def test_random_tokens() -> None:
         tokens.append(previous)
 
     markup = tokens_to_markup(tokens)
+    print(tim.context)
     ansi = tim.parse(markup, append_reset=False)
 
     reverse = list(tokenize_ansi(ansi))
