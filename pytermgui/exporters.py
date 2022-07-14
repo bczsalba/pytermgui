@@ -81,18 +81,7 @@ SVG_FORMAT = f"""\
         }}}}
 {{stylesheet}}
     </style>
-    <rect visibility="{{back_visibility}}" width="{{total_width}}" height="{{total_height}}"
-        fill="{{background}}" />
-    <g visibility="{{chrome_visibility}}">
-        <rect x="{SVG_MARGIN_LEFT}" y="{SVG_MARGIN_TOP}"
-            rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round"
-            width="{{terminal_width}}" height="{{terminal_height}}" fill="{{background}}" />
-        <circle cx="{SVG_MARGIN_LEFT+15}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ff6159"/>
-        <circle cx="{SVG_MARGIN_LEFT+35}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ffbd2e"/>
-        <circle cx="{SVG_MARGIN_LEFT+55}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#28c941"/>
-        <text x="{{title_x}}" y="{{title_y}}" text-anchor="middle"
-            class="{{prefix}}-title">{{title}}</text>
-    </g>
+    {{chrome}}
 {{code}}
 </svg>"""
 
@@ -544,20 +533,32 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
     terminal_width = terminal.width * FONT_WIDTH + 2 * TEXT_MARGIN_LEFT
     terminal_height = terminal.height * FONT_HEIGHT + 2 * TEXT_MARGIN_TOP
 
+    total_width = terminal_width + (2 * SVG_MARGIN_LEFT if chrome else 0)
+    total_height = terminal_height + (2 * SVG_MARGIN_TOP if chrome else 0)
+
     if chrome:
         transform = (
             f"translate({TEXT_MARGIN_LEFT + SVG_MARGIN_LEFT}, "
             + f"{TEXT_MARGIN_TOP + SVG_MARGIN_TOP})"
         )
 
-        chrome_visibility = "visible"
-        back_visibility = "hidden"
+        chrome_part = f"""<g>
+            <rect x="{SVG_MARGIN_LEFT}" y="{SVG_MARGIN_TOP}"
+                rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round"
+                width="{terminal_width}" height="{terminal_height}" fill="{default_back}" />
+            <circle cx="{SVG_MARGIN_LEFT+15}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ff6159"/>
+            <circle cx="{SVG_MARGIN_LEFT+35}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ffbd2e"/>
+            <circle cx="{SVG_MARGIN_LEFT+55}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#28c941"/>
+            <text x="{terminal_width // 2 + 30}" y="{SVG_MARGIN_TOP + FONT_HEIGHT}" text-anchor="middle"
+                class="{prefix}-title">{title}</text>
+        </g>
+        """
 
     else:
         transform = "translate(16, 16)"
 
-        chrome_visibility = "hidden"
-        back_visibility = "visible"
+        chrome_part = f"""<rect width="{total_width}" height="{total_height}"
+            fill="{default_back}" />"""
 
     output = _make_tag("g", text, transform=transform) + "\n"
 
@@ -570,13 +571,8 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
         # Styles
         background=default_back,
         stylesheet=stylesheet,
-        # Title information
-        title=title,
-        title_x=terminal_width // 2 + 30,
-        title_y=SVG_MARGIN_TOP + FONT_HEIGHT,
         # Code
         code=output,
         prefix=prefix,
-        chrome_visibility=chrome_visibility,
-        back_visibility=back_visibility,
+        chrome=chrome_part,
     )
