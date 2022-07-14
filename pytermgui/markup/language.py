@@ -58,7 +58,6 @@ class MarkupLanguage:
         self._macros[name] = method
 
     def alias(self, name: str, value: str, *, generate_unsetter: bool = True) -> None:
-        print("ALIASING", name, value)
         value = eval_alias(value, self.context)
 
         def _generate_unsetter() -> str:
