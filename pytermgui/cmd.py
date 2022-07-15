@@ -304,7 +304,7 @@ class TIMWindow(AppWindow):
             return root
 
         prefix = "ptg.timwindow"
-        tags = [_show_style(style) for style in ptg.tim.tags]
+        tags = [_show_style(style) for style in ptg.markup.style_maps.STYLES]
         colors = [
             f"[[{prefix}.255]0-255[/]]",
             f"[[{prefix}.hex]#RRGGBB[/]]",
@@ -317,7 +317,9 @@ class TIMWindow(AppWindow):
 
         tag_container = _create_table(zip_longest(tags, colors, fillvalue=""))
         user_container = _create_table(
-            (_show_style(tag), f"[!expand {tag}]{tag}") for tag in ptg.tim.user_tags
+            (_show_style(tag), f"[{tag}]{value}")
+            for tag, value in ptg.tim.aliases.items()
+            if not tag.startswith("/")
         )
 
         return ptg.Container(tag_container, user_container, box="EMPTY")
