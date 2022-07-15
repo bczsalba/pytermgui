@@ -370,7 +370,7 @@ def _handle_tokens_svg(
 
     css_styles = [value for _, value in styles]
 
-    if css_styles == []:
+    if css_styles == [] or not any(value.startswith("fill") for _, value in styles):
         css_styles.append(f"fill:{default_fore}")
 
     return pos, back, css_styles
