@@ -465,7 +465,7 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
     if isinstance(obj, Widget):
         obj = "\n".join(obj.get_lines())
 
-    for plain in tim.get_styled_plains(obj):
+    for plain in tim.group_styles(obj):
         should_newline = False
 
         pos, back, styles = _handle_tokens_svg(plain, default_fore)
