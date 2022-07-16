@@ -519,9 +519,8 @@ def parse(
             continue
 
         if token.is_clear():
-            if token.value == "/~":
+            if token.value in ("/", "/~"):
                 link = None
-                continue
 
             found = False
             for macro in macros.copy():
