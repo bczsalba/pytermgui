@@ -1,4 +1,4 @@
-from pytermgui import break_line, get_applied_sequences, real_length, tim
+from pytermgui import break_line, real_length, tim
 
 
 def test_break_plain():
