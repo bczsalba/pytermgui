@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from html import escape
 from typing import Iterator
 
@@ -338,6 +339,10 @@ def _handle_tokens_svg(
     styles = []
     back = pos = None
 
+    has_inverse = any(
+        token.is_style() and token.value == "inverse" for token in text.tokens
+    )
+
     for token in text.tokens:
         if token.is_cursor():
             mapped = tuple(map(int, (token.x, token.y)))
@@ -346,6 +351,10 @@ def _handle_tokens_svg(
 
         if token.is_color():
             color = token.color
+
+            if has_inverse:
+                color = deepcopy(color)
+                color.background = not color.background
 
             if color.background:
                 back = color.hex
