@@ -12,6 +12,8 @@ from .macros import apply_default_macros
 from .parsing import (
     PARSERS,
     ContextDict,
+    MacroType,
+    create_context_dict,
     eval_alias,
     parse_tokens,
     tokenize_ansi,
@@ -41,9 +43,9 @@ class MarkupLanguage:
     def __init__(
         self, *, default_aliases: bool = True, default_macros: bool = True
     ) -> None:
-        self._cache: dict[str, tuple[list[Token], str]] = {}
+        self._cache: dict[tuple[str, bool, bool], tuple[list[Token], str, bool]] = {}
 
-        self.context = ContextDict.create()
+        self.context = create_context_dict()
         self._aliases = self.context["aliases"]
         self._macros = self.context["macros"]
 
@@ -60,12 +62,12 @@ class MarkupLanguage:
         return self._aliases.copy()
 
     @property
-    def macros(self) -> dict[str, Callable[[str, ...]]]:
+    def macros(self) -> dict[str, MacroType]:
         """Returns a copy of the macros defined in context."""
 
         return self._macros.copy()
 
-    def define(self, name: str, method: Callable[[str, ...], str]) -> None:
+    def define(self, name: str, method: MacroType) -> None:
         """Defines a markup macro.
 
         Macros are essentially function bindings callable within markup. They can be
@@ -134,9 +136,7 @@ class MarkupLanguage:
         if generate_unsetter:
             self._aliases[f"/{name}"] = _generate_unsetter()
 
-    def alias_multiple(
-        self, *, generate_unsetter: bool = True, **items: dict[str, str]
-    ) -> None:
+    def alias_multiple(self, *, generate_unsetter: bool = True, **items: str) -> None:
         """Runs `MarkupLanguage.alias` repeatedly for all arguments.
 
         The same `generate_unsetter` value will be used for all calls.
@@ -219,7 +219,7 @@ class MarkupLanguage:
         This function does not use context, and thus is out of place here.
         """
 
-        return tokens_to_markup(tokenize_ansi(text))
+        return tokens_to_markup(list(tokenize_ansi(text)))
 
     def group_styles(
         self, text: str, tokenizer: Tokenizer = tokenize_ansi
@@ -315,7 +315,7 @@ class StyledText:
         of characters.
         """
 
-        context = context if context is not None else ContextDict.create()
+        context = context if context is not None else create_context_dict()
 
         parsers = PARSERS
         link = None
@@ -330,15 +330,15 @@ class StyledText:
                 link = token
                 return ""
 
-            if link is not None and token.is_clear() and token.targets(link):
+            if link is not None and Token.is_clear(token) and token.targets(link):
                 link = None
 
             if token.is_clear() and token.value not in CLEARERS:
                 return token.markup
 
-            return parsers[type(token)](token, context)
+            return parsers[type(token)](token, context)  # type: ignore
 
-        tokens = []
+        tokens: list[Token] = []
         token: Token
 
         for token in tokenizer(text):
@@ -353,7 +353,7 @@ class StyledText:
                 tokens = [tkn for tkn in tokens if not tkn.is_cursor()]
                 continue
 
-            if token.is_clear():
+            if Token.is_clear(token):
                 tokens = [tkn for tkn in tokens if not token.targets(tkn)]
 
                 if len(tokens) > 0 and tokens[-1] == token:

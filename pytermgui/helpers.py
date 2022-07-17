@@ -37,7 +37,7 @@ def break_line(  # pylint: disable=too-many-branches
         yield ""
         return
 
-    def _pad_and_link(line: str, link: str | None) -> str | bool:
+    def _pad_and_link(line: str, link: str | None) -> str:
         count = limit - real_length(line)
 
         if link is not None:
@@ -100,7 +100,7 @@ def break_line(  # pylint: disable=too-many-branches
             link = token.value
             continue
 
-        sequence = parsers[type(token)](token, {})
+        sequence = parsers[type(token)](token, {})  # type: ignore
         sequences += sequence
         current += sequence
 

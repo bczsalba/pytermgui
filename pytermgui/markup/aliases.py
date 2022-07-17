@@ -1,6 +1,8 @@
 """All PTG-builtin TIM aliases."""
 
-MarkupLanguage = "MarkupLanguage"  # pylint: disable=invalid-name
+from typing import Any
+
+MarkupLanguage = Any  # pylint: disable=invalid-name
 
 CODE_GROUP = {
     "code.str": "142",

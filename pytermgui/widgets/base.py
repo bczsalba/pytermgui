@@ -14,6 +14,7 @@ from typing import Any, Callable, Generator, Iterator, Optional, Type, Union
 
 from ..ansi_interface import MouseAction, MouseEvent, reset
 from ..enums import HorizontalAlignment, SizePolicy, WidgetChange
+from ..fancy_repr import FancyYield
 from ..helpers import break_line
 from ..input import keys
 from ..markup import get_markup
@@ -157,7 +158,7 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         return self.debug()
 
-    def __fancy_repr__(self) -> Generator[str, None, None]:
+    def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         """Yields the repr of this object, then a preview of it."""
 
         yield self.debug()

@@ -690,6 +690,7 @@ def _create_aliases() -> None:
     """
 
     ptg.tim.alias("ptg.title", "210 bold")
+    ptg.tim.alias("ptg.brand_title", "!gradient(210) bold")
     ptg.tim.alias("ptg.body", "247")
     ptg.tim.alias("ptg.detail", "dim")
     ptg.tim.alias("ptg.accent", "72")
@@ -805,7 +806,8 @@ def run_environment(args: Namespace) -> None:
             manager.add(_create_footer(manager), assign="footer")
 
             manager.toast(
-                f"[ptg.title]Welcome to the {_title()} [ptg.title]CLI!",
+                "[ptg.title]Welcome to the [ptg.brand_title]"
+                + "PyTermGUI[/ptg.brand_title ptg.title]CLI!",
                 offset=ptg.terminal.height // 2 - 3,
                 delay=700,
             )

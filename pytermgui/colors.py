@@ -16,7 +16,7 @@ import sys
 from dataclasses import dataclass, field
 from functools import cached_property, lru_cache
 from math import sqrt  # pylint: disable=no-name-in-module
-from typing import TYPE_CHECKING, Generator, Literal, Type
+from typing import Generator, Literal, Type
 
 from .ansi_interface import reset as reset_style
 from .color_info import COLOR_TABLE, CSS_COLORS
@@ -24,10 +24,6 @@ from .exceptions import ColorSyntaxError
 from .fancy_repr import FancyYield
 from .input import getch
 from .terminal import ColorSystem, terminal
-
-if TYPE_CHECKING:
-    # This cyclic won't be relevant while type checking.
-    from .markup import StyledText  # pylint: disable=cyclic-import
 
 __all__ = [
     "COLOR_TABLE",
@@ -290,7 +286,7 @@ class Color:
         self._brightness = brightness / 100
         return self._brightness
 
-    def __call__(self, text: str, reset: bool = True) -> StyledText:
+    def __call__(self, text: str, reset: bool = True) -> str:
         """Colors the given string."""
 
         buff = self.sequence + text

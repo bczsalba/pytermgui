@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from random import shuffle
-from typing import TypeVar
+from typing import Any, TypeVar
 
 from .parsing import parse
 
 DEFAULT_MACROS = {}
 
-MarkupLanguage = "MarkupLanguage"  # pylint: disable=invalid-name
+MarkupLanguage = Any
 
 
 MacroTemplate = TypeVar("MacroTemplate")
@@ -18,7 +18,7 @@ MacroTemplate = TypeVar("MacroTemplate")
 def export_macro(func: MacroTemplate) -> MacroTemplate:
     """A decorator to add a function to `DEFAULT_MACROS`."""
 
-    name = "_".join(func.__name__.split("_")[1:])
+    name = "_".join(func.__name__.split("_")[1:])  # type: ignore
 
     DEFAULT_MACROS[f"!{name}"] = func
 

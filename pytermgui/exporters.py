@@ -147,9 +147,12 @@ def _get_spans(  # pylint: disable=too-many-locals
     """
 
     def _adjust_pos(
-        position: int, scale: float, offset: float, digits: int = 2
+        position: int | None, scale: float, offset: float, digits: int = 2
     ) -> float:
         """Adjusts a given position for the HTML canvas' scale."""
+
+        if position is None:
+            return 0
 
         return round(position * scale + offset / FONT_SIZE, digits)
 
@@ -167,16 +170,15 @@ def _get_spans(  # pylint: disable=too-many-locals
             if token.is_plain():
                 continue
 
-            if token.is_cursor():
+            if Token.is_cursor(token):
                 if token.value != position:
                     # Yield closer if there is already an active positioner
                     if position is not None:
                         yield "</div>", []
 
-                    split = tuple(map(int, (token.x, token.y)))
                     adjusted = (
-                        _adjust_pos(split[0], CHAR_WIDTH, horizontal_offset),
-                        _adjust_pos(split[1], CHAR_HEIGHT, vertical_offset),
+                        _adjust_pos(token.x, CHAR_WIDTH, horizontal_offset),
+                        _adjust_pos(token.y, CHAR_HEIGHT, vertical_offset),
                     )
 
                     yield (
@@ -230,7 +232,7 @@ def token_to_css(token: Token, invert: bool = False) -> str:
             are flipped.
     """
 
-    if token.is_color():
+    if Token.is_color(token):
         color = token.color
 
         style = "color:" + color.hex
@@ -285,8 +287,11 @@ def to_html(  # pylint: disable=too-many-arguments, too-many-locals
     if isinstance(obj, Widget):
         data = obj.get_lines()
 
-    else:
+    elif isinstance(obj, str):
         data = obj.splitlines()
+
+    else:
+        data = str(obj).splitlines()
 
     lines = []
     for dataline in data:
@@ -336,7 +341,7 @@ def _handle_tokens_svg(
 ) -> tuple[tuple[int, int] | None, str | None, list[str]]:
     """Builds CSS styles that apply to the text."""
 
-    styles = []
+    styles: list[tuple[Token, str]] = []
     back = pos = None
 
     has_inverse = any(
@@ -344,12 +349,11 @@ def _handle_tokens_svg(
     )
 
     for token in text.tokens:
-        if token.is_cursor():
-            mapped = tuple(map(int, (token.x, token.y)))
-            pos = mapped[0], mapped[1]
+        if Token.is_cursor(token):
+            pos = token.x, token.y
             continue
 
-        if token.is_color():
+        if Token.is_color(token):
             color = token.color
 
             if has_inverse:
@@ -367,7 +371,7 @@ def _handle_tokens_svg(
 
             continue
 
-        if token.is_clear():
+        if Token.is_clear(token):
             for i, (target, _) in enumerate(styles):
                 if token.targets(target):
                     styles.pop(i)
@@ -382,7 +386,8 @@ def _handle_tokens_svg(
     if css_styles == [] or not any(value.startswith("fill") for _, value in styles):
         css_styles.append(f"fill:{default_fore}")
 
-    return pos, back, css_styles
+    non_null_coords = None if pos is None else (pos[0] or 0, pos[1] or 0)
+    return non_null_coords, back, css_styles
 
 
 def _slugify(text: str) -> str:
@@ -416,7 +421,7 @@ def _make_tag(tagname: str, content: str = "", **attrs) -> str:
 
 # This is a bit of a beast of a function, but it does the job and IMO reducing it
 # into parts would just make our lives more complicated.
-def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
+def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-statements
     obj: Widget | StyledText | str,
     prefix: str | None = None,
     chrome: bool = True,
@@ -473,6 +478,9 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
 
     if isinstance(obj, Widget):
         obj = "\n".join(obj.get_lines())
+
+    elif isinstance(obj, StyledText):
+        obj = str(obj)
 
     for plain in tim.group_styles(obj):
         should_newline = False

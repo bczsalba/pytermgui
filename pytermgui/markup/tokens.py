@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Iterator
+from typing import Any, Generator, Iterator
+
+from typing_extensions import TypeGuard
 
 from ..colors import Color
 from ..fancy_repr import FancyYield
@@ -56,7 +58,7 @@ class Token:
     def __repr__(self) -> str:
         return f"<{type(self).__name__} markup: '{self.markup}'>"
 
-    def __fancy_repr__(self) -> FancyYield:
+    def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         yield f"<{type(self).__name__} markup: "
         yield {
             "text": self.prettified_markup,
@@ -64,42 +66,42 @@ class Token:
         }
         yield ">"
 
-    def is_plain(self) -> bool:
+    def is_plain(self) -> TypeGuard["PlainToken"]:
         """Returns True if this token is an instance of PlainToken."""
 
         return isinstance(self, PlainToken)
 
-    def is_color(self) -> bool:
+    def is_color(self) -> TypeGuard["ColorToken"]:
         """Returns True if this token is an instance of ColorToken."""
 
         return isinstance(self, ColorToken)
 
-    def is_style(self) -> bool:
+    def is_style(self) -> TypeGuard["StyleToken"]:
         """Returns True if this token is an instance of StyleToken."""
 
         return isinstance(self, StyleToken)
 
-    def is_alias(self) -> bool:
+    def is_alias(self) -> TypeGuard["AliasToken"]:
         """Returns True if this token is an instance of AliasToken."""
 
         return isinstance(self, AliasToken)
 
-    def is_macro(self) -> bool:
+    def is_macro(self) -> TypeGuard["MacroToken"]:
         """Returns True if this token is an instance of MacroToken."""
 
         return isinstance(self, MacroToken)
 
-    def is_clear(self) -> bool:
+    def is_clear(self) -> TypeGuard["ClearToken"]:
         """Returns True if this token is an instance of ClearToken."""
 
         return isinstance(self, ClearToken)
 
-    def is_hyperlink(self) -> bool:
+    def is_hyperlink(self) -> TypeGuard["HLinkToken"]:
         """Returns True if this token is an instance of HLinkToken."""
 
         return isinstance(self, HLinkToken)
 
-    def is_cursor(self) -> bool:
+    def is_cursor(self) -> TypeGuard["CursorToken"]:
         """Returns True if this token is an instance of CursorToken."""
 
         return isinstance(self, CursorToken)
@@ -119,7 +121,7 @@ class PlainToken(Token):
     def __repr__(self) -> str:
         return f"<{type(self).__name__} markup: {self.markup!r}>"
 
-    def __fancy_repr__(self) -> str:
+    def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         yield f"<{type(self).__name__} markup: {self.markup!r}>"
 
 
@@ -203,6 +205,9 @@ class ClearToken(Token):
         return f"[210 strikethrough]/[/fg]{target}[/]"
 
     def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Token):
+            return False
+
         return super().__eq__(other) or all(
             obj.markup in ["/dim", "/bold"] for obj in [self, other]
         )
@@ -224,7 +229,7 @@ class ClearToken(Token):
         if token.is_macro() and self.value == "/!":
             return True
 
-        if not token.is_color():
+        if not Token.is_color(token):
             return False
 
         if self.value == "/fg" and not token.color.background:
@@ -253,6 +258,9 @@ class MacroToken(Token):
 
     value: str
     arguments: tuple[str, ...]
+
+    def __iter__(self) -> Iterator[Any]:
+        return iter((self.value, self.arguments))
 
     @cached_property
     def prettified_markup(self) -> str:
@@ -300,13 +308,13 @@ class CursorToken(Token):
     y: int | None
     x: int | None
 
-    def __iter__(self) -> Iterator[int]:
+    def __iter__(self) -> Iterator[int | None]:
         return iter((self.y, self.x))
 
     def __repr__(self) -> str:
         return f"<{type(self).__name__} position: {(';'.join(map(str, self)))}>"
 
-    def __fancy_repr__(self) -> str:
+    def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         yield self.__repr__()
 
     @cached_property
