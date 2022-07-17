@@ -97,11 +97,16 @@ class MarkupLanguage:
             name: The name this alias will be referenced by.
             value: The markup value that the alias will represent.
             generate_unsetter: Disable generating clearer aliases.
+
                 For example:
+                    ```
                     my-tag = 141 bold italic
+                    ```
 
                 will generate:
+                    ```
                     /my-tag = /fg /bold /italic
+                    ```
         """
 
         value = eval_alias(value, self.context)
@@ -138,12 +143,16 @@ class MarkupLanguage:
 
         - Traditional keyword arguments:
 
+            ```python
             lang.alias_multiple(my-tag1="bold", my-tag2="italic")
+            ```
 
         - Keyword argument unpacking:
 
+            ```python
             my_aliases = {"my-tag1": "bold", "my-tag2": "italic"}
             lang.alias_multiple(**my_aliases)
+            ```
         """
 
         for name, value in items.items():
@@ -326,6 +335,8 @@ class StyledText:
                     tokens + [token],
                     link.value if link is not None else None,
                 )
+
+                tokens = [tkn for tkn in tokens if not tkn.is_cursor()]
                 continue
 
             if token.is_clear():

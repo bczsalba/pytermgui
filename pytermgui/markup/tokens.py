@@ -207,7 +207,7 @@ class ClearToken(Token):
     ) -> bool:
         """Returns True if this token targets the one given as an argument."""
 
-        if token.is_clear():
+        if token.is_clear() or token.is_cursor():
             return False
 
         if self.value in ("/", f"/{token.value}"):
