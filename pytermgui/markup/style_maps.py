@@ -1,3 +1,5 @@
+"""Dictionaries that define the terminal's styles & their unsetters."""
+
 STYLES = {
     "bold": "1",
     "dim": "2",

@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import Callable, Generator, Iterator
 
 from ..colors import ColorSyntaxError, str_to_color
-from ..regex import RE_MACRO
 from ..terminal import get_terminal
 from .aliases import apply_default_aliases
 from .macros import apply_default_macros
@@ -14,7 +13,6 @@ from .parsing import (
     PARSERS,
     ContextDict,
     eval_alias,
-    parse,
     parse_tokens,
     tokenize_ansi,
     tokenize_markup,

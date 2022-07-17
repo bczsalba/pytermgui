@@ -152,6 +152,7 @@ class StyleToken(Token):
     """A terminal-style identifier.
 
     Most terminals support a set of 9 styles:
+
     - bold
     - dim
     - italic
@@ -165,6 +166,8 @@ class StyleToken(Token):
     This token will store the style it represents by its name in the `value` field. Note
     that other, less widely supported styles *may* be available; for an up-to-date list,
     run `ptg -i pytermgui.markup.style_maps.STYLES`.
+    ```
+
     """
 
     __slots__ = ("value",)
@@ -178,11 +181,12 @@ class ClearToken(Token):
 
     These tokens are prefixed by `/`, and followed by the name of the tag they target.
 
-    To reset color information in the current text, use the `/fg` and `/bg` special tags. We
-    cannot unset a specific color due to how the terminal works; all these do is "reset" the
-    current stroke color to the default of the terminal.
+    To reset color information in the current text, use the `/fg` and `/bg` special
+    tags. We cannot unset a specific color due to how the terminal works; all these do
+    is "reset" the current stroke color to the default of the terminal.
 
     Additionally, there are some other special identifiers:
+
     - `/`:  Clears all tags, including styles, colors, macros, links and more.
     - `/!`: Clears all currently applied macros.
     - `/~`: Clears all currently applied links.

@@ -1,7 +1,11 @@
+"""All PTG-builtin TIM macros."""
+
 from __future__ import annotations
 
 from random import shuffle
 from typing import TypeVar
+
+from .parsing import parse
 
 DEFAULT_MACROS = {}
 
@@ -12,6 +16,8 @@ MacroTemplate = TypeVar("MacroTemplate")
 
 
 def export_macro(func: MacroTemplate) -> MacroTemplate:
+    """A decorator to add a function to `DEFAULT_MACROS`."""
+
     name = "_".join(func.__name__.split("_")[1:])
 
     DEFAULT_MACROS[f"!{name}"] = func
@@ -20,6 +26,12 @@ def export_macro(func: MacroTemplate) -> MacroTemplate:
 
 
 def apply_default_macros(lang: MarkupLanguage) -> None:
+    """Applies all macros in `DEFAULT_MACROS`.
+
+    Args:
+        lang: The language to apply the macros to.
+    """
+
     for name, value in DEFAULT_MACROS.items():
         lang.define(name, value)
 
@@ -79,19 +91,6 @@ def macro_shuffle(item: str) -> str:
     return "".join(shuffled)
 
 
-def macro_link(*args) -> str:
-    """Creates a clickable hyperlink.
-
-    Note:
-        Since this is a pretty new feature for terminals, its support is limited.
-    """
-
-    *uri_parts, label = args
-    uri = ":".join(uri_parts)
-
-    return f"\x1b]8;;{uri}\x1b\\{label}\x1b]8;;\x1b\\"
-
-
 def _apply_colors(colors: list[str] | list[int], item: str) -> str:
     """Applies the given list of colors to the item, spread out evenly."""
 
@@ -105,8 +104,6 @@ def _apply_colors(colors: list[str] | list[int], item: str) -> str:
             current_block += 1
 
         out += char
-
-    from .parsing import parse
 
     return parse(out + "[/fg]", append_reset=False) + "\x1b[0m"
 

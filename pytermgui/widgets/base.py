@@ -16,7 +16,7 @@ from ..ansi_interface import MouseAction, MouseEvent, reset
 from ..enums import HorizontalAlignment, SizePolicy, WidgetChange
 from ..helpers import break_line
 from ..input import keys
-from ..markup import get_markup, tim
+from ..markup import get_markup
 from ..regex import real_length
 from ..terminal import Terminal, get_terminal
 from . import styles as w_styles

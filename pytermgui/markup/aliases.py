@@ -1,3 +1,5 @@
+"""All PTG-builtin TIM aliases."""
+
 MarkupLanguage = "MarkupLanguage"  # pylint: disable=invalid-name
 
 CODE_GROUP = {
@@ -20,4 +22,11 @@ DEFAULT_ALIASES = {**CODE_GROUP}
 
 
 def apply_default_aliases(lang: MarkupLanguage) -> None:
+    """Applies all aliases within `DEFAULT_ALIASES`.
+
+    Args:
+        lang: The `MarkupLanguage` instance all aliases will be
+            applied to.
+    """
+
     lang.alias_multiple(**DEFAULT_ALIASES)
