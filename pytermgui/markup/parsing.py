@@ -1,3 +1,5 @@
+"""The internals of the TIM engine."""
+
 from __future__ import annotations
 
 from typing import Callable, Iterator, TypedDict
@@ -41,16 +43,44 @@ __all__ = [
 
 
 class ContextDict(TypedDict):
+    """A dictionary to hold context about a markup language's environment.
+
+    It has two sub-dicts:
+
+    - aliases
+    - macros
+
+    For information about what they do and contain, see the
+    [MarkupLanguage docs](pytermgui.markup.language.MarkupLanguage).
+    """
+
     aliases: dict[str, str]
     macros: dict[str, Callable[[str, ...], str]]
 
     @classmethod
     def create(cls) -> ContextDict:
+        """Creates a new context dictionary, initializing its sub-dicts.
+
+        Returns:
+            A dictionary with `aliases` and `macros` defined as empty sub-dicts.
+        """
+
         return {"aliases": {}, "macros": {}}
 
 
 def tokenize_markup(text: str) -> Iterator[Token]:
-    def _consume(tag: str) -> Token:
+    """Converts some markup text into a stream of tokens.
+
+    Args:
+        text: Any valid markup.
+
+    Yields:
+        The generated tokens, in the order they occur within the markup.
+    """
+
+    def _consume(tag: str) -> Token:  # pylint: disable=too-many-return-statements
+        """Consumes a tag text, returns the associated Token."""
+
         if tag in STYLES:
             return StyleToken(tag)
 
@@ -131,9 +161,19 @@ def tokenize_markup(text: str) -> Iterator[Token]:
         yield PlainToken(text[cursor:length])
 
 
-def tokenize_ansi(text: str) -> list[Token]:
+def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+    text: str,
+) -> Iterator[Token]:
+    """Converts some ANSI-coded text into a stream of tokens.
+
+    Args:
+        text: Any valid ANSI-coded text.
+
+    Yields:
+        The generated tokens, in the order they occur within the text.
+    """
+
     cursor = 0
-    link = None
 
     for matchobj in RE_ANSI.finditer(text):
         start, end = matchobj.span()
@@ -173,11 +213,10 @@ def tokenize_ansi(text: str) -> list[Token]:
             continue
 
         parts = content.split(";")
-        length = len(parts)
 
         state = None
         color_code = ""
-        for i, part in enumerate(parts):
+        for part in parts:
             if state is None:
                 if part in REVERSE_STYLES:
                     yield StyleToken(REVERSE_STYLES[part])
@@ -196,8 +235,9 @@ def tokenize_ansi(text: str) -> list[Token]:
                 try:
                     yield ColorToken(part, str_to_color(part))
                     continue
-                except ColorSyntaxError:
-                    raise ValueError(f"Que eso {part!r}?")
+
+                except ColorSyntaxError as exc:
+                    raise ValueError(f"Could not parse color tag {part!r}.") from exc
 
             if state != "COLOR":
                 continue
@@ -236,6 +276,15 @@ def tokenize_ansi(text: str) -> list[Token]:
 
 
 def eval_alias(text: str, context: ContextDict) -> str:
+    """Evaluates a space-delimited string of alias tags into their underlying value.
+
+    Args:
+        text: A space-separated string containing the aliases.
+
+    Returns:
+        The space-separated string that the input aliases represent.
+    """
+
     aliases = context["aliases"]
 
     evaluated = ""
@@ -250,14 +299,20 @@ def eval_alias(text: str, context: ContextDict) -> str:
 
 
 def parse_plain(token: PlainToken, _: ContextDict) -> str:
+    """Parses a plain token."""
+
     return token.value
 
 
 def parse_color(token: ColorToken, _: ContextDict) -> str:
+    """Parses a color token."""
+
     return token.color.sequence
 
 
 def parse_style(token: StyleToken, _: ContextDict) -> str:
+    """Parses a style token."""
+
     index = STYLES[token.value]
 
     return f"\x1b[{index}m"
@@ -266,6 +321,13 @@ def parse_style(token: StyleToken, _: ContextDict) -> str:
 def parse_macro(
     token: MacroToken, context: ContextDict
 ) -> tuple[Callable[[str, ...], str], tuple[str, ...]]:
+    """Parses a macro token.
+
+    Returns:
+        A tuple containing the callable bound to the name, as well as the arguments
+        passed to it.
+    """
+
     func = context["macros"].get(token.value)
 
     if func is None:
@@ -275,6 +337,8 @@ def parse_macro(
 
 
 def parse_alias(token: AliasToken, context: ContextDict) -> str:
+    """Parses an alias token."""
+
     if token.value not in context["aliases"]:
         return token.value
 
@@ -284,22 +348,39 @@ def parse_alias(token: AliasToken, context: ContextDict) -> str:
 
 
 def parse_clear(token: ClearToken, _: ContextDict) -> str:
+    """Parses a clearer token."""
+
     index = CLEARERS[token.value]
 
     return f"\x1b[{index}m"
 
 
 def parse_cursor(token: CursorToken, _: ContextDict) -> str:
+    """Parses a cursor token."""
+
     ypos, xpos = map(lambda i: "" if i is None else i, token)
 
     return f"\x1b[{ypos};{xpos}H"
 
 
 def optimize_tokens(tokens: Iterator[Token]) -> Iterator[Token]:
+    """Optimizes a stream of tokens, only yielding functionally relevant ones.
+
+    Args:
+        tokens: Any iterator of Token objects. Usually obtained from `tokenize_markup`
+            or `tokenize_ansi`.
+
+    Yields:
+        All those tokens within the input iterator that are functionally relevant,
+            keeping their order.
+    """
+
     previous = []
     current_tag_group = []
 
     def _diff_previous() -> Iterator[Token]:
+        """Find difference from the previously active list of tokens."""
+
         applied = previous.copy()
 
         for tkn in current_tag_group:
@@ -318,6 +399,13 @@ def optimize_tokens(tokens: Iterator[Token]) -> Iterator[Token]:
             yield tkn
 
     def _remove_redundant_color(token: Token) -> None:
+        """Removes non-functional colors.
+
+        These happen in the following ways:
+        - Multiple colors of the same channel (fg/bg) are present.
+        - A color is applied, then a clearer clears it.
+        """
+
         for applied in current_tag_group.copy():
             if applied.is_clear() and applied.targets(token):
                 current_tag_group.remove(applied)
@@ -371,6 +459,16 @@ def optimize_tokens(tokens: Iterator[Token]) -> Iterator[Token]:
 
 
 def tokens_to_markup(tokens: Iterator[Token]) -> str:
+    """Converts a token stream into the markup of its tokens.
+
+    Args:
+        tokens: Any iterator of Token objects. Usually obtained from `tokenize_markup` or
+            `tokenize_ansi`.
+
+    Returns:
+        The markup the given tokens represent.
+    """
+
     tags = []
     markup = ""
 
@@ -392,10 +490,14 @@ def tokens_to_markup(tokens: Iterator[Token]) -> str:
 
 
 def get_markup(text: str) -> str:
+    """Gets the markup representing an ANSI-coded string."""
+
     return tokens_to_markup(tokenize_ansi(text))
 
 
 def optimize_markup(markup: str) -> str:
+    """Optimizes markup by tokenizing it, optimizing the tokens and converting it back to markup."""
+
     return tokens_to_markup(optimize_tokens(tokenize_markup(markup)))
 
 
@@ -411,7 +513,16 @@ PARSERS = {
 
 
 def _apply_macros(text: str, macros: Iterator[MacroToken]) -> str:
-    """Apply current macros to text"""
+    """Applies macros to the given text.
+
+    Args:
+        text: The plain text the macros will apply to.
+        macros: Any iterator of MacroTokens that will be applied.
+
+    Returns:
+        The input plain text, with all macros applied to it. The macros will be applied
+        in the order they appear in.
+    """
 
     for method, args in macros:
         if len(args) > 0:
@@ -424,18 +535,29 @@ def _apply_macros(text: str, macros: Iterator[MacroToken]) -> str:
 
 
 def _sub_aliases(tokens: Iterator[Token], context: ContextDict) -> list[Token]:
+    """Substitutes all AliasTokens to their underlying values.
+
+    Args:
+        tokens: Any iterator of Tokens. When this iterator contains nothing
+            that can be interpreted as an alias, the same iterator turned into
+            a list will be returned.
+        context: The context that aliases will be searched in.
+    """
+
     token_list = list(tokens)
 
     def _is_substitute_candidate(token: Token) -> bool:
-        if (
+        """Returns whether the given token should be substituted.
+
+        Normally, we would only substitute AliasTokens. However, some aliases may
+        bind non-alias syntax (e.g. /clearers or !macros) to something else. Because
+        of this, if the token's value is contained within our context we prefer to
+        interpret it as an alias.
+        """
+
+        return (
             token.is_alias() or token.is_clear() or token.is_macro()
-        ) and token.value in context["aliases"]:
-            return True
-
-        return False
-
-    line = ""
-    tags = []
+        ) and token.value in context["aliases"]
 
     output: list[Token] = []
     for token in token_list:
@@ -466,6 +588,22 @@ def parse_tokens(
     context: ContextDict | None = None,
     append_reset: bool = True,
 ) -> str:
+    """Parses a stream of tokens into the ANSI-coded string they represent.
+
+    Args:
+        tokens: Any stream of Tokens, usually obtained from either `tokenize_ansi` or
+            `tokenize_markup`.
+        optimize: If set, `optimize_tokens` will optimize the input iterator before
+            usage. This will incur a (minor) performance hit.
+        context: The context that aliases and macros found within the tokens will be
+            searched in.
+        append_reset: If set, `ClearToken("/")` will be appended to the token iterator,
+            clearing all styles.
+
+    Returns:
+        The ANSI-coded string that the token stream represents.
+    """
+
     tokens = list(_sub_aliases(tokens, context))
 
     if optimize:
@@ -532,6 +670,21 @@ def parse(
     context: ContextDict | None = None,
     append_reset: bool = True,
 ) -> str:
+    """Parses markup into the ANSI-coded string it represents.
+
+    Args:
+        text: Any valid markup.
+        optimize: If set, `optimize_tokens` will optimize the tokens found within the
+            input markup before usage. This will incur a (minor) performance hit.
+        context: The context that aliases and macros found within the markup will be
+            searched in.
+        append_reset: If set, `[/]` will be appended to the token iterator, clearing all
+            styles.
+
+    Returns:
+        The ANSI-coded string that the markup represents.
+    """
+
     if context is None:
         context = ContextDict.create()
 
