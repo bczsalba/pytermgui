@@ -7,6 +7,7 @@ generate.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cached_property
 from typing import Iterator
 
 from ..colors import Color
@@ -37,13 +38,13 @@ class Token:
 
     value: str
 
-    @property
+    @cached_property
     def markup(self) -> str:
         """Returns markup representing this token."""
 
         return self.value
 
-    @property
+    @cached_property
     def prettified_markup(self) -> str:
         """Returns syntax-highlighted markup representing this token."""
 
@@ -135,11 +136,11 @@ class ColorToken(Token):
     value: str
     color: Color
 
-    @property
+    @cached_property
     def markup(self) -> str:
         return self.color.markup
 
-    @property
+    @cached_property
     def prettified_markup(self) -> str:
         clearer = "bg" if self.color.background else "fg"
 
@@ -191,7 +192,7 @@ class ClearToken(Token):
 
     value: str
 
-    @property
+    @cached_property
     def prettified_markup(self) -> str:
         target = self.markup[1:]
 
@@ -249,13 +250,13 @@ class MacroToken(Token):
     value: str
     arguments: tuple[str, ...]
 
-    @property
+    @cached_property
     def prettified_markup(self) -> str:
         target = self.markup[1:]
 
         return f"[210 bold]![/]{target}"
 
-    @property
+    @cached_property
     def markup(self) -> str:
         return f"{self.value}" + (
             f"({':'.join(self.arguments)})" if len(self.arguments) > 0 else ""
@@ -273,11 +274,11 @@ class HLinkToken(Token):
 
     value: str
 
-    @property
+    @cached_property
     def markup(self) -> str:
         return f"~{self.value}"
 
-    @property
+    @cached_property
     def prettified_markup(self) -> str:
         return f"[{self.markup}]~[blue underline]{self.value}[/fg /underline /~]"
 
@@ -304,6 +305,6 @@ class CursorToken(Token):
     def __fancy_repr__(self) -> str:
         yield self.__repr__()
 
-    @property
+    @cached_property
     def markup(self) -> str:
         return f"({self.value})"

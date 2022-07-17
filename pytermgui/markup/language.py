@@ -15,6 +15,7 @@ from .parsing import (
     ContextDict,
     eval_alias,
     parse,
+    parse_tokens,
     tokenize_ansi,
     tokenize_markup,
     tokens_to_markup,
@@ -42,7 +43,7 @@ class MarkupLanguage:
     def __init__(
         self, *, default_aliases: bool = True, default_macros: bool = True
     ) -> None:
-        self._cache = {}
+        self._cache: dict[str, tuple[list[Token], str]] = {}
 
         self.context = ContextDict.create()
         self._aliases = self.context["aliases"]
@@ -114,6 +115,9 @@ class MarkupLanguage:
         def _generate_unsetter() -> str:
             unsetter = ""
             for tag in value.split():
+                if "(" in tag and ")" in tag:
+                    tag = tag[: tag.find("(")]
+
                 if tag in self._aliases or tag in self._macros:
                     unsetter += f" /{tag}"
                     continue
@@ -179,21 +183,33 @@ class MarkupLanguage:
 
         key = (text, optimize, append_reset)
 
-        can_cache = key in self._cache
-        if "!" in text and RE_MACRO.match(text) is not None:
-            can_cache = False
+        if key in self._cache:
+            tokens, output, has_macro = self._cache[key]
 
-        if can_cache:
-            return self._cache[key]
+            if has_macro:
+                output = parse_tokens(
+                    tokens,
+                    optimize=optimize,
+                    append_reset=append_reset,
+                    context=self.context,
+                )
 
-        output = parse(
-            text,
+                self._cache[key] = (tokens, output, has_macro)
+
+            return output
+
+        tokens = list(tokenize_markup(text))
+
+        output = parse_tokens(
+            tokens,
             optimize=optimize,
             append_reset=append_reset,
             context=self.context,
         )
 
-        self._cache[key] = output
+        has_macro = any(token.is_macro() for token in tokens)
+
+        self._cache[key] = (tokens, output, has_macro)
 
         return output
 

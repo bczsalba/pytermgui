@@ -36,6 +36,7 @@ __all__ = [
     "tokens_to_markup",
     "get_markup",
     "parse",
+    "parse_tokens",
 ]
 
 
@@ -422,39 +423,25 @@ def _apply_macros(text: str, macros: Iterator[MacroToken]) -> str:
     return text
 
 
-def _sub_aliases(text: str, context: ContextDict) -> str:
+def _sub_aliases(tokens: Iterator[Token], context: ContextDict) -> list[Token]:
+    token_list = list(tokens)
+
+    def _is_substitute_candidate(token: Token) -> bool:
+        if (
+            token.is_alias() or token.is_clear() or token.is_macro()
+        ) and token.value in context["aliases"]:
+            return True
+
+        return False
+
     line = ""
     tags = []
 
-    for token in tokenize_markup(text):
-        if token.is_plain():
-            if len(tags) > 0:
-                line += f"[{' '.join(tags)}]"
+    output: list[Token] = []
+    for token in token_list:
+        if _is_substitute_candidate(token):
+            output.extend(list(tokenize_markup(f"[{parse_alias(token, context)}]")))
 
-            value = token.value
-
-            # TODO: This isn't great.
-            #       - Things that _wouldn't be parsed (like `times[i]`) are ignored and thus
-            #         their brackets are removed in the parsed output
-            #       - Some macros (like !gradient) seem to re-escape text for some reason.
-            #
-            #       Honestly, this might be a full non-issue, and it might just be better to
-            #       immediately parse things like highlight results, and not use macros between.
-            if RE_MARKUP.match(value) is not None:
-                value = value.replace("[", r"\[")
-
-            line += value
-
-            tags = []
-            continue
-
-        if token.is_alias() or token.is_macro() and token.value in context["aliases"]:
-            tags.append(parse_alias(token, context))
-
-            continue
-
-        if token.is_clear() and token.value in context["aliases"]:
-            tags.append(parse_alias(AliasToken(token.value), context))
             continue
 
         if token.is_macro() and token.value == "!link":
@@ -464,38 +451,33 @@ def _sub_aliases(text: str, context: ContextDict) -> str:
                 DeprecationWarning,
                 stacklevel=4,
             )
-            token = HLinkToken(":".join(token.arguments))
 
-        tags.append(token.markup)
+            output.append(HLinkToken(":".join(token.arguments)))
+            continue
 
-    if len(tags) > 0:
-        line += f"[{' '.join(tags)}]"
+        output.append(token)
 
-    return line
+    return output
 
 
-def parse(
-    text: str,
+def parse_tokens(
+    tokens: Iterator[Token],
     optimize: bool = False,
     context: ContextDict | None = None,
     append_reset: bool = True,
 ) -> str:
-    if context is None:
-        context = ContextDict.create()
+    tokens = list(_sub_aliases(tokens, context))
 
-    text = _sub_aliases(text, context)
+    if optimize:
+        tokens = list(optimize_tokens(tokens))
 
-    if append_reset and not text.endswith("/]"):
-        text += "[/]"
+    if append_reset:
+        tokens.append(ClearToken("/"))
 
     output = ""
     segment = ""
     macros = []
     link = None
-
-    tokens: Iterator[Token] = tokenize_markup(text)
-    if optimize:
-        tokens = optimize_tokens(tokens)
 
     for token in tokens:
         if token.is_plain():
@@ -542,3 +524,22 @@ def parse(
     output += segment
 
     return output
+
+
+def parse(
+    text: str,
+    optimize: bool = False,
+    context: ContextDict | None = None,
+    append_reset: bool = True,
+) -> str:
+    if context is None:
+        context = ContextDict.create()
+
+    if append_reset and not text.endswith("/]"):
+        text += "[/]"
+
+    tokens = tokenize_markup(text)
+
+    return parse_tokens(
+        tokens, optimize=optimize, context=context, append_reset=append_reset
+    )
