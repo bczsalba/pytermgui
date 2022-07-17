@@ -58,7 +58,7 @@ HTML_FORMAT = """\
     </body>
 </html>"""
 
-SVG_MARGIN_LEFT = 50
+SVG_MARGIN_LEFT = 0
 TEXT_MARGIN_LEFT = 20
 
 TEXT_MARGIN_TOP = 35
@@ -558,7 +558,7 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
             <circle cx="{SVG_MARGIN_LEFT+15}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ff6159"/>
             <circle cx="{SVG_MARGIN_LEFT+35}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ffbd2e"/>
             <circle cx="{SVG_MARGIN_LEFT+55}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#28c941"/>
-            <text x="{terminal_width // 2 + 30}" y="{SVG_MARGIN_TOP + FONT_HEIGHT}" text-anchor="middle"
+            <text x="{terminal_width // 2}" y="{SVG_MARGIN_TOP + FONT_HEIGHT}" text-anchor="middle"
                 class="{prefix}-title">{title}</text>
         </g>
         """
