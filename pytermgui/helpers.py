@@ -4,60 +4,16 @@ from __future__ import annotations
 
 from typing import Iterator
 
-from .ansi_interface import reset
-from .colors import Color
-from .markup import Token, tim, tokenize_ansi
+from .markup import tokenize_ansi
 from .markup.parsing import LINK_TEMPLATE, PARSERS
 from .regex import real_length
 
 __all__ = [
-    "get_applied_sequences",
     "break_line",
 ]
 
 
-def get_applied_sequences(text: str) -> str:
-    """Extracts ANSI sequences from text.
-
-    Args:
-        text: The text to operate on.
-
-    Returns:
-        All sequences found.
-    """
-
-    tokens: list[Token] = []
-    reset_char = reset()
-    for token in tim.tokenize_ansi(text):
-        if not token.ttype is TokenType.UNSETTER:
-            tokens.append(token)
-            continue
-
-        assert token.sequence is not None
-        if token.sequence == reset_char:
-            tokens = []
-            continue
-
-        name = token.name.lstrip("/")
-        for style in tokens.copy():
-            if name in ["fg", "bg"] and style.ttype is TokenType.COLOR:
-                color = style.data
-                assert isinstance(color, Color)
-
-                if name == "fg" and not color.background:
-                    tokens.remove(style)
-                elif name == "bg" and color.background:
-                    tokens.remove(style)
-
-            elif style.name == name:
-                tokens.remove(style)
-
-        continue
-
-    return "".join(token.sequence or "" for token in tokens)
-
-
-def break_line(
+def break_line(  # pylint: disable=too-many-branches
     line: str, limit: int, non_first_limit: int | None = None, fill: str | None = None
 ) -> Iterator[str]:
     """Breaks a line into a `list[str]` with maximum `limit` length per line.
