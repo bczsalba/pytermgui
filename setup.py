@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 import pytermgui
 
@@ -14,7 +14,7 @@ setup(
     description="A simple and robust terminal UI library, written in Python.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    install_requires=[],
+    install_requires=["typing_extensions"],
     python_requires=">=3.7.0",
     url="https://github.com/bczsalba/pytermgui",
     author="BcZsalba",
