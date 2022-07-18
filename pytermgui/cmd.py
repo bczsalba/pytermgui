@@ -287,7 +287,7 @@ class TIMWindow(AppWindow):
         """Creates the showcase container."""
 
         def _show_style(name: str) -> str:
-            return f"[{name}]{name}"
+            return f"[{name}]{name}"  # .replace("'", "")
 
         def _create_table(source: Iterable[tuple[str, str]]) -> ptg.Container:
             root = ptg.Container()

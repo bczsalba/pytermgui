@@ -558,7 +558,9 @@ def _sub_aliases(tokens: list[Token], context: ContextDict) -> list[Token]:
     output: list[Token] = []
 
     for token in tokens:
-        if token.value in context["aliases"]:
+        if token.value in context["aliases"] and (
+            Token.is_clear(token) or Token.is_macro(token) or Token.is_alias(token)
+        ):
             if Token.is_clear(token) or Token.is_macro(token):
                 token = AliasToken(token.value)
 
