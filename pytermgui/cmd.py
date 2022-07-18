@@ -807,7 +807,7 @@ def run_environment(args: Namespace) -> None:
 
             manager.toast(
                 "[ptg.title]Welcome to the [ptg.brand_title]"
-                + "PyTermGUI[/ptg.brand_title ptg.title]CLI!",
+                + "PyTermGUI[/ptg.brand_title ptg.title] CLI!",
                 offset=ptg.terminal.height // 2 - 3,
                 delay=700,
             )
