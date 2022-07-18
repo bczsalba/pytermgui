@@ -336,7 +336,9 @@ class StyledText:
             if token.is_clear() and token.value not in CLEARERS:
                 return token.markup
 
-            return parsers[type(token)](token, context)  # type: ignore
+            # The full text (last arg) is not relevant here, as ANSI parsing doesn't
+            # use any context-defined tags, so no errors will occur.
+            return parsers[type(token)](token, context, lambda: "")  # type: ignore
 
         tokens: list[Token] = []
         token: Token

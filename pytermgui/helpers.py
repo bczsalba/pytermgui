@@ -100,7 +100,7 @@ def break_line(  # pylint: disable=too-many-branches
             link = token.value
             continue
 
-        sequence = parsers[type(token)](token, {})  # type: ignore
+        sequence = parsers[type(token)](token, {}, lambda: line)  # type: ignore
         sequences += sequence
         current += sequence
 

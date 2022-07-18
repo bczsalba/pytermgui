@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Iterator, Protocol, TypedDict
+import json
+from typing import Callable, Iterator, Protocol, TypedDict
 from warnings import filterwarnings, warn
 
 from ..colors import str_to_color
-from ..exceptions import ColorSyntaxError
+from ..exceptions import ColorSyntaxError, MarkupSyntaxError
 from ..regex import RE_ANSI_NEW as RE_ANSI
 from ..regex import RE_MACRO, RE_MARKUP, RE_POSITION
 from .style_maps import CLEARERS, REVERSE_CLEARERS, REVERSE_STYLES, STYLES
@@ -306,19 +307,19 @@ def eval_alias(text: str, context: ContextDict) -> str:
     return evaluated.rstrip(" ")
 
 
-def parse_plain(token: PlainToken, _: ContextDict) -> str:
+def parse_plain(token: PlainToken, _: ContextDict, __: Callable[[], str]) -> str:
     """Parses a plain token."""
 
     return token.value
 
 
-def parse_color(token: ColorToken, _: ContextDict) -> str:
+def parse_color(token: ColorToken, _: ContextDict, __: Callable[[], str]) -> str:
     """Parses a color token."""
 
     return token.color.sequence
 
 
-def parse_style(token: StyleToken, _: ContextDict) -> str:
+def parse_style(token: StyleToken, _: ContextDict, __: Callable[[], str]) -> str:
     """Parses a style token."""
 
     index = STYLES[token.value]
@@ -327,7 +328,7 @@ def parse_style(token: StyleToken, _: ContextDict) -> str:
 
 
 def parse_macro(
-    token: MacroToken, context: ContextDict
+    token: MacroToken, context: ContextDict, get_full: Callable[[], str]
 ) -> tuple[MacroType, tuple[str, ...]]:
     """Parses a macro token.
 
@@ -339,23 +340,33 @@ def parse_macro(
     func = context["macros"].get(token.value)
 
     if func is None:
-        raise ValueError(f"Undefined macro {token.value!r}.")
+        dump = json.dumps(context["macros"], indent=2, default=str)
+
+        raise MarkupSyntaxError(
+            token.value, f"not defined in macro context: {dump}", get_full()
+        )
 
     return func, token.arguments
 
 
-def parse_alias(token: AliasToken, context: ContextDict) -> str:
+def parse_alias(
+    token: AliasToken, context: ContextDict, get_full: Callable[[], str]
+) -> str:
     """Parses an alias token."""
 
     if token.value not in context["aliases"]:
-        return token.value
+        dump = json.dumps(context["aliases"], indent=2, default=str)
+
+        raise MarkupSyntaxError(
+            token.value, f"not defined in alias context: {dump}", get_full()
+        )
 
     meaning = context["aliases"][token.value]
 
     return eval_alias(meaning, context).rstrip(" ")
 
 
-def parse_clear(token: ClearToken, _: ContextDict) -> str:
+def parse_clear(token: ClearToken, _: ContextDict, __: Callable[[], str]) -> str:
     """Parses a clearer token."""
 
     index = CLEARERS[token.value]
@@ -363,7 +374,7 @@ def parse_clear(token: ClearToken, _: ContextDict) -> str:
     return f"\x1b[{index}m"
 
 
-def parse_cursor(token: CursorToken, _: ContextDict) -> str:
+def parse_cursor(token: CursorToken, _: ContextDict, __: Callable[[], str]) -> str:
     """Parses a cursor token."""
 
     ypos, xpos = map(lambda i: "" if i is None else i, token)
@@ -428,7 +439,7 @@ def optimize_tokens(tokens: list[Token]) -> Iterator[Token]:
                 current_tag_group.remove(applied)
 
     for token in tokens:
-        if token.is_plain():
+        if Token.is_plain(token):
             yield from _diff_previous()
             yield token
 
@@ -557,6 +568,15 @@ def _sub_aliases(tokens: list[Token], context: ContextDict) -> list[Token]:
 
     output: list[Token] = []
 
+    # It's more computationally efficient to create this lambda once and reuse it
+    # every time. There is no need to define a full function, as it just returns
+    # a function return.
+    get_full = (
+        lambda: tokens_to_markup(  # pylint: disable=unnecessary-lambda-assignment
+            tokens
+        )
+    )
+
     for token in tokens:
         if token.value in context["aliases"] and (
             Token.is_clear(token) or Token.is_macro(token) or Token.is_alias(token)
@@ -565,7 +585,8 @@ def _sub_aliases(tokens: list[Token], context: ContextDict) -> list[Token]:
                 token = AliasToken(token.value)
 
             if Token.is_alias(token):
-                output.extend(list(tokenize_markup(f"[{parse_alias(token, context)}]")))
+                aliases_parsed = parse_alias(token, context, get_full)
+                output.extend(list(tokenize_markup(f"[{aliases_parsed}]")))
 
             continue
 
@@ -612,6 +633,15 @@ def parse_tokens(  # pylint: disable=too-many-branches
 
     token_list = list(_sub_aliases(tokens, context))
 
+    # It's more computationally efficient to create this lambda once and reuse it
+    # every time. There is no need to define a full function, as it just returns
+    # a function return.
+    get_full = (
+        lambda: tokens_to_markup(  # pylint: disable=unnecessary-lambda-assignment
+            tokens
+        )
+    )
+
     if optimize:
         token_list = list(optimize_tokens(tokens))
 
@@ -626,7 +656,7 @@ def parse_tokens(  # pylint: disable=too-many-branches
     for token in token_list:
         if token.is_plain():
             value = _apply_macros(
-                token.value, (parse_macro(macro, context) for macro in macros)
+                token.value, (parse_macro(macro, context, get_full) for macro in macros)
             )
 
             output += segment + (
@@ -663,7 +693,7 @@ def parse_tokens(  # pylint: disable=too-many-branches
                     f"Cannot use clearer {token.value!r} with nothing to target."
                 )
 
-        segment += PARSERS[type(token)](token, context)  # type: ignore
+        segment += PARSERS[type(token)](token, context, get_full)  # type: ignore
 
     output += segment
 

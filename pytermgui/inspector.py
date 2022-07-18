@@ -354,7 +354,7 @@ class Inspector(Container):
             if real_length(line) > preview.width - preview.sidelength:
                 preview.width = real_length(line) + preview.sidelength
 
-            preview += Label("[str]" + tim.get_markup(line), parent_align=0)
+            preview += Label(tim.get_markup(line), parent_align=0)
 
         preview.width = min(preview.width, self.terminal.width - preview.sidelength)
         return preview
