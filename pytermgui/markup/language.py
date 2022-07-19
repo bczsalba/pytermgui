@@ -233,24 +233,6 @@ class MarkupLanguage:
             text, tokenizer=tokenizer, context=self.context
         )
 
-    def prettify_markup(self, markup: str) -> str:
-        """Syntax-highlight markup."""
-
-        output = ""
-
-        for span in StyledText.group_styles(
-            markup, tokenizer=tokenize_markup, context=self.context
-        ):
-            tags = " ".join(token.prettified_markup for token in span.tokens[:-1])
-            markup = " ".join(tkn.markup for tkn in span.tokens[:-1])
-
-            if len(tags) > 0 and len(markup) > 0:
-                output += f"[{tags}][{markup}]"
-
-            output += f"{span.plain}[/]"
-
-        return self.parse(output, optimize=True)
-
     def print(self, *args, **kwargs) -> None:
         """Parse all arguments and pass them through to print, along with kwargs."""
 

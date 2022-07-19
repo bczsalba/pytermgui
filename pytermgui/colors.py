@@ -16,14 +16,16 @@ import sys
 from dataclasses import dataclass, field
 from functools import cached_property, lru_cache
 from math import sqrt  # pylint: disable=no-name-in-module
-from typing import Generator, Literal, Type
+from typing import TYPE_CHECKING, Generator, Literal, Type
 
 from .ansi_interface import reset as reset_style
 from .color_info import COLOR_TABLE, CSS_COLORS
 from .exceptions import ColorSyntaxError
-from .fancy_repr import FancyYield
 from .input import getch
 from .terminal import ColorSystem, terminal
+
+if TYPE_CHECKING:
+    from .fancy_repr import FancyYield
 
 __all__ = [
     "COLOR_TABLE",

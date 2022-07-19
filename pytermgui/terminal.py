@@ -14,11 +14,13 @@ from datetime import datetime
 from enum import Enum
 from functools import cached_property
 from shutil import get_terminal_size
-from typing import Any, Callable, Generator, TextIO
+from typing import TYPE_CHECKING, Any, Callable, Generator, TextIO
 
-from .fancy_repr import FancyYield
 from .input import getch_timeout
 from .regex import RE_PIXEL_SIZE, has_open_sequence, real_length, strip_ansi
+
+if TYPE_CHECKING:
+    from .fancy_repr import FancyYield
 
 __all__ = [
     "terminal",

@@ -326,7 +326,7 @@ class TIMWindow(AppWindow):
 
     def on_exit(self) -> None:
         super().on_exit()
-        print(ptg.tim.prettify_markup(self._input.value))
+        ptg.tim.print(ptg.highlight_tim(self._input.value))
         ptg.tim.print(self._input.value)
 
 

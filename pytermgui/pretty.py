@@ -8,6 +8,8 @@ Usage:
     ```
 """
 
+# isort: skip_file
+
 from __future__ import annotations
 
 import builtins
@@ -24,7 +26,9 @@ try:
     # IPython runtime, so if running outside of that context a NameError
     # is raised.
     IPYTHON = get_ipython()  # type: ignore
-    from IPython.core.formatters import BaseFormatter  # pylint: disable=import-error
+    from IPython.core.formatters import (  # type: ignore # pylint: disable=import-error
+        BaseFormatter,
+    )
 
 except NameError:
     IPYTHON = None

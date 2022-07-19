@@ -10,7 +10,7 @@ from collections import UserDict, UserList
 from typing import Any
 
 from .fancy_repr import build_fancy_repr, supports_fancy_repr
-from .highlighters import highlight_python
+from .highlighters import highlight_python, highlight_tim
 from .markup import tim
 from .regex import RE_MARKUP
 
@@ -61,8 +61,10 @@ def prettify(  # pylint: disable=too-many-branches
 
     if isinstance(target, str):
         if RE_MARKUP.match(target) is not None:
+            target = highlight_tim(target)
+
             if parse:
-                return f'"{tim.prettify_markup(target)}"'
+                return f'"{tim.parse(target)}"'
 
             return target + "[/]"
 

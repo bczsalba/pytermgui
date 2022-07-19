@@ -8,12 +8,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, Generator, Iterator
+from typing import TYPE_CHECKING, Any, Generator, Iterator
 
 from typing_extensions import TypeGuard
 
 from ..colors import Color
-from ..fancy_repr import FancyYield
+
+if TYPE_CHECKING:
+    from ..fancy_repr import FancyYield
 
 __all__ = [
     "Token",
