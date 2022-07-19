@@ -1,4 +1,4 @@
-name: Lint with Pylint
+name: Run linting
 
 on:
   push:
