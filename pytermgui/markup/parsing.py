@@ -33,6 +33,7 @@ LINK_TEMPLATE = "\x1b]8;;{uri}\x1b\\{label}\x1b]8;;\x1b\\"
 __all__ = [
     "ContextDict",
     "create_context_dict",
+    "consume_tag",
     "tokenize_markup",
     "tokenize_ansi",
     "optimize_tokens",
@@ -77,6 +78,49 @@ def create_context_dict() -> ContextDict:
     return {"aliases": {}, "macros": {}}
 
 
+def consume_tag(tag: str) -> Token:  # pylint: disable=too-many-return-statements
+    """Consumes a tag text, returns the associated Token."""
+
+    if tag in STYLES:
+        return StyleToken(tag)
+
+    if tag.startswith("/"):
+        return ClearToken(tag)
+
+    if tag.startswith("!"):
+        matchobj = RE_MACRO.match(tag)
+
+        if matchobj is not None:
+            name, args = matchobj.groups()
+
+            if args is None:
+                return MacroToken(name, tuple())
+
+            return MacroToken(name, tuple(args.split(":")))
+
+    if tag.startswith("~"):
+        return HLinkToken(tag[1:])
+
+    if tag.startswith("(") and tag.endswith(")"):
+        values = tag[1:-1].split(";")
+        if len(values) != 2:
+            raise ValueError(
+                f"Cursor tags must have exactly 2 values delimited by `;`, got {tag!r}."
+            )
+
+        return CursorToken(tag[1:-1], *map(int, values))
+
+    token: Token
+    try:
+        token = ColorToken(tag, str_to_color(tag))
+
+    except ColorSyntaxError:
+        token = AliasToken(tag)
+
+    finally:
+        return token  # pylint: disable=lost-exception
+
+
 def tokenize_markup(text: str) -> Iterator[Token]:
     """Converts some markup text into a stream of tokens.
 
@@ -86,48 +130,6 @@ def tokenize_markup(text: str) -> Iterator[Token]:
     Yields:
         The generated tokens, in the order they occur within the markup.
     """
-
-    def _consume(tag: str) -> Token:  # pylint: disable=too-many-return-statements
-        """Consumes a tag text, returns the associated Token."""
-
-        if tag in STYLES:
-            return StyleToken(tag)
-
-        if tag.startswith("/"):
-            return ClearToken(tag)
-
-        if tag.startswith("!"):
-            matchobj = RE_MACRO.match(tag)
-
-            if matchobj is not None:
-                name, args = matchobj.groups()
-
-                if args is None:
-                    return MacroToken(name, tuple())
-
-                return MacroToken(name, tuple(args.split(":")))
-
-        if tag.startswith("~"):
-            return HLinkToken(tag[1:])
-
-        if tag.startswith("(") and tag.endswith(")"):
-            values = tag[1:-1].split(";")
-            if len(values) != 2:
-                raise ValueError(
-                    f"Cursor tags must have exactly 2 values delimited by `;`, got {tag!r}."
-                )
-
-            return CursorToken(tag[1:-1], *map(int, values))
-
-        token: Token
-        try:
-            token = ColorToken(tag, str_to_color(tag))
-
-        except ColorSyntaxError:
-            token = AliasToken(tag)
-
-        finally:
-            return token  # pylint: disable=lost-exception
 
     cursor = 0
     length = len(text)
@@ -154,7 +156,7 @@ def tokenize_markup(text: str) -> Iterator[Token]:
             if tag == "/inverse":
                 has_inverse = False
 
-            consumed = _consume(tag)
+            consumed = consume_tag(tag)
             if has_inverse:
                 if consumed.markup == "/fg":
                     consumed = ClearToken("/fg")
