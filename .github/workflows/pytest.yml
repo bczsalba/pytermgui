@@ -31,6 +31,7 @@ jobs:
           pip install pytest-cov
           pip install coverage
           pip install pyyaml
+          pip install typing-extensions
           pip freeze
           pip install .
 
