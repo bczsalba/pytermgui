@@ -815,7 +815,7 @@ class Container(ScrollableWidget):
 
         return handled
 
-    def execute_binding(self, key: str) -> bool:
+    def execute_binding(self, key: Any, ignore_any: bool = False) -> bool:
         """Executes a binding on self, and then on self._widgets.
 
         If a widget.execute_binding call returns True this function will too. Note
@@ -824,12 +824,13 @@ class Container(ScrollableWidget):
 
         Args:
             key: The binding key.
+            ignore_any: If set, `keys.ANY_KEY` bindings will not be executed.
 
         Returns:
             True if any widget returned True, False otherwise.
         """
 
-        if super().execute_binding(key):
+        if super().execute_binding(key, ignore_any=ignore_any):
             return True
 
         selectables_index = 0

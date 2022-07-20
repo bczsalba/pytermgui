@@ -575,7 +575,7 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         del self._bindings[key]
 
-    def execute_binding(self, key: Any) -> bool:
+    def execute_binding(self, key: Any, ignore_any: bool = False) -> bool:
         """Executes a binding belonging to key, when present.
 
         Use this method inside custom widget `handle_keys` methods, or to run a callback
@@ -584,6 +584,7 @@ class Widget:  # pylint: disable=too-many-public-methods
         Args:
             key: Usually a string, indexing into the `_bindings` dictionary. These are the
               same strings as defined in `Widget.bind`.
+            ignore_any: If set, `keys.ANY_KEY` bindings will not be executed.
 
         Returns:
             True if the binding was found, False otherwise. Bindings will always be
@@ -591,7 +592,7 @@ class Widget:  # pylint: disable=too-many-public-methods
         """
 
         # Execute special binding
-        if keys.ANY_KEY in self._bindings:
+        if not ignore_any and keys.ANY_KEY in self._bindings:
             method, _ = self._bindings[keys.ANY_KEY]
             method(self, key)
 
