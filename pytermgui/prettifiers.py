@@ -9,10 +9,11 @@ from __future__ import annotations
 from collections import UserDict, UserList
 from typing import Any
 
+from .exceptions import MarkupSyntaxError
 from .fancy_repr import build_fancy_repr, supports_fancy_repr
 from .highlighters import highlight_python, highlight_tim
 from .markup import tim
-from .regex import RE_MARKUP
+from .regex import RE_ANSI, RE_MARKUP
 
 __all__ = ["prettify"]
 
@@ -61,12 +62,19 @@ def prettify(  # pylint: disable=too-many-branches
 
     if isinstance(target, str):
         if RE_MARKUP.match(target) is not None:
-            target = highlight_tim(target)
+            try:
+                highlighted_target = highlight_tim(target)
 
-            if parse:
-                return f'"{tim.parse(target)}"'
+                if parse:
+                    return f'"{tim.parse(highlighted_target)}"'
 
-            return target + "[/]"
+                return highlighted_target + "[/]"
+
+            except MarkupSyntaxError:
+                pass
+
+        if RE_ANSI.match(target) is not None:
+            return target + "\x1b[0m"
 
         target = repr(target)
 

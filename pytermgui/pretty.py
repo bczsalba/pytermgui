@@ -141,12 +141,12 @@ def install(
 
     if not NO_WELCOME:
         with get_terminal().no_record():
-            print()
+            builtins.print()
             tim.print("[113 bold]Successfully set up prettification!")
             tim.print("[245 italic]> All function returns will now be pretty-printed,")
-            print()
+            builtins.print()
             pprint("[245 italic]Including [/italic 210]Markup!")
-            print()
+            builtins.print()
 
     get_terminal().displayhook_installed = True
 
@@ -168,7 +168,7 @@ class PTGFormatter(BaseFormatter):  # pylint: disable=too-few-public-methods
         "Out[i]:", and it might mess alignments up.
         """
 
-        print("\n")
+        builtins.print("\n")
         pprint(value, **self.kwargs)
 
         # Sets up "_" as a way to access return value,
