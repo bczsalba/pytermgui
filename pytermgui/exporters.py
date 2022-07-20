@@ -337,15 +337,21 @@ def _escape_text(text: str) -> str:
 
 
 def _handle_tokens_svg(
-    text: StyledText, default_fore: str
+    text: StyledText, default_fore: str, default_back: str
 ) -> tuple[tuple[int, int] | None, str | None, list[str]]:
     """Builds CSS styles that apply to the text."""
 
     styles: list[tuple[Token, str]] = []
-    back = pos = None
+    pos = None
+
+    fore, back = default_fore, default_back
 
     has_inverse = any(
         token.is_style() and token.value == "inverse" for token in text.tokens
+    )
+
+    fore, back = (
+        (default_back, default_fore) if has_inverse else (default_fore, default_back)
     )
 
     for token in text.tokens:
@@ -362,12 +368,9 @@ def _handle_tokens_svg(
 
             if color.background:
                 back = color.hex
-                continue
 
-            style = f"fill:{color.hex}"
-
-            if (token, style) not in styles:
-                styles.append((token, style))
+            else:
+                fore = color.hex
 
             continue
 
@@ -382,12 +385,9 @@ def _handle_tokens_svg(
             styles.append((token, css))
 
     css_styles = [value for _, value in styles]
+    css_styles.append(f"fill:{fore}")
 
-    if css_styles == [] or not any(value.startswith("fill") for _, value in styles):
-        css_styles.append(f"fill:{default_fore}")
-
-    non_null_coords = None if pos is None else (pos[0] or 0, pos[1] or 0)
-    return non_null_coords, back, css_styles
+    return (None if pos is None else (pos[0] or 0, pos[1] or 0)), back, css_styles
 
 
 def _slugify(text: str) -> str:
@@ -485,7 +485,7 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
     for plain in tim.group_styles(obj):
         should_newline = False
 
-        pos, back, styles = _handle_tokens_svg(plain, default_fore)
+        pos, back, styles = _handle_tokens_svg(plain, default_fore, default_back)
 
         index = _generate_index_in(document_styles, styles)
 
