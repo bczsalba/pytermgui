@@ -26,13 +26,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cat setup.py
           python -m pip install --upgrade pip
           pip install testfixtures
           pip install pytest-cov
           pip install coverage
           pip install pyyaml
-          pip install .
+          pip install -e .
 
       - name: Run tests with coverage
         run: |
