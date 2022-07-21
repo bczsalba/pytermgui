@@ -1,3 +1,62 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyTermGUI"
+authors = [ { name = "Balázs Cene", email= "bczsalba@gmail.com" } ]
+description = """\
+    Python TUI framework with mouse support, modular widget system, \
+    customizable and rapid terminal markup language and more!\
+"""
+
+readme = "README.md"
+license = {text = "MIT"}
+
+requires-python = ">=3.8"
+dependencies = ["typing_extensions"]
+
+keywords = []
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Framework :: IPython",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Typing :: Typed",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Terminals",
+    "Topic :: Text Processing :: Markup",
+]
+
+dynamic = ["version"]
+
+# This seems to not be supported yet by setuptools, but I'll keep it
+# here for future use.
+[project.urls]
+homepage = "https://github.com/bczsalba/PyTermGUI"
+repository = "https://github.com/bczsalba/PyTermGUI"
+documentation = "ptg.bczsalba.com"
+
+[project.optional-dependencies]
+yaml = ["PyYAML"]
+
+[project.scripts]
+ptg = "pytermgui.cmd:main"
+
+[tool.setuptools]
+packages = ["pytermgui"]
+dynamic = { version = { attr = "pytermgui.__version__" } }
+
+[tool.mypy]
+show_error_codes = true
+
 [tool.pylint.messages_control]
 disable = [
     "fixme",
@@ -19,3 +78,6 @@ exclude_lines = [
 omit = [
     "pytermgui/cmd.py"
 ]
+
+[tool.isort]
+profile = "black"
