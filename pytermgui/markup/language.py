@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from typing import Callable, Generator, Iterator
 
@@ -23,6 +24,8 @@ from .parsing import (
 from .style_maps import CLEARERS
 from .tokens import Token
 
+STRICT_MARKUP = bool(os.getenv("PTG_STRICT_MARKUP"))
+
 __all__ = [
     "MarkupLanguage",
     "StyledText",
@@ -41,7 +44,11 @@ class MarkupLanguage:
     """
 
     def __init__(
-        self, *, default_aliases: bool = True, default_macros: bool = True
+        self,
+        *,
+        strict: bool = False,
+        default_aliases: bool = True,
+        default_macros: bool = True,
     ) -> None:
         self._cache: dict[tuple[str, bool, bool], tuple[list[Token], str, bool]] = {}
 
@@ -54,6 +61,8 @@ class MarkupLanguage:
 
         if default_macros:
             apply_default_macros(self)
+
+        self.strict = strict or STRICT_MARKUP
 
     @property
     def aliases(self) -> dict[str, str]:
@@ -190,6 +199,7 @@ class MarkupLanguage:
                     optimize=optimize,
                     append_reset=append_reset,
                     context=self.context,
+                    ignore_unknown_tags=self.strict,
                 )
 
                 self._cache[key] = (tokens, output, has_macro)
