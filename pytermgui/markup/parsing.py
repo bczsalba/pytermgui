@@ -368,10 +368,14 @@ def parse_alias(
     return eval_alias(meaning, context).rstrip(" ")
 
 
-def parse_clear(token: ClearToken, _: ContextDict, __: Callable[[], str]) -> str:
+def parse_clear(token: ClearToken, _: ContextDict, get_full: Callable[[], str]) -> str:
     """Parses a clearer token."""
 
-    index = CLEARERS[token.value]
+    index = CLEARERS.get(token.value)
+    if index is None:
+        raise MarkupSyntaxError(
+            token.value, "not a recognized clearer or alias", get_full()
+        )
 
     return f"\x1b[{index}m"
 
@@ -608,11 +612,12 @@ def _sub_aliases(tokens: list[Token], context: ContextDict) -> list[Token]:
     return output
 
 
-def parse_tokens(  # pylint: disable=too-many-branches
+def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals
     tokens: list[Token],
     optimize: bool = False,
     context: ContextDict | None = None,
     append_reset: bool = True,
+    ignore_unknown_tags: bool = True,
 ) -> str:
     """Parses a stream of tokens into the ANSI-coded string they represent.
 
@@ -625,6 +630,8 @@ def parse_tokens(  # pylint: disable=too-many-branches
             searched in.
         append_reset: If set, `ClearToken("/")` will be appended to the token iterator,
             clearing all styles.
+        ignore_unknown_tags: If set, the `MarkupSyntaxError` coming from unknown tags
+            will be silenced.
 
     Returns:
         The ANSI-coded string that the token stream represents.
@@ -650,16 +657,21 @@ def parse_tokens(  # pylint: disable=too-many-branches
     if append_reset:
         token_list.append(ClearToken("/"))
 
+    link = None
     output = ""
     segment = ""
     macros: list[MacroToken] = []
-    link = None
+    unknown_aliases: list[Token] = []
 
     for token in token_list:
         if token.is_plain():
             value = _apply_macros(
                 token.value, (parse_macro(macro, context, get_full) for macro in macros)
             )
+
+            if len(unknown_aliases) > 0:
+                output += f"[{' '.join(tkn.value for tkn in unknown_aliases)}]"
+                unknown_aliases = []
 
             output += segment + (
                 value if link is None else LINK_TEMPLATE.format(uri=link, label=value)
@@ -695,7 +707,16 @@ def parse_tokens(  # pylint: disable=too-many-branches
                     f"Cannot use clearer {token.value!r} with nothing to target."
                 )
 
-        segment += PARSERS[type(token)](token, context, get_full)  # type: ignore
+        try:
+            segment += PARSERS[type(token)](token, context, get_full)  # type: ignore
+        except MarkupSyntaxError:
+            if not ignore_unknown_tags:
+                raise
+
+            unknown_aliases.append(token)
+
+    if len(unknown_aliases) > 0:
+        output += f"[{' '.join(tkn.value for tkn in unknown_aliases)}]"
 
     output += segment
 
@@ -707,6 +728,7 @@ def parse(
     optimize: bool = False,
     context: ContextDict | None = None,
     append_reset: bool = True,
+    ignore_unknown_tags: bool = True,
 ) -> str:
     """Parses markup into the ANSI-coded string it represents.
 
@@ -718,6 +740,8 @@ def parse(
             searched in.
         append_reset: If set, `[/]` will be appended to the token iterator, clearing all
             styles.
+        ignore_unknown_tags: If set, the `MarkupSyntaxError` coming from unknown tags
+            will be silenced.
 
     Returns:
         The ANSI-coded string that the markup represents.
@@ -732,5 +756,9 @@ def parse(
     tokens = list(tokenize_markup(text))
 
     return parse_tokens(
-        tokens, optimize=optimize, context=context, append_reset=append_reset
+        tokens,
+        optimize=optimize,
+        context=context,
+        append_reset=append_reset,
+        ignore_unknown_tags=ignore_unknown_tags,
     )
