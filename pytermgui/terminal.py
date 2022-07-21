@@ -262,12 +262,29 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
+        else:
+            from threading import Thread  # pylint: disable=import-outside-toplevel
 
-        # TODO: Support SIGWINCH on Windows.
+            Thread(
+                name="windows_terminal_resize",
+                target=self._window_terminal_resize,
+                daemon=True,
+            ).start()
 
         self._diff_buffer = [
             ["" for _ in range(self.width)] for y in range(self.height)
         ]
+
+    def _window_terminal_resize(self):
+        from time import sleep  # pylint: disable=import-outside-toplevel
+
+        _previous = get_terminal_size()
+        while True:
+            _next = get_terminal_size()
+            if _previous != _next:
+                self._update_size()
+                _previous = _next
+            sleep(0.001)
 
     def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         """Returns a cool looking repr."""
