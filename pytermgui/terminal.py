@@ -209,9 +209,9 @@ class ColorSystem(Enum):
 
 
 def _get_env_colorsys() -> ColorSystem | None:
-    """Gets a colorsystem if the `PTG_COLORSYS` env var can be linked to one."""
+    """Gets a colorsystem if the `PTG_COLOR_SYSTEM` env var can be linked to one."""
 
-    colorsys = os.getenv("PTG_COLORSYS")
+    colorsys = os.getenv("PTG_COLOR_SYSTEM")
     if colorsys is None:
         return None
 
