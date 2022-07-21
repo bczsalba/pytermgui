@@ -199,7 +199,7 @@ class MarkupLanguage:
                     optimize=optimize,
                     append_reset=append_reset,
                     context=self.context,
-                    ignore_unknown_tags=self.strict,
+                    ignore_unknown_tags=not self.strict,
                 )
 
                 self._cache[key] = (tokens, output, has_macro)
@@ -213,6 +213,7 @@ class MarkupLanguage:
             optimize=optimize,
             append_reset=append_reset,
             context=self.context,
+            ignore_unknown_tags=not self.strict,
         )
 
         has_macro = any(token.is_macro() for token in tokens)

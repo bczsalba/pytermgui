@@ -709,6 +709,7 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals
 
         try:
             segment += PARSERS[type(token)](token, context, get_full)  # type: ignore
+
         except MarkupSyntaxError:
             if not ignore_unknown_tags:
                 raise
