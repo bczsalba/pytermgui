@@ -31,7 +31,7 @@ jobs:
           pip install pytest-cov
           pip install coverage
           pip install pyyaml
-          pip install -e .
+          pip install --no-build-isolation .
 
       - name: Run tests with coverage
         run: |
