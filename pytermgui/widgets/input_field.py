@@ -248,7 +248,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
     ) -> bool:
         """Adds text to the field, or moves the cursor."""
 
-        if self.execute_binding(key):
+        if self.execute_binding(key, ignore_any=True):
             return True
 
         for name, options in self.keys.items():
@@ -286,6 +286,10 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
             else:
                 self.insert_text(key)
+
+            if keys.ANY_KEY in self._bindings:
+                method, _ = self._bindings[keys.ANY_KEY]
+                method(self, key)
 
             return True
 

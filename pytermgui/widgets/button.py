@@ -7,7 +7,6 @@ from typing import Any, Callable, Optional
 
 from ..ansi_interface import MouseAction, MouseEvent
 from ..input import keys
-from ..parser import StyledText
 from ..regex import real_length
 from . import styles as w_styles
 from .base import Widget
@@ -110,6 +109,6 @@ class Button(Widget):
         else:
             style = self.styles.highlight
 
-        line = StyledText(style(left + label + right + self.padding * " "))
+        line = style(left + label + right + self.padding * " ")
 
         return [line]

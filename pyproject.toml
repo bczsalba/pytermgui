@@ -1,17 +1,92 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyTermGUI"
+authors = [ { name = "Balázs Cene", email= "bczsalba@gmail.com" } ]
+description = """\
+    Python TUI framework with mouse support, modular widget system, \
+    customizable and rapid terminal markup language and more!\
+"""
+
+readme = "README.md"
+license = {text = "MIT"}
+
+requires-python = ">=3.8"
+dependencies = ["typing_extensions"]
+
+keywords = [
+    "terminal",
+    "user-interface",
+    "framework",
+    "UI",
+    "TUI",
+    "markup",
+    "xterm",
+    "ANSI",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Framework :: IPython",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Typing :: Typed",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Terminals",
+    "Topic :: Text Processing :: Markup",
+]
+
+dynamic = ["version"]
+
+# This seems to not be supported yet by setuptools, but I'll keep it
+# here for future use.
+[project.urls]
+homepage = "https://github.com/bczsalba/PyTermGUI"
+repository = "https://github.com/bczsalba/PyTermGUI"
+documentation = "ptg.bczsalba.com"
+
+[project.optional-dependencies]
+yaml = ["PyYAML"]
+
+[project.scripts]
+ptg = "pytermgui.cmd:main"
+
+[tool.setuptools]
+packages = ["pytermgui"]
+dynamic = { version = { attr = "pytermgui.__version__" } }
+
+[tool.mypy]
+show_error_codes = true
+
 [tool.pylint.messages_control]
 disable = [
     "fixme",
-        
     # If this is a problem, it should occur during runtime
     "not-callable"
 ]
 
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "ex", "Run", "_", "x" ,"y"]
+
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",
-    "if TYPE_CHECKING:"
+    "if TYPE_CHECKING:",
+    "def __fancy_repr__",
+    "def __repr__",
 ]
 
 omit = [
     "pytermgui/cmd.py"
 ]
+
+[tool.isort]
+profile = "black"

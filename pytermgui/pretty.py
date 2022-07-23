@@ -8,6 +8,8 @@ Usage:
     ```
 """
 
+# isort: skip_file
+
 from __future__ import annotations
 
 import builtins
@@ -15,7 +17,7 @@ import os
 import sys
 from typing import Any
 
-from .parser import tim
+from .markup import tim
 from .prettifiers import prettify
 from .terminal import get_terminal
 
@@ -24,7 +26,9 @@ try:
     # IPython runtime, so if running outside of that context a NameError
     # is raised.
     IPYTHON = get_ipython()  # type: ignore
-    from IPython.core.formatters import BaseFormatter  # pylint: disable=import-error
+    from IPython.core.formatters import (  # type: ignore # pylint: disable=import-error
+        BaseFormatter,
+    )
 
 except NameError:
     IPYTHON = None
@@ -137,12 +141,12 @@ def install(
 
     if not NO_WELCOME:
         with get_terminal().no_record():
-            print()
+            builtins.print()
             tim.print("[113 bold]Successfully set up prettification!")
             tim.print("[245 italic]> All function returns will now be pretty-printed,")
-            print()
+            builtins.print()
             pprint("[245 italic]Including [/italic 210]Markup!")
-            print()
+            builtins.print()
 
     get_terminal().displayhook_installed = True
 
@@ -164,7 +168,7 @@ class PTGFormatter(BaseFormatter):  # pylint: disable=too-few-public-methods
         "Out[i]:", and it might mess alignments up.
         """
 
-        print("\n")
+        builtins.print("\n")
         pprint(value, **self.kwargs)
 
         # Sets up "_" as a way to access return value,

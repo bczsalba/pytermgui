@@ -128,7 +128,7 @@ from dataclasses import dataclass, field
 from typing import IO, Any, Callable, Type
 
 from . import widgets as widgets_m
-from .parser import markup
+from .markup import tim
 from .serializer import Serializer
 
 YAML_ERROR = None
@@ -339,7 +339,7 @@ class FileLoader(ABC):
 
         # Create aliases
         for key, value in (parsed.get("markup") or {}).items():
-            markup.alias(key, value)
+            tim.alias(key, value)
 
         # Create boxes
         for name, inner in (parsed.get("boxes") or {}).items():

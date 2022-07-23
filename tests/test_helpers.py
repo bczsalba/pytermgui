@@ -1,4 +1,4 @@
-from pytermgui import tim, real_length, get_applied_sequences, break_line
+from pytermgui import break_line, real_length, tim
 
 
 def test_break_plain():
@@ -29,21 +29,23 @@ def test_break_newline():
     assert list(broken) == ["this is too short", "sike"]
 
 
-def test_get_applied_sequences_full_unset():
-    text = tim.parse("[249 @green bold]Hello[/ cyan italic]There").rstrip("\x1b[0m")
-    assert get_applied_sequences(text) == "\x1b[38;5;6m\x1b[3m"
-
-
-def test_get_applied_sequences_fg_unset():
-    text = tim.parse("[249 @green bold]Hello[/fg italic]There").rstrip("\x1b[0m")
-    assert get_applied_sequences(text) == "\x1b[48;5;2m\x1b[1m\x1b[3m"
+# NOTE: This is no longer a part of PTG. It might come back in the future, which is
+#       why the tests are going to stay for now.
+# def test_get_applied_sequences_full_unset():
+#     text = tim.parse("[249 @green bold]Hello[/ cyan italic]There").rstrip("\x1b[0m")
+#     assert get_applied_sequences(text) == "\x1b[38;5;6m\x1b[3m"
+#
+#
+# def test_get_applied_sequences_fg_unset():
+#     text = tim.parse("[249 @green bold]Hello[/fg italic]There").rstrip("\x1b[0m")
+#     assert get_applied_sequences(text) == "\x1b[48;5;2m\x1b[1m\x1b[3m"
 
 
 # TODO: There is something wrong with this specific functionality in the pytest env.
 #       It seems like on STANDARD colorsys /bg and /fg sometimes get interpreted as
 #       a normal indexed color, which makes this break. It only happens on STANDARD,
 #       which should hopefully be around 0 users, but we should fix it sometime.
-def not_test_get_applied_sequences_bg_unset():
-    text = "\x1b[38;5;249m\x1b[48;5;2m\x1b[1mHello\x1b[49m\x1b[3mThere"
-
-    assert get_applied_sequences(text) == "\x1b[38;5;249m\x1b[1m\x1b[3m"
+# def not_test_get_applied_sequences_bg_unset():
+#     text = "\x1b[38;5;249m\x1b[48;5;2m\x1b[1mHello\x1b[49m\x1b[3mThere"
+#
+#     assert get_applied_sequences(text) == "\x1b[38;5;249m\x1b[1m\x1b[3m"

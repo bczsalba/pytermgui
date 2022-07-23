@@ -14,9 +14,10 @@ from typing import Any, Callable, Generator, Iterator, Optional, Type, Union
 
 from ..ansi_interface import MouseAction, MouseEvent, reset
 from ..enums import HorizontalAlignment, SizePolicy, WidgetChange
+from ..fancy_repr import FancyYield
 from ..helpers import break_line
 from ..input import keys
-from ..parser import markup
+from ..markup import get_markup
 from ..regex import real_length
 from ..terminal import Terminal, get_terminal
 from . import styles as w_styles
@@ -157,7 +158,7 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         return self.debug()
 
-    def __fancy_repr__(self) -> Generator[str, None, None]:
+    def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         """Yields the repr of this object, then a preview of it."""
 
         yield self.debug()
@@ -455,9 +456,9 @@ class Widget:  # pylint: disable=too-many-public-methods
             if style:
                 style_call = self._get_style(key)
                 if isinstance(value, list):
-                    out[key] = [markup.get_markup(style_call(char)) for char in value]
+                    out[key] = [get_markup(style_call(char)) for char in value]
                 else:
-                    out[key] = markup.get_markup(style_call(value))
+                    out[key] = get_markup(style_call(value))
 
                 continue
 
@@ -469,11 +470,9 @@ class Widget:  # pylint: disable=too-many-public-methods
             style_call = self._get_style(key)
 
             if isinstance(value, list):
-                out["chars"][key] = [
-                    markup.get_markup(style_call(char)) for char in value
-                ]
+                out["chars"][key] = [get_markup(style_call(char)) for char in value]
             else:
-                out["chars"][key] = markup.get_markup(style_call(value))
+                out["chars"][key] = get_markup(style_call(value))
 
         return out
 
@@ -576,7 +575,7 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         del self._bindings[key]
 
-    def execute_binding(self, key: Any) -> bool:
+    def execute_binding(self, key: Any, ignore_any: bool = False) -> bool:
         """Executes a binding belonging to key, when present.
 
         Use this method inside custom widget `handle_keys` methods, or to run a callback
@@ -585,6 +584,7 @@ class Widget:  # pylint: disable=too-many-public-methods
         Args:
             key: Usually a string, indexing into the `_bindings` dictionary. These are the
               same strings as defined in `Widget.bind`.
+            ignore_any: If set, `keys.ANY_KEY` bindings will not be executed.
 
         Returns:
             True if the binding was found, False otherwise. Bindings will always be
@@ -592,7 +592,7 @@ class Widget:  # pylint: disable=too-many-public-methods
         """
 
         # Execute special binding
-        if keys.ANY_KEY in self._bindings:
+        if not ignore_any and keys.ANY_KEY in self._bindings:
             method, _ = self._bindings[keys.ANY_KEY]
             method(self, key)
 

@@ -10,7 +10,7 @@ all:
 	make install format lint list-todo
 
 format:
-	black $(PROJECT)
+	isort $(PROJECT) && black $(PROJECT)
 
 lint:
 	pylint $(PROJECT)
@@ -29,6 +29,9 @@ cover:
 
 test-cov:
 	make test cover
+
+pre-commit:
+	make format lint type test
 
 docs:
 	pdoc --logo https://github.com/bczsalba/pytermgui/blob/master/assets/title.png?raw=true --docformat google -o docs pytermgui

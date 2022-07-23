@@ -287,7 +287,7 @@ class TIMWindow(AppWindow):
         """Creates the showcase container."""
 
         def _show_style(name: str) -> str:
-            return f"[{name}]{name}"
+            return f"[{name}]{name}"  # .replace("'", "")
 
         def _create_table(source: Iterable[tuple[str, str]]) -> ptg.Container:
             root = ptg.Container()
@@ -304,7 +304,7 @@ class TIMWindow(AppWindow):
             return root
 
         prefix = "ptg.timwindow"
-        tags = [_show_style(style) for style in ptg.tim.tags]
+        tags = [_show_style(style) for style in ptg.markup.style_maps.STYLES]
         colors = [
             f"[[{prefix}.255]0-255[/]]",
             f"[[{prefix}.hex]#RRGGBB[/]]",
@@ -317,14 +317,16 @@ class TIMWindow(AppWindow):
 
         tag_container = _create_table(zip_longest(tags, colors, fillvalue=""))
         user_container = _create_table(
-            (_show_style(tag), f"[!expand {tag}]{tag}") for tag in ptg.tim.user_tags
+            (_show_style(tag), f"[{tag}]{value}")
+            for tag, value in ptg.tim.aliases.items()
+            if not tag.startswith("/")
         )
 
         return ptg.Container(tag_container, user_container, box="EMPTY")
 
     def on_exit(self) -> None:
         super().on_exit()
-        print(ptg.tim.prettify_markup(self._input.value))
+        ptg.tim.print(ptg.highlight_tim(self._input.value))
         ptg.tim.print(self._input.value)
 
 
@@ -688,6 +690,7 @@ def _create_aliases() -> None:
     """
 
     ptg.tim.alias("ptg.title", "210 bold")
+    ptg.tim.alias("ptg.brand_title", "!gradient(210) bold")
     ptg.tim.alias("ptg.body", "247")
     ptg.tim.alias("ptg.detail", "dim")
     ptg.tim.alias("ptg.accent", "72")
@@ -803,7 +806,8 @@ def run_environment(args: Namespace) -> None:
             manager.add(_create_footer(manager), assign="footer")
 
             manager.toast(
-                f"[ptg.title]Welcome to the {_title()} [ptg.title]CLI!",
+                "[ptg.title]Welcome to the [ptg.brand_title]"
+                + "PyTermGUI[/ptg.brand_title ptg.title] CLI!",
                 offset=ptg.terminal.height // 2 - 3,
                 delay=700,
             )

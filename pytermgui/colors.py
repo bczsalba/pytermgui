@@ -21,13 +21,11 @@ from typing import TYPE_CHECKING, Generator, Literal, Type
 from .ansi_interface import reset as reset_style
 from .color_info import COLOR_TABLE, CSS_COLORS
 from .exceptions import ColorSyntaxError
-from .fancy_repr import FancyYield
 from .input import getch
 from .terminal import ColorSystem, terminal
 
 if TYPE_CHECKING:
-    # This cyclic won't be relevant while type checking.
-    from .parser import StyledText  # pylint: disable=cyclic-import
+    from .fancy_repr import FancyYield
 
 __all__ = [
     "COLOR_TABLE",
@@ -290,18 +288,14 @@ class Color:
         self._brightness = brightness / 100
         return self._brightness
 
-    def __call__(self, text: str, reset: bool = True) -> StyledText:
-        """Colors the given string, returning a `pytermgui.parser.StyledText`."""
-
-        # We import this here as toplevel would cause circular imports, and it won't
-        # be used until this method is called anyways.
-        from .parser import StyledText  # pylint: disable=import-outside-toplevel
+    def __call__(self, text: str, reset: bool = True) -> str:
+        """Colors the given string."""
 
         buff = self.sequence + text
         if reset:
             buff += reset_style()
 
-        return StyledText(buff)
+        return buff
 
     def get_localized(self) -> Color:
         """Creates a terminal-capability local Color instance.

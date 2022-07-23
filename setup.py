@@ -1,23 +1,16 @@
-from setuptools import setup, find_packages
+"""Project setup.
 
-import pytermgui
+Most of the metadata comes from `pyproject.toml`.
 
-setup(
-    name="pytermgui",
-    version=pytermgui.__version__,
-    include_package_data=True,
-    package_data={
-        "pytermgui": ["py.typed"],
-    },
-    packages=find_packages(),
-    license="MIT",
-    description="A simple and robust terminal UI library, written in Python.",
-    long_description=open("README.md").read(),
-    long_description_content_type="text/markdown",
-    install_requires=[],
-    python_requires=">=3.7.0",
-    url="https://github.com/bczsalba/pytermgui",
-    author="BcZsalba",
-    author_email="bczsalba@gmail.com",
-    entry_points={"console_scripts": ["ptg = pytermgui.cmd:main"]},
-)
+This file is for:
+
+- Adding in the remaining, non-supported bits of data
+- Support of `pip install -e`
+- Support for GitHub's dependency indexing
+"""
+
+from setuptools import setup
+
+# These two fields aren't supported properly by setuptools' pyproject.toml
+# reading, so we'll add it manually.
+setup(author="Balázs Cene", url="https://github.com/bczsalba/PyTermGUI")

@@ -6,11 +6,12 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from html import escape
 from typing import Iterator
 
 from .colors import Color
-from .parser import StyledText, Token, TokenType, tim
+from .markup import StyledText, Token, tim
 from .terminal import get_terminal
 from .widgets import Widget
 
@@ -57,7 +58,7 @@ HTML_FORMAT = """\
     </body>
 </html>"""
 
-SVG_MARGIN_LEFT = 50
+SVG_MARGIN_LEFT = 0
 TEXT_MARGIN_LEFT = 20
 
 TEXT_MARGIN_TOP = 35
@@ -81,18 +82,7 @@ SVG_FORMAT = f"""\
         }}}}
 {{stylesheet}}
     </style>
-    <rect visibility="{{back_visibility}}" width="{{total_width}}" height="{{total_height}}"
-        fill="{{background}}" />
-    <g visibility="{{chrome_visibility}}">
-        <rect x="{SVG_MARGIN_LEFT}" y="{SVG_MARGIN_TOP}"
-            rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round"
-            width="{{terminal_width}}" height="{{terminal_height}}" fill="{{background}}" />
-        <circle cx="{SVG_MARGIN_LEFT+15}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ff6159"/>
-        <circle cx="{SVG_MARGIN_LEFT+35}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ffbd2e"/>
-        <circle cx="{SVG_MARGIN_LEFT+55}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#28c941"/>
-        <text x="{{title_x}}" y="{{title_y}}" text-anchor="middle"
-            class="{{prefix}}-title">{{title}}</text>
-    </g>
+    {{chrome}}
 {{code}}
 </svg>"""
 
@@ -157,15 +147,18 @@ def _get_spans(  # pylint: disable=too-many-locals
     """
 
     def _adjust_pos(
-        position: int, scale: float, offset: float, digits: int = 2
+        position: int | None, scale: float, offset: float, digits: int = 2
     ) -> float:
         """Adjusts a given position for the HTML canvas' scale."""
+
+        if position is None:
+            return 0
 
         return round(position * scale + offset / FONT_SIZE, digits)
 
     position = None
 
-    for styled in tim.get_styled_plains(line):
+    for span in StyledText.group_styles(line):
         styles = []
         if include_background:
             styles.append("background-color: var(--ptg-background)")
@@ -173,26 +166,19 @@ def _get_spans(  # pylint: disable=too-many-locals
         has_link = False
         has_inverse = False
 
-        for token in sorted(
-            styled.tokens, key=lambda token: token.ttype is TokenType.COLOR
-        ):
-            if token.ttype is TokenType.PLAIN:
+        for token in sorted(span.tokens, key=lambda token: token.is_color()):
+            if token.is_plain():
                 continue
 
-            if token.ttype is TokenType.POSITION:
-                assert isinstance(token.data, str)
-
-                if token.data != position:
+            if Token.is_cursor(token):
+                if token.value != position:
                     # Yield closer if there is already an active positioner
                     if position is not None:
                         yield "</div>", []
 
-                    position = token.data
-                    split = tuple(map(int, position.split(",")))
-
                     adjusted = (
-                        _adjust_pos(split[0], CHAR_WIDTH, horizontal_offset),
-                        _adjust_pos(split[1], CHAR_HEIGHT, vertical_offset),
+                        _adjust_pos(token.x, CHAR_WIDTH, horizontal_offset),
+                        _adjust_pos(token.y, CHAR_HEIGHT, vertical_offset),
                     )
 
                     yield (
@@ -200,11 +186,13 @@ def _get_spans(  # pylint: disable=too-many-locals
                         + f" style='left: {adjusted[0]}em; top: {adjusted[1]}em'>"
                     ), []
 
-            elif token.ttype is TokenType.LINK:
-                has_link = True
-                yield f"<a href='{token.data}'>", []
+                    position = token.value
 
-            elif token.ttype is TokenType.STYLE and token.name == "inverse":
+            elif token.is_hyperlink():
+                has_link = True
+                yield f"<a href='{token.value}'>", []
+
+            elif token.is_style() and token.value == "inverse":
                 has_inverse = True
 
                 # Add default inverted colors, in case the text doesn't have any
@@ -219,7 +207,7 @@ def _get_spans(  # pylint: disable=too-many-locals
                 styles.append(css)
 
         escaped = (
-            escape(styled.plain)
+            escape(span.plain)
             .replace("{", "{{")
             .replace("}", "}}")
             .replace(" ", "&#160;")
@@ -244,9 +232,8 @@ def token_to_css(token: Token, invert: bool = False) -> str:
             are flipped.
     """
 
-    if token.ttype is TokenType.COLOR:
-        color = token.data
-        assert isinstance(color, Color)
+    if Token.is_color(token):
+        color = token.color
 
         style = "color:" + color.hex
 
@@ -258,8 +245,8 @@ def token_to_css(token: Token, invert: bool = False) -> str:
 
         return style
 
-    if token.ttype is TokenType.STYLE and token.name in _STYLE_TO_CSS:
-        return _STYLE_TO_CSS[token.name]
+    if token.is_style() and token.value in _STYLE_TO_CSS:
+        return _STYLE_TO_CSS[token.value]
 
     return ""
 
@@ -300,8 +287,11 @@ def to_html(  # pylint: disable=too-many-arguments, too-many-locals
     if isinstance(obj, Widget):
         data = obj.get_lines()
 
-    else:
+    elif isinstance(obj, str):
         data = obj.splitlines()
+
+    else:
+        data = str(obj).splitlines()
 
     lines = []
     for dataline in data:
@@ -347,39 +337,57 @@ def _escape_text(text: str) -> str:
 
 
 def _handle_tokens_svg(
-    text: StyledText, default_fore: str
+    text: StyledText, default_fore: str, default_back: str
 ) -> tuple[tuple[int, int] | None, str | None, list[str]]:
     """Builds CSS styles that apply to the text."""
 
-    default = f"fill:{default_fore}"
-    styles = [default]
-    back = pos = None
+    styles: list[tuple[Token, str]] = []
+    pos = None
+
+    fore, back = default_fore, default_back
+
+    has_inverse = any(
+        token.is_style() and token.value == "inverse" for token in text.tokens
+    )
+
+    fore, back = (
+        (default_back, default_fore) if has_inverse else (default_fore, default_back)
+    )
 
     for token in text.tokens:
-        if token.ttype is TokenType.POSITION:
-            assert isinstance(token.data, str)
-            mapped = tuple(map(int, token.data.split(",")))
-            pos = mapped[0], mapped[1]
+        if Token.is_cursor(token):
+            pos = token.x, token.y
             continue
 
-        if token.ttype is TokenType.COLOR:
-            color = token.data
-            assert isinstance(color, Color)
+        if Token.is_color(token):
+            color = token.color
+
+            if has_inverse:
+                color = deepcopy(color)
+                color.background = not color.background
 
             if color.background:
                 back = color.hex
-                continue
 
-            styles.remove(default)
-            styles.append(f"fill:{color.hex}")
+            else:
+                fore = color.hex
+
             continue
+
+        if Token.is_clear(token):
+            for i, (target, _) in enumerate(styles):
+                if token.targets(target):
+                    styles.pop(i)
 
         css = token_to_css(token)
 
         if css != "":
-            styles.append(css)
+            styles.append((token, css))
 
-    return pos, back, styles
+    css_styles = [value for _, value in styles]
+    css_styles.append(f"fill:{fore}")
+
+    return (None if pos is None else (pos[0] or 0, pos[1] or 0)), back, css_styles
 
 
 def _slugify(text: str) -> str:
@@ -413,7 +421,7 @@ def _make_tag(tagname: str, content: str = "", **attrs) -> str:
 
 # This is a bit of a beast of a function, but it does the job and IMO reducing it
 # into parts would just make our lives more complicated.
-def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
+def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-statements
     obj: Widget | StyledText | str,
     prefix: str | None = None,
     chrome: bool = True,
@@ -471,10 +479,13 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
     if isinstance(obj, Widget):
         obj = "\n".join(obj.get_lines())
 
-    for plain in tim.get_styled_plains(obj):
+    elif isinstance(obj, StyledText):
+        obj = str(obj)
+
+    for plain in tim.group_styles(obj):
         should_newline = False
 
-        pos, back, styles = _handle_tokens_svg(plain, default_fore)
+        pos, back, styles = _handle_tokens_svg(plain, default_fore, default_back)
 
         index = _generate_index_in(document_styles, styles)
 
@@ -539,20 +550,32 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
     terminal_width = terminal.width * FONT_WIDTH + 2 * TEXT_MARGIN_LEFT
     terminal_height = terminal.height * FONT_HEIGHT + 2 * TEXT_MARGIN_TOP
 
+    total_width = terminal_width + (2 * SVG_MARGIN_LEFT if chrome else 0)
+    total_height = terminal_height + (2 * SVG_MARGIN_TOP if chrome else 0)
+
     if chrome:
         transform = (
             f"translate({TEXT_MARGIN_LEFT + SVG_MARGIN_LEFT}, "
             + f"{TEXT_MARGIN_TOP + SVG_MARGIN_TOP})"
         )
 
-        chrome_visibility = "visible"
-        back_visibility = "hidden"
+        chrome_part = f"""<g>
+            <rect x="{SVG_MARGIN_LEFT}" y="{SVG_MARGIN_TOP}"
+                rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round"
+                width="{terminal_width}" height="{terminal_height}" fill="{default_back}" />
+            <circle cx="{SVG_MARGIN_LEFT+15}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ff6159"/>
+            <circle cx="{SVG_MARGIN_LEFT+35}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#ffbd2e"/>
+            <circle cx="{SVG_MARGIN_LEFT+55}" cy="{SVG_MARGIN_TOP + 15}" r="6" fill="#28c941"/>
+            <text x="{terminal_width // 2}" y="{SVG_MARGIN_TOP + FONT_HEIGHT}" text-anchor="middle"
+                class="{prefix}-title">{title}</text>
+        </g>
+        """
 
     else:
         transform = "translate(16, 16)"
 
-        chrome_visibility = "hidden"
-        back_visibility = "visible"
+        chrome_part = f"""<rect width="{total_width}" height="{total_height}"
+            fill="{default_back}" />"""
 
     output = _make_tag("g", text, transform=transform) + "\n"
 
@@ -565,13 +588,8 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments
         # Styles
         background=default_back,
         stylesheet=stylesheet,
-        # Title information
-        title=title,
-        title_x=terminal_width // 2 + 30,
-        title_y=SVG_MARGIN_TOP + FONT_HEIGHT,
         # Code
         code=output,
         prefix=prefix,
-        chrome_visibility=chrome_visibility,
-        back_visibility=back_visibility,
+        chrome=chrome_part,
     )

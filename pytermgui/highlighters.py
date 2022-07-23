@@ -6,8 +6,10 @@ import builtins
 import keyword
 import re
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import TYPE_CHECKING, Callable, Generator, Match, Pattern, Protocol
 
+from .markup import Token, consume_tag, escape
 from .regex import RE_MARKUP
 
 if TYPE_CHECKING:
@@ -16,6 +18,7 @@ if TYPE_CHECKING:
 __all__ = [
     "Highlighter",
     "RegexHighlighter",
+    "highlight_tim",
     "highlight_python",
 ]
 
@@ -113,13 +116,6 @@ class RegexHighlighter:
             name = matchobj.lastgroup
             content = groups.get(str(name), None)
 
-            # Literalize "[" characters to avoid TIM parsing them
-            if name in ["str", "multiline_str"]:
-                if len(RE_MARKUP.findall(content)) > 0:
-                    content = content.replace("[", r"\[")
-
-                content = content.replace("\\n", "\n")
-
             if self.match_formatter is not None:
                 content = self.match_formatter(matchobj, content)
 
@@ -137,7 +133,7 @@ class RegexHighlighter:
         return text
 
     def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
-        """Yields some fancy looking repl text."""
+        """Yields some fancy looking repr text."""
 
         preview = self("highlight_python()") + "\x1b[0m"
         pattern = self._pattern.pattern
@@ -151,12 +147,79 @@ class RegexHighlighter:
         yield ">"
 
 
+def highlight_tim(text: str, cache: bool = True) -> str:
+    """Highlights some TIM code."""
+
+    @lru_cache(1048)
+    def _highlight(txt: str) -> str:
+        output = ""
+        cursor = 0
+        active_tokens: list[Token] = []
+
+        def _get_active_markup() -> str:
+            active_markup = " ".join(tkn.markup for tkn in active_tokens)
+
+            if active_markup == "":
+                return ""
+
+            return f"[{active_markup}]"
+
+        for matchobj in RE_MARKUP.finditer(txt):
+            start, end = matchobj.span()
+
+            if cursor < start:
+                if cursor > 0:
+                    output += "]"
+
+                output += _get_active_markup()
+                output += f"{txt[cursor:start]}[/]"
+
+            *_, tags = matchobj.groups()
+
+            output += "["
+            for tag in tags.split():
+                token = consume_tag(tag)
+                output += f"{token.prettified_markup} "
+
+                if Token.is_clear(token):
+                    active_tokens = [
+                        tkn for tkn in active_tokens if not token.targets(tkn)
+                    ]
+
+                else:
+                    active_tokens.append(token)
+
+            output = output.rstrip()
+            cursor = end
+
+        if cursor < len(txt) - 1:
+            if cursor > 0:
+                output += "]"
+
+            output += _get_active_markup()
+            output += f"{txt[cursor:]}"
+
+            if len(active_tokens) > 0:
+                output += "[/]"
+
+        if output.count("[") != output.count("]"):
+            output += "]"
+
+        return output
+
+    if cache:
+        return _highlight(text)
+
+    return _highlight.__wrapped__(text)
+
+
 _BUILTIN_NAMES = "|".join(f"(?:{item})" for item in dir(builtins))
 _KEYWORD_NAMES = "|".join(
     f"(?:{keyw})" for keyw in list(keyword.kwlist) + ["builtin", "function", "module"]
 )
 
 highlight_python = RegexHighlighter(
+    pre_formatter=escape,
     prefix="code.",
     styles=[
         ("multiline_str", r"([frbu]*)\"{3}([\s\S]*?)(?<!\\)\"{3}"),

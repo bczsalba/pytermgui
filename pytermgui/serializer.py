@@ -9,7 +9,7 @@ import json
 from typing import IO, Any, Callable, Dict, Type
 
 from . import widgets
-from .parser import markup
+from .markup import tim
 from .widgets import CharType
 from .widgets.base import Widget
 from .window_manager import Window
@@ -130,9 +130,9 @@ class Serializer:
 
             formatted: CharType
             if isinstance(value, list):
-                formatted = [markup.parse(val) for val in value]
+                formatted = [tim.parse(val) for val in value]
             else:
-                formatted = markup.parse(value)
+                formatted = tim.parse(value)
 
             return formatted
 
