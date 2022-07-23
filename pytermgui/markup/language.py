@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Callable, Generator, Iterator
+from typing import Callable, Generator, Iterator, Match
 
 from ..colors import ColorSyntaxError, str_to_color
+from ..regex import RE_MARKUP
 from ..terminal import get_terminal
 from .aliases import apply_default_aliases
 from .macros import apply_default_macros
@@ -27,12 +28,24 @@ from .tokens import Token
 STRICT_MARKUP = bool(os.getenv("PTG_STRICT_MARKUP"))
 
 __all__ = [
+    "escape",
     "MarkupLanguage",
     "StyledText",
     "tim",
 ]
 
 Tokenizer = Callable[[str], Iterator[Token]]
+
+
+def escape(text: str) -> str:
+    """Escapes any markup found within the given text."""
+
+    def _repl(matchobj: Match) -> str:
+        full, *_ = matchobj.groups()
+
+        return f"\\{full}"
+
+    return RE_MARKUP.sub(_repl, text)
 
 
 class MarkupLanguage:
