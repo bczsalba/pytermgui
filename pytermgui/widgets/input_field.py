@@ -327,9 +327,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
             return True
 
         # Select text using dragging the mouse
-        if event.action is MouseAction.LEFT_DRAG:
-            assert self._drag_start is not None
-
+        if event.action is MouseAction.LEFT_DRAG and self._drag_start is not None:
             change = x_offset - self._drag_start[0]
             self.update_selection(
                 change - self._selection_length + 1, correct_zero_length=False
