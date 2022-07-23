@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import TYPE_CHECKING, Callable, Generator, Match, Pattern, Protocol
 
-from .markup import Token, consume_tag
+from .markup import Token, consume_tag, escape
 from .regex import RE_MARKUP
 
 if TYPE_CHECKING:
@@ -116,13 +116,6 @@ class RegexHighlighter:
             name = matchobj.lastgroup
             content = groups.get(str(name), None)
 
-            # Literalize "[" characters to avoid TIM parsing them
-            if name in ["str", "multiline_str", "comment"]:
-                if len(RE_MARKUP.findall(content)) > 0:
-                    content = content.replace("[", r"\[")
-
-                content = content.replace("\\n", "\n")
-
             if self.match_formatter is not None:
                 content = self.match_formatter(matchobj, content)
 
@@ -226,6 +219,7 @@ _KEYWORD_NAMES = "|".join(
 )
 
 highlight_python = RegexHighlighter(
+    pre_formatter=escape,
     prefix="code.",
     styles=[
         ("multiline_str", r"([frbu]*)\"{3}([\s\S]*?)(?<!\\)\"{3}"),
