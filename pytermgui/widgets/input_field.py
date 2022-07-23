@@ -318,6 +318,9 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
         # Set cursor to mouse location
         if event.action is MouseAction.LEFT_CLICK:
+            if not y_offset < len(self._lines):
+                return False
+
             line = self._lines[y_offset]
             self.move_cursor((y_offset, min(len(line), x_offset)), absolute=True)
 
