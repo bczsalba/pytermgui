@@ -162,7 +162,7 @@ class Compositor:
         """Runs the compositor draw loop as a thread."""
 
         self._is_running = True
-        Thread(name="CompositorDrawLoop", target=self._draw_loop).start()
+        Thread(name="CompositorDrawLoop", target=self._draw_loop, daemon=True).start()
 
     def stop(self) -> None:
         """Stops the compositor."""
