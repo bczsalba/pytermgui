@@ -11,6 +11,7 @@ on one screen.
 from __future__ import annotations
 
 import time
+
 import pytermgui as ptg
 
 
@@ -42,7 +43,7 @@ def define_slow_macro(
 
         return trimmed
 
-    name = f"slow{str(time.time())[-5:]}"
+    name = f"!slow{str(time.time())[-5:]}"
     lang.define(name, _macro)
     return name
 
@@ -55,10 +56,10 @@ with ptg.WindowManager() as manager:
     manager.add(
         ptg.Window(
             ptg.Label(
-                f"[210 bold !{slow1}]This is a very long message...",
+                f"[210 bold {slow1}]This is a very long message...",
                 parent_align=0,
             ),
-            ptg.Label(f"[!{slow2}]This is a very long message...", parent_align=0),
+            ptg.Label(f"[{slow2}]This is a very long message...", parent_align=0),
             width=50,
         )
     )
