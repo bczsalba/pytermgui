@@ -539,8 +539,6 @@ class Container(ScrollableWidget):
 
         overflow = self.overflow
 
-        self.positioned_line_buffer = []
-
         for widget in self._widgets:
             align, offset = self._get_aligners(widget, (borders[0], borders[2]))
 
@@ -564,9 +562,6 @@ class Container(ScrollableWidget):
 
             lines.extend(widget_lines)
 
-            self.positioned_line_buffer.extend(widget.positioned_line_buffer)
-            widget.positioned_line_buffer = []
-
         if overflow == Overflow.SCROLL:
             self._max_scroll = len(lines) - self.height + sum(has_top_bottom)
             height = self.height - sum(has_top_bottom)
@@ -585,7 +580,13 @@ class Container(ScrollableWidget):
             widget.pos = (widget.pos[0], widget.pos[1] + vertical_offset)
 
             if widget.is_selectable:
+                # This buffer will be out of position, so we must clear it.
+                widget.positioned_line_buffer = []
                 widget.get_lines()
+
+            self.positioned_line_buffer.extend(widget.positioned_line_buffer)
+
+            widget.positioned_line_buffer = []
 
         if has_top_bottom[0]:
             lines.insert(0, _get_border(corners[0], borders[1], corners[1]))
