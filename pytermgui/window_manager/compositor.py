@@ -121,7 +121,7 @@ class Compositor:
         if until is None:
             until = widget.height
 
-        for i, line in enumerate(widget.get_lines()):
+        for i, line in enumerate(widget.get_lines()[:until]):
             if i >= until:
                 break
 
@@ -129,10 +129,10 @@ class Compositor:
 
             yield (pos, line)
 
-        for i, (pos, line) in enumerate(widget.positioned_line_buffer.copy()):
-            yield (pos, line)
+        for item in widget.positioned_line_buffer.copy():
+            yield item
 
-            widget.positioned_line_buffer.remove((pos, line))
+            widget.positioned_line_buffer.remove(item)
 
     @property
     def framerate(self) -> int:
