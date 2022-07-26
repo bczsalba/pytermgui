@@ -834,9 +834,7 @@ def _print_version() -> None:
 
         ptg.tim.print(f"[ptg.detail]{left:<19} [/ptg.detail 157]{right}")
 
-    ptg.tim.print(
-        f"[bold !gradient(210)]PyTermGUI[/ /!gradient] version [157]{ptg.__version__}"
-    )
+    ptg.tim.print(f"[bold !gradient(210)]PyTermGUI[/] version [157]{ptg.__version__}")
     ptg.tim.print()
     ptg.tim.print("[ptg.title]System details:")
 
