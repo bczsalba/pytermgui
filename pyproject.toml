@@ -51,7 +51,7 @@ dynamic = ["version"]
 [project.urls]
 homepage = "https://github.com/bczsalba/PyTermGUI"
 repository = "https://github.com/bczsalba/PyTermGUI"
-documentation = "ptg.bczsalba.com"
+documentation = "https://ptg.bczsalba.com"
 
 [project.optional-dependencies]
 yaml = ["PyYAML"]
