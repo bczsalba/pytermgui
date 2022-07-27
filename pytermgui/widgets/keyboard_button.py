@@ -43,10 +43,11 @@ class KeyboardButton(Button):
             bound = getattr(keys, "CTRL_" + label[index].upper())
 
         brackets = "{}".join(self._get_char("bracket"))
+        original = label
         label = label[:index] + brackets.format(label[index])
 
         if index > -1:
-            label += label[index + 1 :]
+            label += original[index + 1 :]
 
         super().__init__(label, onclick)
         self.bind(bound, lambda btn, _: onclick(btn))
