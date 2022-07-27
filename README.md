@@ -186,6 +186,6 @@ We use algorithms based on human vision to convert and downgrade colors when the
 Pretty much every single name in the library, private or public, has an insightful dockstring attached to it, and we are accumulating a growing amount of walkthrough-based documentations articles. See 'em all on the [doc website](https://ptg.bczsalba.com)!
 
 
-## Contributions, issues et. al
+## Contributions, issues et al.
 
 If you have any problems using the library, feel free to open up a discussion or raise an issue ticket. If you would prefer to hack on the library yourself, see the [contribution guidelines](CONTRIBUTING.md). Pull requests are encouraged, but make sure you aren't trying to fix an issue that others are already working on, for your own sake. :slightly_smiling_face:
