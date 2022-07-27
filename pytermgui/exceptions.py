@@ -48,15 +48,17 @@ class ParserSyntaxError(Exception):
     def message(self) -> str:
         """Create message from tag, context and cause."""
 
-        start, end = self._delimiters
-        full = start + self.tag + end
+        msg = f'Tag "{self.tag}" '
 
-        escaped_context = ascii(self.context).strip("'")[:50]
-        highlighted = escaped_context.replace(
-            full, "\x1b[31m\x1b[1m" + full + "\x1b[0m", 1
-        )
+        if self.context != "":
+            escaped_context = ascii(self.context).strip("'")[:50]
+            highlighted = escaped_context.replace(
+                self.tag, "\x1b[31m\x1b[1m" + self.tag + "\x1b[0m", 1
+            )
 
-        return f'Tag "{start}{self.tag}{end}" in string "{highlighted}" {self.cause}.'
+            msg += f'in string "{highlighted}" '
+
+        return f"{msg}{self.cause}."
 
     def escape_message(self) -> str:
         """Return message with markup tags escaped."""

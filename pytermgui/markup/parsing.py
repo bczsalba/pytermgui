@@ -104,8 +104,10 @@ def consume_tag(tag: str) -> Token:  # pylint: disable=too-many-return-statement
     if tag.startswith("(") and tag.endswith(")"):
         values = tag[1:-1].split(";")
         if len(values) != 2:
-            raise ValueError(
-                f"Cursor tags must have exactly 2 values delimited by `;`, got {tag!r}."
+            raise MarkupSyntaxError(
+                tag,
+                f"should have exactly 2 values separated by `;`, not {len(values)}",
+                "",
             )
 
         return CursorToken(tag[1:-1], *map(int, values))
