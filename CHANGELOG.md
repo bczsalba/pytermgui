@@ -1,3 +1,16 @@
+## [7.1.0] - 2022-07-27
+
+### Additions
+
+- Re-introduce `InputField` prompt attribute
+
+### Bugfixes
+
+- Fix `ptg --version`
+- Start wrapping `InputField` cursor when it goes outside of the given width
+- Fix incorrect `KeyboardButton` label generation
+
+
 ## [7.0.0] - 2022-07-24
 
 ### Additions
@@ -280,6 +293,7 @@
 - Fix blocking `getch` call on Windows
 
 
+[7.1.0]: https://github.com/bczsalba/pytermgui/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/bczsalba/pytermgui/compare/6.4.0...7.0.0
 [6.4.0]: https://github.com/bczsalba/pytermgui/compare/6.0.0...6.4.0
 [6.3.0]: https://github.com/bczsalba/pytermgui/compare/6.2.2...6.3.0
