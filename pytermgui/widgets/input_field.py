@@ -315,6 +315,12 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         x_offset = event.position[0] - self.pos[0]
         y_offset = event.position[1] - self.pos[1]
 
+        if y_offset == 0:
+            x_offset -= len(self.prompt)
+
+            if x_offset < 0:
+                return False
+
         # Set cursor to mouse location
         if event.action is MouseAction.LEFT_CLICK:
             if not y_offset < len(self._lines):
@@ -422,7 +428,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         # TODO: This is horribly hackish, but is the only way to "get around" the
         #       limits of the current scrolling techniques. Should be refactored
         #       once a better solution is available
-        if self.parent is not None:
+        if self.parent is not None and self.selected_index is not None:
             offset = 0
             parent = self.parent
             while hasattr(parent, "parent"):
