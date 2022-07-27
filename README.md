@@ -1,6 +1,6 @@
 <!--![title](https://github.com/bczsalba/pytermgui/raw/master/assets/title.png)-->
 
-![title](assets/readme/screenshot.png)
+![title](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/screenshot.png)
 
 > Python TUI framework with mouse support, modular widget system, customizable and rapid terminal markup language and more!
 
@@ -60,7 +60,7 @@ We provide a couple of things to make your life easier:
 - Mouse support out of the box with **0** configuration
 - YAML (or Python) based styling engines
 - TIM, our markup language for creating styled terminal text with expressive text, including systems for aliases & macros
-- A bunch of things I can't think of right now :slight_smile:
+- A bunch of things I can't think of right now :slightly_smiling_face:
 
 Additionally, there are a couple of neat tools to make your general Python development easier:
 
@@ -94,7 +94,7 @@ with ptg.WindowManager() as manager:
 Since strings are converted into the `Label` widget, and all widgets use markup for styling, we can use a custom-defined TIM macro function to return the current time. After running the above, you should see something like:
 
 <p align="center">
-    <img alt="Clock example output" src="assets/readme/clock.svg">
+    <img alt="Clock example output" src="https://github.com/bczsalba/pytermgui/raw/master/assets/readme/clock.svg">
 </p>
 
 For something a bit more in-depth, see this contact form inspired by [asciimatics' example](https://github.com/peterbrittain/asciimatics#how-to-use-it):
@@ -156,7 +156,7 @@ with ptg.WindowManager() as manager:
 This showcases the YAML-based config system, as well as some additional API. I recommended checking out the [source file](utils/readme_examples/contact.py) to see how the `submit` callback works.
 
 <p align="center">
-    <img alt="Contact form example output" src="assets/readme/contact.svg">
+    <img alt="Contact form example output" src="https://github.com/bczsalba/pytermgui/raw/master/assets/readme/contact.svg">
 </p>
 
 ## Not a fan of colors? We've got you!
@@ -167,7 +167,7 @@ This is how the above example looks like with the environment variable `NO_COLOR
 
 
 <p align="center">
-    <img alt="Contact form NO_COLOR output" src="assets/readme/contact_no_color.svg">
+    <img alt="Contact form NO_COLOR output" src="https://github.com/bczsalba/pytermgui/raw/master/assets/readme/contact_no_color.svg">
 </p>
 
 
@@ -176,7 +176,7 @@ This is how the above example looks like with the environment variable `NO_COLOR
 We use algorithms based on human vision to convert and downgrade colors when the current terminal emulator doesn't support them. Here is a cool screenshot:
 
 <p align="center">
-    <img alt="Contact form NO_COLOR output" src="assets/readme/colorgrids.png">
+    <img alt="Contact form NO_COLOR output" src="https://github.com/bczsalba/pytermgui/raw/master/assets/readme/colorgrids.png">
     <figcaption><em>Disclaimer:</em> Termage currently doesn't play nicely to changing colorsystems during runtime, so this image had to be captured natively :(</figcaption>
 </p>
 
@@ -188,4 +188,4 @@ Pretty much every single name in the library, private or public, has an insightf
 
 ## Contributions, issues et. al
 
-If you have any problems using the library, feel free to open up a discussion or raise an issue ticket. If you would prefer to hack on the library yourself, see the [contribution guidelines](CONTRIBUTING.md). Pull requests are encouraged, but make sure you aren't trying to fix an issue that others are already working on, for your own sake. :slight_smile:
+If you have any problems using the library, feel free to open up a discussion or raise an issue ticket. If you would prefer to hack on the library yourself, see the [contribution guidelines](CONTRIBUTING.md). Pull requests are encouraged, but make sure you aren't trying to fix an issue that others are already working on, for your own sake. :slightly_smiling_face:
