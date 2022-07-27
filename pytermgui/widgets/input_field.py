@@ -44,6 +44,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
     styles = w_styles.StyleManager(
         value="",
+        prompt="",
         cursor="dim inverse",
     )
 
@@ -66,6 +67,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         self,
         value: str = "",
         *,
+        prompt: str = "",
         tablength: int = 4,
         multiline: bool = False,
         cursor: Cursor | None = None,
@@ -78,11 +80,12 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         if "width" not in attrs:
             self.width = len(value)
 
+        self.prompt = prompt
         self.height = 1
         self.tablength = tablength
         self.multiline = multiline
 
-        self.cursor = cursor or Cursor(0, 0)
+        self.cursor = cursor or Cursor(0, len(self.prompt))
 
         self._lines = value.splitlines() or [""]
         self._selection_length = 1
@@ -119,13 +122,9 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
     def _style_and_break_lines(self) -> list[str]:
         """Styles and breaks self._lines."""
 
-        value = self.value
-        style = self.styles.value
-
-        # TODO: This is done line-by-line due to parser performance problems.
-        #       These should be resolved in the upcoming parser refactor.
-        document = [style(line) for line in value.splitlines()]
-        # document = style(value).splitlines()
+        document = (
+            self.styles.prompt(self.prompt) + self.styles.value(self.value)
+        ).splitlines()
 
         lines: list[str] = []
         width = self.width
@@ -322,6 +321,10 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
                 return False
 
             line = self._lines[y_offset]
+
+            if y_offset == 0:
+                line = self.prompt + line
+
             self.move_cursor((y_offset, min(len(line), x_offset)), absolute=True)
 
             self._drag_start = (x_offset, y_offset)
@@ -388,8 +391,6 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
     def get_lines(self) -> list[str]:
         """Builds the input field's lines."""
 
-        style = self.styles.value
-
         if not self._cache_is_valid() or self._styled_cache is None:
             self._styled_cache = self._style_and_break_lines()
 
@@ -414,7 +415,9 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
             except IndexError as error:
                 raise ValueError(f"Invalid index in {line!r}: {col}") from error
 
-        style_cursor = style if self.selected_index is None else self.styles.cursor
+        style_cursor = (
+            self.styles.value if self.selected_index is None else self.styles.cursor
+        )
 
         # TODO: This is horribly hackish, but is the only way to "get around" the
         #       limits of the current scrolling techniques. Should be refactored
@@ -428,7 +431,12 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
                 parent = parent.parent  # type: ignore
 
             offset_row = self.pos[1] - offset + row
-            position = (self.pos[0] + start, offset_row)
+            offset_col = start + (len(self.prompt) if row == 0 else 0)
+
+            position = (
+                self.pos[0] + offset_col,
+                offset_row,
+            )
 
             self.positioned_line_buffer.append(
                 (position, style_cursor(cursor_char))  # type: ignore
