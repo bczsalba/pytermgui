@@ -430,7 +430,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
                 parent = parent.parent  # type: ignore
 
-            offset_row = self.pos[1] - offset + row
+            offset_row = -offset + row
             offset_col = start + (len(self.prompt) if row == 0 else 0)
 
             if offset_col > self.width - 1:
@@ -443,7 +443,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
             position = (
                 self.pos[0] + offset_col,
-                offset_row,
+                self.pos[1] + offset_row,
             )
 
             self.positioned_line_buffer.append(
