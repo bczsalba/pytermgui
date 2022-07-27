@@ -27,7 +27,7 @@ all:
 	make install format lint list-todo
 
 format:
-	black \$(PROJECT)
+	isort \$(PROJECT) && black \$(PROJECT)
 
 lint:
 	pylint \$(PROJECT)

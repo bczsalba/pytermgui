@@ -33,5 +33,8 @@ test-cov:
 pre-commit:
 	make format lint type test
 
+readme:
+	python3 utils/gen_readme_images.py
+
 docs:
 	pdoc --logo https://github.com/bczsalba/pytermgui/blob/master/assets/title.png?raw=true --docformat google -o docs pytermgui
