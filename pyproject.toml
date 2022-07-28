@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "PyTermGUI"
+name = "pytermgui"
 authors = [ { name = "Balázs Cene", email= "bczsalba@gmail.com" } ]
 description = """\
     Python TUI framework with mouse support, modular widget system, \
