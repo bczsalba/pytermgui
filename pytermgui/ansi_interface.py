@@ -129,13 +129,13 @@ def clear(what: str = "screen") -> None:
 def hide_cursor() -> None:
     """Stops printing the cursor."""
 
-    print("\x1b[?25l")
+    terminal.write("\x1b[?25l")
 
 
 def show_cursor() -> None:
     """Starts printing the cursor."""
 
-    print("\x1b[?25h")
+    terminal.write("\x1b[?25h")
 
 
 def save_cursor() -> None:
@@ -165,7 +165,7 @@ def report_cursor() -> tuple[int, int] | None:
         `report_mouse` if that is what you are interested in.
     """
 
-    print("\x1b[6n")
+    terminal.write("\x1b[6n", flush=True)
     chars = getch()
     posy, posx = chars[2:-1].split(";")
 
@@ -617,7 +617,7 @@ def print_to(pos: tuple[int, int], *args: Any, **kwargs: Any) -> None:
     """
 
     move_cursor(pos)
-    print(*args, **kwargs, end="", flush=True)
+    print(*args, **kwargs)
 
 
 def reset() -> str:

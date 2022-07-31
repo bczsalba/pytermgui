@@ -69,7 +69,7 @@ class StyleCall:
         # this is purposefully broad, as anything can happen during these calls.
         except Exception as error:
             raise RuntimeError(
-                f'Could not apply style {self.method} to "{item}": {error}'  # type: ignore
+                f"Could not apply style {self.method} to {item!r}: {error}"  # type: ignore
             ) from error
 
     def __eq__(self, other: object) -> bool:

@@ -1058,8 +1058,3 @@ class Splitter(Container):
 
         self.height = max(widget.height for widget in self)
         return lines
-
-    def debug(self) -> str:
-        """Return identifiable information"""
-
-        return super().debug().replace("Container", "Splitter", 1)

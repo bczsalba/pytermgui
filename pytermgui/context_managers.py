@@ -53,12 +53,12 @@ def cursor_at(pos: tuple[int, int]) -> Generator[Callable[..., None], None, None
     offset = 0
     posx, posy = pos
 
-    def printer(*args: tuple[Any, ...]) -> None:
+    def printer(*args: Any, **kwargs: Any) -> None:
         """Print to posx, current y"""
 
         nonlocal offset
 
-        print_to((posx, posy + offset), *args)
+        print_to((posx, posy + offset), *args, **kwargs)
         offset += 1
 
     try:
