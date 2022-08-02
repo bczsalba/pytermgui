@@ -23,7 +23,7 @@ from .parsing import (
     tokens_to_markup,
 )
 from .style_maps import CLEARERS
-from .tokens import Token
+from .tokens import ColorToken, Token
 
 STRICT_MARKUP = bool(os.getenv("PTG_STRICT_MARKUP"))
 
@@ -187,8 +187,14 @@ class MarkupLanguage:
         text: str,
         optimize: bool = False,
         append_reset: bool = True,
+        append_foreground: bool = True,
     ) -> str:
         """Parses some markup text.
+
+        Args:
+            - append_foreground: If set, when a token stream is given that contains a background
+                color but no foreground, a foreground color matching the W3C contrast rules
+                is inserted.
 
         This is a thin wrapper around `pytermgui.markup.parsing.parse`. The main additions
         of this wrapper are a caching system, as well as state management.
@@ -220,6 +226,18 @@ class MarkupLanguage:
             return output
 
         tokens = list(tokenize_markup(text))
+
+        if append_foreground:
+            colors = [
+                (i, tkn.color) for i, tkn in enumerate(tokens) if Token.is_color(tkn)
+            ]
+
+            if any(color.background for _, color in colors) and not any(
+                not color.background for _, color in colors
+            ):
+                index, color = colors[-1]
+                contrast = color.contrast
+                tokens.insert(index + 1, ColorToken(contrast.markup, contrast))
 
         output = parse_tokens(
             tokens,
