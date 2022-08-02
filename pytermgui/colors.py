@@ -288,6 +288,102 @@ class Color:
         self._brightness = brightness / 100
         return self._brightness
 
+    @property
+    def accent(self) -> Color:
+        """Returns the complimentary, secondary or accent of this color.
+
+        This is done by negating the color from full white, a.k.a. 0xFFFFFF. It returns
+        the color opposite to this one on the color wheel.
+        """
+
+        hex_number = int(self.hex[1:], base=16)
+
+        return Color.parse(
+            f"{int(hex(0xFFFFFF - hex_number), base=16):#0{8}X}".replace("0X", "#"),
+            background=self.background,
+        )
+
+    @property
+    def contrast(self) -> Color:
+        """Returns a color (black or white) that complies with the W3C contrast ratio guidelines."""
+
+        if self.luminance > 0.179:
+            return Color.parse("#000000")
+
+        return Color.parse("#FFFFFF")
+
+    def blend(self, other: Color, alpha: float = 0.5, localize: bool = True) -> Color:
+        """Blends a color into another one.
+
+        Args:
+            other: The color to blend with.
+            alpha: How much the other color should influence the outcome.
+            localize: If set, the returned color will returned its localized version by running
+                `get_localized` on it before returning.
+
+        Returns:
+            A `Color` that is the result of the blending.
+        """
+
+        red1, green1, blue1 = self.rgb
+        red2, green2, blue2 = other.rgb
+
+        blended = RGBColor.from_rgb(
+            (
+                int(red1 + (red2 - red1) * alpha),
+                int(green1 + (green2 - green1) * alpha),
+                int(blue1 + (blue2 - blue1) * alpha),
+            )
+        )
+
+        if localize:
+            blended = blended.get_localized()
+
+        return blended
+
+    def blend_accent(self, alpha: float = 0.5, localize: bool = True) -> Color:
+        """Blends this color with its accent.
+
+        See `Color.blend`.
+        """
+
+        return self.blend(self.accent, alpha, localize)
+
+    def blend_contrast(self, alpha: float = 0.5, localize: bool = True) -> Color:
+        """Blends this color with its contrast pair.
+
+        See `Color.blend`.
+        """
+
+        return self.blend(self.contrast, alpha, localize)
+
+    def darken(self, alpha: float = 0.5) -> Color:
+        """Darkens the color by blending it with black, using the alpha provided."""
+
+        return self.blend(Color.parse("#000000"), alpha)
+
+    def lighten(self, alpha: float = 0.5) -> Color:
+        """Lightens the color by blending it with white, using the alpha provided."""
+
+        return self.blend(Color.parse("#FFFFFF"), alpha)
+
+    @classmethod
+    def parse(
+        cls,
+        text: str,
+        background: bool = False,  # pylint: disable=redefined-outer-name
+        localize: bool = True,
+        use_cache: bool = False,
+    ) -> Color:
+        """Uses `str_to_color` to parse some text into a `Color`."""
+
+        return str_to_color(
+            text=text,
+            is_background=background,
+            localize=localize,
+            use_cache=use_cache,
+        )
+
     def __call__(self, text: str, reset: bool = True) -> str:
         """Colors the given string."""
 
@@ -603,24 +699,6 @@ class HEXColor(RGBColor):
         self._rgb = rgb[0], rgb[1], rgb[2]
 
         assert len(self._rgb) == 3
-
-    @property
-    def red(self) -> str:
-        """Returns the red component of this color."""
-
-        return hex(int(self.value[1:3], base=16))
-
-    @property
-    def green(self) -> str:
-        """Returns the green component of this color."""
-
-        return hex(int(self.value[3:5], base=16))
-
-    @property
-    def blue(self) -> str:
-        """Returns the blue component of this color."""
-
-        return hex(int(self.value[5:7], base=16))
 
 
 SYSTEM_TO_TYPE: dict[ColorSystem, Type[Color]] = {
