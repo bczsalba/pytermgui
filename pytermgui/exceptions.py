@@ -51,7 +51,16 @@ class ParserSyntaxError(Exception):
         msg = f'Tag "{self.tag}" '
 
         if self.context != "":
-            escaped_context = ascii(self.context).strip("'")[:50]
+            index = self.context.find(self.tag)
+            escaped_context = repr(self.context).strip("'")
+
+            if len(self.context) > 50:
+                escaped_context = (
+                    "..."
+                    + ascii(self.context).strip("'")[max(index - 25, 0) : index + 25]
+                    + "..."
+                )
+
             highlighted = escaped_context.replace(
                 self.tag, "\x1b[31m\x1b[1m" + self.tag + "\x1b[0m", 1
             )
