@@ -16,7 +16,8 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable, List, Type, Union
 
 from ..highlighters import Highlighter
-from ..markup import get_markup, tim
+from ..markup import Token, get_markup, tim, tokenize_markup, tokens_to_markup
+from ..markup.parsing import _sub_aliases
 from ..regex import RE_MARKUP, strip_ansi
 
 __all__ = [
@@ -216,7 +217,17 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
         if RE_MARKUP.match(shorthand) is not None:
             return MarkupFormatter(shorthand)
 
-        markup = "[" + shorthand + "]"
+        tokens = _sub_aliases(tokenize_markup(f"[{shorthand}]"), tim.context)
+        markup = tokens_to_markup(tokens)[1:-1]
+
+        colors = [tkn for tkn in tokens if Token.is_color(tkn)]
+
+        if any(tkn.color.background for tkn in colors) and not any(
+            not tkn.color.background for tkn in colors
+        ):
+            markup += " #auto"
+
+        markup = f"[{markup}]"
 
         if not "{item}" in shorthand:
             markup += "{item}"
