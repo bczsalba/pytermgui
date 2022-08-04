@@ -136,7 +136,6 @@ def tokenize_markup(text: str) -> Iterator[Token]:
     cursor = 0
     length = len(text)
     has_inverse = False
-    background = Color.parse("#000000")
     for matchobj in RE_MARKUP.finditer(text):
         full, escapes, content = matchobj.groups()
         start, end = matchobj.span()
@@ -154,7 +153,7 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
         for tag in content.split():
             if tag == "#auto":
-                yield ColorToken("#auto", background.contrast)
+                yield ColorToken("#auto", Color.parse("#000000"))
                 continue
 
             if tag == "inverse":
@@ -170,9 +169,6 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
                 elif consumed.markup == "/bg":
                     consumed = ClearToken("/bg")
-
-            if Token.is_color(consumed) and consumed.color.background:
-                background = consumed.color
 
             yield consumed
 
@@ -622,7 +618,8 @@ def _sub_aliases(tokens: list[Token], context: ContextDict) -> list[Token]:
     return output
 
 
-def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals
+# This function could be broken up into pieces, but that will likely lose readability.
+def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals, too-many-statements
     tokens: list[Token],
     *,
     optimize: bool = False,
@@ -671,6 +668,7 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals
     link = None
     output = ""
     segment = ""
+    background = Color.parse("#000000")
     macros: list[MacroToken] = []
     unknown_aliases: list[Token] = []
 
@@ -717,6 +715,13 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals
                 raise MarkupSyntaxError(
                     token.value, "has nothing to target", get_full()
                 )
+
+        if Token.is_color(token):
+            if token.value == "#auto":
+                token = ColorToken("#auto", background.contrast)
+
+            elif token.color.background:
+                background = token.color
 
         try:
             segment += PARSERS[type(token)](token, context, get_full)  # type: ignore
