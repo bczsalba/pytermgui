@@ -6,7 +6,7 @@ import json
 from typing import Callable, Iterator, Protocol, TypedDict
 from warnings import filterwarnings, warn
 
-from ..colors import str_to_color
+from ..colors import Color, str_to_color
 from ..exceptions import ColorSyntaxError, MarkupSyntaxError
 from ..regex import RE_ANSI_NEW as RE_ANSI
 from ..regex import RE_MACRO, RE_MARKUP, RE_POSITION
@@ -136,6 +136,7 @@ def tokenize_markup(text: str) -> Iterator[Token]:
     cursor = 0
     length = len(text)
     has_inverse = False
+    background = Color.parse("#000000")
     for matchobj in RE_MARKUP.finditer(text):
         full, escapes, content = matchobj.groups()
         start, end = matchobj.span()
@@ -152,6 +153,10 @@ def tokenize_markup(text: str) -> Iterator[Token]:
             continue
 
         for tag in content.split():
+            if tag == "#auto":
+                yield ColorToken("#auto", background.contrast)
+                continue
+
             if tag == "inverse":
                 has_inverse = True
 
@@ -165,6 +170,9 @@ def tokenize_markup(text: str) -> Iterator[Token]:
 
                 elif consumed.markup == "/bg":
                     consumed = ClearToken("/bg")
+
+            if Token.is_color(consumed) and consumed.color.background:
+                background = consumed.color
 
             yield consumed
 
@@ -616,6 +624,7 @@ def _sub_aliases(tokens: list[Token], context: ContextDict) -> list[Token]:
 
 def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals
     tokens: list[Token],
+    *,
     optimize: bool = False,
     context: ContextDict | None = None,
     append_reset: bool = True,
@@ -642,19 +651,19 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals
     if context is None:
         context = create_context_dict()
 
-    token_list = list(_sub_aliases(tokens, context))
+    token_list = _sub_aliases(tokens, context)
 
     # It's more computationally efficient to create this lambda once and reuse it
     # every time. There is no need to define a full function, as it just returns
     # a function return.
     get_full = (
         lambda: tokens_to_markup(  # pylint: disable=unnecessary-lambda-assignment
-            tokens
+            token_list
         )
     )
 
     if optimize:
-        token_list = list(optimize_tokens(tokens))
+        token_list = list(optimize_tokens(token_list))
 
     if append_reset:
         token_list.append(ClearToken("/"))
@@ -705,8 +714,8 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals
                 continue
 
             if token.value.startswith("/!"):
-                raise ValueError(
-                    f"Cannot use clearer {token.value!r} with nothing to target."
+                raise MarkupSyntaxError(
+                    token.value, "has nothing to target", get_full()
                 )
 
         try:
