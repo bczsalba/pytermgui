@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from functools import cached_property
 from typing import Callable, Generator, Iterator, Match
 
-from ..colors import ColorSyntaxError, str_to_color
+from ..colors import Color, ColorSyntaxError, str_to_color
 from ..regex import RE_MARKUP
 from ..terminal import get_terminal
 from .aliases import apply_default_aliases
@@ -23,7 +24,7 @@ from .parsing import (
     tokens_to_markup,
 )
 from .style_maps import CLEARERS
-from .tokens import ColorToken, Token
+from .tokens import Token
 
 STRICT_MARKUP = bool(os.getenv("PTG_STRICT_MARKUP"))
 
@@ -88,6 +89,14 @@ class MarkupLanguage:
         """Returns a copy of the macros defined in context."""
 
         return self._macros.copy()
+
+    def clear_cache(self) -> None:
+        """Clears the internal cache.
+
+        Use this after re-defining aliases.
+        """
+
+        self._cache.clear()
 
     def define(self, name: str, method: MacroType) -> None:
         """Defines a markup macro.
@@ -187,7 +196,6 @@ class MarkupLanguage:
         text: str,
         optimize: bool = False,
         append_reset: bool = True,
-        append_foreground: bool = True,
     ) -> str:
         """Parses some markup text.
 
@@ -225,19 +233,7 @@ class MarkupLanguage:
 
             return output
 
-        tokens = list(tokenize_markup(text))
-
-        if append_foreground:
-            colors = [
-                (i, tkn.color) for i, tkn in enumerate(tokens) if Token.is_color(tkn)
-            ]
-
-            if any(color.background for _, color in colors) and not any(
-                not color.background for _, color in colors
-            ):
-                index, color = colors[-1]
-                contrast = color.contrast
-                tokens.insert(index + 1, ColorToken(contrast.markup, contrast))
+        tokens = tokenize_markup(text)
 
         output = parse_tokens(
             tokens,
@@ -299,32 +295,110 @@ class StyledText:
     indexing will return the characters at the given slice, but also include the
     sequences that are applied to them.
 
-    To generate StyledText-s, it is recommended to use the `StyledText.yield_from_ansi`
+    To generate StyledText-s, it is recommended to use the `StyledText.group_styles`
     classmethod.
     """
 
-    __slots__ = ("plain", "sequences", "tokens", "link")
+    __slots__ = ("plain", "sequences", "tokens", "link", "__dict__")
 
     sequences: str
     plain: str
     tokens: list[Token]
     link: str | None
 
-    # TODO: These attributes could be added in the future, though doing so would cement
-    #       StyledText-s only ever being created by `group_styles`.
-    #
-    #       Maybe we could add a `styled_text.as_bold()`, `as_color()` type API? We would
-    #       still need to somehow default the attributes somehow, which could then be done
-    #       with a helper function?
-    #
-    # foreground: Color | None
-    # background: Color | None
-    # bold: bool
-    # dim: bool
-    # italic: bool
-    # underline: bool
-    # strikethrough: bool
-    # inverse: bool
+    @cached_property
+    def foreground(self) -> Color | None:
+        """Returns the foreground color of this object."""
+
+        colors = [
+            tkn
+            for tkn in self.tokens
+            if Token.is_color(tkn) and not tkn.color.background
+        ]
+
+        if len(colors) == 0:
+            return None
+
+        return colors[-1].color
+
+    @cached_property
+    def background(self) -> Color | None:
+        """Returns the background color of this object."""
+
+        colors = [
+            tkn for tkn in self.tokens if Token.is_color(tkn) and tkn.color.background
+        ]
+
+        if len(colors) == 0:
+            return None
+
+        return colors[-1].color
+
+    @cached_property
+    def bold(self) -> bool:
+        """Returns this text is bold."""
+
+        return any(Token.is_style(tkn) and tkn.markup == "bold" for tkn in self.tokens)
+
+    @cached_property
+    def dim(self) -> bool:
+        """Returns this text is dimmed."""
+
+        return any(Token.is_style(tkn) and tkn.markup == "dim" for tkn in self.tokens)
+
+    @cached_property
+    def italic(self) -> bool:
+        """Returns this text is italicized."""
+
+        return any(
+            Token.is_style(tkn) and tkn.markup == "italic" for tkn in self.tokens
+        )
+
+    @cached_property
+    def underline(self) -> bool:
+        """Returns this text is underlined."""
+
+        return any(
+            Token.is_style(tkn) and tkn.markup == "underline" for tkn in self.tokens
+        )
+
+    @cached_property
+    def blink(self) -> bool:
+        """Returns this text is blinking."""
+
+        return any(Token.is_style(tkn) and tkn.markup == "blink" for tkn in self.tokens)
+
+    @cached_property
+    def blink2(self) -> bool:
+        """Returns this text is alternate-blinking."""
+
+        return any(
+            Token.is_style(tkn) and tkn.markup == "blink2" for tkn in self.tokens
+        )
+
+    @cached_property
+    def strikethrough(self) -> bool:
+        """Returns this text is striked out."""
+
+        return any(
+            Token.is_style(tkn) and tkn.markup == "strikethrough" for tkn in self.tokens
+        )
+
+    @cached_property
+    def inverse(self) -> bool:
+        """Returns this text has its colors inversed."""
+
+        return any(
+            Token.is_style(tkn) and tkn.markup == "inverse" for tkn in self.tokens
+        )
+
+    @cached_property
+    def overline(self) -> bool:
+        """Returns this text is overlined."""
+
+        return any(
+            Token.is_style(tkn) and tkn.markup == "overline" for tkn in self.tokens
+        )
 
     @staticmethod
     def group_styles(
