@@ -11,12 +11,13 @@ answers I've ever bumped into.
 
 from __future__ import annotations
 
+import colorsys
 import re
 import sys
 from dataclasses import dataclass, field
 from functools import cached_property, lru_cache
 from math import sqrt  # pylint: disable=no-name-in-module
-from typing import TYPE_CHECKING, Generator, Literal, Type
+from typing import TYPE_CHECKING, Generator, Literal, Tuple, Type, Union, cast
 
 from .ansi_interface import reset as reset_style
 from .color_info import COLOR_TABLE, CSS_COLORS
@@ -77,8 +78,11 @@ NAMED_COLORS = {
     **{color: str(index) for index, color in XTERM_NAMED_COLORS.items()},
 }
 
+Number = Union[float, int]
+RGBTriplet = Tuple[Number, Number, Number]
+
 _COLOR_CACHE: dict[str, Color] = {}
-_COLOR_MATCH_CACHE: dict[tuple[float, float, float], Color] = {}
+_COLOR_MATCH_CACHE: dict[RGBTriplet, Color] = {}
 
 
 def clear_color_cache() -> None:
@@ -124,8 +128,9 @@ def _get_palette_color(color: Literal["10", "11"]) -> Color:
     return palette_color
 
 
+# A lot of methods defined here are actually just cached properties.
 @dataclass
-class Color:
+class Color:  # pylint: disable=too-many-public-methods
     """A terminal color.
 
     Args:
@@ -155,8 +160,6 @@ class Color:
     default_foreground: Color | None = field(default=None, repr=False)
     default_background: Color | None = field(default=None, repr=False)
 
-    _luminance: float | None = field(init=False, default=None, repr=False)
-    _brightness: float | None = field(init=False, default=None, repr=False)
     _rgb: tuple[int, int, int] | None = field(init=False, default=None, repr=False)
 
     def __format__(self, spec: str) -> str:
@@ -171,14 +174,32 @@ class Color:
         return repr(self)
 
     @classmethod
-    def from_rgb(cls, rgb: tuple[int, int, int]) -> Color:
-        """Creates a color from the given RGB, within terminal's colorsystem.
+    def from_rgb(cls, rgb: RGBTriplet) -> Color:
+        """Creates a color from the given RGB.
 
         Args:
             rgb: The RGB value to base the new color off of.
         """
 
-        raise NotImplementedError
+        return RGBColor.from_rgb(rgb)
+
+    @classmethod
+    def from_hls(cls, hsl: RGBTriplet) -> Color:
+        """Creates a color from the given HLS.
+
+        HLS stands for Hue, Lightness & Saturation. It is more commonly known as HSL,
+        but the `colorsys` library uses HLS instead so that's what we use too.
+
+        Args:
+            rgb: The HLS value to base the new color off of.
+        """
+
+        rgb = cast(
+            RGBTriplet,
+            map(lambda n: int(256 * n), colorsys.hls_to_rgb(*hsl)),
+        )
+
+        return RGBColor.from_rgb(rgb)
 
     @property
     def sequence(self) -> str:
@@ -193,7 +214,7 @@ class Color:
         return ("@" if self.background else "") + self.value
 
     @cached_property
-    def rgb(self) -> tuple[int, int, int]:
+    def rgb(self) -> RGBTriplet:
         """Returns this color as a tuple of (red, green, blue) values."""
 
         if self._rgb is None:
@@ -201,7 +222,49 @@ class Color:
 
         return self._rgb
 
-    @property
+    @cached_property
+    def red(self) -> Number:
+        """Returns the red component of this color."""
+
+        return self.rgb[0]
+
+    @cached_property
+    def green(self) -> Number:
+        """Returns the red component of this color."""
+
+        return self.rgb[1]
+
+    @cached_property
+    def blue(self) -> Number:
+        """Returns the red component of this color."""
+
+        return self.rgb[2]
+
+    @cached_property
+    def hls(self) -> RGBTriplet:
+        """Returns the HLS (Hue, Lightness, Saturation) representation of this color."""
+
+        return colorsys.rgb_to_hls(self.red / 256, self.green / 256, self.blue / 256)
+
+    @cached_property
+    def hue(self) -> float:
+        """Returns the hue component of this color."""
+
+        return self.hls[0]
+
+    @cached_property
+    def lightness(self) -> float:
+        """Returns the lightness component of this color."""
+
+        return self.hls[1]
+
+    @cached_property
+    def saturation(self) -> float:
+        """Returns the saturation component of this color."""
+
+        return self.hls[2]
+
+    @cached_property
     def hex(self) -> str:
         """Returns CSS-like HEX representation of this color."""
 
@@ -235,16 +298,12 @@ class Color:
 
         return ("@" if self.background else "") + self.value
 
-    @property
+    @cached_property
     def luminance(self) -> float:
         """Returns this color's perceived luminance (brightness).
 
         From https://stackoverflow.com/a/596243
         """
-
-        # Don't do expensive calculations over and over
-        if self._luminance is not None:
-            return self._luminance
 
         def _linearize(color: float) -> float:
             """Converts sRGB color to linear value."""
@@ -264,20 +323,33 @@ class Color:
         blue = _linearize(blue)
         green = _linearize(green)
 
-        self._luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+        return 0.2126 * red + 0.7152 * green + 0.0722 * blue
 
-        return self._luminance
+    def hue_offset(self, offset: float) -> Color:
+        """Returns the color offset by the given hue."""
 
-    @property
+        hue, lightness, saturation = colorsys.rgb_to_hls(
+            self.red / 256, self.green / 256, self.blue / 256
+        )
+
+        hue = (hue + offset) % 1
+
+        return Color.parse(
+            ";".join(
+                map(
+                    lambda n: str(int(256 * n)),
+                    colorsys.hls_to_rgb(hue, lightness, saturation),
+                )
+            ),
+            background=self.background,
+        )
+
+    @cached_property
     def brightness(self) -> float:
         """Returns the perceived "brightness" of a color.
 
         From https://stackoverflow.com/a/56678483
         """
-
-        # Don't do expensive calculations over and over
-        if self._brightness is not None:
-            return self._brightness
 
         if self.luminance <= (216 / 24389):
             brightness = self.luminance * (24389 / 27)
@@ -285,32 +357,65 @@ class Color:
         else:
             brightness = self.luminance ** (1 / 3) * 116 - 16
 
-        self._brightness = brightness / 100
-        return self._brightness
+        return brightness / 100
 
-    @property
-    def accent(self) -> Color:
-        """Returns the complimentary, secondary or accent of this color.
+    @cached_property
+    def complement(self) -> Color:
+        """Returns the complement of this color."""
 
-        This is done by negating the color from full white, a.k.a. 0xFFFFFF. It returns
-        the color opposite to this one on the color wheel.
+        if self.hue == 0.0:
+            return (
+                Color.parse("#FFFFFF")
+                if self.lightness == 0.0
+                else Color.parse("#000000")
+            )
+
+        return self.hue_offset(0.5)
+
+    @cached_property
+    def triadic(self) -> tuple[Color, Color, Color]:
+        """Computes the triadic group this color is in.
+
+        Triadic colors are 3-way complements of eachother.
+
+        Returns:
+            This color, the first triadic element and the second one.
         """
 
-        hex_number = int(self.hex[1:], base=16)
+        return self, self.hue_offset(1 / 3), self.hue_offset(2 / 3)
 
-        return Color.parse(
-            f"{int(hex(0xFFFFFF - hex_number), base=16):#0{8}X}".replace("0X", "#"),
-            background=self.background,
-        )
+    @cached_property
+    def tetradic(self) -> tuple[Color, Color, Color, Color]:
+        """Computes the tetradic group this color is in.
 
-    @property
+        Tetradic colors are 4-way complements of eachother.
+
+        Returns:
+            This color, the first tetradic element and the second one.
+        """
+
+        return self, self.hue_offset(1 / 4), self.complement, self.hue_offset(3 / 4)
+
+    @cached_property
+    def analogous(self) -> tuple[Color, Color, Color]:
+        """Computes the analogous group this colors is in.
+
+        Analogous colors are located next to eachother on the color wheel.
+
+        Returns:
+            The color to the left, this color and the color to the right.
+        """
+
+        return self.hue_offset(-1 / 12), self, self.hue_offset(1 / 12)
+
+    @cached_property
     def contrast(self) -> Color:
         """Returns a color (black or white) that complies with the W3C contrast ratio guidelines."""
 
         if self.luminance > 0.179:
-            return Color.parse("#000000")
+            return Color.parse("#000000").blend_complement(0.05)
 
-        return Color.parse("#FFFFFF")
+        return Color.parse("#FFFFFF").blend_complement(0.05)
 
     def blend(self, other: Color, alpha: float = 0.5, localize: bool = True) -> Color:
         """Blends a color into another one.
@@ -328,7 +433,7 @@ class Color:
         red1, green1, blue1 = self.rgb
         red2, green2, blue2 = other.rgb
 
-        blended = RGBColor.from_rgb(
+        blended: Color = RGBColor.from_rgb(
             (
                 int(red1 + (red2 - red1) * alpha),
                 int(green1 + (green2 - green1) * alpha),
@@ -341,13 +446,13 @@ class Color:
 
         return blended
 
-    def blend_accent(self, alpha: float = 0.5, localize: bool = True) -> Color:
-        """Blends this color with its accent.
+    def blend_complement(self, alpha: float = 0.5, localize: bool = True) -> Color:
+        """Blends this color with its complement.
 
         See `Color.blend`.
         """
 
-        return self.blend(self.accent, alpha, localize)
+        return self.blend(self.complement, alpha, localize)
 
     def blend_contrast(self, alpha: float = 0.5, localize: bool = True) -> Color:
         """Blends this color with its contrast pair.
@@ -441,7 +546,7 @@ class IndexedColor(Color):
         yield ">"
 
     @classmethod
-    def from_rgb(cls, rgb: tuple[int, int, int]) -> IndexedColor:
+    def from_rgb(cls, rgb: RGBTriplet) -> IndexedColor:
         """Constructs an `IndexedColor` from the closest matching option."""
 
         if rgb in _COLOR_MATCH_CACHE:
@@ -476,7 +581,7 @@ class IndexedColor(Color):
         return "\x1b[" + ("48" if self.background else "38") + f";5;{index}m"
 
     @cached_property
-    def rgb(self) -> tuple[int, int, int]:
+    def rgb(self) -> RGBTriplet:
         """Returns an RGB representation of this color."""
 
         if self._rgb is not None:
@@ -535,7 +640,7 @@ class StandardColor(IndexedColor):
         return cls(str(code_int), background=is_background)
 
     @classmethod
-    def from_rgb(cls, rgb: tuple[int, int, int]) -> StandardColor:
+    def from_rgb(cls, rgb: RGBTriplet) -> StandardColor:
         """Creates a color with the closest-matching xterm index, based on rgb.
 
         Args:
@@ -575,7 +680,7 @@ class StandardColor(IndexedColor):
         return f"\x1b[{index}m"
 
     @cached_property
-    def rgb(self) -> tuple[int, int, int]:
+    def rgb(self) -> RGBTriplet:
         """Returns an RGB representation of this color."""
 
         index = int(self.value)
@@ -598,7 +703,7 @@ class GreyscaleRampColor(IndexedColor):
     """
 
     @classmethod
-    def from_rgb(cls, rgb: tuple[int, int, int]) -> GreyscaleRampColor:
+    def from_rgb(cls, rgb: RGBTriplet) -> GreyscaleRampColor:
         """Gets a greyscale color based on the given color's luminance."""
 
         color = cls("0")
@@ -641,25 +746,25 @@ class RGBColor(Color):
         yield ">"
 
     @classmethod
-    def from_rgb(cls, rgb: tuple[int, int, int]) -> RGBColor:
+    def from_rgb(cls, rgb: RGBTriplet) -> RGBColor:
         """Returns an `RGBColor` from the given triplet."""
 
         return cls(";".join(map(str, rgb)))
 
     @property
-    def red(self) -> int | str:
+    def red(self) -> float:
         """Returns the red component of this color."""
 
         return self.rgb[0]
 
     @property
-    def green(self) -> int | str:
+    def green(self) -> float:
         """Returns the green component of this color."""
 
         return self.rgb[1]
 
     @property
-    def blue(self) -> int | str:
+    def blue(self) -> float:
         """Returns the blue component of this color."""
 
         return self.rgb[2]
@@ -709,9 +814,7 @@ SYSTEM_TO_TYPE: dict[ColorSystem, Type[Color]] = {
 }
 
 
-def _get_color_difference(
-    rgb1: tuple[int, int, int], rgb2: tuple[int, int, int]
-) -> float:
+def _get_color_difference(rgb1: RGBTriplet, rgb2: RGBTriplet) -> float:
     """Gets the geometric difference of 2 RGB colors (0-255).
 
     See https://en.wikipedia.org/wiki/Color_difference's Euclidian section.
@@ -733,7 +836,7 @@ def _get_color_difference(
     )
 
 
-@lru_cache(maxsize=None)
+@lru_cache(maxsize=1024)
 def str_to_color(
     text: str,
     is_background: bool = False,
