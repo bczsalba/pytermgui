@@ -239,7 +239,7 @@ class ColorPicker(Container):
                 return False
 
             button = _FadeInButton(f"{color:^5}", width=5)
-            button.styles.label = f"black @{color}"
+            button.styles.label = f"@{color}"
             self.chosen.lazy_add(button)
 
             return True
@@ -258,7 +258,7 @@ class ColorPicker(Container):
             rgb = color_obj.rgb
             hex_ = color_obj.hex
             lines: list[Widget] = [
-                Label(f"[black @{color}] {color} [/ {color}] {color}"),
+                Label(f"[@{color} #auto] {color} [/ {color}] {color}"),
                 Label(
                     f"[{color} bold]Here[/bold italic] is "
                     + "[/italic underline]some[/underline dim] example[/dim] text"

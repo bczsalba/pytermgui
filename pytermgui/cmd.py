@@ -806,7 +806,7 @@ def run_environment(args: Namespace) -> None:
             manager.add(_create_footer(manager), assign="footer")
 
             manager.toast(
-                "[ptg.title]Welcome to the [ptg.brand_title]"
+                "[ptg.title]Welcome to the [/ptg.title ptg.brand_title]"
                 + "PyTermGUI[/ptg.brand_title ptg.title] CLI!",
                 offset=ptg.terminal.height // 2 - 3,
                 delay=700,
