@@ -1,11 +1,11 @@
 {
     "markup": {
-        "background": "[234 grey]"
+        "test-background": "[234 grey]"
     },
     "config": {
         "Splitter": {
             "styles": {
-                "separator": "[background]{item}"
+                "separator": "[test-background]{item}"
             }
         },
         "Window": {
@@ -13,9 +13,9 @@
                 "border": ["a", "b", "c", "d"]
             },
             "styles": {
-                "corner": "[background]{item}",
-                "border": "[background]{item}",
-                "fill": "[background]{item}"
+                "corner": "[test-background]{item}",
+                "border": "[test-background]{item}",
+                "fill": "[test-background]{item}"
             }
         }
     },
@@ -25,7 +25,7 @@
             "widgets": [
                 {
                     "Label": {
-                        "value": "[background]Hello"
+                        "value": "[test-background]Hello"
                     }
                 },
                 {

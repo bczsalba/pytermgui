@@ -104,11 +104,6 @@ class TestParser:
             == "\x1b[38;5;141m\x1b[48;5;61m\x1b[1mHELLO\x1b[0m"
         ), repr(tim.parse("[141 @61 bold !upper]Hello"))
 
-    @pytest.mark.skip(reason="Markup prettification is currently not implemented.")
-    def test_pretty_markup(self):
-        markup = "[141 bold]Hello[/bold /fg dim italic]There[/]"
-        assert StyledText(tim.prettify_markup(markup)).plain == markup
-
 
 class TestFunctionality:
     def test_alias(self):
@@ -149,7 +144,6 @@ def test_random_tokens() -> None:
         tokens.append(previous)
 
     markup = tokens_to_markup(tokens)
-    print(tim.context)
     ansi = tim.parse(markup, append_reset=False)
 
     reverse = list(tokenize_ansi(ansi))

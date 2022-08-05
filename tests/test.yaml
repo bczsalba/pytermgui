@@ -5,13 +5,13 @@ _item_splitter: &menu_item
 
 _detail: &detail_criteria
   - Label:
-      value: "[background bold 210][][/fg grey] Criteria"
+      value: "[test-background bold 210][][/fg grey] Criteria"
       parent_align: 0
 
   - Label: {}
 
   - Label:
-      value: "[background 249 italic]: Details"
+      value: "[test-background 249 italic]: Details"
       parent_align: 0
 
   - Splitter:
@@ -50,7 +50,7 @@ _detail: &detail_criteria
 _condition: &condition_criteria
   - Label:
       <<: *menu_item
-      value: "[background 249 italic]: Conditions"
+      value: "[test-background 249 italic]: Conditions"
       parent_align: 0
 
   - Splitter:
@@ -77,12 +77,12 @@ _condition: &condition_criteria
             value: "100"
 
 markup:
-  background: "@234 grey"
+  test-background: "@234 grey"
 
 config:
   Splitter:
     styles:
-      separator: &fill_style "[background]{item}"
+      separator: &fill_style "[test-background]{item}"
 
   Container: &container_style
     chars:
