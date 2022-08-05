@@ -1,6 +1,8 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
+# requires = ["setuptools", "setuptools-scm"]
+# build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
 
 [project]
 name = "pytermgui"
@@ -10,7 +12,6 @@ description = """\
     customizable and rapid terminal markup language and more!\
 """
 
-readme = "README.md"
 license = {text = "MIT"}
 
 requires-python = ">=3.8"
@@ -26,6 +27,7 @@ keywords = [
     "xterm",
     "ANSI",
 ]
+
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -44,10 +46,8 @@ classifiers = [
     "Topic :: Text Processing :: Markup",
 ]
 
-dynamic = ["version"]
+dynamic = ["readme", "version"]
 
-# This seems to not be supported yet by setuptools, but I'll keep it
-# here for future use.
 [project.urls]
 homepage = "https://github.com/bczsalba/PyTermGUI"
 repository = "https://github.com/bczsalba/PyTermGUI"
@@ -59,9 +59,39 @@ yaml = ["PyYAML"]
 [project.scripts]
 ptg = "pytermgui.cmd:main"
 
-[tool.setuptools]
-packages = ["pytermgui"]
-dynamic = { version = { attr = "pytermgui.__version__" } }
+[tool.hatch.version]
+path = "pytermgui/__init__.py"
+
+[tool.hatch.build]
+include = [
+    "/pytermgui",
+    "/tests",
+]
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "README.md"
+end-before = "\n<!-- HATCH README END -->"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+text = """
+
+## Latest release
+
+#"""
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "CHANGELOG.md"
+end-before = "\n<!-- HATCH README END -->"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+text = "\n\nRead the full changelog [here](https://github.com/bczsalba/pytermgui/blob/master/CHANGELOG.md).\n\n"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "CHANGELOG.md"
+start-after = "\n<!-- HATCH URI DEFINITIONS START -->"
 
 [tool.mypy]
 show_error_codes = true
@@ -74,7 +104,7 @@ disable = [
 ]
 
 [tool.pylint.basic]
-good-names = ["i", "j", "k", "ex", "Run", "_", "x" ,"y"]
+good-names = ["i", "j", "k", "ex", "Run", "_", "x" ,"y", "fd"]
 
 [tool.coverage.report]
 exclude_lines = [
