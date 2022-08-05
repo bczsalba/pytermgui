@@ -977,7 +977,7 @@ class Container(ScrollableWidget):
 class Splitter(Container):
     """A widget that displays other widgets, stacked horizontally."""
 
-    styles = w_styles.StyleManager(separator="surface2", fill="background")
+    styles = w_styles.StyleManager(separator="surface", fill="background")
 
     chars: dict[str, list[str] | str] = {"separator": " | "}
     keys = {

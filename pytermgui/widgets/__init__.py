@@ -67,6 +67,7 @@ from .checkbox import Checkbox
 from .collapsible import *
 from .color_picker import ColorPicker
 from .containers import *
+from .fancy_repr import FancyReprWidget
 from .input_field import InputField
 from .keyboard_button import KeyboardButton
 from .pixel_matrix import *
@@ -75,9 +76,6 @@ from .styles import *
 from .toggle import Toggle
 
 WidgetType = Union[Widget, Type[Widget]]
-
-palette = Palette.generate_from(primary="skyblue")
-palette.alias()
 
 
 class _IDManager:
