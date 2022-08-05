@@ -143,12 +143,11 @@ class ColorPickerWindow(AppWindow):
         self._chosen_rgb = ptg.str_to_color("black")
 
         self._colorpicker = ptg.ColorPicker()
-        self._add_widget(ptg.Collapsible("xterm-256", "", self._colorpicker).expand())
+        self._add_widget(ptg.FancyReprWidget(ptg.palette, starts_at=2))
+        self._add_widget(ptg.Collapsible("xterm-256", "", self._colorpicker))
         self._add_widget("")
         self._add_widget(
-            ptg.Collapsible(
-                "RGB & HEX", "", self._create_rgb_picker(), static_width=81
-            ).expand(),
+            ptg.Collapsible("RGB & HEX", "", self._create_rgb_picker(), static_width=81)
         )
 
         self.setup()
@@ -295,7 +294,7 @@ class TIMWindow(AppWindow):
             for left, right in source:
                 row = ptg.Splitter(
                     ptg.Label(left, parent_align=0), ptg.Label(right, parent_align=2)
-                ).styles(separator="ptg.border")
+                )
 
                 row.set_char("separator", f" {ptg.Container.chars['border'][0]}")
 
@@ -689,7 +688,7 @@ def _create_aliases() -> None:
     - ptg.border_blurred: Used for non-focused window borders & corners.
     """
 
-    ptg.tim.alias("ptg.title", "accent bold")
+    ptg.tim.alias("ptg.title", "secondary bold")
     ptg.tim.alias("ptg.brand_title", "!gradient(210) bold")
     ptg.tim.alias("ptg.body", "surface+3")
     ptg.tim.alias("ptg.detail", "surface+1")
@@ -697,9 +696,6 @@ def _create_aliases() -> None:
 
     ptg.tim.alias("ptg.header", "bold @surface-2 surface+1")
     ptg.tim.alias("ptg.footer", "@surface-2 surface+1")
-
-    ptg.tim.alias("ptg.border", "60")
-    ptg.tim.alias("ptg.border_blurred", "#373748")
 
 
 def _configure_widgets() -> None:
@@ -755,6 +751,14 @@ def run_environment(args: Namespace) -> None:
 
         focused.close()
 
+    def _generate_palette() -> None:
+        palette = ptg.Palette.generate_from(
+            primary=";".join(str(random.randint(0, 256)) for _ in range(3))
+        )
+
+        ptg.palette.data = palette.data
+        ptg.palette.alias()
+
     _configure_widgets()
 
     window: AppWindow | None = None
@@ -790,9 +794,7 @@ def run_environment(args: Namespace) -> None:
         )
         manager.bind(
             "!",
-            lambda *_: ptg.Palette.generate_from(
-                primary=";".join(str(random.randint(0, 256)) for _ in range(3))
-            ).alias(),
+            lambda *_: _generate_palette(),
             "Re-palette",
         )
 
