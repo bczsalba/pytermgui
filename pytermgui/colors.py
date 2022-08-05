@@ -55,22 +55,22 @@ RE_PALETTE_REPLY = re.compile(
 PREVIEW_CHAR = "▄▀"
 
 XTERM_NAMED_COLORS = {
-    0: "black",
-    1: "red",
-    2: "green",
-    3: "yellow",
-    4: "blue",
-    5: "magenta",
-    6: "cyan",
-    7: "white",
-    8: "bright-black",
-    9: "bright-red",
-    10: "bright-green",
-    11: "bright-yellow",
-    12: "bright-blue",
-    14: "bright-magenta",
-    15: "bright-cyan",
-    16: "bright-white",
+    0: "ansi-black",
+    1: "ansi-red",
+    2: "ansi-green",
+    3: "ansi-yellow",
+    4: "ansi-blue",
+    5: "ansi-magenta",
+    6: "ansi-cyan",
+    7: "ansi-white",
+    8: "ansi-bright-black",
+    9: "ansi-bright-red",
+    10: "ansi-bright-green",
+    11: "ansi-bright-yellow",
+    12: "ansi-bright-blue",
+    14: "ansi-bright-magenta",
+    15: "ansi-bright-cyan",
+    16: "ansi-bright-white",
 }
 
 NAMED_COLORS = {
