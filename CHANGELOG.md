@@ -1,3 +1,27 @@
+## [7.2.0] - 2022-08-05
+
+### Additions
+
+- Add various color manipulation utilities
+- Add `#auto` TIM pseudo-tag that always gives properly contrasted foreground text
+- Add `palettes` module for framework-wide color generation & configuration
+- Add `Synchronized Output` support
+- Add `FancyReprWidget`
+- Add `ptg --palette` flag
+
+### Bugfixes
+
+- Fix markup aliases getting literalized during `parsing.eval_alias` & `MarkupLanguage.alias`
+- Fix background colors creating vertical seams in SVG exports
+- Fix colors getting localized pre-maturely
+
+### Refactors
+
+- Make all the `ptg` program & all builting widgets use the global palette
+
+<!-- HATCH README END -->
+
+
 ## [7.1.0] - 2022-07-27
 
 ### Additions
@@ -293,21 +317,24 @@
 - Fix blocking `getch` call on Windows
 
 
-[7.1.0]: https://github.com/bczsalba/pytermgui/compare/7.0.0...7.1.0
-[7.0.0]: https://github.com/bczsalba/pytermgui/compare/6.4.0...7.0.0
-[6.4.0]: https://github.com/bczsalba/pytermgui/compare/6.0.0...6.4.0
-[6.3.0]: https://github.com/bczsalba/pytermgui/compare/6.2.2...6.3.0
-[6.2.2]: https://github.com/bczsalba/pytermgui/compare/6.2.1...6.2.2
-[6.2.1]: https://github.com/bczsalba/pytermgui/compare/6.2.0...6.2.1
-[6.2.0]: https://github.com/bczsalba/pytermgui/compare/6.1.0...6.2.0
-[6.1.0]: https://github.com/bczsalba/pytermgui/compare/6.0.0...6.1.0
-[6.0.0]: https://github.com/bczsalba/pytermgui/compare/5.0.0...6.0.0
-[5.0.0]: https://github.com/bczsalba/pytermgui/compare/4.3.2...5.0.0
-[4.3.2]: https://github.com/bczsalba/pytermgui/compare/4.3.1...4.3.2
-[4.3.1]: https://github.com/bczsalba/pytermgui/compare/4.3.0...4.3.1
-[4.3.0]: https://github.com/bczsalba/pytermgui/compare/4.2.0...4.3.0
-[4.2.1]: https://github.com/bczsalba/pytermgui/compare/4.2.0...4.2.1
-[4.2.0]: https://github.com/bczsalba/pytermgui/compare/4.1.0...4.2.0
-[4.1.0]: https://github.com/bczsalba/pytermgui/compare/4.0.0...4.1.0
-[4.0.1]: https://github.com/bczsalba/pytermgui/compare/4.0.0...4.0.1
-[4.0.0]: https://github.com/bczsalba/pytermgui/compare/3.2.1...4.0.0
+<!-- HATCH URI DEFINITIONS START -->
+
+[7.2.0]: https://github.com/bczsalba/pytermgui/compare/v7.1.0...v7.2.0
+[7.1.0]: https://github.com/bczsalba/pytermgui/compare/v7.0.0...v7.1.0
+[7.0.0]: https://github.com/bczsalba/pytermgui/compare/v6.4.0...v7.0.0
+[6.4.0]: https://github.com/bczsalba/pytermgui/compare/v6.0.0...v6.4.0
+[6.3.0]: https://github.com/bczsalba/pytermgui/compare/v6.2.2...v6.3.0
+[6.2.2]: https://github.com/bczsalba/pytermgui/compare/v6.2.1...v6.2.2
+[6.2.1]: https://github.com/bczsalba/pytermgui/compare/v6.2.0...v6.2.1
+[6.2.0]: https://github.com/bczsalba/pytermgui/compare/v6.1.0...v6.2.0
+[6.1.0]: https://github.com/bczsalba/pytermgui/compare/v6.0.0...v6.1.0
+[6.0.0]: https://github.com/bczsalba/pytermgui/compare/v5.0.0...v6.0.0
+[5.0.0]: https://github.com/bczsalba/pytermgui/compare/v4.3.2...v5.0.0
+[4.3.2]: https://github.com/bczsalba/pytermgui/compare/v4.3.1...v4.3.2
+[4.3.1]: https://github.com/bczsalba/pytermgui/compare/v4.3.0...v4.3.1
+[4.3.0]: https://github.com/bczsalba/pytermgui/compare/v4.2.0...v4.3.0
+[4.2.1]: https://github.com/bczsalba/pytermgui/compare/v4.2.0...v4.2.1
+[4.2.0]: https://github.com/bczsalba/pytermgui/compare/v4.1.0...v4.2.0
+[4.1.0]: https://github.com/bczsalba/pytermgui/compare/v4.0.0...v4.1.0
+[4.0.1]: https://github.com/bczsalba/pytermgui/compare/v4.0.0...v4.0.1
+[4.0.0]: https://github.com/bczsalba/pytermgui/compare/v3.2.1...v4.0.0

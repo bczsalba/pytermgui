@@ -38,7 +38,6 @@ pip3 install pytermgui
    </a>
 </p>
 
-
 ## Why?
 
 Mostly because terminals are cool, but creating terminal apps has historically been difficult. PyTermGUI aims to provide a simple, readable and modular way to make the app of your dreams!
@@ -67,6 +66,8 @@ Additionally, there are a couple of neat tools to make your general Python devel
 - An inspection utility
 - A pretty printer for both the REPL and IPython
 - A way to create SVG and HTML screenshots of your terminal
+
+<!-- HATCH README END -->
 
 ## Examples
 
@@ -153,7 +154,7 @@ with ptg.WindowManager() as manager:
     manager.add(window)
 ```
 
-This showcases the YAML-based config system, as well as some additional API. I recommended checking out the [source file](utils/readme_examples/contact.py) to see how the `submit` callback works.
+This showcases the YAML-based config system, as well as some additional API. I recommended checking out the [source file](https://github.com/bczsalba/pytermgui/blob/master/utils/readme_scripts/contact.py) to see how the `submit` callback works.
 
 <p align="center">
     <img alt="Contact form example output" src="https://github.com/bczsalba/pytermgui/raw/master/assets/readme/contact.svg">
@@ -188,4 +189,4 @@ Pretty much every single name in the library, private or public, has an insightf
 
 ## Contributions, issues et al.
 
-If you have any problems using the library, feel free to open up a discussion or raise an issue ticket. If you would prefer to hack on the library yourself, see the [contribution guidelines](CONTRIBUTING.md). Pull requests are encouraged, but make sure you aren't trying to fix an issue that others are already working on, for your own sake. :slightly_smiling_face:
+If you have any problems using the library, feel free to open up a discussion or raise an issue ticket. If you would prefer to hack on the library yourself, see the [contribution guidelines](https://github.com/bczsalba/pytermgui/blob/master/CONTRIBUTING.md). Pull requests are encouraged, but make sure you aren't trying to fix an issue that others are already working on, for your own sake. :slightly_smiling_face:
