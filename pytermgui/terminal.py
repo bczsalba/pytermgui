@@ -454,12 +454,14 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         buffer = StringIO()
 
         try:
-            self.write("\x1b[?2026h")
+            with self.no_record():
+                self.write("\x1b[?2026h")
             yield buffer
 
         finally:
             self.write(buffer.getvalue())
-            self.write("\x1b[?2026l")
+            with self.no_record():
+                self.write("\x1b[?2026l")
             self.flush()
 
     @staticmethod
