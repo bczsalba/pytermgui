@@ -8,7 +8,9 @@ def test_break_plain():
 
 
 def test_break_fancy():
-    text = tim.parse("[141 bold]Hello there[/ italic blue] whats up[cyan bold]?")
+    text = tim.parse(
+        "[141 bold]Hello there[/ italic ansi-blue] whats up[ansi-cyan bold]?"
+    )
     broken = break_line(text, 3)
 
     assert list(broken) == [

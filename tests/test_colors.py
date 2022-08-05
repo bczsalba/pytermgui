@@ -1,14 +1,14 @@
-from pytermgui import (
-    str_to_color,
-    IndexedColor,
-    StandardColor,
-    RGBColor,
-    HEXColor,
-    terminal,
-    ColorSystem,
-)
-
 from contextlib import contextmanager
+
+from pytermgui import (
+    ColorSystem,
+    HEXColor,
+    IndexedColor,
+    RGBColor,
+    StandardColor,
+    str_to_color,
+    terminal,
+)
 
 terminal.forced_colorsystem = ColorSystem.TRUE
 
@@ -55,7 +55,7 @@ def test_fg_named():
 
 def test_bg_named():
     with set_colorsystem(terminal, ColorSystem.STANDARD):
-        color = str_to_color("@bright-blue")
+        color = str_to_color("@ansi-bright-blue")
 
         assert isinstance(color, IndexedColor)
         assert color.name == "@12"

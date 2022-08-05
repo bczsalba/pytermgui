@@ -170,7 +170,7 @@ class Palette:
         surface2: str | None = None,
         surface3: str | None = None,
         strategy: PaletteGeneratorStrategy = triadic,
-    ) -> None:
+    ) -> dict[str, str]:
         """Generates a map of color names to values.
 
         See `__init__` for more information.
