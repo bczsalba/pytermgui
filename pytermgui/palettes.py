@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Callable, Generator, Tuple
+from typing import Any, Callable, Generator, Tuple
 
 from .colors import Color
 from .fancy_repr import FancyYield
@@ -116,9 +116,8 @@ class Palette:
 
     data: dict[str, str]
 
-    @classmethod
-    def generate_from(  # pylint: disable=too-many-locals
-        cls,
+    def __init__(  # pylint: disable=too-many-locals
+        self,
         *,
         primary: str,
         secondary: str | None = None,
@@ -131,7 +130,7 @@ class Palette:
         surface2: str | None = None,
         surface3: str | None = None,
         strategy: PaletteGeneratorStrategy = triadic,
-    ) -> Palette:
+    ) -> None:
         """Generates a color palette from the given primary color.
 
         If any other color arguments are passed, they will be parsed as a color
@@ -141,6 +140,40 @@ class Palette:
 
         Args:
             strategy: A strategy that will be used to derive colors.
+        """
+
+        self.data = self._generate_map(
+            primary=primary,
+            secondary=secondary,
+            tertiary=tertiary,
+            accent=accent,
+            success=success,
+            warning=warning,
+            error=error,
+            surface=surface,
+            surface2=surface2,
+            surface3=surface3,
+            strategy=strategy,
+        )
+
+    def _generate_map(  # pylint: disable=too-many-locals
+        self,
+        *,
+        primary: str,
+        secondary: str | None = None,
+        tertiary: str | None = None,
+        accent: str | None = None,
+        success: str | None = None,
+        warning: str | None = None,
+        error: str | None = None,
+        surface: str | None = None,
+        surface2: str | None = None,
+        surface3: str | None = None,
+        strategy: PaletteGeneratorStrategy = triadic,
+    ) -> None:
+        """Generates a map of color names to values.
+
+        See `__init__` for more information.
         """
 
         if isinstance(strategy, str):
@@ -219,12 +252,18 @@ class Palette:
                 bg_variant.background = True
                 data[f"@{name}{shadeindex}"] = bg_variant
 
-        return Palette(
-            {
-                key: ("@" if color.background else "") + color.hex
-                for key, color in data.items()
-            }
-        )
+        return {
+            key: ("@" if color.background else "") + color.hex
+            for key, color in data.items()
+        }
+
+    def regenerate(self, **kwargs: Any) -> None:
+        """Generates a new palette and replaces self.data with its data."""
+
+        other = Palette(**kwargs)
+
+        self.data = other.data
+        self.alias()
 
     def base_keys(self) -> list[str]:
         """Returns the non-background, non-shade alias keys."""
@@ -326,7 +365,7 @@ class Palette:
             tim.print("".join(f"[@{self.data[name]}]{' ' * length}" for name in names))
 
 
-palette = Palette.generate_from(
+palette = Palette(
     primary="#7c93d0", success="#93d07b", warning="#d0b97b", error="#d07b92"
 )
 palette.alias()

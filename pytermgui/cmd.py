@@ -755,14 +755,6 @@ def run_environment(args: Namespace) -> None:
 
         focused.close()
 
-    def _generate_palette() -> None:
-        palette = ptg.Palette.generate_from(
-            primary=";".join(str(random.randint(0, 256)) for _ in range(3))
-        )
-
-        ptg.palette.data = palette.data
-        ptg.palette.alias()
-
     _configure_widgets()
 
     window: AppWindow | None = None
@@ -798,7 +790,9 @@ def run_environment(args: Namespace) -> None:
         )
         manager.bind(
             "!",
-            lambda *_: _generate_palette(),
+            lambda *_: ptg.palette.regenerate(
+                primary=";".join(str(random.randint(0, 256)) for _ in range(3))
+            ),
             "Re-palette",
         )
 
