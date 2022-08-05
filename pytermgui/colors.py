@@ -342,6 +342,7 @@ class Color:  # pylint: disable=too-many-public-methods
                 )
             ),
             background=self.background,
+            localize=False,
         )
 
     @cached_property
@@ -417,7 +418,7 @@ class Color:  # pylint: disable=too-many-public-methods
 
         return Color.parse("#FFFFFF").blend_complement(0.05)
 
-    def blend(self, other: Color, alpha: float = 0.5, localize: bool = True) -> Color:
+    def blend(self, other: Color, alpha: float = 0.5, localize: bool = False) -> Color:
         """Blends a color into another one.
 
         Args:
@@ -446,21 +447,21 @@ class Color:  # pylint: disable=too-many-public-methods
 
         return blended
 
-    def blend_complement(self, alpha: float = 0.5, localize: bool = True) -> Color:
+    def blend_complement(self, alpha: float = 0.5) -> Color:
         """Blends this color with its complement.
 
         See `Color.blend`.
         """
 
-        return self.blend(self.complement, alpha, localize)
+        return self.blend(self.complement, alpha)
 
-    def blend_contrast(self, alpha: float = 0.5, localize: bool = True) -> Color:
+    def blend_contrast(self, alpha: float = 0.5) -> Color:
         """Blends this color with its contrast pair.
 
         See `Color.blend`.
         """
 
-        return self.blend(self.contrast, alpha, localize)
+        return self.blend(self.contrast, alpha)
 
     def darken(self, alpha: float = 0.5) -> Color:
         """Darkens the color by blending it with black, using the alpha provided."""
@@ -841,7 +842,7 @@ def str_to_color(
     text: str,
     is_background: bool = False,
     localize: bool = True,
-    use_cache: bool = False,
+    use_cache: bool = True,
 ) -> Color:
     """Creates a `Color` from the given text.
 
@@ -911,13 +912,13 @@ def str_to_color(
 
     match = RE_HEX.match(text)
     if match is not None:
-        color = HEXColor(match[0], background=is_background).get_localized()
+        color = HEXColor(match[0], background=is_background)
 
         return color.get_localized() if localize else color
 
     match = RE_RGB.match(text)
     if match is not None:
-        color = RGBColor(match[0], background=is_background).get_localized()
+        color = RGBColor(match[0], background=is_background)
 
         return color.get_localized() if localize else color
 

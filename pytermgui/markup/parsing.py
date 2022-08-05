@@ -6,7 +6,7 @@ import json
 from typing import Callable, Iterator, Protocol, TypedDict
 from warnings import filterwarnings, warn
 
-from ..colors import Color, str_to_color
+from ..colors import Color
 from ..exceptions import ColorSyntaxError, MarkupSyntaxError
 from ..regex import RE_ANSI_NEW as RE_ANSI
 from ..regex import RE_MACRO, RE_MARKUP, RE_POSITION
@@ -114,7 +114,7 @@ def consume_tag(tag: str) -> Token:  # pylint: disable=too-many-return-statement
 
     token: Token
     try:
-        token = ColorToken(tag, str_to_color(tag))
+        token = ColorToken(tag, Color.parse(tag, localize=False))
 
     except ColorSyntaxError:
         token = AliasToken(tag)
@@ -250,7 +250,7 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
 
                 # standard colors
                 try:
-                    yield ColorToken(part, str_to_color(part))
+                    yield ColorToken(part, Color.parse(part, localize=False))
                     continue
 
                 except ColorSyntaxError as exc:
@@ -279,7 +279,7 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
 
                     code = stripped
 
-                yield ColorToken(code, str_to_color(code))
+                yield ColorToken(code, Color.parse(code, localize=False))
 
             except ColorSyntaxError:
                 continue
@@ -324,7 +324,7 @@ def parse_plain(token: PlainToken, _: ContextDict, __: Callable[[], str]) -> str
 def parse_color(token: ColorToken, _: ContextDict, __: Callable[[], str]) -> str:
     """Parses a color token."""
 
-    return token.color.sequence
+    return token.color.get_localized().sequence
 
 
 def parse_style(token: StyleToken, _: ContextDict, __: Callable[[], str]) -> str:

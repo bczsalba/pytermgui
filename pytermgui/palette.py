@@ -43,7 +43,7 @@ def _parse_optional(color: str | None, default: Color) -> Color:
     if color is None:
         return default
 
-    return Color.parse(color)
+    return Color.parse(color, localize=False)
 
 
 def triadic(base: Color) -> tuple[Color, Color, Color, Color]:
@@ -153,7 +153,7 @@ class Palette:
                     + f" {list(STRATEGIES.keys())}."
                 )
 
-        c_primary = Color.parse(primary)
+        c_primary = Color.parse(primary, localize=False)
         success = success or primary
         warning = warning or primary
 
@@ -167,8 +167,8 @@ class Palette:
         )
         c_surface3 = _parse_optional(surface3, SURFACE.blend(c_tertiary, SURFACE_ALPHA))
         c_surface4 = _parse_optional(surface3, SURFACE.blend(c_accent, SURFACE_ALPHA))
-        c_success = Color.parse(success)
-        c_warning = Color.parse(warning)
+        c_success = Color.parse(success, localize=False)
+        c_warning = Color.parse(warning, localize=False)
         c_error = _parse_optional(error, c_accent)
 
         base_palette: dict[str, Color] = {
