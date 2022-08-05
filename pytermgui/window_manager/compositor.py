@@ -252,11 +252,12 @@ class Compositor:
         if not force and self._previous == lines:
             return
 
-        buffer = "".join(f"\x1b[{pos[1]};{pos[0]}H{line}" for pos, line in lines)
-
         self.terminal.clear_stream()
-        self.terminal.write(buffer)
-        self.terminal.flush()
+        with self.terminal.frame() as frame:
+            frame_write = frame.write
+
+            for pos, line in lines:
+                frame_write(f"\x1b[{pos[1]};{pos[0]}H{line}")
 
         self._previous = lines
 

@@ -13,6 +13,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from enum import Enum
 from functools import cached_property
+from io import StringIO
 from shutil import get_terminal_size
 from typing import TYPE_CHECKING, Any, Callable, Generator, TextIO
 
@@ -442,6 +443,24 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         finally:
             self._recorder = recorder
+
+    @contextmanager
+    def frame(self) -> Generator[StringIO, None, None]:
+        """Notifies the emulator of the inner content being a single frame.
+
+        See https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036!
+        """
+
+        buffer = StringIO()
+
+        try:
+            self.write("\x1b[?2026h")
+            yield buffer
+
+        finally:
+            self.write(buffer.getvalue())
+            self.write("\x1b[?2026l")
+            self.flush()
 
     @staticmethod
     def isatty() -> bool:
