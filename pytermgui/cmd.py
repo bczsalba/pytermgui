@@ -690,8 +690,6 @@ def _create_aliases() -> None:
     - ptg.accent: Used as an accent color in various places.
     - ptg.header: Used for the header bar.
     - ptg.footer: Used for the footer bar.
-    - ptg.border: Used for focused window borders & corners.
-    - ptg.border_blurred: Used for non-focused window borders & corners.
     """
 
     ptg.tim.alias("ptg.title", "secondary bold")
