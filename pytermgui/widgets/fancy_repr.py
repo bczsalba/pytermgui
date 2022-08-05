@@ -1,5 +1,7 @@
 """A widget to wrap objects supporting the `fancy_repr` protocol."""
 
+from __future__ import annotations
+
 from typing import Any
 
 from ..fancy_repr import SupportsFancyRepr, build_fancy_repr
