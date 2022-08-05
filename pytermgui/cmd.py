@@ -501,6 +501,12 @@ def process_args(argv: list[str] | None = None) -> Namespace:
     )
 
     util_group.add_argument(
+        "--palette",
+        help="Print the default PyTermGUI color palette.",
+        action="store_true",
+    )
+
+    util_group.add_argument(
         "--highlight",
         help=(
             "Highlight some python-like code syntax."
@@ -691,7 +697,7 @@ def _create_aliases() -> None:
     ptg.tim.alias("ptg.title", "secondary bold")
     ptg.tim.alias("ptg.brand_title", "!gradient(210) bold")
     ptg.tim.alias("ptg.body", "surface+3")
-    ptg.tim.alias("ptg.detail", "surface+1")
+    ptg.tim.alias("ptg.detail", "surface+2")
     ptg.tim.alias("ptg.accent", "primary")
 
     ptg.tim.alias("ptg.header", "bold @surface-2 surface+1")
@@ -911,6 +917,7 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.app or len(sys.argv) == 1:
         run_environment(args)
+
         return
 
     with ptg.terminal.record() as recording:
@@ -919,6 +926,9 @@ def main(argv: list[str] | None = None) -> None:
 
         elif args.version:
             _print_version()
+
+        elif args.palette:
+            ptg.palette.print()
 
         elif args.inspect:
             _run_inspect(args)
