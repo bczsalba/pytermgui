@@ -257,13 +257,22 @@ class Palette:
             for key, color in data.items()
         }
 
-    def regenerate(self, **kwargs: Any) -> None:
-        """Generates a new palette and replaces self.data with its data."""
+    def regenerate(self, **kwargs: Any) -> Palette:
+        """Generates a new palette and replaces self.data with its data.
+
+        Args:
+            **kwargs: All key word args passed to the new Palette. See `__init__`.
+
+        Returns:
+            This palette, after regeneration.
+        """
 
         other = Palette(**kwargs)
 
         self.data = other.data
         self.alias()
+
+        return self
 
     def base_keys(self) -> list[str]:
         """Returns the non-background, non-shade alias keys."""
