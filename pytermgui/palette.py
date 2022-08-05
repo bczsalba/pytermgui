@@ -246,6 +246,7 @@ class Palette:
             lang: The language to run `alias_multiple` on.
         """
 
+        lang.clear_cache()
         lang.alias_multiple(**self.data, generate_unsetter=False)
 
     def __fancy_repr__(self) -> Generator[FancyYield, None, None]:

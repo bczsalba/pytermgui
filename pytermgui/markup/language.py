@@ -141,11 +141,11 @@ class MarkupLanguage:
                     ```
         """
 
-        value = eval_alias(value, self.context)
-
         def _generate_unsetter() -> str:
             unsetter = ""
-            for tag in value.split():
+            no_alias = eval_alias(value, self.context)
+
+            for tag in no_alias.split():
                 if "(" in tag and ")" in tag:
                     tag = tag[: tag.find("(")]
 
@@ -476,7 +476,7 @@ class StyledText:
 
     @classmethod
     def first_of(cls, text: str) -> StyledText | None:
-        """Returns the first element of cls.yield_from_ansi(text)."""
+        """Returns the first element of cls.group_styles(text)."""
 
         for item in cls.group_styles(text):
             return item

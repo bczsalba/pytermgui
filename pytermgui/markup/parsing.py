@@ -310,7 +310,7 @@ def eval_alias(text: str, context: ContextDict) -> str:
             evaluated += tag + " "
             continue
 
-        evaluated += eval_alias(aliases[tag], context)
+        evaluated += eval_alias(aliases[tag], context) + " "
 
     return evaluated.rstrip(" ")
 
