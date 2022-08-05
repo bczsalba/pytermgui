@@ -630,7 +630,7 @@ def _create_app_picker(manager: ptg.WindowManager) -> ptg.Window:
     ]
 
     dropdown = ptg.Collapsible("Applications", *buttons, keyboard=True).styles(
-        fill="ptg.footer"
+        fill="ptg.header"
     )
 
     return ptg.Window(
@@ -689,14 +689,14 @@ def _create_aliases() -> None:
     - ptg.border_blurred: Used for non-focused window borders & corners.
     """
 
-    ptg.tim.alias("ptg.title", "210 bold")
+    ptg.tim.alias("ptg.title", "accent bold")
     ptg.tim.alias("ptg.brand_title", "!gradient(210) bold")
-    ptg.tim.alias("ptg.body", "247")
-    ptg.tim.alias("ptg.detail", "dim")
-    ptg.tim.alias("ptg.accent", "72")
+    ptg.tim.alias("ptg.body", "surface+3")
+    ptg.tim.alias("ptg.detail", "surface+1")
+    ptg.tim.alias("ptg.accent", "primary")
 
-    ptg.tim.alias("ptg.header", "@235 242 bold")
-    ptg.tim.alias("ptg.footer", "@235")
+    ptg.tim.alias("ptg.header", "bold @surface-2 surface+1")
+    ptg.tim.alias("ptg.footer", "@surface-2 surface+1")
 
     ptg.tim.alias("ptg.border", "60")
     ptg.tim.alias("ptg.border_blurred", "#373748")
@@ -709,17 +709,8 @@ def _configure_widgets() -> None:
     ptg.boxes.SINGLE.set_chars_of(ptg.Container)
     ptg.boxes.DOUBLE.set_chars_of(ptg.Window)
 
-    ptg.InputField.styles.cursor = "inverse ptg.accent"
-    ptg.InputField.styles.fill = "245"
-    ptg.Container.styles.border__corner = "ptg.border"
     ptg.Splitter.set_char("separator", "")
     ptg.Button.set_char("delimiter", ["  ", "  "])
-
-    ptg.Window.styles.border__corner = "ptg.border"
-    ptg.Window.set_focus_styles(
-        focused=("ptg.border", "ptg.border"),
-        blurred=("ptg.border_blurred", "ptg.border_blurred"),
-    )
 
 
 def run_environment(args: Namespace) -> None:
@@ -796,6 +787,13 @@ def run_environment(args: Namespace) -> None:
         manager.bind(
             ptg.keys.ALT + ptg.keys.TAB,
             lambda *_: manager.focus_next(),
+        )
+        manager.bind(
+            "!",
+            lambda *_: ptg.Palette.generate_from(
+                primary=";".join(str(random.randint(0, 256)) for _ in range(3))
+            ).alias(),
+            "Re-palette",
         )
 
         if not args.app:
