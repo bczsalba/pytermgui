@@ -118,18 +118,12 @@ INDENTED_EMPTY_BOX = boxes.Box(
 )
 
 
-def inspect(target: object, **inspector_args) -> Inspector:
+def inspect(target: object, **inspector_args: Any) -> Inspector:
     """Inspects an object.
 
     Args:
-        obj: The object to inspect.
-        show_private: Whether `_private` attributes should be shown.
-        show_dunder: Whether `__dunder__` attributes should be shown.
-        show_methods: Whether methods should be shown when encountering a class.
-        show_full_doc: If not set, docstrings are cut to only include their first
-            line.
-        show_qualname: Show fully-qualified name, e.g. `module.submodule.name`
-            instead of `name`.
+        target: The object to inspect.
+        **inspector_args: See `Inspector.__init__`.
     """
 
     def _conditionally_overwrite_kwarg(**kwargs) -> None:

@@ -63,7 +63,7 @@ def pprint(
             builtin print.
         indent: The indentation value used for multi-line objects. This is ignored when
             the given object has a `len() < 2`, and `expand_all is not set.`
-        force_tim: Turn all ANSI-sequences into tim before pretty printing.
+        force_markup: Turn all ANSI-sequences into markup before pretty printing.
         expand_all: Force-expand containers, even when they would normally be collapsed.
         **print_args: All arguments passed to builtin print.
     """
@@ -117,7 +117,7 @@ def install(
     Args:
         indent: The indentation value used for multi-line objects. This is ignored when
             the given object has a `len() < 2`, and `expand_all is not set.`
-        force_tim: Turn all ANSI-sequences into tim before pretty printing.
+        force_markup: Turn all ANSI-sequences into tim before pretty printing.
         expand_all: Force-expand containers, even when they would normally be collapsed.
     """
 

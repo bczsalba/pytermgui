@@ -428,7 +428,7 @@ def getch_timeout(
     No timeout is applied on Windows systems, as there is no support for `SIGALRM`.
 
     Args:
-        timeout: How long the call should wait for input.
+        duration: How long the call should wait for input.
         default: The value to return if timeout occured.
     """
 

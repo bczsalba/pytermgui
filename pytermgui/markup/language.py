@@ -199,11 +199,6 @@ class MarkupLanguage:
     ) -> str:
         """Parses some markup text.
 
-        Args:
-            - append_foreground: If set, when a token stream is given that contains a background
-                color but no foreground, a foreground color matching the W3C contrast rules
-                is inserted.
-
         This is a thin wrapper around `pytermgui.markup.parsing.parse`. The main additions
         of this wrapper are a caching system, as well as state management.
 

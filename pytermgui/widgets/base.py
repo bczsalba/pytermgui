@@ -342,7 +342,7 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         Returns:
             Boolean describing whether the position is inside
-              this widget.
+                this widget.
         """
 
         rect = self.pos, (
@@ -406,8 +406,8 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         Args:
             key: String representation of input string.
-              The `pytermgui.input.keys` object can be
-              used to retrieve special keys.
+                The `pytermgui.input.keys` object can be
+                used to retrieve special keys.
 
         Returns:
             A boolean describing whether the key was handled.
@@ -583,12 +583,12 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         Args:
             key: Usually a string, indexing into the `_bindings` dictionary. These are the
-              same strings as defined in `Widget.bind`.
+                same strings as defined in `Widget.bind`.
             ignore_any: If set, `keys.ANY_KEY` bindings will not be executed.
 
         Returns:
             True if the binding was found, False otherwise. Bindings will always be
-              executed if they are found.
+                executed if they are found.
         """
 
         # Execute special binding

@@ -229,7 +229,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
         return MarkupFormatter(markup)
 
     @classmethod
-    def merge(cls, other: StyleManager, **styles) -> StyleManager:
+    def merge(cls, other: StyleManager, **styles: str) -> StyleManager:
         """Creates a new manager that merges `other` with the passed in styles.
 
         Args:

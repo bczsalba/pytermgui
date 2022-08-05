@@ -191,7 +191,7 @@ class Color:  # pylint: disable=too-many-public-methods
         but the `colorsys` library uses HLS instead so that's what we use too.
 
         Args:
-            rgb: The HLS value to base the new color off of.
+            hsl: The HLS value to base the new color off of.
         """
 
         rgb = cast(

@@ -33,9 +33,9 @@ class KeyboardButton(Button):
 
         Args:
             label: The label of the button.
-            char: The "highlighted" character inside the label. Defaults to first
-                character of the label.
-            bound: The keybind that activates this button. Defaults to CTRL_{char}
+            onclick: The callback to be executed when the button is activated.
+            index: The index of the label to use as the binding character.
+            bound: The keybind that activates this button. Defaults to `keys.CTRL_{char}`
                 is used as the default binding.
         """
 

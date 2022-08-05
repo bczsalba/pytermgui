@@ -66,8 +66,8 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         """Initializes object.
 
         Args:
-            widgets: Widgets to add to this window after initilization.
-            attrs: Attributes that are passed to the constructor.
+            *widgets: Widgets to add to this window after initilization.
+            **attrs: Attributes that are passed to the constructor.
         """
 
         self._min_width: int | None = None
@@ -240,7 +240,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
         Returns:
             Boolean describing whether the position is inside
-              this widget.
+                this widget.
         """
 
         left, top, right, bottom = self.rect

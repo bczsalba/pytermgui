@@ -569,7 +569,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
         getch()
 
-    def alert(self, *items, center: bool = True, **attributes) -> Window:
+    def alert(self, *items: Any, center: bool = True, **attributes: Any) -> Window:
         """Creates a modal popup of the given elements and attributes.
 
         Args:
@@ -589,11 +589,11 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
     def toast(
         self,
-        *items,
+        *items: Any,
         offset: int = 0,
         duration: int = 300,
         delay: int = 1000,
-        **attributes,
+        **attributes: Any,
     ) -> Window:
         """Creates a Material UI-inspired toast window of the given elements and attributes.
 

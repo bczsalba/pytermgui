@@ -229,7 +229,7 @@ class Container(ScrollableWidget):
 
         Args:
             other: Any widget instance, or data structure that can be turned
-            into a widget by `Widget.from_data`.
+                into a widget by `Widget.from_data`.
 
         Returns:
             A reference to self.
@@ -651,7 +651,7 @@ class Container(ScrollableWidget):
         Analogous to self._widgets.remove(other).
 
         Args:
-            widget: The widget to remove.
+            other: The widget to remove.
         """
 
         return self._widgets.remove(other)
