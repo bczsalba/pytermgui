@@ -520,7 +520,7 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
                 y=cursor_y - (baseline_offset if not _is_block(line) else 0),
                 fill=back or default_back,
                 width=text_len * 1.02,
-                height=FONT_HEIGHT,
+                height=FONT_HEIGHT * 1.02,
             )
 
             text += _make_tag(
