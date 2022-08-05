@@ -30,7 +30,7 @@ from .highlighters import *
 from .input import getch, keys
 from .inspector import *
 from .markup import *
-from .palette import *
+from .palettes import *
 from .prettifiers import *
 from .serializer import *
 from .terminal import *
