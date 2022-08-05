@@ -11,7 +11,7 @@ from .fancy_repr import FancyYield
 from .markup import MarkupLanguage, tim
 
 SHADE_COUNT = 3
-SHADE_FLOOR = 0.3
+SHADE_FLOOR = 0.4
 SHADE_INCREMENT = (1 - SHADE_FLOOR) / SHADE_COUNT
 
 SURFACE = Color.parse("#303030")
@@ -21,6 +21,7 @@ __all__ = [
     "Palette",
     "triadic",
     "analogous",
+    "palette",
 ]
 
 
@@ -63,9 +64,6 @@ def triadic(base: Color) -> tuple[Color, Color, Color, Color]:
 def analogous(base: Color) -> tuple[Color, Color, Color, Color]:
     """Colors that sit next to eachother on the colorwheel.
 
-    Note that the base will be returned as the secondary color, as that is how
-    the orientation works best.
-
     Args:
         base: The color used for derivations.
 
@@ -74,7 +72,7 @@ def analogous(base: Color) -> tuple[Color, Color, Color, Color]:
 
     before, _, after = base.analogous
 
-    return before, base, after, before.complement
+    return base, before, after, base.complement
 
 
 STRATEGIES = {
@@ -190,7 +188,7 @@ class Palette:
         black = Color.parse("#000000")
         white = Color.parse("#FFFFFF")
 
-        palette = {}
+        data = {}
 
         for name, color in base_palette.items():
             for shadenumber in range(-SHADE_COUNT, SHADE_COUNT + 1):
@@ -215,16 +213,16 @@ class Palette:
                         blend_color, blend_multiplier * SHADE_INCREMENT * shadenumber
                     )
 
-                palette[f"{name}{shadeindex}"] = blended
+                data[f"{name}{shadeindex}"] = blended
 
                 bg_variant = deepcopy(blended)
                 bg_variant.background = True
-                palette[f"@{name}{shadeindex}"] = bg_variant
+                data[f"@{name}{shadeindex}"] = bg_variant
 
         return Palette(
             {
                 key: ("@" if color.background else "") + color.hex
-                for key, color in palette.items()
+                for key, color in data.items()
             }
         )
 
@@ -326,3 +324,9 @@ class Palette:
                 )
             )
             tim.print("".join(f"[@{self.data[name]}]{' ' * length}" for name in names))
+
+
+palette = Palette.generate_from(
+    primary="#7c93d0", success="#93d07b", warning="#d0b97b", error="#d07b92"
+)
+palette.alias()
