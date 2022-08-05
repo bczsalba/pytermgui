@@ -319,7 +319,7 @@ class TIMWindow(AppWindow):
         user_container = _create_table(
             (_show_style(tag), f"[{tag}]{value}")
             for tag, value in ptg.tim.aliases.items()
-            if not tag.startswith("/")
+            if not tag.startswith("/") and tag not in ptg.palette.data
         )
 
         return ptg.Container(tag_container, user_container, box="EMPTY")

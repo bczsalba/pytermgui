@@ -126,7 +126,7 @@ class PixelMatrix(Widget):
         for row in self._matrix:
             line = ""
             for pixel in row:
-                if len(pixel) > 0:
+                if len(pixel) > 0 and pixel != "background":
                     line += f"[@{pixel}]  "
                 else:
                     line += "[/ background]  "
