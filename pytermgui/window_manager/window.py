@@ -53,13 +53,13 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
     chars = Container.chars.copy()
 
     styles = w_styles.StyleManager(
-        border=w_styles.FOREGROUND,
-        corner=w_styles.FOREGROUND,
-        fill="",
-        border_focused=w_styles.FOREGROUND,
-        corner_focused=w_styles.FOREGROUND,
-        border_blurred="238",
-        corner_blurred="238",
+        border="surface",
+        corner="surface",
+        fill="background",
+        border_focused="surface",
+        corner_focused="surface",
+        border_blurred="surface-2",
+        corner_blurred="surface-2",
     )
 
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
@@ -75,6 +75,9 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
         self.styles.border_focused = type(self).styles.border
         self.styles.corner_focused = type(self).styles.corner
+
+        if "box" not in attrs:
+            attrs["box"] = "DOUBLE"
 
         super().__init__(*widgets, **attrs)
 

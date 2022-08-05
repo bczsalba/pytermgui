@@ -45,7 +45,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
     styles = w_styles.StyleManager(
         value="",
         prompt="",
-        cursor="dim inverse",
+        cursor="@primary dim #auto",
     )
 
     keys = {

@@ -701,7 +701,7 @@ class Label(Widget):
     """
 
     serialized = Widget.serialized + ["*value", "align", "padding"]
-    styles = w_styles.StyleManager(value=w_styles.MARKUP)
+    styles = w_styles.StyleManager(value="")
 
     def __init__(
         self,

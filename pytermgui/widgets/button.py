@@ -16,8 +16,8 @@ class Button(Widget):
     """A simple Widget representing a mouse-clickable button"""
 
     styles = w_styles.StyleManager(
-        label=w_styles.CLICKABLE,
-        highlight=w_styles.CLICKED,
+        label="@surface dim #auto",
+        highlight="@surface+1 dim #auto",
         _current=None,
     )
 

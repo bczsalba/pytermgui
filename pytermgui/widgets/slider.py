@@ -30,12 +30,12 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
     chars = {"cursor": "", "fill": "", "rail": "━", "delimiter": ["[", "]"]}
 
     styles = w_styles.StyleManager(
-        delimiter=UNFILLED_STYLE,
-        filled=FILLED_UNSELECTED_STYLE,
-        cursor=FILLED_SELECTED_STYLE,
-        filled_selected=FILLED_SELECTED_STYLE,
-        unfilled=UNFILLED_STYLE,
-        unfilled_selected=UNFILLED_STYLE,
+        delimiter="surface",
+        filled="surface+1",
+        cursor="primary",
+        filled_selected="primary",
+        unfilled="surface-1",
+        unfilled_selected="surface",
     )
 
     keys = {

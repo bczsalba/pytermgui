@@ -28,11 +28,6 @@ __all__ = [
     "StyleManager",
     "DepthlessStyleType",
     "CharType",
-    "MARKUP",
-    "FOREGROUND",
-    "BACKGROUND",
-    "CLICKABLE",
-    "CLICKED",
 ]
 
 if TYPE_CHECKING:
@@ -341,19 +336,3 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
             self._set_as_stylecall(key, value)
 
         return self.parent
-
-
-CLICKABLE = MarkupFormatter("[@238 72 bold]{item}")
-"""Style for inactive clickable things, such as `pytermgui.widgets.Button`"""
-
-CLICKED = MarkupFormatter("[238 @72 bold]{item}")
-"""Style for active clickable things, such as `pytermgui.widgets.Button`"""
-
-FOREGROUND = lambda _, item: item
-"""Standard foreground style, currently unused by the library"""
-
-BACKGROUND = lambda _, item: item
-"""Standard background, used by most `fill` styles"""
-
-MARKUP = lambda depth, item: tim.parse(item)
-"""Style that parses value as markup. Used by most text labels, like `pytermgui.widgets.Label`"""

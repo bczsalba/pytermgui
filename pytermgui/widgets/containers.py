@@ -31,9 +31,9 @@ class Container(ScrollableWidget):
     """A widget that displays other widgets, stacked vertically."""
 
     styles = w_styles.StyleManager(
-        border=w_styles.MARKUP,
-        corner=w_styles.MARKUP,
-        fill=w_styles.BACKGROUND,
+        border="surface",
+        corner="surface",
+        fill="background",
     )
 
     chars: dict[str, w_styles.CharType] = {
@@ -74,8 +74,14 @@ class Container(ScrollableWidget):
         for widget in widgets:
             self._add_widget(widget)
 
-        if "box" in attrs:
+        if "box" not in attrs:
+            attrs["box"] = "SINGLE"
+
+        try:
             self.box = attrs["box"]
+        # Splitter doesn't use boxes ATM.
+        except KeyError:
+            pass
 
         self._mouse_target: Widget | None = None
 
@@ -971,7 +977,7 @@ class Container(ScrollableWidget):
 class Splitter(Container):
     """A widget that displays other widgets, stacked horizontally."""
 
-    styles = w_styles.StyleManager(separator=w_styles.MARKUP, fill=w_styles.BACKGROUND)
+    styles = w_styles.StyleManager(separator="surface2", fill="background")
 
     chars: dict[str, list[str] | str] = {"separator": " | "}
     keys = {

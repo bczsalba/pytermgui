@@ -43,7 +43,9 @@ class PixelMatrix(Widget):
     selected_pixel: tuple[tuple[int, int], str] | None
     """A tuple of the position & value (color) of the currently hovered pixel."""
 
-    def __init__(self, width: int, height: int, default: str = "", **attrs) -> None:
+    def __init__(
+        self, width: int, height: int, default: str = "background", **attrs
+    ) -> None:
         """Initializes a PixelMatrix.
 
         Args:
@@ -127,7 +129,7 @@ class PixelMatrix(Widget):
                 if len(pixel) > 0:
                     line += f"[@{pixel}]  "
                 else:
-                    line += "[/]  "
+                    line += "[/ background]  "
 
             lines.append(tim.parse(line))
 

@@ -20,7 +20,7 @@ CODE_GROUP = {
 }
 
 
-DEFAULT_ALIASES = {**CODE_GROUP}
+DEFAULT_ALIASES = {**CODE_GROUP, **{"background": ""}}
 
 
 def apply_default_aliases(lang: MarkupLanguage) -> None:

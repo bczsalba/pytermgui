@@ -59,6 +59,7 @@ from __future__ import annotations
 
 from typing import Optional, Type, Union
 
+from ..palette import Palette
 from . import boxes
 from .base import *
 from .button import Button
@@ -74,6 +75,9 @@ from .styles import *
 from .toggle import Toggle
 
 WidgetType = Union[Widget, Type[Widget]]
+
+palette = Palette.generate_from(primary="skyblue")
+palette.alias()
 
 
 class _IDManager:
