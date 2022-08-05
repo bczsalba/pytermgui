@@ -18,6 +18,7 @@
 ### Refactors
 
 - Make all the `ptg` program & all builting widgets use the global palette
+- Prefix all ANSI colors with `ansi-`
 
 <!-- HATCH README END -->
 
