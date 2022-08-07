@@ -108,15 +108,15 @@ class Compositor:
     #     self._cache[_id] = lines
     #     return lines
 
-    @staticmethod
     def _iter_positioned(
-        widget: Widget, until: int | None = None
+        self, widget: Widget, until: int | None = None
     ) -> Iterator[tuple[tuple[int, int], str]]:
         """Iterates through (pos, line) tuples from widget.get_lines()."""
 
         # get_lines = widget.get_lines
         # if isinstance(widget, Window):
         #     get_lines = lambda *_: self._get_lines(widget)  # type: ignore
+        width, height = self.terminal.size
 
         if until is None:
             until = widget.height
@@ -130,7 +130,10 @@ class Compositor:
             yield (pos, line)
 
         for item in widget.positioned_line_buffer.copy():
-            yield item
+            pos, line = item
+
+            if 0 <= pos[0] <= width and 0 <= pos[1] <= height:
+                yield item
 
             widget.positioned_line_buffer.remove(item)
 
