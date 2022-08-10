@@ -5,7 +5,7 @@ requires = ["hatchling", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pytermgui"
+name = "PyTermGUI"
 authors = [ { name = "Balázs Cene", email= "bczsalba@gmail.com" } ]
 description = """\
     Python TUI framework with mouse support, modular widget system, \
