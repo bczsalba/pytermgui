@@ -11,6 +11,7 @@ from __future__ import annotations
 from copy import deepcopy
 from inspect import signature
 from typing import Any, Callable, Generator, Iterator, Optional, Type, Union
+from unicodedata import lookup as u_lookup
 
 from ..ansi_interface import MouseAction, MouseEvent, reset
 from ..enums import HorizontalAlignment, SizePolicy, WidgetChange
@@ -517,7 +518,12 @@ class Widget:  # pylint: disable=too-many-public-methods
         """
 
         chars = self.chars[key]
+
         if isinstance(chars, str):
+            if chars.startswith("u:"):
+                identifier = " ".join(chars[2:].split("_"))
+                chars = u_lookup(identifier)
+
             return chars
 
         return chars.copy()
