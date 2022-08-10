@@ -389,6 +389,9 @@ class Widget:  # pylint: disable=too-many-public-methods
             if parts[0] in ["left", "right"]:
                 return (action.value, parts[1])
 
+            if parts[0] == "shift":
+                return (action.value, f"shift_{parts[1]}", parts[1])
+
             # scroll up & down
             return (action.value, parts[0])
 

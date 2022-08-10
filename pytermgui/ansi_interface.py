@@ -395,6 +395,12 @@ class MouseAction(Enum):
     SCROLL_DOWN = "scroll_down"
     """Mouse wheel or touchpad scroll downwards."""
 
+    SHIFT_SCROLL_UP = "shift_scroll_up"
+    """Mouse wheel or touchpad scroll upwards."""
+
+    SHIFT_SCROLL_DOWN = "shift_scroll_down"
+    """Mouse wheel or touchpad scroll downwards."""
+
     HOVER = "hover"
     """Mouse moved without clicking."""
 
@@ -562,6 +568,8 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
             "35": MouseAction.HOVER,
             "64": MouseAction.SCROLL_UP,
             "65": MouseAction.SCROLL_DOWN,
+            "68": MouseAction.SHIFT_SCROLL_UP,
+            "69": MouseAction.SHIFT_SCROLL_DOWN,
         },
         "decimal_urxvt": {
             "32": MouseAction.LEFT_CLICK,

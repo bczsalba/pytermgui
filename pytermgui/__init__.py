@@ -32,6 +32,7 @@ from .inspector import *
 from .markup import *
 from .palettes import *
 from .prettifiers import *
+from .regex import *
 from .serializer import *
 from .terminal import *
 from .widgets import *
