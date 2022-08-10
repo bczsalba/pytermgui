@@ -13,4 +13,4 @@ from setuptools import setup
 
 # These two fields aren't supported properly by setuptools' pyproject.toml
 # reading, so we'll add it manually.
-setup(author="Balázs Cene", url="https://github.com/bczsalba/PyTermGUI")
+setup(name="pytermgui", author="Balázs Cene", url="https://github.com/bczsalba/PyTermGUI")
