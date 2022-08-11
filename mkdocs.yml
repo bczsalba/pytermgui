@@ -1,0 +1,97 @@
+site_name: PyTermGUI::docs
+
+theme:
+  name: material
+  font:
+    text: Open Sans
+
+  features:
+    - navigation.tabs
+    - content.code.annotate
+
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep-purple
+      accent: lime
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep-purple
+      accent: green
+      toggle:
+        icon: material/lightbulb
+        name: Switch to light mode
+
+plugins:
+  - search
+  - gen-files:
+      scripts:
+        - docs/gen_ref_nav.py
+        - docs/gen_docstring_svgs.py
+
+  - literate-nav:
+      nav_file: SUMMARY.md
+
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [pytermgui]
+          options:
+            docstring_style: google
+
+  - termage:
+      # MkDocs Material's theme colors
+      background: "#21222C"
+      foreground: "#D5D7E2"
+
+
+repo_url: https://github.com/bczsalba/pytermgui
+repo_name: bczsalba/pytermgui
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.superfences
+  - pymdownx.keys
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - PyTermGUI:
+    - Landing: index.md
+    - Widgets:
+      - 'Palettes & styling': widgets/styling.md
+      - Built-ins: widgets/builtins.md
+      - Create your own: widgets/custom.md
+
+    - How do I get started?: getting_started.md
+
+  - TIM:
+    - Introduction: tim/index.md
+    - Syntax: tim/syntax.md
+    - MarkupLanguage: tim/markup_language.md
+    - Examples: tim/examples.md
+    - Specification: tim/spec.md
+
+      # - "ANSI & xterm APIs": ansi.md
+
+      # - Miscellaneous: misc.md
+
+  - Walkthroughs:
+    - walkthroughs/index.md
+
+    - Building a TUI application:
+      - Making plans: walkthroughs/tui/planning.md
+      - Defining structure: walkthroughs/tui/blockouts.md
+      - Adding interaction: walkthroughs/tui/interaction.md
+      - Earning those stylepoints: walkthroughs/tui/styling.md
+
+  - Reference: reference/
+
