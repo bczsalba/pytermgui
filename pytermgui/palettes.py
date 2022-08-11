@@ -360,8 +360,12 @@ class Palette:
             tim.print("".join(f"[@{self.data[name]}]{' ' * length}" for name in names))
             tim.print(
                 "".join(
-                    f"[@{self.data[name]} bold #auto]"
-                    + (name.center(length) if name in keys else " " * length)
+                    f"[@{self.data[name]} #auto]"
+                    + (
+                        f"[bold]{name:^{length}}[/]"
+                        if name in keys
+                        else name[-2:].center(length)
+                    )
                     for name in names
                 )
             )
