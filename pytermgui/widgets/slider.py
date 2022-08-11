@@ -27,7 +27,7 @@ class Slider(Widget):  # pylint: disable=too-many-instance-attributes
     locked: bool
     """Disallow mouse input, hide cursor and lock current state"""
 
-    chars = {"cursor": "", "fill": "", "rail": "━", "delimiter": ["[", "]"]}
+    chars = {"cursor": "", "rail": "━", "delimiter": ["[", "]"]}
 
     styles = w_styles.StyleManager(
         delimiter="surface",

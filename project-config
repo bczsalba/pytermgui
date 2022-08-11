@@ -47,6 +47,9 @@ cover:
 test-cov:
 	make test cover
 
+docs-dev:
+	$(python3 utils/doc_command.py)
+
 docs:
 	pdoc --logo https://github.com/bczsalba/pytermgui/blob/master/assets/title.png?raw=true --docformat google -o docs pytermgui" > $VIM_PROJPATH/Makefile
 }

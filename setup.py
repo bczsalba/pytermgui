@@ -11,6 +11,10 @@ This file is for:
 
 from setuptools import setup
 
-# These two fields aren't supported properly by setuptools' pyproject.toml
+# These fields aren't supported properly by setuptools' pyproject.toml
 # reading, so we'll add it manually.
-setup(name="pytermgui", author="Balázs Cene", url="https://github.com/bczsalba/PyTermGUI")
+#
+# `name` is needed for GitHub's dependency tracking to function properly.
+setup(
+    name="pytermgui", author="Balázs Cene", url="https://github.com/bczsalba/PyTermGUI"
+)

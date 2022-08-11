@@ -30,5 +30,8 @@ cover:
 test-cov:
 	make test cover
 
+docs-dev:
+	mkdocs serve --watch docs/index.html --watch docs/.DS_Store --watch docs/widgets.md --watch docs/pytermgui.html --watch docs/CNAME --watch docs/ansi.md --watch docs/pytermgui --watch docs/getting_started.md --watch docs/tim --watch docs/window_manager.md --watch docs/index.md --watch docs/gen_ref_nav.py --watch docs/_config.yml --watch docs/misc.md --watch docs/gen_docstring_svgs.py --watch docs/search.js --watch docs/reference --watch docs/walkthroughs --watch docs/src
+
 docs:
 	pdoc --logo https://github.com/bczsalba/pytermgui/blob/master/assets/title.png?raw=true --docformat google -o docs pytermgui
