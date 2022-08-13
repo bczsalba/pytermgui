@@ -141,7 +141,7 @@ def show_cursor() -> None:
 def save_cursor() -> None:
     """Saves the current cursor position.
 
-    Use `restore_cursor()` to restore it.
+    Use `restore_cursor` to restore it.
     """
 
     terminal.write("\x1b[s")
@@ -153,7 +153,7 @@ def restore_cursor() -> None:
     terminal.write("\x1b[u")
 
 
-def report_cursor() -> tuple[int, int] | None:
+def report_cursor() -> Optional[tuple[int, int]]:
     """Gets position of cursor.
 
     Returns:
@@ -179,7 +179,7 @@ def move_cursor(pos: tuple[int, int]) -> None:
     """Moves the cursor.
 
     Args:
-        pos: Tuple of (columns, rows) that the cursor will be moved to.
+        pos: Tuple of that the cursor will be moved to.
 
     This does not flush the terminal for performance reasons. You
     can do it manually with `sys.stdout.flush()`.
@@ -547,7 +547,7 @@ def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
 
     Args:
         code: The string of mouse code(s) to translate.
-        method: The reporting method to translate. One of [`decimal_xterm`, `decimal_urxvt`].
+        method: The reporting method to translate. One of `decimal_xterm`, `decimal_urxvt`.
 
     Returns:
         A list of optional mouse events obtained from the code argument. If the code was malformed,
