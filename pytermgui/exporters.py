@@ -548,7 +548,9 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
     stylesheet = "" if inline_styles else _generate_stylesheet(document_styles, prefix)
 
     terminal_width = terminal.width * FONT_WIDTH + 2 * TEXT_MARGIN_LEFT
-    terminal_height = terminal.height * FONT_HEIGHT + 2 * TEXT_MARGIN_TOP
+    terminal_height = (
+        terminal.height * FONT_HEIGHT + (2 if chrome else 1) * TEXT_MARGIN_TOP
+    )
 
     total_width = terminal_width + (2 * SVG_MARGIN_LEFT if chrome else 0)
     total_height = terminal_height + (2 * SVG_MARGIN_TOP if chrome else 0)
@@ -581,8 +583,8 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
 
     return formatter.format(
         # Dimensions
-        total_width=terminal_width + (2 * SVG_MARGIN_LEFT if chrome else 0),
-        total_height=terminal_height + (2 * SVG_MARGIN_TOP if chrome else 0),
+        total_width=total_width,
+        total_height=total_height,
         terminal_width=terminal_width * 1.02,
         terminal_height=terminal_height - 15,
         # Styles
