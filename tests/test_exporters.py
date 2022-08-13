@@ -3,7 +3,7 @@ from __future__ import annotations
 from testfixtures import compare
 
 import pytermgui
-from pytermgui import tim, DensePixelMatrix, Color, str_to_color
+from pytermgui import Color, DensePixelMatrix, str_to_color, tim
 from pytermgui.terminal import Recorder, Terminal, terminal
 
 try:

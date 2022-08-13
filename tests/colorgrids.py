@@ -1,9 +1,10 @@
 """Displays some RGB colorgrids in the terminal."""
 
-import time
 import colorsys
+import time
 from argparse import ArgumentParser, Namespace
-from pytermgui import tim, terminal, ColorSystem
+
+from pytermgui import ColorSystem, terminal, tim
 
 
 def _normalize(_rgb: tuple[float, float, float]) -> str:

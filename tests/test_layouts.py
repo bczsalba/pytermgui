@@ -1,8 +1,9 @@
 import re
+
 import pytest
 
-from pytermgui.window_manager.layouts import Auto, Static
 import pytermgui as ptg
+from pytermgui.window_manager.layouts import Auto, Static
 
 
 def test_auto():

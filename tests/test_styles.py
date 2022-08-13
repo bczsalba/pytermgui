@@ -1,4 +1,5 @@
 import pytest
+
 import pytermgui as ptg
 
 

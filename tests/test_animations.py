@@ -1,7 +1,7 @@
 import pytest
 
 import pytermgui as ptg
-from pytermgui.animations import _remove_flag, Animation, Direction
+from pytermgui.animations import Animation, Direction, _remove_flag
 
 
 class MyTarget:

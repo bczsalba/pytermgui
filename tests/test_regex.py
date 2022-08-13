@@ -1,5 +1,5 @@
 import pytermgui as ptg
-from pytermgui.regex import strip_ansi, strip_markup, real_length, has_open_sequence
+from pytermgui.regex import has_open_sequence, real_length, strip_ansi, strip_markup
 
 
 def test_strip_ansi():
