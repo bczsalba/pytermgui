@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import TYPE_CHECKING, Callable, Generator, Match, Pattern, Protocol
 
-from .markup import Token, consume_tag, escape
+from .markup import Token, consume_tag
 from .regex import RE_MARKUP
 
 if TYPE_CHECKING:
@@ -219,7 +219,6 @@ _KEYWORD_NAMES = "|".join(
 )
 
 highlight_python = RegexHighlighter(
-    pre_formatter=escape,
     prefix="code.",
     styles=[
         ("multiline_str", r"([frbu]*)\"{3}([\s\S]*?)(?<!\\)\"{3}"),
