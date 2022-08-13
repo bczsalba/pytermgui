@@ -21,7 +21,6 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
     to store and display various widgets, while allowing some custom functionality.
     """
 
-    is_bindable = True
     overflow = Overflow.HIDE
 
     title = ""

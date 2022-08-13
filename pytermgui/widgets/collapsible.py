@@ -15,8 +15,6 @@ __all__ = ["Collapsible"]
 class Collapsible(Container):
     """A collapsible section of UI."""
 
-    is_bindable = True
-
     def __init__(
         self, label: str, *items: Any, keyboard: bool = False, **attrs: Any
     ) -> None:

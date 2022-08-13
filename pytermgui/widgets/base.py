@@ -106,9 +106,6 @@ class Widget:  # pylint: disable=too-many-public-methods
     # and thus mypy doesn't see its existence.
     _id_manager: Optional["_IDManager"] = None  # type: ignore
 
-    is_bindable = False
-    """Allow binding support"""
-
     size_policy = SizePolicy.get_default()
     """`pytermgui.enums.SizePolicy` to set widget's width according to"""
 
@@ -566,13 +563,7 @@ class Widget:  # pylint: disable=too-many-public-methods
             action: The action executed when the key is pressed.
             description: An optional description for this binding. It is not really
                 used anywhere, but you can provide a helper menu and display them.
-
-        Raises:
-            TypeError: This widget is not bindable, i.e. widget.is_bindable == False.
         """
-
-        if not self.is_bindable:
-            raise TypeError(f"Widget of type {type(self)} does not accept bindings.")
 
         if description is None:
             description = f"Binding of {key} to {action}"

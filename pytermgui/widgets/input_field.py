@@ -61,8 +61,6 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
     parent_align = HorizontalAlignment.LEFT
 
-    is_bindable = True
-
     def __init__(
         self,
         value: str = "",

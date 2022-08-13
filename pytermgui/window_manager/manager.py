@@ -48,8 +48,6 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
     using the `pytermgui.window_manager.window.Window` class and the general Widget API.
     """
 
-    is_bindable = True
-
     focusing_actions = (MouseAction.LEFT_CLICK, MouseAction.RIGHT_CLICK)
     """These mouse actions will focus the window they are acted upon."""
 
