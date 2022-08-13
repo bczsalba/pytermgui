@@ -183,6 +183,7 @@ class Inspector(Container):
         show_methods: bool = False,
         show_full_doc: bool = False,
         show_qualname: bool = True,
+        show_header: bool = True,
         **attrs: Any,
     ):
         """Initializes an inspector.
@@ -202,6 +203,8 @@ class Inspector(Container):
                 line.
             show_qualname: Show fully-qualified name, e.g. `module.submodule.name`
                 instead of `name`.
+            show_header: If not set, the header containing the path to the object and
+                its qualname will not be added.
         """
 
         if "box" not in attrs:
@@ -216,6 +219,7 @@ class Inspector(Container):
         self.show_methods = show_methods
         self.show_full_doc = show_full_doc
         self.show_qualname = show_qualname
+        self.show_header = show_header
 
         # TODO: Fix attr-showing
         self.show_attrs = False
@@ -417,7 +421,7 @@ class Inspector(Container):
         self.target_type = _determine_type(target)
 
         # Header
-        if self.box is not INDENTED_EMPTY_BOX:
+        if self.show_header and self.box is not INDENTED_EMPTY_BOX:
             self.lazy_add(self._get_header())
 
         # Body
