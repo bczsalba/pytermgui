@@ -68,7 +68,8 @@ nav:
     - Landing: index.md
     - Widgets:
       - 'Palettes & styling': widgets/styling.md
-      - Built-ins: widgets/builtins.md
+      - The batteries included: widgets/builtins.md
+      - Attributes to know about: widgets/attrs.md
       - Create your own: widgets/custom.md
 
     - How do I get started?: getting_started.md
