@@ -1,6 +1,6 @@
 While the default widgets are pretty nifty themselves, sometimes you might wanna do your own thing. Luckily for you, PyTermGUI's `Widget` API is ridiculously easy to build upon!
 
-## Pre-requisities
+## What to know
 
 Firstly, you should know some things about the shape and function of various parts of the API.
 
@@ -47,6 +47,7 @@ To compare key codes to canonical names (e.g. `CTRL_B` to `\x02`), you can use t
 ```python
 from pytermgui import Widget, keys
 
+
 class MyWidget(Widget):
     def handle_key(self, key: str) -> bool:
         if super().handle_key(key):
@@ -72,7 +73,8 @@ def handle_mouse(self, event: MouseEvent) -> bool:
 The only argument is the `event`, which is an instance of [MouseEvent](/reference/pytermgui/ansi_interface/#pytermgui.ansi_interface.MouseEvent). This is what it looks like:
 
 ```termage-svg height=28 title=inspect(MouseEvent)
-from pytermgui import inspect, MouseEvent
+from pytermgui import MouseEvent, inspect
+
 print(inspect(MouseEvent))
 ```
 
@@ -115,7 +117,8 @@ They all follow the syntax `on_{event_name}`. events can be one of:
 Handler methods are looked for in the order of highest specifity. For example, the following widget:
 
 ```python
-from pytermgui import Widget, MouseEvent
+from pytermgui import MouseEvent, Widget
+
 
 class MyWidget(Widget):
     label: str = "No action"
@@ -145,9 +148,105 @@ class MyWidget(Widget):
 ...will display `Left click` only on left clicks, `Generic click` only on right clicks (as `on_right_click` isn't defined) and `No action` on any other mouse input.
 
 
-## Actually creating something
+## FAQ
 
-While the above has touched on elements of creating your own widgets, we haven't done much that is very functional. Here is that very functional bit.
+### How do I dynamically update a widget's content?
 
-```termage-svg include=docs/src/todo.py title=You\ weren't\ meant\ to\ see\ this...
+The pattern I've come to adopt for this purpose is based on a regularly updated inner state that gets displayed within `get_lines`. For example, let's say we have a `Weather` widget that regularly requests weather information and displays it. 
+
+Here is how I would do it. Take _extra_ notice of the highlighted lines:
+
+```termage include=docs/src/widgets/weather.py linenums="1" hl_lines="51 52 62 63 64 65 66 67 68 69"
 ```
+
+As you can see, I made the widget inherit `Container`. This is _usually_ what you want when dealing with a widget that:
+
+- Contains inner content representable by sub-widgets (`Label` in our case)
+- Has to periodically update said inner content
+
+We also use a thread to do all the monitoring & updating, instead of doing it in `get_lines` or some other periodically called method. Since `get_lines` is called _very_ regularly, and its time-to-return is critical for the rendering of an application, we need to make sure to avoid putting anything with noticable delays in there.
+
+??? warning "Don't overuse threads"
+    
+    If you have multiple widgets that run on a thread-based monitor, you are likely better of creating a single master thread that updates every widget periodically. A simple monitor implementation like the following should work alright:
+
+    ```python
+    from __future__ import annotations
+
+    from dataclasses import dataclass, field
+    from threading import Thread
+    from time import sleep, time
+    from typing import Callable
+
+
+    @dataclass
+    class Listener:
+        callback: Callable[[], None]
+        period: float
+        time_till_next: float
+
+
+    @dataclass
+    class Monitor:
+        update_frequency: float = 0.5
+        listeners: list[Listener] = field(default_factory=list)
+
+        def attach(self, callback: Callable[[], None], *, period: float) -> Listener:
+            listener = Listener(callback, period, period)
+            self.listeners.append(listener)
+
+            return listener
+
+        def start(self) -> Monitor:
+            def _monitor() -> None:
+                previous = time()
+
+                while True:
+                    elapsed = time() - previous
+
+                    for listener in self.listeners:
+                        listener.time_till_next -= elapsed
+
+                        if listener.time_till_next <= 0.0:
+                            listener.callback()
+                            listener.time_till_next = listener.period
+
+                    previous = time()
+                    sleep(self.update_frequency)
+
+            Thread(target=_monitor).start()
+            return self
+    ```
+
+    You can then use this in your widgets:
+
+    ```py
+    from .monitor import Monitor
+    from pytermgui import Container
+
+    monitor = Monitor().start()
+
+    class Weather(Container):
+        def __init__(self, location: str, timeout: float, **attrs: Any) -> None:
+            ...  # Standard init code (see above)
+
+            monitor.attach(self._request_and_update, timeout) 
+
+        def _request_and_update(self) -> None:
+            self.data = self._request()
+            self.update_content()
+    ```
+
+**Let's talk about those highlighted lines, shall we?**
+
+In the first set of lines we send out a request to the (imaginary) external API, and update ourselves accordingly. This update is done in the second set of lines, where the `set_widgets` method is used to overwrite the current widget selection.
+
+**Why use this method instead of manually overwriting `_widgets`?**
+
+The reason this method was created in the first place was to simplify the process of:
+
+- Emptying the container's widgets
+- Resetting its height
+- Going through a list, running `auto` on each item and adding it to the container
+
+It makes things a lot simpler, and it also accounts for any future oddities that mess with the process!

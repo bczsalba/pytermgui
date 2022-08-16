@@ -1,4 +1,4 @@
-from pytermgui import pretty, Container, Label
+from pytermgui import Container, Label, pretty
 
 container = Container(
     Label("This is the left", parent_align=0),

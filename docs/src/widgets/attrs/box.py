@@ -1,4 +1,4 @@
-from pytermgui import pretty, Container, boxes
+from pytermgui import Container, boxes, pretty
 
 container = Container(box="EMPTY")
 

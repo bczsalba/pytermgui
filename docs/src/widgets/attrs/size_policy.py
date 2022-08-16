@@ -1,4 +1,4 @@
-from pytermgui import pretty, Container, SizePolicy
+from pytermgui import Container, SizePolicy, pretty
 
 container = Container(
     Container("I fill the space"),
