@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 __all__ = [
     "Token",
     "PlainToken",
+    "PseudoToken",
     "StyleToken",
     "ColorToken",
     "AliasToken",
@@ -73,6 +74,11 @@ class Token:
 
         return isinstance(self, PlainToken)
 
+    def is_pseudo(self) -> TypeGuard["PseudoToken"]:
+        """Returns True if this token is an instance of PseudoToken."""
+
+        return isinstance(self, PseudoToken)
+
     def is_color(self) -> TypeGuard["ColorToken"]:
         """Returns True if this token is an instance of ColorToken."""
 
@@ -125,6 +131,17 @@ class PlainToken(Token):
 
     def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         yield f"<{type(self).__name__} markup: {self.markup!r}>"
+
+
+@dataclass(frozen=True, repr=False)
+class PseudoToken(Token):
+    """A token that can modify it's context, but doesn't hold information of its own."""
+
+    value: str
+
+    @cached_property
+    def prettified_markup(self) -> str:
+        return f"[245 italic]{self.markup}[/]"
 
 
 @dataclass(frozen=True, repr=False)

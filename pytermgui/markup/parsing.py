@@ -19,6 +19,7 @@ from .tokens import (
     HLinkToken,
     MacroToken,
     PlainToken,
+    PseudoToken,
     StyleToken,
     Token,
 )
@@ -111,6 +112,9 @@ def consume_tag(tag: str) -> Token:  # pylint: disable=too-many-return-statement
             )
 
         return CursorToken(tag[1:-1], *map(int, values))
+
+    if tag == "#auto":
+        return PseudoToken("#auto")
 
     token: Token
     try:
@@ -716,12 +720,12 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals, too-man
                     token.value, "has nothing to target", get_full()
                 )
 
-        if Token.is_color(token):
+        if Token.is_color(token) and token.color.background:
+            background = token.color
+
+        if Token.is_pseudo(token):
             if token.value == "#auto":
                 token = ColorToken("#auto", background.contrast)
-
-            elif token.color.background:
-                background = token.color
 
         try:
             segment += PARSERS[type(token)](token, context, get_full)  # type: ignore
