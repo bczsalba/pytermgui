@@ -66,24 +66,25 @@ markdown_extensions:
 nav:
   - PyTermGUI:
     - Landing: index.md
+    - Introduction: intro.md
+
+    - TIM:
+      - Introduction: tim/index.md
+      - Syntax: tim/syntax.md
+      - MarkupLanguage: tim/markup_language.md
+      - Examples: tim/examples.md
+      - Specification: tim/spec.md
+
     - Widgets:
       - 'Palettes & styling': widgets/styling.md
       - The batteries included: widgets/builtins.md
       - Attributes to know about: widgets/attrs.md
       - Create your own: widgets/custom.md
 
+    - Inspection: inspect.md
+    - 'SVG & HTML exports': exports.md
+
     - How do I get started?: getting_started.md
-
-  - TIM:
-    - Introduction: tim/index.md
-    - Syntax: tim/syntax.md
-    - MarkupLanguage: tim/markup_language.md
-    - Examples: tim/examples.md
-    - Specification: tim/spec.md
-
-      # - "ANSI & xterm APIs": ansi.md
-
-      # - Miscellaneous: misc.md
 
   - Walkthroughs:
     - walkthroughs/index.md
