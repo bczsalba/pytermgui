@@ -8,6 +8,8 @@ The [markup](/reference/pytermgui/markup) module exports the `tim` name; this is
 
     `MarkupLanguage` keeps track of some context that can be modified with the `alias` and `define` methods, and passes this state into every `parse*` call for you!
 
+**Fun fact**: You can use TIM in most widgets! See the [styling docs](/widgets/styling) for more info.
+
 ## Methods
 
 ### Parse

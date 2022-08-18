@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from time import sleep
 from threading import Thread
+from time import sleep
 
-from pytermgui import StyleManager, Container, tim, real_length
+from pytermgui import Container, StyleManager, real_length, tim
 
 
 @dataclass

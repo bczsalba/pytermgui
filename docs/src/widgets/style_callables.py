@@ -1,4 +1,4 @@
-from pytermgui import Container, Button, tim, pretty
+from pytermgui import Button, Container, pretty, tim
 
 template = "[@primary #auto] {first} [@surface-1 #auto] {second} "
 
