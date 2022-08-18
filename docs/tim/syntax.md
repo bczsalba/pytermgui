@@ -210,3 +210,15 @@ when there are no arguments passed.
 
 In both examples, `name` is the name the macro is defined as, and `arg1` and `arg2` are some arguments passed to it. Macro arguments are separated by colons (`:`), in order to clearly visually differentiate them from Python function calls.
 
+## Positioners
+
+You can position text in the terminal using the syntax:
+
+```
+[({x};{y})]
+```
+
+Where `x` and `y` are terminal coordinates, starting from [terminal.origin](/reference/pytermgui/terminal#pytermgui.terminal.origin).
+
+```termage include=docs/src/tim/syntax_position.py chrome=false height=5 tabs=TIM,Output
+```

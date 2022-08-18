@@ -33,7 +33,7 @@ While you _can_ set these manually, it's easier for the both of us if you use th
 
 <p style="padding-top: 5px"></p>
 
-```termage-svg chrome=false height=23 title=Size\ policy\ helpers
+```termage-svg chrome=false height=23 title="Size policy helpers"
 from pytermgui import inspect, Widget
 print(inspect(Widget.static_width.fget, show_header=False))
 print("\n")

@@ -1,4 +1,5 @@
 from pytermgui import Window
+
 &from pytermgui import WindowManager
 
 window = Window("This is my test window")
