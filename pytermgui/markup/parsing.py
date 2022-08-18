@@ -156,10 +156,6 @@ def tokenize_markup(text: str) -> Iterator[Token]:
             continue
 
         for tag in content.split():
-            if tag == "#auto":
-                yield ColorToken("#auto", Color.parse("#000000"))
-                continue
-
             if tag == "inverse":
                 has_inverse = True
 
