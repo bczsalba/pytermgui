@@ -70,10 +70,8 @@ nav:
 
     - TIM:
       - Introduction: tim/index.md
-      - Syntax: tim/syntax.md
-      - MarkupLanguage: tim/markup_language.md
-      - Examples: tim/examples.md
-      - Specification: tim/spec.md
+      - Tags: tim/tags.md
+      - Usage in PTG: tim/usage.md
 
     - Widgets:
       - 'Palettes & styling': widgets/styling.md
@@ -84,16 +82,13 @@ nav:
     - Inspection: inspect.md
     - 'SVG & HTML exports': exports.md
 
-    - How do I get started?: getting_started.md
+      # - How do I get started?: getting_started.md
 
   - Walkthroughs:
     - walkthroughs/index.md
 
-    - Building a TUI application:
-      - Making plans: walkthroughs/tui/planning.md
-      - Defining structure: walkthroughs/tui/blockouts.md
-      - Adding interaction: walkthroughs/tui/interaction.md
-      - Earning those stylepoints: walkthroughs/tui/styling.md
+    - Building a TUI application: tui/
+    - Building an inline-widget context: inline/
 
   - Reference: reference/
 
