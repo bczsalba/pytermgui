@@ -53,7 +53,7 @@ Default: `SizePolicy.FILL`
 
 ### Box
 
-The container `border` and `corner` characters can be set to a few presets, which are defined in the [boxes](/reference/pytermgui/widgets/boxes.py) module. 
+The container `border` and `corner` characters can be set to a few presets, which are defined in the [boxes](/reference/pytermgui/widgets/boxes) module. 
 
 Setting the `box` attribute to either a `Box` instance or an upper-cased box name will set both the `border` and `corner` characters to those defined by the box.
 

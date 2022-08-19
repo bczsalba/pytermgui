@@ -65,8 +65,7 @@ markdown_extensions:
 
 nav:
   - PyTermGUI:
-    - Landing: index.md
-    - Introduction: intro.md
+    - Welcome: welcome.md
 
     - TIM:
       - Introduction: tim/index.md
@@ -82,13 +81,15 @@ nav:
     - Inspection: inspect.md
     - 'SVG & HTML exports': exports.md
 
-      # - How do I get started?: getting_started.md
-
   - Walkthroughs:
     - walkthroughs/index.md
 
-    - Building a TUI application: tui/
-    - Building an inline-widget context: inline/
+    - Building a TUI application:
+      - Planning: walkthroughs/tui/planning.md
+      - Functional prototype: walkthroughs/tui/prototype.md
+      - Styled product: walkthroughs/tui/product.md
+
+    - Building an inline-widget context: walkthroughs/inline.md
 
   - Reference: reference/
 
