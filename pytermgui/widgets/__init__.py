@@ -1,59 +1,4 @@
-"""
-The widget system.
-
-Basic concept
--------------
-
-Everything starts with the `Widget` class. It represents a single part
-of the overarching system. Simple widgets like `Label` simply implement
-a `get_lines` method, in which they can come up with what to display as.
-
-The more complex type widget is something like `Container`. This widget holds
-other widgets within itself, and uses some fancy logic to display them
-in a neat and organized way.
-
-
-Magic methods
--------------
-
-Most widgets support a selection of magic methods, also known as dunders.
-For example, all `Container` children are iterable by default, and allow
-adding elements using the `+=` operator. You can also index into them, if
-that floats your boat.
-
-
-Demo
-----
-
-There is a lot more information specific to each widget, located in its
-documentation. For now, here is a cool showcase of this part of pytermgui.
-
-```python3
-import sys
-import pytermgui as ptg
-
-with ptg.alt_buffer():
-    root = ptg.Container(
-        ptg.Label("[210 bold]This is a title"),
-        ptg.Label(""),
-        ptg.Label("[italic grey]This is some body text. It is very interesting."),
-        ptg.Label(),
-        ptg.Button("[red]Stop application!", onclick=lambda *_: sys.exit()),
-        ptg.Button("[green]Do nothing"),
-    )
-
-    root.center().print()
-
-    while True:
-        root.handle_key(ptg.getch())
-        root.print()
-```
-
-<p style="text-align: center">
- <img
-  src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/
-  widgets/demo.png" width=100%>
-</p>"""
+"""The widget system."""
 
 from __future__ import annotations
 
@@ -67,6 +12,7 @@ from .collapsible import *
 from .color_picker import ColorPicker
 from .containers import *
 from .fancy_repr import FancyReprWidget
+from .inline import inline
 from .input_field import InputField
 from .keyboard_button import KeyboardButton
 from .pixel_matrix import *
