@@ -44,8 +44,3 @@ Because of the way the framework is built, you can implement the input-key-mouse
 Widget layouts are explicit from the syntax of their creation. Widgets are rendered line-by-line, using the plain strings they return. There is built-in support for [keyboard](/widgets/custom#keyboard-input) & [mouse](/widgets/custom#mouse-input) inputs on all widgets, as well as the underlying low-level API that is used to make it all work.
 
 This means that you, the user, can create TUI applications with workflows that rival the web in simplicity, without having to deal with the _massive_ fragmentation, framework war, and <sub>_shudders_</sub> CSS.
-
-## In more practical terms
-
-```termage include=docs/src/crud.py
-```

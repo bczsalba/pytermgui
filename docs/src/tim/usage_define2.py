@@ -1,37 +1,29 @@
 from pytermgui import tim
 
-LANG = "en"
+LANGUAGE = "en"
 
-
-def toggle_lang() -> None:
-    global LANG
-
-    LANG = "hu" if LANG == "en" else "en"
-    tim.print(f"LANGUAGE: [bold lime]{LANG}")
-
-
-LOCALIZATION_DATA = {
-    "welcome-long": {
-        "en": "Welcome to the docs!",
-        "hu": "Üdv a dokumentációban!",
-    },
-    "settings": {
-        "en": "Settings",
-        "hu": "Beállítások",
-    },
+TRANSLATIONS = {
+    "welcome": {
+        "en": "Welcome to the documentation",
+        "hu": "Üdv a dokumentációban",
+    }
 }
 
 
-def macro_lang(ident: str) -> str:
-    return LOCALIZATION_DATA[ident][LANG]
+def macro_lang(key: str) -> str:
+    translation = TRANSLATIONS.get(key)
+
+    if translation is None:
+        return key
+
+    return translation[LANGUAGE]
 
 
 tim.define("!lang", macro_lang)
 
-for _ in range(2):
-    toggle_lang()
+for LANGUAGE in ["en", "hu"]:
     tim.clear_cache()
 
-    tim.print("[!lang italic]welcome-long")
-    tim.print("[!lang]settings")
+    tim.print(f"[bold]LANGUAGE: [/ 157]{LANGUAGE!r}")
+    tim.print("--> [!lang]welcome[/!lang]")
     tim.print()

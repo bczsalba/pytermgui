@@ -68,7 +68,7 @@ A simple widget meant to display text. Supports line breaking and styling using 
 
 ---
 
-## [Container](/reference/pytermgui/widgets/base/#pytermgui.widgets.containers.Container)
+## [Container](/reference/pytermgui/widgets/containers#pytermgui.widgets.containers.Container)
 
 A widget to display other widgets, stacked vertically. It may display a box around said widgets as well, using the `border` and `corner` characters.
 
@@ -95,7 +95,7 @@ A widget to display other widgets, stacked vertically. It may display a box arou
 
 ---
 
-## [Splitter](/reference/pytermgui/widgets/base/#pytermgui.widgets.containers.Splitter)
+## [Splitter](/reference/pytermgui/widgets/containers#pytermgui.widgets.containers.Splitter)
 
 
 Similar to Container, but displays widgets stacked horizontally instead. Each widget is separated by the `separator` character set.
@@ -117,7 +117,7 @@ Similar to Container, but displays widgets stacked horizontally instead. Each wi
 
 ---
 
-## [Collapsible](/reference/pytermgui/widgets/collapsible/#pytermgui.widgets.collapsible)
+## [Collapsible](/reference/pytermgui/widgets/collapsible#pytermgui.widgets.collapsible)
 
 A widget that hides or shows whatever other widgets it is given. It will always display its "trigger", the `Button` used to collapse or expand its content.
 
@@ -133,7 +133,7 @@ A widget that hides or shows whatever other widgets it is given. It will always 
 
 ---
 
-## [Window](/reference/pytermgui/window_manager/window/#pytermgui.window_manager.window)
+## [Window](/reference/pytermgui/window_manager/window#pytermgui.window_manager.window)
 
 An extended version of `Container`, used in the `window_manager` context.
 
@@ -165,7 +165,7 @@ Same as `Container`, but expanded with:
 
 ---
 
-## [Button](/reference/pytermgui/widgets/button/#pytermgui.widgets.button)
+## [Button](/reference/pytermgui/widgets/button#pytermgui.widgets.button)
 
 
 Something clickable. All widgets can be made clickable by defining an `on_click` method, but this widget looks the part as well.
@@ -193,7 +193,7 @@ Something clickable. All widgets can be made clickable by defining an `on_click`
 
 ---
 
-## [KeyboardButton](/reference/pytermgui/widgets/keyboard_button/#pytermgui.widgets.keyboard_button)
+## [KeyboardButton](/reference/pytermgui/widgets/keyboard_button#pytermgui.widgets.keyboard_button)
 
 
 
@@ -214,7 +214,7 @@ Much like button, but has a default binding applied to it. This binding is also 
 ---
 
 
-## [Checkbox](/reference/pytermgui/widgets/checkbox/#pytermgui.widgets.checkbox)
+## [Checkbox](/reference/pytermgui/widgets/checkbox#pytermgui.widgets.checkbox)
 
 A simple check box, you know the drill.
 
@@ -236,7 +236,7 @@ A simple check box, you know the drill.
 
 ---
 
-## [Toggle](/reference/pytermgui/widgets/toggle/#pytermgui.widgets.toggle)
+## [Toggle](/reference/pytermgui/widgets/toggle#pytermgui.widgets.toggle)
 
 A button that toggles its label between the two given values.
 
@@ -254,7 +254,7 @@ A button that toggles its label between the two given values.
 
 ---
 
-## [Slider](/reference/pytermgui/widgets/slider/#pytermgui.widgets.slider.Slider)
+## [Slider](/reference/pytermgui/widgets/slider#pytermgui.widgets.slider.Slider)
 
 A widget to display and/or control a floating point value.
 
@@ -290,7 +290,7 @@ A widget to display and/or control a floating point value.
 
 ---
 
-## [InputField](/reference/pytermgui/widgets/input_field/#pytermgui.widgets.input_field.InputField)
+## [InputField](/reference/pytermgui/widgets/input_field#pytermgui.widgets.input_field.InputField)
 
 A field to display input. Should be used in a context that sends it keyboard inputs, such as `WindowManager`.
 
@@ -314,7 +314,7 @@ A field to display input. Should be used in a context that sends it keyboard inp
 
 ---
 
-## [PixelMatrix](/reference/widgets/pixel_matrix/#pytermgui.widgets.pixel_matrix.PixelMatrix)
+## [PixelMatrix](/reference/pytermgui/widgets/pixel_matrix#pytermgui.widgets.pixel_matrix.PixelMatrix)
 
 A customizable matrix of unicode pixels. With some image decoding, it can be used to display low-resolution pictures.
 
@@ -326,7 +326,7 @@ A customizable matrix of unicode pixels. With some image decoding, it can be use
 
 ---
 
-## [DensePixelMatrix](/reference/widgets/pixel_matrix/#pytermgui.widgets.pixel_matrix.DensePixelMatrix)
+## [DensePixelMatrix](/reference/pytermgui/widgets/pixel_matrix/#pytermgui.widgets.pixel_matrix.DensePixelMatrix)
 
 Similar to `PixelMatrix`, but instead of using two unicode block characters per pixel, it uses either the upper or lower half of one. Allows for higher resolution pictures!
 
