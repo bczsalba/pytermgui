@@ -21,7 +21,7 @@ from os import system
 from typing import Any, Optional, Pattern, Union
 
 from .input import getch
-from .terminal import terminal
+from .terminal import get_terminal
 
 __all__ = [
     "save_screen",
@@ -122,20 +122,20 @@ def clear(what: str = "screen") -> None:
         "line": "\x1b[2K",
     }
 
-    terminal.write(commands[what])
+    get_terminal().write(commands[what])
 
 
 # cursor commands
 def hide_cursor() -> None:
     """Stops printing the cursor."""
 
-    terminal.write("\x1b[?25l")
+    get_terminal().write("\x1b[?25l")
 
 
 def show_cursor() -> None:
     """Starts printing the cursor."""
 
-    terminal.write("\x1b[?25h")
+    get_terminal().write("\x1b[?25h")
 
 
 def save_cursor() -> None:
@@ -144,13 +144,13 @@ def save_cursor() -> None:
     Use `restore_cursor()` to restore it.
     """
 
-    terminal.write("\x1b[s")
+    get_terminal().write("\x1b[s")
 
 
 def restore_cursor() -> None:
     """Restore cursor position as saved by `save_cursor`."""
 
-    terminal.write("\x1b[u")
+    get_terminal().write("\x1b[u")
 
 
 def report_cursor() -> tuple[int, int] | None:
@@ -165,7 +165,7 @@ def report_cursor() -> tuple[int, int] | None:
         `report_mouse` if that is what you are interested in.
     """
 
-    terminal.write("\x1b[6n", flush=True)
+    get_terminal().write("\x1b[6n", flush=True)
     chars = getch()
     posy, posx = chars[2:-1].split(";")
 
@@ -186,7 +186,7 @@ def move_cursor(pos: tuple[int, int]) -> None:
     """
 
     posx, posy = pos
-    terminal.write(f"\x1b[{posy};{posx}H")
+    get_terminal().write(f"\x1b[{posy};{posx}H")
 
 
 def cursor_up(num: int = 1) -> None:
@@ -200,7 +200,7 @@ def cursor_up(num: int = 1) -> None:
         can do it manually with `sys.stdout.flush()`.
     """
 
-    terminal.write(f"\x1b[{num}A")
+    get_terminal().write(f"\x1b[{num}A")
 
 
 def cursor_down(num: int = 1) -> None:
@@ -214,7 +214,7 @@ def cursor_down(num: int = 1) -> None:
         can do it manually with `sys.stdout.flush()`.
     """
 
-    terminal.write(f"\x1b[{num}B")
+    get_terminal().write(f"\x1b[{num}B")
 
 
 def cursor_right(num: int = 1) -> None:
@@ -228,7 +228,7 @@ def cursor_right(num: int = 1) -> None:
         can do it manually with `sys.stdout.flush()`.
     """
 
-    terminal.write(f"\x1b[{num}C")
+    get_terminal().write(f"\x1b[{num}C")
 
 
 def cursor_left(num: int = 1) -> None:
@@ -242,7 +242,7 @@ def cursor_left(num: int = 1) -> None:
         can do it manually with `sys.stdout.flush()`.
     """
 
-    terminal.write(f"\x1b[{num}D")
+    get_terminal().write(f"\x1b[{num}D")
 
 
 def cursor_next_line(num: int = 1) -> None:
@@ -256,7 +256,7 @@ def cursor_next_line(num: int = 1) -> None:
         can do it manually with `sys.stdout.flush()`.
     """
 
-    terminal.write(f"\x1b[{num}E")
+    get_terminal().write(f"\x1b[{num}E")
 
 
 def cursor_prev_line(num: int = 1) -> None:
@@ -270,7 +270,7 @@ def cursor_prev_line(num: int = 1) -> None:
         can do it manually with `sys.stdout.flush()`.
     """
 
-    terminal.write(f"\x1b[{num}F")
+    get_terminal().write(f"\x1b[{num}F")
 
 
 def cursor_column(num: int = 0) -> None:
@@ -284,18 +284,18 @@ def cursor_column(num: int = 0) -> None:
         can do it manually with `sys.stdout.flush()`.
     """
 
-    terminal.write(f"\x1b[{num}G")
+    get_terminal().write(f"\x1b[{num}G")
 
 
 def cursor_home() -> None:
-    """Moves cursor to `terminal.origin`.
+    """Moves cursor to `get_terminal().origin`.
 
     Note:
         This does not flush the terminal for performance reasons. You
         can do it manually with `sys.stdout.flush()`.
     """
 
-    terminal.write("\x1b[H")
+    get_terminal().write("\x1b[H")
 
 
 def set_mode(mode: Union[str, int], write: bool = True) -> str:
@@ -343,7 +343,7 @@ def set_mode(mode: Union[str, int], write: bool = True) -> str:
 
     code = f"\x1b[{mode}m"
     if write:
-        terminal.write(code)
+        get_terminal().write(code)
 
     return code
 
@@ -506,30 +506,30 @@ def report_mouse(
     """
 
     if event == "press":
-        terminal.write("\x1b[?1000")
+        get_terminal().write("\x1b[?1000")
 
     elif event == "highlight":
-        terminal.write("\x1b[?1001")
+        get_terminal().write("\x1b[?1001")
 
     elif event == "press_hold":
-        terminal.write("\x1b[?1002")
+        get_terminal().write("\x1b[?1002")
 
     elif event == "hover":
-        terminal.write("\x1b[?1003")
+        get_terminal().write("\x1b[?1003")
 
     else:
         raise NotImplementedError(f"Mouse report event {event} is not supported!")
 
-    terminal.write("l" if stop else "h")
+    get_terminal().write("l" if stop else "h")
 
     if method == "decimal_utf8":
-        terminal.write("\x1b[?1005")
+        get_terminal().write("\x1b[?1005")
 
     elif method == "decimal_xterm":
-        terminal.write("\x1b[?1006")
+        get_terminal().write("\x1b[?1006")
 
     elif method == "decimal_urxvt":
-        terminal.write("\x1b[?1015")
+        get_terminal().write("\x1b[?1015")
 
     elif method is None:
         return
@@ -537,7 +537,7 @@ def report_mouse(
     else:
         raise NotImplementedError(f"Mouse report method {method} is not supported!")
 
-    terminal.write("l" if stop else "h", flush=True)
+    get_terminal().write("l" if stop else "h", flush=True)
 
 
 def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:
