@@ -2,17 +2,20 @@ Our objective today will be to implement a function that lets us use PyTermGUI w
 
 This type of usage is common for simple prompts that are part of a greater, CLI-based application; they give you the cool-factor of the TUI, and in our case its mouse & keyboard input options, while staying in a CLI environment.
 
+```termage-svg height=9 include=docs/src/inline_login.py
+```
+
 ## Defining our goals
 
 Our target syntax will be this:
 
-```python title="inline.py"
+```python
 prompt_widget = ptg.inline(built_prompt())
 ```
 
 ...which gives us the general signature:
 
-```python title="inline.py"
+```python
 def inline(widget: T) -> T:
 ```
 
