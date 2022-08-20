@@ -56,12 +56,12 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - admonition
-  - pymdownx.superfences
   - pymdownx.keys
   - pymdownx.details
   - pymdownx.snippets
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.superfences
 
 nav:
   - PyTermGUI:
