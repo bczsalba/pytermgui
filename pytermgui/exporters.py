@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import xml.dom.minidom as md
 from copy import deepcopy
 from html import escape
 from typing import Iterator
@@ -97,6 +98,15 @@ _STYLE_TO_CSS = {
 
 
 __all__ = ["token_to_css", "to_html"]
+
+
+def prettify_xml(xml: str) -> str:
+    """Prettifies some XML."""
+
+    dom = md.parseString(xml)
+    pretty_xml = dom.toprettyxml()
+
+    return "\n".join([s for s in pretty_xml.splitlines()[1:] if s.strip() != ""])
 
 
 def _get_cls(prefix: str | None, index: int) -> str:
@@ -519,8 +529,8 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
                 x=cursor_x,
                 y=cursor_y - (baseline_offset if not _is_block(line) else 0),
                 fill=back or default_back,
-                width=text_len * 1.02,
-                height=FONT_HEIGHT * 1.02,
+                width=round(text_len * 1.02, 4),
+                height=round(FONT_HEIGHT * 1.02, 4),
             )
 
             text += _make_tag(
@@ -547,9 +557,9 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
 
     stylesheet = "" if inline_styles else _generate_stylesheet(document_styles, prefix)
 
-    terminal_width = terminal.width * FONT_WIDTH + 2 * TEXT_MARGIN_LEFT
-    terminal_height = (
-        terminal.height * FONT_HEIGHT + (2 if chrome else 1) * TEXT_MARGIN_TOP
+    terminal_width = round(terminal.width * FONT_WIDTH + 2 * TEXT_MARGIN_LEFT, 4)
+    terminal_height = round(
+        terminal.height * FONT_HEIGHT + (2 if chrome else 1) * TEXT_MARGIN_TOP, 4
     )
 
     total_width = terminal_width + (2 * SVG_MARGIN_LEFT if chrome else 0)
@@ -581,17 +591,19 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
 
     output = _make_tag("g", text, transform=transform) + "\n"
 
-    return formatter.format(
-        # Dimensions
-        total_width=total_width,
-        total_height=total_height,
-        terminal_width=terminal_width * 1.02,
-        terminal_height=terminal_height - 15,
-        # Styles
-        background=default_back,
-        stylesheet=stylesheet,
-        # Code
-        code=output,
-        prefix=prefix,
-        chrome=chrome_part,
+    return prettify_xml(
+        formatter.format(
+            # Dimensions
+            total_width=round(total_width, 4),
+            total_height=round(total_height, 4),
+            terminal_width=terminal_width * 1.02,
+            terminal_height=terminal_height - 15,
+            # Styles
+            background=default_back,
+            stylesheet=stylesheet,
+            # Code
+            code=output,
+            prefix=prefix,
+            chrome=chrome_part,
+        )
     )
