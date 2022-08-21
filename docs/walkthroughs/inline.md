@@ -16,7 +16,10 @@ prompt_widget = ptg.inline(built_prompt())
 ...which gives us the general signature:
 
 ```python
-def inline(widget: T) -> T:
+def inline(widget):
+    ...
+
+    return widget
 ```
 
 ## Basic implementation
@@ -24,12 +27,9 @@ def inline(widget: T) -> T:
 Let's start with getting the widget to read keyboard inputs and render after each one of them. To do this, we will sit in a `while` loop, use the [getch](/reference/pytermgui/input#pytermgui.input.getch) function and send its output to our widget's [handle_key](/reference/pytermgui/widgets/base#pytermgui.widgets.base.Widget.handle_key) method.
 
 ```python title="inline.py"
-from typing import TypeVar
 from pytermgui import getch, Widget
 
-T = TypeVar("T", bound=Widget)
-
-def inline(widget: T) -> T:
+def inline(widget):
     while True:
         key = getch()
 
@@ -90,7 +90,7 @@ It's important to note that this is not a full hard _drop everything you're doin
       
       T = TypeVar("T", bound=Widget)
       
-      def inline(widget: T) -> T:
+      def inline(widget):
           while True:
     -         key = getch()
     +         key = getch(interrupts=False)
@@ -114,7 +114,7 @@ It's important to note that this is not a full hard _drop everything you're doin
     
     T = TypeVar("T", bound=Widget)
     
-    def inline(widget: T) -> T:
+    def inline(widget):
         while True:
             key = getch(interrupts=False)
     
@@ -147,9 +147,7 @@ Let's start by making the following changes:
     - from pytermgui import getch, keys, Widget
     + from pytermgui import getch, keys, save_cursor, restore_cursor, Widget
       
-      T = TypeVar("T", bound=Widget)
-      
-      def inline(widget: T) -> T:
+      def inline(widget):
           while True:
               key = getch(interrupts=False)
       
@@ -173,10 +171,8 @@ Let's start by making the following changes:
     ```python linenums="1" title="inline.py"
     from typing import TypeVar
     from pytermgui import getch, keys, save_cursor, restore_cursor, Widget
-    
-    T = TypeVar("T", bound=Widget)
-    
-    def inline(widget: T) -> T:
+     
+    def inline(widget):
         while True:
             key = getch(interrupts=False)
     
@@ -203,10 +199,8 @@ This fixes the issue, but you may notice our widget only gets printed after the 
       from typing import TypeVar
       from pytermgui import getch, keys, save_cursor, restore_cursor, Widget
 
-      T = TypeVar("T", bound=Widget)
-
-      def inline(widget: T) -> T:
-    +     def _print_widget() -> None:
+      def inline(widget):
+    +     def _print_widget():
     +         save_cursor()
     +
     +         for line in widget.get_lines():
@@ -241,10 +235,8 @@ This fixes the issue, but you may notice our widget only gets printed after the 
     from typing import TypeVar
     from pytermgui import getch, keys, save_cursor, restore_cursor, Widget
 
-    T = TypeVar("T", bound=Widget)
-
-    def inline(widget: T) -> T:
-        def _print_widget() -> None:
+    def inline(widget):
+        def _print_widget():
             save_cursor()
     
             for line in widget.get_lines():
@@ -274,7 +266,7 @@ We can use the [clear](/reference/pytermgui/ansi_interface#pytermgui.ansi_interf
 Let's introduce a new inner function, `_clear_widget`:
 
 ```python linenums="15"
-def _clear_widget() -> None:
+def _clear_widget():
     save_cursor()
 
     for _ in range(widget.height):
@@ -306,13 +298,11 @@ Here is a snapshot of our work so far:
     +     get_terminal,
     + )
 
-      T = TypeVar("T", bound=Widget)
-
-      def inline(widget: T) -> T:
+      def inline(widget):
     +     # Make sure we use the global terminal
     +     terminal = get_terminal()
     +
-          def _print_widget() -> None:
+          def _print_widget():
               save_cursor()
      
               for line in widget.get_lines():
@@ -320,7 +310,7 @@ Here is a snapshot of our work so far:
      
               restore_cursor()
 
-    +     def _clear_widget() -> None:
+    +     def _clear_widget():
     +         save_cursor()
     +
     +         for _ in range(widget.height):
@@ -361,13 +351,11 @@ Here is a snapshot of our work so far:
         get_terminal,
     )
 
-    T = TypeVar("T", bound=Widget)
-
-    def inline(widget: T) -> T:
+    def inline(widget):
         # Make sure we use the global terminal
         terminal = get_terminal()
     
-        def _print_widget() -> None:
+        def _print_widget():
             save_cursor()
     
             for line in widget.get_lines():
@@ -375,7 +363,7 @@ Here is a snapshot of our work so far:
     
             restore_cursor()
 
-        def _clear_widget() -> None:
+        def _clear_widget():
             save_cursor()
     
             for _ in range(widget.height):
@@ -460,15 +448,13 @@ from pytermgui import (
     mouse_handler,
 )
 
-T = TypeVar("T", bound=Widget)
-
-def inline(widget: T) -> T:
+def inline(widget):
     # Make sure we use the global terminal
     terminal = get_terminal()
 
     widget.pos = report_cursor()
 
-    def _print_widget() -> None:
+    def _print_widget():
         save_cursor()
 
         for line in widget.get_lines():
@@ -476,7 +462,7 @@ def inline(widget: T) -> T:
 
         restore_cursor()
 
-    def _clear_widget() -> None:
+    def _clear_widget():
         save_cursor()
 
         for _ in range(widget.height):
