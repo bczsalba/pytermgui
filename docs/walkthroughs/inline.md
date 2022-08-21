@@ -515,6 +515,6 @@ def inline(widget: T) -> T:
 
 ## Congratulations!
 
-**You just implemented PyTermGUI's [inline](/reference/pytermgui/widgets#pytermgui.widgets.inline) function!**
+**You just implemented PyTermGUI's [inline](/reference/pytermgui/widgets/inline#pytermgui.widgets.inline) function!**
 
 Make sure to look at its source code for the final version of the code we've been working with, along with a few extra improvements, such as handling each the widget's `positioned_line_buffer`.
