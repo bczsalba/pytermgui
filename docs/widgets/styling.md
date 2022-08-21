@@ -46,7 +46,7 @@ palette.regenerate(primary="skyblue")
 
 Under the hood, it will look at the given color, and generate some complementaries for it. 
 
-The above code gives use the following palette, btw:
+The above code gives use the following palette, by the way:
 
 ```termage-svg width=91 height=44 title= 
 from pytermgui import palette
@@ -90,7 +90,7 @@ Values for these calls can be of 2 general types:
 
 #### TIM string shorthands
 
-The easier way to create custom styles is by defining some markup for them. A fully-expanded markup string contains both the `{depth}` and `{item}` template keys, but it can be shortened and [expanded automatically](/reference/pytermgui/widgets/styles/#pytermgui.widgets.styles.StyleManager.expand_shorthand) for convenience.
+The easier way to create custom styles is by defining some markup for them. A fully expanded markup string contains both the `{depth}` and `{item}` template keys, but it can be shortened and [expanded automatically](/reference/pytermgui/widgets/styles/#pytermgui.widgets.styles.StyleManager.expand_shorthand) for convenience.
 
 `item` must be in the final style string. It represents the string that was passed for styling. `depth` is not necessary to use; it represents the given widget's `depth` property.
 
@@ -104,7 +104,7 @@ For example, `surface+2 italic dim` would be expanded into `[surface+2 italic di
 
 #### Custom callables
 
-For more complete control of a style, one may use a callable. These follow the following signature:
+For more granular control of a style, one may use a callable. These follow the following signature:
 
 ```python
 def my_style(depth: int, item: str) -> str:

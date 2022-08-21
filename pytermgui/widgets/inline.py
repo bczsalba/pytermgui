@@ -41,9 +41,9 @@ def inline(
     Returns:
         The same widget. This allows defining and running a prompt in the same line:
 
-        ```python
-        prompt = inline(_build_prompt())
-        ```
+            ```python
+            prompt = inline(_build_prompt())
+            ```
     """
 
     # Make sure we use the global terminal

@@ -50,7 +50,7 @@ There is also no mouse interaction, but we'll leave that for later.
 
 ## Implementing clean exits
 
-Let's focus on our first problem, relating to the `KeyboardInterrupt` error. This is actually very trivial to fix; we can tell `getch` to convert `KeyboardInterrupt` into the character ++ctrl+c++ sends, and break the loop when we see said character.
+Let's focus on our first problem, relating to the `KeyboardInterrupt` error. This is trivial to fix; we can tell `getch` to convert `KeyboardInterrupt` into the character ++ctrl+c++ sends, and break the loop when we see said character.
 
 The reason we need to do this lies deep in the trenches of the terminal, but here is the gist: When ++ctrl+c++ is detected, the "interrupt" signal is sent to the current foreground task. This signal (in simple terms) tells the program:
 
@@ -287,7 +287,7 @@ def _clear_widget() -> None:
 
 1. We need to increment the cursor using newlines to make sure we aren't just clearing the same line over and over.
 
-To include this, we need to import both `clear` and `terminal`. We also probably want to call our new function, specifically **before** the call to print and at the very end of our `inline` routine.
+To include this, we need to import both `clear` and `terminal`. We also probably want to call our new function, specifically **before** the call to print and at the end of our `inline` routine.
 
 Here is a snapshot of our work so far:
 
@@ -413,7 +413,7 @@ The only new thing we will need to import is the [mouse_handler](/reference/pyte
 - Tells the terminal to send mouse events
 - Returns a function that can translate mouse codes into [MouseEvent](/reference/pytermgui/ansi_interface#pytermgui.ansi_interface.MouseEvent) instances
 
-To use it, we will wrap our `while True` loop into the context, and try to handle keys as mouse events when our widget didn't handle them successfully. Each widget denotes "successful" event handling by returning `True` from the given method, so the check will be very simple:
+To use it, we will wrap our `while True` loop into the context, and try to handle keys as mouse events when our widget didn't handle them successfully. Each widget denotes "successful" event handling by returning `True` from the given method, so the check will be simple:
 
 ```diff linenums="37"
 + with mouse_handler(["press_hold", "hover"], "decimal_xterm") as translate:
@@ -437,7 +437,7 @@ _clear_widget()
 return widget
 ```
 
-There is a tiny bug with our mouse handling, however. We never tell the widget _where_ it is located, so it will reject most events. We can easily fix this by using the [report_mouse](/reference/pytermgui/ansi_interface#pytermgui.ansi_interface.report_mouse) and inserting the following line at the very top of our function:
+There is a tiny bug with our mouse handling, however. We never tell the widget _where_ it is located, so it will reject most events. We can easily fix this by using the [report_mouse](/reference/pytermgui/ansi_interface#pytermgui.ansi_interface.report_mouse) and inserting the following line at the top of our function:
 
 ```python
 widget.pos = report_cursor()

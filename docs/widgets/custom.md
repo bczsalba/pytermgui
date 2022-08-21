@@ -62,7 +62,7 @@ class MyWidget(Widget):
 
 #### Mouse input
 
-While terminal mouse inputs are historically pretty hard to handle, PTG offers a very simple interface to hide all that paperwork. 
+While terminal mouse inputs are historically pretty hard to handle, PTG offers a simple interface to hide all that paperwork. 
 
 An interface symmetrical to the keyboard handlers exists, and is the base of all that comes below:
 

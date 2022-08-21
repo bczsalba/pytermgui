@@ -55,7 +55,7 @@ Terminal apps are (often):
 We provide a couple of things to make your life easier:
 
 - Sensible abstractions over most terminal standards
-- A fully-fledged, desktop-inspired window manager system with modals and completely customizable windows
+- A fully fledged, desktop-inspired window manager system with modals and completely customizable windows
 - Mouse support out of the box with **0** configuration
 - YAML (or Python) based styling engines
 - TIM, our markup language for creating styled terminal text with expressive text, including systems for aliases & macros

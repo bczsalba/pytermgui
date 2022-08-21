@@ -1,4 +1,4 @@
-We provide a growing selection of widgets you can drop straight into your projects. Looking at the `widgets` submodule's contents can help illuminate you on the exact selection, but this page describes the most commonly-used ones.
+We provide a growing selection of widgets you can drop straight into your projects. Looking at the `widgets` submodule's contents can help illuminate you on the exact selection, but this page describes the most commonly used ones.
 
 ## A note about `auto`
 
