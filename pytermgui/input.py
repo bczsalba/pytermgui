@@ -429,7 +429,7 @@ def getch_timeout(
 
     Args:
         duration: How long the call should wait for input.
-        default: The value to return if timeout occured.
+        default: The value to return if timeout occurred.
     """
 
     if isinstance(_getch, _GetchWindows):

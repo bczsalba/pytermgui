@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.0.2"/>
+    <meta name="generator" content="pdoc 12.1.0"/>
     <title>pytermgui.widgets.boxes API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -171,7 +171,7 @@ be referenced &amp; defined in markup file definitions. For more info, check out
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    their respective lines.</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">    You can set corners to be of any length, their end is calculated by</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    finding the index of the most often occuring character, which is assumed</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    finding the index of the most often occurring character, which is assumed</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    to be the border character.</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">    Top &amp; bottom borders are currently limited in length to 1, but sides</span>
@@ -230,7 +230,7 @@ be referenced &amp; defined in markup file definitions. For more info, check out
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="nd">@staticmethod</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="k">def</span> <span class="nf">_find_mode_char</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="sd">&quot;&quot;&quot;Find most often consecutively occuring character in string&quot;&quot;&quot;</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="sd">&quot;&quot;&quot;Find most often consecutively occurring character in string&quot;&quot;&quot;</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="n">instances</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="n">current_char</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -442,7 +442,7 @@ be referenced &amp; defined in markup file definitions. For more info, check out
 </span><span id="Box-41"><a href="#Box-41"><span class="linenos"> 41</span></a><span class="sd">    their respective lines.</span>
 </span><span id="Box-42"><a href="#Box-42"><span class="linenos"> 42</span></a>
 </span><span id="Box-43"><a href="#Box-43"><span class="linenos"> 43</span></a><span class="sd">    You can set corners to be of any length, their end is calculated by</span>
-</span><span id="Box-44"><a href="#Box-44"><span class="linenos"> 44</span></a><span class="sd">    finding the index of the most often occuring character, which is assumed</span>
+</span><span id="Box-44"><a href="#Box-44"><span class="linenos"> 44</span></a><span class="sd">    finding the index of the most often occurring character, which is assumed</span>
 </span><span id="Box-45"><a href="#Box-45"><span class="linenos"> 45</span></a><span class="sd">    to be the border character.</span>
 </span><span id="Box-46"><a href="#Box-46"><span class="linenos"> 46</span></a>
 </span><span id="Box-47"><a href="#Box-47"><span class="linenos"> 47</span></a><span class="sd">    Top &amp; bottom borders are currently limited in length to 1, but sides</span>
@@ -501,7 +501,7 @@ be referenced &amp; defined in markup file definitions. For more info, check out
 </span><span id="Box-100"><a href="#Box-100"><span class="linenos">100</span></a>
 </span><span id="Box-101"><a href="#Box-101"><span class="linenos">101</span></a>    <span class="nd">@staticmethod</span>
 </span><span id="Box-102"><a href="#Box-102"><span class="linenos">102</span></a>    <span class="k">def</span> <span class="nf">_find_mode_char</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="Box-103"><a href="#Box-103"><span class="linenos">103</span></a>        <span class="sd">&quot;&quot;&quot;Find most often consecutively occuring character in string&quot;&quot;&quot;</span>
+</span><span id="Box-103"><a href="#Box-103"><span class="linenos">103</span></a>        <span class="sd">&quot;&quot;&quot;Find most often consecutively occurring character in string&quot;&quot;&quot;</span>
 </span><span id="Box-104"><a href="#Box-104"><span class="linenos">104</span></a>
 </span><span id="Box-105"><a href="#Box-105"><span class="linenos">105</span></a>        <span class="n">instances</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="Box-106"><a href="#Box-106"><span class="linenos">106</span></a>        <span class="n">current_char</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -589,7 +589,7 @@ that the top &amp; bottom border characters should occur most often in
 their respective lines.</p>
 
 <p>You can set corners to be of any length, their end is calculated by
-finding the index of the most often occuring character, which is assumed
+finding the index of the most often occurring character, which is assumed
 to be the border character.</p>
 
 <p>Top &amp; bottom borders are currently limited in length to 1, but sides
@@ -991,7 +991,11 @@ construction parameter.</p>
                 let heading;
                 switch (result.doc.type) {
                     case "function":
-                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;

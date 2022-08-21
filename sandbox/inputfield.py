@@ -10,7 +10,7 @@ import pytermgui as ptg
 def _process_arguments(argv: list[str] | None = None) -> Namespace:
     """Processes command line arguments.
 
-    Note that you don't _have to_ use the bultin argparse module for this; it
+    Note that you don't _have to_ use the builtin argparse module for this; it
     is just what the module uses.
 
     Args:

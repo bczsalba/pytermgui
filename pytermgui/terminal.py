@@ -339,7 +339,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
                 callback(data)
 
     def _get_size(self) -> tuple[int, int]:
-        """Gets the screen size with origin substracted."""
+        """Gets the screen size with origin subtracted."""
 
         if self._size is not None:
             return self._size
@@ -482,7 +482,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             last_time = delay
 
     def subscribe(self, event: int, callback: Callable[..., Any]) -> None:
-        """Subcribes a callback to be called when event occurs.
+        """Subscribes a callback to be called when event occurs.
 
         Args:
             event: The terminal event that calls callback.

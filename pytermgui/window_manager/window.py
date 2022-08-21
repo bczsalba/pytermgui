@@ -66,7 +66,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         """Initializes object.
 
         Args:
-            *widgets: Widgets to add to this window after initilization.
+            *widgets: Widgets to add to this window after initialization.
             **attrs: Attributes that are passed to the constructor.
         """
 

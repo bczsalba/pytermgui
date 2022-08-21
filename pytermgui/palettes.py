@@ -67,7 +67,7 @@ def triadic(base: Color) -> tuple[Color, Color, Color, Color]:
 
 
 def analogous(base: Color) -> tuple[Color, Color, Color, Color]:
-    """Colors that sit next to eachother on the colorwheel.
+    """Colors that sit next to each other on the colorwheel.
 
     Args:
         base: The color used for derivations.

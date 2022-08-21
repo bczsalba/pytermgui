@@ -17,7 +17,7 @@
 
 ### Refactors
 
-- Make all the `ptg` program & all builting widgets use the global palette
+- Make all the `ptg` program & all built-in widgets use the global palette
 - Prefix all ANSI colors with `ansi-`
 
 <!-- HATCH README END -->
@@ -267,7 +267,7 @@
 
 ### Bugfixes
 
-- Fix `[` sometimes being ommitted during `prettify_markup`
+- Fix `[` sometimes being omitted during `prettify_markup`
 
 
 ## [4.1.0] - 2022-03-16

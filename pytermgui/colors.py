@@ -377,7 +377,7 @@ class Color:  # pylint: disable=too-many-public-methods
     def triadic(self) -> tuple[Color, Color, Color]:
         """Computes the triadic group this color is in.
 
-        Triadic colors are 3-way complements of eachother.
+        Triadic colors are 3-way complements of each other.
 
         Returns:
             This color, the first triadic element and the second one.
@@ -389,7 +389,7 @@ class Color:  # pylint: disable=too-many-public-methods
     def tetradic(self) -> tuple[Color, Color, Color, Color]:
         """Computes the tetradic group this color is in.
 
-        Tetradic colors are 4-way complements of eachother.
+        Tetradic colors are 4-way complements of each other.
 
         Returns:
             This color, the first tetradic element and the second one.
@@ -401,7 +401,7 @@ class Color:  # pylint: disable=too-many-public-methods
     def analogous(self) -> tuple[Color, Color, Color]:
         """Computes the analogous group this colors is in.
 
-        Analogous colors are located next to eachother on the color wheel.
+        Analogous colors are located next to each other on the color wheel.
 
         Returns:
             The color to the left, this color and the color to the right.
@@ -818,7 +818,7 @@ SYSTEM_TO_TYPE: dict[ColorSystem, Type[Color]] = {
 def _get_color_difference(rgb1: RGBTriplet, rgb2: RGBTriplet) -> float:
     """Gets the geometric difference of 2 RGB colors (0-255).
 
-    See https://en.wikipedia.org/wiki/Color_difference's Euclidian section.
+    See https://en.wikipedia.org/wiki/Color_difference's Euclidean section.
     """
 
     red1, green1, blue1 = rgb1

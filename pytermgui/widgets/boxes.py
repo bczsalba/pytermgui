@@ -40,7 +40,7 @@ class Box:
     their respective lines.
 
     You can set corners to be of any length, their end is calculated by
-    finding the index of the most often occuring character, which is assumed
+    finding the index of the most often occurring character, which is assumed
     to be the border character.
 
     Top & bottom borders are currently limited in length to 1, but sides
@@ -99,7 +99,7 @@ class Box:
 
     @staticmethod
     def _find_mode_char(line: str) -> str:
-        """Find most often consecutively occuring character in string"""
+        """Find most often consecutively occurring character in string"""
 
         instances = 0
         current_char = ""

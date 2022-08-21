@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.0.2"/>
+    <meta name="generator" content="pdoc 12.1.0"/>
     <title>pytermgui API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -21,6 +21,46 @@
 
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
+
+        <h2>Contents</h2>
+        <ul>
+  <li><a href="#getting-started">Getting started</a></li>
+  <li><a href="#how-to-create-your-own-app">How to: Create your own app</a>
+  <ul>
+    <li><a href="#most-primitive-usecase">Most primitive usecase</a></li>
+    <li><a href="#adding-windows-as-variables">Adding windows as variables</a></li>
+    <li><a href="#adding-windows-during-definition">Adding windows during definition</a></li>
+    <li><a href="#useful-methods-to-know-about">Useful methods to know about</a></li>
+  </ul></li>
+  <li><a href="#how-to-configure-your-application-using-yaml">How to: Configure your Application using <code>YAML</code></a>
+  <ul>
+    <li><a href="#why-you-should-bother">Why you should bother</a></li>
+    <li><a href="#base-application">Base application</a></li>
+    <li><a href="#adding-markup">Adding markup</a></li>
+    <li><a href="#customizing-widget-styles-chars">Customizing widget styles &amp; chars</a></li>
+  </ul></li>
+  <li><a href="#how-to-define-widgets-in-yaml">How to: Define widgets in YAML</a>
+  <ul>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#loading-a-namespace-using-ptg-f">Loading a namespace using <code>ptg -f</code></a></li>
+    <li><a href="#loading-a-namespace-programmatically">Loading a namespace programmatically</a></li>
+    <li><a href="#defining-widget-attributes">Defining widget attributes</a></li>
+    <li><a href="#defining-custom-boxes">Defining custom boxes</a></li>
+    <li><a href="#combining-our-knowledge-to-create-an-application">Combining our knowledge to create an application</a></li>
+  </ul></li>
+  <li><a href="#how-to-define-your-own-widget">How to: Define your own Widget</a>
+  <ul>
+    <li><a href="#important-things-to-know">Important things to know</a></li>
+    <li><a href="#everything-a-girl-widget-needs">Everything a <s>girl</s> widget needs</a></li>
+    <li><a href="#the-things-you-should-define">The things you should define</a></li>
+  </ul></li>
+  <li><a href="#layers-of-the-api">Layers of the API</a>
+  <ul>
+    <li><a href="#low-level">Low level</a></li>
+    <li><a href="#helper-level">Helper level</a></li>
+    <li><a href="#high-level">High level</a></li>
+  </ul></li>
+</ul>
 
 
         <h2>Submodules</h2>
@@ -41,6 +81,7 @@
                 <li><a href="pytermgui/input.html">input</a></li>
                 <li><a href="pytermgui/inspector.html">inspector</a></li>
                 <li><a href="pytermgui/markup.html">markup</a></li>
+                <li><a href="pytermgui/palettes.html">palettes</a></li>
                 <li><a href="pytermgui/prettifiers.html">prettifiers</a></li>
                 <li><a href="pytermgui/pretty.html">pretty</a></li>
                 <li><a href="pytermgui/regex.html">regex</a></li>
@@ -74,8 +115,593 @@ pytermgui    </h1>
                         <div class="docstring"><p>A simple yet powerful TUI framework for your Python (3.7+) applications.</p>
 
 <p>There is a couple of parts that make up this module, all building on top
-of eachother to achieve the final result. Your usage depends on which part
+of each other to achieve the final result. Your usage depends on which part
 of the library you use. I will provide an example of usage for each.</p>
+
+<h1 id="getting-started">Getting started</h1>
+
+<p>Getting started with pytermgui is quite easy. The library allows you to define layouts inline, thus letting you get by without ever having to subclass Widget or WindowManager. However, if you do want that functionality the later sections of this guide will tell you how to.</p>
+
+<h1 id="how-to-create-your-own-app">How to: Create your own app</h1>
+
+<h2 id="most-primitive-usecase">Most primitive usecase</h2>
+
+<p>To create your own app, it is recommended to use the <code>pytermgui.window_manager.WindowManager</code> context. Technically, all that is needed for the app to run correctly is to call <code>pytermgui.window_manager.WindowManager.run</code> with no arguments.</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<p>This will give you an empty screen you can quit using <code>CTRL_C</code>. That is doesn't really get us anywhere though, does it?</p>
+
+<h2 id="adding-windows-as-variables">Adding windows as variables</h2>
+
+<p>In order to actually have something going on, you can call <code>pytermgui.widgets.WindowManager.add</code> with a window of your choice. Adding a window to the manager will bring it to focus.</p>
+
+<p>Here is a quick example of the most basic usecase:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+        <span class="s2">&quot;[wm-title]My first window!&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">exit</span><span class="p">()],</span>
+    <span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="adding-windows-during-definition">Adding windows during definition</h2>
+
+<p>You don't need to assign your window to a variable if you aren't going to reference it later. Since all widgets implement <code>__add__</code> and <code>__iadd__</code>, you can define them as a sum of other widgets.</p>
+
+<p>For example:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">ptg</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="o">+</span> <span class="s2">&quot;[wm-title]My first window!&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">exit</span><span class="p">()]</span>
+    <span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="useful-methods-to-know-about">Useful methods to know about</h2>
+
+<ul>
+<li><code>pytermgui.widgets.Widget.bind</code>: Bind a keypress to an action. You can also add a description, which you can then use to have a sort of help menu.</li>
+<li><code>pytermgui.parser.MarkupLanguage.alias</code>: Alias a single word (with no spaces) to some markup.</li>
+<li><code>pytermgui.parser.MarkupLanguage.define</code>: Define a markup macro. See <code>pytermgui.parser</code> for info on the macro functionality.</li>
+</ul>
+
+<p><strong>Note:</strong> For markup functions, it is recommended to use the <code>markup</code> name that is exported by the module.</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="n">ptg</span><span class="o">.</span><span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;my-tag&quot;</span><span class="p">,</span> <span class="s2">&quot;blue @141&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">markup</span> <span class="k">as</span> <span class="n">mprint</span><span class="p">:</span>
+    <span class="n">mprint</span><span class="p">(</span><span class="s2">&quot;This is [my-tag]my-tag!&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h1 id="how-to-configure-your-application-using-yaml">How to: Configure your Application using <code>YAML</code></h1>
+
+<h2 id="why-you-should-bother">Why you should bother</h2>
+
+<p>While the programmatic interface for the style system is <em>alright</em>, it's a bit clunky to use for serious customization. In order to improve your experience, you can use a YAML file with your configuration in its <code>config</code> section. Additionally, you can define markup in a nicer way as well.</p>
+
+<p>For the purposes of this guide, we will use YAML defined inside our Python code. <code><a href="pytermgui/file_loaders.html#FileLoader.load">pytermgui.file_loaders.FileLoader.load</a></code> can take either strings or files, so the <code>PTG_CONFIG</code> name below can be trivially modified to reference a file.</p>
+
+<p><strong>Note:</strong> You will need to install <code>PyYAML</code> in order to use the YAML loader class.</p>
+
+<h2 id="base-application">Base application</h2>
+
+<p>For the purposes of this section, this is the application we will use:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="c1"># Define empty config as the base</span>
+<span class="c1"># </span>
+<span class="c1"># Note that we define markup tags as empty.</span>
+<span class="c1"># markup tags **need** to be defined for program</span>
+<span class="c1"># execution.</span>
+<span class="n">PTG_CONFIG</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">config: </span><span class="si">{}</span><span class="s2"></span>
+
+<span class="s2">markup:</span>
+<span class="s2">    title: &quot;&quot;</span>
+<span class="s2">    body: &quot;&quot;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="c1"># Initialize a loader, and load our config</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">YamlLoader</span><span class="p">()</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">PTG_CONFIG</span><span class="p">)</span>
+
+    <span class="c1"># Create a test window</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">ptg</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="o">+</span> <span class="s2">&quot;[title]This is our title&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="o">+</span> <span class="p">{</span><span class="s2">&quot;[body]First key&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;First button&quot;</span><span class="p">]}</span>
+        <span class="o">+</span> <span class="p">{</span><span class="s2">&quot;[body]Second key&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Second button&quot;</span><span class="p">]}</span>
+        <span class="o">+</span> <span class="p">{</span><span class="s2">&quot;[body]Third key&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Third button&quot;</span><span class="p">]}</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">exit</span><span class="p">()]</span>
+    <span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<p>This gives us the following, very bland interface.</p>
+
+<p align="center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/base.png
+    style="width: 80%">
+</p>
+
+<h2 id="adding-markup">Adding markup</h2>
+
+<p>As you could see above, defining markup aliases is quite easy. You cannot and will possibly never be able to define macros in a markup file for two main reasons:</p>
+
+<ul>
+<li>It would be a nightmare to implement in terms of technicalities</li>
+<li>It would be a hotbed for RCE security risks</li>
+</ul>
+
+<p>There is some leeway on both of those however, and that may be revisited in the future.</p>
+
+<p>Anyways, markup aliases. The <code>markup</code> section of your file should be the following format:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">markup</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">alias-name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alias-value</span><span class="w"></span>
+</code></pre></div>
+
+<p>...which would stand for</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="n">ptg</span><span class="o">.</span><span class="n">markup</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;alias-name&quot;</span><span class="p">,</span> <span class="s2">&quot;alias-value&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>You should not include <code>[</code> and <code>]</code> delimiters around either arguments.</p>
+
+<p>As an example, let's expand our <code>PTG_CONFIG</code> from above:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+
+<span class="nt">markup</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">210 bold</span><span class="w"></span>
+<span class="w">    </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">245 italic</span><span class="w"></span>
+</code></pre></div>
+
+<p align="center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/markup.png
+    style="width: 80%">
+</p>
+
+<p>Getting there.</p>
+
+<h2 id="customizing-widget-styles-chars">Customizing widget styles &amp; chars</h2>
+
+<p>The markup configuration allows for quite a bit more customization, using the thus-far untouched config section.</p>
+
+<p>The basic syntax goes as follows:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">config</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">WidgetName</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">styles</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">style_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">markup_str</span><span class="w"></span>
+
+<span class="w">        </span><span class="nt">chars</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">char_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">char_str</span><span class="w"></span>
+</code></pre></div>
+
+<p>As you can see, styles take markup strings. This is because they are converted right into <code>pytermgui.styles.MarkupFormatter</code> objects, which means you can incorporate both <code>{depth}</code> and <code>{item}</code> into them.</p>
+
+<p><strong>Note:</strong> While it is permitted, not including <code>depth</code> nor <code>item</code> into your markup will turn it static, likely causing some headaches.</p>
+
+<p>So for a simple example, let's define some styles &amp; chars:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">config</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">Window</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">styles</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">border</span><span class="p">:</span><span class="w"> </span><span class="nl">&amp;border-style</span><span class="w"> </span><span class="s">&quot;[60]{item}&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="nt">corner</span><span class="p">:</span><span class="w"> </span><span class="nv">*border-style</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">Button</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">styles</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[@235</span><span class="nv"> </span><span class="s">108</span><span class="nv"> </span><span class="s">bold]{item}&quot;</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">Splitter</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">chars</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">separator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="nv">   </span><span class="s">&quot;</span><span class="w"></span>
+
+<span class="nt">markup</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">210 bold</span><span class="w"></span>
+<span class="w">    </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">245 italic</span><span class="w"></span>
+</code></pre></div>
+
+<p><strong>Note:</strong> We used the <code>&amp;</code> and <code>*</code> symbols above. In YAML, <code>&amp;</code> creates a named anchor point, and <code>*</code> allows you to reference it. <a href="https://medium.com/@kinghuang/docker-compose-anchors-aliases-extensions-a1e4105d70bd">Here</a> is a cool article on the subject.</p>
+
+<p align="center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/config_basic.png
+    style="width: 80%">
+</p>
+
+<h1 id="how-to-define-widgets-in-yaml">How to: Define widgets in YAML</h1>
+
+<h2 id="setup">Setup</h2>
+
+<p>The file loader system also has support for defining entire widgets in files, as can be seen by the <a href="https://github.com/bczsalba/pytermgui/blob/master/examples/hello_world.yaml">hello world example</a>.</p>
+
+<p>These files can be interpreted with a CLI flag and require no actual code to "run".</p>
+
+<p>This is how the <code>widgets</code> section of the file should look like:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">WidgetName</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WidgetTypeKnownToPTG</span><span class="w"></span>
+<span class="w">        </span><span class="nt">arbitrary-attribute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arbitrary-value</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Alternatively, if you don&#39;t need your widget to be named,</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># this syntax will automatically assign `type` to the key provided.</span><span class="w"></span>
+<span class="w">    </span><span class="nt">WidgetTypeKnownToPTG</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">arbitrary-attribute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arbitrary-value</span><span class="w"></span>
+</code></pre></div>
+
+<p>Where <code>WidgetTypeKnownToPTG</code> <em>must</em> be a widget subclass either included in the library by default, or registered using the loader's serializer. The second is only possible when you are interpreting it from Python yourself, and not when you use <code>ptg -f</code>.</p>
+
+<p>Registering a widget goes as follows:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">ptg</span> <span class="k">as</span> <span class="nn">pytermgui</span>
+
+<span class="k">class</span> <span class="nc">YourCustomWidget</span><span class="p">(</span><span class="n">ptg</span><span class="o">.</span><span class="n">Widget</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="n">serializer</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">Serializer</span><span class="p">()</span>
+<span class="n">serializer</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">YourCustomWidget</span><span class="p">)</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">YamlLoader</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;your-file.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ptg_file</span><span class="p">:</span>
+    <span class="n">namespace</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+</code></pre></div>
+
+<p>All of the <code>FileLoader</code> subclasses take a <code><a href="pytermgui/serializer.html#Serializer">pytermgui.serializer.Serializer</a></code> instance as their first argument, setting up their own if one was not given. This object is then used to instantiate all of the widgets it encounters, so registering a widget to it will allow the loader to use it.</p>
+
+<p><strong>Note:</strong> Serializers can dump any, even unknown widget types, but <strong>can only load known ones</strong>.</p>
+
+<p>Once all your widgets are registered and load correctly, you can access them by the <code>WidgetName</code> attribute of your namespace.</p>
+
+<h2 id="loading-a-namespace-using-ptg-f">Loading a namespace using <code>ptg -f</code></h2>
+
+<p>The simplest way to use these files is running <code>ptg -f "filename"</code>, where <code>filename</code> points to your namespace file. As mentioned above, <strong>you can only use PTG native widget types</strong> with this method.</p>
+
+<p>What that CLI tool does is essentially this:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">namespace</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">YamlLoader</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">namespace</span><span class="o">.</span><span class="n">widgets</span><span class="p">:</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="loading-a-namespace-programmatically">Loading a namespace programmatically</h2>
+
+<p>Loading namespaces manually is more or less defined above, with one extra detail. You can either loop through all defined widgets as show previously, or reference them as the key they were defined as in your namespace file.</p>
+
+<p>For example:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">MyWidget</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">...</span><span class="w"></span>
+</code></pre></div>
+
+<p>...where <code>...</code> would be filled with your data, would allow you to use</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="n">my_widget</span> <span class="o">=</span> <span class="n">namespace</span><span class="o">.</span><span class="n">MyWidget</span>
+</code></pre></div>
+
+<p>...to reference the instance that was created.</p>
+
+<p><strong>Note:</strong> This is the specific instance the loader created. If you plan on using this as a sort of template, be sure to run <code>copy()</code> before modifying your widget.</p>
+
+<h2 id="defining-widget-attributes">Defining widget attributes</h2>
+
+<p>So, now that you know how to get your namespace file loaded, let's get some information into it.</p>
+
+<p>The syntax goes like this:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">WidgetName</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WidgetType</span><span class="w"></span>
+<span class="w">        </span><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">WidgetType</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="nt">arbitrary-attribute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arbitrary-value</span><span class="w"></span>
+
+<span class="w">        </span><span class="nt">arbitrary-attribute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arbitrary-value</span><span class="w"></span>
+</code></pre></div>
+
+<p>As you can see, any arbitrary attribute can be set in this method. You can also define a <strong>list</strong> of widgets, using the <code>widgets</code> key. The loader only looks for keys <strong>starting with</strong> <code>widgets</code>, so you can separate your widgets into categories or groups if that tickles your fancy.</p>
+
+<p>For example:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">MyContainer</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Container</span><span class="w"></span>
+<span class="w">        </span><span class="nt">widgets_header</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">This is my header</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+
+<span class="w">        </span><span class="nt">widgets_body</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Button</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Press me</span><span class="w"></span>
+</code></pre></div>
+
+<p>This syntax is the equivalent of putting all three widget definitions under one <code>widgets</code> key.</p>
+
+<h2 id="defining-custom-boxes">Defining custom boxes</h2>
+
+<p>The <code>boxes</code> section allows you to define your own <strong>namespace file local</strong> <code><a href="pytermgui/widgets/boxes.html#Box">pytermgui.widgets.boxes.Box</a></code> classes. <strong>You may only use these within the file they were defined in</strong>.</p>
+
+<p><strong>Note:</strong> The preferred naming convention for boxes is <code>WHATEVER_THIS_IS</code>. Not sure why, but that's how all the native boxes were defined and it stands out enough for clarity.</p>
+
+<p>A basic box definition would go like this:</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">boxes</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">MY_BOX</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;0bbb1&quot;</span><span class="p p-Indicator">,</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;a</span><span class="nv"> </span><span class="s">x</span><span class="nv"> </span><span class="s">c&quot;</span><span class="p p-Indicator">,</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;3ddd2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">]</span><span class="w"></span>
+</code></pre></div>
+
+<p>In this example, we would get a box with the corner characters </p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;0&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+</code></pre></div>
+
+<p>...and border characters</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="p p-Indicator">[</span><span class="s">&quot;a&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+</code></pre></div>
+
+<p>For more information on the semantics of boxes, check out <code><a href="pytermgui/widgets/boxes.html#Box">pytermgui.widgets.boxes.Box</a></code>. The characters defined here are directly passed to the <code>Box</code> constructor.</p>
+
+<h2 id="combining-our-knowledge-to-create-an-application">Combining our knowledge to create an application</h2>
+
+<p>Using everything we learnt above, we can define a simple application:</p>
+
+<h3 id="namespaceyaml">namespace.yaml</h3>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="nt">config</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">Window</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">styles</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">border</span><span class="p">:</span><span class="w"> </span><span class="nl">&amp;w-border-style</span><span class="w"> </span><span class="s">&quot;[#5A6572]{item}&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="nt">corner</span><span class="p">:</span><span class="w"> </span><span class="nv">*w-border-style</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">Container</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">styles</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">border</span><span class="p">:</span><span class="w"> </span><span class="nl">&amp;c-border-style</span><span class="w"> </span><span class="s">&quot;[#7D98A1]{item}&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="nt">corner</span><span class="p">:</span><span class="w"> </span><span class="nv">*c-border-style</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">Button</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">styles</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[@#1C2220</span><span class="nv"> </span><span class="s">#A9B4C2]{item}&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="nt">highlight</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[#1C2220</span><span class="nv"> </span><span class="s">@#A9B4C2]{item}&quot;</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">Splitter</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">chars</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">separator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="nv">   </span><span class="s">&quot;</span><span class="w"></span>
+
+<span class="nt">boxes</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">OUTER</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;█▀▀▀█&quot;</span><span class="p p-Indicator">,</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;█</span><span class="nv"> </span><span class="s">x</span><span class="nv"> </span><span class="s">█&quot;</span><span class="p p-Indicator">,</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;█▄▄▄█&quot;</span><span class="p p-Indicator">,</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">]</span><span class="w"></span>
+
+<span class="nt">markup</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#A9B4C2</span><span class="nv"> </span><span class="s">bold&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">subtitle</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;italic</span><span class="nv"> </span><span class="s">dim&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;245&quot;</span><span class="w"></span>
+
+<span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">MainWindow</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Window</span><span class="w"></span>
+<span class="w">      </span><span class="nt">box</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OUTER</span><span class="w"></span>
+<span class="w">      </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70</span><span class="w"></span>
+<span class="w">      </span><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[title]YAML</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">cool!&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[subtitle]Here</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">some</span><span class="nv"> </span><span class="s">facts</span><span class="nv"> </span><span class="s">about</span><span class="nv"> </span><span class="s">it:&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Splitter</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Container</span><span class="p">:</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">box</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OUTER</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"></span>
+<span class="w">                              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span><span class="w"></span>
+<span class="w">                                </span><span class="no">-[body] YAML originally stood for &quot;Yet Another Markup</span><span class="w"></span>
+<span class="w">                                </span><span class="no">Language&quot;, but was later modified to mean &quot;YAML Ain&#39;t </span><span class="w"></span>
+<span class="w">                                </span><span class="no">Markup&quot;.</span><span class="w"></span>
+
+<span class="w">                              </span><span class="nt">parent_align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
+
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Container</span><span class="p">:</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">box</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OUTER</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"></span>
+<span class="w">                              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span><span class="w"></span>
+<span class="w">                                </span><span class="no">-[body] The language was designed by Clark Evans, Ingy</span><span class="w"></span>
+<span class="w">                                </span><span class="no">döt Net and Oren Ben-Kiki.</span><span class="w"></span>
+
+<span class="w">                              </span><span class="nt">parent_align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
+
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Button</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">button-definition</span><span class="w"></span>
+<span class="w">            </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get definition</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">PopupWindow</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Window</span><span class="w"></span>
+<span class="w">        </span><span class="nt">is_modal</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="w">        </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w"></span>
+
+<span class="w">        </span><span class="nt">box</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OUTER</span><span class="w"></span>
+<span class="w">        </span><span class="nt">widgets</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[title]YAML</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">defined</span><span class="nv"> </span><span class="s">as...&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[body]...a</span><span class="nv"> </span><span class="s">human-readable</span><span class="nv"> </span><span class="s">data-serialization</span><span class="nv"> </span><span class="s">language.&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Label</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="nt">parent_align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[body</span><span class="nv"> </span><span class="s">italic]Press</span><span class="nv"> </span><span class="s">CTRL_W</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">close</span><span class="nv"> </span><span class="s">this</span><span class="nv"> </span><span class="s">window.&quot;</span><span class="w"></span>
+</code></pre></div>
+
+<h3 id="runnerpy">runner.py</h3>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="n">namespace</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">YamlLoader</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">PTG_NAMESPACE</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">namespace</span><span class="o">.</span><span class="n">MainWindow</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
+
+    <span class="n">popup</span> <span class="o">=</span> <span class="n">namespace</span><span class="o">.</span><span class="n">PopupWindow</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+    <span class="n">popup</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">ptg</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">CTRL_W</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">window</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">window</span><span class="o">.</span><span class="n">close</span><span class="p">())</span>
+
+    <span class="n">button</span> <span class="o">=</span> <span class="n">ptg</span><span class="o">.</span><span class="n">get_widget</span><span class="p">(</span><span class="s2">&quot;button-definition&quot;</span><span class="p">)</span>
+    <span class="n">button</span><span class="o">.</span><span class="n">onclick</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">popup</span><span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/config_advanced0.png
+    style="width: 80%">
+</p>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/yaml/config_advanced1.png
+    style="width: 80%">
+</p>
+
+<h1 id="how-to-define-your-own-widget">How to: Define your own Widget</h1>
+
+<p>As mentioned above, you <strong>usually</strong> don't have to do this. <code><a href="">pytermgui</a></code> tries to make everything definable inline, but for some functionalities you might need more than what is exposed.</p>
+
+<h2 id="important-things-to-know">Important things to know</h2>
+
+<p>Firstly, the most important aspect of how the library works is the <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code> threading system. As listening for any IO, let it be keyboard or mouse, is always blocking, we cannot print while that is happening. This obviously will not do, so we separate the input and output to different threads.</p>
+
+<p>The main thread is input. This thread is completely handled by the library, and the only place the user can influence it is with the <code><a href="pytermgui/widgets/base.html#Widget.bind">pytermgui.widgets.base.Widget.bind</a></code> system.</p>
+
+<p>The secondary thread handles the output. This is where the users (you) are able to have a say, as most widget code is run here.</p>
+
+<h2 id="everything-a-girl-widget-needs">Everything a <s>girl</s> widget needs</h2>
+
+<p>You should <strong>always</strong> subclass <code><a href="pytermgui/widgets/base.html#Widget">pytermgui.widgets.base.Widget</a></code> when creating your own widget. There is a lot of abstractions, implementations and all sort of useful junk that the base class does, and reimplementing it is almost never a good idea. (Though if you manage to reimplement a feature-complete Widget class in a better manner than the library does, PRs are always welcome!)</p>
+
+<h2 id="the-things-you-should-define">The things you should define</h2>
+
+<p>For any output, use the <code>get_lines</code> method. This returns a <code>list[str]</code>, where each item of the list is <strong>exactly as long as the widget is wide</strong>, and the length of the list is equal to the height of your widget. What goes in this list is completely up to you, pytermgui will render it as long as it fits those criteria. If you need to do any blocking or long actions for your UI's contents, it is best to do that in a thread and have the thread update some instance attribute, which can then be displayed here. This method is called <em>a lot</em> (at least once a frame, usually more), so keep it performant.</p>
+
+<p>For mouse interaction, use <code>handle_mouse</code>. This gets a <code>MouseEvent</code> and <code>MouseTarget</code> as its arguments, and should return <strong>True if widget.select should be run by the caller, False otherwise</strong>. The return value generally stands for whether the given widget could handle the input, but sometimes the above distinction is useful to know about.</p>
+
+<p>For handling keyboard input, use <code>handle_key</code>. This simply gets a <code>str</code> key as its argument, and should return <strong>True if input was handled, False otherwise</strong>. It should also call <code>self.execute_binding(key)</code> before it does any of its own handling, as bindings enjoy priority over normal keyboard actions.</p>
+
+<p>For having a number of suboptions within the widget, define the <code>selectables_length</code> property. This is defined by <code>Container</code> already, so if you subclass any of its children you won't have to worry about it. <code>selectables_length</code> defines how many options can be selected within the widget, and is checked by its parent. Be sure to make it a <code>@property</code>, otherwise you will get errors.</p>
+
+<p>For custom styles &amp; chars, define those attributes in the widget body. There is plenty of examples in the <code><a href="pytermgui/widgets.html">pytermgui.widgets</a></code> submodule on how to do this.</p>
+
+<h1 id="layers-of-the-api">Layers of the API</h1>
+
+<p>The API has a strict layered structure. Modules can only use names defined below them in the structure, as such a <code>Widget</code> has no clue about a <code>WindowManager</code>, unless it has a strictly defined reference to it.</p>
+
+<h2 id="low-level">Low level</h2>
+
+<p>At the base, there is <code><a href="pytermgui/ansi_interface.html">pytermgui.ansi_interface</a></code> and <code><a href="pytermgui/input.html">pytermgui.input</a></code>, handling terminal APIs for output and input respectively. This is the lowest-level layer of the library.</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="n">ptg</span><span class="o">.</span><span class="n">set_alt_buffer</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This terminal will be discarded on r&quot;</span><span class="se">\n</span><span class="s1">&quot; input.&#39;</span><span class="p">)</span>
+<span class="k">while</span> <span class="n">ptg</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span> <span class="o">!=</span> <span class="sa">r</span><span class="s2">&quot;\n&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wrong key.&quot;</span><span class="p">)</span>
+
+<span class="n">ptg</span><span class="o">.</span><span class="n">unset_alt_buffer</span><span class="p">()</span>
+</code></pre></div>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/low.png
+    style="width: 80%">
+</p>
+
+<h2 id="helper-level">Helper level</h2>
+
+<p>On top of that, there is the helper layer, including things like <code><a href="pytermgui/helpers.html">pytermgui.helpers</a></code>, <code><a href="pytermgui/context_managers.html">pytermgui.context_managers</a></code> and the kind. These provide no extra functionality, only combine functions defined below them in order to make them more usable.</p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;This is some \033[1mlong\033[0m and \033[38;5;141mstyled\033[0m text.&quot;</span>
+
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ptg</span><span class="o">.</span><span class="n">break_line</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</code></pre></div>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/helper.png
+    style="width: 80%">
+</p>
+
+<h2 id="high-level">High level</h2>
+
+<p>Building on all that is the relatively high level <code><a href="pytermgui/widgets.html">pytermgui.widgets</a></code> module. This part uses things from everything defined before it to create a visually appealing interface system. It introduces a lot of its own APIs and abstractions, and leaves all the parts below it free of cross-layer dependencies.</p>
+
+<p>The highest layer of the library is for <code><a href="pytermgui/window_manager.html">pytermgui.window_manager</a></code>. This layer combines parts from everything below. It introduces abstractions on top of the <code>pytermgui.widget</code> system, and creates its own featureset. </p>
+
+<div class="pdoc-code codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytermgui</span> <span class="k">as</span> <span class="nn">ptg</span>
+<span class="k">with</span> <span class="n">ptg</span><span class="o">.</span><span class="n">WindowManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">ptg</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
+        <span class="o">+</span> <span class="s2">&quot;[141 bold]Title&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;[grey italic]body text&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+        <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Button&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+<p style="text-align: center">
+    <img src=https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/docs/init/high.png
+    style="width: 80%">
+</p>
 </div>
 
                         <input id="pytermgui-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -86,7 +712,7 @@ of the library you use. I will provide an example of usage for each.</p>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">A simple yet powerful TUI framework for your Python (3.7+) applications.</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">There is a couple of parts that make up this module, all building on top</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">of eachother to achieve the final result. Your usage depends on which part</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">of each other to achieve the final result. Your usage depends on which part</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">of the library you use. I will provide an example of usage for each.</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">.. include:: ../docs/getting_started.md</span>
@@ -114,145 +740,147 @@ of the library you use. I will provide an example of usage for each.</p>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="kn">from</span> <span class="nn">.input</span> <span class="kn">import</span> <span class="n">getch</span><span class="p">,</span> <span class="n">keys</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="kn">from</span> <span class="nn">.inspector</span> <span class="kn">import</span> <span class="o">*</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="kn">from</span> <span class="nn">.markup</span> <span class="kn">import</span> <span class="o">*</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="kn">from</span> <span class="nn">.prettifiers</span> <span class="kn">import</span> <span class="o">*</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="kn">from</span> <span class="nn">.serializer</span> <span class="kn">import</span> <span class="o">*</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="o">*</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="kn">from</span> <span class="nn">.widgets</span> <span class="kn">import</span> <span class="o">*</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="kn">from</span> <span class="nn">.window_manager</span> <span class="kn">import</span> <span class="o">*</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="c1"># Silence warning if running as standalone module</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="k">if</span> <span class="s2">&quot;-m&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="kn">import</span> <span class="nn">warnings</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="kn">from</span> <span class="nn">.palettes</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="kn">from</span> <span class="nn">.prettifiers</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="kn">from</span> <span class="nn">.regex</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="kn">from</span> <span class="nn">.serializer</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="kn">from</span> <span class="nn">.widgets</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="kn">from</span> <span class="nn">.window_manager</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="c1"># Silence warning if running as standalone module</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="k">if</span> <span class="s2">&quot;-m&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="kn">import</span> <span class="nn">warnings</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;7.1.0&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="k">def</span> <span class="nf">auto</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Widget</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]]:</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="sd">&quot;&quot;&quot;Creates a widget from specific data structures.</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    This conversion includes various widget classes, as well as some shorthands for</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">    more complex objects.  This method is called implicitly whenever a non-widget is</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">    attempted to be added to a Widget.</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">    Args:</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">        data: The structure to convert. See below for formats.</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        **widget_args: Arguments passed straight to the widget constructor.</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    Returns:</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">        The widget or list of widgets created, or None if the passed structure could</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">        not be converted.</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">    &lt;br&gt;</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">    &lt;details style=&quot;text-align: left&quot;&gt;</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        &lt;summary style=&quot;all: revert; cursor: pointer&quot;&gt;Data structures:&lt;/summary&gt;</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">    `pytermgui.widgets.base.Label`:</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;7.2.0&quot;</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="k">def</span> <span class="nf">auto</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Widget</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]]:</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="sd">&quot;&quot;&quot;Creates a widget from specific data structures.</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">    This conversion includes various widget classes, as well as some shorthands for</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">    more complex objects.  This method is called implicitly whenever a non-widget is</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">    attempted to be added to a Widget.</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">    Args:</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">        data: The structure to convert. See below for formats.</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">        **widget_args: Arguments passed straight to the widget constructor.</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">    Returns:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        The widget or list of widgets created, or None if the passed structure could</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        not be converted.</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    &lt;br&gt;</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">    &lt;details style=&quot;text-align: left&quot;&gt;</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        &lt;summary style=&quot;all: revert; cursor: pointer&quot;&gt;Data structures:&lt;/summary&gt;</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    * Created from `str`</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">    * Syntax example: `&quot;Label value&quot;`</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    `pytermgui.widgets.extra.Splitter`:</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    `pytermgui.widgets.base.Label`:</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    * Created from `str`</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    * Syntax example: `&quot;Label value&quot;`</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    * Created from `tuple[Any]`</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    * Syntax example: `(YourWidget(), &quot;auto_syntax&quot;, ...)`</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    `pytermgui.widgets.extra.Splitter` prompt:</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    `pytermgui.widgets.extra.Splitter`:</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    * Created from `tuple[Any]`</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    * Syntax example: `(YourWidget(), &quot;auto_syntax&quot;, ...)`</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    * Created from `dict[Any, Any]`</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">    * Syntax example: `{YourWidget(): &quot;auto_syntax&quot;}`</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">    `pytermgui.widgets.buttons.Button`:</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    `pytermgui.widgets.extra.Splitter` prompt:</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    * Created from `dict[Any, Any]`</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">    * Syntax example: `{YourWidget(): &quot;auto_syntax&quot;}`</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">    * Created from `list[str, pytermgui.widgets.buttons.MouseCallback]`</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">    * Syntax example: `[&quot;Button label&quot;, lambda target, caller: ...]`</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">    `pytermgui.widgets.buttons.Checkbox`:</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">    `pytermgui.widgets.buttons.Button`:</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">    * Created from `list[str, pytermgui.widgets.buttons.MouseCallback]`</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">    * Syntax example: `[&quot;Button label&quot;, lambda target, caller: ...]`</span>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">    * Created from `list[bool, Callable[[bool], Any]]`</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">    * Syntax example: `[True, lambda checked: ...]`</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">    `pytermgui.widgets.buttons.Toggle`:</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">    `pytermgui.widgets.buttons.Checkbox`:</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">    * Created from `list[bool, Callable[[bool], Any]]`</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">    * Syntax example: `[True, lambda checked: ...]`</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    * Created from `list[tuple[str, str], Callable[[str], Any]]`</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">    * Syntax example: `[(&quot;On&quot;, &quot;Off&quot;), lambda new_value: ...]`</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">    &lt;/details&gt;</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    Example:</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    `pytermgui.widgets.buttons.Toggle`:</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">    * Created from `list[tuple[str, str], Callable[[str], Any]]`</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    * Syntax example: `[(&quot;On&quot;, &quot;Off&quot;), lambda new_value: ...]`</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    &lt;/details&gt;</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    ```python3</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    from pytermgui import Container</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">    form = (</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        Container(id=&quot;form&quot;)</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        + &quot;[157 bold]This is a title&quot;</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">        + &quot;&quot;</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">        + {&quot;[72 italic]Label1&quot;: &quot;[210]Button1&quot;}</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        + {&quot;[72 italic]Label2&quot;: &quot;[210]Button2&quot;}</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        + {&quot;[72 italic]Label3&quot;: &quot;[210]Button3&quot;}</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        + &quot;&quot;</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        + [&quot;Submit&quot;, lambda _, button, your_submit_handler(button.parent)]</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">    )</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    ```</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="c1"># In my opinion, returning immediately after construction is much more readable.</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="c1"># pylint: disable=too-many-return-statements</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="c1"># Nothing to do.</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Widget</span><span class="p">):</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>        <span class="c1"># Set all **widget_args</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">widget_args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="k">return</span> <span class="n">data</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    Example:</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">    ```python3</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">    from pytermgui import Container</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">    form = (</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">        Container(id=&quot;form&quot;)</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">        + &quot;[157 bold]This is a title&quot;</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        + &quot;&quot;</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        + {&quot;[72 italic]Label1&quot;: &quot;[210]Button1&quot;}</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        + {&quot;[72 italic]Label2&quot;: &quot;[210]Button2&quot;}</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        + {&quot;[72 italic]Label3&quot;: &quot;[210]Button3&quot;}</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        + &quot;&quot;</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">        + [&quot;Submit&quot;, lambda _, button, your_submit_handler(button.parent)]</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">    )</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">    ```</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="c1"># In my opinion, returning immediately after construction is much more readable.</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="c1"># pylint: disable=too-many-return-statements</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="c1"># Nothing to do.</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Widget</span><span class="p">):</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>        <span class="c1"># Set all **widget_args</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">widget_args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="c1"># Label</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>        <span class="k">return</span> <span class="n">Label</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="c1"># Splitter</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>        <span class="k">return</span> <span class="n">Splitter</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>    <span class="c1"># buttons</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="n">label</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>        <span class="n">onclick</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>            <span class="n">onclick</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>        <span class="c1"># Checkbox</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>            <span class="k">return</span> <span class="n">Checkbox</span><span class="p">(</span><span class="n">onclick</span><span class="p">,</span> <span class="n">checked</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>        <span class="c1"># Toggle</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>            <span class="k">return</span> <span class="n">Toggle</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">onclick</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>        <span class="k">return</span> <span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">onclick</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="k">return</span> <span class="n">data</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="c1"># Label</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="k">return</span> <span class="n">Label</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="c1"># Splitter</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="n">Splitter</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="c1"># buttons</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>        <span class="n">label</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>        <span class="n">onclick</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>            <span class="n">onclick</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>        <span class="c1"># Checkbox</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>            <span class="k">return</span> <span class="n">Checkbox</span><span class="p">(</span><span class="n">onclick</span><span class="p">,</span> <span class="n">checked</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>        <span class="c1"># Toggle</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>            <span class="k">return</span> <span class="n">Toggle</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">onclick</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="c1"># prompt splitter</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>        <span class="n">rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>            <span class="n">left</span> <span class="o">=</span> <span class="n">auto</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>            <span class="n">right</span> <span class="o">=</span> <span class="n">auto</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">)</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Splitter</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">))</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>        <span class="k">return</span> <span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">onclick</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="c1"># prompt splitter</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="n">rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>            <span class="n">left</span> <span class="o">=</span> <span class="n">auto</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>            <span class="n">right</span> <span class="o">=</span> <span class="n">auto</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">)</span>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>            <span class="k">return</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="k">return</span> <span class="n">rows</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Splitter</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">))</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>            <span class="k">return</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>    <span class="k">return</span> <span class="kc">None</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="k">return</span> <span class="n">rows</span>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="c1"># Alternative binding for the `auto` method</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="n">Widget</span><span class="o">.</span><span class="n">from_data</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">auto</span><span class="p">)</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="k">return</span> <span class="kc">None</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="c1"># Alternative binding for the `auto` method</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="n">Widget</span><span class="o">.</span><span class="n">from_data</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">auto</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -268,126 +896,126 @@ of the library you use. I will provide an example of usage for each.</p>
 
     </div>
     <a class="headerlink" href="#auto"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="auto-49"><a href="#auto-49"><span class="linenos"> 49</span></a><span class="k">def</span> <span class="nf">auto</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Widget</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]]:</span>
-</span><span id="auto-50"><a href="#auto-50"><span class="linenos"> 50</span></a>    <span class="sd">&quot;&quot;&quot;Creates a widget from specific data structures.</span>
-</span><span id="auto-51"><a href="#auto-51"><span class="linenos"> 51</span></a>
-</span><span id="auto-52"><a href="#auto-52"><span class="linenos"> 52</span></a><span class="sd">    This conversion includes various widget classes, as well as some shorthands for</span>
-</span><span id="auto-53"><a href="#auto-53"><span class="linenos"> 53</span></a><span class="sd">    more complex objects.  This method is called implicitly whenever a non-widget is</span>
-</span><span id="auto-54"><a href="#auto-54"><span class="linenos"> 54</span></a><span class="sd">    attempted to be added to a Widget.</span>
-</span><span id="auto-55"><a href="#auto-55"><span class="linenos"> 55</span></a>
-</span><span id="auto-56"><a href="#auto-56"><span class="linenos"> 56</span></a>
-</span><span id="auto-57"><a href="#auto-57"><span class="linenos"> 57</span></a><span class="sd">    Args:</span>
-</span><span id="auto-58"><a href="#auto-58"><span class="linenos"> 58</span></a><span class="sd">        data: The structure to convert. See below for formats.</span>
-</span><span id="auto-59"><a href="#auto-59"><span class="linenos"> 59</span></a><span class="sd">        **widget_args: Arguments passed straight to the widget constructor.</span>
-</span><span id="auto-60"><a href="#auto-60"><span class="linenos"> 60</span></a>
-</span><span id="auto-61"><a href="#auto-61"><span class="linenos"> 61</span></a><span class="sd">    Returns:</span>
-</span><span id="auto-62"><a href="#auto-62"><span class="linenos"> 62</span></a><span class="sd">        The widget or list of widgets created, or None if the passed structure could</span>
-</span><span id="auto-63"><a href="#auto-63"><span class="linenos"> 63</span></a><span class="sd">        not be converted.</span>
-</span><span id="auto-64"><a href="#auto-64"><span class="linenos"> 64</span></a>
-</span><span id="auto-65"><a href="#auto-65"><span class="linenos"> 65</span></a><span class="sd">    &lt;br&gt;</span>
-</span><span id="auto-66"><a href="#auto-66"><span class="linenos"> 66</span></a><span class="sd">    &lt;details style=&quot;text-align: left&quot;&gt;</span>
-</span><span id="auto-67"><a href="#auto-67"><span class="linenos"> 67</span></a><span class="sd">        &lt;summary style=&quot;all: revert; cursor: pointer&quot;&gt;Data structures:&lt;/summary&gt;</span>
-</span><span id="auto-68"><a href="#auto-68"><span class="linenos"> 68</span></a>
-</span><span id="auto-69"><a href="#auto-69"><span class="linenos"> 69</span></a><span class="sd">    `pytermgui.widgets.base.Label`:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="auto-51"><a href="#auto-51"><span class="linenos"> 51</span></a><span class="k">def</span> <span class="nf">auto</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Widget</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]]:</span>
+</span><span id="auto-52"><a href="#auto-52"><span class="linenos"> 52</span></a>    <span class="sd">&quot;&quot;&quot;Creates a widget from specific data structures.</span>
+</span><span id="auto-53"><a href="#auto-53"><span class="linenos"> 53</span></a>
+</span><span id="auto-54"><a href="#auto-54"><span class="linenos"> 54</span></a><span class="sd">    This conversion includes various widget classes, as well as some shorthands for</span>
+</span><span id="auto-55"><a href="#auto-55"><span class="linenos"> 55</span></a><span class="sd">    more complex objects.  This method is called implicitly whenever a non-widget is</span>
+</span><span id="auto-56"><a href="#auto-56"><span class="linenos"> 56</span></a><span class="sd">    attempted to be added to a Widget.</span>
+</span><span id="auto-57"><a href="#auto-57"><span class="linenos"> 57</span></a>
+</span><span id="auto-58"><a href="#auto-58"><span class="linenos"> 58</span></a>
+</span><span id="auto-59"><a href="#auto-59"><span class="linenos"> 59</span></a><span class="sd">    Args:</span>
+</span><span id="auto-60"><a href="#auto-60"><span class="linenos"> 60</span></a><span class="sd">        data: The structure to convert. See below for formats.</span>
+</span><span id="auto-61"><a href="#auto-61"><span class="linenos"> 61</span></a><span class="sd">        **widget_args: Arguments passed straight to the widget constructor.</span>
+</span><span id="auto-62"><a href="#auto-62"><span class="linenos"> 62</span></a>
+</span><span id="auto-63"><a href="#auto-63"><span class="linenos"> 63</span></a><span class="sd">    Returns:</span>
+</span><span id="auto-64"><a href="#auto-64"><span class="linenos"> 64</span></a><span class="sd">        The widget or list of widgets created, or None if the passed structure could</span>
+</span><span id="auto-65"><a href="#auto-65"><span class="linenos"> 65</span></a><span class="sd">        not be converted.</span>
+</span><span id="auto-66"><a href="#auto-66"><span class="linenos"> 66</span></a>
+</span><span id="auto-67"><a href="#auto-67"><span class="linenos"> 67</span></a><span class="sd">    &lt;br&gt;</span>
+</span><span id="auto-68"><a href="#auto-68"><span class="linenos"> 68</span></a><span class="sd">    &lt;details style=&quot;text-align: left&quot;&gt;</span>
+</span><span id="auto-69"><a href="#auto-69"><span class="linenos"> 69</span></a><span class="sd">        &lt;summary style=&quot;all: revert; cursor: pointer&quot;&gt;Data structures:&lt;/summary&gt;</span>
 </span><span id="auto-70"><a href="#auto-70"><span class="linenos"> 70</span></a>
-</span><span id="auto-71"><a href="#auto-71"><span class="linenos"> 71</span></a><span class="sd">    * Created from `str`</span>
-</span><span id="auto-72"><a href="#auto-72"><span class="linenos"> 72</span></a><span class="sd">    * Syntax example: `&quot;Label value&quot;`</span>
-</span><span id="auto-73"><a href="#auto-73"><span class="linenos"> 73</span></a>
-</span><span id="auto-74"><a href="#auto-74"><span class="linenos"> 74</span></a><span class="sd">    `pytermgui.widgets.extra.Splitter`:</span>
+</span><span id="auto-71"><a href="#auto-71"><span class="linenos"> 71</span></a><span class="sd">    `pytermgui.widgets.base.Label`:</span>
+</span><span id="auto-72"><a href="#auto-72"><span class="linenos"> 72</span></a>
+</span><span id="auto-73"><a href="#auto-73"><span class="linenos"> 73</span></a><span class="sd">    * Created from `str`</span>
+</span><span id="auto-74"><a href="#auto-74"><span class="linenos"> 74</span></a><span class="sd">    * Syntax example: `&quot;Label value&quot;`</span>
 </span><span id="auto-75"><a href="#auto-75"><span class="linenos"> 75</span></a>
-</span><span id="auto-76"><a href="#auto-76"><span class="linenos"> 76</span></a><span class="sd">    * Created from `tuple[Any]`</span>
-</span><span id="auto-77"><a href="#auto-77"><span class="linenos"> 77</span></a><span class="sd">    * Syntax example: `(YourWidget(), &quot;auto_syntax&quot;, ...)`</span>
-</span><span id="auto-78"><a href="#auto-78"><span class="linenos"> 78</span></a>
-</span><span id="auto-79"><a href="#auto-79"><span class="linenos"> 79</span></a><span class="sd">    `pytermgui.widgets.extra.Splitter` prompt:</span>
+</span><span id="auto-76"><a href="#auto-76"><span class="linenos"> 76</span></a><span class="sd">    `pytermgui.widgets.extra.Splitter`:</span>
+</span><span id="auto-77"><a href="#auto-77"><span class="linenos"> 77</span></a>
+</span><span id="auto-78"><a href="#auto-78"><span class="linenos"> 78</span></a><span class="sd">    * Created from `tuple[Any]`</span>
+</span><span id="auto-79"><a href="#auto-79"><span class="linenos"> 79</span></a><span class="sd">    * Syntax example: `(YourWidget(), &quot;auto_syntax&quot;, ...)`</span>
 </span><span id="auto-80"><a href="#auto-80"><span class="linenos"> 80</span></a>
-</span><span id="auto-81"><a href="#auto-81"><span class="linenos"> 81</span></a><span class="sd">    * Created from `dict[Any, Any]`</span>
-</span><span id="auto-82"><a href="#auto-82"><span class="linenos"> 82</span></a><span class="sd">    * Syntax example: `{YourWidget(): &quot;auto_syntax&quot;}`</span>
-</span><span id="auto-83"><a href="#auto-83"><span class="linenos"> 83</span></a>
-</span><span id="auto-84"><a href="#auto-84"><span class="linenos"> 84</span></a><span class="sd">    `pytermgui.widgets.buttons.Button`:</span>
+</span><span id="auto-81"><a href="#auto-81"><span class="linenos"> 81</span></a><span class="sd">    `pytermgui.widgets.extra.Splitter` prompt:</span>
+</span><span id="auto-82"><a href="#auto-82"><span class="linenos"> 82</span></a>
+</span><span id="auto-83"><a href="#auto-83"><span class="linenos"> 83</span></a><span class="sd">    * Created from `dict[Any, Any]`</span>
+</span><span id="auto-84"><a href="#auto-84"><span class="linenos"> 84</span></a><span class="sd">    * Syntax example: `{YourWidget(): &quot;auto_syntax&quot;}`</span>
 </span><span id="auto-85"><a href="#auto-85"><span class="linenos"> 85</span></a>
-</span><span id="auto-86"><a href="#auto-86"><span class="linenos"> 86</span></a><span class="sd">    * Created from `list[str, pytermgui.widgets.buttons.MouseCallback]`</span>
-</span><span id="auto-87"><a href="#auto-87"><span class="linenos"> 87</span></a><span class="sd">    * Syntax example: `[&quot;Button label&quot;, lambda target, caller: ...]`</span>
-</span><span id="auto-88"><a href="#auto-88"><span class="linenos"> 88</span></a>
-</span><span id="auto-89"><a href="#auto-89"><span class="linenos"> 89</span></a><span class="sd">    `pytermgui.widgets.buttons.Checkbox`:</span>
+</span><span id="auto-86"><a href="#auto-86"><span class="linenos"> 86</span></a><span class="sd">    `pytermgui.widgets.buttons.Button`:</span>
+</span><span id="auto-87"><a href="#auto-87"><span class="linenos"> 87</span></a>
+</span><span id="auto-88"><a href="#auto-88"><span class="linenos"> 88</span></a><span class="sd">    * Created from `list[str, pytermgui.widgets.buttons.MouseCallback]`</span>
+</span><span id="auto-89"><a href="#auto-89"><span class="linenos"> 89</span></a><span class="sd">    * Syntax example: `[&quot;Button label&quot;, lambda target, caller: ...]`</span>
 </span><span id="auto-90"><a href="#auto-90"><span class="linenos"> 90</span></a>
-</span><span id="auto-91"><a href="#auto-91"><span class="linenos"> 91</span></a><span class="sd">    * Created from `list[bool, Callable[[bool], Any]]`</span>
-</span><span id="auto-92"><a href="#auto-92"><span class="linenos"> 92</span></a><span class="sd">    * Syntax example: `[True, lambda checked: ...]`</span>
-</span><span id="auto-93"><a href="#auto-93"><span class="linenos"> 93</span></a>
-</span><span id="auto-94"><a href="#auto-94"><span class="linenos"> 94</span></a><span class="sd">    `pytermgui.widgets.buttons.Toggle`:</span>
+</span><span id="auto-91"><a href="#auto-91"><span class="linenos"> 91</span></a><span class="sd">    `pytermgui.widgets.buttons.Checkbox`:</span>
+</span><span id="auto-92"><a href="#auto-92"><span class="linenos"> 92</span></a>
+</span><span id="auto-93"><a href="#auto-93"><span class="linenos"> 93</span></a><span class="sd">    * Created from `list[bool, Callable[[bool], Any]]`</span>
+</span><span id="auto-94"><a href="#auto-94"><span class="linenos"> 94</span></a><span class="sd">    * Syntax example: `[True, lambda checked: ...]`</span>
 </span><span id="auto-95"><a href="#auto-95"><span class="linenos"> 95</span></a>
-</span><span id="auto-96"><a href="#auto-96"><span class="linenos"> 96</span></a><span class="sd">    * Created from `list[tuple[str, str], Callable[[str], Any]]`</span>
-</span><span id="auto-97"><a href="#auto-97"><span class="linenos"> 97</span></a><span class="sd">    * Syntax example: `[(&quot;On&quot;, &quot;Off&quot;), lambda new_value: ...]`</span>
-</span><span id="auto-98"><a href="#auto-98"><span class="linenos"> 98</span></a><span class="sd">    &lt;/details&gt;</span>
-</span><span id="auto-99"><a href="#auto-99"><span class="linenos"> 99</span></a>
-</span><span id="auto-100"><a href="#auto-100"><span class="linenos">100</span></a><span class="sd">    Example:</span>
+</span><span id="auto-96"><a href="#auto-96"><span class="linenos"> 96</span></a><span class="sd">    `pytermgui.widgets.buttons.Toggle`:</span>
+</span><span id="auto-97"><a href="#auto-97"><span class="linenos"> 97</span></a>
+</span><span id="auto-98"><a href="#auto-98"><span class="linenos"> 98</span></a><span class="sd">    * Created from `list[tuple[str, str], Callable[[str], Any]]`</span>
+</span><span id="auto-99"><a href="#auto-99"><span class="linenos"> 99</span></a><span class="sd">    * Syntax example: `[(&quot;On&quot;, &quot;Off&quot;), lambda new_value: ...]`</span>
+</span><span id="auto-100"><a href="#auto-100"><span class="linenos">100</span></a><span class="sd">    &lt;/details&gt;</span>
 </span><span id="auto-101"><a href="#auto-101"><span class="linenos">101</span></a>
-</span><span id="auto-102"><a href="#auto-102"><span class="linenos">102</span></a><span class="sd">    ```python3</span>
-</span><span id="auto-103"><a href="#auto-103"><span class="linenos">103</span></a><span class="sd">    from pytermgui import Container</span>
-</span><span id="auto-104"><a href="#auto-104"><span class="linenos">104</span></a><span class="sd">    form = (</span>
-</span><span id="auto-105"><a href="#auto-105"><span class="linenos">105</span></a><span class="sd">        Container(id=&quot;form&quot;)</span>
-</span><span id="auto-106"><a href="#auto-106"><span class="linenos">106</span></a><span class="sd">        + &quot;[157 bold]This is a title&quot;</span>
-</span><span id="auto-107"><a href="#auto-107"><span class="linenos">107</span></a><span class="sd">        + &quot;&quot;</span>
-</span><span id="auto-108"><a href="#auto-108"><span class="linenos">108</span></a><span class="sd">        + {&quot;[72 italic]Label1&quot;: &quot;[210]Button1&quot;}</span>
-</span><span id="auto-109"><a href="#auto-109"><span class="linenos">109</span></a><span class="sd">        + {&quot;[72 italic]Label2&quot;: &quot;[210]Button2&quot;}</span>
-</span><span id="auto-110"><a href="#auto-110"><span class="linenos">110</span></a><span class="sd">        + {&quot;[72 italic]Label3&quot;: &quot;[210]Button3&quot;}</span>
-</span><span id="auto-111"><a href="#auto-111"><span class="linenos">111</span></a><span class="sd">        + &quot;&quot;</span>
-</span><span id="auto-112"><a href="#auto-112"><span class="linenos">112</span></a><span class="sd">        + [&quot;Submit&quot;, lambda _, button, your_submit_handler(button.parent)]</span>
-</span><span id="auto-113"><a href="#auto-113"><span class="linenos">113</span></a><span class="sd">    )</span>
-</span><span id="auto-114"><a href="#auto-114"><span class="linenos">114</span></a><span class="sd">    ```</span>
-</span><span id="auto-115"><a href="#auto-115"><span class="linenos">115</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="auto-116"><a href="#auto-116"><span class="linenos">116</span></a>    <span class="c1"># In my opinion, returning immediately after construction is much more readable.</span>
-</span><span id="auto-117"><a href="#auto-117"><span class="linenos">117</span></a>    <span class="c1"># pylint: disable=too-many-return-statements</span>
-</span><span id="auto-118"><a href="#auto-118"><span class="linenos">118</span></a>
-</span><span id="auto-119"><a href="#auto-119"><span class="linenos">119</span></a>    <span class="c1"># Nothing to do.</span>
-</span><span id="auto-120"><a href="#auto-120"><span class="linenos">120</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Widget</span><span class="p">):</span>
-</span><span id="auto-121"><a href="#auto-121"><span class="linenos">121</span></a>        <span class="c1"># Set all **widget_args</span>
-</span><span id="auto-122"><a href="#auto-122"><span class="linenos">122</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">widget_args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="auto-123"><a href="#auto-123"><span class="linenos">123</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="auto-124"><a href="#auto-124"><span class="linenos">124</span></a>
-</span><span id="auto-125"><a href="#auto-125"><span class="linenos">125</span></a>        <span class="k">return</span> <span class="n">data</span>
+</span><span id="auto-102"><a href="#auto-102"><span class="linenos">102</span></a><span class="sd">    Example:</span>
+</span><span id="auto-103"><a href="#auto-103"><span class="linenos">103</span></a>
+</span><span id="auto-104"><a href="#auto-104"><span class="linenos">104</span></a><span class="sd">    ```python3</span>
+</span><span id="auto-105"><a href="#auto-105"><span class="linenos">105</span></a><span class="sd">    from pytermgui import Container</span>
+</span><span id="auto-106"><a href="#auto-106"><span class="linenos">106</span></a><span class="sd">    form = (</span>
+</span><span id="auto-107"><a href="#auto-107"><span class="linenos">107</span></a><span class="sd">        Container(id=&quot;form&quot;)</span>
+</span><span id="auto-108"><a href="#auto-108"><span class="linenos">108</span></a><span class="sd">        + &quot;[157 bold]This is a title&quot;</span>
+</span><span id="auto-109"><a href="#auto-109"><span class="linenos">109</span></a><span class="sd">        + &quot;&quot;</span>
+</span><span id="auto-110"><a href="#auto-110"><span class="linenos">110</span></a><span class="sd">        + {&quot;[72 italic]Label1&quot;: &quot;[210]Button1&quot;}</span>
+</span><span id="auto-111"><a href="#auto-111"><span class="linenos">111</span></a><span class="sd">        + {&quot;[72 italic]Label2&quot;: &quot;[210]Button2&quot;}</span>
+</span><span id="auto-112"><a href="#auto-112"><span class="linenos">112</span></a><span class="sd">        + {&quot;[72 italic]Label3&quot;: &quot;[210]Button3&quot;}</span>
+</span><span id="auto-113"><a href="#auto-113"><span class="linenos">113</span></a><span class="sd">        + &quot;&quot;</span>
+</span><span id="auto-114"><a href="#auto-114"><span class="linenos">114</span></a><span class="sd">        + [&quot;Submit&quot;, lambda _, button, your_submit_handler(button.parent)]</span>
+</span><span id="auto-115"><a href="#auto-115"><span class="linenos">115</span></a><span class="sd">    )</span>
+</span><span id="auto-116"><a href="#auto-116"><span class="linenos">116</span></a><span class="sd">    ```</span>
+</span><span id="auto-117"><a href="#auto-117"><span class="linenos">117</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="auto-118"><a href="#auto-118"><span class="linenos">118</span></a>    <span class="c1"># In my opinion, returning immediately after construction is much more readable.</span>
+</span><span id="auto-119"><a href="#auto-119"><span class="linenos">119</span></a>    <span class="c1"># pylint: disable=too-many-return-statements</span>
+</span><span id="auto-120"><a href="#auto-120"><span class="linenos">120</span></a>
+</span><span id="auto-121"><a href="#auto-121"><span class="linenos">121</span></a>    <span class="c1"># Nothing to do.</span>
+</span><span id="auto-122"><a href="#auto-122"><span class="linenos">122</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Widget</span><span class="p">):</span>
+</span><span id="auto-123"><a href="#auto-123"><span class="linenos">123</span></a>        <span class="c1"># Set all **widget_args</span>
+</span><span id="auto-124"><a href="#auto-124"><span class="linenos">124</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">widget_args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="auto-125"><a href="#auto-125"><span class="linenos">125</span></a>            <span class="nb">setattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </span><span id="auto-126"><a href="#auto-126"><span class="linenos">126</span></a>
-</span><span id="auto-127"><a href="#auto-127"><span class="linenos">127</span></a>    <span class="c1"># Label</span>
-</span><span id="auto-128"><a href="#auto-128"><span class="linenos">128</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="auto-129"><a href="#auto-129"><span class="linenos">129</span></a>        <span class="k">return</span> <span class="n">Label</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
-</span><span id="auto-130"><a href="#auto-130"><span class="linenos">130</span></a>
-</span><span id="auto-131"><a href="#auto-131"><span class="linenos">131</span></a>    <span class="c1"># Splitter</span>
-</span><span id="auto-132"><a href="#auto-132"><span class="linenos">132</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span id="auto-133"><a href="#auto-133"><span class="linenos">133</span></a>        <span class="k">return</span> <span class="n">Splitter</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
-</span><span id="auto-134"><a href="#auto-134"><span class="linenos">134</span></a>
-</span><span id="auto-135"><a href="#auto-135"><span class="linenos">135</span></a>    <span class="c1"># buttons</span>
-</span><span id="auto-136"><a href="#auto-136"><span class="linenos">136</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="auto-137"><a href="#auto-137"><span class="linenos">137</span></a>        <span class="n">label</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="auto-138"><a href="#auto-138"><span class="linenos">138</span></a>        <span class="n">onclick</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="auto-139"><a href="#auto-139"><span class="linenos">139</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="auto-140"><a href="#auto-140"><span class="linenos">140</span></a>            <span class="n">onclick</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span id="auto-141"><a href="#auto-141"><span class="linenos">141</span></a>
-</span><span id="auto-142"><a href="#auto-142"><span class="linenos">142</span></a>        <span class="c1"># Checkbox</span>
-</span><span id="auto-143"><a href="#auto-143"><span class="linenos">143</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="auto-144"><a href="#auto-144"><span class="linenos">144</span></a>            <span class="k">return</span> <span class="n">Checkbox</span><span class="p">(</span><span class="n">onclick</span><span class="p">,</span> <span class="n">checked</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
-</span><span id="auto-145"><a href="#auto-145"><span class="linenos">145</span></a>
-</span><span id="auto-146"><a href="#auto-146"><span class="linenos">146</span></a>        <span class="c1"># Toggle</span>
-</span><span id="auto-147"><a href="#auto-147"><span class="linenos">147</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span id="auto-148"><a href="#auto-148"><span class="linenos">148</span></a>            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-</span><span id="auto-149"><a href="#auto-149"><span class="linenos">149</span></a>            <span class="k">return</span> <span class="n">Toggle</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">onclick</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
-</span><span id="auto-150"><a href="#auto-150"><span class="linenos">150</span></a>
-</span><span id="auto-151"><a href="#auto-151"><span class="linenos">151</span></a>        <span class="k">return</span> <span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">onclick</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="auto-127"><a href="#auto-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="n">data</span>
+</span><span id="auto-128"><a href="#auto-128"><span class="linenos">128</span></a>
+</span><span id="auto-129"><a href="#auto-129"><span class="linenos">129</span></a>    <span class="c1"># Label</span>
+</span><span id="auto-130"><a href="#auto-130"><span class="linenos">130</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="auto-131"><a href="#auto-131"><span class="linenos">131</span></a>        <span class="k">return</span> <span class="n">Label</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="auto-132"><a href="#auto-132"><span class="linenos">132</span></a>
+</span><span id="auto-133"><a href="#auto-133"><span class="linenos">133</span></a>    <span class="c1"># Splitter</span>
+</span><span id="auto-134"><a href="#auto-134"><span class="linenos">134</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span id="auto-135"><a href="#auto-135"><span class="linenos">135</span></a>        <span class="k">return</span> <span class="n">Splitter</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="auto-136"><a href="#auto-136"><span class="linenos">136</span></a>
+</span><span id="auto-137"><a href="#auto-137"><span class="linenos">137</span></a>    <span class="c1"># buttons</span>
+</span><span id="auto-138"><a href="#auto-138"><span class="linenos">138</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="auto-139"><a href="#auto-139"><span class="linenos">139</span></a>        <span class="n">label</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="auto-140"><a href="#auto-140"><span class="linenos">140</span></a>        <span class="n">onclick</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="auto-141"><a href="#auto-141"><span class="linenos">141</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="auto-142"><a href="#auto-142"><span class="linenos">142</span></a>            <span class="n">onclick</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="auto-143"><a href="#auto-143"><span class="linenos">143</span></a>
+</span><span id="auto-144"><a href="#auto-144"><span class="linenos">144</span></a>        <span class="c1"># Checkbox</span>
+</span><span id="auto-145"><a href="#auto-145"><span class="linenos">145</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="auto-146"><a href="#auto-146"><span class="linenos">146</span></a>            <span class="k">return</span> <span class="n">Checkbox</span><span class="p">(</span><span class="n">onclick</span><span class="p">,</span> <span class="n">checked</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="auto-147"><a href="#auto-147"><span class="linenos">147</span></a>
+</span><span id="auto-148"><a href="#auto-148"><span class="linenos">148</span></a>        <span class="c1"># Toggle</span>
+</span><span id="auto-149"><a href="#auto-149"><span class="linenos">149</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span id="auto-150"><a href="#auto-150"><span class="linenos">150</span></a>            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+</span><span id="auto-151"><a href="#auto-151"><span class="linenos">151</span></a>            <span class="k">return</span> <span class="n">Toggle</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">onclick</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
 </span><span id="auto-152"><a href="#auto-152"><span class="linenos">152</span></a>
-</span><span id="auto-153"><a href="#auto-153"><span class="linenos">153</span></a>    <span class="c1"># prompt splitter</span>
-</span><span id="auto-154"><a href="#auto-154"><span class="linenos">154</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="auto-155"><a href="#auto-155"><span class="linenos">155</span></a>        <span class="n">rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="auto-156"><a href="#auto-156"><span class="linenos">156</span></a>
-</span><span id="auto-157"><a href="#auto-157"><span class="linenos">157</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="auto-158"><a href="#auto-158"><span class="linenos">158</span></a>            <span class="n">left</span> <span class="o">=</span> <span class="n">auto</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
-</span><span id="auto-159"><a href="#auto-159"><span class="linenos">159</span></a>            <span class="n">right</span> <span class="o">=</span> <span class="n">auto</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">)</span>
-</span><span id="auto-160"><a href="#auto-160"><span class="linenos">160</span></a>
-</span><span id="auto-161"><a href="#auto-161"><span class="linenos">161</span></a>            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Splitter</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">))</span>
+</span><span id="auto-153"><a href="#auto-153"><span class="linenos">153</span></a>        <span class="k">return</span> <span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">onclick</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">)</span>
+</span><span id="auto-154"><a href="#auto-154"><span class="linenos">154</span></a>
+</span><span id="auto-155"><a href="#auto-155"><span class="linenos">155</span></a>    <span class="c1"># prompt splitter</span>
+</span><span id="auto-156"><a href="#auto-156"><span class="linenos">156</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="auto-157"><a href="#auto-157"><span class="linenos">157</span></a>        <span class="n">rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Splitter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="auto-158"><a href="#auto-158"><span class="linenos">158</span></a>
+</span><span id="auto-159"><a href="#auto-159"><span class="linenos">159</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="auto-160"><a href="#auto-160"><span class="linenos">160</span></a>            <span class="n">left</span> <span class="o">=</span> <span class="n">auto</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
+</span><span id="auto-161"><a href="#auto-161"><span class="linenos">161</span></a>            <span class="n">right</span> <span class="o">=</span> <span class="n">auto</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">parent_align</span><span class="o">=</span><span class="n">HorizontalAlignment</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">)</span>
 </span><span id="auto-162"><a href="#auto-162"><span class="linenos">162</span></a>
-</span><span id="auto-163"><a href="#auto-163"><span class="linenos">163</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="auto-164"><a href="#auto-164"><span class="linenos">164</span></a>            <span class="k">return</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="auto-165"><a href="#auto-165"><span class="linenos">165</span></a>
-</span><span id="auto-166"><a href="#auto-166"><span class="linenos">166</span></a>        <span class="k">return</span> <span class="n">rows</span>
+</span><span id="auto-163"><a href="#auto-163"><span class="linenos">163</span></a>            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Splitter</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="o">**</span><span class="n">widget_args</span><span class="p">))</span>
+</span><span id="auto-164"><a href="#auto-164"><span class="linenos">164</span></a>
+</span><span id="auto-165"><a href="#auto-165"><span class="linenos">165</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="auto-166"><a href="#auto-166"><span class="linenos">166</span></a>            <span class="k">return</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="auto-167"><a href="#auto-167"><span class="linenos">167</span></a>
-</span><span id="auto-168"><a href="#auto-168"><span class="linenos">168</span></a>    <span class="k">return</span> <span class="kc">None</span>
+</span><span id="auto-168"><a href="#auto-168"><span class="linenos">168</span></a>        <span class="k">return</span> <span class="n">rows</span>
+</span><span id="auto-169"><a href="#auto-169"><span class="linenos">169</span></a>
+</span><span id="auto-170"><a href="#auto-170"><span class="linenos">170</span></a>    <span class="k">return</span> <span class="kc">None</span>
 </span></pre></div>
 
 
@@ -579,7 +1207,11 @@ attempted to be added to a Widget.</p>
                 let heading;
                 switch (result.doc.type) {
                     case "function":
-                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;

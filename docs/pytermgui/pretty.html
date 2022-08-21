@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.0.2"/>
+    <meta name="generator" content="pdoc 12.1.0"/>
     <title>pytermgui.pretty API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -125,7 +125,7 @@
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">    This essentially just calls `prettify` on each given object, and passes the</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">    `**print_args` right through to print. Note that when the `sep` print argument is</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">    ommitted it is manually set to &quot;, \n&quot;.</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">    omitted it is manually set to &quot;, \n&quot;.</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    To customize any of the styles, see `MarkupLanguage.prettify`.</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
@@ -134,7 +134,7 @@
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">            builtin print.</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        indent: The indentation value used for multi-line objects. This is ignored when</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">            the given object has a `len() &lt; 2`, and `expand_all is not set.`</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        force_tim: Turn all ANSI-sequences into tim before pretty printing.</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        force_markup: Turn all ANSI-sequences into markup before pretty printing.</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">        expand_all: Force-expand containers, even when they would normally be collapsed.</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        **print_args: All arguments passed to builtin print.</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -188,7 +188,7 @@
 </span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">    Args:</span>
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        indent: The indentation value used for multi-line objects. This is ignored when</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">            the given object has a `len() &lt; 2`, and `expand_all is not set.`</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        force_tim: Turn all ANSI-sequences into tim before pretty printing.</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        force_markup: Turn all ANSI-sequences into tim before pretty printing.</span>
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        expand_all: Force-expand containers, even when they would normally be collapsed.</span>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>
@@ -279,7 +279,7 @@
 </span><span id="pprint-55"><a href="#pprint-55"><span class="linenos">55</span></a>
 </span><span id="pprint-56"><a href="#pprint-56"><span class="linenos">56</span></a><span class="sd">    This essentially just calls `prettify` on each given object, and passes the</span>
 </span><span id="pprint-57"><a href="#pprint-57"><span class="linenos">57</span></a><span class="sd">    `**print_args` right through to print. Note that when the `sep` print argument is</span>
-</span><span id="pprint-58"><a href="#pprint-58"><span class="linenos">58</span></a><span class="sd">    ommitted it is manually set to &quot;, \n&quot;.</span>
+</span><span id="pprint-58"><a href="#pprint-58"><span class="linenos">58</span></a><span class="sd">    omitted it is manually set to &quot;, \n&quot;.</span>
 </span><span id="pprint-59"><a href="#pprint-59"><span class="linenos">59</span></a>
 </span><span id="pprint-60"><a href="#pprint-60"><span class="linenos">60</span></a><span class="sd">    To customize any of the styles, see `MarkupLanguage.prettify`.</span>
 </span><span id="pprint-61"><a href="#pprint-61"><span class="linenos">61</span></a>
@@ -288,7 +288,7 @@
 </span><span id="pprint-64"><a href="#pprint-64"><span class="linenos">64</span></a><span class="sd">            builtin print.</span>
 </span><span id="pprint-65"><a href="#pprint-65"><span class="linenos">65</span></a><span class="sd">        indent: The indentation value used for multi-line objects. This is ignored when</span>
 </span><span id="pprint-66"><a href="#pprint-66"><span class="linenos">66</span></a><span class="sd">            the given object has a `len() &lt; 2`, and `expand_all is not set.`</span>
-</span><span id="pprint-67"><a href="#pprint-67"><span class="linenos">67</span></a><span class="sd">        force_tim: Turn all ANSI-sequences into tim before pretty printing.</span>
+</span><span id="pprint-67"><a href="#pprint-67"><span class="linenos">67</span></a><span class="sd">        force_markup: Turn all ANSI-sequences into markup before pretty printing.</span>
 </span><span id="pprint-68"><a href="#pprint-68"><span class="linenos">68</span></a><span class="sd">        expand_all: Force-expand containers, even when they would normally be collapsed.</span>
 </span><span id="pprint-69"><a href="#pprint-69"><span class="linenos">69</span></a><span class="sd">        **print_args: All arguments passed to builtin print.</span>
 </span><span id="pprint-70"><a href="#pprint-70"><span class="linenos">70</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -316,7 +316,7 @@
 
 <p>This essentially just calls <code>prettify</code> on each given object, and passes the
 <code>**print_args</code> right through to print. Note that when the <code>sep</code> print argument is
-ommitted it is manually set to ", \n".</p>
+omitted it is manually set to ", \n".</p>
 
 <p>To customize any of the styles, see <code>MarkupLanguage.prettify</code>.</p>
 
@@ -327,7 +327,7 @@ ommitted it is manually set to ", \n".</p>
 builtin print.</li>
 <li><strong>indent:</strong>  The indentation value used for multi-line objects. This is ignored when
 the given object has a <code>len() &lt; 2</code>, and <code>expand_all is not set.</code></li>
-<li><strong>force_tim:</strong>  Turn all ANSI-sequences into tim before pretty printing.</li>
+<li><strong>force_markup:</strong>  Turn all ANSI-sequences into markup before pretty printing.</li>
 <li><strong>expand_all:</strong>  Force-expand containers, even when they would normally be collapsed.</li>
 <li><strong>**print_args:</strong>  All arguments passed to builtin print.</li>
 </ul>
@@ -377,7 +377,7 @@ the given object has a <code>len() &lt; 2</code>, and <code>expand_all is not se
 </span><span id="install-118"><a href="#install-118"><span class="linenos">118</span></a><span class="sd">    Args:</span>
 </span><span id="install-119"><a href="#install-119"><span class="linenos">119</span></a><span class="sd">        indent: The indentation value used for multi-line objects. This is ignored when</span>
 </span><span id="install-120"><a href="#install-120"><span class="linenos">120</span></a><span class="sd">            the given object has a `len() &lt; 2`, and `expand_all is not set.`</span>
-</span><span id="install-121"><a href="#install-121"><span class="linenos">121</span></a><span class="sd">        force_tim: Turn all ANSI-sequences into tim before pretty printing.</span>
+</span><span id="install-121"><a href="#install-121"><span class="linenos">121</span></a><span class="sd">        force_markup: Turn all ANSI-sequences into tim before pretty printing.</span>
 </span><span id="install-122"><a href="#install-122"><span class="linenos">122</span></a><span class="sd">        expand_all: Force-expand containers, even when they would normally be collapsed.</span>
 </span><span id="install-123"><a href="#install-123"><span class="linenos">123</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="install-124"><a href="#install-124"><span class="linenos">124</span></a>
@@ -440,7 +440,7 @@ function with <code>tim.pprint</code>:</p>
 <ul>
 <li><strong>indent:</strong>  The indentation value used for multi-line objects. This is ignored when
 the given object has a <code>len() &lt; 2</code>, and <code>expand_all is not set.</code></li>
-<li><strong>force_tim:</strong>  Turn all ANSI-sequences into tim before pretty printing.</li>
+<li><strong>force_markup:</strong>  Turn all ANSI-sequences into tim before pretty printing.</li>
 <li><strong>expand_all:</strong>  Force-expand containers, even when they would normally be collapsed.</li>
 </ul>
 </div>
@@ -550,7 +550,11 @@ the given object has a <code>len() &lt; 2</code>, and <code>expand_all is not se
                 let heading;
                 switch (result.doc.type) {
                     case "function":
-                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;

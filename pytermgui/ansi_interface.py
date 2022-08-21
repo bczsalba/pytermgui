@@ -733,7 +733,7 @@ def overline(text: str, reset_style: Optional[bool] = True) -> str:
             be appended to the end of the string.
 
     Note:
-        This isnt' very widely supported.
+        This isn't very widely supported.
     """
 
     return set_mode("overline", False) + text + (reset() if reset_style else "")

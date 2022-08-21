@@ -1,4 +1,4 @@
-"""The WindowManager class, whos job it is to move, control and update windows,
+"""The WindowManager class, whose job it is to move, control and update windows,
 while letting `Compositor` draw them."""
 
 from __future__ import annotations
@@ -112,7 +112,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
     def __exit__(self, _: Any, exception: Exception, __: Any) -> bool:
         """Ends context manager."""
 
-        # Run the manager if it hasnt been run before.
+        # Run the manager if it hasn't been run before.
         if self.autorun and exception is None and self.mouse_translator is None:
             self.run()
 

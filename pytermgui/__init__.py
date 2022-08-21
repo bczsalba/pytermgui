@@ -2,7 +2,7 @@
 A simple yet powerful TUI framework for your Python (3.7+) applications.
 
 There is a couple of parts that make up this module, all building on top
-of eachother to achieve the final result. Your usage depends on which part
+of each other to achieve the final result. Your usage depends on which part
 of the library you use. I will provide an example of usage for each.
 
 .. include:: ../docs/getting_started.md

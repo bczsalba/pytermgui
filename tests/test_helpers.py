@@ -9,7 +9,7 @@ def test_break_plain():
 
 def test_break_fancy():
     text = tim.parse(
-        "[141 bold]Hello there[/ italic ansi-blue] whats up[ansi-cyan bold]?"
+        "[141 bold]Hello there[/ italic ansi-blue] what's up[ansi-cyan bold]?"
     )
     broken = break_line(text, 3)
 

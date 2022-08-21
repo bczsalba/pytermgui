@@ -43,7 +43,7 @@ class RegexHighlighter:
     This class must be provided with a list of styles. These styles are really just a
     tuple of the markup alias name, and their associated RE patterns. If *all* aliases
     in the instance use the same prefix, it can be given under the `prefix` key and
-    ommitted from the style names.
+    omitted from the style names.
 
     On construction, the instance will combine all of its patterns into a monster regex
     including named capturing groups. The general format is something like:

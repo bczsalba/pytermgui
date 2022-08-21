@@ -54,7 +54,7 @@ def pprint(
 
     This essentially just calls `prettify` on each given object, and passes the
     `**print_args` right through to print. Note that when the `sep` print argument is
-    ommitted it is manually set to ", \n".
+    omitted it is manually set to ", \n".
 
     To customize any of the styles, see `MarkupLanguage.prettify`.
 

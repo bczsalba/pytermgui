@@ -2,7 +2,7 @@
 
 The `inspect` method can be used to create an `Inspector` widget, which can
 then be used to see what is happening inside any python object. This method is
-usually preferred for instantiating an `Inspector`, as it sets up overwriteable default
+usually preferred for instantiating an `Inspector`, as it sets up overwritable default
 arguments passed to the new widget.
 
 These defaults are meant to hide the non-important information when they are not needed,

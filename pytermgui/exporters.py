@@ -431,7 +431,7 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
 ) -> str:
     """Creates an SVG screenshot of the given object.
 
-    This screenshot tries to mimick what the Kitty terminal looks like on MacOS,
+    This screenshot tries to mimic what the Kitty terminal looks like on MacOS,
     complete with the menu buttons and drop shadow. The `title` argument will be
     displayed in the window's top bar.
 
@@ -440,7 +440,7 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
         prefix: The prefix included in the generated classes, e.g. instead of `ptg-0`,
             you would get `ptg-my-prefix-0`.
         chrome: Sets the visibility of the window "chrome", e.g. the part of the SVG
-            that mimicks the outside border of a terminal.
+            that mimics the outside border of a terminal.
         inline_styles: If set, styles will be set for each span using the inline `style`
             argument, otherwise a full style section is constructed.
         title: A string to display in the top bar of the fake terminal.

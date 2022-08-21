@@ -124,7 +124,7 @@ class Container(ScrollableWidget):
 
         Returns:
             A list of tuples containing a widget and an integer each. For each widget that is
-            withing this one, it is added to this list as many times as it has selectables. Each
+            within this one, it is added to this list as many times as it has selectables. Each
             of the integers correspond to a selectable_index within the widget.
 
             For example, a Container with a Button, InputField and an inner Container containing

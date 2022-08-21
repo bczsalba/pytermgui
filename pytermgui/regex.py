@@ -1,4 +1,4 @@
-"""This modules contains all of the regex-related names and utilites."""
+"""This modules contains all of the regex-related names and utilities."""
 
 import re
 from functools import lru_cache

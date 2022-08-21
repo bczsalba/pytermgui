@@ -17,7 +17,7 @@ PALETTE_DARKER = "#242321"
 def _process_arguments(argv: list[str] | None = None) -> Namespace:
     """Processes command line arguments.
 
-    Note that you don't _have to_ use the bultin argparse module for this; it
+    Note that you don't _have to_ use the builtin argparse module for this; it
     is just what the module uses.
 
     Args:
@@ -88,7 +88,7 @@ def _define_layout() -> ptg.Layout:
     Layouts work based on "slots" within them. Each slot can be given dimensions for
     both width and height. Integer values are interpreted to mean a static width, float
     values will be used to "scale" the relevant terminal dimension, and giving nothing
-    will allow PTG to calculate the corrent dimension.
+    will allow PTG to calculate the current dimension.
     """
 
     layout = ptg.Layout()

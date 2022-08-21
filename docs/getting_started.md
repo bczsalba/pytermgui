@@ -80,7 +80,7 @@ with ptg.markup as mprint:
 
 While the programmatic interface for the style system is *alright*, it's a bit clunky to use for serious customization. In order to improve your experience, you can use a YAML file with your configuration in its `config` section. Additionally, you can define markup in a nicer way as well.
 
-For the purposes of this guide, we will use YAML defined inside our Python code. `pytermgui.file_loaders.FileLoader.load` can take etiher strings or files, so the `PTG_CONFIG` name below can be trivially modified to refernce a file.
+For the purposes of this guide, we will use YAML defined inside our Python code. `pytermgui.file_loaders.FileLoader.load` can take either strings or files, so the `PTG_CONFIG` name below can be trivially modified to reference a file.
 
 **Note:** You will need to install `PyYAML` in order to use the YAML loader class.
 
@@ -288,7 +288,7 @@ with ptg.WindowManager() as manager:
     manager.run()
 ```
 
-## Loading a namespace programatically
+## Loading a namespace programmatically
 
 Loading namespaces manually is more or less defined above, with one extra detail. You can either loop through all defined widgets as show previously, or reference them as the key they were defined as in your namespace file.
 
