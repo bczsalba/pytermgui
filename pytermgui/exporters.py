@@ -73,6 +73,9 @@ SVG_FORMAT = f"""\
         text.{{prefix}} {{{{
             font-size: {FONT_SIZE}px;
             font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
+            font-feature-settings: normal;
+            /* Inline SVGs are `antialiased` by default, while `src=`-d ones are `auto`.
+            -webkit-font-smoothing: auto;
         }}}}
 
         .{{prefix}}-title {{{{
@@ -120,7 +123,9 @@ def _generate_stylesheet(document_styles: list[list[str]], prefix: str | None) -
 
     stylesheet = ""
     for i, styles in enumerate(document_styles):
-        stylesheet += "\n." + _get_cls(prefix, i) + " {" + "; ".join(styles) + "}"
+        stylesheet += (
+            "\n        ." + _get_cls(prefix, i) + " {" + "; ".join(styles) + "}"
+        )
 
     return stylesheet
 
