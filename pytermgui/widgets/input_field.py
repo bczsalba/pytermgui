@@ -85,7 +85,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         self.tablength = tablength
         self.multiline = multiline
 
-        self.cursor = cursor or Cursor(0, len(self.prompt))
+        self.cursor = cursor or Cursor(0, len(value))
 
         self._lines = value.splitlines() or [""]
         self._selection_length = 1
