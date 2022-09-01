@@ -112,10 +112,13 @@ def prettify_xml(xml: str) -> str:
     return "\n".join([s for s in pretty_xml.splitlines()[1:] if s.strip() != ""])
 
 
-def _get_cls(prefix: str | None, index: int) -> str:
+def _get_cls(prefix: str, index: int) -> str:
     """Constructs a class identifier with the given prefix and index."""
 
-    return "ptg" + ("-" + prefix if prefix is not None else "") + str(index)
+    if prefix == "":
+        return f"{index}"
+
+    return f"{prefix}-{index}"
 
 
 def _generate_stylesheet(document_styles: list[list[str]], prefix: str | None) -> str:

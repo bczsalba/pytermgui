@@ -65,7 +65,7 @@ markdown_extensions:
 
 nav:
   - PyTermGUI:
-    - Welcome: welcome.md
+    - Welcome: index.md
 
     - TIM:
       - Introduction: tim/index.md
