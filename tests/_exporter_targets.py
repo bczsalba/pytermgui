@@ -6,7 +6,7 @@ SVG_TARGET = """\
             font-size: 15px;
             font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
             font-feature-settings: normal;
-            /* Inline SVGs are `antialiased` by default, while `src=`-d ones are `auto`.
+            /* Inline SVGs are `antialiased` by default, while `src=`-d ones are `auto`.*/
             -webkit-font-smoothing: auto;
         }
         .ptg-title {
