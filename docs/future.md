@@ -67,3 +67,13 @@ styles = Stylesheet.load("styles.ptg", auto_reload=True)
 - Re-wiring `_IdManager` to act as the style managment overlord
 - Likely re-writing the `file_loaders` module. I hope to keep the current API alive, with massive deprecation notices
 - Moving some of the default widget configuration into a `default.yaml` file
+
+
+## **8.X.0**: A better composition
+
+The current compositor isn't super smart. It does _way_ too much writes to the terminal, and thus it makes things flickery and unstable on lower power emulators. A fix to this is already far in the works, and involves a resizable matrix of screen coordinates to their content. I want this update to happen seemlessly on the user's side, but this makes things a _lot_ more difficult.
+
+### Planned changes
+
+- Add a canvas class that handles emulating the terminal's display
+- Change compositor to write to a canvas, and to only update the terminal with the canvas' contents
