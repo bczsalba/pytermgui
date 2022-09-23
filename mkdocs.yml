@@ -92,4 +92,5 @@ nav:
     - Building an inline-widget context: walkthroughs/inline.md
 
   - Reference: reference/
+  - Future: future.md
 
