@@ -84,10 +84,10 @@ nav:
   - Walkthroughs:
     - walkthroughs/index.md
 
-    - Building a TUI application:
-      - Planning: walkthroughs/tui/planning.md
-      - Functional prototype: walkthroughs/tui/prototype.md
-      - Styled product: walkthroughs/tui/product.md
+    # - Building a TUI application:
+    #   - Planning: walkthroughs/tui/planning.md
+    #   - Functional prototype: walkthroughs/tui/prototype.md
+    #   - Styled product: walkthroughs/tui/product.md
 
     - Building an inline-widget context: walkthroughs/inline.md
 
