@@ -177,8 +177,8 @@ class Box:
                 f"Object of type {cls_or_obj} does not support `set_char`"
             )
 
-        cls_or_obj.set_char("border", self.borders)
-        cls_or_obj.set_char("corner", self.corners)
+        cls_or_obj.set_char("border", list(self.borders))
+        cls_or_obj.set_char("corner", list(self.corners))
 
         return cls_or_obj
 
