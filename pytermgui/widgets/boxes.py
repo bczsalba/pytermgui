@@ -16,10 +16,13 @@ be referenced & defined in markup file definitions. For more info, check out
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Tuple
 
 from ..regex import real_length
 from .base import WidgetType
+
+CharTuple = Tuple[str, str, str, str]
 
 
 class Box:
@@ -72,8 +75,6 @@ class Box:
     ```
     """
 
-    CharType = Tuple[str, str, str, str]
-
     def __init__(self, lines: list[str], content_char: str = "x"):
         """Set instance attributes"""
 
@@ -84,18 +85,35 @@ class Box:
         top_left, top_right = self._get_corners(top)
         bottom_left, bottom_right = self._get_corners(bottom)
 
-        self.borders = list(self._get_borders(lines))
-        self.corners = [
+        self.borders: CharTuple = tuple(self._get_borders(lines))
+        self.corners: CharTuple = (
             top_left,
             top_right,
             bottom_right,
             bottom_left,
-        ]
+        )
 
     def __repr__(self) -> str:
         """Return string of self"""
 
         return self.debug()
+
+    @staticmethod
+    def from_string(name: str) -> Box:
+        """Returns one of the pre-defined boxes by its string name.
+
+        Case does not matter.
+
+        Raises:
+            KeyError: The box was not found.
+        """
+
+        name = name.upper()
+
+        if name in globals():
+            return deepcopy(globals()[name])
+
+        raise KeyError(f"Unknown box {name!r}.")
 
     @staticmethod
     def _find_mode_char(line: str) -> str:
@@ -163,6 +181,47 @@ class Box:
         cls_or_obj.set_char("corner", self.corners)
 
         return cls_or_obj
+
+    def render(
+        self, *, origin: tuple[int, int], width: int, height: int
+    ) -> list[tuple[tuple[int, int], str]]:
+        """Renders a box into positioned lines.
+
+        Args:
+            origin: The origin of the positioning strings.
+            width: The width to render at.
+            height: The height to render at.
+
+        Returns:
+            A list that contains `(position, line)` elements. This can then
+            be displayed by the
+            [compositor](/reference/pytermgui/window_manager/compositor).
+        """
+
+        left, top, right, bottom = self.borders
+        left_top, right_top, right_bottom, left_bottom = self.corners
+
+        used_vertical = 0
+
+        lines = []
+        if top != "":
+            lines.append(
+                left_top + top * (width - real_length(left_top + right_top)) + right_top
+            )
+            used_vertical += 1
+
+        if bottom != "":
+            lines.append(
+                left_bottom
+                + bottom * (width - real_length(left_bottom + right_bottom))
+                + right_bottom
+            )
+            used_vertical += 1
+
+        for _ in range(height - used_vertical):
+            lines.insert(-1, left + " " * (width - real_length(left + right)) + right)
+
+        return [((origin[0], origin[1] + i), line) for i, line in enumerate(lines)]
 
     def debug(self) -> str:
         """Return identifiable information about object"""
