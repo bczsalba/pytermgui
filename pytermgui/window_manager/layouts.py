@@ -177,16 +177,43 @@ class Layout:
     """
 
     name: str
+    size: tuple[int, int]
 
-    def __init__(self, name: str = "Layout") -> None:
+    def __init__(self, name: str = "Layout", adapt_to_terminal: bool = True) -> None:
         self.name = name
         self.slots: list[Slot] = []
+
+        self.origin = self.terminal.origin if adapt_to_terminal else (0, 0)
+        self.size: tuple[int, int] = self.terminal.size
+
+        if adapt_to_terminal:
+            self.terminal.subscribe(self.terminal.RESIZE, self.resize)
 
     @property
     def terminal(self) -> Terminal:
         """Returns the current global terminal instance."""
 
         return get_terminal()
+
+    @property
+    def width(self) -> int:
+        """Returns the width of the layout."""
+
+        return self.size[0]
+
+    @property
+    def height(self) -> int:
+        """Returns the height of the layout."""
+
+        return self.size[1]
+
+    def resize(self, size: tuple[int, int], apply: bool = True) -> None:
+        """Resizes the layout."""
+
+        self.size = size
+
+        if apply:
+            self.apply()
 
     def _to_rows(self) -> list[list[Slot]]:
         """Breaks `self.slots` into a list of list of slots.
@@ -197,7 +224,7 @@ class Layout:
         """
 
         rows: list[list[Slot]] = []
-        available = self.terminal.width
+        available = self.width
 
         row: list[Slot] = []
         for slot in self.slots:
@@ -205,7 +232,7 @@ class Layout:
                 rows.append(row)
 
                 row = []
-                available = self.terminal.width - slot.width.value
+                available = self.width - slot.width.value
 
             if slot is ROW_BREAK:
                 continue
@@ -239,7 +266,7 @@ class Layout:
             )
             undefined = list(filter(lambda slt: slt not in defined, row))
 
-            available = self.terminal.width - sum(slot.width.value for slot in defined)
+            available = self.width - sum(slot.width.value for slot in defined)
 
             return divmod(available, len(undefined) or 1)
 
@@ -248,7 +275,7 @@ class Layout:
 
         occupied = sum(heights)
         auto_height, extra_height = divmod(
-            self.terminal.height - occupied, heights.count(0) or 1
+            self.height - occupied, heights.count(0) or 1
         )
 
         for row, height in zip(rows, heights):
@@ -308,7 +335,7 @@ class Layout:
                 width = Static(width)
 
             elif isinstance(width, float):
-                width = Relative(width, bound=lambda: self.terminal.width)
+                width = Relative(width, bound=lambda: self.width)
 
             if height is None:
                 height = Auto()
@@ -317,7 +344,7 @@ class Layout:
                 height = Static(height)
 
             elif isinstance(height, float):
-                height = Relative(height, bound=lambda: self.terminal.height)
+                height = Relative(height, bound=lambda: self.height)
 
             slot = Slot(name, width=width, height=height)
 
@@ -362,9 +389,12 @@ class Layout:
     def apply(self) -> None:
         """Applies the layout to each slot."""
 
-        position = list(self.terminal.origin)
+        position = list(self.origin)
         for row in self.build_rows():
-            position[0] = 1
+            position[0] = self.origin[0]
+
+            if row == []:
+                continue
 
             for slot in row:
                 slot.apply((position[0], position[1]))
