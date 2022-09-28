@@ -118,7 +118,7 @@ This method is far more powerful than just using template string, but it's also 
 --8<-- "docs/src/widgets/style_callables.py"
 ```
 
-This gives the following result:
+This gives the following result. See the `#auto` tag setting valid foregrounds for both light and dark backgrounds:
 
 ```termage-svg include=docs/src/widgets/style_callables.py title=docs/src/widgets/style_callables.py height=5
 ```

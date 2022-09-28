@@ -5,6 +5,9 @@ theme:
   font:
     text: Open Sans
 
+  icon:
+    logo: octicons/terminal-16
+
   features:
     - navigation.tabs
     - content.code.annotate
