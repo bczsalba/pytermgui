@@ -1,11 +1,7 @@
 """
-A simple yet powerful TUI framework for your Python (3.7+) applications.
-
-There is a couple of parts that make up this module, all building on top
-of eachother to achieve the final result. Your usage depends on which part
-of the library you use. I will provide an example of usage for each.
-
-.. include:: ../docs/getting_started.md
+Welcome to the API reference for **PyTermGUI**, a Python TUI framework with mouse
+support, modular widget system, customizable and rapid terminal markup language and
+more!
 """
 
 # https://github.com/python/mypy/issues/4930
@@ -54,6 +50,8 @@ def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
     more complex objects.  This method is called implicitly whenever a non-widget is
     attempted to be added to a Widget.
 
+    You can read up on the syntacies for each builtin widget within the widget
+    [documentation](/widgets/builtins).
 
     Args:
         data: The structure to convert. See below for formats.
@@ -62,41 +60,6 @@ def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
     Returns:
         The widget or list of widgets created, or None if the passed structure could
         not be converted.
-
-    <br>
-    <details style="text-align: left">
-        <summary style="all: revert; cursor: pointer">Data structures:</summary>
-
-    `pytermgui.widgets.base.Label`:
-
-    * Created from `str`
-    * Syntax example: `"Label value"`
-
-    `pytermgui.widgets.extra.Splitter`:
-
-    * Created from `tuple[Any]`
-    * Syntax example: `(YourWidget(), "auto_syntax", ...)`
-
-    `pytermgui.widgets.extra.Splitter` prompt:
-
-    * Created from `dict[Any, Any]`
-    * Syntax example: `{YourWidget(): "auto_syntax"}`
-
-    `pytermgui.widgets.buttons.Button`:
-
-    * Created from `list[str, pytermgui.widgets.buttons.MouseCallback]`
-    * Syntax example: `["Button label", lambda target, caller: ...]`
-
-    `pytermgui.widgets.buttons.Checkbox`:
-
-    * Created from `list[bool, Callable[[bool], Any]]`
-    * Syntax example: `[True, lambda checked: ...]`
-
-    `pytermgui.widgets.buttons.Toggle`:
-
-    * Created from `list[tuple[str, str], Callable[[str], Any]]`
-    * Syntax example: `[("On", "Off"), lambda new_value: ...]`
-    </details>
 
     Example:
 

@@ -13,8 +13,6 @@
 Tag groups are always denoted by square brackets (`[` and `]`). All text outside of a tag group is considered to be plain text.
 
 
-It seems like this works now?
-
 
 ### Nesting
 
