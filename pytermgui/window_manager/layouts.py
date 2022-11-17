@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
-from ..terminal import Terminal, get_terminal
+from ..term import Terminal, get_terminal
 from ..widgets import Widget
 
 

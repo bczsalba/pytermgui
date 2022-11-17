@@ -29,8 +29,8 @@ from .markup import *
 from .palettes import *
 from .prettifiers import *
 from .regex import *
-from .serializer import *
-from .terminal import *
+from .serialization import *
+from .term import *
 from .widgets import *
 from .window_manager import *
 

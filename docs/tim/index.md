@@ -22,7 +22,7 @@ PyTermGUI offers a markup language complimentary to the other features of the li
 
 - **Extensibility**
 
-    I like tinkering. I hate using things that are made with the philosophy of "this is what I made, and it's all that you will get.". TIM implements customizability in its [alias](state_management.md#aliases) and [macro](state_management.md#macros) systems.
+    I like tinkering. I hate using things that are made with the philosophy of "this is what I made, and it's all that you will get.". TIM implements customizability in its [alias](usage/#alias) and [macro](usage/#macros) systems.
 
 - **Convenience & granularity**
 

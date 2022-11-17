@@ -29,6 +29,9 @@ theme:
         icon: material/lightbulb
         name: Switch to light mode
 
+extra_css:
+  - stylesheets/extra.css
+
 plugins:
   - search
   - gen-files:

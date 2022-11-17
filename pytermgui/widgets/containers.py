@@ -245,7 +245,7 @@ class Container(ScrollableWidget):
 
         Args:
             other: Any widget instance, or data structure that can be turned
-            into a widget by `Widget.from_data`.
+                into a widget by `Widget.from_data`.
 
         Returns:
             A reference to self.

@@ -10,7 +10,6 @@ nav = mkdocs_gen_files.Nav()
 EXCLUDE = [
     re.compile(pat)
     for pat in [
-        # "ansi_interface",
         "style_maps",
         "color_info",
     ]

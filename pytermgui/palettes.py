@@ -69,6 +69,10 @@ def triadic(base: Color) -> tuple[Color, Color, Color, Color]:
 def analogous(base: Color) -> tuple[Color, Color, Color, Color]:
     """Colors that sit next to eachother on the colorwheel.
 
+    Note that the order of primary and secondary colors are swapped
+    by this function. This is done so the colors, when laid out next
+    to eachother, complete a gradient.
+
     Args:
         base: The color used for derivations.
 
@@ -77,7 +81,7 @@ def analogous(base: Color) -> tuple[Color, Color, Color, Color]:
 
     before, _, after = base.analogous
 
-    return base, before, after, base.complement
+    return before, base, after, base.complement
 
 
 STRATEGIES = {

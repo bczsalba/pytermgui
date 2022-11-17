@@ -14,7 +14,7 @@ from ..context_managers import MouseTranslator, alt_buffer, mouse_handler
 from ..enums import Overflow
 from ..input import getch
 from ..regex import real_length
-from ..terminal import terminal
+from ..term import terminal
 from ..widgets import Container, Widget
 from ..widgets.base import BoundCallback
 from .compositor import Compositor

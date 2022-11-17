@@ -13,7 +13,7 @@ from typing import Iterator
 
 from .colors import Color
 from .markup import StyledText, Token, tim
-from .terminal import get_terminal
+from .term import get_terminal
 from .widgets import Widget
 
 MARGIN = 15

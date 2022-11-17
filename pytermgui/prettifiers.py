@@ -35,13 +35,14 @@ def prettify(  # pylint: disable=too-many-branches
     customizable.
 
     The aliases are:
+
     - `str`: Applied to all strings, so long as they do not contain TIM code.
     - `int`: Applied to all integers and booleans. The latter are included as they
         subclass int.
     - `type`: Applied to all types.
-    - `none`: Applied to NoneType. Note that when using `pytermgui.pretty`, a
-        single `None` return value will not be printed, only when part of a more
-        complex structure.
+    - `none`: Applied to NoneType. Note that when using `pytermgui.pretty` or any
+        of its printers, a single `None` return value will not be printed, only when
+        part of a more complex structure.
 
     Args:
         target: The object to prettify. Can be any type.

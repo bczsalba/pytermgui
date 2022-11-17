@@ -17,7 +17,7 @@ from ..ansi_interface import (
 )
 from ..context_managers import mouse_handler
 from ..input import getch, keys
-from ..terminal import get_terminal
+from ..term import get_terminal
 from .base import Widget
 
 T = TypeVar("T", bound=Widget)

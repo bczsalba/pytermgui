@@ -19,7 +19,7 @@ from typing import Any
 
 from .markup import tim
 from .prettifiers import prettify
-from .terminal import get_terminal
+from .term import get_terminal
 
 try:
     # Try to get IPython instance. This function is provided by the
@@ -54,7 +54,7 @@ def pprint(
 
     This essentially just calls `prettify` on each given object, and passes the
     `**print_args` right through to print. Note that when the `sep` print argument is
-    ommitted it is manually set to ", \n".
+    ommitted it is manually set to `", \n"`.
 
     To customize any of the styles, see `MarkupLanguage.prettify`.
 
@@ -91,8 +91,8 @@ def install(
 ) -> None:
     """Sets up `pprint` to print all REPL output. IPython is also supported.
 
-    This functions sets up a hook that will call `pprint` after every interactive
-    return. The given arguments are passed directly to `pprint`, so for more information
+    This function sets up a hook that will call `pprint` after every interactive return.
+    The given arguments are passed directly to `pprint`, so for more information
     you can check out that function.
 
     Usage is pretty simple:
