@@ -23,7 +23,7 @@ The end goal of this version is to make it so implementing the [7GUIs](https://e
 
 ## **8.1.0** - A better YAML styling engine
 
-The current YAML styling works, but doesn't support quite as much as I would like it to. CSS, as <sub>as hideous as it can be</sub> does some things very well: being able to apply styles to specific elements individually, swapping style groups on the fly and integration with the scripting language, just to name a few.
+The current YAML styling works, but doesn't support quite as much as I would like it to. CSS, as <sub>as hideous as it can be</sub> does some things well: being able to apply styles to specific elements individually, swapping style groups on the fly and integration with the scripting language, just to name a few.
 
 With this update, our YAML files should do more or less the same as CSS, but in a more thought-out manner, with clear and readable syntax.
 
