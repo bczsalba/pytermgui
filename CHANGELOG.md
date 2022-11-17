@@ -1,3 +1,29 @@
+## [7.3.0] - 2022-11-17
+
+### Additions
+
+- Add support for `SHIFT+` scroll events
+- Add shade number indicators to `Palette.print`
+- Add `inline` widget runner
+
+### Bugfixes
+
+- Fix incorrect macro caching behaviour
+- Fix various issues and misbehaviours with SVG exports
+- Fix incorrect placement of `InputField` cursor
+
+### Refactors
+
+- New `MkDocs` based documentation
+- Change `terminal.py` -> `term.py` and `serializer.py` -> `serialization.py` to avoid naming conflicts
+- Improve pseudo token behaviour by parsing it as a new token type
+- Start generating semantic colors (success, warning, error) by blending with the primary
+
+### Removals
+
+- Remove `is_bindable` widget attribute
+
+
 ## [7.2.0] - 2022-08-05
 
 ### Additions
@@ -320,6 +346,7 @@
 
 <!-- HATCH URI DEFINITIONS START -->
 
+[7.3.0]: https://github.com/bczsalba/pytermgui/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/bczsalba/pytermgui/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/bczsalba/pytermgui/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/bczsalba/pytermgui/compare/v6.4.0...v7.0.0
