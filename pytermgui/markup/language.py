@@ -199,22 +199,31 @@ class MarkupLanguage:
     ) -> str:
         """Parses some markup text.
 
-        This is a thin wrapper around `pytermgui.markup.parsing.parse`. The main additions
+        This is a thin wrapper around [markup.parsing.parse](/reference/
+        pytermgui/markup/parsing#pytermgui.markup.parsing.parse). The main additions
         of this wrapper are a caching system, as well as state management.
 
         Ignoring caching, all calls to this function would be equivalent to:
 
-            def parse(self, *args, **kwargs) -> str:
-                kwargs["context"] = self.context
+        ```python3
+        def parse(self, *args, **kwargs) -> str:
+            kwargs["context"] = self.context
 
-                return parse(*args, **kwargs)
+            return parse(*args, **kwargs)
+        ```
         """
 
         key = (text, optimize, append_reset)
 
-        if key in self._cache:
-            tokens, output, has_macro = self._cache[key]
+        cache_hit = self._cache.get(key)
+        if cache_hit is not None:
+            cached, tokens, has_macro = cache_hit
 
+            # Re-parse using known tokens when macro is present
+            #
+            # This saves a tiny fraction of time (around 0.2ms) when parsing
+            # macros, for a loss of an even smaller time for the general,
+            # non-macro usecase.
             if has_macro:
                 output = parse_tokens(
                     tokens,
@@ -224,11 +233,11 @@ class MarkupLanguage:
                     ignore_unknown_tags=not self.strict,
                 )
 
-                self._cache[key] = (tokens, output, has_macro)
+                return output
 
-            return output
+            return cached
 
-        tokens = tokenize_markup(text)
+        tokens = list(tokenize_markup(text))
 
         output = parse_tokens(
             tokens,
@@ -240,7 +249,7 @@ class MarkupLanguage:
 
         has_macro = any(token.is_macro() for token in tokens)
 
-        self._cache[key] = (tokens, output, has_macro)
+        self._cache[key] = (output, tokens, has_macro)
 
         return output
 
