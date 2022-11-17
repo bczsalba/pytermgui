@@ -4,7 +4,7 @@ from testfixtures import compare
 
 import pytermgui
 from pytermgui import Color, DensePixelMatrix, str_to_color, tim
-from pytermgui.terminal import Recorder, Terminal, terminal
+from pytermgui.term import Recorder, Terminal, terminal
 
 try:
     from ._exporter_targets import HTML_TARGET, SVG_TARGET

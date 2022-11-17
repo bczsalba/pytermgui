@@ -15,190 +15,190 @@ SVG_TARGET = """\
             font-size: 13px;
             font-weight: bold;
         }
-        .ptg-ptg0 {fill:#ffd787}
-        .ptg-ptg1 {fill:#5fff00}
-        .ptg-ptg2 {fill:#afaf5f}
-        .ptg-ptg3 {fill:#ff00af}
-        .ptg-ptg4 {fill:#ffd75f}
-        .ptg-ptg5 {fill:#5faf00}
-        .ptg-ptg6 {fill:#5f005f}
-        .ptg-ptg7 {fill:#00ffaf}
-        .ptg-ptg8 {fill:#87ffd7}
-        .ptg-ptg9 {fill:#00af5f}
-        .ptg-ptg10 {fill:#5f87ff}
-        .ptg-ptg11 {fill:#d70087}
-        .ptg-ptg12 {fill:#d75f5f}
-        .ptg-ptg13 {fill:#afafd7}
-        .ptg-ptg14 {fill:#87d787}
-        .ptg-ptg15 {fill:#ff87ff}
-        .ptg-ptg16 {fill:#d7d75f}
-        .ptg-ptg17 {fill:#87ff00}
-        .ptg-ptg18 {fill:#5f5fd7}
-        .ptg-ptg19 {fill:#ff0000}
-        .ptg-ptg20 {fill:#d75fd7}
-        .ptg-ptg21 {fill:#00afd7}
-        .ptg-ptg22 {fill:#ff5f87}
-        .ptg-ptg23 {fill:#8700d7}
-        .ptg-ptg24 {fill:#00ff5f}
-        .ptg-ptg25 {fill:#ffafaf}
-        .ptg-ptg26 {fill:#0000ff}
-        .ptg-ptg27 {fill:#00ffff}
-        .ptg-ptg28 {fill:#ffffff}
-        .ptg-ptg29 {fill:#d78787}
-        .ptg-ptg30 {fill:#5f5f5f}
-        .ptg-ptg31 {fill:#afd700}
-        .ptg-ptg32 {fill:#af5f00}
-        .ptg-ptg33 {fill:#af0087}
-        .ptg-ptg34 {fill:#005fff}
-        .ptg-ptg35 {fill:#d7af87}
-        .ptg-ptg36 {fill:#afaf00}
-        .ptg-ptg37 {fill:#5f0087}
-        .ptg-ptg38 {fill:#8787d7}
-        .ptg-ptg39 {fill:#5f5fff}
-        .ptg-ptg40 {fill:#5fffff}
-        .ptg-ptg41 {fill:#87d75f}
-        .ptg-ptg42 {fill:#d7d787}
-        .ptg-ptg43 {fill:#ff87d7}
-        .ptg-ptg44 {fill:#af5fd7}
-        .ptg-ptg45 {fill:#afffaf}
-        .ptg-ptg46 {fill:#87d7d7}
-        .ptg-ptg47 {fill:#ffff00}
-        .ptg-ptg48 {fill:#ff0087}
-        .ptg-ptg49 {fill:#ffafff}
-        .ptg-ptg50 {fill:#00d7d7}
-        .ptg-ptg51 {fill:#000087}
-        .ptg-ptg52 {fill:#00d7ff}
-        .ptg-ptg53 {fill:#d7d7d7}
-        .ptg-ptg54 {fill:#0087ff}
-        .ptg-ptg55 {fill:#5f0000}
-        .ptg-ptg56 {fill:#87ffff}
-        .ptg-ptg57 {fill:#ff87af}
-        .ptg-ptg58 {fill:#5fff87}
-        .ptg-ptg59 {fill:#ff8787}
-        .ptg-ptg60 {fill:#afffff}
-        .ptg-ptg61 {fill:#d7ffff}
-        .ptg-ptg62 {fill:#ffaf5f}
-        .ptg-ptg63 {fill:#ff5fd7}
-        .ptg-ptg64 {fill:#ff8700}
-        .ptg-ptg65 {fill:#00005f}
-        .ptg-ptg66 {fill:#875f00}
-        .ptg-ptg67 {fill:#d787af}
-        .ptg-ptg68 {fill:#afd75f}
-        .ptg-ptg69 {fill:#d70000}
-        .ptg-ptg70 {fill:#d7af5f}
-        .ptg-ptg71 {fill:#5fffaf}
-        .ptg-ptg72 {fill:#5f00af}
-        .ptg-ptg73 {fill:#005f5f}
-        .ptg-ptg74 {fill:#ffff87}
-        .ptg-ptg75 {fill:#af00d7}
-        .ptg-ptg76 {fill:#5f00ff}
-        .ptg-ptg77 {fill:#5fd7ff}
-        .ptg-ptg78 {fill:#5fd7af}
-        .ptg-ptg79 {fill:#87ff87}
-        .ptg-ptg80 {fill:#87d700}
-        .ptg-ptg81 {fill:#00afaf}
-        .ptg-ptg82 {fill:#ffafd7}
-        .ptg-ptg83 {fill:#af8787}
-        .ptg-ptg84 {fill:#d75faf}
-        .ptg-ptg85 {fill:#87005f}
-        .ptg-ptg86 {fill:#5fffd7}
-        .ptg-ptg87 {fill:#d7ffaf}
-        .ptg-ptg88 {fill:#d7d700}
-        .ptg-ptg89 {fill:#8700ff}
-        .ptg-ptg90 {fill:#d7ffd7}
-        .ptg-ptg91 {fill:#87d7af}
-        .ptg-ptg92 {fill:#005f87}
-        .ptg-ptg93 {fill:#af5f87}
-        .ptg-ptg94 {fill:#afd7af}
-        .ptg-ptg95 {fill:#afafaf}
-        .ptg-ptg96 {fill:#afff00}
-        .ptg-ptg97 {fill:#5fafd7}
-        .ptg-ptg98 {fill:#00d75f}
-        .ptg-ptg99 {fill:#875faf}
-        .ptg-ptg100 {fill:#87afff}
-        .ptg-ptg101 {fill:#878700}
-        .ptg-ptg102 {fill:#87ff5f}
-        .ptg-ptg103 {fill:#ffaf00}
-        .ptg-ptg104 {fill:#5fd7d7}
-        .ptg-ptg105 {fill:#87875f}
-        .ptg-ptg106 {fill:#5fd787}
-        .ptg-ptg107 {fill:#00ffd7}
-        .ptg-ptg108 {fill:#ffaf87}
-        .ptg-ptg109 {fill:#d7afff}
-        .ptg-ptg110 {fill:#ffd700}
-        .ptg-ptg111 {fill:#afd7ff}
-        .ptg-ptg112 {fill:#00afff}
-        .ptg-ptg113 {fill:#af5f5f}
-        .ptg-ptg114 {fill:#875fff}
-        .ptg-ptg115 {fill:#ffd7af}
-        .ptg-ptg116 {fill:#ffff5f}
-        .ptg-ptg117 {fill:#d7af00}
-        .ptg-ptg118 {fill:#ff875f}
-        .ptg-ptg119 {fill:#8787ff}
-        .ptg-ptg120 {fill:#87af5f}
-        .ptg-ptg121 {fill:#af87d7}
-        .ptg-ptg122 {fill:#af00af}
-        .ptg-ptg123 {fill:#5f8700}
-        .ptg-ptg124 {fill:#ffffd7}
-        .ptg-ptg125 {fill:#0000af}
-        .ptg-ptg126 {fill:#ff5fff}
-        .ptg-ptg127 {fill:#af0000}
-        .ptg-ptg128 {fill:#ff5f00}
-        .ptg-ptg129 {fill:#005faf}
-        .ptg-ptg130 {fill:#87afd7}
-        .ptg-ptg131 {fill:#5f87d7}
-        .ptg-ptg132 {fill:#af005f}
-        .ptg-ptg133 {fill:#d7d7ff}
-        .ptg-ptg134 {fill:#008787}
-        .ptg-ptg135 {fill:#080808}
-        .ptg-ptg136 {fill:#00875f}
-        .ptg-ptg137 {fill:#5fd700}
-        .ptg-ptg138 {fill:#00ff00}
-        .ptg-ptg139 {fill:#005fd7}
-        .ptg-ptg140 {fill:#00ff87}
-        .ptg-ptg141 {fill:#5f8787}
-        .ptg-ptg142 {fill:#d700ff}
-        .ptg-ptg143 {fill:#ffd7d7}
-        .ptg-ptg144 {fill:#af5faf}
-        .ptg-ptg145 {fill:#00d7af}
-        .ptg-ptg146 {fill:#5fff5f}
-        .ptg-ptg147 {fill:#afaf87}
-        .ptg-ptg148 {fill:#8787af}
-        .ptg-ptg149 {fill:#875f87}
-        .ptg-ptg150 {fill:#5faf87}
-        .ptg-ptg151 {fill:#5fd75f}
-        .ptg-ptg152 {fill:#5f875f}
-        .ptg-ptg153 {fill:#870000}
-        .ptg-ptg154 {fill:#afd787}
-        .ptg-ptg155 {fill:#5f5faf}
-        .ptg-ptg156 {fill:#0000d7}
-        .ptg-ptg157 {fill:#af87ff}
-        .ptg-ptg158 {fill:#87d7ff}
-        .ptg-ptg159 {fill:#00d787}
-        .ptg-ptg160 {fill:#af00ff}
-        .ptg-ptg161 {fill:#5fafaf}
-        .ptg-ptg162 {fill:#005f00}
-        .ptg-ptg163 {fill:#af5fff}
-        .ptg-ptg164 {fill:#5f87af}
-        .ptg-ptg165 {fill:#af87af}
-        .ptg-ptg166 {fill:#870087}
-        .ptg-ptg167 {fill:#d7ff87}
-        .ptg-ptg168 {fill:#d7ff5f}
-        .ptg-ptg169 {fill:#d78700}
-        .ptg-ptg170 {fill:#d7afaf}
-        .ptg-ptg171 {fill:#d75fff}
-        .ptg-ptg172 {fill:#ff5f5f}
-        .ptg-ptg173 {fill:#afff5f}
-        .ptg-ptg174 {fill:#875fd7}
-        .ptg-ptg175 {fill:#00af87}
-        .ptg-ptg176 {fill:#d700af}
-        .ptg-ptg177 {fill:#d75f87}
-        .ptg-ptg178 {fill:#008700}
-        .ptg-ptg179 {fill:#d75f00}
-        .ptg-ptg180 {fill:#5f5f00}
-        .ptg-ptg181 {fill:#d7afd7}
-        .ptg-ptg182 {fill:#afafff}
-        .ptg-ptg183 {fill:#d7005f}
+        .ptg-0 {fill:#ffd787}
+        .ptg-1 {fill:#5fff00}
+        .ptg-2 {fill:#afaf5f}
+        .ptg-3 {fill:#ff00af}
+        .ptg-4 {fill:#ffd75f}
+        .ptg-5 {fill:#5faf00}
+        .ptg-6 {fill:#5f005f}
+        .ptg-7 {fill:#00ffaf}
+        .ptg-8 {fill:#87ffd7}
+        .ptg-9 {fill:#00af5f}
+        .ptg-10 {fill:#5f87ff}
+        .ptg-11 {fill:#d70087}
+        .ptg-12 {fill:#d75f5f}
+        .ptg-13 {fill:#afafd7}
+        .ptg-14 {fill:#87d787}
+        .ptg-15 {fill:#ff87ff}
+        .ptg-16 {fill:#d7d75f}
+        .ptg-17 {fill:#87ff00}
+        .ptg-18 {fill:#5f5fd7}
+        .ptg-19 {fill:#ff0000}
+        .ptg-20 {fill:#d75fd7}
+        .ptg-21 {fill:#00afd7}
+        .ptg-22 {fill:#ff5f87}
+        .ptg-23 {fill:#8700d7}
+        .ptg-24 {fill:#00ff5f}
+        .ptg-25 {fill:#ffafaf}
+        .ptg-26 {fill:#0000ff}
+        .ptg-27 {fill:#00ffff}
+        .ptg-28 {fill:#ffffff}
+        .ptg-29 {fill:#d78787}
+        .ptg-30 {fill:#5f5f5f}
+        .ptg-31 {fill:#afd700}
+        .ptg-32 {fill:#af5f00}
+        .ptg-33 {fill:#af0087}
+        .ptg-34 {fill:#005fff}
+        .ptg-35 {fill:#d7af87}
+        .ptg-36 {fill:#afaf00}
+        .ptg-37 {fill:#5f0087}
+        .ptg-38 {fill:#8787d7}
+        .ptg-39 {fill:#5f5fff}
+        .ptg-40 {fill:#5fffff}
+        .ptg-41 {fill:#87d75f}
+        .ptg-42 {fill:#d7d787}
+        .ptg-43 {fill:#ff87d7}
+        .ptg-44 {fill:#af5fd7}
+        .ptg-45 {fill:#afffaf}
+        .ptg-46 {fill:#87d7d7}
+        .ptg-47 {fill:#ffff00}
+        .ptg-48 {fill:#ff0087}
+        .ptg-49 {fill:#ffafff}
+        .ptg-50 {fill:#00d7d7}
+        .ptg-51 {fill:#000087}
+        .ptg-52 {fill:#00d7ff}
+        .ptg-53 {fill:#d7d7d7}
+        .ptg-54 {fill:#0087ff}
+        .ptg-55 {fill:#5f0000}
+        .ptg-56 {fill:#87ffff}
+        .ptg-57 {fill:#ff87af}
+        .ptg-58 {fill:#5fff87}
+        .ptg-59 {fill:#ff8787}
+        .ptg-60 {fill:#afffff}
+        .ptg-61 {fill:#d7ffff}
+        .ptg-62 {fill:#ffaf5f}
+        .ptg-63 {fill:#ff5fd7}
+        .ptg-64 {fill:#ff8700}
+        .ptg-65 {fill:#00005f}
+        .ptg-66 {fill:#875f00}
+        .ptg-67 {fill:#d787af}
+        .ptg-68 {fill:#afd75f}
+        .ptg-69 {fill:#d70000}
+        .ptg-70 {fill:#d7af5f}
+        .ptg-71 {fill:#5fffaf}
+        .ptg-72 {fill:#5f00af}
+        .ptg-73 {fill:#005f5f}
+        .ptg-74 {fill:#ffff87}
+        .ptg-75 {fill:#af00d7}
+        .ptg-76 {fill:#5f00ff}
+        .ptg-77 {fill:#5fd7ff}
+        .ptg-78 {fill:#5fd7af}
+        .ptg-79 {fill:#87ff87}
+        .ptg-80 {fill:#87d700}
+        .ptg-81 {fill:#00afaf}
+        .ptg-82 {fill:#ffafd7}
+        .ptg-83 {fill:#af8787}
+        .ptg-84 {fill:#d75faf}
+        .ptg-85 {fill:#87005f}
+        .ptg-86 {fill:#5fffd7}
+        .ptg-87 {fill:#d7ffaf}
+        .ptg-88 {fill:#d7d700}
+        .ptg-89 {fill:#8700ff}
+        .ptg-90 {fill:#d7ffd7}
+        .ptg-91 {fill:#87d7af}
+        .ptg-92 {fill:#005f87}
+        .ptg-93 {fill:#af5f87}
+        .ptg-94 {fill:#afd7af}
+        .ptg-95 {fill:#afafaf}
+        .ptg-96 {fill:#afff00}
+        .ptg-97 {fill:#5fafd7}
+        .ptg-98 {fill:#00d75f}
+        .ptg-99 {fill:#875faf}
+        .ptg-100 {fill:#87afff}
+        .ptg-101 {fill:#878700}
+        .ptg-102 {fill:#87ff5f}
+        .ptg-103 {fill:#ffaf00}
+        .ptg-104 {fill:#5fd7d7}
+        .ptg-105 {fill:#87875f}
+        .ptg-106 {fill:#5fd787}
+        .ptg-107 {fill:#00ffd7}
+        .ptg-108 {fill:#ffaf87}
+        .ptg-109 {fill:#d7afff}
+        .ptg-110 {fill:#ffd700}
+        .ptg-111 {fill:#afd7ff}
+        .ptg-112 {fill:#00afff}
+        .ptg-113 {fill:#af5f5f}
+        .ptg-114 {fill:#875fff}
+        .ptg-115 {fill:#ffd7af}
+        .ptg-116 {fill:#ffff5f}
+        .ptg-117 {fill:#d7af00}
+        .ptg-118 {fill:#ff875f}
+        .ptg-119 {fill:#8787ff}
+        .ptg-120 {fill:#87af5f}
+        .ptg-121 {fill:#af87d7}
+        .ptg-122 {fill:#af00af}
+        .ptg-123 {fill:#5f8700}
+        .ptg-124 {fill:#ffffd7}
+        .ptg-125 {fill:#0000af}
+        .ptg-126 {fill:#ff5fff}
+        .ptg-127 {fill:#af0000}
+        .ptg-128 {fill:#ff5f00}
+        .ptg-129 {fill:#005faf}
+        .ptg-130 {fill:#87afd7}
+        .ptg-131 {fill:#5f87d7}
+        .ptg-132 {fill:#af005f}
+        .ptg-133 {fill:#d7d7ff}
+        .ptg-134 {fill:#008787}
+        .ptg-135 {fill:#080808}
+        .ptg-136 {fill:#00875f}
+        .ptg-137 {fill:#5fd700}
+        .ptg-138 {fill:#00ff00}
+        .ptg-139 {fill:#005fd7}
+        .ptg-140 {fill:#00ff87}
+        .ptg-141 {fill:#5f8787}
+        .ptg-142 {fill:#d700ff}
+        .ptg-143 {fill:#ffd7d7}
+        .ptg-144 {fill:#af5faf}
+        .ptg-145 {fill:#00d7af}
+        .ptg-146 {fill:#5fff5f}
+        .ptg-147 {fill:#afaf87}
+        .ptg-148 {fill:#8787af}
+        .ptg-149 {fill:#875f87}
+        .ptg-150 {fill:#5faf87}
+        .ptg-151 {fill:#5fd75f}
+        .ptg-152 {fill:#5f875f}
+        .ptg-153 {fill:#870000}
+        .ptg-154 {fill:#afd787}
+        .ptg-155 {fill:#5f5faf}
+        .ptg-156 {fill:#0000d7}
+        .ptg-157 {fill:#af87ff}
+        .ptg-158 {fill:#87d7ff}
+        .ptg-159 {fill:#00d787}
+        .ptg-160 {fill:#af00ff}
+        .ptg-161 {fill:#5fafaf}
+        .ptg-162 {fill:#005f00}
+        .ptg-163 {fill:#af5fff}
+        .ptg-164 {fill:#5f87af}
+        .ptg-165 {fill:#af87af}
+        .ptg-166 {fill:#870087}
+        .ptg-167 {fill:#d7ff87}
+        .ptg-168 {fill:#d7ff5f}
+        .ptg-169 {fill:#d78700}
+        .ptg-170 {fill:#d7afaf}
+        .ptg-171 {fill:#d75fff}
+        .ptg-172 {fill:#ff5f5f}
+        .ptg-173 {fill:#afff5f}
+        .ptg-174 {fill:#875fd7}
+        .ptg-175 {fill:#00af87}
+        .ptg-176 {fill:#d700af}
+        .ptg-177 {fill:#d75f87}
+        .ptg-178 {fill:#008700}
+        .ptg-179 {fill:#d75f00}
+        .ptg-180 {fill:#5f5f00}
+        .ptg-181 {fill:#d7afd7}
+        .ptg-182 {fill:#afafff}
+        .ptg-183 {fill:#d7005f}
     </style>
 	<g>
 		<rect x="0" y="20" rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round" width="784.0" height="544.375" fill="#000000"/>
@@ -208,942 +208,942 @@ SVG_TARGET = """\
 		<text x="392.0" y="38.975" text-anchor="middle" class="ptg-title">PyTermGUI</text>
 	</g>
 	<g transform="translate(20, 55)">
-		<rect x="0.0" y="0.0" fill="#afaf00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0.0" y="15.0" textLength="9.3" class="ptg ptg-ptg0">▄</text>
-		<rect x="9.3" y="0.0" fill="#875f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="15.0" textLength="9.3" class="ptg ptg-ptg1">▄</text>
-		<rect x="18.6" y="0.0" fill="#af87af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="15.0" textLength="9.3" class="ptg ptg-ptg2">▄</text>
-		<rect x="27.9" y="0.0" fill="#0087d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="15.0" textLength="9.3" class="ptg ptg-ptg3">▄</text>
-		<rect x="37.2" y="0.0" fill="#d7af5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="15.0" textLength="9.3" class="ptg ptg-ptg4">▄</text>
-		<rect x="46.5" y="0.0" fill="#d7ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="15.0" textLength="9.3" class="ptg ptg-ptg5">▄</text>
-		<rect x="55.8" y="0.0" fill="#ffaf00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="15.0" textLength="9.3" class="ptg ptg-ptg6">▄</text>
-		<rect x="65.1" y="0.0" fill="#af00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="15.0" textLength="9.3" class="ptg ptg-ptg7">▄</text>
-		<rect x="74.4" y="0.0" fill="#ff87af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="15.0" textLength="9.3" class="ptg ptg-ptg8">▄</text>
-		<rect x="83.7" y="0.0" fill="#005faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="15.0" textLength="9.3" class="ptg ptg-ptg9">▄</text>
-		<rect x="93.0" y="0.0" fill="#8700ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="15.0" textLength="9.3" class="ptg ptg-ptg10">▄</text>
-		<rect x="102.3" y="0.0" fill="#5f5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="15.0" textLength="9.3" class="ptg ptg-ptg11">▄</text>
-		<rect x="111.6" y="0.0" fill="#5f5f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="15.0" textLength="9.3" class="ptg ptg-ptg12">▄</text>
-		<rect x="120.9" y="0.0" fill="#8787af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="15.0" textLength="9.3" class="ptg ptg-ptg13">▄</text>
-		<rect x="130.2" y="0.0" fill="#87afaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="15.0" textLength="9.3" class="ptg ptg-ptg14">▄</text>
-		<rect x="139.5" y="0.0" fill="#afd787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="15.0" textLength="9.3" class="ptg ptg-ptg15">▄</text>
-		<rect x="148.8" y="0.0" fill="#00af87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="15.0" textLength="9.3" class="ptg ptg-ptg16">▄</text>
-		<rect x="158.1" y="0.0" fill="#d700ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="15.0" textLength="9.3" class="ptg ptg-ptg12">▄</text>
-		<rect x="167.4" y="0.0" fill="#d7d7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="15.0" textLength="9.3" class="ptg ptg-ptg17">▄</text>
-		<rect x="176.7" y="0.0" fill="#8787af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="15.0" textLength="9.3" class="ptg ptg-ptg18">▄</text>
-		<rect x="186.0" y="0.0" fill="#5f00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="15.0" textLength="9.3" class="ptg ptg-ptg19">▄</text>
-		<rect x="195.3" y="0.0" fill="#d75f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="15.0" textLength="9.3" class="ptg ptg-ptg20">▄</text>
-		<rect x="204.6" y="0.0" fill="#ff87d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="15.0" textLength="9.3" class="ptg ptg-ptg21">▄</text>
-		<rect x="213.9" y="0.0" fill="#5f0000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="15.0" textLength="9.3" class="ptg ptg-ptg22">▄</text>
-		<rect x="223.2" y="0.0" fill="#afd7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="15.0" textLength="9.3" class="ptg ptg-ptg23">▄</text>
-		<rect x="232.5" y="0.0" fill="#87d787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="15.0" textLength="9.3" class="ptg ptg-ptg24">▄</text>
-		<rect x="241.8" y="0.0" fill="#ff87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="15.0" textLength="9.3" class="ptg ptg-ptg25">▄</text>
-		<rect x="251.1" y="0.0" fill="#5f875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="15.0" textLength="9.3" class="ptg ptg-ptg26">▄</text>
-		<rect x="260.4" y="0.0" fill="#5f5f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="15.0" textLength="9.3" class="ptg ptg-ptg27">▄</text>
-		<rect x="269.7" y="0.0" fill="#87875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="15.0" textLength="9.3" class="ptg ptg-ptg12">▄</text>
-		<rect x="279.0" y="0.0" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="15.0" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="18.98" fill="#d7af00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="33.98" textLength="9.3" class="ptg ptg-ptg29">▄</text>
-		<rect x="9.3" y="18.98" fill="#5fff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="33.98" textLength="9.3" class="ptg ptg-ptg19">▄</text>
-		<rect x="18.6" y="18.98" fill="#d75f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="33.98" textLength="9.3" class="ptg ptg-ptg30">▄</text>
-		<rect x="27.9" y="18.98" fill="#ff87af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="33.98" textLength="9.3" class="ptg ptg-ptg31">▄</text>
-		<rect x="37.2" y="18.98" fill="#000087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="33.98" textLength="9.3" class="ptg ptg-ptg32">▄</text>
-		<rect x="46.5" y="18.98" fill="#875f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="33.98" textLength="9.3" class="ptg ptg-ptg33">▄</text>
-		<rect x="55.8" y="18.98" fill="#ffd787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="33.98" textLength="9.3" class="ptg ptg-ptg34">▄</text>
-		<rect x="65.1" y="18.98" fill="#5f0000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="33.98" textLength="9.3" class="ptg ptg-ptg27">▄</text>
-		<rect x="74.4" y="18.98" fill="#ff5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="33.98" textLength="9.3" class="ptg ptg-ptg35">▄</text>
-		<rect x="83.7" y="18.98" fill="#d78700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="33.98" textLength="9.3" class="ptg ptg-ptg24">▄</text>
-		<rect x="93.0" y="18.98" fill="#5fff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="33.98" textLength="9.3" class="ptg ptg-ptg36">▄</text>
-		<rect x="102.3" y="18.98" fill="#afafff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="33.98" textLength="9.3" class="ptg ptg-ptg37">▄</text>
-		<rect x="111.6" y="18.98" fill="#d7afaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="33.98" textLength="9.3" class="ptg ptg-ptg38">▄</text>
-		<rect x="120.9" y="18.98" fill="#d70087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="33.98" textLength="9.3" class="ptg ptg-ptg39">▄</text>
-		<rect x="130.2" y="18.98" fill="#87005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="33.98" textLength="9.3" class="ptg ptg-ptg26">▄</text>
-		<rect x="139.5" y="18.98" fill="#ffff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="33.98" textLength="9.3" class="ptg ptg-ptg40">▄</text>
-		<rect x="148.8" y="18.98" fill="#af8700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="33.98" textLength="9.3" class="ptg ptg-ptg41">▄</text>
-		<rect x="158.1" y="18.98" fill="#8700d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="33.98" textLength="9.3" class="ptg ptg-ptg42">▄</text>
-		<rect x="167.4" y="18.98" fill="#008787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="33.98" textLength="9.3" class="ptg ptg-ptg13">▄</text>
-		<rect x="176.7" y="18.98" fill="#5fff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="33.98" textLength="9.3" class="ptg ptg-ptg43">▄</text>
-		<rect x="186.0" y="18.98" fill="#5f8787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="33.98" textLength="9.3" class="ptg ptg-ptg10">▄</text>
-		<rect x="195.3" y="18.98" fill="#d7afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="33.98" textLength="9.3" class="ptg ptg-ptg44">▄</text>
-		<rect x="204.6" y="18.98" fill="#ffffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="33.98" textLength="9.3" class="ptg ptg-ptg45">▄</text>
-		<rect x="213.9" y="18.98" fill="#878700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="33.98" textLength="9.3" class="ptg ptg-ptg46">▄</text>
-		<rect x="223.2" y="18.98" fill="#d70000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="33.98" textLength="9.3" class="ptg ptg-ptg47">▄</text>
-		<rect x="232.5" y="18.98" fill="#5fff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="33.98" textLength="9.3" class="ptg ptg-ptg39">▄</text>
-		<rect x="241.8" y="18.98" fill="#ffafd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="33.98" textLength="9.3" class="ptg ptg-ptg48">▄</text>
-		<rect x="251.1" y="18.98" fill="#ffd7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="33.98" textLength="9.3" class="ptg ptg-ptg28">▄</text>
-		<rect x="260.4" y="18.98" fill="#0087d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="33.98" textLength="9.3" class="ptg ptg-ptg49">▄</text>
-		<rect x="269.7" y="18.98" fill="#afd7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="33.98" textLength="9.3" class="ptg ptg-ptg3">▄</text>
-		<rect x="279.0" y="18.98" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="33.98" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="37.95" fill="#d7af00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="52.95" textLength="9.3" class="ptg ptg-ptg24">▄</text>
-		<rect x="9.3" y="37.95" fill="#5f875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="52.95" textLength="9.3" class="ptg ptg-ptg50">▄</text>
-		<rect x="18.6" y="37.95" fill="#00afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="52.95" textLength="9.3" class="ptg ptg-ptg51">▄</text>
-		<rect x="27.9" y="37.95" fill="#d7d7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="52.95" textLength="9.3" class="ptg ptg-ptg52">▄</text>
-		<rect x="37.2" y="37.95" fill="#ffff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="52.95" textLength="9.3" class="ptg ptg-ptg53">▄</text>
-		<rect x="46.5" y="37.95" fill="#5fafff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="52.95" textLength="9.3" class="ptg ptg-ptg7">▄</text>
-		<rect x="55.8" y="37.95" fill="#afffff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="52.95" textLength="9.3" class="ptg ptg-ptg54">▄</text>
-		<rect x="65.1" y="37.95" fill="#00d787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="52.95" textLength="9.3" class="ptg ptg-ptg55">▄</text>
-		<rect x="74.4" y="37.95" fill="#afaf5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="52.95" textLength="9.3" class="ptg ptg-ptg56">▄</text>
-		<rect x="83.7" y="37.95" fill="#afff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="52.95" textLength="9.3" class="ptg ptg-ptg57">▄</text>
-		<rect x="93.0" y="37.95" fill="#ffff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="52.95" textLength="9.3" class="ptg ptg-ptg58">▄</text>
-		<rect x="102.3" y="37.95" fill="#d7af5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="52.95" textLength="9.3" class="ptg ptg-ptg59">▄</text>
-		<rect x="111.6" y="37.95" fill="#8787d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="52.95" textLength="9.3" class="ptg ptg-ptg60">▄</text>
-		<rect x="120.9" y="37.95" fill="#5fffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="52.95" textLength="9.3" class="ptg ptg-ptg61">▄</text>
-		<rect x="130.2" y="37.95" fill="#af00d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="52.95" textLength="9.3" class="ptg ptg-ptg62">▄</text>
-		<rect x="139.5" y="37.95" fill="#00ff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="52.95" textLength="9.3" class="ptg ptg-ptg29">▄</text>
-		<rect x="148.8" y="37.95" fill="#d7ffff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="52.95" textLength="9.3" class="ptg ptg-ptg63">▄</text>
-		<rect x="158.1" y="37.95" fill="#d7afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="52.95" textLength="9.3" class="ptg ptg-ptg49">▄</text>
-		<rect x="167.4" y="37.95" fill="#00d7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="52.95" textLength="9.3" class="ptg ptg-ptg64">▄</text>
-		<rect x="176.7" y="37.95" fill="#005f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="52.95" textLength="9.3" class="ptg ptg-ptg65">▄</text>
-		<rect x="186.0" y="37.95" fill="#d7ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="52.95" textLength="9.3" class="ptg ptg-ptg4">▄</text>
-		<rect x="195.3" y="37.95" fill="#5f00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="52.95" textLength="9.3" class="ptg ptg-ptg12">▄</text>
-		<rect x="204.6" y="37.95" fill="#d7ff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="52.95" textLength="9.3" class="ptg ptg-ptg66">▄</text>
-		<rect x="213.9" y="37.95" fill="#5fffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="52.95" textLength="9.3" class="ptg ptg-ptg60">▄</text>
-		<rect x="223.2" y="37.95" fill="#0087af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="52.95" textLength="9.3" class="ptg ptg-ptg26">▄</text>
-		<rect x="232.5" y="37.95" fill="#af87af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="52.95" textLength="9.3" class="ptg ptg-ptg67">▄</text>
-		<rect x="241.8" y="37.95" fill="#ffff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="52.95" textLength="9.3" class="ptg ptg-ptg47">▄</text>
-		<rect x="251.1" y="37.95" fill="#5f00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="52.95" textLength="9.3" class="ptg ptg-ptg68">▄</text>
-		<rect x="260.4" y="37.95" fill="#87d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="52.95" textLength="9.3" class="ptg ptg-ptg69">▄</text>
-		<rect x="269.7" y="37.95" fill="#d7afd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="52.95" textLength="9.3" class="ptg ptg-ptg70">▄</text>
-		<rect x="279.0" y="37.95" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="52.95" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="56.93" fill="#87afd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="71.93" textLength="9.3" class="ptg ptg-ptg51">▄</text>
-		<rect x="9.3" y="56.93" fill="#5f005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="71.93" textLength="9.3" class="ptg ptg-ptg4">▄</text>
-		<rect x="18.6" y="56.93" fill="#87ff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="71.93" textLength="9.3" class="ptg ptg-ptg71">▄</text>
-		<rect x="27.9" y="56.93" fill="#af87af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="71.93" textLength="9.3" class="ptg ptg-ptg72">▄</text>
-		<rect x="37.2" y="56.93" fill="#af00ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="71.93" textLength="9.3" class="ptg ptg-ptg33">▄</text>
-		<rect x="46.5" y="56.93" fill="#87ffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="71.93" textLength="9.3" class="ptg ptg-ptg59">▄</text>
-		<rect x="55.8" y="56.93" fill="#d7d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="71.93" textLength="9.3" class="ptg ptg-ptg73">▄</text>
-		<rect x="65.1" y="56.93" fill="#5faf87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="71.93" textLength="9.3" class="ptg ptg-ptg36">▄</text>
-		<rect x="74.4" y="56.93" fill="#ff5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="71.93" textLength="9.3" class="ptg ptg-ptg30">▄</text>
-		<rect x="83.7" y="56.93" fill="#afd787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="71.93" textLength="9.3" class="ptg ptg-ptg74">▄</text>
-		<rect x="93.0" y="56.93" fill="#afd75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="71.93" textLength="9.3" class="ptg ptg-ptg7">▄</text>
-		<rect x="102.3" y="56.93" fill="#ff00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="71.93" textLength="9.3" class="ptg ptg-ptg75">▄</text>
-		<rect x="111.6" y="56.93" fill="#00d7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="71.93" textLength="9.3" class="ptg ptg-ptg76">▄</text>
-		<rect x="120.9" y="56.93" fill="#5f5f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="71.93" textLength="9.3" class="ptg ptg-ptg77">▄</text>
-		<rect x="130.2" y="56.93" fill="#5fffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="71.93" textLength="9.3" class="ptg ptg-ptg78">▄</text>
-		<rect x="139.5" y="56.93" fill="#0087ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="71.93" textLength="9.3" class="ptg ptg-ptg79">▄</text>
-		<rect x="148.8" y="56.93" fill="#afafaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="71.93" textLength="9.3" class="ptg ptg-ptg28">▄</text>
-		<rect x="158.1" y="56.93" fill="#ff5fff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="71.93" textLength="9.3" class="ptg ptg-ptg80">▄</text>
-		<rect x="167.4" y="56.93" fill="#00afaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="71.93" textLength="9.3" class="ptg ptg-ptg81">▄</text>
-		<rect x="176.7" y="56.93" fill="#870000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="71.93" textLength="9.3" class="ptg ptg-ptg56">▄</text>
-		<rect x="186.0" y="56.93" fill="#5f005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="71.93" textLength="9.3" class="ptg ptg-ptg82">▄</text>
-		<rect x="195.3" y="56.93" fill="#5faf00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="71.93" textLength="9.3" class="ptg ptg-ptg73">▄</text>
-		<rect x="204.6" y="56.93" fill="#af87af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="71.93" textLength="9.3" class="ptg ptg-ptg83">▄</text>
-		<rect x="213.9" y="56.93" fill="#87d7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="71.93" textLength="9.3" class="ptg ptg-ptg84">▄</text>
-		<rect x="223.2" y="56.93" fill="#ff8700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="71.93" textLength="9.3" class="ptg ptg-ptg85">▄</text>
-		<rect x="232.5" y="56.93" fill="#d7d75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="71.93" textLength="9.3" class="ptg ptg-ptg86">▄</text>
-		<rect x="241.8" y="56.93" fill="#5fd7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="71.93" textLength="9.3" class="ptg ptg-ptg9">▄</text>
-		<rect x="251.1" y="56.93" fill="#d7005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="71.93" textLength="9.3" class="ptg ptg-ptg87">▄</text>
-		<rect x="260.4" y="56.93" fill="#afaf00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="71.93" textLength="9.3" class="ptg ptg-ptg88">▄</text>
-		<rect x="269.7" y="56.93" fill="#00d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="71.93" textLength="9.3" class="ptg ptg-ptg33">▄</text>
-		<rect x="279.0" y="56.93" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="71.93" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="75.9" fill="#ff0087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="90.9" textLength="9.3" class="ptg ptg-ptg89">▄</text>
-		<rect x="9.3" y="75.9" fill="#afff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="90.9" textLength="9.3" class="ptg ptg-ptg58">▄</text>
-		<rect x="18.6" y="75.9" fill="#afffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="90.9" textLength="9.3" class="ptg ptg-ptg90">▄</text>
-		<rect x="27.9" y="75.9" fill="#af00ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="90.9" textLength="9.3" class="ptg ptg-ptg91">▄</text>
-		<rect x="37.2" y="75.9" fill="#ff00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="90.9" textLength="9.3" class="ptg ptg-ptg92">▄</text>
-		<rect x="46.5" y="75.9" fill="#5faf5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="90.9" textLength="9.3" class="ptg ptg-ptg7">▄</text>
-		<rect x="55.8" y="75.9" fill="#87afaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="90.9" textLength="9.3" class="ptg ptg-ptg93">▄</text>
-		<rect x="65.1" y="75.9" fill="#ffafaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="90.9" textLength="9.3" class="ptg ptg-ptg45">▄</text>
-		<rect x="74.4" y="75.9" fill="#d7d787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="90.9" textLength="9.3" class="ptg ptg-ptg94">▄</text>
-		<rect x="83.7" y="75.9" fill="#8700af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="90.9" textLength="9.3" class="ptg ptg-ptg95">▄</text>
-		<rect x="93.0" y="75.9" fill="#87af5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="90.9" textLength="9.3" class="ptg ptg-ptg96">▄</text>
-		<rect x="102.3" y="75.9" fill="#af005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="90.9" textLength="9.3" class="ptg ptg-ptg97">▄</text>
-		<rect x="111.6" y="75.9" fill="#00af87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="90.9" textLength="9.3" class="ptg ptg-ptg98">▄</text>
-		<rect x="120.9" y="75.9" fill="#afff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="90.9" textLength="9.3" class="ptg ptg-ptg82">▄</text>
-		<rect x="130.2" y="75.9" fill="#ffafd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="90.9" textLength="9.3" class="ptg ptg-ptg1">▄</text>
-		<rect x="139.5" y="75.9" fill="#008787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="90.9" textLength="9.3" class="ptg ptg-ptg70">▄</text>
-		<rect x="148.8" y="75.9" fill="#ffaf87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="90.9" textLength="9.3" class="ptg ptg-ptg92">▄</text>
-		<rect x="158.1" y="75.9" fill="#ffafd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="90.9" textLength="9.3" class="ptg ptg-ptg42">▄</text>
-		<rect x="167.4" y="75.9" fill="#87af00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="90.9" textLength="9.3" class="ptg ptg-ptg52">▄</text>
-		<rect x="176.7" y="75.9" fill="#af00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="90.9" textLength="9.3" class="ptg ptg-ptg99">▄</text>
-		<rect x="186.0" y="75.9" fill="#d787af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="90.9" textLength="9.3" class="ptg ptg-ptg100">▄</text>
-		<rect x="195.3" y="75.9" fill="#875f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="90.9" textLength="9.3" class="ptg ptg-ptg59">▄</text>
-		<rect x="204.6" y="75.9" fill="#5f5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="90.9" textLength="9.3" class="ptg ptg-ptg101">▄</text>
-		<rect x="213.9" y="75.9" fill="#d78787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="90.9" textLength="9.3" class="ptg ptg-ptg90">▄</text>
-		<rect x="223.2" y="75.9" fill="#af0000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="90.9" textLength="9.3" class="ptg ptg-ptg102">▄</text>
-		<rect x="232.5" y="75.9" fill="#ff00d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="90.9" textLength="9.3" class="ptg ptg-ptg87">▄</text>
-		<rect x="241.8" y="75.9" fill="#5f0000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="90.9" textLength="9.3" class="ptg ptg-ptg103">▄</text>
-		<rect x="251.1" y="75.9" fill="#5faf87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="90.9" textLength="9.3" class="ptg ptg-ptg6">▄</text>
-		<rect x="260.4" y="75.9" fill="#00ffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="90.9" textLength="9.3" class="ptg ptg-ptg34">▄</text>
-		<rect x="269.7" y="75.9" fill="#00875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="90.9" textLength="9.3" class="ptg ptg-ptg37">▄</text>
-		<rect x="279.0" y="75.9" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="90.9" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="94.88" fill="#000087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="109.88" textLength="9.3" class="ptg ptg-ptg11">▄</text>
-		<rect x="9.3" y="94.88" fill="#d7af00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="109.88" textLength="9.3" class="ptg ptg-ptg104">▄</text>
-		<rect x="18.6" y="94.88" fill="#d75fff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="109.88" textLength="9.3" class="ptg ptg-ptg46">▄</text>
-		<rect x="27.9" y="94.88" fill="#ffff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="109.88" textLength="9.3" class="ptg ptg-ptg91">▄</text>
-		<rect x="37.2" y="94.88" fill="#d75f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="109.88" textLength="9.3" class="ptg ptg-ptg57">▄</text>
-		<rect x="46.5" y="94.88" fill="#afffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="109.88" textLength="9.3" class="ptg ptg-ptg105">▄</text>
-		<rect x="55.8" y="94.88" fill="#af5f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="109.88" textLength="9.3" class="ptg ptg-ptg106">▄</text>
-		<rect x="65.1" y="94.88" fill="#afd787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="109.88" textLength="9.3" class="ptg ptg-ptg100">▄</text>
-		<rect x="74.4" y="94.88" fill="#5faf5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="109.88" textLength="9.3" class="ptg ptg-ptg107">▄</text>
-		<rect x="83.7" y="94.88" fill="#ffd787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="109.88" textLength="9.3" class="ptg ptg-ptg84">▄</text>
-		<rect x="93.0" y="94.88" fill="#870000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="109.88" textLength="9.3" class="ptg ptg-ptg71">▄</text>
-		<rect x="102.3" y="94.88" fill="#ffd700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="109.88" textLength="9.3" class="ptg ptg-ptg107">▄</text>
-		<rect x="111.6" y="94.88" fill="#87ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="109.88" textLength="9.3" class="ptg ptg-ptg108">▄</text>
-		<rect x="120.9" y="94.88" fill="#d7d7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="109.88" textLength="9.3" class="ptg ptg-ptg106">▄</text>
-		<rect x="130.2" y="94.88" fill="#d70000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="109.88" textLength="9.3" class="ptg ptg-ptg109">▄</text>
-		<rect x="139.5" y="94.88" fill="#afd7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="109.88" textLength="9.3" class="ptg ptg-ptg54">▄</text>
-		<rect x="148.8" y="94.88" fill="#87ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="109.88" textLength="9.3" class="ptg ptg-ptg110">▄</text>
-		<rect x="158.1" y="94.88" fill="#875f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="109.88" textLength="9.3" class="ptg ptg-ptg111">▄</text>
-		<rect x="167.4" y="94.88" fill="#87ffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="109.88" textLength="9.3" class="ptg ptg-ptg74">▄</text>
-		<rect x="176.7" y="94.88" fill="#ff5f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="109.88" textLength="9.3" class="ptg ptg-ptg112">▄</text>
-		<rect x="186.0" y="94.88" fill="#5f8787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="109.88" textLength="9.3" class="ptg ptg-ptg113">▄</text>
-		<rect x="195.3" y="94.88" fill="#870000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="109.88" textLength="9.3" class="ptg ptg-ptg77">▄</text>
-		<rect x="204.6" y="94.88" fill="#5fafaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="109.88" textLength="9.3" class="ptg ptg-ptg114">▄</text>
-		<rect x="213.9" y="94.88" fill="#87d7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="109.88" textLength="9.3" class="ptg ptg-ptg115">▄</text>
-		<rect x="223.2" y="94.88" fill="#878787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="109.88" textLength="9.3" class="ptg ptg-ptg116">▄</text>
-		<rect x="232.5" y="94.88" fill="#87d7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="109.88" textLength="9.3" class="ptg ptg-ptg117">▄</text>
-		<rect x="241.8" y="94.88" fill="#d7ff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="109.88" textLength="9.3" class="ptg ptg-ptg37">▄</text>
-		<rect x="251.1" y="94.88" fill="#ff00d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="109.88" textLength="9.3" class="ptg ptg-ptg55">▄</text>
-		<rect x="260.4" y="94.88" fill="#5f0000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="109.88" textLength="9.3" class="ptg ptg-ptg21">▄</text>
-		<rect x="269.7" y="94.88" fill="#5fafff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="109.88" textLength="9.3" class="ptg ptg-ptg118">▄</text>
-		<rect x="279.0" y="94.88" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="109.88" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="113.85" fill="#af00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="128.85" textLength="9.3" class="ptg ptg-ptg119">▄</text>
-		<rect x="9.3" y="113.85" fill="#00d787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="128.85" textLength="9.3" class="ptg ptg-ptg120">▄</text>
-		<rect x="18.6" y="113.85" fill="#af0000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="128.85" textLength="9.3" class="ptg ptg-ptg86">▄</text>
-		<rect x="27.9" y="113.85" fill="#87af00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="128.85" textLength="9.3" class="ptg ptg-ptg113">▄</text>
-		<rect x="37.2" y="113.85" fill="#afaf00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="128.85" textLength="9.3" class="ptg ptg-ptg121">▄</text>
-		<rect x="46.5" y="113.85" fill="#d7ff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="128.85" textLength="9.3" class="ptg ptg-ptg122">▄</text>
-		<rect x="55.8" y="113.85" fill="#005f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="128.85" textLength="9.3" class="ptg ptg-ptg123">▄</text>
-		<rect x="65.1" y="113.85" fill="#080808" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="128.85" textLength="9.3" class="ptg ptg-ptg92">▄</text>
-		<rect x="74.4" y="113.85" fill="#87005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="128.85" textLength="9.3" class="ptg ptg-ptg124">▄</text>
-		<rect x="83.7" y="113.85" fill="#ffafaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="128.85" textLength="9.3" class="ptg ptg-ptg125">▄</text>
-		<rect x="93.0" y="113.85" fill="#d7ff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="128.85" textLength="9.3" class="ptg ptg-ptg101">▄</text>
-		<rect x="102.3" y="113.85" fill="#ff87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="128.85" textLength="9.3" class="ptg ptg-ptg120">▄</text>
-		<rect x="111.6" y="113.85" fill="#87005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="128.85" textLength="9.3" class="ptg ptg-ptg80">▄</text>
-		<rect x="120.9" y="113.85" fill="#875f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="128.85" textLength="9.3" class="ptg ptg-ptg126">▄</text>
-		<rect x="130.2" y="113.85" fill="#5f005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="128.85" textLength="9.3" class="ptg ptg-ptg103">▄</text>
-		<rect x="139.5" y="113.85" fill="#87d75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="128.85" textLength="9.3" class="ptg ptg-ptg127">▄</text>
-		<rect x="148.8" y="113.85" fill="#d75f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="128.85" textLength="9.3" class="ptg ptg-ptg75">▄</text>
-		<rect x="158.1" y="113.85" fill="#87ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="128.85" textLength="9.3" class="ptg ptg-ptg104">▄</text>
-		<rect x="167.4" y="113.85" fill="#87ff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="128.85" textLength="9.3" class="ptg ptg-ptg128">▄</text>
-		<rect x="176.7" y="113.85" fill="#5f5f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="128.85" textLength="9.3" class="ptg ptg-ptg113">▄</text>
-		<rect x="186.0" y="113.85" fill="#5fff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="128.85" textLength="9.3" class="ptg ptg-ptg35">▄</text>
-		<rect x="195.3" y="113.85" fill="#d7d700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="128.85" textLength="9.3" class="ptg ptg-ptg129">▄</text>
-		<rect x="204.6" y="113.85" fill="#5fd75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="128.85" textLength="9.3" class="ptg ptg-ptg118">▄</text>
-		<rect x="213.9" y="113.85" fill="#87d700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="128.85" textLength="9.3" class="ptg ptg-ptg126">▄</text>
-		<rect x="223.2" y="113.85" fill="#5f5f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="128.85" textLength="9.3" class="ptg ptg-ptg130">▄</text>
-		<rect x="232.5" y="113.85" fill="#d7af5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="128.85" textLength="9.3" class="ptg ptg-ptg32">▄</text>
-		<rect x="241.8" y="113.85" fill="#d7ffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="128.85" textLength="9.3" class="ptg ptg-ptg131">▄</text>
-		<rect x="251.1" y="113.85" fill="#d75fd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="128.85" textLength="9.3" class="ptg ptg-ptg125">▄</text>
-		<rect x="260.4" y="113.85" fill="#afafd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="128.85" textLength="9.3" class="ptg ptg-ptg28">▄</text>
-		<rect x="269.7" y="113.85" fill="#afd700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="128.85" textLength="9.3" class="ptg ptg-ptg75">▄</text>
-		<rect x="279.0" y="113.85" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="128.85" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="132.82" fill="#875f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="147.82" textLength="9.3" class="ptg ptg-ptg62">▄</text>
-		<rect x="9.3" y="132.82" fill="#5fafff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="147.82" textLength="9.3" class="ptg ptg-ptg132">▄</text>
-		<rect x="18.6" y="132.82" fill="#5fff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="147.82" textLength="9.3" class="ptg ptg-ptg133">▄</text>
-		<rect x="27.9" y="132.82" fill="#d7af5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="147.82" textLength="9.3" class="ptg ptg-ptg47">▄</text>
-		<rect x="37.2" y="132.82" fill="#d7d7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="147.82" textLength="9.3" class="ptg ptg-ptg134">▄</text>
-		<rect x="46.5" y="132.82" fill="#875f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="147.82" textLength="9.3" class="ptg ptg-ptg77">▄</text>
-		<rect x="55.8" y="132.82" fill="#5fafaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="147.82" textLength="9.3" class="ptg ptg-ptg48">▄</text>
-		<rect x="65.1" y="132.82" fill="#ff00d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="147.82" textLength="9.3" class="ptg ptg-ptg135">▄</text>
-		<rect x="74.4" y="132.82" fill="#d7ffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="147.82" textLength="9.3" class="ptg ptg-ptg65">▄</text>
-		<rect x="83.7" y="132.82" fill="#ffd7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="147.82" textLength="9.3" class="ptg ptg-ptg9">▄</text>
-		<rect x="93.0" y="132.82" fill="#d7ffff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="147.82" textLength="9.3" class="ptg ptg-ptg81">▄</text>
-		<rect x="102.3" y="132.82" fill="#ffff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="147.82" textLength="9.3" class="ptg ptg-ptg35">▄</text>
-		<rect x="111.6" y="132.82" fill="#5f5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="147.82" textLength="9.3" class="ptg ptg-ptg46">▄</text>
-		<rect x="120.9" y="132.82" fill="#d75f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="147.82" textLength="9.3" class="ptg ptg-ptg69">▄</text>
-		<rect x="130.2" y="132.82" fill="#af00d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="147.82" textLength="9.3" class="ptg ptg-ptg41">▄</text>
-		<rect x="139.5" y="132.82" fill="#5f875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="147.82" textLength="9.3" class="ptg ptg-ptg67">▄</text>
-		<rect x="148.8" y="132.82" fill="#87ffff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="147.82" textLength="9.3" class="ptg ptg-ptg136">▄</text>
-		<rect x="158.1" y="132.82" fill="#8700d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="147.82" textLength="9.3" class="ptg ptg-ptg137">▄</text>
-		<rect x="167.4" y="132.82" fill="#d7afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="147.82" textLength="9.3" class="ptg ptg-ptg54">▄</text>
-		<rect x="176.7" y="132.82" fill="#d70000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="147.82" textLength="9.3" class="ptg ptg-ptg138">▄</text>
-		<rect x="186.0" y="132.82" fill="#00afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="147.82" textLength="9.3" class="ptg ptg-ptg67">▄</text>
-		<rect x="195.3" y="132.82" fill="#ffff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="147.82" textLength="9.3" class="ptg ptg-ptg139">▄</text>
-		<rect x="204.6" y="132.82" fill="#5faf00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="147.82" textLength="9.3" class="ptg ptg-ptg117">▄</text>
-		<rect x="213.9" y="132.82" fill="#00afaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="147.82" textLength="9.3" class="ptg ptg-ptg140">▄</text>
-		<rect x="223.2" y="132.82" fill="#afffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="147.82" textLength="9.3" class="ptg ptg-ptg141">▄</text>
-		<rect x="232.5" y="132.82" fill="#ffd75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="147.82" textLength="9.3" class="ptg ptg-ptg123">▄</text>
-		<rect x="241.8" y="132.82" fill="#afd7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="147.82" textLength="9.3" class="ptg ptg-ptg134">▄</text>
-		<rect x="251.1" y="132.82" fill="#870087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="147.82" textLength="9.3" class="ptg ptg-ptg57">▄</text>
-		<rect x="260.4" y="132.82" fill="#d787ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="147.82" textLength="9.3" class="ptg ptg-ptg56">▄</text>
-		<rect x="269.7" y="132.82" fill="#ffd7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="147.82" textLength="9.3" class="ptg ptg-ptg62">▄</text>
-		<rect x="279.0" y="132.82" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="147.82" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="151.8" fill="#ff5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="166.8" textLength="9.3" class="ptg ptg-ptg133">▄</text>
-		<rect x="9.3" y="151.8" fill="#d7af00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="166.8" textLength="9.3" class="ptg ptg-ptg142">▄</text>
-		<rect x="18.6" y="151.8" fill="#af00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="166.8" textLength="9.3" class="ptg ptg-ptg143">▄</text>
-		<rect x="27.9" y="151.8" fill="#87ffff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="166.8" textLength="9.3" class="ptg ptg-ptg35">▄</text>
-		<rect x="37.2" y="151.8" fill="#87d700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="166.8" textLength="9.3" class="ptg ptg-ptg144">▄</text>
-		<rect x="46.5" y="151.8" fill="#ff875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="166.8" textLength="9.3" class="ptg ptg-ptg145">▄</text>
-		<rect x="55.8" y="151.8" fill="#af87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="166.8" textLength="9.3" class="ptg ptg-ptg22">▄</text>
-		<rect x="65.1" y="151.8" fill="#0000af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="166.8" textLength="9.3" class="ptg ptg-ptg146">▄</text>
-		<rect x="74.4" y="151.8" fill="#875f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="166.8" textLength="9.3" class="ptg ptg-ptg106">▄</text>
-		<rect x="83.7" y="151.8" fill="#ffafd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="166.8" textLength="9.3" class="ptg ptg-ptg58">▄</text>
-		<rect x="93.0" y="151.8" fill="#d75fd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="166.8" textLength="9.3" class="ptg ptg-ptg114">▄</text>
-		<rect x="102.3" y="151.8" fill="#5faf5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="166.8" textLength="9.3" class="ptg ptg-ptg51">▄</text>
-		<rect x="111.6" y="151.8" fill="#d75f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="166.8" textLength="9.3" class="ptg ptg-ptg43">▄</text>
-		<rect x="120.9" y="151.8" fill="#5f5f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="166.8" textLength="9.3" class="ptg ptg-ptg147">▄</text>
-		<rect x="130.2" y="151.8" fill="#af5f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="166.8" textLength="9.3" class="ptg ptg-ptg79">▄</text>
-		<rect x="139.5" y="151.8" fill="#d7ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="166.8" textLength="9.3" class="ptg ptg-ptg32">▄</text>
-		<rect x="148.8" y="151.8" fill="#afafff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="166.8" textLength="9.3" class="ptg ptg-ptg80">▄</text>
-		<rect x="158.1" y="151.8" fill="#5f0000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="166.8" textLength="9.3" class="ptg ptg-ptg24">▄</text>
-		<rect x="167.4" y="151.8" fill="#005f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="166.8" textLength="9.3" class="ptg ptg-ptg148">▄</text>
-		<rect x="176.7" y="151.8" fill="#d7ffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="166.8" textLength="9.3" class="ptg ptg-ptg148">▄</text>
-		<rect x="186.0" y="151.8" fill="#afd787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="166.8" textLength="9.3" class="ptg ptg-ptg99">▄</text>
-		<rect x="195.3" y="151.8" fill="#005fd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="166.8" textLength="9.3" class="ptg ptg-ptg107">▄</text>
-		<rect x="204.6" y="151.8" fill="#875f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="166.8" textLength="9.3" class="ptg ptg-ptg2">▄</text>
-		<rect x="213.9" y="151.8" fill="#00af00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="166.8" textLength="9.3" class="ptg ptg-ptg130">▄</text>
-		<rect x="223.2" y="151.8" fill="#ff87d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="166.8" textLength="9.3" class="ptg ptg-ptg149">▄</text>
-		<rect x="232.5" y="151.8" fill="#878787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="166.8" textLength="9.3" class="ptg ptg-ptg150">▄</text>
-		<rect x="241.8" y="151.8" fill="#87ffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="166.8" textLength="9.3" class="ptg ptg-ptg146">▄</text>
-		<rect x="251.1" y="151.8" fill="#5f8787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="166.8" textLength="9.3" class="ptg ptg-ptg32">▄</text>
-		<rect x="260.4" y="151.8" fill="#af5f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="166.8" textLength="9.3" class="ptg ptg-ptg100">▄</text>
-		<rect x="269.7" y="151.8" fill="#00875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="166.8" textLength="9.3" class="ptg ptg-ptg90">▄</text>
-		<rect x="279.0" y="151.8" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="166.8" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="170.77" fill="#d7af87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="185.77" textLength="9.3" class="ptg ptg-ptg151">▄</text>
-		<rect x="9.3" y="170.77" fill="#875f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="185.77" textLength="9.3" class="ptg ptg-ptg11">▄</text>
-		<rect x="18.6" y="170.77" fill="#5f5fff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="185.77" textLength="9.3" class="ptg ptg-ptg23">▄</text>
-		<rect x="27.9" y="170.77" fill="#8700af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="185.77" textLength="9.3" class="ptg ptg-ptg152">▄</text>
-		<rect x="37.2" y="170.77" fill="#5f0000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="185.77" textLength="9.3" class="ptg ptg-ptg27">▄</text>
-		<rect x="46.5" y="170.77" fill="#ffffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="185.77" textLength="9.3" class="ptg ptg-ptg42">▄</text>
-		<rect x="55.8" y="170.77" fill="#8787d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="185.77" textLength="9.3" class="ptg ptg-ptg131">▄</text>
-		<rect x="65.1" y="170.77" fill="#00005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="185.77" textLength="9.3" class="ptg ptg-ptg104">▄</text>
-		<rect x="74.4" y="170.77" fill="#d7ffff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="185.77" textLength="9.3" class="ptg ptg-ptg88">▄</text>
-		<rect x="83.7" y="170.77" fill="#ff87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="185.77" textLength="9.3" class="ptg ptg-ptg95">▄</text>
-		<rect x="93.0" y="170.77" fill="#000087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="185.77" textLength="9.3" class="ptg ptg-ptg25">▄</text>
-		<rect x="102.3" y="170.77" fill="#5fafd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="185.77" textLength="9.3" class="ptg ptg-ptg33">▄</text>
-		<rect x="111.6" y="170.77" fill="#d7d7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="185.77" textLength="9.3" class="ptg ptg-ptg148">▄</text>
-		<rect x="120.9" y="170.77" fill="#5fafd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="185.77" textLength="9.3" class="ptg ptg-ptg130">▄</text>
-		<rect x="130.2" y="170.77" fill="#5f87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="185.77" textLength="9.3" class="ptg ptg-ptg92">▄</text>
-		<rect x="139.5" y="170.77" fill="#ff8787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="185.77" textLength="9.3" class="ptg ptg-ptg129">▄</text>
-		<rect x="148.8" y="170.77" fill="#ff5f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="185.77" textLength="9.3" class="ptg ptg-ptg140">▄</text>
-		<rect x="158.1" y="170.77" fill="#d7afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="185.77" textLength="9.3" class="ptg ptg-ptg104">▄</text>
-		<rect x="167.4" y="170.77" fill="#d75f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="185.77" textLength="9.3" class="ptg ptg-ptg97">▄</text>
-		<rect x="176.7" y="170.77" fill="#5faf5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="185.77" textLength="9.3" class="ptg ptg-ptg43">▄</text>
-		<rect x="186.0" y="170.77" fill="#00d75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="185.77" textLength="9.3" class="ptg ptg-ptg153">▄</text>
-		<rect x="195.3" y="170.77" fill="#afffff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="185.77" textLength="9.3" class="ptg ptg-ptg154">▄</text>
-		<rect x="204.6" y="170.77" fill="#080808" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="185.77" textLength="9.3" class="ptg ptg-ptg42">▄</text>
-		<rect x="213.9" y="170.77" fill="#af87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="185.77" textLength="9.3" class="ptg ptg-ptg98">▄</text>
-		<rect x="223.2" y="170.77" fill="#00d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="185.77" textLength="9.3" class="ptg ptg-ptg140">▄</text>
-		<rect x="232.5" y="170.77" fill="#af5fff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="185.77" textLength="9.3" class="ptg ptg-ptg92">▄</text>
-		<rect x="241.8" y="170.77" fill="#d7005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="185.77" textLength="9.3" class="ptg ptg-ptg90">▄</text>
-		<rect x="251.1" y="170.77" fill="#ff005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="185.77" textLength="9.3" class="ptg ptg-ptg25">▄</text>
-		<rect x="260.4" y="170.77" fill="#878700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="185.77" textLength="9.3" class="ptg ptg-ptg149">▄</text>
-		<rect x="269.7" y="170.77" fill="#ffff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="185.77" textLength="9.3" class="ptg ptg-ptg155">▄</text>
-		<rect x="279.0" y="170.77" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="185.77" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="189.75" fill="#d75fd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="204.75" textLength="9.3" class="ptg ptg-ptg156">▄</text>
-		<rect x="9.3" y="189.75" fill="#87ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="204.75" textLength="9.3" class="ptg ptg-ptg157">▄</text>
-		<rect x="18.6" y="189.75" fill="#afd7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="204.75" textLength="9.3" class="ptg ptg-ptg36">▄</text>
-		<rect x="27.9" y="189.75" fill="#5fd7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="204.75" textLength="9.3" class="ptg ptg-ptg74">▄</text>
-		<rect x="37.2" y="189.75" fill="#afffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="204.75" textLength="9.3" class="ptg ptg-ptg84">▄</text>
-		<rect x="46.5" y="189.75" fill="#5fd75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="204.75" textLength="9.3" class="ptg ptg-ptg112">▄</text>
-		<rect x="55.8" y="189.75" fill="#af00ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="204.75" textLength="9.3" class="ptg ptg-ptg94">▄</text>
-		<rect x="65.1" y="189.75" fill="#d7afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="204.75" textLength="9.3" class="ptg ptg-ptg26">▄</text>
-		<rect x="74.4" y="189.75" fill="#00d7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="204.75" textLength="9.3" class="ptg ptg-ptg158">▄</text>
-		<rect x="83.7" y="189.75" fill="#d70087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="204.75" textLength="9.3" class="ptg ptg-ptg159">▄</text>
-		<rect x="93.0" y="189.75" fill="#d75f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="204.75" textLength="9.3" class="ptg ptg-ptg159">▄</text>
-		<rect x="102.3" y="189.75" fill="#ffff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="204.75" textLength="9.3" class="ptg ptg-ptg130">▄</text>
-		<rect x="111.6" y="189.75" fill="#5f87af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="204.75" textLength="9.3" class="ptg ptg-ptg67">▄</text>
-		<rect x="120.9" y="189.75" fill="#5fd75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="204.75" textLength="9.3" class="ptg ptg-ptg128">▄</text>
-		<rect x="130.2" y="189.75" fill="#87d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="204.75" textLength="9.3" class="ptg ptg-ptg135">▄</text>
-		<rect x="139.5" y="189.75" fill="#af5f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="204.75" textLength="9.3" class="ptg ptg-ptg59">▄</text>
-		<rect x="148.8" y="189.75" fill="#875faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="204.75" textLength="9.3" class="ptg ptg-ptg160">▄</text>
-		<rect x="158.1" y="189.75" fill="#afd787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="204.75" textLength="9.3" class="ptg ptg-ptg76">▄</text>
-		<rect x="167.4" y="189.75" fill="#875f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="204.75" textLength="9.3" class="ptg ptg-ptg106">▄</text>
-		<rect x="176.7" y="189.75" fill="#5fff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="204.75" textLength="9.3" class="ptg ptg-ptg153">▄</text>
-		<rect x="186.0" y="189.75" fill="#00d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="204.75" textLength="9.3" class="ptg ptg-ptg116">▄</text>
-		<rect x="195.3" y="189.75" fill="#5f8787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="204.75" textLength="9.3" class="ptg ptg-ptg72">▄</text>
-		<rect x="204.6" y="189.75" fill="#ffd787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="204.75" textLength="9.3" class="ptg ptg-ptg137">▄</text>
-		<rect x="213.9" y="189.75" fill="#00ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="204.75" textLength="9.3" class="ptg ptg-ptg9">▄</text>
-		<rect x="223.2" y="189.75" fill="#ff87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="204.75" textLength="9.3" class="ptg ptg-ptg115">▄</text>
-		<rect x="232.5" y="189.75" fill="#87d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="204.75" textLength="9.3" class="ptg ptg-ptg100">▄</text>
-		<rect x="241.8" y="189.75" fill="#ff0087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="204.75" textLength="9.3" class="ptg ptg-ptg149">▄</text>
-		<rect x="251.1" y="189.75" fill="#87ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="204.75" textLength="9.3" class="ptg ptg-ptg1">▄</text>
-		<rect x="260.4" y="189.75" fill="#d7afaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="204.75" textLength="9.3" class="ptg ptg-ptg24">▄</text>
-		<rect x="269.7" y="189.75" fill="#5faf87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="204.75" textLength="9.3" class="ptg ptg-ptg143">▄</text>
-		<rect x="279.0" y="189.75" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="204.75" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="208.72" fill="#d7ff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="223.72" textLength="9.3" class="ptg ptg-ptg161">▄</text>
-		<rect x="9.3" y="208.72" fill="#af5fd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="223.72" textLength="9.3" class="ptg ptg-ptg41">▄</text>
-		<rect x="18.6" y="208.72" fill="#af5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="223.72" textLength="9.3" class="ptg ptg-ptg158">▄</text>
-		<rect x="27.9" y="208.72" fill="#d7ffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="223.72" textLength="9.3" class="ptg ptg-ptg157">▄</text>
-		<rect x="37.2" y="208.72" fill="#ffd700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="223.72" textLength="9.3" class="ptg ptg-ptg162">▄</text>
-		<rect x="46.5" y="208.72" fill="#d78787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="223.72" textLength="9.3" class="ptg ptg-ptg110">▄</text>
-		<rect x="55.8" y="208.72" fill="#afffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="223.72" textLength="9.3" class="ptg ptg-ptg163">▄</text>
-		<rect x="65.1" y="208.72" fill="#ff00d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="223.72" textLength="9.3" class="ptg ptg-ptg146">▄</text>
-		<rect x="74.4" y="208.72" fill="#00ff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="223.72" textLength="9.3" class="ptg ptg-ptg16">▄</text>
-		<rect x="83.7" y="208.72" fill="#ffffff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="223.72" textLength="9.3" class="ptg ptg-ptg59">▄</text>
-		<rect x="93.0" y="208.72" fill="#afffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="223.72" textLength="9.3" class="ptg ptg-ptg139">▄</text>
-		<rect x="102.3" y="208.72" fill="#ffff00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="223.72" textLength="9.3" class="ptg ptg-ptg97">▄</text>
-		<rect x="111.6" y="208.72" fill="#afff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="223.72" textLength="9.3" class="ptg ptg-ptg164">▄</text>
-		<rect x="120.9" y="208.72" fill="#af00d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="223.72" textLength="9.3" class="ptg ptg-ptg116">▄</text>
-		<rect x="130.2" y="208.72" fill="#afaf87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="223.72" textLength="9.3" class="ptg ptg-ptg165">▄</text>
-		<rect x="139.5" y="208.72" fill="#ffffff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="223.72" textLength="9.3" class="ptg ptg-ptg59">▄</text>
-		<rect x="148.8" y="208.72" fill="#00d7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="223.72" textLength="9.3" class="ptg ptg-ptg135">▄</text>
-		<rect x="158.1" y="208.72" fill="#5fafaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="223.72" textLength="9.3" class="ptg ptg-ptg166">▄</text>
-		<rect x="167.4" y="208.72" fill="#5fd7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="223.72" textLength="9.3" class="ptg ptg-ptg167">▄</text>
-		<rect x="176.7" y="208.72" fill="#ff87af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="223.72" textLength="9.3" class="ptg ptg-ptg115">▄</text>
-		<rect x="186.0" y="208.72" fill="#afaf87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="223.72" textLength="9.3" class="ptg ptg-ptg90">▄</text>
-		<rect x="195.3" y="208.72" fill="#00875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="223.72" textLength="9.3" class="ptg ptg-ptg36">▄</text>
-		<rect x="204.6" y="208.72" fill="#00d7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="223.72" textLength="9.3" class="ptg ptg-ptg158">▄</text>
-		<rect x="213.9" y="208.72" fill="#00d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="223.72" textLength="9.3" class="ptg ptg-ptg118">▄</text>
-		<rect x="223.2" y="208.72" fill="#d7af00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="223.72" textLength="9.3" class="ptg ptg-ptg88">▄</text>
-		<rect x="232.5" y="208.72" fill="#ff87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="223.72" textLength="9.3" class="ptg ptg-ptg30">▄</text>
-		<rect x="241.8" y="208.72" fill="#87ffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="223.72" textLength="9.3" class="ptg ptg-ptg49">▄</text>
-		<rect x="251.1" y="208.72" fill="#875f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="223.72" textLength="9.3" class="ptg ptg-ptg30">▄</text>
-		<rect x="260.4" y="208.72" fill="#ffffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="223.72" textLength="9.3" class="ptg ptg-ptg95">▄</text>
-		<rect x="269.7" y="208.72" fill="#870087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="223.72" textLength="9.3" class="ptg ptg-ptg103">▄</text>
-		<rect x="279.0" y="208.72" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="223.72" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="227.7" fill="#87875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="242.7" textLength="9.3" class="ptg ptg-ptg44">▄</text>
-		<rect x="9.3" y="227.7" fill="#ffaf87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="242.7" textLength="9.3" class="ptg ptg-ptg167">▄</text>
-		<rect x="18.6" y="227.7" fill="#5fd7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="242.7" textLength="9.3" class="ptg ptg-ptg161">▄</text>
-		<rect x="27.9" y="227.7" fill="#ff87d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="242.7" textLength="9.3" class="ptg ptg-ptg112">▄</text>
-		<rect x="37.2" y="227.7" fill="#00005f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="242.7" textLength="9.3" class="ptg ptg-ptg84">▄</text>
-		<rect x="46.5" y="227.7" fill="#d7ffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="242.7" textLength="9.3" class="ptg ptg-ptg33">▄</text>
-		<rect x="55.8" y="227.7" fill="#875f5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="242.7" textLength="9.3" class="ptg ptg-ptg104">▄</text>
-		<rect x="65.1" y="227.7" fill="#af875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="242.7" textLength="9.3" class="ptg ptg-ptg125">▄</text>
-		<rect x="74.4" y="227.7" fill="#5fffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="242.7" textLength="9.3" class="ptg ptg-ptg168">▄</text>
-		<rect x="83.7" y="227.7" fill="#ff5fff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="242.7" textLength="9.3" class="ptg ptg-ptg88">▄</text>
-		<rect x="93.0" y="227.7" fill="#ffd75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="242.7" textLength="9.3" class="ptg ptg-ptg4">▄</text>
-		<rect x="102.3" y="227.7" fill="#afaf87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="242.7" textLength="9.3" class="ptg ptg-ptg157">▄</text>
-		<rect x="111.6" y="227.7" fill="#ff00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="242.7" textLength="9.3" class="ptg ptg-ptg169">▄</text>
-		<rect x="120.9" y="227.7" fill="#00d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="242.7" textLength="9.3" class="ptg ptg-ptg143">▄</text>
-		<rect x="130.2" y="227.7" fill="#ff5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="242.7" textLength="9.3" class="ptg ptg-ptg109">▄</text>
-		<rect x="139.5" y="227.7" fill="#af00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="242.7" textLength="9.3" class="ptg ptg-ptg49">▄</text>
-		<rect x="148.8" y="227.7" fill="#af87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="242.7" textLength="9.3" class="ptg ptg-ptg26">▄</text>
-		<rect x="158.1" y="227.7" fill="#875faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="242.7" textLength="9.3" class="ptg ptg-ptg170">▄</text>
-		<rect x="167.4" y="227.7" fill="#ffaf87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="242.7" textLength="9.3" class="ptg ptg-ptg52">▄</text>
-		<rect x="176.7" y="227.7" fill="#87ffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="242.7" textLength="9.3" class="ptg ptg-ptg168">▄</text>
-		<rect x="186.0" y="227.7" fill="#ffd7d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="242.7" textLength="9.3" class="ptg ptg-ptg93">▄</text>
-		<rect x="195.3" y="227.7" fill="#af8700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="242.7" textLength="9.3" class="ptg ptg-ptg171">▄</text>
-		<rect x="204.6" y="227.7" fill="#00afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="242.7" textLength="9.3" class="ptg ptg-ptg172">▄</text>
-		<rect x="213.9" y="227.7" fill="#afaf00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="242.7" textLength="9.3" class="ptg ptg-ptg173">▄</text>
-		<rect x="223.2" y="227.7" fill="#ff0087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="242.7" textLength="9.3" class="ptg ptg-ptg76">▄</text>
-		<rect x="232.5" y="227.7" fill="#878787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="242.7" textLength="9.3" class="ptg ptg-ptg157">▄</text>
-		<rect x="241.8" y="227.7" fill="#d7afaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="242.7" textLength="9.3" class="ptg ptg-ptg174">▄</text>
-		<rect x="251.1" y="227.7" fill="#ffafd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="242.7" textLength="9.3" class="ptg ptg-ptg175">▄</text>
-		<rect x="260.4" y="227.7" fill="#5f5fd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="242.7" textLength="9.3" class="ptg ptg-ptg155">▄</text>
-		<rect x="269.7" y="227.7" fill="#5f5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="242.7" textLength="9.3" class="ptg ptg-ptg39">▄</text>
-		<rect x="279.0" y="227.7" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="242.7" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="246.67" fill="#5f87d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="261.67" textLength="9.3" class="ptg ptg-ptg14">▄</text>
-		<rect x="9.3" y="246.67" fill="#d78787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="261.67" textLength="9.3" class="ptg ptg-ptg172">▄</text>
-		<rect x="18.6" y="246.67" fill="#d78700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="261.67" textLength="9.3" class="ptg ptg-ptg90">▄</text>
-		<rect x="27.9" y="246.67" fill="#d7ff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="261.67" textLength="9.3" class="ptg ptg-ptg129">▄</text>
-		<rect x="37.2" y="246.67" fill="#af8787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="261.67" textLength="9.3" class="ptg ptg-ptg66">▄</text>
-		<rect x="46.5" y="246.67" fill="#5fff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="261.67" textLength="9.3" class="ptg ptg-ptg99">▄</text>
-		<rect x="55.8" y="246.67" fill="#af875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="261.67" textLength="9.3" class="ptg ptg-ptg27">▄</text>
-		<rect x="65.1" y="246.67" fill="#d787af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="261.67" textLength="9.3" class="ptg ptg-ptg54">▄</text>
-		<rect x="74.4" y="246.67" fill="#87afaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="261.67" textLength="9.3" class="ptg ptg-ptg3">▄</text>
-		<rect x="83.7" y="246.67" fill="#870000" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="261.67" textLength="9.3" class="ptg ptg-ptg20">▄</text>
-		<rect x="93.0" y="246.67" fill="#8787af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="261.67" textLength="9.3" class="ptg ptg-ptg76">▄</text>
-		<rect x="102.3" y="246.67" fill="#d70087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="261.67" textLength="9.3" class="ptg ptg-ptg176">▄</text>
-		<rect x="111.6" y="246.67" fill="#5f87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="261.67" textLength="9.3" class="ptg ptg-ptg62">▄</text>
-		<rect x="120.9" y="246.67" fill="#afff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="261.67" textLength="9.3" class="ptg ptg-ptg75">▄</text>
-		<rect x="130.2" y="246.67" fill="#d7afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="261.67" textLength="9.3" class="ptg ptg-ptg34">▄</text>
-		<rect x="139.5" y="246.67" fill="#0000d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="261.67" textLength="9.3" class="ptg ptg-ptg111">▄</text>
-		<rect x="148.8" y="246.67" fill="#8700ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="261.67" textLength="9.3" class="ptg ptg-ptg119">▄</text>
-		<rect x="158.1" y="246.67" fill="#5fd75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="261.67" textLength="9.3" class="ptg ptg-ptg57">▄</text>
-		<rect x="167.4" y="246.67" fill="#5fffaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="261.67" textLength="9.3" class="ptg ptg-ptg177">▄</text>
-		<rect x="176.7" y="246.67" fill="#5f5fff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="261.67" textLength="9.3" class="ptg ptg-ptg135">▄</text>
-		<rect x="186.0" y="246.67" fill="#d7ff5f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="261.67" textLength="9.3" class="ptg ptg-ptg178">▄</text>
-		<rect x="195.3" y="246.67" fill="#000087" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="261.67" textLength="9.3" class="ptg ptg-ptg13">▄</text>
-		<rect x="204.6" y="246.67" fill="#8700ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="261.67" textLength="9.3" class="ptg ptg-ptg87">▄</text>
-		<rect x="213.9" y="246.67" fill="#5f5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="261.67" textLength="9.3" class="ptg ptg-ptg5">▄</text>
-		<rect x="223.2" y="246.67" fill="#00afd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="261.67" textLength="9.3" class="ptg ptg-ptg35">▄</text>
-		<rect x="232.5" y="246.67" fill="#ff87ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="261.67" textLength="9.3" class="ptg ptg-ptg155">▄</text>
-		<rect x="241.8" y="246.67" fill="#00af00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="261.67" textLength="9.3" class="ptg ptg-ptg37">▄</text>
-		<rect x="251.1" y="246.67" fill="#5f00d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="261.67" textLength="9.3" class="ptg ptg-ptg179">▄</text>
-		<rect x="260.4" y="246.67" fill="#5fffd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="261.67" textLength="9.3" class="ptg ptg-ptg53">▄</text>
-		<rect x="269.7" y="246.67" fill="#5f00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="261.67" textLength="9.3" class="ptg ptg-ptg159">▄</text>
-		<rect x="279.0" y="246.67" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="261.67" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="265.65" fill="#ff00af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="0" y="280.65" textLength="9.3" class="ptg ptg-ptg180">▄</text>
-		<rect x="9.3" y="265.65" fill="#080808" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="9.3" y="280.65" textLength="9.3" class="ptg ptg-ptg90">▄</text>
-		<rect x="18.6" y="265.65" fill="#af8787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="18.6" y="280.65" textLength="9.3" class="ptg ptg-ptg142">▄</text>
-		<rect x="27.9" y="265.65" fill="#5fafd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="27.9" y="280.65" textLength="9.3" class="ptg ptg-ptg168">▄</text>
-		<rect x="37.2" y="265.65" fill="#d7d7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="37.2" y="280.65" textLength="9.3" class="ptg ptg-ptg175">▄</text>
-		<rect x="46.5" y="265.65" fill="#ff87af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="280.65" textLength="9.3" class="ptg ptg-ptg171">▄</text>
-		<rect x="55.8" y="265.65" fill="#87afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="55.8" y="280.65" textLength="9.3" class="ptg ptg-ptg181">▄</text>
-		<rect x="65.1" y="265.65" fill="#af5faf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="65.1" y="280.65" textLength="9.3" class="ptg ptg-ptg122">▄</text>
-		<rect x="74.4" y="265.65" fill="#af8787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="74.4" y="280.65" textLength="9.3" class="ptg ptg-ptg62">▄</text>
-		<rect x="83.7" y="265.65" fill="#00afaf" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="83.7" y="280.65" textLength="9.3" class="ptg ptg-ptg126">▄</text>
-		<rect x="93.0" y="265.65" fill="#ffd75f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="280.65" textLength="9.3" class="ptg ptg-ptg91">▄</text>
-		<rect x="102.3" y="265.65" fill="#af875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="102.3" y="280.65" textLength="9.3" class="ptg ptg-ptg127">▄</text>
-		<rect x="111.6" y="265.65" fill="#00afff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="111.6" y="280.65" textLength="9.3" class="ptg ptg-ptg178">▄</text>
-		<rect x="120.9" y="265.65" fill="#5f8787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="120.9" y="280.65" textLength="9.3" class="ptg ptg-ptg8">▄</text>
-		<rect x="130.2" y="265.65" fill="#00ff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="130.2" y="280.65" textLength="9.3" class="ptg ptg-ptg182">▄</text>
-		<rect x="139.5" y="265.65" fill="#ffaf00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="139.5" y="280.65" textLength="9.3" class="ptg ptg-ptg114">▄</text>
-		<rect x="148.8" y="265.65" fill="#ff8700" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="148.8" y="280.65" textLength="9.3" class="ptg ptg-ptg174">▄</text>
-		<rect x="158.1" y="265.65" fill="#ff875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="158.1" y="280.65" textLength="9.3" class="ptg ptg-ptg172">▄</text>
-		<rect x="167.4" y="265.65" fill="#87d7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="167.4" y="280.65" textLength="9.3" class="ptg ptg-ptg73">▄</text>
-		<rect x="176.7" y="265.65" fill="#87d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="176.7" y="280.65" textLength="9.3" class="ptg ptg-ptg34">▄</text>
-		<rect x="186.0" y="265.65" fill="#ff5f00" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="186.0" y="280.65" textLength="9.3" class="ptg ptg-ptg120">▄</text>
-		<rect x="195.3" y="265.65" fill="#87ff87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="195.3" y="280.65" textLength="9.3" class="ptg ptg-ptg83">▄</text>
-		<rect x="204.6" y="265.65" fill="#005f87" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="204.6" y="280.65" textLength="9.3" class="ptg ptg-ptg126">▄</text>
-		<rect x="213.9" y="265.65" fill="#d7d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="213.9" y="280.65" textLength="9.3" class="ptg ptg-ptg8">▄</text>
-		<rect x="223.2" y="265.65" fill="#af875f" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="223.2" y="280.65" textLength="9.3" class="ptg ptg-ptg170">▄</text>
-		<rect x="232.5" y="265.65" fill="#afd7af" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="232.5" y="280.65" textLength="9.3" class="ptg ptg-ptg183">▄</text>
-		<rect x="241.8" y="265.65" fill="#d75fd7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="241.8" y="280.65" textLength="9.3" class="ptg ptg-ptg6">▄</text>
-		<rect x="251.1" y="265.65" fill="#ffd787" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="251.1" y="280.65" textLength="9.3" class="ptg ptg-ptg18">▄</text>
-		<rect x="260.4" y="265.65" fill="#5f00d7" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="260.4" y="280.65" textLength="9.3" class="ptg ptg-ptg55">▄</text>
-		<rect x="269.7" y="265.65" fill="#87d7ff" width="9.49" height="19.35"/>
-		<text dy="-0.25em" x="269.7" y="280.65" textLength="9.3" class="ptg ptg-ptg9">▄</text>
-		<rect x="279.0" y="265.65" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="279.0" y="280.65" textLength="0.0" class="ptg ptg-ptg28"/>
-		<rect x="0" y="281.4" fill="#af87ff" width="47.43" height="19.35"/>
-		<text dy="-0.25em" x="0" y="299.62" textLength="46.5" class="ptg ptg-ptg155">Hello</text>
-		<rect x="46.5" y="281.4" fill="#5f5faf" width="47.43" height="19.35"/>
-		<text dy="-0.25em" x="46.5" y="299.62" textLength="46.5" class="ptg ptg-ptg157">There</text>
-		<rect x="93.0" y="284.62" fill="#000000" width="0.0" height="19.35"/>
-		<text dy="-0.25em" x="93.0" y="299.62" textLength="0.0" class="ptg ptg-ptg28"/>
+		<rect x="0.0" y="0.0" fill="#afaf00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0.0" y="15.0" textLength="9.3" class="ptg ptg-0">▄</text>
+		<rect x="9.3" y="0.0" fill="#875f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="15.0" textLength="9.3" class="ptg ptg-1">▄</text>
+		<rect x="18.6" y="0.0" fill="#af87af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="15.0" textLength="9.3" class="ptg ptg-2">▄</text>
+		<rect x="27.9" y="0.0" fill="#0087d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="15.0" textLength="9.3" class="ptg ptg-3">▄</text>
+		<rect x="37.2" y="0.0" fill="#d7af5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="15.0" textLength="9.3" class="ptg ptg-4">▄</text>
+		<rect x="46.5" y="0.0" fill="#d7ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="15.0" textLength="9.3" class="ptg ptg-5">▄</text>
+		<rect x="55.8" y="0.0" fill="#ffaf00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="15.0" textLength="9.3" class="ptg ptg-6">▄</text>
+		<rect x="65.1" y="0.0" fill="#af00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="15.0" textLength="9.3" class="ptg ptg-7">▄</text>
+		<rect x="74.4" y="0.0" fill="#ff87af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="15.0" textLength="9.3" class="ptg ptg-8">▄</text>
+		<rect x="83.7" y="0.0" fill="#005faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="15.0" textLength="9.3" class="ptg ptg-9">▄</text>
+		<rect x="93.0" y="0.0" fill="#8700ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="15.0" textLength="9.3" class="ptg ptg-10">▄</text>
+		<rect x="102.3" y="0.0" fill="#5f5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="15.0" textLength="9.3" class="ptg ptg-11">▄</text>
+		<rect x="111.6" y="0.0" fill="#5f5f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="15.0" textLength="9.3" class="ptg ptg-12">▄</text>
+		<rect x="120.9" y="0.0" fill="#8787af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="15.0" textLength="9.3" class="ptg ptg-13">▄</text>
+		<rect x="130.2" y="0.0" fill="#87afaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="15.0" textLength="9.3" class="ptg ptg-14">▄</text>
+		<rect x="139.5" y="0.0" fill="#afd787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="15.0" textLength="9.3" class="ptg ptg-15">▄</text>
+		<rect x="148.8" y="0.0" fill="#00af87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="15.0" textLength="9.3" class="ptg ptg-16">▄</text>
+		<rect x="158.1" y="0.0" fill="#d700ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="15.0" textLength="9.3" class="ptg ptg-12">▄</text>
+		<rect x="167.4" y="0.0" fill="#d7d7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="15.0" textLength="9.3" class="ptg ptg-17">▄</text>
+		<rect x="176.7" y="0.0" fill="#8787af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="15.0" textLength="9.3" class="ptg ptg-18">▄</text>
+		<rect x="186.0" y="0.0" fill="#5f00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="15.0" textLength="9.3" class="ptg ptg-19">▄</text>
+		<rect x="195.3" y="0.0" fill="#d75f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="15.0" textLength="9.3" class="ptg ptg-20">▄</text>
+		<rect x="204.6" y="0.0" fill="#ff87d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="15.0" textLength="9.3" class="ptg ptg-21">▄</text>
+		<rect x="213.9" y="0.0" fill="#5f0000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="15.0" textLength="9.3" class="ptg ptg-22">▄</text>
+		<rect x="223.2" y="0.0" fill="#afd7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="15.0" textLength="9.3" class="ptg ptg-23">▄</text>
+		<rect x="232.5" y="0.0" fill="#87d787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="15.0" textLength="9.3" class="ptg ptg-24">▄</text>
+		<rect x="241.8" y="0.0" fill="#ff87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="15.0" textLength="9.3" class="ptg ptg-25">▄</text>
+		<rect x="251.1" y="0.0" fill="#5f875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="15.0" textLength="9.3" class="ptg ptg-26">▄</text>
+		<rect x="260.4" y="0.0" fill="#5f5f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="15.0" textLength="9.3" class="ptg ptg-27">▄</text>
+		<rect x="269.7" y="0.0" fill="#87875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="15.0" textLength="9.3" class="ptg ptg-12">▄</text>
+		<rect x="279.0" y="0.0" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="15.0" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="18.98" fill="#d7af00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="33.98" textLength="9.3" class="ptg ptg-29">▄</text>
+		<rect x="9.3" y="18.98" fill="#5fff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="33.98" textLength="9.3" class="ptg ptg-19">▄</text>
+		<rect x="18.6" y="18.98" fill="#d75f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="33.98" textLength="9.3" class="ptg ptg-30">▄</text>
+		<rect x="27.9" y="18.98" fill="#ff87af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="33.98" textLength="9.3" class="ptg ptg-31">▄</text>
+		<rect x="37.2" y="18.98" fill="#000087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="33.98" textLength="9.3" class="ptg ptg-32">▄</text>
+		<rect x="46.5" y="18.98" fill="#875f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="33.98" textLength="9.3" class="ptg ptg-33">▄</text>
+		<rect x="55.8" y="18.98" fill="#ffd787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="33.98" textLength="9.3" class="ptg ptg-34">▄</text>
+		<rect x="65.1" y="18.98" fill="#5f0000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="33.98" textLength="9.3" class="ptg ptg-27">▄</text>
+		<rect x="74.4" y="18.98" fill="#ff5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="33.98" textLength="9.3" class="ptg ptg-35">▄</text>
+		<rect x="83.7" y="18.98" fill="#d78700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="33.98" textLength="9.3" class="ptg ptg-24">▄</text>
+		<rect x="93.0" y="18.98" fill="#5fff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="33.98" textLength="9.3" class="ptg ptg-36">▄</text>
+		<rect x="102.3" y="18.98" fill="#afafff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="33.98" textLength="9.3" class="ptg ptg-37">▄</text>
+		<rect x="111.6" y="18.98" fill="#d7afaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="33.98" textLength="9.3" class="ptg ptg-38">▄</text>
+		<rect x="120.9" y="18.98" fill="#d70087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="33.98" textLength="9.3" class="ptg ptg-39">▄</text>
+		<rect x="130.2" y="18.98" fill="#87005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="33.98" textLength="9.3" class="ptg ptg-26">▄</text>
+		<rect x="139.5" y="18.98" fill="#ffff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="33.98" textLength="9.3" class="ptg ptg-40">▄</text>
+		<rect x="148.8" y="18.98" fill="#af8700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="33.98" textLength="9.3" class="ptg ptg-41">▄</text>
+		<rect x="158.1" y="18.98" fill="#8700d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="33.98" textLength="9.3" class="ptg ptg-42">▄</text>
+		<rect x="167.4" y="18.98" fill="#008787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="33.98" textLength="9.3" class="ptg ptg-13">▄</text>
+		<rect x="176.7" y="18.98" fill="#5fff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="33.98" textLength="9.3" class="ptg ptg-43">▄</text>
+		<rect x="186.0" y="18.98" fill="#5f8787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="33.98" textLength="9.3" class="ptg ptg-10">▄</text>
+		<rect x="195.3" y="18.98" fill="#d7afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="33.98" textLength="9.3" class="ptg ptg-44">▄</text>
+		<rect x="204.6" y="18.98" fill="#ffffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="33.98" textLength="9.3" class="ptg ptg-45">▄</text>
+		<rect x="213.9" y="18.98" fill="#878700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="33.98" textLength="9.3" class="ptg ptg-46">▄</text>
+		<rect x="223.2" y="18.98" fill="#d70000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="33.98" textLength="9.3" class="ptg ptg-47">▄</text>
+		<rect x="232.5" y="18.98" fill="#5fff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="33.98" textLength="9.3" class="ptg ptg-39">▄</text>
+		<rect x="241.8" y="18.98" fill="#ffafd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="33.98" textLength="9.3" class="ptg ptg-48">▄</text>
+		<rect x="251.1" y="18.98" fill="#ffd7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="33.98" textLength="9.3" class="ptg ptg-28">▄</text>
+		<rect x="260.4" y="18.98" fill="#0087d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="33.98" textLength="9.3" class="ptg ptg-49">▄</text>
+		<rect x="269.7" y="18.98" fill="#afd7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="33.98" textLength="9.3" class="ptg ptg-3">▄</text>
+		<rect x="279.0" y="18.98" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="33.98" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="37.95" fill="#d7af00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="52.95" textLength="9.3" class="ptg ptg-24">▄</text>
+		<rect x="9.3" y="37.95" fill="#5f875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="52.95" textLength="9.3" class="ptg ptg-50">▄</text>
+		<rect x="18.6" y="37.95" fill="#00afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="52.95" textLength="9.3" class="ptg ptg-51">▄</text>
+		<rect x="27.9" y="37.95" fill="#d7d7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="52.95" textLength="9.3" class="ptg ptg-52">▄</text>
+		<rect x="37.2" y="37.95" fill="#ffff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="52.95" textLength="9.3" class="ptg ptg-53">▄</text>
+		<rect x="46.5" y="37.95" fill="#5fafff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="52.95" textLength="9.3" class="ptg ptg-7">▄</text>
+		<rect x="55.8" y="37.95" fill="#afffff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="52.95" textLength="9.3" class="ptg ptg-54">▄</text>
+		<rect x="65.1" y="37.95" fill="#00d787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="52.95" textLength="9.3" class="ptg ptg-55">▄</text>
+		<rect x="74.4" y="37.95" fill="#afaf5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="52.95" textLength="9.3" class="ptg ptg-56">▄</text>
+		<rect x="83.7" y="37.95" fill="#afff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="52.95" textLength="9.3" class="ptg ptg-57">▄</text>
+		<rect x="93.0" y="37.95" fill="#ffff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="52.95" textLength="9.3" class="ptg ptg-58">▄</text>
+		<rect x="102.3" y="37.95" fill="#d7af5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="52.95" textLength="9.3" class="ptg ptg-59">▄</text>
+		<rect x="111.6" y="37.95" fill="#8787d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="52.95" textLength="9.3" class="ptg ptg-60">▄</text>
+		<rect x="120.9" y="37.95" fill="#5fffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="52.95" textLength="9.3" class="ptg ptg-61">▄</text>
+		<rect x="130.2" y="37.95" fill="#af00d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="52.95" textLength="9.3" class="ptg ptg-62">▄</text>
+		<rect x="139.5" y="37.95" fill="#00ff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="52.95" textLength="9.3" class="ptg ptg-29">▄</text>
+		<rect x="148.8" y="37.95" fill="#d7ffff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="52.95" textLength="9.3" class="ptg ptg-63">▄</text>
+		<rect x="158.1" y="37.95" fill="#d7afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="52.95" textLength="9.3" class="ptg ptg-49">▄</text>
+		<rect x="167.4" y="37.95" fill="#00d7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="52.95" textLength="9.3" class="ptg ptg-64">▄</text>
+		<rect x="176.7" y="37.95" fill="#005f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="52.95" textLength="9.3" class="ptg ptg-65">▄</text>
+		<rect x="186.0" y="37.95" fill="#d7ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="52.95" textLength="9.3" class="ptg ptg-4">▄</text>
+		<rect x="195.3" y="37.95" fill="#5f00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="52.95" textLength="9.3" class="ptg ptg-12">▄</text>
+		<rect x="204.6" y="37.95" fill="#d7ff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="52.95" textLength="9.3" class="ptg ptg-66">▄</text>
+		<rect x="213.9" y="37.95" fill="#5fffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="52.95" textLength="9.3" class="ptg ptg-60">▄</text>
+		<rect x="223.2" y="37.95" fill="#0087af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="52.95" textLength="9.3" class="ptg ptg-26">▄</text>
+		<rect x="232.5" y="37.95" fill="#af87af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="52.95" textLength="9.3" class="ptg ptg-67">▄</text>
+		<rect x="241.8" y="37.95" fill="#ffff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="52.95" textLength="9.3" class="ptg ptg-47">▄</text>
+		<rect x="251.1" y="37.95" fill="#5f00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="52.95" textLength="9.3" class="ptg ptg-68">▄</text>
+		<rect x="260.4" y="37.95" fill="#87d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="52.95" textLength="9.3" class="ptg ptg-69">▄</text>
+		<rect x="269.7" y="37.95" fill="#d7afd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="52.95" textLength="9.3" class="ptg ptg-70">▄</text>
+		<rect x="279.0" y="37.95" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="52.95" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="56.93" fill="#87afd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="71.93" textLength="9.3" class="ptg ptg-51">▄</text>
+		<rect x="9.3" y="56.93" fill="#5f005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="71.93" textLength="9.3" class="ptg ptg-4">▄</text>
+		<rect x="18.6" y="56.93" fill="#87ff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="71.93" textLength="9.3" class="ptg ptg-71">▄</text>
+		<rect x="27.9" y="56.93" fill="#af87af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="71.93" textLength="9.3" class="ptg ptg-72">▄</text>
+		<rect x="37.2" y="56.93" fill="#af00ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="71.93" textLength="9.3" class="ptg ptg-33">▄</text>
+		<rect x="46.5" y="56.93" fill="#87ffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="71.93" textLength="9.3" class="ptg ptg-59">▄</text>
+		<rect x="55.8" y="56.93" fill="#d7d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="71.93" textLength="9.3" class="ptg ptg-73">▄</text>
+		<rect x="65.1" y="56.93" fill="#5faf87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="71.93" textLength="9.3" class="ptg ptg-36">▄</text>
+		<rect x="74.4" y="56.93" fill="#ff5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="71.93" textLength="9.3" class="ptg ptg-30">▄</text>
+		<rect x="83.7" y="56.93" fill="#afd787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="71.93" textLength="9.3" class="ptg ptg-74">▄</text>
+		<rect x="93.0" y="56.93" fill="#afd75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="71.93" textLength="9.3" class="ptg ptg-7">▄</text>
+		<rect x="102.3" y="56.93" fill="#ff00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="71.93" textLength="9.3" class="ptg ptg-75">▄</text>
+		<rect x="111.6" y="56.93" fill="#00d7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="71.93" textLength="9.3" class="ptg ptg-76">▄</text>
+		<rect x="120.9" y="56.93" fill="#5f5f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="71.93" textLength="9.3" class="ptg ptg-77">▄</text>
+		<rect x="130.2" y="56.93" fill="#5fffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="71.93" textLength="9.3" class="ptg ptg-78">▄</text>
+		<rect x="139.5" y="56.93" fill="#0087ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="71.93" textLength="9.3" class="ptg ptg-79">▄</text>
+		<rect x="148.8" y="56.93" fill="#afafaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="71.93" textLength="9.3" class="ptg ptg-28">▄</text>
+		<rect x="158.1" y="56.93" fill="#ff5fff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="71.93" textLength="9.3" class="ptg ptg-80">▄</text>
+		<rect x="167.4" y="56.93" fill="#00afaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="71.93" textLength="9.3" class="ptg ptg-81">▄</text>
+		<rect x="176.7" y="56.93" fill="#870000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="71.93" textLength="9.3" class="ptg ptg-56">▄</text>
+		<rect x="186.0" y="56.93" fill="#5f005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="71.93" textLength="9.3" class="ptg ptg-82">▄</text>
+		<rect x="195.3" y="56.93" fill="#5faf00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="71.93" textLength="9.3" class="ptg ptg-73">▄</text>
+		<rect x="204.6" y="56.93" fill="#af87af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="71.93" textLength="9.3" class="ptg ptg-83">▄</text>
+		<rect x="213.9" y="56.93" fill="#87d7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="71.93" textLength="9.3" class="ptg ptg-84">▄</text>
+		<rect x="223.2" y="56.93" fill="#ff8700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="71.93" textLength="9.3" class="ptg ptg-85">▄</text>
+		<rect x="232.5" y="56.93" fill="#d7d75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="71.93" textLength="9.3" class="ptg ptg-86">▄</text>
+		<rect x="241.8" y="56.93" fill="#5fd7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="71.93" textLength="9.3" class="ptg ptg-9">▄</text>
+		<rect x="251.1" y="56.93" fill="#d7005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="71.93" textLength="9.3" class="ptg ptg-87">▄</text>
+		<rect x="260.4" y="56.93" fill="#afaf00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="71.93" textLength="9.3" class="ptg ptg-88">▄</text>
+		<rect x="269.7" y="56.93" fill="#00d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="71.93" textLength="9.3" class="ptg ptg-33">▄</text>
+		<rect x="279.0" y="56.93" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="71.93" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="75.9" fill="#ff0087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="90.9" textLength="9.3" class="ptg ptg-89">▄</text>
+		<rect x="9.3" y="75.9" fill="#afff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="90.9" textLength="9.3" class="ptg ptg-58">▄</text>
+		<rect x="18.6" y="75.9" fill="#afffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="90.9" textLength="9.3" class="ptg ptg-90">▄</text>
+		<rect x="27.9" y="75.9" fill="#af00ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="90.9" textLength="9.3" class="ptg ptg-91">▄</text>
+		<rect x="37.2" y="75.9" fill="#ff00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="90.9" textLength="9.3" class="ptg ptg-92">▄</text>
+		<rect x="46.5" y="75.9" fill="#5faf5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="90.9" textLength="9.3" class="ptg ptg-7">▄</text>
+		<rect x="55.8" y="75.9" fill="#87afaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="90.9" textLength="9.3" class="ptg ptg-93">▄</text>
+		<rect x="65.1" y="75.9" fill="#ffafaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="90.9" textLength="9.3" class="ptg ptg-45">▄</text>
+		<rect x="74.4" y="75.9" fill="#d7d787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="90.9" textLength="9.3" class="ptg ptg-94">▄</text>
+		<rect x="83.7" y="75.9" fill="#8700af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="90.9" textLength="9.3" class="ptg ptg-95">▄</text>
+		<rect x="93.0" y="75.9" fill="#87af5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="90.9" textLength="9.3" class="ptg ptg-96">▄</text>
+		<rect x="102.3" y="75.9" fill="#af005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="90.9" textLength="9.3" class="ptg ptg-97">▄</text>
+		<rect x="111.6" y="75.9" fill="#00af87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="90.9" textLength="9.3" class="ptg ptg-98">▄</text>
+		<rect x="120.9" y="75.9" fill="#afff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="90.9" textLength="9.3" class="ptg ptg-82">▄</text>
+		<rect x="130.2" y="75.9" fill="#ffafd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="90.9" textLength="9.3" class="ptg ptg-1">▄</text>
+		<rect x="139.5" y="75.9" fill="#008787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="90.9" textLength="9.3" class="ptg ptg-70">▄</text>
+		<rect x="148.8" y="75.9" fill="#ffaf87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="90.9" textLength="9.3" class="ptg ptg-92">▄</text>
+		<rect x="158.1" y="75.9" fill="#ffafd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="90.9" textLength="9.3" class="ptg ptg-42">▄</text>
+		<rect x="167.4" y="75.9" fill="#87af00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="90.9" textLength="9.3" class="ptg ptg-52">▄</text>
+		<rect x="176.7" y="75.9" fill="#af00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="90.9" textLength="9.3" class="ptg ptg-99">▄</text>
+		<rect x="186.0" y="75.9" fill="#d787af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="90.9" textLength="9.3" class="ptg ptg-100">▄</text>
+		<rect x="195.3" y="75.9" fill="#875f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="90.9" textLength="9.3" class="ptg ptg-59">▄</text>
+		<rect x="204.6" y="75.9" fill="#5f5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="90.9" textLength="9.3" class="ptg ptg-101">▄</text>
+		<rect x="213.9" y="75.9" fill="#d78787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="90.9" textLength="9.3" class="ptg ptg-90">▄</text>
+		<rect x="223.2" y="75.9" fill="#af0000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="90.9" textLength="9.3" class="ptg ptg-102">▄</text>
+		<rect x="232.5" y="75.9" fill="#ff00d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="90.9" textLength="9.3" class="ptg ptg-87">▄</text>
+		<rect x="241.8" y="75.9" fill="#5f0000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="90.9" textLength="9.3" class="ptg ptg-103">▄</text>
+		<rect x="251.1" y="75.9" fill="#5faf87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="90.9" textLength="9.3" class="ptg ptg-6">▄</text>
+		<rect x="260.4" y="75.9" fill="#00ffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="90.9" textLength="9.3" class="ptg ptg-34">▄</text>
+		<rect x="269.7" y="75.9" fill="#00875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="90.9" textLength="9.3" class="ptg ptg-37">▄</text>
+		<rect x="279.0" y="75.9" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="90.9" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="94.88" fill="#000087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="109.88" textLength="9.3" class="ptg ptg-11">▄</text>
+		<rect x="9.3" y="94.88" fill="#d7af00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="109.88" textLength="9.3" class="ptg ptg-104">▄</text>
+		<rect x="18.6" y="94.88" fill="#d75fff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="109.88" textLength="9.3" class="ptg ptg-46">▄</text>
+		<rect x="27.9" y="94.88" fill="#ffff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="109.88" textLength="9.3" class="ptg ptg-91">▄</text>
+		<rect x="37.2" y="94.88" fill="#d75f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="109.88" textLength="9.3" class="ptg ptg-57">▄</text>
+		<rect x="46.5" y="94.88" fill="#afffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="109.88" textLength="9.3" class="ptg ptg-105">▄</text>
+		<rect x="55.8" y="94.88" fill="#af5f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="109.88" textLength="9.3" class="ptg ptg-106">▄</text>
+		<rect x="65.1" y="94.88" fill="#afd787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="109.88" textLength="9.3" class="ptg ptg-100">▄</text>
+		<rect x="74.4" y="94.88" fill="#5faf5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="109.88" textLength="9.3" class="ptg ptg-107">▄</text>
+		<rect x="83.7" y="94.88" fill="#ffd787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="109.88" textLength="9.3" class="ptg ptg-84">▄</text>
+		<rect x="93.0" y="94.88" fill="#870000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="109.88" textLength="9.3" class="ptg ptg-71">▄</text>
+		<rect x="102.3" y="94.88" fill="#ffd700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="109.88" textLength="9.3" class="ptg ptg-107">▄</text>
+		<rect x="111.6" y="94.88" fill="#87ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="109.88" textLength="9.3" class="ptg ptg-108">▄</text>
+		<rect x="120.9" y="94.88" fill="#d7d7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="109.88" textLength="9.3" class="ptg ptg-106">▄</text>
+		<rect x="130.2" y="94.88" fill="#d70000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="109.88" textLength="9.3" class="ptg ptg-109">▄</text>
+		<rect x="139.5" y="94.88" fill="#afd7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="109.88" textLength="9.3" class="ptg ptg-54">▄</text>
+		<rect x="148.8" y="94.88" fill="#87ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="109.88" textLength="9.3" class="ptg ptg-110">▄</text>
+		<rect x="158.1" y="94.88" fill="#875f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="109.88" textLength="9.3" class="ptg ptg-111">▄</text>
+		<rect x="167.4" y="94.88" fill="#87ffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="109.88" textLength="9.3" class="ptg ptg-74">▄</text>
+		<rect x="176.7" y="94.88" fill="#ff5f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="109.88" textLength="9.3" class="ptg ptg-112">▄</text>
+		<rect x="186.0" y="94.88" fill="#5f8787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="109.88" textLength="9.3" class="ptg ptg-113">▄</text>
+		<rect x="195.3" y="94.88" fill="#870000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="109.88" textLength="9.3" class="ptg ptg-77">▄</text>
+		<rect x="204.6" y="94.88" fill="#5fafaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="109.88" textLength="9.3" class="ptg ptg-114">▄</text>
+		<rect x="213.9" y="94.88" fill="#87d7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="109.88" textLength="9.3" class="ptg ptg-115">▄</text>
+		<rect x="223.2" y="94.88" fill="#878787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="109.88" textLength="9.3" class="ptg ptg-116">▄</text>
+		<rect x="232.5" y="94.88" fill="#87d7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="109.88" textLength="9.3" class="ptg ptg-117">▄</text>
+		<rect x="241.8" y="94.88" fill="#d7ff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="109.88" textLength="9.3" class="ptg ptg-37">▄</text>
+		<rect x="251.1" y="94.88" fill="#ff00d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="109.88" textLength="9.3" class="ptg ptg-55">▄</text>
+		<rect x="260.4" y="94.88" fill="#5f0000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="109.88" textLength="9.3" class="ptg ptg-21">▄</text>
+		<rect x="269.7" y="94.88" fill="#5fafff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="109.88" textLength="9.3" class="ptg ptg-118">▄</text>
+		<rect x="279.0" y="94.88" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="109.88" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="113.85" fill="#af00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="128.85" textLength="9.3" class="ptg ptg-119">▄</text>
+		<rect x="9.3" y="113.85" fill="#00d787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="128.85" textLength="9.3" class="ptg ptg-120">▄</text>
+		<rect x="18.6" y="113.85" fill="#af0000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="128.85" textLength="9.3" class="ptg ptg-86">▄</text>
+		<rect x="27.9" y="113.85" fill="#87af00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="128.85" textLength="9.3" class="ptg ptg-113">▄</text>
+		<rect x="37.2" y="113.85" fill="#afaf00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="128.85" textLength="9.3" class="ptg ptg-121">▄</text>
+		<rect x="46.5" y="113.85" fill="#d7ff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="128.85" textLength="9.3" class="ptg ptg-122">▄</text>
+		<rect x="55.8" y="113.85" fill="#005f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="128.85" textLength="9.3" class="ptg ptg-123">▄</text>
+		<rect x="65.1" y="113.85" fill="#080808" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="128.85" textLength="9.3" class="ptg ptg-92">▄</text>
+		<rect x="74.4" y="113.85" fill="#87005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="128.85" textLength="9.3" class="ptg ptg-124">▄</text>
+		<rect x="83.7" y="113.85" fill="#ffafaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="128.85" textLength="9.3" class="ptg ptg-125">▄</text>
+		<rect x="93.0" y="113.85" fill="#d7ff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="128.85" textLength="9.3" class="ptg ptg-101">▄</text>
+		<rect x="102.3" y="113.85" fill="#ff87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="128.85" textLength="9.3" class="ptg ptg-120">▄</text>
+		<rect x="111.6" y="113.85" fill="#87005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="128.85" textLength="9.3" class="ptg ptg-80">▄</text>
+		<rect x="120.9" y="113.85" fill="#875f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="128.85" textLength="9.3" class="ptg ptg-126">▄</text>
+		<rect x="130.2" y="113.85" fill="#5f005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="128.85" textLength="9.3" class="ptg ptg-103">▄</text>
+		<rect x="139.5" y="113.85" fill="#87d75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="128.85" textLength="9.3" class="ptg ptg-127">▄</text>
+		<rect x="148.8" y="113.85" fill="#d75f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="128.85" textLength="9.3" class="ptg ptg-75">▄</text>
+		<rect x="158.1" y="113.85" fill="#87ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="128.85" textLength="9.3" class="ptg ptg-104">▄</text>
+		<rect x="167.4" y="113.85" fill="#87ff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="128.85" textLength="9.3" class="ptg ptg-128">▄</text>
+		<rect x="176.7" y="113.85" fill="#5f5f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="128.85" textLength="9.3" class="ptg ptg-113">▄</text>
+		<rect x="186.0" y="113.85" fill="#5fff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="128.85" textLength="9.3" class="ptg ptg-35">▄</text>
+		<rect x="195.3" y="113.85" fill="#d7d700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="128.85" textLength="9.3" class="ptg ptg-129">▄</text>
+		<rect x="204.6" y="113.85" fill="#5fd75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="128.85" textLength="9.3" class="ptg ptg-118">▄</text>
+		<rect x="213.9" y="113.85" fill="#87d700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="128.85" textLength="9.3" class="ptg ptg-126">▄</text>
+		<rect x="223.2" y="113.85" fill="#5f5f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="128.85" textLength="9.3" class="ptg ptg-130">▄</text>
+		<rect x="232.5" y="113.85" fill="#d7af5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="128.85" textLength="9.3" class="ptg ptg-32">▄</text>
+		<rect x="241.8" y="113.85" fill="#d7ffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="128.85" textLength="9.3" class="ptg ptg-131">▄</text>
+		<rect x="251.1" y="113.85" fill="#d75fd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="128.85" textLength="9.3" class="ptg ptg-125">▄</text>
+		<rect x="260.4" y="113.85" fill="#afafd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="128.85" textLength="9.3" class="ptg ptg-28">▄</text>
+		<rect x="269.7" y="113.85" fill="#afd700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="128.85" textLength="9.3" class="ptg ptg-75">▄</text>
+		<rect x="279.0" y="113.85" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="128.85" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="132.82" fill="#875f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="147.82" textLength="9.3" class="ptg ptg-62">▄</text>
+		<rect x="9.3" y="132.82" fill="#5fafff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="147.82" textLength="9.3" class="ptg ptg-132">▄</text>
+		<rect x="18.6" y="132.82" fill="#5fff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="147.82" textLength="9.3" class="ptg ptg-133">▄</text>
+		<rect x="27.9" y="132.82" fill="#d7af5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="147.82" textLength="9.3" class="ptg ptg-47">▄</text>
+		<rect x="37.2" y="132.82" fill="#d7d7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="147.82" textLength="9.3" class="ptg ptg-134">▄</text>
+		<rect x="46.5" y="132.82" fill="#875f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="147.82" textLength="9.3" class="ptg ptg-77">▄</text>
+		<rect x="55.8" y="132.82" fill="#5fafaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="147.82" textLength="9.3" class="ptg ptg-48">▄</text>
+		<rect x="65.1" y="132.82" fill="#ff00d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="147.82" textLength="9.3" class="ptg ptg-135">▄</text>
+		<rect x="74.4" y="132.82" fill="#d7ffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="147.82" textLength="9.3" class="ptg ptg-65">▄</text>
+		<rect x="83.7" y="132.82" fill="#ffd7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="147.82" textLength="9.3" class="ptg ptg-9">▄</text>
+		<rect x="93.0" y="132.82" fill="#d7ffff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="147.82" textLength="9.3" class="ptg ptg-81">▄</text>
+		<rect x="102.3" y="132.82" fill="#ffff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="147.82" textLength="9.3" class="ptg ptg-35">▄</text>
+		<rect x="111.6" y="132.82" fill="#5f5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="147.82" textLength="9.3" class="ptg ptg-46">▄</text>
+		<rect x="120.9" y="132.82" fill="#d75f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="147.82" textLength="9.3" class="ptg ptg-69">▄</text>
+		<rect x="130.2" y="132.82" fill="#af00d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="147.82" textLength="9.3" class="ptg ptg-41">▄</text>
+		<rect x="139.5" y="132.82" fill="#5f875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="147.82" textLength="9.3" class="ptg ptg-67">▄</text>
+		<rect x="148.8" y="132.82" fill="#87ffff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="147.82" textLength="9.3" class="ptg ptg-136">▄</text>
+		<rect x="158.1" y="132.82" fill="#8700d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="147.82" textLength="9.3" class="ptg ptg-137">▄</text>
+		<rect x="167.4" y="132.82" fill="#d7afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="147.82" textLength="9.3" class="ptg ptg-54">▄</text>
+		<rect x="176.7" y="132.82" fill="#d70000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="147.82" textLength="9.3" class="ptg ptg-138">▄</text>
+		<rect x="186.0" y="132.82" fill="#00afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="147.82" textLength="9.3" class="ptg ptg-67">▄</text>
+		<rect x="195.3" y="132.82" fill="#ffff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="147.82" textLength="9.3" class="ptg ptg-139">▄</text>
+		<rect x="204.6" y="132.82" fill="#5faf00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="147.82" textLength="9.3" class="ptg ptg-117">▄</text>
+		<rect x="213.9" y="132.82" fill="#00afaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="147.82" textLength="9.3" class="ptg ptg-140">▄</text>
+		<rect x="223.2" y="132.82" fill="#afffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="147.82" textLength="9.3" class="ptg ptg-141">▄</text>
+		<rect x="232.5" y="132.82" fill="#ffd75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="147.82" textLength="9.3" class="ptg ptg-123">▄</text>
+		<rect x="241.8" y="132.82" fill="#afd7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="147.82" textLength="9.3" class="ptg ptg-134">▄</text>
+		<rect x="251.1" y="132.82" fill="#870087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="147.82" textLength="9.3" class="ptg ptg-57">▄</text>
+		<rect x="260.4" y="132.82" fill="#d787ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="147.82" textLength="9.3" class="ptg ptg-56">▄</text>
+		<rect x="269.7" y="132.82" fill="#ffd7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="147.82" textLength="9.3" class="ptg ptg-62">▄</text>
+		<rect x="279.0" y="132.82" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="147.82" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="151.8" fill="#ff5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="166.8" textLength="9.3" class="ptg ptg-133">▄</text>
+		<rect x="9.3" y="151.8" fill="#d7af00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="166.8" textLength="9.3" class="ptg ptg-142">▄</text>
+		<rect x="18.6" y="151.8" fill="#af00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="166.8" textLength="9.3" class="ptg ptg-143">▄</text>
+		<rect x="27.9" y="151.8" fill="#87ffff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="166.8" textLength="9.3" class="ptg ptg-35">▄</text>
+		<rect x="37.2" y="151.8" fill="#87d700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="166.8" textLength="9.3" class="ptg ptg-144">▄</text>
+		<rect x="46.5" y="151.8" fill="#ff875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="166.8" textLength="9.3" class="ptg ptg-145">▄</text>
+		<rect x="55.8" y="151.8" fill="#af87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="166.8" textLength="9.3" class="ptg ptg-22">▄</text>
+		<rect x="65.1" y="151.8" fill="#0000af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="166.8" textLength="9.3" class="ptg ptg-146">▄</text>
+		<rect x="74.4" y="151.8" fill="#875f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="166.8" textLength="9.3" class="ptg ptg-106">▄</text>
+		<rect x="83.7" y="151.8" fill="#ffafd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="166.8" textLength="9.3" class="ptg ptg-58">▄</text>
+		<rect x="93.0" y="151.8" fill="#d75fd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="166.8" textLength="9.3" class="ptg ptg-114">▄</text>
+		<rect x="102.3" y="151.8" fill="#5faf5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="166.8" textLength="9.3" class="ptg ptg-51">▄</text>
+		<rect x="111.6" y="151.8" fill="#d75f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="166.8" textLength="9.3" class="ptg ptg-43">▄</text>
+		<rect x="120.9" y="151.8" fill="#5f5f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="166.8" textLength="9.3" class="ptg ptg-147">▄</text>
+		<rect x="130.2" y="151.8" fill="#af5f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="166.8" textLength="9.3" class="ptg ptg-79">▄</text>
+		<rect x="139.5" y="151.8" fill="#d7ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="166.8" textLength="9.3" class="ptg ptg-32">▄</text>
+		<rect x="148.8" y="151.8" fill="#afafff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="166.8" textLength="9.3" class="ptg ptg-80">▄</text>
+		<rect x="158.1" y="151.8" fill="#5f0000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="166.8" textLength="9.3" class="ptg ptg-24">▄</text>
+		<rect x="167.4" y="151.8" fill="#005f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="166.8" textLength="9.3" class="ptg ptg-148">▄</text>
+		<rect x="176.7" y="151.8" fill="#d7ffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="166.8" textLength="9.3" class="ptg ptg-148">▄</text>
+		<rect x="186.0" y="151.8" fill="#afd787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="166.8" textLength="9.3" class="ptg ptg-99">▄</text>
+		<rect x="195.3" y="151.8" fill="#005fd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="166.8" textLength="9.3" class="ptg ptg-107">▄</text>
+		<rect x="204.6" y="151.8" fill="#875f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="166.8" textLength="9.3" class="ptg ptg-2">▄</text>
+		<rect x="213.9" y="151.8" fill="#00af00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="166.8" textLength="9.3" class="ptg ptg-130">▄</text>
+		<rect x="223.2" y="151.8" fill="#ff87d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="166.8" textLength="9.3" class="ptg ptg-149">▄</text>
+		<rect x="232.5" y="151.8" fill="#878787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="166.8" textLength="9.3" class="ptg ptg-150">▄</text>
+		<rect x="241.8" y="151.8" fill="#87ffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="166.8" textLength="9.3" class="ptg ptg-146">▄</text>
+		<rect x="251.1" y="151.8" fill="#5f8787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="166.8" textLength="9.3" class="ptg ptg-32">▄</text>
+		<rect x="260.4" y="151.8" fill="#af5f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="166.8" textLength="9.3" class="ptg ptg-100">▄</text>
+		<rect x="269.7" y="151.8" fill="#00875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="166.8" textLength="9.3" class="ptg ptg-90">▄</text>
+		<rect x="279.0" y="151.8" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="166.8" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="170.77" fill="#d7af87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="185.77" textLength="9.3" class="ptg ptg-151">▄</text>
+		<rect x="9.3" y="170.77" fill="#875f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="185.77" textLength="9.3" class="ptg ptg-11">▄</text>
+		<rect x="18.6" y="170.77" fill="#5f5fff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="185.77" textLength="9.3" class="ptg ptg-23">▄</text>
+		<rect x="27.9" y="170.77" fill="#8700af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="185.77" textLength="9.3" class="ptg ptg-152">▄</text>
+		<rect x="37.2" y="170.77" fill="#5f0000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="185.77" textLength="9.3" class="ptg ptg-27">▄</text>
+		<rect x="46.5" y="170.77" fill="#ffffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="185.77" textLength="9.3" class="ptg ptg-42">▄</text>
+		<rect x="55.8" y="170.77" fill="#8787d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="185.77" textLength="9.3" class="ptg ptg-131">▄</text>
+		<rect x="65.1" y="170.77" fill="#00005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="185.77" textLength="9.3" class="ptg ptg-104">▄</text>
+		<rect x="74.4" y="170.77" fill="#d7ffff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="185.77" textLength="9.3" class="ptg ptg-88">▄</text>
+		<rect x="83.7" y="170.77" fill="#ff87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="185.77" textLength="9.3" class="ptg ptg-95">▄</text>
+		<rect x="93.0" y="170.77" fill="#000087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="185.77" textLength="9.3" class="ptg ptg-25">▄</text>
+		<rect x="102.3" y="170.77" fill="#5fafd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="185.77" textLength="9.3" class="ptg ptg-33">▄</text>
+		<rect x="111.6" y="170.77" fill="#d7d7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="185.77" textLength="9.3" class="ptg ptg-148">▄</text>
+		<rect x="120.9" y="170.77" fill="#5fafd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="185.77" textLength="9.3" class="ptg ptg-130">▄</text>
+		<rect x="130.2" y="170.77" fill="#5f87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="185.77" textLength="9.3" class="ptg ptg-92">▄</text>
+		<rect x="139.5" y="170.77" fill="#ff8787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="185.77" textLength="9.3" class="ptg ptg-129">▄</text>
+		<rect x="148.8" y="170.77" fill="#ff5f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="185.77" textLength="9.3" class="ptg ptg-140">▄</text>
+		<rect x="158.1" y="170.77" fill="#d7afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="185.77" textLength="9.3" class="ptg ptg-104">▄</text>
+		<rect x="167.4" y="170.77" fill="#d75f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="185.77" textLength="9.3" class="ptg ptg-97">▄</text>
+		<rect x="176.7" y="170.77" fill="#5faf5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="185.77" textLength="9.3" class="ptg ptg-43">▄</text>
+		<rect x="186.0" y="170.77" fill="#00d75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="185.77" textLength="9.3" class="ptg ptg-153">▄</text>
+		<rect x="195.3" y="170.77" fill="#afffff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="185.77" textLength="9.3" class="ptg ptg-154">▄</text>
+		<rect x="204.6" y="170.77" fill="#080808" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="185.77" textLength="9.3" class="ptg ptg-42">▄</text>
+		<rect x="213.9" y="170.77" fill="#af87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="185.77" textLength="9.3" class="ptg ptg-98">▄</text>
+		<rect x="223.2" y="170.77" fill="#00d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="185.77" textLength="9.3" class="ptg ptg-140">▄</text>
+		<rect x="232.5" y="170.77" fill="#af5fff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="185.77" textLength="9.3" class="ptg ptg-92">▄</text>
+		<rect x="241.8" y="170.77" fill="#d7005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="185.77" textLength="9.3" class="ptg ptg-90">▄</text>
+		<rect x="251.1" y="170.77" fill="#ff005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="185.77" textLength="9.3" class="ptg ptg-25">▄</text>
+		<rect x="260.4" y="170.77" fill="#878700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="185.77" textLength="9.3" class="ptg ptg-149">▄</text>
+		<rect x="269.7" y="170.77" fill="#ffff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="185.77" textLength="9.3" class="ptg ptg-155">▄</text>
+		<rect x="279.0" y="170.77" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="185.77" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="189.75" fill="#d75fd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="204.75" textLength="9.3" class="ptg ptg-156">▄</text>
+		<rect x="9.3" y="189.75" fill="#87ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="204.75" textLength="9.3" class="ptg ptg-157">▄</text>
+		<rect x="18.6" y="189.75" fill="#afd7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="204.75" textLength="9.3" class="ptg ptg-36">▄</text>
+		<rect x="27.9" y="189.75" fill="#5fd7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="204.75" textLength="9.3" class="ptg ptg-74">▄</text>
+		<rect x="37.2" y="189.75" fill="#afffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="204.75" textLength="9.3" class="ptg ptg-84">▄</text>
+		<rect x="46.5" y="189.75" fill="#5fd75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="204.75" textLength="9.3" class="ptg ptg-112">▄</text>
+		<rect x="55.8" y="189.75" fill="#af00ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="204.75" textLength="9.3" class="ptg ptg-94">▄</text>
+		<rect x="65.1" y="189.75" fill="#d7afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="204.75" textLength="9.3" class="ptg ptg-26">▄</text>
+		<rect x="74.4" y="189.75" fill="#00d7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="204.75" textLength="9.3" class="ptg ptg-158">▄</text>
+		<rect x="83.7" y="189.75" fill="#d70087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="204.75" textLength="9.3" class="ptg ptg-159">▄</text>
+		<rect x="93.0" y="189.75" fill="#d75f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="204.75" textLength="9.3" class="ptg ptg-159">▄</text>
+		<rect x="102.3" y="189.75" fill="#ffff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="204.75" textLength="9.3" class="ptg ptg-130">▄</text>
+		<rect x="111.6" y="189.75" fill="#5f87af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="204.75" textLength="9.3" class="ptg ptg-67">▄</text>
+		<rect x="120.9" y="189.75" fill="#5fd75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="204.75" textLength="9.3" class="ptg ptg-128">▄</text>
+		<rect x="130.2" y="189.75" fill="#87d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="204.75" textLength="9.3" class="ptg ptg-135">▄</text>
+		<rect x="139.5" y="189.75" fill="#af5f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="204.75" textLength="9.3" class="ptg ptg-59">▄</text>
+		<rect x="148.8" y="189.75" fill="#875faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="204.75" textLength="9.3" class="ptg ptg-160">▄</text>
+		<rect x="158.1" y="189.75" fill="#afd787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="204.75" textLength="9.3" class="ptg ptg-76">▄</text>
+		<rect x="167.4" y="189.75" fill="#875f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="204.75" textLength="9.3" class="ptg ptg-106">▄</text>
+		<rect x="176.7" y="189.75" fill="#5fff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="204.75" textLength="9.3" class="ptg ptg-153">▄</text>
+		<rect x="186.0" y="189.75" fill="#00d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="204.75" textLength="9.3" class="ptg ptg-116">▄</text>
+		<rect x="195.3" y="189.75" fill="#5f8787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="204.75" textLength="9.3" class="ptg ptg-72">▄</text>
+		<rect x="204.6" y="189.75" fill="#ffd787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="204.75" textLength="9.3" class="ptg ptg-137">▄</text>
+		<rect x="213.9" y="189.75" fill="#00ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="204.75" textLength="9.3" class="ptg ptg-9">▄</text>
+		<rect x="223.2" y="189.75" fill="#ff87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="204.75" textLength="9.3" class="ptg ptg-115">▄</text>
+		<rect x="232.5" y="189.75" fill="#87d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="204.75" textLength="9.3" class="ptg ptg-100">▄</text>
+		<rect x="241.8" y="189.75" fill="#ff0087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="204.75" textLength="9.3" class="ptg ptg-149">▄</text>
+		<rect x="251.1" y="189.75" fill="#87ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="204.75" textLength="9.3" class="ptg ptg-1">▄</text>
+		<rect x="260.4" y="189.75" fill="#d7afaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="204.75" textLength="9.3" class="ptg ptg-24">▄</text>
+		<rect x="269.7" y="189.75" fill="#5faf87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="204.75" textLength="9.3" class="ptg ptg-143">▄</text>
+		<rect x="279.0" y="189.75" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="204.75" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="208.72" fill="#d7ff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="223.72" textLength="9.3" class="ptg ptg-161">▄</text>
+		<rect x="9.3" y="208.72" fill="#af5fd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="223.72" textLength="9.3" class="ptg ptg-41">▄</text>
+		<rect x="18.6" y="208.72" fill="#af5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="223.72" textLength="9.3" class="ptg ptg-158">▄</text>
+		<rect x="27.9" y="208.72" fill="#d7ffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="223.72" textLength="9.3" class="ptg ptg-157">▄</text>
+		<rect x="37.2" y="208.72" fill="#ffd700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="223.72" textLength="9.3" class="ptg ptg-162">▄</text>
+		<rect x="46.5" y="208.72" fill="#d78787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="223.72" textLength="9.3" class="ptg ptg-110">▄</text>
+		<rect x="55.8" y="208.72" fill="#afffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="223.72" textLength="9.3" class="ptg ptg-163">▄</text>
+		<rect x="65.1" y="208.72" fill="#ff00d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="223.72" textLength="9.3" class="ptg ptg-146">▄</text>
+		<rect x="74.4" y="208.72" fill="#00ff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="223.72" textLength="9.3" class="ptg ptg-16">▄</text>
+		<rect x="83.7" y="208.72" fill="#ffffff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="223.72" textLength="9.3" class="ptg ptg-59">▄</text>
+		<rect x="93.0" y="208.72" fill="#afffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="223.72" textLength="9.3" class="ptg ptg-139">▄</text>
+		<rect x="102.3" y="208.72" fill="#ffff00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="223.72" textLength="9.3" class="ptg ptg-97">▄</text>
+		<rect x="111.6" y="208.72" fill="#afff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="223.72" textLength="9.3" class="ptg ptg-164">▄</text>
+		<rect x="120.9" y="208.72" fill="#af00d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="223.72" textLength="9.3" class="ptg ptg-116">▄</text>
+		<rect x="130.2" y="208.72" fill="#afaf87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="223.72" textLength="9.3" class="ptg ptg-165">▄</text>
+		<rect x="139.5" y="208.72" fill="#ffffff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="223.72" textLength="9.3" class="ptg ptg-59">▄</text>
+		<rect x="148.8" y="208.72" fill="#00d7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="223.72" textLength="9.3" class="ptg ptg-135">▄</text>
+		<rect x="158.1" y="208.72" fill="#5fafaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="223.72" textLength="9.3" class="ptg ptg-166">▄</text>
+		<rect x="167.4" y="208.72" fill="#5fd7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="223.72" textLength="9.3" class="ptg ptg-167">▄</text>
+		<rect x="176.7" y="208.72" fill="#ff87af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="223.72" textLength="9.3" class="ptg ptg-115">▄</text>
+		<rect x="186.0" y="208.72" fill="#afaf87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="223.72" textLength="9.3" class="ptg ptg-90">▄</text>
+		<rect x="195.3" y="208.72" fill="#00875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="223.72" textLength="9.3" class="ptg ptg-36">▄</text>
+		<rect x="204.6" y="208.72" fill="#00d7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="223.72" textLength="9.3" class="ptg ptg-158">▄</text>
+		<rect x="213.9" y="208.72" fill="#00d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="223.72" textLength="9.3" class="ptg ptg-118">▄</text>
+		<rect x="223.2" y="208.72" fill="#d7af00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="223.72" textLength="9.3" class="ptg ptg-88">▄</text>
+		<rect x="232.5" y="208.72" fill="#ff87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="223.72" textLength="9.3" class="ptg ptg-30">▄</text>
+		<rect x="241.8" y="208.72" fill="#87ffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="223.72" textLength="9.3" class="ptg ptg-49">▄</text>
+		<rect x="251.1" y="208.72" fill="#875f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="223.72" textLength="9.3" class="ptg ptg-30">▄</text>
+		<rect x="260.4" y="208.72" fill="#ffffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="223.72" textLength="9.3" class="ptg ptg-95">▄</text>
+		<rect x="269.7" y="208.72" fill="#870087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="223.72" textLength="9.3" class="ptg ptg-103">▄</text>
+		<rect x="279.0" y="208.72" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="223.72" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="227.7" fill="#87875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="242.7" textLength="9.3" class="ptg ptg-44">▄</text>
+		<rect x="9.3" y="227.7" fill="#ffaf87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="242.7" textLength="9.3" class="ptg ptg-167">▄</text>
+		<rect x="18.6" y="227.7" fill="#5fd7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="242.7" textLength="9.3" class="ptg ptg-161">▄</text>
+		<rect x="27.9" y="227.7" fill="#ff87d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="242.7" textLength="9.3" class="ptg ptg-112">▄</text>
+		<rect x="37.2" y="227.7" fill="#00005f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="242.7" textLength="9.3" class="ptg ptg-84">▄</text>
+		<rect x="46.5" y="227.7" fill="#d7ffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="242.7" textLength="9.3" class="ptg ptg-33">▄</text>
+		<rect x="55.8" y="227.7" fill="#875f5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="242.7" textLength="9.3" class="ptg ptg-104">▄</text>
+		<rect x="65.1" y="227.7" fill="#af875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="242.7" textLength="9.3" class="ptg ptg-125">▄</text>
+		<rect x="74.4" y="227.7" fill="#5fffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="242.7" textLength="9.3" class="ptg ptg-168">▄</text>
+		<rect x="83.7" y="227.7" fill="#ff5fff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="242.7" textLength="9.3" class="ptg ptg-88">▄</text>
+		<rect x="93.0" y="227.7" fill="#ffd75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="242.7" textLength="9.3" class="ptg ptg-4">▄</text>
+		<rect x="102.3" y="227.7" fill="#afaf87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="242.7" textLength="9.3" class="ptg ptg-157">▄</text>
+		<rect x="111.6" y="227.7" fill="#ff00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="242.7" textLength="9.3" class="ptg ptg-169">▄</text>
+		<rect x="120.9" y="227.7" fill="#00d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="242.7" textLength="9.3" class="ptg ptg-143">▄</text>
+		<rect x="130.2" y="227.7" fill="#ff5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="242.7" textLength="9.3" class="ptg ptg-109">▄</text>
+		<rect x="139.5" y="227.7" fill="#af00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="242.7" textLength="9.3" class="ptg ptg-49">▄</text>
+		<rect x="148.8" y="227.7" fill="#af87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="242.7" textLength="9.3" class="ptg ptg-26">▄</text>
+		<rect x="158.1" y="227.7" fill="#875faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="242.7" textLength="9.3" class="ptg ptg-170">▄</text>
+		<rect x="167.4" y="227.7" fill="#ffaf87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="242.7" textLength="9.3" class="ptg ptg-52">▄</text>
+		<rect x="176.7" y="227.7" fill="#87ffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="242.7" textLength="9.3" class="ptg ptg-168">▄</text>
+		<rect x="186.0" y="227.7" fill="#ffd7d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="242.7" textLength="9.3" class="ptg ptg-93">▄</text>
+		<rect x="195.3" y="227.7" fill="#af8700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="242.7" textLength="9.3" class="ptg ptg-171">▄</text>
+		<rect x="204.6" y="227.7" fill="#00afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="242.7" textLength="9.3" class="ptg ptg-172">▄</text>
+		<rect x="213.9" y="227.7" fill="#afaf00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="242.7" textLength="9.3" class="ptg ptg-173">▄</text>
+		<rect x="223.2" y="227.7" fill="#ff0087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="242.7" textLength="9.3" class="ptg ptg-76">▄</text>
+		<rect x="232.5" y="227.7" fill="#878787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="242.7" textLength="9.3" class="ptg ptg-157">▄</text>
+		<rect x="241.8" y="227.7" fill="#d7afaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="242.7" textLength="9.3" class="ptg ptg-174">▄</text>
+		<rect x="251.1" y="227.7" fill="#ffafd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="242.7" textLength="9.3" class="ptg ptg-175">▄</text>
+		<rect x="260.4" y="227.7" fill="#5f5fd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="242.7" textLength="9.3" class="ptg ptg-155">▄</text>
+		<rect x="269.7" y="227.7" fill="#5f5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="242.7" textLength="9.3" class="ptg ptg-39">▄</text>
+		<rect x="279.0" y="227.7" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="242.7" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="246.67" fill="#5f87d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="261.67" textLength="9.3" class="ptg ptg-14">▄</text>
+		<rect x="9.3" y="246.67" fill="#d78787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="261.67" textLength="9.3" class="ptg ptg-172">▄</text>
+		<rect x="18.6" y="246.67" fill="#d78700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="261.67" textLength="9.3" class="ptg ptg-90">▄</text>
+		<rect x="27.9" y="246.67" fill="#d7ff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="261.67" textLength="9.3" class="ptg ptg-129">▄</text>
+		<rect x="37.2" y="246.67" fill="#af8787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="261.67" textLength="9.3" class="ptg ptg-66">▄</text>
+		<rect x="46.5" y="246.67" fill="#5fff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="261.67" textLength="9.3" class="ptg ptg-99">▄</text>
+		<rect x="55.8" y="246.67" fill="#af875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="261.67" textLength="9.3" class="ptg ptg-27">▄</text>
+		<rect x="65.1" y="246.67" fill="#d787af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="261.67" textLength="9.3" class="ptg ptg-54">▄</text>
+		<rect x="74.4" y="246.67" fill="#87afaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="261.67" textLength="9.3" class="ptg ptg-3">▄</text>
+		<rect x="83.7" y="246.67" fill="#870000" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="261.67" textLength="9.3" class="ptg ptg-20">▄</text>
+		<rect x="93.0" y="246.67" fill="#8787af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="261.67" textLength="9.3" class="ptg ptg-76">▄</text>
+		<rect x="102.3" y="246.67" fill="#d70087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="261.67" textLength="9.3" class="ptg ptg-176">▄</text>
+		<rect x="111.6" y="246.67" fill="#5f87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="261.67" textLength="9.3" class="ptg ptg-62">▄</text>
+		<rect x="120.9" y="246.67" fill="#afff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="261.67" textLength="9.3" class="ptg ptg-75">▄</text>
+		<rect x="130.2" y="246.67" fill="#d7afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="261.67" textLength="9.3" class="ptg ptg-34">▄</text>
+		<rect x="139.5" y="246.67" fill="#0000d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="261.67" textLength="9.3" class="ptg ptg-111">▄</text>
+		<rect x="148.8" y="246.67" fill="#8700ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="261.67" textLength="9.3" class="ptg ptg-119">▄</text>
+		<rect x="158.1" y="246.67" fill="#5fd75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="261.67" textLength="9.3" class="ptg ptg-57">▄</text>
+		<rect x="167.4" y="246.67" fill="#5fffaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="261.67" textLength="9.3" class="ptg ptg-177">▄</text>
+		<rect x="176.7" y="246.67" fill="#5f5fff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="261.67" textLength="9.3" class="ptg ptg-135">▄</text>
+		<rect x="186.0" y="246.67" fill="#d7ff5f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="261.67" textLength="9.3" class="ptg ptg-178">▄</text>
+		<rect x="195.3" y="246.67" fill="#000087" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="261.67" textLength="9.3" class="ptg ptg-13">▄</text>
+		<rect x="204.6" y="246.67" fill="#8700ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="261.67" textLength="9.3" class="ptg ptg-87">▄</text>
+		<rect x="213.9" y="246.67" fill="#5f5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="261.67" textLength="9.3" class="ptg ptg-5">▄</text>
+		<rect x="223.2" y="246.67" fill="#00afd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="261.67" textLength="9.3" class="ptg ptg-35">▄</text>
+		<rect x="232.5" y="246.67" fill="#ff87ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="261.67" textLength="9.3" class="ptg ptg-155">▄</text>
+		<rect x="241.8" y="246.67" fill="#00af00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="261.67" textLength="9.3" class="ptg ptg-37">▄</text>
+		<rect x="251.1" y="246.67" fill="#5f00d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="261.67" textLength="9.3" class="ptg ptg-179">▄</text>
+		<rect x="260.4" y="246.67" fill="#5fffd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="261.67" textLength="9.3" class="ptg ptg-53">▄</text>
+		<rect x="269.7" y="246.67" fill="#5f00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="261.67" textLength="9.3" class="ptg ptg-159">▄</text>
+		<rect x="279.0" y="246.67" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="261.67" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="265.65" fill="#ff00af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="0" y="280.65" textLength="9.3" class="ptg ptg-180">▄</text>
+		<rect x="9.3" y="265.65" fill="#080808" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="9.3" y="280.65" textLength="9.3" class="ptg ptg-90">▄</text>
+		<rect x="18.6" y="265.65" fill="#af8787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="18.6" y="280.65" textLength="9.3" class="ptg ptg-142">▄</text>
+		<rect x="27.9" y="265.65" fill="#5fafd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="27.9" y="280.65" textLength="9.3" class="ptg ptg-168">▄</text>
+		<rect x="37.2" y="265.65" fill="#d7d7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="37.2" y="280.65" textLength="9.3" class="ptg ptg-175">▄</text>
+		<rect x="46.5" y="265.65" fill="#ff87af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="280.65" textLength="9.3" class="ptg ptg-171">▄</text>
+		<rect x="55.8" y="265.65" fill="#87afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="55.8" y="280.65" textLength="9.3" class="ptg ptg-181">▄</text>
+		<rect x="65.1" y="265.65" fill="#af5faf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="65.1" y="280.65" textLength="9.3" class="ptg ptg-122">▄</text>
+		<rect x="74.4" y="265.65" fill="#af8787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="74.4" y="280.65" textLength="9.3" class="ptg ptg-62">▄</text>
+		<rect x="83.7" y="265.65" fill="#00afaf" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="83.7" y="280.65" textLength="9.3" class="ptg ptg-126">▄</text>
+		<rect x="93.0" y="265.65" fill="#ffd75f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="280.65" textLength="9.3" class="ptg ptg-91">▄</text>
+		<rect x="102.3" y="265.65" fill="#af875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="102.3" y="280.65" textLength="9.3" class="ptg ptg-127">▄</text>
+		<rect x="111.6" y="265.65" fill="#00afff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="111.6" y="280.65" textLength="9.3" class="ptg ptg-178">▄</text>
+		<rect x="120.9" y="265.65" fill="#5f8787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="120.9" y="280.65" textLength="9.3" class="ptg ptg-8">▄</text>
+		<rect x="130.2" y="265.65" fill="#00ff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="130.2" y="280.65" textLength="9.3" class="ptg ptg-182">▄</text>
+		<rect x="139.5" y="265.65" fill="#ffaf00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="139.5" y="280.65" textLength="9.3" class="ptg ptg-114">▄</text>
+		<rect x="148.8" y="265.65" fill="#ff8700" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="148.8" y="280.65" textLength="9.3" class="ptg ptg-174">▄</text>
+		<rect x="158.1" y="265.65" fill="#ff875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="158.1" y="280.65" textLength="9.3" class="ptg ptg-172">▄</text>
+		<rect x="167.4" y="265.65" fill="#87d7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="167.4" y="280.65" textLength="9.3" class="ptg ptg-73">▄</text>
+		<rect x="176.7" y="265.65" fill="#87d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="176.7" y="280.65" textLength="9.3" class="ptg ptg-34">▄</text>
+		<rect x="186.0" y="265.65" fill="#ff5f00" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="186.0" y="280.65" textLength="9.3" class="ptg ptg-120">▄</text>
+		<rect x="195.3" y="265.65" fill="#87ff87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="195.3" y="280.65" textLength="9.3" class="ptg ptg-83">▄</text>
+		<rect x="204.6" y="265.65" fill="#005f87" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="204.6" y="280.65" textLength="9.3" class="ptg ptg-126">▄</text>
+		<rect x="213.9" y="265.65" fill="#d7d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="213.9" y="280.65" textLength="9.3" class="ptg ptg-8">▄</text>
+		<rect x="223.2" y="265.65" fill="#af875f" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="223.2" y="280.65" textLength="9.3" class="ptg ptg-170">▄</text>
+		<rect x="232.5" y="265.65" fill="#afd7af" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="232.5" y="280.65" textLength="9.3" class="ptg ptg-183">▄</text>
+		<rect x="241.8" y="265.65" fill="#d75fd7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="241.8" y="280.65" textLength="9.3" class="ptg ptg-6">▄</text>
+		<rect x="251.1" y="265.65" fill="#ffd787" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="251.1" y="280.65" textLength="9.3" class="ptg ptg-18">▄</text>
+		<rect x="260.4" y="265.65" fill="#5f00d7" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="260.4" y="280.65" textLength="9.3" class="ptg ptg-55">▄</text>
+		<rect x="269.7" y="265.65" fill="#87d7ff" width="9.49" height="20.49"/>
+		<text dy="-0.25em" x="269.7" y="280.65" textLength="9.3" class="ptg ptg-9">▄</text>
+		<rect x="279.0" y="265.65" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="279.0" y="280.65" textLength="0.0" class="ptg ptg-28"/>
+		<rect x="0" y="281.4" fill="#af87ff" width="47.43" height="20.49"/>
+		<text dy="-0.25em" x="0" y="299.62" textLength="46.5" class="ptg ptg-155">Hello</text>
+		<rect x="46.5" y="281.4" fill="#5f5faf" width="47.43" height="20.49"/>
+		<text dy="-0.25em" x="46.5" y="299.62" textLength="46.5" class="ptg ptg-157">There</text>
+		<rect x="93.0" y="284.62" fill="#000000" width="0.0" height="20.49"/>
+		<text dy="-0.25em" x="93.0" y="299.62" textLength="0.0" class="ptg ptg-28"/>
 	</g>
 </svg>"""
 
@@ -1170,476 +1170,476 @@ HTML_TARGET = """\
                 position: absolute;
             }
 
-        .ptg0 {background-color: var(--ptg-background); background-color:#afaf00; color:#ffd787}
-        .ptg1 {background-color: var(--ptg-background); background-color:#875f87; color:#5fff00}
-        .ptg2 {background-color: var(--ptg-background); background-color:#af87af; color:#afaf5f}
-        .ptg3 {background-color: var(--ptg-background); background-color:#0087d7; color:#ff00af}
-        .ptg4 {background-color: var(--ptg-background); background-color:#d7af5f; color:#ffd75f}
-        .ptg5 {background-color: var(--ptg-background); background-color:#d7ff5f; color:#5faf00}
-        .ptg6 {background-color: var(--ptg-background); background-color:#ffaf00; color:#5f005f}
-        .ptg7 {background-color: var(--ptg-background); background-color:#af00af; color:#00ffaf}
-        .ptg8 {background-color: var(--ptg-background); background-color:#ff87af; color:#87ffd7}
-        .ptg9 {background-color: var(--ptg-background); background-color:#005faf; color:#00af5f}
-        .ptg10 {background-color: var(--ptg-background); background-color:#8700ff; color:#5f87ff}
-        .ptg11 {background-color: var(--ptg-background); background-color:#5f5faf; color:#d70087}
-        .ptg12 {background-color: var(--ptg-background); background-color:#5f5f87; color:#d75f5f}
-        .ptg13 {background-color: var(--ptg-background); background-color:#8787af; color:#afafd7}
-        .ptg14 {background-color: var(--ptg-background); background-color:#87afaf; color:#87d787}
-        .ptg15 {background-color: var(--ptg-background); background-color:#afd787; color:#ff87ff}
-        .ptg16 {background-color: var(--ptg-background); background-color:#00af87; color:#d7d75f}
-        .ptg17 {background-color: var(--ptg-background); background-color:#d700ff; color:#d75f5f}
-        .ptg18 {background-color: var(--ptg-background); background-color:#d7d7d7; color:#87ff00}
-        .ptg19 {background-color: var(--ptg-background); background-color:#8787af; color:#5f5fd7}
-        .ptg20 {background-color: var(--ptg-background); background-color:#5f00af; color:#ff0000}
-        .ptg21 {background-color: var(--ptg-background); background-color:#d75f5f; color:#d75fd7}
-        .ptg22 {background-color: var(--ptg-background); background-color:#ff87d7; color:#00afd7}
-        .ptg23 {background-color: var(--ptg-background); background-color:#5f0000; color:#ff5f87}
-        .ptg24 {background-color: var(--ptg-background); background-color:#afd7af; color:#8700d7}
-        .ptg25 {background-color: var(--ptg-background); background-color:#87d787; color:#00ff5f}
-        .ptg26 {background-color: var(--ptg-background); background-color:#ff87ff; color:#ffafaf}
-        .ptg27 {background-color: var(--ptg-background); background-color:#5f875f; color:#0000ff}
-        .ptg28 {background-color: var(--ptg-background); background-color:#5f5f00; color:#00ffff}
-        .ptg29 {background-color: var(--ptg-background); background-color:#87875f; color:#d75f5f}
-        .ptg30 {background-color: var(--ptg-background); background-color:#d7af00; color:#d78787}
-        .ptg31 {background-color: var(--ptg-background); background-color:#5fff5f; color:#ff0000}
-        .ptg32 {background-color: var(--ptg-background); background-color:#d75f87; color:#5f5f5f}
-        .ptg33 {background-color: var(--ptg-background); background-color:#ff87af; color:#afd700}
-        .ptg34 {background-color: var(--ptg-background); background-color:#000087; color:#af5f00}
-        .ptg35 {background-color: var(--ptg-background); background-color:#875f5f; color:#af0087}
-        .ptg36 {background-color: var(--ptg-background); background-color:#ffd787; color:#005fff}
-        .ptg37 {background-color: var(--ptg-background); background-color:#5f0000; color:#00ffff}
-        .ptg38 {background-color: var(--ptg-background); background-color:#ff5faf; color:#d7af87}
-        .ptg39 {background-color: var(--ptg-background); background-color:#d78700; color:#00ff5f}
-        .ptg40 {background-color: var(--ptg-background); background-color:#5fff00; color:#afaf00}
-        .ptg41 {background-color: var(--ptg-background); background-color:#afafff; color:#5f0087}
-        .ptg42 {background-color: var(--ptg-background); background-color:#d7afaf; color:#8787d7}
-        .ptg43 {background-color: var(--ptg-background); background-color:#d70087; color:#5f5fff}
-        .ptg44 {background-color: var(--ptg-background); background-color:#87005f; color:#0000ff}
-        .ptg45 {background-color: var(--ptg-background); background-color:#ffff00; color:#5fffff}
-        .ptg46 {background-color: var(--ptg-background); background-color:#af8700; color:#87d75f}
-        .ptg47 {background-color: var(--ptg-background); background-color:#8700d7; color:#d7d787}
-        .ptg48 {background-color: var(--ptg-background); background-color:#008787; color:#afafd7}
-        .ptg49 {background-color: var(--ptg-background); background-color:#5fff87; color:#ff87d7}
-        .ptg50 {background-color: var(--ptg-background); background-color:#5f8787; color:#5f87ff}
-        .ptg51 {background-color: var(--ptg-background); background-color:#d7afff; color:#af5fd7}
-        .ptg52 {background-color: var(--ptg-background); background-color:#ffffaf; color:#afffaf}
-        .ptg53 {background-color: var(--ptg-background); background-color:#878700; color:#87d7d7}
-        .ptg54 {background-color: var(--ptg-background); background-color:#d70000; color:#ffff00}
-        .ptg55 {background-color: var(--ptg-background); background-color:#5fff00; color:#5f5fff}
-        .ptg56 {background-color: var(--ptg-background); background-color:#ffafd7; color:#ff0087}
-        .ptg57 {background-color: var(--ptg-background); background-color:#ffd7af; color:#ffffff}
-        .ptg58 {background-color: var(--ptg-background); background-color:#0087d7; color:#ffafff}
-        .ptg59 {background-color: var(--ptg-background); background-color:#afd7ff; color:#ff00af}
-        .ptg60 {background-color: var(--ptg-background); background-color:#d7af00; color:#00ff5f}
-        .ptg61 {background-color: var(--ptg-background); background-color:#5f875f; color:#00d7d7}
-        .ptg62 {background-color: var(--ptg-background); background-color:#00afff; color:#000087}
-        .ptg63 {background-color: var(--ptg-background); background-color:#d7d7d7; color:#00d7ff}
-        .ptg64 {background-color: var(--ptg-background); background-color:#ffff00; color:#d7d7d7}
-        .ptg65 {background-color: var(--ptg-background); background-color:#5fafff; color:#00ffaf}
-        .ptg66 {background-color: var(--ptg-background); background-color:#afffff; color:#0087ff}
-        .ptg67 {background-color: var(--ptg-background); background-color:#00d787; color:#5f0000}
-        .ptg68 {background-color: var(--ptg-background); background-color:#afaf5f; color:#87ffff}
-        .ptg69 {background-color: var(--ptg-background); background-color:#afff00; color:#ff87af}
-        .ptg70 {background-color: var(--ptg-background); background-color:#ffff87; color:#5fff87}
-        .ptg71 {background-color: var(--ptg-background); background-color:#d7af5f; color:#ff8787}
-        .ptg72 {background-color: var(--ptg-background); background-color:#8787d7; color:#afffff}
-        .ptg73 {background-color: var(--ptg-background); background-color:#5fffaf; color:#d7ffff}
-        .ptg74 {background-color: var(--ptg-background); background-color:#af00d7; color:#ffaf5f}
-        .ptg75 {background-color: var(--ptg-background); background-color:#00ff87; color:#d78787}
-        .ptg76 {background-color: var(--ptg-background); background-color:#d7ffff; color:#ff5fd7}
-        .ptg77 {background-color: var(--ptg-background); background-color:#d7afff; color:#ffafff}
-        .ptg78 {background-color: var(--ptg-background); background-color:#00d7af; color:#ff8700}
-        .ptg79 {background-color: var(--ptg-background); background-color:#005f00; color:#00005f}
-        .ptg80 {background-color: var(--ptg-background); background-color:#d7ff5f; color:#ffd75f}
-        .ptg81 {background-color: var(--ptg-background); background-color:#5f00af; color:#d75f5f}
-        .ptg82 {background-color: var(--ptg-background); background-color:#d7ff00; color:#875f00}
-        .ptg83 {background-color: var(--ptg-background); background-color:#5fffd7; color:#afffff}
-        .ptg84 {background-color: var(--ptg-background); background-color:#0087af; color:#0000ff}
-        .ptg85 {background-color: var(--ptg-background); background-color:#af87af; color:#d787af}
-        .ptg86 {background-color: var(--ptg-background); background-color:#ffff87; color:#ffff00}
-        .ptg87 {background-color: var(--ptg-background); background-color:#5f00af; color:#afd75f}
-        .ptg88 {background-color: var(--ptg-background); background-color:#87d7ff; color:#d70000}
-        .ptg89 {background-color: var(--ptg-background); background-color:#d7afd7; color:#d7af5f}
-        .ptg90 {background-color: var(--ptg-background); background-color:#87afd7; color:#000087}
-        .ptg91 {background-color: var(--ptg-background); background-color:#5f005f; color:#ffd75f}
-        .ptg92 {background-color: var(--ptg-background); background-color:#87ff87; color:#5fffaf}
-        .ptg93 {background-color: var(--ptg-background); background-color:#af87af; color:#5f00af}
-        .ptg94 {background-color: var(--ptg-background); background-color:#af00ff; color:#af0087}
-        .ptg95 {background-color: var(--ptg-background); background-color:#87ffd7; color:#ff8787}
-        .ptg96 {background-color: var(--ptg-background); background-color:#d7d7ff; color:#005f5f}
-        .ptg97 {background-color: var(--ptg-background); background-color:#5faf87; color:#afaf00}
-        .ptg98 {background-color: var(--ptg-background); background-color:#ff5faf; color:#5f5f5f}
-        .ptg99 {background-color: var(--ptg-background); background-color:#afd787; color:#ffff87}
-        .ptg100 {background-color: var(--ptg-background); background-color:#afd75f; color:#00ffaf}
-        .ptg101 {background-color: var(--ptg-background); background-color:#ff00af; color:#af00d7}
-        .ptg102 {background-color: var(--ptg-background); background-color:#00d7d7; color:#5f00ff}
-        .ptg103 {background-color: var(--ptg-background); background-color:#5f5f87; color:#5fd7ff}
-        .ptg104 {background-color: var(--ptg-background); background-color:#5fffaf; color:#5fd7af}
-        .ptg105 {background-color: var(--ptg-background); background-color:#0087ff; color:#87ff87}
-        .ptg106 {background-color: var(--ptg-background); background-color:#afafaf; color:#ffffff}
-        .ptg107 {background-color: var(--ptg-background); background-color:#ff5fff; color:#87d700}
-        .ptg108 {background-color: var(--ptg-background); background-color:#00afaf; color:#00afaf}
-        .ptg109 {background-color: var(--ptg-background); background-color:#870000; color:#87ffff}
-        .ptg110 {background-color: var(--ptg-background); background-color:#5f005f; color:#ffafd7}
-        .ptg111 {background-color: var(--ptg-background); background-color:#5faf00; color:#005f5f}
-        .ptg112 {background-color: var(--ptg-background); background-color:#af87af; color:#af8787}
-        .ptg113 {background-color: var(--ptg-background); background-color:#87d7af; color:#d75faf}
-        .ptg114 {background-color: var(--ptg-background); background-color:#ff8700; color:#87005f}
-        .ptg115 {background-color: var(--ptg-background); background-color:#d7d75f; color:#5fffd7}
-        .ptg116 {background-color: var(--ptg-background); background-color:#5fd7d7; color:#00af5f}
-        .ptg117 {background-color: var(--ptg-background); background-color:#d7005f; color:#d7ffaf}
-        .ptg118 {background-color: var(--ptg-background); background-color:#afaf00; color:#d7d700}
-        .ptg119 {background-color: var(--ptg-background); background-color:#00d7ff; color:#af0087}
-        .ptg120 {background-color: var(--ptg-background); background-color:#ff0087; color:#8700ff}
-        .ptg121 {background-color: var(--ptg-background); background-color:#afff00; color:#5fff87}
-        .ptg122 {background-color: var(--ptg-background); background-color:#afffaf; color:#d7ffd7}
-        .ptg123 {background-color: var(--ptg-background); background-color:#af00ff; color:#87d7af}
-        .ptg124 {background-color: var(--ptg-background); background-color:#ff00af; color:#005f87}
-        .ptg125 {background-color: var(--ptg-background); background-color:#5faf5f; color:#00ffaf}
-        .ptg126 {background-color: var(--ptg-background); background-color:#87afaf; color:#af5f87}
-        .ptg127 {background-color: var(--ptg-background); background-color:#ffafaf; color:#afffaf}
-        .ptg128 {background-color: var(--ptg-background); background-color:#d7d787; color:#afd7af}
-        .ptg129 {background-color: var(--ptg-background); background-color:#8700af; color:#afafaf}
-        .ptg130 {background-color: var(--ptg-background); background-color:#87af5f; color:#afff00}
-        .ptg131 {background-color: var(--ptg-background); background-color:#af005f; color:#5fafd7}
-        .ptg132 {background-color: var(--ptg-background); background-color:#00af87; color:#00d75f}
-        .ptg133 {background-color: var(--ptg-background); background-color:#afff87; color:#ffafd7}
-        .ptg134 {background-color: var(--ptg-background); background-color:#ffafd7; color:#5fff00}
-        .ptg135 {background-color: var(--ptg-background); background-color:#008787; color:#d7af5f}
-        .ptg136 {background-color: var(--ptg-background); background-color:#ffaf87; color:#005f87}
-        .ptg137 {background-color: var(--ptg-background); background-color:#ffafd7; color:#d7d787}
-        .ptg138 {background-color: var(--ptg-background); background-color:#87af00; color:#00d7ff}
-        .ptg139 {background-color: var(--ptg-background); background-color:#af00af; color:#875faf}
-        .ptg140 {background-color: var(--ptg-background); background-color:#d787af; color:#87afff}
-        .ptg141 {background-color: var(--ptg-background); background-color:#875f5f; color:#ff8787}
-        .ptg142 {background-color: var(--ptg-background); background-color:#5f5faf; color:#878700}
-        .ptg143 {background-color: var(--ptg-background); background-color:#d78787; color:#d7ffd7}
-        .ptg144 {background-color: var(--ptg-background); background-color:#af0000; color:#87ff5f}
-        .ptg145 {background-color: var(--ptg-background); background-color:#ff00d7; color:#d7ffaf}
-        .ptg146 {background-color: var(--ptg-background); background-color:#5f0000; color:#ffaf00}
-        .ptg147 {background-color: var(--ptg-background); background-color:#5faf87; color:#5f005f}
-        .ptg148 {background-color: var(--ptg-background); background-color:#00ffaf; color:#005fff}
-        .ptg149 {background-color: var(--ptg-background); background-color:#00875f; color:#5f0087}
-        .ptg150 {background-color: var(--ptg-background); background-color:#000087; color:#d70087}
-        .ptg151 {background-color: var(--ptg-background); background-color:#d7af00; color:#5fd7d7}
-        .ptg152 {background-color: var(--ptg-background); background-color:#d75fff; color:#87d7d7}
-        .ptg153 {background-color: var(--ptg-background); background-color:#ffff87; color:#87d7af}
-        .ptg154 {background-color: var(--ptg-background); background-color:#d75f87; color:#ff87af}
-        .ptg155 {background-color: var(--ptg-background); background-color:#afffaf; color:#87875f}
-        .ptg156 {background-color: var(--ptg-background); background-color:#af5f5f; color:#5fd787}
-        .ptg157 {background-color: var(--ptg-background); background-color:#afd787; color:#87afff}
-        .ptg158 {background-color: var(--ptg-background); background-color:#5faf5f; color:#00ffd7}
-        .ptg159 {background-color: var(--ptg-background); background-color:#ffd787; color:#d75faf}
-        .ptg160 {background-color: var(--ptg-background); background-color:#870000; color:#5fffaf}
-        .ptg161 {background-color: var(--ptg-background); background-color:#ffd700; color:#00ffd7}
-        .ptg162 {background-color: var(--ptg-background); background-color:#87ff5f; color:#ffaf87}
-        .ptg163 {background-color: var(--ptg-background); background-color:#d7d7af; color:#5fd787}
-        .ptg164 {background-color: var(--ptg-background); background-color:#d70000; color:#d7afff}
-        .ptg165 {background-color: var(--ptg-background); background-color:#afd7af; color:#0087ff}
-        .ptg166 {background-color: var(--ptg-background); background-color:#87ff5f; color:#ffd700}
-        .ptg167 {background-color: var(--ptg-background); background-color:#875f00; color:#afd7ff}
-        .ptg168 {background-color: var(--ptg-background); background-color:#87ffaf; color:#ffff87}
-        .ptg169 {background-color: var(--ptg-background); background-color:#ff5f87; color:#00afff}
-        .ptg170 {background-color: var(--ptg-background); background-color:#5f8787; color:#af5f5f}
-        .ptg171 {background-color: var(--ptg-background); background-color:#870000; color:#5fd7ff}
-        .ptg172 {background-color: var(--ptg-background); background-color:#5fafaf; color:#875fff}
-        .ptg173 {background-color: var(--ptg-background); background-color:#87d7af; color:#ffd7af}
-        .ptg174 {background-color: var(--ptg-background); background-color:#878787; color:#ffff5f}
-        .ptg175 {background-color: var(--ptg-background); background-color:#87d7af; color:#d7af00}
-        .ptg176 {background-color: var(--ptg-background); background-color:#d7ff00; color:#5f0087}
-        .ptg177 {background-color: var(--ptg-background); background-color:#ff00d7; color:#5f0000}
-        .ptg178 {background-color: var(--ptg-background); background-color:#5f0000; color:#00afd7}
-        .ptg179 {background-color: var(--ptg-background); background-color:#5fafff; color:#ff875f}
-        .ptg180 {background-color: var(--ptg-background); background-color:#af00af; color:#8787ff}
-        .ptg181 {background-color: var(--ptg-background); background-color:#00d787; color:#87af5f}
-        .ptg182 {background-color: var(--ptg-background); background-color:#af0000; color:#5fffd7}
-        .ptg183 {background-color: var(--ptg-background); background-color:#87af00; color:#af5f5f}
-        .ptg184 {background-color: var(--ptg-background); background-color:#afaf00; color:#af87d7}
-        .ptg185 {background-color: var(--ptg-background); background-color:#d7ff00; color:#af00af}
-        .ptg186 {background-color: var(--ptg-background); background-color:#005f00; color:#5f8700}
-        .ptg187 {background-color: var(--ptg-background); background-color:#080808; color:#005f87}
-        .ptg188 {background-color: var(--ptg-background); background-color:#87005f; color:#ffffd7}
-        .ptg189 {background-color: var(--ptg-background); background-color:#ffafaf; color:#0000af}
-        .ptg190 {background-color: var(--ptg-background); background-color:#d7ff87; color:#878700}
-        .ptg191 {background-color: var(--ptg-background); background-color:#ff87ff; color:#87af5f}
-        .ptg192 {background-color: var(--ptg-background); background-color:#87005f; color:#87d700}
-        .ptg193 {background-color: var(--ptg-background); background-color:#875f87; color:#ff5fff}
-        .ptg194 {background-color: var(--ptg-background); background-color:#5f005f; color:#ffaf00}
-        .ptg195 {background-color: var(--ptg-background); background-color:#87d75f; color:#af0000}
-        .ptg196 {background-color: var(--ptg-background); background-color:#d75f87; color:#af00d7}
-        .ptg197 {background-color: var(--ptg-background); background-color:#87ff5f; color:#5fd7d7}
-        .ptg198 {background-color: var(--ptg-background); background-color:#87ff00; color:#ff5f00}
-        .ptg199 {background-color: var(--ptg-background); background-color:#5f5f5f; color:#af5f5f}
-        .ptg200 {background-color: var(--ptg-background); background-color:#5fff5f; color:#d7af87}
-        .ptg201 {background-color: var(--ptg-background); background-color:#d7d700; color:#005faf}
-        .ptg202 {background-color: var(--ptg-background); background-color:#5fd75f; color:#ff875f}
-        .ptg203 {background-color: var(--ptg-background); background-color:#87d700; color:#ff5fff}
-        .ptg204 {background-color: var(--ptg-background); background-color:#5f5f87; color:#87afd7}
-        .ptg205 {background-color: var(--ptg-background); background-color:#d7af5f; color:#af5f00}
-        .ptg206 {background-color: var(--ptg-background); background-color:#d7ffaf; color:#5f87d7}
-        .ptg207 {background-color: var(--ptg-background); background-color:#d75fd7; color:#0000af}
-        .ptg208 {background-color: var(--ptg-background); background-color:#afafd7; color:#ffffff}
-        .ptg209 {background-color: var(--ptg-background); background-color:#afd700; color:#af00d7}
-        .ptg210 {background-color: var(--ptg-background); background-color:#875f5f; color:#ffaf5f}
-        .ptg211 {background-color: var(--ptg-background); background-color:#5fafff; color:#af005f}
-        .ptg212 {background-color: var(--ptg-background); background-color:#5fff5f; color:#d7d7ff}
-        .ptg213 {background-color: var(--ptg-background); background-color:#d7af5f; color:#ffff00}
-        .ptg214 {background-color: var(--ptg-background); background-color:#d7d7af; color:#008787}
-        .ptg215 {background-color: var(--ptg-background); background-color:#875f00; color:#5fd7ff}
-        .ptg216 {background-color: var(--ptg-background); background-color:#5fafaf; color:#ff0087}
-        .ptg217 {background-color: var(--ptg-background); background-color:#ff00d7; color:#080808}
-        .ptg218 {background-color: var(--ptg-background); background-color:#d7ffd7; color:#00005f}
-        .ptg219 {background-color: var(--ptg-background); background-color:#ffd7d7; color:#00af5f}
-        .ptg220 {background-color: var(--ptg-background); background-color:#d7ffff; color:#00afaf}
-        .ptg221 {background-color: var(--ptg-background); background-color:#ffff00; color:#d7af87}
-        .ptg222 {background-color: var(--ptg-background); background-color:#5f5faf; color:#87d7d7}
-        .ptg223 {background-color: var(--ptg-background); background-color:#d75f87; color:#d70000}
-        .ptg224 {background-color: var(--ptg-background); background-color:#af00d7; color:#87d75f}
-        .ptg225 {background-color: var(--ptg-background); background-color:#5f875f; color:#d787af}
-        .ptg226 {background-color: var(--ptg-background); background-color:#87ffff; color:#00875f}
-        .ptg227 {background-color: var(--ptg-background); background-color:#8700d7; color:#5fd700}
-        .ptg228 {background-color: var(--ptg-background); background-color:#d7afff; color:#0087ff}
-        .ptg229 {background-color: var(--ptg-background); background-color:#d70000; color:#00ff00}
-        .ptg230 {background-color: var(--ptg-background); background-color:#00afff; color:#d787af}
-        .ptg231 {background-color: var(--ptg-background); background-color:#ffff5f; color:#005fd7}
-        .ptg232 {background-color: var(--ptg-background); background-color:#5faf00; color:#d7af00}
-        .ptg233 {background-color: var(--ptg-background); background-color:#00afaf; color:#00ff87}
-        .ptg234 {background-color: var(--ptg-background); background-color:#afffd7; color:#5f8787}
-        .ptg235 {background-color: var(--ptg-background); background-color:#ffd75f; color:#5f8700}
-        .ptg236 {background-color: var(--ptg-background); background-color:#afd7d7; color:#008787}
-        .ptg237 {background-color: var(--ptg-background); background-color:#870087; color:#ff87af}
-        .ptg238 {background-color: var(--ptg-background); background-color:#d787ff; color:#87ffff}
-        .ptg239 {background-color: var(--ptg-background); background-color:#ffd7d7; color:#ffaf5f}
-        .ptg240 {background-color: var(--ptg-background); background-color:#ff5faf; color:#d7d7ff}
-        .ptg241 {background-color: var(--ptg-background); background-color:#d7af00; color:#d700ff}
-        .ptg242 {background-color: var(--ptg-background); background-color:#af00af; color:#ffd7d7}
-        .ptg243 {background-color: var(--ptg-background); background-color:#87ffff; color:#d7af87}
-        .ptg244 {background-color: var(--ptg-background); background-color:#87d700; color:#af5faf}
-        .ptg245 {background-color: var(--ptg-background); background-color:#ff875f; color:#00d7af}
-        .ptg246 {background-color: var(--ptg-background); background-color:#af87ff; color:#ff5f87}
-        .ptg247 {background-color: var(--ptg-background); background-color:#0000af; color:#5fff5f}
-        .ptg248 {background-color: var(--ptg-background); background-color:#875f00; color:#5fd787}
-        .ptg249 {background-color: var(--ptg-background); background-color:#ffafd7; color:#5fff87}
-        .ptg250 {background-color: var(--ptg-background); background-color:#d75fd7; color:#875fff}
-        .ptg251 {background-color: var(--ptg-background); background-color:#5faf5f; color:#000087}
-        .ptg252 {background-color: var(--ptg-background); background-color:#d75f5f; color:#ff87d7}
-        .ptg253 {background-color: var(--ptg-background); background-color:#5f5f5f; color:#afaf87}
-        .ptg254 {background-color: var(--ptg-background); background-color:#af5f5f; color:#87ff87}
-        .ptg255 {background-color: var(--ptg-background); background-color:#d7ff5f; color:#af5f00}
-        .ptg256 {background-color: var(--ptg-background); background-color:#afafff; color:#87d700}
-        .ptg257 {background-color: var(--ptg-background); background-color:#5f0000; color:#00ff5f}
-        .ptg258 {background-color: var(--ptg-background); background-color:#005f00; color:#8787af}
-        .ptg259 {background-color: var(--ptg-background); background-color:#d7ffd7; color:#8787af}
-        .ptg260 {background-color: var(--ptg-background); background-color:#afd787; color:#875faf}
-        .ptg261 {background-color: var(--ptg-background); background-color:#005fd7; color:#00ffd7}
-        .ptg262 {background-color: var(--ptg-background); background-color:#875f5f; color:#afaf5f}
-        .ptg263 {background-color: var(--ptg-background); background-color:#00af00; color:#87afd7}
-        .ptg264 {background-color: var(--ptg-background); background-color:#ff87d7; color:#875f87}
-        .ptg265 {background-color: var(--ptg-background); background-color:#878787; color:#5faf87}
-        .ptg266 {background-color: var(--ptg-background); background-color:#87ffaf; color:#5fff5f}
-        .ptg267 {background-color: var(--ptg-background); background-color:#5f8787; color:#af5f00}
-        .ptg268 {background-color: var(--ptg-background); background-color:#af5f87; color:#87afff}
-        .ptg269 {background-color: var(--ptg-background); background-color:#00875f; color:#d7ffd7}
-        .ptg270 {background-color: var(--ptg-background); background-color:#d7af87; color:#5fd75f}
-        .ptg271 {background-color: var(--ptg-background); background-color:#875f87; color:#d70087}
-        .ptg272 {background-color: var(--ptg-background); background-color:#5f5fff; color:#8700d7}
-        .ptg273 {background-color: var(--ptg-background); background-color:#8700af; color:#5f875f}
-        .ptg274 {background-color: var(--ptg-background); background-color:#ffffaf; color:#d7d787}
-        .ptg275 {background-color: var(--ptg-background); background-color:#8787d7; color:#5f87d7}
-        .ptg276 {background-color: var(--ptg-background); background-color:#00005f; color:#5fd7d7}
-        .ptg277 {background-color: var(--ptg-background); background-color:#d7ffff; color:#d7d700}
-        .ptg278 {background-color: var(--ptg-background); background-color:#ff87ff; color:#afafaf}
-        .ptg279 {background-color: var(--ptg-background); background-color:#000087; color:#ffafaf}
-        .ptg280 {background-color: var(--ptg-background); background-color:#5fafd7; color:#af0087}
-        .ptg281 {background-color: var(--ptg-background); background-color:#d7d7d7; color:#8787af}
-        .ptg282 {background-color: var(--ptg-background); background-color:#5fafd7; color:#87afd7}
-        .ptg283 {background-color: var(--ptg-background); background-color:#5f87ff; color:#005f87}
-        .ptg284 {background-color: var(--ptg-background); background-color:#ff8787; color:#005faf}
-        .ptg285 {background-color: var(--ptg-background); background-color:#ff5f87; color:#00ff87}
-        .ptg286 {background-color: var(--ptg-background); background-color:#d7afff; color:#5fd7d7}
-        .ptg287 {background-color: var(--ptg-background); background-color:#d75f00; color:#5fafd7}
-        .ptg288 {background-color: var(--ptg-background); background-color:#5faf5f; color:#ff87d7}
-        .ptg289 {background-color: var(--ptg-background); background-color:#00d75f; color:#870000}
-        .ptg290 {background-color: var(--ptg-background); background-color:#afffff; color:#afd787}
-        .ptg291 {background-color: var(--ptg-background); background-color:#080808; color:#d7d787}
-        .ptg292 {background-color: var(--ptg-background); background-color:#af87ff; color:#00d75f}
-        .ptg293 {background-color: var(--ptg-background); background-color:#00d7ff; color:#00ff87}
-        .ptg294 {background-color: var(--ptg-background); background-color:#af5fff; color:#005f87}
-        .ptg295 {background-color: var(--ptg-background); background-color:#d7005f; color:#d7ffd7}
-        .ptg296 {background-color: var(--ptg-background); background-color:#ff005f; color:#ffafaf}
-        .ptg297 {background-color: var(--ptg-background); background-color:#878700; color:#875f87}
-        .ptg298 {background-color: var(--ptg-background); background-color:#ffff87; color:#5f5faf}
-        .ptg299 {background-color: var(--ptg-background); background-color:#d75fd7; color:#0000d7}
-        .ptg300 {background-color: var(--ptg-background); background-color:#87ff5f; color:#af87ff}
-        .ptg301 {background-color: var(--ptg-background); background-color:#afd7af; color:#afaf00}
-        .ptg302 {background-color: var(--ptg-background); background-color:#5fd7d7; color:#ffff87}
-        .ptg303 {background-color: var(--ptg-background); background-color:#afffaf; color:#d75faf}
-        .ptg304 {background-color: var(--ptg-background); background-color:#5fd75f; color:#00afff}
-        .ptg305 {background-color: var(--ptg-background); background-color:#af00ff; color:#afd7af}
-        .ptg306 {background-color: var(--ptg-background); background-color:#d7afff; color:#0000ff}
-        .ptg307 {background-color: var(--ptg-background); background-color:#00d7af; color:#87d7ff}
-        .ptg308 {background-color: var(--ptg-background); background-color:#d70087; color:#00d787}
-        .ptg309 {background-color: var(--ptg-background); background-color:#d75f5f; color:#00d787}
-        .ptg310 {background-color: var(--ptg-background); background-color:#ffff00; color:#87afd7}
-        .ptg311 {background-color: var(--ptg-background); background-color:#5f87af; color:#d787af}
-        .ptg312 {background-color: var(--ptg-background); background-color:#5fd75f; color:#ff5f00}
-        .ptg313 {background-color: var(--ptg-background); background-color:#87d7ff; color:#080808}
-        .ptg314 {background-color: var(--ptg-background); background-color:#af5f87; color:#ff8787}
-        .ptg315 {background-color: var(--ptg-background); background-color:#875faf; color:#af00ff}
-        .ptg316 {background-color: var(--ptg-background); background-color:#afd787; color:#5f00ff}
-        .ptg317 {background-color: var(--ptg-background); background-color:#5fff87; color:#870000}
-        .ptg318 {background-color: var(--ptg-background); background-color:#00d7ff; color:#ffff5f}
-        .ptg319 {background-color: var(--ptg-background); background-color:#5f8787; color:#5f00af}
-        .ptg320 {background-color: var(--ptg-background); background-color:#ffd787; color:#5fd700}
-        .ptg321 {background-color: var(--ptg-background); background-color:#00ff5f; color:#00af5f}
-        .ptg322 {background-color: var(--ptg-background); background-color:#ff87ff; color:#ffd7af}
-        .ptg323 {background-color: var(--ptg-background); background-color:#87d7ff; color:#87afff}
-        .ptg324 {background-color: var(--ptg-background); background-color:#ff0087; color:#875f87}
-        .ptg325 {background-color: var(--ptg-background); background-color:#87ff5f; color:#5fff00}
-        .ptg326 {background-color: var(--ptg-background); background-color:#d7afaf; color:#00ff5f}
-        .ptg327 {background-color: var(--ptg-background); background-color:#5faf87; color:#ffd7d7}
-        .ptg328 {background-color: var(--ptg-background); background-color:#d7ff00; color:#5fafaf}
-        .ptg329 {background-color: var(--ptg-background); background-color:#af5fd7; color:#87d75f}
-        .ptg330 {background-color: var(--ptg-background); background-color:#af5faf; color:#87d7ff}
-        .ptg331 {background-color: var(--ptg-background); background-color:#d7ffaf; color:#af87ff}
-        .ptg332 {background-color: var(--ptg-background); background-color:#ffd700; color:#005f00}
-        .ptg333 {background-color: var(--ptg-background); background-color:#d78787; color:#ffd700}
-        .ptg334 {background-color: var(--ptg-background); background-color:#afffaf; color:#af5fff}
-        .ptg335 {background-color: var(--ptg-background); background-color:#ff00d7; color:#5fff5f}
-        .ptg336 {background-color: var(--ptg-background); background-color:#00ff87; color:#d7d75f}
-        .ptg337 {background-color: var(--ptg-background); background-color:#ffffff; color:#ff8787}
-        .ptg338 {background-color: var(--ptg-background); background-color:#afffaf; color:#005fd7}
-        .ptg339 {background-color: var(--ptg-background); background-color:#ffff00; color:#5fafd7}
-        .ptg340 {background-color: var(--ptg-background); background-color:#afff5f; color:#5f87af}
-        .ptg341 {background-color: var(--ptg-background); background-color:#af00d7; color:#ffff5f}
-        .ptg342 {background-color: var(--ptg-background); background-color:#afaf87; color:#af87af}
-        .ptg343 {background-color: var(--ptg-background); background-color:#00d7d7; color:#080808}
-        .ptg344 {background-color: var(--ptg-background); background-color:#5fafaf; color:#870087}
-        .ptg345 {background-color: var(--ptg-background); background-color:#5fd7af; color:#d7ff87}
-        .ptg346 {background-color: var(--ptg-background); background-color:#ff87af; color:#ffd7af}
-        .ptg347 {background-color: var(--ptg-background); background-color:#afaf87; color:#d7ffd7}
-        .ptg348 {background-color: var(--ptg-background); background-color:#00875f; color:#afaf00}
-        .ptg349 {background-color: var(--ptg-background); background-color:#00d7d7; color:#87d7ff}
-        .ptg350 {background-color: var(--ptg-background); background-color:#00d7ff; color:#ff875f}
-        .ptg351 {background-color: var(--ptg-background); background-color:#d7af00; color:#d7d700}
-        .ptg352 {background-color: var(--ptg-background); background-color:#ff87ff; color:#5f5f5f}
-        .ptg353 {background-color: var(--ptg-background); background-color:#87ffd7; color:#ffafff}
-        .ptg354 {background-color: var(--ptg-background); background-color:#875f87; color:#5f5f5f}
-        .ptg355 {background-color: var(--ptg-background); background-color:#ffffd7; color:#afafaf}
-        .ptg356 {background-color: var(--ptg-background); background-color:#870087; color:#ffaf00}
-        .ptg357 {background-color: var(--ptg-background); background-color:#87875f; color:#af5fd7}
-        .ptg358 {background-color: var(--ptg-background); background-color:#ffaf87; color:#d7ff87}
-        .ptg359 {background-color: var(--ptg-background); background-color:#5fd7ff; color:#5fafaf}
-        .ptg360 {background-color: var(--ptg-background); background-color:#ff87d7; color:#00afff}
-        .ptg361 {background-color: var(--ptg-background); background-color:#00005f; color:#d75faf}
-        .ptg362 {background-color: var(--ptg-background); background-color:#d7ffd7; color:#af0087}
-        .ptg363 {background-color: var(--ptg-background); background-color:#875f5f; color:#5fd7d7}
-        .ptg364 {background-color: var(--ptg-background); background-color:#af875f; color:#0000af}
-        .ptg365 {background-color: var(--ptg-background); background-color:#5fffd7; color:#d7ff5f}
-        .ptg366 {background-color: var(--ptg-background); background-color:#ff5fff; color:#d7d700}
-        .ptg367 {background-color: var(--ptg-background); background-color:#ffd75f; color:#ffd75f}
-        .ptg368 {background-color: var(--ptg-background); background-color:#afaf87; color:#af87ff}
-        .ptg369 {background-color: var(--ptg-background); background-color:#ff00af; color:#d78700}
-        .ptg370 {background-color: var(--ptg-background); background-color:#00d7ff; color:#ffd7d7}
-        .ptg371 {background-color: var(--ptg-background); background-color:#ff5faf; color:#d7afff}
-        .ptg372 {background-color: var(--ptg-background); background-color:#af00af; color:#ffafff}
-        .ptg373 {background-color: var(--ptg-background); background-color:#af87ff; color:#0000ff}
-        .ptg374 {background-color: var(--ptg-background); background-color:#875faf; color:#d7afaf}
-        .ptg375 {background-color: var(--ptg-background); background-color:#ffaf87; color:#00d7ff}
-        .ptg376 {background-color: var(--ptg-background); background-color:#87ffaf; color:#d7ff5f}
-        .ptg377 {background-color: var(--ptg-background); background-color:#ffd7d7; color:#af5f87}
-        .ptg378 {background-color: var(--ptg-background); background-color:#af8700; color:#d75fff}
-        .ptg379 {background-color: var(--ptg-background); background-color:#00afff; color:#ff5f5f}
-        .ptg380 {background-color: var(--ptg-background); background-color:#afaf00; color:#afff5f}
-        .ptg381 {background-color: var(--ptg-background); background-color:#ff0087; color:#5f00ff}
-        .ptg382 {background-color: var(--ptg-background); background-color:#878787; color:#af87ff}
-        .ptg383 {background-color: var(--ptg-background); background-color:#d7afaf; color:#875fd7}
-        .ptg384 {background-color: var(--ptg-background); background-color:#ffafd7; color:#00af87}
-        .ptg385 {background-color: var(--ptg-background); background-color:#5f5fd7; color:#5f5faf}
-        .ptg386 {background-color: var(--ptg-background); background-color:#5f5faf; color:#5f5fff}
-        .ptg387 {background-color: var(--ptg-background); background-color:#5f87d7; color:#87d787}
-        .ptg388 {background-color: var(--ptg-background); background-color:#d78787; color:#ff5f5f}
-        .ptg389 {background-color: var(--ptg-background); background-color:#d78700; color:#d7ffd7}
-        .ptg390 {background-color: var(--ptg-background); background-color:#d7ff87; color:#005faf}
-        .ptg391 {background-color: var(--ptg-background); background-color:#af8787; color:#875f00}
-        .ptg392 {background-color: var(--ptg-background); background-color:#5fff87; color:#875faf}
-        .ptg393 {background-color: var(--ptg-background); background-color:#af875f; color:#00ffff}
-        .ptg394 {background-color: var(--ptg-background); background-color:#d787af; color:#0087ff}
-        .ptg395 {background-color: var(--ptg-background); background-color:#87afaf; color:#ff00af}
-        .ptg396 {background-color: var(--ptg-background); background-color:#870000; color:#d75fd7}
-        .ptg397 {background-color: var(--ptg-background); background-color:#8787af; color:#5f00ff}
-        .ptg398 {background-color: var(--ptg-background); background-color:#d70087; color:#d700af}
-        .ptg399 {background-color: var(--ptg-background); background-color:#5f87ff; color:#ffaf5f}
-        .ptg400 {background-color: var(--ptg-background); background-color:#afff5f; color:#af00d7}
-        .ptg401 {background-color: var(--ptg-background); background-color:#d7afff; color:#005fff}
-        .ptg402 {background-color: var(--ptg-background); background-color:#0000d7; color:#afd7ff}
-        .ptg403 {background-color: var(--ptg-background); background-color:#8700ff; color:#8787ff}
-        .ptg404 {background-color: var(--ptg-background); background-color:#5fd75f; color:#ff87af}
-        .ptg405 {background-color: var(--ptg-background); background-color:#5fffaf; color:#d75f87}
-        .ptg406 {background-color: var(--ptg-background); background-color:#5f5fff; color:#080808}
-        .ptg407 {background-color: var(--ptg-background); background-color:#d7ff5f; color:#008700}
-        .ptg408 {background-color: var(--ptg-background); background-color:#000087; color:#afafd7}
-        .ptg409 {background-color: var(--ptg-background); background-color:#8700ff; color:#d7ffaf}
-        .ptg410 {background-color: var(--ptg-background); background-color:#5f5faf; color:#5faf00}
-        .ptg411 {background-color: var(--ptg-background); background-color:#00afd7; color:#d7af87}
-        .ptg412 {background-color: var(--ptg-background); background-color:#ff87ff; color:#5f5faf}
-        .ptg413 {background-color: var(--ptg-background); background-color:#00af00; color:#5f0087}
-        .ptg414 {background-color: var(--ptg-background); background-color:#5f00d7; color:#d75f00}
-        .ptg415 {background-color: var(--ptg-background); background-color:#5fffd7; color:#d7d7d7}
-        .ptg416 {background-color: var(--ptg-background); background-color:#5f00af; color:#00d787}
-        .ptg417 {background-color: var(--ptg-background); background-color:#ff00af; color:#5f5f00}
-        .ptg418 {background-color: var(--ptg-background); background-color:#080808; color:#d7ffd7}
-        .ptg419 {background-color: var(--ptg-background); background-color:#af8787; color:#d700ff}
-        .ptg420 {background-color: var(--ptg-background); background-color:#5fafd7; color:#d7ff5f}
-        .ptg421 {background-color: var(--ptg-background); background-color:#d7d7af; color:#00af87}
-        .ptg422 {background-color: var(--ptg-background); background-color:#ff87af; color:#d75fff}
-        .ptg423 {background-color: var(--ptg-background); background-color:#87afff; color:#d7afd7}
-        .ptg424 {background-color: var(--ptg-background); background-color:#af5faf; color:#af00af}
-        .ptg425 {background-color: var(--ptg-background); background-color:#af8787; color:#ffaf5f}
-        .ptg426 {background-color: var(--ptg-background); background-color:#00afaf; color:#ff5fff}
-        .ptg427 {background-color: var(--ptg-background); background-color:#ffd75f; color:#87d7af}
-        .ptg428 {background-color: var(--ptg-background); background-color:#af875f; color:#af0000}
-        .ptg429 {background-color: var(--ptg-background); background-color:#00afff; color:#008700}
-        .ptg430 {background-color: var(--ptg-background); background-color:#5f8787; color:#87ffd7}
-        .ptg431 {background-color: var(--ptg-background); background-color:#00ff87; color:#afafff}
-        .ptg432 {background-color: var(--ptg-background); background-color:#ffaf00; color:#875fff}
-        .ptg433 {background-color: var(--ptg-background); background-color:#ff8700; color:#875fd7}
-        .ptg434 {background-color: var(--ptg-background); background-color:#ff875f; color:#ff5f5f}
-        .ptg435 {background-color: var(--ptg-background); background-color:#87d7af; color:#005f5f}
-        .ptg436 {background-color: var(--ptg-background); background-color:#87d7ff; color:#005fff}
-        .ptg437 {background-color: var(--ptg-background); background-color:#ff5f00; color:#87af5f}
-        .ptg438 {background-color: var(--ptg-background); background-color:#87ff87; color:#af8787}
-        .ptg439 {background-color: var(--ptg-background); background-color:#005f87; color:#ff5fff}
-        .ptg440 {background-color: var(--ptg-background); background-color:#d7d7ff; color:#87ffd7}
-        .ptg441 {background-color: var(--ptg-background); background-color:#af875f; color:#d7afaf}
-        .ptg442 {background-color: var(--ptg-background); background-color:#afd7af; color:#d7005f}
-        .ptg443 {background-color: var(--ptg-background); background-color:#d75fd7; color:#5f005f}
-        .ptg444 {background-color: var(--ptg-background); background-color:#ffd787; color:#5f5fd7}
-        .ptg445 {background-color: var(--ptg-background); background-color:#5f00d7; color:#5f0000}
-        .ptg446 {background-color: var(--ptg-background); background-color:#87d7ff; color:#00af5f}
-        .ptg447 {background-color: var(--ptg-background); background-color:#af87ff; color:#5f5faf}
-        .ptg448 {background-color: var(--ptg-background); color: var(--ptg-background);; background-color: var(--ptg-foreground); color:#af87ff; background-color:#5f5faf}
+        .None-0 {background-color: var(--ptg-background); background-color:#afaf00; color:#ffd787}
+        .None-1 {background-color: var(--ptg-background); background-color:#875f87; color:#5fff00}
+        .None-2 {background-color: var(--ptg-background); background-color:#af87af; color:#afaf5f}
+        .None-3 {background-color: var(--ptg-background); background-color:#0087d7; color:#ff00af}
+        .None-4 {background-color: var(--ptg-background); background-color:#d7af5f; color:#ffd75f}
+        .None-5 {background-color: var(--ptg-background); background-color:#d7ff5f; color:#5faf00}
+        .None-6 {background-color: var(--ptg-background); background-color:#ffaf00; color:#5f005f}
+        .None-7 {background-color: var(--ptg-background); background-color:#af00af; color:#00ffaf}
+        .None-8 {background-color: var(--ptg-background); background-color:#ff87af; color:#87ffd7}
+        .None-9 {background-color: var(--ptg-background); background-color:#005faf; color:#00af5f}
+        .None-10 {background-color: var(--ptg-background); background-color:#8700ff; color:#5f87ff}
+        .None-11 {background-color: var(--ptg-background); background-color:#5f5faf; color:#d70087}
+        .None-12 {background-color: var(--ptg-background); background-color:#5f5f87; color:#d75f5f}
+        .None-13 {background-color: var(--ptg-background); background-color:#8787af; color:#afafd7}
+        .None-14 {background-color: var(--ptg-background); background-color:#87afaf; color:#87d787}
+        .None-15 {background-color: var(--ptg-background); background-color:#afd787; color:#ff87ff}
+        .None-16 {background-color: var(--ptg-background); background-color:#00af87; color:#d7d75f}
+        .None-17 {background-color: var(--ptg-background); background-color:#d700ff; color:#d75f5f}
+        .None-18 {background-color: var(--ptg-background); background-color:#d7d7d7; color:#87ff00}
+        .None-19 {background-color: var(--ptg-background); background-color:#8787af; color:#5f5fd7}
+        .None-20 {background-color: var(--ptg-background); background-color:#5f00af; color:#ff0000}
+        .None-21 {background-color: var(--ptg-background); background-color:#d75f5f; color:#d75fd7}
+        .None-22 {background-color: var(--ptg-background); background-color:#ff87d7; color:#00afd7}
+        .None-23 {background-color: var(--ptg-background); background-color:#5f0000; color:#ff5f87}
+        .None-24 {background-color: var(--ptg-background); background-color:#afd7af; color:#8700d7}
+        .None-25 {background-color: var(--ptg-background); background-color:#87d787; color:#00ff5f}
+        .None-26 {background-color: var(--ptg-background); background-color:#ff87ff; color:#ffafaf}
+        .None-27 {background-color: var(--ptg-background); background-color:#5f875f; color:#0000ff}
+        .None-28 {background-color: var(--ptg-background); background-color:#5f5f00; color:#00ffff}
+        .None-29 {background-color: var(--ptg-background); background-color:#87875f; color:#d75f5f}
+        .None-30 {background-color: var(--ptg-background); background-color:#d7af00; color:#d78787}
+        .None-31 {background-color: var(--ptg-background); background-color:#5fff5f; color:#ff0000}
+        .None-32 {background-color: var(--ptg-background); background-color:#d75f87; color:#5f5f5f}
+        .None-33 {background-color: var(--ptg-background); background-color:#ff87af; color:#afd700}
+        .None-34 {background-color: var(--ptg-background); background-color:#000087; color:#af5f00}
+        .None-35 {background-color: var(--ptg-background); background-color:#875f5f; color:#af0087}
+        .None-36 {background-color: var(--ptg-background); background-color:#ffd787; color:#005fff}
+        .None-37 {background-color: var(--ptg-background); background-color:#5f0000; color:#00ffff}
+        .None-38 {background-color: var(--ptg-background); background-color:#ff5faf; color:#d7af87}
+        .None-39 {background-color: var(--ptg-background); background-color:#d78700; color:#00ff5f}
+        .None-40 {background-color: var(--ptg-background); background-color:#5fff00; color:#afaf00}
+        .None-41 {background-color: var(--ptg-background); background-color:#afafff; color:#5f0087}
+        .None-42 {background-color: var(--ptg-background); background-color:#d7afaf; color:#8787d7}
+        .None-43 {background-color: var(--ptg-background); background-color:#d70087; color:#5f5fff}
+        .None-44 {background-color: var(--ptg-background); background-color:#87005f; color:#0000ff}
+        .None-45 {background-color: var(--ptg-background); background-color:#ffff00; color:#5fffff}
+        .None-46 {background-color: var(--ptg-background); background-color:#af8700; color:#87d75f}
+        .None-47 {background-color: var(--ptg-background); background-color:#8700d7; color:#d7d787}
+        .None-48 {background-color: var(--ptg-background); background-color:#008787; color:#afafd7}
+        .None-49 {background-color: var(--ptg-background); background-color:#5fff87; color:#ff87d7}
+        .None-50 {background-color: var(--ptg-background); background-color:#5f8787; color:#5f87ff}
+        .None-51 {background-color: var(--ptg-background); background-color:#d7afff; color:#af5fd7}
+        .None-52 {background-color: var(--ptg-background); background-color:#ffffaf; color:#afffaf}
+        .None-53 {background-color: var(--ptg-background); background-color:#878700; color:#87d7d7}
+        .None-54 {background-color: var(--ptg-background); background-color:#d70000; color:#ffff00}
+        .None-55 {background-color: var(--ptg-background); background-color:#5fff00; color:#5f5fff}
+        .None-56 {background-color: var(--ptg-background); background-color:#ffafd7; color:#ff0087}
+        .None-57 {background-color: var(--ptg-background); background-color:#ffd7af; color:#ffffff}
+        .None-58 {background-color: var(--ptg-background); background-color:#0087d7; color:#ffafff}
+        .None-59 {background-color: var(--ptg-background); background-color:#afd7ff; color:#ff00af}
+        .None-60 {background-color: var(--ptg-background); background-color:#d7af00; color:#00ff5f}
+        .None-61 {background-color: var(--ptg-background); background-color:#5f875f; color:#00d7d7}
+        .None-62 {background-color: var(--ptg-background); background-color:#00afff; color:#000087}
+        .None-63 {background-color: var(--ptg-background); background-color:#d7d7d7; color:#00d7ff}
+        .None-64 {background-color: var(--ptg-background); background-color:#ffff00; color:#d7d7d7}
+        .None-65 {background-color: var(--ptg-background); background-color:#5fafff; color:#00ffaf}
+        .None-66 {background-color: var(--ptg-background); background-color:#afffff; color:#0087ff}
+        .None-67 {background-color: var(--ptg-background); background-color:#00d787; color:#5f0000}
+        .None-68 {background-color: var(--ptg-background); background-color:#afaf5f; color:#87ffff}
+        .None-69 {background-color: var(--ptg-background); background-color:#afff00; color:#ff87af}
+        .None-70 {background-color: var(--ptg-background); background-color:#ffff87; color:#5fff87}
+        .None-71 {background-color: var(--ptg-background); background-color:#d7af5f; color:#ff8787}
+        .None-72 {background-color: var(--ptg-background); background-color:#8787d7; color:#afffff}
+        .None-73 {background-color: var(--ptg-background); background-color:#5fffaf; color:#d7ffff}
+        .None-74 {background-color: var(--ptg-background); background-color:#af00d7; color:#ffaf5f}
+        .None-75 {background-color: var(--ptg-background); background-color:#00ff87; color:#d78787}
+        .None-76 {background-color: var(--ptg-background); background-color:#d7ffff; color:#ff5fd7}
+        .None-77 {background-color: var(--ptg-background); background-color:#d7afff; color:#ffafff}
+        .None-78 {background-color: var(--ptg-background); background-color:#00d7af; color:#ff8700}
+        .None-79 {background-color: var(--ptg-background); background-color:#005f00; color:#00005f}
+        .None-80 {background-color: var(--ptg-background); background-color:#d7ff5f; color:#ffd75f}
+        .None-81 {background-color: var(--ptg-background); background-color:#5f00af; color:#d75f5f}
+        .None-82 {background-color: var(--ptg-background); background-color:#d7ff00; color:#875f00}
+        .None-83 {background-color: var(--ptg-background); background-color:#5fffd7; color:#afffff}
+        .None-84 {background-color: var(--ptg-background); background-color:#0087af; color:#0000ff}
+        .None-85 {background-color: var(--ptg-background); background-color:#af87af; color:#d787af}
+        .None-86 {background-color: var(--ptg-background); background-color:#ffff87; color:#ffff00}
+        .None-87 {background-color: var(--ptg-background); background-color:#5f00af; color:#afd75f}
+        .None-88 {background-color: var(--ptg-background); background-color:#87d7ff; color:#d70000}
+        .None-89 {background-color: var(--ptg-background); background-color:#d7afd7; color:#d7af5f}
+        .None-90 {background-color: var(--ptg-background); background-color:#87afd7; color:#000087}
+        .None-91 {background-color: var(--ptg-background); background-color:#5f005f; color:#ffd75f}
+        .None-92 {background-color: var(--ptg-background); background-color:#87ff87; color:#5fffaf}
+        .None-93 {background-color: var(--ptg-background); background-color:#af87af; color:#5f00af}
+        .None-94 {background-color: var(--ptg-background); background-color:#af00ff; color:#af0087}
+        .None-95 {background-color: var(--ptg-background); background-color:#87ffd7; color:#ff8787}
+        .None-96 {background-color: var(--ptg-background); background-color:#d7d7ff; color:#005f5f}
+        .None-97 {background-color: var(--ptg-background); background-color:#5faf87; color:#afaf00}
+        .None-98 {background-color: var(--ptg-background); background-color:#ff5faf; color:#5f5f5f}
+        .None-99 {background-color: var(--ptg-background); background-color:#afd787; color:#ffff87}
+        .None-100 {background-color: var(--ptg-background); background-color:#afd75f; color:#00ffaf}
+        .None-101 {background-color: var(--ptg-background); background-color:#ff00af; color:#af00d7}
+        .None-102 {background-color: var(--ptg-background); background-color:#00d7d7; color:#5f00ff}
+        .None-103 {background-color: var(--ptg-background); background-color:#5f5f87; color:#5fd7ff}
+        .None-104 {background-color: var(--ptg-background); background-color:#5fffaf; color:#5fd7af}
+        .None-105 {background-color: var(--ptg-background); background-color:#0087ff; color:#87ff87}
+        .None-106 {background-color: var(--ptg-background); background-color:#afafaf; color:#ffffff}
+        .None-107 {background-color: var(--ptg-background); background-color:#ff5fff; color:#87d700}
+        .None-108 {background-color: var(--ptg-background); background-color:#00afaf; color:#00afaf}
+        .None-109 {background-color: var(--ptg-background); background-color:#870000; color:#87ffff}
+        .None-110 {background-color: var(--ptg-background); background-color:#5f005f; color:#ffafd7}
+        .None-111 {background-color: var(--ptg-background); background-color:#5faf00; color:#005f5f}
+        .None-112 {background-color: var(--ptg-background); background-color:#af87af; color:#af8787}
+        .None-113 {background-color: var(--ptg-background); background-color:#87d7af; color:#d75faf}
+        .None-114 {background-color: var(--ptg-background); background-color:#ff8700; color:#87005f}
+        .None-115 {background-color: var(--ptg-background); background-color:#d7d75f; color:#5fffd7}
+        .None-116 {background-color: var(--ptg-background); background-color:#5fd7d7; color:#00af5f}
+        .None-117 {background-color: var(--ptg-background); background-color:#d7005f; color:#d7ffaf}
+        .None-118 {background-color: var(--ptg-background); background-color:#afaf00; color:#d7d700}
+        .None-119 {background-color: var(--ptg-background); background-color:#00d7ff; color:#af0087}
+        .None-120 {background-color: var(--ptg-background); background-color:#ff0087; color:#8700ff}
+        .None-121 {background-color: var(--ptg-background); background-color:#afff00; color:#5fff87}
+        .None-122 {background-color: var(--ptg-background); background-color:#afffaf; color:#d7ffd7}
+        .None-123 {background-color: var(--ptg-background); background-color:#af00ff; color:#87d7af}
+        .None-124 {background-color: var(--ptg-background); background-color:#ff00af; color:#005f87}
+        .None-125 {background-color: var(--ptg-background); background-color:#5faf5f; color:#00ffaf}
+        .None-126 {background-color: var(--ptg-background); background-color:#87afaf; color:#af5f87}
+        .None-127 {background-color: var(--ptg-background); background-color:#ffafaf; color:#afffaf}
+        .None-128 {background-color: var(--ptg-background); background-color:#d7d787; color:#afd7af}
+        .None-129 {background-color: var(--ptg-background); background-color:#8700af; color:#afafaf}
+        .None-130 {background-color: var(--ptg-background); background-color:#87af5f; color:#afff00}
+        .None-131 {background-color: var(--ptg-background); background-color:#af005f; color:#5fafd7}
+        .None-132 {background-color: var(--ptg-background); background-color:#00af87; color:#00d75f}
+        .None-133 {background-color: var(--ptg-background); background-color:#afff87; color:#ffafd7}
+        .None-134 {background-color: var(--ptg-background); background-color:#ffafd7; color:#5fff00}
+        .None-135 {background-color: var(--ptg-background); background-color:#008787; color:#d7af5f}
+        .None-136 {background-color: var(--ptg-background); background-color:#ffaf87; color:#005f87}
+        .None-137 {background-color: var(--ptg-background); background-color:#ffafd7; color:#d7d787}
+        .None-138 {background-color: var(--ptg-background); background-color:#87af00; color:#00d7ff}
+        .None-139 {background-color: var(--ptg-background); background-color:#af00af; color:#875faf}
+        .None-140 {background-color: var(--ptg-background); background-color:#d787af; color:#87afff}
+        .None-141 {background-color: var(--ptg-background); background-color:#875f5f; color:#ff8787}
+        .None-142 {background-color: var(--ptg-background); background-color:#5f5faf; color:#878700}
+        .None-143 {background-color: var(--ptg-background); background-color:#d78787; color:#d7ffd7}
+        .None-144 {background-color: var(--ptg-background); background-color:#af0000; color:#87ff5f}
+        .None-145 {background-color: var(--ptg-background); background-color:#ff00d7; color:#d7ffaf}
+        .None-146 {background-color: var(--ptg-background); background-color:#5f0000; color:#ffaf00}
+        .None-147 {background-color: var(--ptg-background); background-color:#5faf87; color:#5f005f}
+        .None-148 {background-color: var(--ptg-background); background-color:#00ffaf; color:#005fff}
+        .None-149 {background-color: var(--ptg-background); background-color:#00875f; color:#5f0087}
+        .None-150 {background-color: var(--ptg-background); background-color:#000087; color:#d70087}
+        .None-151 {background-color: var(--ptg-background); background-color:#d7af00; color:#5fd7d7}
+        .None-152 {background-color: var(--ptg-background); background-color:#d75fff; color:#87d7d7}
+        .None-153 {background-color: var(--ptg-background); background-color:#ffff87; color:#87d7af}
+        .None-154 {background-color: var(--ptg-background); background-color:#d75f87; color:#ff87af}
+        .None-155 {background-color: var(--ptg-background); background-color:#afffaf; color:#87875f}
+        .None-156 {background-color: var(--ptg-background); background-color:#af5f5f; color:#5fd787}
+        .None-157 {background-color: var(--ptg-background); background-color:#afd787; color:#87afff}
+        .None-158 {background-color: var(--ptg-background); background-color:#5faf5f; color:#00ffd7}
+        .None-159 {background-color: var(--ptg-background); background-color:#ffd787; color:#d75faf}
+        .None-160 {background-color: var(--ptg-background); background-color:#870000; color:#5fffaf}
+        .None-161 {background-color: var(--ptg-background); background-color:#ffd700; color:#00ffd7}
+        .None-162 {background-color: var(--ptg-background); background-color:#87ff5f; color:#ffaf87}
+        .None-163 {background-color: var(--ptg-background); background-color:#d7d7af; color:#5fd787}
+        .None-164 {background-color: var(--ptg-background); background-color:#d70000; color:#d7afff}
+        .None-165 {background-color: var(--ptg-background); background-color:#afd7af; color:#0087ff}
+        .None-166 {background-color: var(--ptg-background); background-color:#87ff5f; color:#ffd700}
+        .None-167 {background-color: var(--ptg-background); background-color:#875f00; color:#afd7ff}
+        .None-168 {background-color: var(--ptg-background); background-color:#87ffaf; color:#ffff87}
+        .None-169 {background-color: var(--ptg-background); background-color:#ff5f87; color:#00afff}
+        .None-170 {background-color: var(--ptg-background); background-color:#5f8787; color:#af5f5f}
+        .None-171 {background-color: var(--ptg-background); background-color:#870000; color:#5fd7ff}
+        .None-172 {background-color: var(--ptg-background); background-color:#5fafaf; color:#875fff}
+        .None-173 {background-color: var(--ptg-background); background-color:#87d7af; color:#ffd7af}
+        .None-174 {background-color: var(--ptg-background); background-color:#878787; color:#ffff5f}
+        .None-175 {background-color: var(--ptg-background); background-color:#87d7af; color:#d7af00}
+        .None-176 {background-color: var(--ptg-background); background-color:#d7ff00; color:#5f0087}
+        .None-177 {background-color: var(--ptg-background); background-color:#ff00d7; color:#5f0000}
+        .None-178 {background-color: var(--ptg-background); background-color:#5f0000; color:#00afd7}
+        .None-179 {background-color: var(--ptg-background); background-color:#5fafff; color:#ff875f}
+        .None-180 {background-color: var(--ptg-background); background-color:#af00af; color:#8787ff}
+        .None-181 {background-color: var(--ptg-background); background-color:#00d787; color:#87af5f}
+        .None-182 {background-color: var(--ptg-background); background-color:#af0000; color:#5fffd7}
+        .None-183 {background-color: var(--ptg-background); background-color:#87af00; color:#af5f5f}
+        .None-184 {background-color: var(--ptg-background); background-color:#afaf00; color:#af87d7}
+        .None-185 {background-color: var(--ptg-background); background-color:#d7ff00; color:#af00af}
+        .None-186 {background-color: var(--ptg-background); background-color:#005f00; color:#5f8700}
+        .None-187 {background-color: var(--ptg-background); background-color:#080808; color:#005f87}
+        .None-188 {background-color: var(--ptg-background); background-color:#87005f; color:#ffffd7}
+        .None-189 {background-color: var(--ptg-background); background-color:#ffafaf; color:#0000af}
+        .None-190 {background-color: var(--ptg-background); background-color:#d7ff87; color:#878700}
+        .None-191 {background-color: var(--ptg-background); background-color:#ff87ff; color:#87af5f}
+        .None-192 {background-color: var(--ptg-background); background-color:#87005f; color:#87d700}
+        .None-193 {background-color: var(--ptg-background); background-color:#875f87; color:#ff5fff}
+        .None-194 {background-color: var(--ptg-background); background-color:#5f005f; color:#ffaf00}
+        .None-195 {background-color: var(--ptg-background); background-color:#87d75f; color:#af0000}
+        .None-196 {background-color: var(--ptg-background); background-color:#d75f87; color:#af00d7}
+        .None-197 {background-color: var(--ptg-background); background-color:#87ff5f; color:#5fd7d7}
+        .None-198 {background-color: var(--ptg-background); background-color:#87ff00; color:#ff5f00}
+        .None-199 {background-color: var(--ptg-background); background-color:#5f5f5f; color:#af5f5f}
+        .None-200 {background-color: var(--ptg-background); background-color:#5fff5f; color:#d7af87}
+        .None-201 {background-color: var(--ptg-background); background-color:#d7d700; color:#005faf}
+        .None-202 {background-color: var(--ptg-background); background-color:#5fd75f; color:#ff875f}
+        .None-203 {background-color: var(--ptg-background); background-color:#87d700; color:#ff5fff}
+        .None-204 {background-color: var(--ptg-background); background-color:#5f5f87; color:#87afd7}
+        .None-205 {background-color: var(--ptg-background); background-color:#d7af5f; color:#af5f00}
+        .None-206 {background-color: var(--ptg-background); background-color:#d7ffaf; color:#5f87d7}
+        .None-207 {background-color: var(--ptg-background); background-color:#d75fd7; color:#0000af}
+        .None-208 {background-color: var(--ptg-background); background-color:#afafd7; color:#ffffff}
+        .None-209 {background-color: var(--ptg-background); background-color:#afd700; color:#af00d7}
+        .None-210 {background-color: var(--ptg-background); background-color:#875f5f; color:#ffaf5f}
+        .None-211 {background-color: var(--ptg-background); background-color:#5fafff; color:#af005f}
+        .None-212 {background-color: var(--ptg-background); background-color:#5fff5f; color:#d7d7ff}
+        .None-213 {background-color: var(--ptg-background); background-color:#d7af5f; color:#ffff00}
+        .None-214 {background-color: var(--ptg-background); background-color:#d7d7af; color:#008787}
+        .None-215 {background-color: var(--ptg-background); background-color:#875f00; color:#5fd7ff}
+        .None-216 {background-color: var(--ptg-background); background-color:#5fafaf; color:#ff0087}
+        .None-217 {background-color: var(--ptg-background); background-color:#ff00d7; color:#080808}
+        .None-218 {background-color: var(--ptg-background); background-color:#d7ffd7; color:#00005f}
+        .None-219 {background-color: var(--ptg-background); background-color:#ffd7d7; color:#00af5f}
+        .None-220 {background-color: var(--ptg-background); background-color:#d7ffff; color:#00afaf}
+        .None-221 {background-color: var(--ptg-background); background-color:#ffff00; color:#d7af87}
+        .None-222 {background-color: var(--ptg-background); background-color:#5f5faf; color:#87d7d7}
+        .None-223 {background-color: var(--ptg-background); background-color:#d75f87; color:#d70000}
+        .None-224 {background-color: var(--ptg-background); background-color:#af00d7; color:#87d75f}
+        .None-225 {background-color: var(--ptg-background); background-color:#5f875f; color:#d787af}
+        .None-226 {background-color: var(--ptg-background); background-color:#87ffff; color:#00875f}
+        .None-227 {background-color: var(--ptg-background); background-color:#8700d7; color:#5fd700}
+        .None-228 {background-color: var(--ptg-background); background-color:#d7afff; color:#0087ff}
+        .None-229 {background-color: var(--ptg-background); background-color:#d70000; color:#00ff00}
+        .None-230 {background-color: var(--ptg-background); background-color:#00afff; color:#d787af}
+        .None-231 {background-color: var(--ptg-background); background-color:#ffff5f; color:#005fd7}
+        .None-232 {background-color: var(--ptg-background); background-color:#5faf00; color:#d7af00}
+        .None-233 {background-color: var(--ptg-background); background-color:#00afaf; color:#00ff87}
+        .None-234 {background-color: var(--ptg-background); background-color:#afffd7; color:#5f8787}
+        .None-235 {background-color: var(--ptg-background); background-color:#ffd75f; color:#5f8700}
+        .None-236 {background-color: var(--ptg-background); background-color:#afd7d7; color:#008787}
+        .None-237 {background-color: var(--ptg-background); background-color:#870087; color:#ff87af}
+        .None-238 {background-color: var(--ptg-background); background-color:#d787ff; color:#87ffff}
+        .None-239 {background-color: var(--ptg-background); background-color:#ffd7d7; color:#ffaf5f}
+        .None-240 {background-color: var(--ptg-background); background-color:#ff5faf; color:#d7d7ff}
+        .None-241 {background-color: var(--ptg-background); background-color:#d7af00; color:#d700ff}
+        .None-242 {background-color: var(--ptg-background); background-color:#af00af; color:#ffd7d7}
+        .None-243 {background-color: var(--ptg-background); background-color:#87ffff; color:#d7af87}
+        .None-244 {background-color: var(--ptg-background); background-color:#87d700; color:#af5faf}
+        .None-245 {background-color: var(--ptg-background); background-color:#ff875f; color:#00d7af}
+        .None-246 {background-color: var(--ptg-background); background-color:#af87ff; color:#ff5f87}
+        .None-247 {background-color: var(--ptg-background); background-color:#0000af; color:#5fff5f}
+        .None-248 {background-color: var(--ptg-background); background-color:#875f00; color:#5fd787}
+        .None-249 {background-color: var(--ptg-background); background-color:#ffafd7; color:#5fff87}
+        .None-250 {background-color: var(--ptg-background); background-color:#d75fd7; color:#875fff}
+        .None-251 {background-color: var(--ptg-background); background-color:#5faf5f; color:#000087}
+        .None-252 {background-color: var(--ptg-background); background-color:#d75f5f; color:#ff87d7}
+        .None-253 {background-color: var(--ptg-background); background-color:#5f5f5f; color:#afaf87}
+        .None-254 {background-color: var(--ptg-background); background-color:#af5f5f; color:#87ff87}
+        .None-255 {background-color: var(--ptg-background); background-color:#d7ff5f; color:#af5f00}
+        .None-256 {background-color: var(--ptg-background); background-color:#afafff; color:#87d700}
+        .None-257 {background-color: var(--ptg-background); background-color:#5f0000; color:#00ff5f}
+        .None-258 {background-color: var(--ptg-background); background-color:#005f00; color:#8787af}
+        .None-259 {background-color: var(--ptg-background); background-color:#d7ffd7; color:#8787af}
+        .None-260 {background-color: var(--ptg-background); background-color:#afd787; color:#875faf}
+        .None-261 {background-color: var(--ptg-background); background-color:#005fd7; color:#00ffd7}
+        .None-262 {background-color: var(--ptg-background); background-color:#875f5f; color:#afaf5f}
+        .None-263 {background-color: var(--ptg-background); background-color:#00af00; color:#87afd7}
+        .None-264 {background-color: var(--ptg-background); background-color:#ff87d7; color:#875f87}
+        .None-265 {background-color: var(--ptg-background); background-color:#878787; color:#5faf87}
+        .None-266 {background-color: var(--ptg-background); background-color:#87ffaf; color:#5fff5f}
+        .None-267 {background-color: var(--ptg-background); background-color:#5f8787; color:#af5f00}
+        .None-268 {background-color: var(--ptg-background); background-color:#af5f87; color:#87afff}
+        .None-269 {background-color: var(--ptg-background); background-color:#00875f; color:#d7ffd7}
+        .None-270 {background-color: var(--ptg-background); background-color:#d7af87; color:#5fd75f}
+        .None-271 {background-color: var(--ptg-background); background-color:#875f87; color:#d70087}
+        .None-272 {background-color: var(--ptg-background); background-color:#5f5fff; color:#8700d7}
+        .None-273 {background-color: var(--ptg-background); background-color:#8700af; color:#5f875f}
+        .None-274 {background-color: var(--ptg-background); background-color:#ffffaf; color:#d7d787}
+        .None-275 {background-color: var(--ptg-background); background-color:#8787d7; color:#5f87d7}
+        .None-276 {background-color: var(--ptg-background); background-color:#00005f; color:#5fd7d7}
+        .None-277 {background-color: var(--ptg-background); background-color:#d7ffff; color:#d7d700}
+        .None-278 {background-color: var(--ptg-background); background-color:#ff87ff; color:#afafaf}
+        .None-279 {background-color: var(--ptg-background); background-color:#000087; color:#ffafaf}
+        .None-280 {background-color: var(--ptg-background); background-color:#5fafd7; color:#af0087}
+        .None-281 {background-color: var(--ptg-background); background-color:#d7d7d7; color:#8787af}
+        .None-282 {background-color: var(--ptg-background); background-color:#5fafd7; color:#87afd7}
+        .None-283 {background-color: var(--ptg-background); background-color:#5f87ff; color:#005f87}
+        .None-284 {background-color: var(--ptg-background); background-color:#ff8787; color:#005faf}
+        .None-285 {background-color: var(--ptg-background); background-color:#ff5f87; color:#00ff87}
+        .None-286 {background-color: var(--ptg-background); background-color:#d7afff; color:#5fd7d7}
+        .None-287 {background-color: var(--ptg-background); background-color:#d75f00; color:#5fafd7}
+        .None-288 {background-color: var(--ptg-background); background-color:#5faf5f; color:#ff87d7}
+        .None-289 {background-color: var(--ptg-background); background-color:#00d75f; color:#870000}
+        .None-290 {background-color: var(--ptg-background); background-color:#afffff; color:#afd787}
+        .None-291 {background-color: var(--ptg-background); background-color:#080808; color:#d7d787}
+        .None-292 {background-color: var(--ptg-background); background-color:#af87ff; color:#00d75f}
+        .None-293 {background-color: var(--ptg-background); background-color:#00d7ff; color:#00ff87}
+        .None-294 {background-color: var(--ptg-background); background-color:#af5fff; color:#005f87}
+        .None-295 {background-color: var(--ptg-background); background-color:#d7005f; color:#d7ffd7}
+        .None-296 {background-color: var(--ptg-background); background-color:#ff005f; color:#ffafaf}
+        .None-297 {background-color: var(--ptg-background); background-color:#878700; color:#875f87}
+        .None-298 {background-color: var(--ptg-background); background-color:#ffff87; color:#5f5faf}
+        .None-299 {background-color: var(--ptg-background); background-color:#d75fd7; color:#0000d7}
+        .None-300 {background-color: var(--ptg-background); background-color:#87ff5f; color:#af87ff}
+        .None-301 {background-color: var(--ptg-background); background-color:#afd7af; color:#afaf00}
+        .None-302 {background-color: var(--ptg-background); background-color:#5fd7d7; color:#ffff87}
+        .None-303 {background-color: var(--ptg-background); background-color:#afffaf; color:#d75faf}
+        .None-304 {background-color: var(--ptg-background); background-color:#5fd75f; color:#00afff}
+        .None-305 {background-color: var(--ptg-background); background-color:#af00ff; color:#afd7af}
+        .None-306 {background-color: var(--ptg-background); background-color:#d7afff; color:#0000ff}
+        .None-307 {background-color: var(--ptg-background); background-color:#00d7af; color:#87d7ff}
+        .None-308 {background-color: var(--ptg-background); background-color:#d70087; color:#00d787}
+        .None-309 {background-color: var(--ptg-background); background-color:#d75f5f; color:#00d787}
+        .None-310 {background-color: var(--ptg-background); background-color:#ffff00; color:#87afd7}
+        .None-311 {background-color: var(--ptg-background); background-color:#5f87af; color:#d787af}
+        .None-312 {background-color: var(--ptg-background); background-color:#5fd75f; color:#ff5f00}
+        .None-313 {background-color: var(--ptg-background); background-color:#87d7ff; color:#080808}
+        .None-314 {background-color: var(--ptg-background); background-color:#af5f87; color:#ff8787}
+        .None-315 {background-color: var(--ptg-background); background-color:#875faf; color:#af00ff}
+        .None-316 {background-color: var(--ptg-background); background-color:#afd787; color:#5f00ff}
+        .None-317 {background-color: var(--ptg-background); background-color:#5fff87; color:#870000}
+        .None-318 {background-color: var(--ptg-background); background-color:#00d7ff; color:#ffff5f}
+        .None-319 {background-color: var(--ptg-background); background-color:#5f8787; color:#5f00af}
+        .None-320 {background-color: var(--ptg-background); background-color:#ffd787; color:#5fd700}
+        .None-321 {background-color: var(--ptg-background); background-color:#00ff5f; color:#00af5f}
+        .None-322 {background-color: var(--ptg-background); background-color:#ff87ff; color:#ffd7af}
+        .None-323 {background-color: var(--ptg-background); background-color:#87d7ff; color:#87afff}
+        .None-324 {background-color: var(--ptg-background); background-color:#ff0087; color:#875f87}
+        .None-325 {background-color: var(--ptg-background); background-color:#87ff5f; color:#5fff00}
+        .None-326 {background-color: var(--ptg-background); background-color:#d7afaf; color:#00ff5f}
+        .None-327 {background-color: var(--ptg-background); background-color:#5faf87; color:#ffd7d7}
+        .None-328 {background-color: var(--ptg-background); background-color:#d7ff00; color:#5fafaf}
+        .None-329 {background-color: var(--ptg-background); background-color:#af5fd7; color:#87d75f}
+        .None-330 {background-color: var(--ptg-background); background-color:#af5faf; color:#87d7ff}
+        .None-331 {background-color: var(--ptg-background); background-color:#d7ffaf; color:#af87ff}
+        .None-332 {background-color: var(--ptg-background); background-color:#ffd700; color:#005f00}
+        .None-333 {background-color: var(--ptg-background); background-color:#d78787; color:#ffd700}
+        .None-334 {background-color: var(--ptg-background); background-color:#afffaf; color:#af5fff}
+        .None-335 {background-color: var(--ptg-background); background-color:#ff00d7; color:#5fff5f}
+        .None-336 {background-color: var(--ptg-background); background-color:#00ff87; color:#d7d75f}
+        .None-337 {background-color: var(--ptg-background); background-color:#ffffff; color:#ff8787}
+        .None-338 {background-color: var(--ptg-background); background-color:#afffaf; color:#005fd7}
+        .None-339 {background-color: var(--ptg-background); background-color:#ffff00; color:#5fafd7}
+        .None-340 {background-color: var(--ptg-background); background-color:#afff5f; color:#5f87af}
+        .None-341 {background-color: var(--ptg-background); background-color:#af00d7; color:#ffff5f}
+        .None-342 {background-color: var(--ptg-background); background-color:#afaf87; color:#af87af}
+        .None-343 {background-color: var(--ptg-background); background-color:#00d7d7; color:#080808}
+        .None-344 {background-color: var(--ptg-background); background-color:#5fafaf; color:#870087}
+        .None-345 {background-color: var(--ptg-background); background-color:#5fd7af; color:#d7ff87}
+        .None-346 {background-color: var(--ptg-background); background-color:#ff87af; color:#ffd7af}
+        .None-347 {background-color: var(--ptg-background); background-color:#afaf87; color:#d7ffd7}
+        .None-348 {background-color: var(--ptg-background); background-color:#00875f; color:#afaf00}
+        .None-349 {background-color: var(--ptg-background); background-color:#00d7d7; color:#87d7ff}
+        .None-350 {background-color: var(--ptg-background); background-color:#00d7ff; color:#ff875f}
+        .None-351 {background-color: var(--ptg-background); background-color:#d7af00; color:#d7d700}
+        .None-352 {background-color: var(--ptg-background); background-color:#ff87ff; color:#5f5f5f}
+        .None-353 {background-color: var(--ptg-background); background-color:#87ffd7; color:#ffafff}
+        .None-354 {background-color: var(--ptg-background); background-color:#875f87; color:#5f5f5f}
+        .None-355 {background-color: var(--ptg-background); background-color:#ffffd7; color:#afafaf}
+        .None-356 {background-color: var(--ptg-background); background-color:#870087; color:#ffaf00}
+        .None-357 {background-color: var(--ptg-background); background-color:#87875f; color:#af5fd7}
+        .None-358 {background-color: var(--ptg-background); background-color:#ffaf87; color:#d7ff87}
+        .None-359 {background-color: var(--ptg-background); background-color:#5fd7ff; color:#5fafaf}
+        .None-360 {background-color: var(--ptg-background); background-color:#ff87d7; color:#00afff}
+        .None-361 {background-color: var(--ptg-background); background-color:#00005f; color:#d75faf}
+        .None-362 {background-color: var(--ptg-background); background-color:#d7ffd7; color:#af0087}
+        .None-363 {background-color: var(--ptg-background); background-color:#875f5f; color:#5fd7d7}
+        .None-364 {background-color: var(--ptg-background); background-color:#af875f; color:#0000af}
+        .None-365 {background-color: var(--ptg-background); background-color:#5fffd7; color:#d7ff5f}
+        .None-366 {background-color: var(--ptg-background); background-color:#ff5fff; color:#d7d700}
+        .None-367 {background-color: var(--ptg-background); background-color:#ffd75f; color:#ffd75f}
+        .None-368 {background-color: var(--ptg-background); background-color:#afaf87; color:#af87ff}
+        .None-369 {background-color: var(--ptg-background); background-color:#ff00af; color:#d78700}
+        .None-370 {background-color: var(--ptg-background); background-color:#00d7ff; color:#ffd7d7}
+        .None-371 {background-color: var(--ptg-background); background-color:#ff5faf; color:#d7afff}
+        .None-372 {background-color: var(--ptg-background); background-color:#af00af; color:#ffafff}
+        .None-373 {background-color: var(--ptg-background); background-color:#af87ff; color:#0000ff}
+        .None-374 {background-color: var(--ptg-background); background-color:#875faf; color:#d7afaf}
+        .None-375 {background-color: var(--ptg-background); background-color:#ffaf87; color:#00d7ff}
+        .None-376 {background-color: var(--ptg-background); background-color:#87ffaf; color:#d7ff5f}
+        .None-377 {background-color: var(--ptg-background); background-color:#ffd7d7; color:#af5f87}
+        .None-378 {background-color: var(--ptg-background); background-color:#af8700; color:#d75fff}
+        .None-379 {background-color: var(--ptg-background); background-color:#00afff; color:#ff5f5f}
+        .None-380 {background-color: var(--ptg-background); background-color:#afaf00; color:#afff5f}
+        .None-381 {background-color: var(--ptg-background); background-color:#ff0087; color:#5f00ff}
+        .None-382 {background-color: var(--ptg-background); background-color:#878787; color:#af87ff}
+        .None-383 {background-color: var(--ptg-background); background-color:#d7afaf; color:#875fd7}
+        .None-384 {background-color: var(--ptg-background); background-color:#ffafd7; color:#00af87}
+        .None-385 {background-color: var(--ptg-background); background-color:#5f5fd7; color:#5f5faf}
+        .None-386 {background-color: var(--ptg-background); background-color:#5f5faf; color:#5f5fff}
+        .None-387 {background-color: var(--ptg-background); background-color:#5f87d7; color:#87d787}
+        .None-388 {background-color: var(--ptg-background); background-color:#d78787; color:#ff5f5f}
+        .None-389 {background-color: var(--ptg-background); background-color:#d78700; color:#d7ffd7}
+        .None-390 {background-color: var(--ptg-background); background-color:#d7ff87; color:#005faf}
+        .None-391 {background-color: var(--ptg-background); background-color:#af8787; color:#875f00}
+        .None-392 {background-color: var(--ptg-background); background-color:#5fff87; color:#875faf}
+        .None-393 {background-color: var(--ptg-background); background-color:#af875f; color:#00ffff}
+        .None-394 {background-color: var(--ptg-background); background-color:#d787af; color:#0087ff}
+        .None-395 {background-color: var(--ptg-background); background-color:#87afaf; color:#ff00af}
+        .None-396 {background-color: var(--ptg-background); background-color:#870000; color:#d75fd7}
+        .None-397 {background-color: var(--ptg-background); background-color:#8787af; color:#5f00ff}
+        .None-398 {background-color: var(--ptg-background); background-color:#d70087; color:#d700af}
+        .None-399 {background-color: var(--ptg-background); background-color:#5f87ff; color:#ffaf5f}
+        .None-400 {background-color: var(--ptg-background); background-color:#afff5f; color:#af00d7}
+        .None-401 {background-color: var(--ptg-background); background-color:#d7afff; color:#005fff}
+        .None-402 {background-color: var(--ptg-background); background-color:#0000d7; color:#afd7ff}
+        .None-403 {background-color: var(--ptg-background); background-color:#8700ff; color:#8787ff}
+        .None-404 {background-color: var(--ptg-background); background-color:#5fd75f; color:#ff87af}
+        .None-405 {background-color: var(--ptg-background); background-color:#5fffaf; color:#d75f87}
+        .None-406 {background-color: var(--ptg-background); background-color:#5f5fff; color:#080808}
+        .None-407 {background-color: var(--ptg-background); background-color:#d7ff5f; color:#008700}
+        .None-408 {background-color: var(--ptg-background); background-color:#000087; color:#afafd7}
+        .None-409 {background-color: var(--ptg-background); background-color:#8700ff; color:#d7ffaf}
+        .None-410 {background-color: var(--ptg-background); background-color:#5f5faf; color:#5faf00}
+        .None-411 {background-color: var(--ptg-background); background-color:#00afd7; color:#d7af87}
+        .None-412 {background-color: var(--ptg-background); background-color:#ff87ff; color:#5f5faf}
+        .None-413 {background-color: var(--ptg-background); background-color:#00af00; color:#5f0087}
+        .None-414 {background-color: var(--ptg-background); background-color:#5f00d7; color:#d75f00}
+        .None-415 {background-color: var(--ptg-background); background-color:#5fffd7; color:#d7d7d7}
+        .None-416 {background-color: var(--ptg-background); background-color:#5f00af; color:#00d787}
+        .None-417 {background-color: var(--ptg-background); background-color:#ff00af; color:#5f5f00}
+        .None-418 {background-color: var(--ptg-background); background-color:#080808; color:#d7ffd7}
+        .None-419 {background-color: var(--ptg-background); background-color:#af8787; color:#d700ff}
+        .None-420 {background-color: var(--ptg-background); background-color:#5fafd7; color:#d7ff5f}
+        .None-421 {background-color: var(--ptg-background); background-color:#d7d7af; color:#00af87}
+        .None-422 {background-color: var(--ptg-background); background-color:#ff87af; color:#d75fff}
+        .None-423 {background-color: var(--ptg-background); background-color:#87afff; color:#d7afd7}
+        .None-424 {background-color: var(--ptg-background); background-color:#af5faf; color:#af00af}
+        .None-425 {background-color: var(--ptg-background); background-color:#af8787; color:#ffaf5f}
+        .None-426 {background-color: var(--ptg-background); background-color:#00afaf; color:#ff5fff}
+        .None-427 {background-color: var(--ptg-background); background-color:#ffd75f; color:#87d7af}
+        .None-428 {background-color: var(--ptg-background); background-color:#af875f; color:#af0000}
+        .None-429 {background-color: var(--ptg-background); background-color:#00afff; color:#008700}
+        .None-430 {background-color: var(--ptg-background); background-color:#5f8787; color:#87ffd7}
+        .None-431 {background-color: var(--ptg-background); background-color:#00ff87; color:#afafff}
+        .None-432 {background-color: var(--ptg-background); background-color:#ffaf00; color:#875fff}
+        .None-433 {background-color: var(--ptg-background); background-color:#ff8700; color:#875fd7}
+        .None-434 {background-color: var(--ptg-background); background-color:#ff875f; color:#ff5f5f}
+        .None-435 {background-color: var(--ptg-background); background-color:#87d7af; color:#005f5f}
+        .None-436 {background-color: var(--ptg-background); background-color:#87d7ff; color:#005fff}
+        .None-437 {background-color: var(--ptg-background); background-color:#ff5f00; color:#87af5f}
+        .None-438 {background-color: var(--ptg-background); background-color:#87ff87; color:#af8787}
+        .None-439 {background-color: var(--ptg-background); background-color:#005f87; color:#ff5fff}
+        .None-440 {background-color: var(--ptg-background); background-color:#d7d7ff; color:#87ffd7}
+        .None-441 {background-color: var(--ptg-background); background-color:#af875f; color:#d7afaf}
+        .None-442 {background-color: var(--ptg-background); background-color:#afd7af; color:#d7005f}
+        .None-443 {background-color: var(--ptg-background); background-color:#d75fd7; color:#5f005f}
+        .None-444 {background-color: var(--ptg-background); background-color:#ffd787; color:#5f5fd7}
+        .None-445 {background-color: var(--ptg-background); background-color:#5f00d7; color:#5f0000}
+        .None-446 {background-color: var(--ptg-background); background-color:#87d7ff; color:#00af5f}
+        .None-447 {background-color: var(--ptg-background); background-color:#af87ff; color:#5f5faf}
+        .None-448 {background-color: var(--ptg-background); color: var(--ptg-background);; background-color: var(--ptg-foreground); color:#af87ff; background-color:#5f5faf}
         </style>
     </head>
     <body>
         <pre class="ptg">
             <code>
-<span class='ptg0'>▄</span><span class='ptg1'>▄</span><span class='ptg2'>▄</span><span class='ptg3'>▄</span><span class='ptg4'>▄</span><span class='ptg5'>▄</span><span class='ptg6'>▄</span><span class='ptg7'>▄</span><span class='ptg8'>▄</span><span class='ptg9'>▄</span><span class='ptg10'>▄</span><span class='ptg11'>▄</span><span class='ptg12'>▄</span><span class='ptg13'>▄</span><span class='ptg14'>▄</span><span class='ptg15'>▄</span><span class='ptg16'>▄</span><span class='ptg17'>▄</span><span class='ptg18'>▄</span><span class='ptg19'>▄</span><span class='ptg20'>▄</span><span class='ptg21'>▄</span><span class='ptg22'>▄</span><span class='ptg23'>▄</span><span class='ptg24'>▄</span><span class='ptg25'>▄</span><span class='ptg26'>▄</span><span class='ptg27'>▄</span><span class='ptg28'>▄</span><span class='ptg29'>▄</span>
-<span class='ptg30'>▄</span><span class='ptg31'>▄</span><span class='ptg32'>▄</span><span class='ptg33'>▄</span><span class='ptg34'>▄</span><span class='ptg35'>▄</span><span class='ptg36'>▄</span><span class='ptg37'>▄</span><span class='ptg38'>▄</span><span class='ptg39'>▄</span><span class='ptg40'>▄</span><span class='ptg41'>▄</span><span class='ptg42'>▄</span><span class='ptg43'>▄</span><span class='ptg44'>▄</span><span class='ptg45'>▄</span><span class='ptg46'>▄</span><span class='ptg47'>▄</span><span class='ptg48'>▄</span><span class='ptg49'>▄</span><span class='ptg50'>▄</span><span class='ptg51'>▄</span><span class='ptg52'>▄</span><span class='ptg53'>▄</span><span class='ptg54'>▄</span><span class='ptg55'>▄</span><span class='ptg56'>▄</span><span class='ptg57'>▄</span><span class='ptg58'>▄</span><span class='ptg59'>▄</span>
-<span class='ptg60'>▄</span><span class='ptg61'>▄</span><span class='ptg62'>▄</span><span class='ptg63'>▄</span><span class='ptg64'>▄</span><span class='ptg65'>▄</span><span class='ptg66'>▄</span><span class='ptg67'>▄</span><span class='ptg68'>▄</span><span class='ptg69'>▄</span><span class='ptg70'>▄</span><span class='ptg71'>▄</span><span class='ptg72'>▄</span><span class='ptg73'>▄</span><span class='ptg74'>▄</span><span class='ptg75'>▄</span><span class='ptg76'>▄</span><span class='ptg77'>▄</span><span class='ptg78'>▄</span><span class='ptg79'>▄</span><span class='ptg80'>▄</span><span class='ptg81'>▄</span><span class='ptg82'>▄</span><span class='ptg83'>▄</span><span class='ptg84'>▄</span><span class='ptg85'>▄</span><span class='ptg86'>▄</span><span class='ptg87'>▄</span><span class='ptg88'>▄</span><span class='ptg89'>▄</span>
-<span class='ptg90'>▄</span><span class='ptg91'>▄</span><span class='ptg92'>▄</span><span class='ptg93'>▄</span><span class='ptg94'>▄</span><span class='ptg95'>▄</span><span class='ptg96'>▄</span><span class='ptg97'>▄</span><span class='ptg98'>▄</span><span class='ptg99'>▄</span><span class='ptg100'>▄</span><span class='ptg101'>▄</span><span class='ptg102'>▄</span><span class='ptg103'>▄</span><span class='ptg104'>▄</span><span class='ptg105'>▄</span><span class='ptg106'>▄</span><span class='ptg107'>▄</span><span class='ptg108'>▄</span><span class='ptg109'>▄</span><span class='ptg110'>▄</span><span class='ptg111'>▄</span><span class='ptg112'>▄</span><span class='ptg113'>▄</span><span class='ptg114'>▄</span><span class='ptg115'>▄</span><span class='ptg116'>▄</span><span class='ptg117'>▄</span><span class='ptg118'>▄</span><span class='ptg119'>▄</span>
-<span class='ptg120'>▄</span><span class='ptg121'>▄</span><span class='ptg122'>▄</span><span class='ptg123'>▄</span><span class='ptg124'>▄</span><span class='ptg125'>▄</span><span class='ptg126'>▄</span><span class='ptg127'>▄</span><span class='ptg128'>▄</span><span class='ptg129'>▄</span><span class='ptg130'>▄</span><span class='ptg131'>▄</span><span class='ptg132'>▄</span><span class='ptg133'>▄</span><span class='ptg134'>▄</span><span class='ptg135'>▄</span><span class='ptg136'>▄</span><span class='ptg137'>▄</span><span class='ptg138'>▄</span><span class='ptg139'>▄</span><span class='ptg140'>▄</span><span class='ptg141'>▄</span><span class='ptg142'>▄</span><span class='ptg143'>▄</span><span class='ptg144'>▄</span><span class='ptg145'>▄</span><span class='ptg146'>▄</span><span class='ptg147'>▄</span><span class='ptg148'>▄</span><span class='ptg149'>▄</span>
-<span class='ptg150'>▄</span><span class='ptg151'>▄</span><span class='ptg152'>▄</span><span class='ptg153'>▄</span><span class='ptg154'>▄</span><span class='ptg155'>▄</span><span class='ptg156'>▄</span><span class='ptg157'>▄</span><span class='ptg158'>▄</span><span class='ptg159'>▄</span><span class='ptg160'>▄</span><span class='ptg161'>▄</span><span class='ptg162'>▄</span><span class='ptg163'>▄</span><span class='ptg164'>▄</span><span class='ptg165'>▄</span><span class='ptg166'>▄</span><span class='ptg167'>▄</span><span class='ptg168'>▄</span><span class='ptg169'>▄</span><span class='ptg170'>▄</span><span class='ptg171'>▄</span><span class='ptg172'>▄</span><span class='ptg173'>▄</span><span class='ptg174'>▄</span><span class='ptg175'>▄</span><span class='ptg176'>▄</span><span class='ptg177'>▄</span><span class='ptg178'>▄</span><span class='ptg179'>▄</span>
-<span class='ptg180'>▄</span><span class='ptg181'>▄</span><span class='ptg182'>▄</span><span class='ptg183'>▄</span><span class='ptg184'>▄</span><span class='ptg185'>▄</span><span class='ptg186'>▄</span><span class='ptg187'>▄</span><span class='ptg188'>▄</span><span class='ptg189'>▄</span><span class='ptg190'>▄</span><span class='ptg191'>▄</span><span class='ptg192'>▄</span><span class='ptg193'>▄</span><span class='ptg194'>▄</span><span class='ptg195'>▄</span><span class='ptg196'>▄</span><span class='ptg197'>▄</span><span class='ptg198'>▄</span><span class='ptg199'>▄</span><span class='ptg200'>▄</span><span class='ptg201'>▄</span><span class='ptg202'>▄</span><span class='ptg203'>▄</span><span class='ptg204'>▄</span><span class='ptg205'>▄</span><span class='ptg206'>▄</span><span class='ptg207'>▄</span><span class='ptg208'>▄</span><span class='ptg209'>▄</span>
-<span class='ptg210'>▄</span><span class='ptg211'>▄</span><span class='ptg212'>▄</span><span class='ptg213'>▄</span><span class='ptg214'>▄</span><span class='ptg215'>▄</span><span class='ptg216'>▄</span><span class='ptg217'>▄</span><span class='ptg218'>▄</span><span class='ptg219'>▄</span><span class='ptg220'>▄</span><span class='ptg221'>▄</span><span class='ptg222'>▄</span><span class='ptg223'>▄</span><span class='ptg224'>▄</span><span class='ptg225'>▄</span><span class='ptg226'>▄</span><span class='ptg227'>▄</span><span class='ptg228'>▄</span><span class='ptg229'>▄</span><span class='ptg230'>▄</span><span class='ptg231'>▄</span><span class='ptg232'>▄</span><span class='ptg233'>▄</span><span class='ptg234'>▄</span><span class='ptg235'>▄</span><span class='ptg236'>▄</span><span class='ptg237'>▄</span><span class='ptg238'>▄</span><span class='ptg239'>▄</span>
-<span class='ptg240'>▄</span><span class='ptg241'>▄</span><span class='ptg242'>▄</span><span class='ptg243'>▄</span><span class='ptg244'>▄</span><span class='ptg245'>▄</span><span class='ptg246'>▄</span><span class='ptg247'>▄</span><span class='ptg248'>▄</span><span class='ptg249'>▄</span><span class='ptg250'>▄</span><span class='ptg251'>▄</span><span class='ptg252'>▄</span><span class='ptg253'>▄</span><span class='ptg254'>▄</span><span class='ptg255'>▄</span><span class='ptg256'>▄</span><span class='ptg257'>▄</span><span class='ptg258'>▄</span><span class='ptg259'>▄</span><span class='ptg260'>▄</span><span class='ptg261'>▄</span><span class='ptg262'>▄</span><span class='ptg263'>▄</span><span class='ptg264'>▄</span><span class='ptg265'>▄</span><span class='ptg266'>▄</span><span class='ptg267'>▄</span><span class='ptg268'>▄</span><span class='ptg269'>▄</span>
-<span class='ptg270'>▄</span><span class='ptg271'>▄</span><span class='ptg272'>▄</span><span class='ptg273'>▄</span><span class='ptg37'>▄</span><span class='ptg274'>▄</span><span class='ptg275'>▄</span><span class='ptg276'>▄</span><span class='ptg277'>▄</span><span class='ptg278'>▄</span><span class='ptg279'>▄</span><span class='ptg280'>▄</span><span class='ptg281'>▄</span><span class='ptg282'>▄</span><span class='ptg283'>▄</span><span class='ptg284'>▄</span><span class='ptg285'>▄</span><span class='ptg286'>▄</span><span class='ptg287'>▄</span><span class='ptg288'>▄</span><span class='ptg289'>▄</span><span class='ptg290'>▄</span><span class='ptg291'>▄</span><span class='ptg292'>▄</span><span class='ptg293'>▄</span><span class='ptg294'>▄</span><span class='ptg295'>▄</span><span class='ptg296'>▄</span><span class='ptg297'>▄</span><span class='ptg298'>▄</span>
-<span class='ptg299'>▄</span><span class='ptg300'>▄</span><span class='ptg301'>▄</span><span class='ptg302'>▄</span><span class='ptg303'>▄</span><span class='ptg304'>▄</span><span class='ptg305'>▄</span><span class='ptg306'>▄</span><span class='ptg307'>▄</span><span class='ptg308'>▄</span><span class='ptg309'>▄</span><span class='ptg310'>▄</span><span class='ptg311'>▄</span><span class='ptg312'>▄</span><span class='ptg313'>▄</span><span class='ptg314'>▄</span><span class='ptg315'>▄</span><span class='ptg316'>▄</span><span class='ptg248'>▄</span><span class='ptg317'>▄</span><span class='ptg318'>▄</span><span class='ptg319'>▄</span><span class='ptg320'>▄</span><span class='ptg321'>▄</span><span class='ptg322'>▄</span><span class='ptg323'>▄</span><span class='ptg324'>▄</span><span class='ptg325'>▄</span><span class='ptg326'>▄</span><span class='ptg327'>▄</span>
-<span class='ptg328'>▄</span><span class='ptg329'>▄</span><span class='ptg330'>▄</span><span class='ptg331'>▄</span><span class='ptg332'>▄</span><span class='ptg333'>▄</span><span class='ptg334'>▄</span><span class='ptg335'>▄</span><span class='ptg336'>▄</span><span class='ptg337'>▄</span><span class='ptg338'>▄</span><span class='ptg339'>▄</span><span class='ptg340'>▄</span><span class='ptg341'>▄</span><span class='ptg342'>▄</span><span class='ptg337'>▄</span><span class='ptg343'>▄</span><span class='ptg344'>▄</span><span class='ptg345'>▄</span><span class='ptg346'>▄</span><span class='ptg347'>▄</span><span class='ptg348'>▄</span><span class='ptg349'>▄</span><span class='ptg350'>▄</span><span class='ptg351'>▄</span><span class='ptg352'>▄</span><span class='ptg353'>▄</span><span class='ptg354'>▄</span><span class='ptg355'>▄</span><span class='ptg356'>▄</span>
-<span class='ptg357'>▄</span><span class='ptg358'>▄</span><span class='ptg359'>▄</span><span class='ptg360'>▄</span><span class='ptg361'>▄</span><span class='ptg362'>▄</span><span class='ptg363'>▄</span><span class='ptg364'>▄</span><span class='ptg365'>▄</span><span class='ptg366'>▄</span><span class='ptg367'>▄</span><span class='ptg368'>▄</span><span class='ptg369'>▄</span><span class='ptg370'>▄</span><span class='ptg371'>▄</span><span class='ptg372'>▄</span><span class='ptg373'>▄</span><span class='ptg374'>▄</span><span class='ptg375'>▄</span><span class='ptg376'>▄</span><span class='ptg377'>▄</span><span class='ptg378'>▄</span><span class='ptg379'>▄</span><span class='ptg380'>▄</span><span class='ptg381'>▄</span><span class='ptg382'>▄</span><span class='ptg383'>▄</span><span class='ptg384'>▄</span><span class='ptg385'>▄</span><span class='ptg386'>▄</span>
-<span class='ptg387'>▄</span><span class='ptg388'>▄</span><span class='ptg389'>▄</span><span class='ptg390'>▄</span><span class='ptg391'>▄</span><span class='ptg392'>▄</span><span class='ptg393'>▄</span><span class='ptg394'>▄</span><span class='ptg395'>▄</span><span class='ptg396'>▄</span><span class='ptg397'>▄</span><span class='ptg398'>▄</span><span class='ptg399'>▄</span><span class='ptg400'>▄</span><span class='ptg401'>▄</span><span class='ptg402'>▄</span><span class='ptg403'>▄</span><span class='ptg404'>▄</span><span class='ptg405'>▄</span><span class='ptg406'>▄</span><span class='ptg407'>▄</span><span class='ptg408'>▄</span><span class='ptg409'>▄</span><span class='ptg410'>▄</span><span class='ptg411'>▄</span><span class='ptg412'>▄</span><span class='ptg413'>▄</span><span class='ptg414'>▄</span><span class='ptg415'>▄</span><span class='ptg416'>▄</span>
-<span class='ptg417'>▄</span><span class='ptg418'>▄</span><span class='ptg419'>▄</span><span class='ptg420'>▄</span><span class='ptg421'>▄</span><span class='ptg422'>▄</span><span class='ptg423'>▄</span><span class='ptg424'>▄</span><span class='ptg425'>▄</span><span class='ptg426'>▄</span><span class='ptg427'>▄</span><span class='ptg428'>▄</span><span class='ptg429'>▄</span><span class='ptg430'>▄</span><span class='ptg431'>▄</span><span class='ptg432'>▄</span><span class='ptg433'>▄</span><span class='ptg434'>▄</span><span class='ptg435'>▄</span><span class='ptg436'>▄</span><span class='ptg437'>▄</span><span class='ptg438'>▄</span><span class='ptg439'>▄</span><span class='ptg440'>▄</span><span class='ptg441'>▄</span><span class='ptg442'>▄</span><span class='ptg443'>▄</span><span class='ptg444'>▄</span><span class='ptg445'>▄</span><span class='ptg446'>▄</span>
-<span class='ptg447'>Hello</span><span class='ptg448'>There</span>
+<span class='None-0'>▄</span><span class='None-1'>▄</span><span class='None-2'>▄</span><span class='None-3'>▄</span><span class='None-4'>▄</span><span class='None-5'>▄</span><span class='None-6'>▄</span><span class='None-7'>▄</span><span class='None-8'>▄</span><span class='None-9'>▄</span><span class='None-10'>▄</span><span class='None-11'>▄</span><span class='None-12'>▄</span><span class='None-13'>▄</span><span class='None-14'>▄</span><span class='None-15'>▄</span><span class='None-16'>▄</span><span class='None-17'>▄</span><span class='None-18'>▄</span><span class='None-19'>▄</span><span class='None-20'>▄</span><span class='None-21'>▄</span><span class='None-22'>▄</span><span class='None-23'>▄</span><span class='None-24'>▄</span><span class='None-25'>▄</span><span class='None-26'>▄</span><span class='None-27'>▄</span><span class='None-28'>▄</span><span class='None-29'>▄</span>
+<span class='None-30'>▄</span><span class='None-31'>▄</span><span class='None-32'>▄</span><span class='None-33'>▄</span><span class='None-34'>▄</span><span class='None-35'>▄</span><span class='None-36'>▄</span><span class='None-37'>▄</span><span class='None-38'>▄</span><span class='None-39'>▄</span><span class='None-40'>▄</span><span class='None-41'>▄</span><span class='None-42'>▄</span><span class='None-43'>▄</span><span class='None-44'>▄</span><span class='None-45'>▄</span><span class='None-46'>▄</span><span class='None-47'>▄</span><span class='None-48'>▄</span><span class='None-49'>▄</span><span class='None-50'>▄</span><span class='None-51'>▄</span><span class='None-52'>▄</span><span class='None-53'>▄</span><span class='None-54'>▄</span><span class='None-55'>▄</span><span class='None-56'>▄</span><span class='None-57'>▄</span><span class='None-58'>▄</span><span class='None-59'>▄</span>
+<span class='None-60'>▄</span><span class='None-61'>▄</span><span class='None-62'>▄</span><span class='None-63'>▄</span><span class='None-64'>▄</span><span class='None-65'>▄</span><span class='None-66'>▄</span><span class='None-67'>▄</span><span class='None-68'>▄</span><span class='None-69'>▄</span><span class='None-70'>▄</span><span class='None-71'>▄</span><span class='None-72'>▄</span><span class='None-73'>▄</span><span class='None-74'>▄</span><span class='None-75'>▄</span><span class='None-76'>▄</span><span class='None-77'>▄</span><span class='None-78'>▄</span><span class='None-79'>▄</span><span class='None-80'>▄</span><span class='None-81'>▄</span><span class='None-82'>▄</span><span class='None-83'>▄</span><span class='None-84'>▄</span><span class='None-85'>▄</span><span class='None-86'>▄</span><span class='None-87'>▄</span><span class='None-88'>▄</span><span class='None-89'>▄</span>
+<span class='None-90'>▄</span><span class='None-91'>▄</span><span class='None-92'>▄</span><span class='None-93'>▄</span><span class='None-94'>▄</span><span class='None-95'>▄</span><span class='None-96'>▄</span><span class='None-97'>▄</span><span class='None-98'>▄</span><span class='None-99'>▄</span><span class='None-100'>▄</span><span class='None-101'>▄</span><span class='None-102'>▄</span><span class='None-103'>▄</span><span class='None-104'>▄</span><span class='None-105'>▄</span><span class='None-106'>▄</span><span class='None-107'>▄</span><span class='None-108'>▄</span><span class='None-109'>▄</span><span class='None-110'>▄</span><span class='None-111'>▄</span><span class='None-112'>▄</span><span class='None-113'>▄</span><span class='None-114'>▄</span><span class='None-115'>▄</span><span class='None-116'>▄</span><span class='None-117'>▄</span><span class='None-118'>▄</span><span class='None-119'>▄</span>
+<span class='None-120'>▄</span><span class='None-121'>▄</span><span class='None-122'>▄</span><span class='None-123'>▄</span><span class='None-124'>▄</span><span class='None-125'>▄</span><span class='None-126'>▄</span><span class='None-127'>▄</span><span class='None-128'>▄</span><span class='None-129'>▄</span><span class='None-130'>▄</span><span class='None-131'>▄</span><span class='None-132'>▄</span><span class='None-133'>▄</span><span class='None-134'>▄</span><span class='None-135'>▄</span><span class='None-136'>▄</span><span class='None-137'>▄</span><span class='None-138'>▄</span><span class='None-139'>▄</span><span class='None-140'>▄</span><span class='None-141'>▄</span><span class='None-142'>▄</span><span class='None-143'>▄</span><span class='None-144'>▄</span><span class='None-145'>▄</span><span class='None-146'>▄</span><span class='None-147'>▄</span><span class='None-148'>▄</span><span class='None-149'>▄</span>
+<span class='None-150'>▄</span><span class='None-151'>▄</span><span class='None-152'>▄</span><span class='None-153'>▄</span><span class='None-154'>▄</span><span class='None-155'>▄</span><span class='None-156'>▄</span><span class='None-157'>▄</span><span class='None-158'>▄</span><span class='None-159'>▄</span><span class='None-160'>▄</span><span class='None-161'>▄</span><span class='None-162'>▄</span><span class='None-163'>▄</span><span class='None-164'>▄</span><span class='None-165'>▄</span><span class='None-166'>▄</span><span class='None-167'>▄</span><span class='None-168'>▄</span><span class='None-169'>▄</span><span class='None-170'>▄</span><span class='None-171'>▄</span><span class='None-172'>▄</span><span class='None-173'>▄</span><span class='None-174'>▄</span><span class='None-175'>▄</span><span class='None-176'>▄</span><span class='None-177'>▄</span><span class='None-178'>▄</span><span class='None-179'>▄</span>
+<span class='None-180'>▄</span><span class='None-181'>▄</span><span class='None-182'>▄</span><span class='None-183'>▄</span><span class='None-184'>▄</span><span class='None-185'>▄</span><span class='None-186'>▄</span><span class='None-187'>▄</span><span class='None-188'>▄</span><span class='None-189'>▄</span><span class='None-190'>▄</span><span class='None-191'>▄</span><span class='None-192'>▄</span><span class='None-193'>▄</span><span class='None-194'>▄</span><span class='None-195'>▄</span><span class='None-196'>▄</span><span class='None-197'>▄</span><span class='None-198'>▄</span><span class='None-199'>▄</span><span class='None-200'>▄</span><span class='None-201'>▄</span><span class='None-202'>▄</span><span class='None-203'>▄</span><span class='None-204'>▄</span><span class='None-205'>▄</span><span class='None-206'>▄</span><span class='None-207'>▄</span><span class='None-208'>▄</span><span class='None-209'>▄</span>
+<span class='None-210'>▄</span><span class='None-211'>▄</span><span class='None-212'>▄</span><span class='None-213'>▄</span><span class='None-214'>▄</span><span class='None-215'>▄</span><span class='None-216'>▄</span><span class='None-217'>▄</span><span class='None-218'>▄</span><span class='None-219'>▄</span><span class='None-220'>▄</span><span class='None-221'>▄</span><span class='None-222'>▄</span><span class='None-223'>▄</span><span class='None-224'>▄</span><span class='None-225'>▄</span><span class='None-226'>▄</span><span class='None-227'>▄</span><span class='None-228'>▄</span><span class='None-229'>▄</span><span class='None-230'>▄</span><span class='None-231'>▄</span><span class='None-232'>▄</span><span class='None-233'>▄</span><span class='None-234'>▄</span><span class='None-235'>▄</span><span class='None-236'>▄</span><span class='None-237'>▄</span><span class='None-238'>▄</span><span class='None-239'>▄</span>
+<span class='None-240'>▄</span><span class='None-241'>▄</span><span class='None-242'>▄</span><span class='None-243'>▄</span><span class='None-244'>▄</span><span class='None-245'>▄</span><span class='None-246'>▄</span><span class='None-247'>▄</span><span class='None-248'>▄</span><span class='None-249'>▄</span><span class='None-250'>▄</span><span class='None-251'>▄</span><span class='None-252'>▄</span><span class='None-253'>▄</span><span class='None-254'>▄</span><span class='None-255'>▄</span><span class='None-256'>▄</span><span class='None-257'>▄</span><span class='None-258'>▄</span><span class='None-259'>▄</span><span class='None-260'>▄</span><span class='None-261'>▄</span><span class='None-262'>▄</span><span class='None-263'>▄</span><span class='None-264'>▄</span><span class='None-265'>▄</span><span class='None-266'>▄</span><span class='None-267'>▄</span><span class='None-268'>▄</span><span class='None-269'>▄</span>
+<span class='None-270'>▄</span><span class='None-271'>▄</span><span class='None-272'>▄</span><span class='None-273'>▄</span><span class='None-37'>▄</span><span class='None-274'>▄</span><span class='None-275'>▄</span><span class='None-276'>▄</span><span class='None-277'>▄</span><span class='None-278'>▄</span><span class='None-279'>▄</span><span class='None-280'>▄</span><span class='None-281'>▄</span><span class='None-282'>▄</span><span class='None-283'>▄</span><span class='None-284'>▄</span><span class='None-285'>▄</span><span class='None-286'>▄</span><span class='None-287'>▄</span><span class='None-288'>▄</span><span class='None-289'>▄</span><span class='None-290'>▄</span><span class='None-291'>▄</span><span class='None-292'>▄</span><span class='None-293'>▄</span><span class='None-294'>▄</span><span class='None-295'>▄</span><span class='None-296'>▄</span><span class='None-297'>▄</span><span class='None-298'>▄</span>
+<span class='None-299'>▄</span><span class='None-300'>▄</span><span class='None-301'>▄</span><span class='None-302'>▄</span><span class='None-303'>▄</span><span class='None-304'>▄</span><span class='None-305'>▄</span><span class='None-306'>▄</span><span class='None-307'>▄</span><span class='None-308'>▄</span><span class='None-309'>▄</span><span class='None-310'>▄</span><span class='None-311'>▄</span><span class='None-312'>▄</span><span class='None-313'>▄</span><span class='None-314'>▄</span><span class='None-315'>▄</span><span class='None-316'>▄</span><span class='None-248'>▄</span><span class='None-317'>▄</span><span class='None-318'>▄</span><span class='None-319'>▄</span><span class='None-320'>▄</span><span class='None-321'>▄</span><span class='None-322'>▄</span><span class='None-323'>▄</span><span class='None-324'>▄</span><span class='None-325'>▄</span><span class='None-326'>▄</span><span class='None-327'>▄</span>
+<span class='None-328'>▄</span><span class='None-329'>▄</span><span class='None-330'>▄</span><span class='None-331'>▄</span><span class='None-332'>▄</span><span class='None-333'>▄</span><span class='None-334'>▄</span><span class='None-335'>▄</span><span class='None-336'>▄</span><span class='None-337'>▄</span><span class='None-338'>▄</span><span class='None-339'>▄</span><span class='None-340'>▄</span><span class='None-341'>▄</span><span class='None-342'>▄</span><span class='None-337'>▄</span><span class='None-343'>▄</span><span class='None-344'>▄</span><span class='None-345'>▄</span><span class='None-346'>▄</span><span class='None-347'>▄</span><span class='None-348'>▄</span><span class='None-349'>▄</span><span class='None-350'>▄</span><span class='None-351'>▄</span><span class='None-352'>▄</span><span class='None-353'>▄</span><span class='None-354'>▄</span><span class='None-355'>▄</span><span class='None-356'>▄</span>
+<span class='None-357'>▄</span><span class='None-358'>▄</span><span class='None-359'>▄</span><span class='None-360'>▄</span><span class='None-361'>▄</span><span class='None-362'>▄</span><span class='None-363'>▄</span><span class='None-364'>▄</span><span class='None-365'>▄</span><span class='None-366'>▄</span><span class='None-367'>▄</span><span class='None-368'>▄</span><span class='None-369'>▄</span><span class='None-370'>▄</span><span class='None-371'>▄</span><span class='None-372'>▄</span><span class='None-373'>▄</span><span class='None-374'>▄</span><span class='None-375'>▄</span><span class='None-376'>▄</span><span class='None-377'>▄</span><span class='None-378'>▄</span><span class='None-379'>▄</span><span class='None-380'>▄</span><span class='None-381'>▄</span><span class='None-382'>▄</span><span class='None-383'>▄</span><span class='None-384'>▄</span><span class='None-385'>▄</span><span class='None-386'>▄</span>
+<span class='None-387'>▄</span><span class='None-388'>▄</span><span class='None-389'>▄</span><span class='None-390'>▄</span><span class='None-391'>▄</span><span class='None-392'>▄</span><span class='None-393'>▄</span><span class='None-394'>▄</span><span class='None-395'>▄</span><span class='None-396'>▄</span><span class='None-397'>▄</span><span class='None-398'>▄</span><span class='None-399'>▄</span><span class='None-400'>▄</span><span class='None-401'>▄</span><span class='None-402'>▄</span><span class='None-403'>▄</span><span class='None-404'>▄</span><span class='None-405'>▄</span><span class='None-406'>▄</span><span class='None-407'>▄</span><span class='None-408'>▄</span><span class='None-409'>▄</span><span class='None-410'>▄</span><span class='None-411'>▄</span><span class='None-412'>▄</span><span class='None-413'>▄</span><span class='None-414'>▄</span><span class='None-415'>▄</span><span class='None-416'>▄</span>
+<span class='None-417'>▄</span><span class='None-418'>▄</span><span class='None-419'>▄</span><span class='None-420'>▄</span><span class='None-421'>▄</span><span class='None-422'>▄</span><span class='None-423'>▄</span><span class='None-424'>▄</span><span class='None-425'>▄</span><span class='None-426'>▄</span><span class='None-427'>▄</span><span class='None-428'>▄</span><span class='None-429'>▄</span><span class='None-430'>▄</span><span class='None-431'>▄</span><span class='None-432'>▄</span><span class='None-433'>▄</span><span class='None-434'>▄</span><span class='None-435'>▄</span><span class='None-436'>▄</span><span class='None-437'>▄</span><span class='None-438'>▄</span><span class='None-439'>▄</span><span class='None-440'>▄</span><span class='None-441'>▄</span><span class='None-442'>▄</span><span class='None-443'>▄</span><span class='None-444'>▄</span><span class='None-445'>▄</span><span class='None-446'>▄</span>
+<span class='None-447'>Hello</span><span class='None-448'>There</span>
             </code>
         </pre>
     </body>
