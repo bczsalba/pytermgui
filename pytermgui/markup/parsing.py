@@ -49,7 +49,9 @@ __all__ = [
 class MacroType(Protocol):  # pylint: disable=too-few-public-methods
     """A protocol for TIM macros."""
 
-    def __call__(*args: str) -> str:  # pylint: disable=no-method-argument
+    def __call__(  # pylint: disable=no-method-argument, no-self-argument
+        *args: str,
+    ) -> str:
         """Applies the macro."""
 
 
