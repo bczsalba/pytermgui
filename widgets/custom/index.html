@@ -1,0 +1,2508 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>Create your own - PyTermGUI::docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.472b142f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.08040f6c.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Open Sans";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="lime">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#what-to-know" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="PyTermGUI::docs" class="md-header__button md-logo" aria-label="PyTermGUI::docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25V2.75zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25H1.75zM7.25 8a.75.75 0 0 1-.22.53l-2.25 2.25a.75.75 0 1 1-1.06-1.06L5.44 8 3.72 6.28a.75.75 0 1 1 1.06-1.06l2.25 2.25c.141.14.22.331.22.53zm1.5 1.5a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PyTermGUI::docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Create your own
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+            </label>
+          
+        
+          
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bczsalba/pytermgui" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bczsalba/pytermgui
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link md-tabs__link--active">
+        PyTermGUI
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../walkthroughs/" class="md-tabs__link">
+        Walkthroughs
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reference/pytermgui/" class="md-tabs__link">
+        Reference
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../future/" class="md-tabs__link">
+      Future
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PyTermGUI::docs" class="md-nav__button md-logo" aria-label="PyTermGUI::docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25V2.75zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25H1.75zM7.25 8a.75.75 0 0 1-.22.53l-2.25 2.25a.75.75 0 1 1-1.06-1.06L5.44 8 3.72 6.28a.75.75 0 1 1 1.06-1.06l2.25 2.25c.141.14.22.331.22.53zm1.5 1.5a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3z"/></svg>
+
+    </a>
+    PyTermGUI::docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bczsalba/pytermgui" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bczsalba/pytermgui
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          PyTermGUI
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="PyTermGUI" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          PyTermGUI
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Welcome
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_2" type="checkbox" id="__nav_1_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1_2">
+          TIM
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="TIM" data-md-level="2">
+        <label class="md-nav__title" for="__nav_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          TIM
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tim/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tim/tags/" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tim/usage/" class="md-nav__link">
+        Usage in PTG
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_3" type="checkbox" id="__nav_1_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1_3">
+          Widgets
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Widgets" data-md-level="2">
+        <label class="md-nav__title" for="__nav_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          Widgets
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../styling/" class="md-nav__link">
+        Palettes & styling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../builtins/" class="md-nav__link">
+        The batteries included
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../attrs/" class="md-nav__link">
+        Attributes to know about
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Create your own
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Create your own
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-to-know" class="md-nav__link">
+    What to know
+  </a>
+  
+    <nav class="md-nav" aria-label="What to know">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-rendering" class="md-nav__link">
+    Output &amp; rendering
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selectables" class="md-nav__link">
+    Selectables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#input-handling" class="md-nav__link">
+    Input handling
+  </a>
+  
+    <nav class="md-nav" aria-label="Input handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keyboard-input" class="md-nav__link">
+    Keyboard input
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mouse-input" class="md-nav__link">
+    Mouse input
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#faq" class="md-nav__link">
+    FAQ
+  </a>
+  
+    <nav class="md-nav" aria-label="FAQ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-dynamically-update-a-widgets-content" class="md-nav__link">
+    How do I dynamically update a widget's content?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../inspect/" class="md-nav__link">
+        Inspection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exports/" class="md-nav__link">
+        SVG & HTML exports
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Walkthroughs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Walkthroughs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Walkthroughs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../walkthroughs/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../walkthroughs/inline/" class="md-nav__link">
+        Building an inline-widget context
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          pytermgui
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="pytermgui" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          pytermgui
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/animations/" class="md-nav__link">
+        animations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/ansi_interface/" class="md-nav__link">
+        ansi_interface
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/cmd/" class="md-nav__link">
+        cmd
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/colors/" class="md-nav__link">
+        colors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/context_managers/" class="md-nav__link">
+        context_managers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/enums/" class="md-nav__link">
+        enums
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/exceptions/" class="md-nav__link">
+        exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/exporters/" class="md-nav__link">
+        exporters
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/fancy_repr/" class="md-nav__link">
+        fancy_repr
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/file_loaders/" class="md-nav__link">
+        file_loaders
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/helpers/" class="md-nav__link">
+        helpers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/highlighters/" class="md-nav__link">
+        highlighters
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/input/" class="md-nav__link">
+        input
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/inspector/" class="md-nav__link">
+        inspector
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_16" type="checkbox" id="__nav_3_1_16" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1_16">
+          markup
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="markup" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_16">
+          <span class="md-nav__icon md-icon"></span>
+          markup
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/markup/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/markup/aliases/" class="md-nav__link">
+        aliases
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/markup/language/" class="md-nav__link">
+        language
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/markup/macros/" class="md-nav__link">
+        macros
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/markup/parsing/" class="md-nav__link">
+        parsing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/markup/tokens/" class="md-nav__link">
+        tokens
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/palettes/" class="md-nav__link">
+        palettes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/prettifiers/" class="md-nav__link">
+        prettifiers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/pretty/" class="md-nav__link">
+        pretty
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/regex/" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/serialization/" class="md-nav__link">
+        serialization
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/term/" class="md-nav__link">
+        term
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_23" type="checkbox" id="__nav_3_1_23" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1_23">
+          widgets
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="widgets" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_23">
+          <span class="md-nav__icon md-icon"></span>
+          widgets
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/base/" class="md-nav__link">
+        base
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/boxes/" class="md-nav__link">
+        boxes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/button/" class="md-nav__link">
+        button
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/checkbox/" class="md-nav__link">
+        checkbox
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/collapsible/" class="md-nav__link">
+        collapsible
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/color_picker/" class="md-nav__link">
+        color_picker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/containers/" class="md-nav__link">
+        containers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/fancy_repr/" class="md-nav__link">
+        fancy_repr
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/inline/" class="md-nav__link">
+        inline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/input_field/" class="md-nav__link">
+        input_field
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/keyboard_button/" class="md-nav__link">
+        keyboard_button
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/pixel_matrix/" class="md-nav__link">
+        pixel_matrix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/slider/" class="md-nav__link">
+        slider
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/styles/" class="md-nav__link">
+        styles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/widgets/toggle/" class="md-nav__link">
+        toggle
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_24" type="checkbox" id="__nav_3_1_24" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1_24">
+          window_manager
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="window_manager" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_24">
+          <span class="md-nav__icon md-icon"></span>
+          window_manager
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/window_manager/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/window_manager/compositor/" class="md-nav__link">
+        compositor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/window_manager/layouts/" class="md-nav__link">
+        layouts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/window_manager/manager/" class="md-nav__link">
+        manager
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pytermgui/window_manager/window/" class="md-nav__link">
+        window
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../future/" class="md-nav__link">
+        Future
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-to-know" class="md-nav__link">
+    What to know
+  </a>
+  
+    <nav class="md-nav" aria-label="What to know">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-rendering" class="md-nav__link">
+    Output &amp; rendering
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selectables" class="md-nav__link">
+    Selectables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#input-handling" class="md-nav__link">
+    Input handling
+  </a>
+  
+    <nav class="md-nav" aria-label="Input handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keyboard-input" class="md-nav__link">
+    Keyboard input
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mouse-input" class="md-nav__link">
+    Mouse input
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#faq" class="md-nav__link">
+    FAQ
+  </a>
+  
+    <nav class="md-nav" aria-label="FAQ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-dynamically-update-a-widgets-content" class="md-nav__link">
+    How do I dynamically update a widget's content?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <a href="https://github.com/bczsalba/pytermgui/edit/master/docs/widgets/custom.md" title="Edit this page" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+  <h1>Create your own</h1>
+
+<p>While the default widgets are pretty nifty themselves, sometimes you might wanna do your own thing. Luckily for you, PyTermGUI's <code>Widget</code> API is ridiculously easy to build upon!</p>
+<h2 id="what-to-know">What to know</h2>
+<p>Firstly, you should know some things about the shape and function of various parts of the API.</p>
+<h3 id="output-rendering">Output &amp; rendering</h3>
+<p>The most important method to a widget is its <code>get_lines</code>. This returns a list of strings, which is what is used to eventually display it in the terminal. This method is called a <em>healthy</em> amount, so you probably wanna make all state changes in some other place, so <code>get_lines</code> can request <em>mostly</em> static data.</p>
+<h3 id="selectables">Selectables</h3>
+<p>Each widget can be made selectable by either setting <code>widget._selectables_length</code> to a non-zero value, or overwriting the <code>selectables_length</code> property of said widget.</p>
+<p>If you want to make parent widgets know that your widget can be selected, you can just define <code>_selectables_length</code> as 1. If you have multiple inner-widgets you need to handle selecting, you should inherit from <code>Container</code> and let it handle all the plumbing for you. If you're interested in how it does all that magic, see it's <a href="/reference/pytermgui/widgets/containers#pytermgui.widgets.containers.Container.selectables">selectables</a> property, and its <a href="/reference/pytermgui/widgets/containers#pytermgui.widgets.containers.Container.select">select</a> method.</p>
+<h3 id="input-handling">Input handling</h3>
+<p>Both keyboard and mouse inputs are cascaded down from the <code>WindowManager</code> to each widget. A widget can mark some input as "handled" and stop it from cascading further by having its handler method return <code>True</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The base <code>Widget</code> class may go through some routines for each input, such as calling any widget bindings, or, in the case of mouse inputs, call semantic handlers.</p>
+<p>Because of this, and to ensure future backwards-compatibility (weird phrase, I know), you should start all your input handlers by calling the parent class' handler:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MyWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Do our own handling</span>
+</code></pre></div>
+</div>
+<h4 id="keyboard-input">Keyboard input</h4>
+<p>The signature of the keyboard handler is pretty simple:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p>To compare key codes to canonical names (e.g. <code>CTRL_B</code> to <code>\x02</code>), you can use the <code>keys</code> singleton:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pytermgui</span> <span class="kn">import</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">keys</span>
+
+
+<span class="k">class</span> <span class="nc">MyWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">handle_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">keys</span><span class="o">.</span><span class="n">CTRL_F</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_something</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<h4 id="mouse-input">Mouse input</h4>
+<p>While terminal mouse inputs are historically pretty hard to handle, PTG offers a simple interface to hide all that paperwork. </p>
+<p>An interface symmetrical to the keyboard handlers exists, and is the base of all that comes below:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">handle_mouse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">MouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</code></pre></div>
+<p>The only argument is the <code>event</code>, which is an instance of <a href="/reference/pytermgui/ansi_interface/#pytermgui.ansi_interface.MouseEvent">MouseEvent</a>. This is what it looks like:</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="784.0" height="641.3" viewBox="0 0 784.0 641.3">
+    <!-- Generated by PyTermGUI -->
+    <style type="text/css">
+        text.termage-23 {
+            font-size: 15px;
+            font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
+            font-feature-settings: normal;
+            /* Inline SVGs are `antialiased` by default, while `src=`-d ones are `auto`.*/
+            -webkit-font-smoothing: auto;
+        }
+        .termage-23-title {
+            font-family: 'arial';
+            fill: #94999A;
+            font-size: 13px;
+            font-weight: bold;
+        }
+    </style>
+    <g>
+        <rect x="0" y="20" rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round" width="784.0" height="601.3" fill="#21222c"/>
+        <circle cx="15" cy="35" r="6" fill="#ff6159"/>
+        <circle cx="35" cy="35" r="6" fill="#ffbd2e"/>
+        <circle cx="55" cy="35" r="6" fill="#28c941"/>
+        <text x="392.0" y="38.975" text-anchor="middle" class="termage-23-title">inspect(MouseEvent)</text>
+    </g>
+    <g transform="translate(20, 55)">
+        <rect x="0.0" y="-3.23" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="0.0" y="15.0" textLength="9.3" class="termage-23" style="fill:#3f4350">┌</text>
+        <rect x="9.3" y="-3.23" fill="#21222c" width="739.91" height="20.49"/>
+        <text dy="-0.25em" x="9.3" y="15.0" textLength="725.4" class="termage-23" style="fill:#3f4350">──────────────────────────────────────────────────────────────────────────────</text>
+        <rect x="734.7" y="-3.23" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="734.7" y="15.0" textLength="9.3" class="termage-23" style="fill:#3f4350">┐</text>
+        <rect x="744.0" y="0.0" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="15.0" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="15.75" fill="#21222c" width="18.97" height="20.49"/>
+        <text dy="-0.25em" x="0" y="33.98" textLength="18.6" class="termage-23" style="fill:#3f4350">│ </text>
+        <rect x="18.6" y="15.75" fill="#21222c" width="199.21" height="20.49"/>
+        <text dy="-0.25em" x="18.6" y="33.98" textLength="195.3" class="termage-23" style="fill:#d5d7e2">                     </text>
+        <rect x="213.9" y="15.75" fill="#21222c" width="332.01" height="20.49"/>
+        <text dy="-0.25em" x="213.9" y="33.98" textLength="325.5" class="termage-23" style="fill:#ffaf00">pytermgui.ansi_interface.MouseEvent</text>
+        <rect x="539.4" y="15.75" fill="#21222c" width="189.72" height="20.49"/>
+        <text dy="-0.25em" x="539.4" y="33.98" textLength="186.0" class="termage-23" style="fill:#d5d7e2">                    </text>
+        <rect x="725.4" y="15.75" fill="#21222c" width="18.97" height="20.49"/>
+        <text dy="-0.25em" x="725.4" y="33.98" textLength="18.6" class="termage-23" style="fill:#3f4350"> │</text>
+        <rect x="744.0" y="18.98" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="33.98" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="34.72" fill="#21222c" width="18.97" height="20.49"/>
+        <text dy="-0.25em" x="0" y="52.95" textLength="18.6" class="termage-23" style="fill:#3f4350">│ </text>
+        <rect x="18.6" y="34.72" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="18.6" y="52.95" textLength="9.3" class="termage-23" style="fill:#d5d7e2"> </text>
+        <rect x="27.9" y="34.72" fill="#21222c" width="104.35" height="20.49"/>
+        <text dy="-0.25em" x="27.9" y="52.95" textLength="102.3" class="termage-23" style="fill:#d5d7e2">Located in </text>
+        <rect x="130.2" y="34.72" fill="#21222c" width="607.1" height="20.49"/>
+        <text dy="-0.25em" x="130.2" y="52.95" textLength="595.2" class="termage-23" style="fill:#87afaf">/Users/lapis/Code/Projects/pytermgui/pytermgui/ansi_interface.py</text>
+        <rect x="725.4" y="34.72" fill="#21222c" width="18.97" height="20.49"/>
+        <text dy="-0.25em" x="725.4" y="52.95" textLength="18.6" class="termage-23" style="fill:#3f4350"> │</text>
+        <rect x="744.0" y="37.95" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="52.95" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="53.7" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="0" y="71.93" textLength="9.3" class="termage-23" style="fill:#3f4350">└</text>
+        <rect x="9.3" y="53.7" fill="#21222c" width="739.91" height="20.49"/>
+        <text dy="-0.25em" x="9.3" y="71.93" textLength="725.4" class="termage-23" style="fill:#3f4350">──────────────────────────────────────────────────────────────────────────────</text>
+        <rect x="734.7" y="53.7" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="734.7" y="71.93" textLength="9.3" class="termage-23" style="fill:#3f4350">┘</text>
+        <rect x="744.0" y="56.93" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="71.93" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="72.67" fill="#21222c" width="47.43" height="20.49"/>
+        <text dy="-0.25em" x="0" y="90.9" textLength="46.5" class="termage-23" style="fill:#ff5f5f">class</text>
+        <rect x="46.5" y="72.67" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="46.5" y="90.9" textLength="9.3" class="termage-23" style="fill:#d5d7e2"> </text>
+        <rect x="55.8" y="72.67" fill="#21222c" width="94.86" height="20.49"/>
+        <text dy="-0.25em" x="55.8" y="90.9" textLength="93.0" class="termage-23" style="fill:#87afaf">MouseEvent</text>
+        <rect x="148.8" y="72.67" fill="#21222c" width="85.37" height="20.49"/>
+        <text dy="-0.25em" x="148.8" y="90.9" textLength="83.7" class="termage-23" style="fill:#d5d7e2">(action: </text>
+        <rect x="232.5" y="72.67" fill="#21222c" width="104.35" height="20.49"/>
+        <text dy="-0.25em" x="232.5" y="90.9" textLength="102.3" class="termage-23" style="fill:#ffaf00">MouseAction</text>
+        <rect x="334.8" y="72.67" fill="#21222c" width="113.83" height="20.49"/>
+        <text dy="-0.25em" x="334.8" y="90.9" textLength="111.6" class="termage-23" style="fill:#d5d7e2">, position: </text>
+        <rect x="446.4" y="72.67" fill="#21222c" width="47.43" height="20.49"/>
+        <text dy="-0.25em" x="446.4" y="90.9" textLength="46.5" class="termage-23" style="fill:#ffaf00">tuple</text>
+        <rect x="492.9" y="72.67" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="492.9" y="90.9" textLength="9.3" class="termage-23" style="fill:#d5d7e2">[</text>
+        <rect x="502.2" y="72.67" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="502.2" y="90.9" textLength="27.9" class="termage-23" style="fill:#ffaf00">int</text>
+        <rect x="530.1" y="72.67" fill="#21222c" width="18.97" height="20.49"/>
+        <text dy="-0.25em" x="530.1" y="90.9" textLength="18.6" class="termage-23" style="fill:#d5d7e2">, </text>
+        <rect x="548.7" y="72.67" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="548.7" y="90.9" textLength="27.9" class="termage-23" style="fill:#ffaf00">int</text>
+        <rect x="576.6" y="72.67" fill="#21222c" width="56.92" height="20.49"/>
+        <text dy="-0.25em" x="576.6" y="90.9" textLength="55.8" class="termage-23" style="fill:#d5d7e2">]) -&gt; </text>
+        <rect x="632.4" y="72.67" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="632.4" y="90.9" textLength="37.2" class="termage-23" style="fill:#ff5f5f">None</text>
+        <rect x="669.6" y="72.67" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="669.6" y="90.9" textLength="9.3" class="termage-23" style="fill:#d5d7e2">:</text>
+        <rect x="678.9" y="72.67" fill="#21222c" width="66.4" height="20.49"/>
+        <text dy="-0.25em" x="678.9" y="90.9" textLength="65.1" class="termage-23" style="fill:#d5d7e2">       </text>
+        <rect x="744.0" y="75.9" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="90.9" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="91.65" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="109.88" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="91.65" fill="#21222c" width="502.76" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="109.88" textLength="492.9" class="termage-23" style="fill:#878787">A class to represent events created by mouse actions.</text>
+        <rect x="530.1" y="91.65" fill="#21222c" width="218.18" height="20.49"/>
+        <text dy="-0.25em" x="530.1" y="109.88" textLength="213.9" class="termage-23" style="fill:#d5d7e2">                       </text>
+        <rect x="744.0" y="94.88" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="109.88" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="110.62" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="128.85" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="110.62" fill="#21222c" width="720.94" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="128.85" textLength="706.8" class="termage-23" style="fill:#d5d7e2">                                                                            </text>
+        <rect x="744.0" y="113.85" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="128.85" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="129.6" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="147.82" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="129.6" fill="#21222c" width="597.62" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="147.82" textLength="585.9" class="termage-23" style="fill:#878787">Its first argument is a `MouseAction` describing what happened,</text>
+        <rect x="623.1" y="129.6" fill="#21222c" width="123.32" height="20.49"/>
+        <text dy="-0.25em" x="623.1" y="147.82" textLength="120.9" class="termage-23" style="fill:#d5d7e2">             </text>
+        <rect x="744.0" y="132.82" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="147.82" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="148.57" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="166.8" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="148.57" fill="#21222c" width="597.62" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="166.8" textLength="585.9" class="termage-23" style="fill:#878787">and its second argument is a `tuple[int, int]` describing where</text>
+        <rect x="623.1" y="148.57" fill="#21222c" width="123.32" height="20.49"/>
+        <text dy="-0.25em" x="623.1" y="166.8" textLength="120.9" class="termage-23" style="fill:#d5d7e2">             </text>
+        <rect x="744.0" y="151.8" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="166.8" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="167.55" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="185.77" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="167.55" fill="#21222c" width="113.83" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="185.77" textLength="111.6" class="termage-23" style="fill:#878787">it happened.</text>
+        <rect x="148.8" y="167.55" fill="#21222c" width="607.1" height="20.49"/>
+        <text dy="-0.25em" x="148.8" y="185.77" textLength="595.2" class="termage-23" style="fill:#d5d7e2">                                                                </text>
+        <rect x="744.0" y="170.77" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="185.77" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="186.52" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="204.75" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="186.52" fill="#21222c" width="720.94" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="204.75" textLength="706.8" class="termage-23" style="fill:#d5d7e2">                                                                            </text>
+        <rect x="744.0" y="189.75" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="204.75" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="205.5" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="223.72" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="205.5" fill="#21222c" width="626.08" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="223.72" textLength="613.8" class="termage-23" style="fill:#878787">This class mostly exists for readability &amp; typing reasons. It also</text>
+        <rect x="651.0" y="205.5" fill="#21222c" width="94.86" height="20.49"/>
+        <text dy="-0.25em" x="651.0" y="223.72" textLength="93.0" class="termage-23" style="fill:#d5d7e2">          </text>
+        <rect x="744.0" y="208.72" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="223.72" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="224.47" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="242.7" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="224.47" fill="#21222c" width="664.02" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="242.7" textLength="651.0" class="termage-23" style="fill:#878787">implements the iterable protocol, so you can use the unpacking syntax,</text>
+        <rect x="688.2" y="224.47" fill="#21222c" width="56.92" height="20.49"/>
+        <text dy="-0.25em" x="688.2" y="242.7" textLength="55.8" class="termage-23" style="fill:#d5d7e2">      </text>
+        <rect x="744.0" y="227.7" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="242.7" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="243.45" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="261.67" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="243.45" fill="#21222c" width="75.89" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="261.67" textLength="74.4" class="termage-23" style="fill:#878787">such as:</text>
+        <rect x="111.6" y="243.45" fill="#21222c" width="645.05" height="20.49"/>
+        <text dy="-0.25em" x="111.6" y="261.67" textLength="632.4" class="termage-23" style="fill:#d5d7e2">                                                                    </text>
+        <rect x="744.0" y="246.67" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="261.67" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="262.42" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="280.65" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="262.42" fill="#21222c" width="720.94" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="280.65" textLength="706.8" class="termage-23" style="fill:#d5d7e2">                                                                            </text>
+        <rect x="744.0" y="265.65" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="280.65" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="281.4" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="299.62" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="281.4" fill="#21222c" width="94.86" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="299.62" textLength="93.0" class="termage-23" style="fill:#878787">```python3</text>
+        <rect x="130.2" y="281.4" fill="#21222c" width="626.08" height="20.49"/>
+        <text dy="-0.25em" x="130.2" y="299.62" textLength="613.8" class="termage-23" style="fill:#d5d7e2">                                                                  </text>
+        <rect x="744.0" y="284.62" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="299.62" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="300.37" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="318.6" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="300.37" fill="#21222c" width="322.52" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="318.6" textLength="316.2" class="termage-23" style="fill:#878787">action, position = MouseEvent(...)</text>
+        <rect x="353.4" y="300.37" fill="#21222c" width="398.41" height="20.49"/>
+        <text dy="-0.25em" x="353.4" y="318.6" textLength="390.6" class="termage-23" style="fill:#d5d7e2">                                          </text>
+        <rect x="744.0" y="303.6" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="318.6" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="319.35" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="0" y="337.58" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="37.2" y="319.35" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="37.2" y="337.58" textLength="27.9" class="termage-23" style="fill:#878787">```</text>
+        <rect x="65.1" y="319.35" fill="#21222c" width="692.48" height="20.49"/>
+        <text dy="-0.25em" x="65.1" y="337.58" textLength="678.9" class="termage-23" style="fill:#d5d7e2">                                                                         </text>
+        <rect x="744.0" y="322.58" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="337.58" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="338.32" fill="#21222c" width="758.88" height="20.49"/>
+        <text dy="-0.25em" x="0" y="356.55" textLength="744.0" class="termage-23" style="fill:#3f4350">                                                                                </text>
+        <rect x="744.0" y="341.55" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="356.55" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="357.3" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="0" y="375.53" textLength="27.9" class="termage-23" style="fill:#3f4350">   </text>
+        <rect x="27.9" y="357.3" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="27.9" y="375.53" textLength="27.9" class="termage-23" style="fill:#ff5f5f">def</text>
+        <rect x="55.8" y="357.3" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="55.8" y="375.53" textLength="9.3" class="termage-23" style="fill:#d5d7e2"> </text>
+        <rect x="65.1" y="357.3" fill="#21222c" width="94.86" height="20.49"/>
+        <text dy="-0.25em" x="65.1" y="375.53" textLength="93.0" class="termage-23" style="fill:#87afaf">is_primary</text>
+        <rect x="158.1" y="357.3" fill="#21222c" width="94.86" height="20.49"/>
+        <text dy="-0.25em" x="158.1" y="375.53" textLength="93.0" class="termage-23" style="fill:#d5d7e2">(self) -&gt; </text>
+        <rect x="251.1" y="357.3" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="251.1" y="375.53" textLength="37.2" class="termage-23" style="fill:#ffaf00">bool</text>
+        <rect x="288.3" y="357.3" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="288.3" y="375.53" textLength="9.3" class="termage-23" style="fill:#d5d7e2">:</text>
+        <rect x="297.6" y="357.3" fill="#21222c" width="455.33" height="20.49"/>
+        <text dy="-0.25em" x="297.6" y="375.53" textLength="446.4" class="termage-23" style="fill:#d5d7e2">                                                </text>
+        <rect x="744.0" y="360.53" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="375.53" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="376.27" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="0" y="394.5" textLength="27.9" class="termage-23" style="fill:#3f4350">   </text>
+        <rect x="27.9" y="376.27" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="27.9" y="394.5" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="65.1" y="376.27" fill="#21222c" width="692.48" height="20.49"/>
+        <text dy="-0.25em" x="65.1" y="394.5" textLength="678.9" class="termage-23" style="fill:#878787">Returns True if event.action is one of the primary (left-button) actions.</text>
+        <rect x="744.0" y="379.5" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="394.5" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="395.25" fill="#21222c" width="758.88" height="20.49"/>
+        <text dy="-0.25em" x="0" y="413.48" textLength="744.0" class="termage-23" style="fill:#3f4350">                                                                                </text>
+        <rect x="744.0" y="398.48" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="413.48" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="414.22" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="0" y="432.45" textLength="27.9" class="termage-23" style="fill:#3f4350">   </text>
+        <rect x="27.9" y="414.22" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="27.9" y="432.45" textLength="27.9" class="termage-23" style="fill:#ff5f5f">def</text>
+        <rect x="55.8" y="414.22" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="55.8" y="432.45" textLength="9.3" class="termage-23" style="fill:#d5d7e2"> </text>
+        <rect x="65.1" y="414.22" fill="#21222c" width="85.37" height="20.49"/>
+        <text dy="-0.25em" x="65.1" y="432.45" textLength="83.7" class="termage-23" style="fill:#87afaf">is_scroll</text>
+        <rect x="148.8" y="414.22" fill="#21222c" width="94.86" height="20.49"/>
+        <text dy="-0.25em" x="148.8" y="432.45" textLength="93.0" class="termage-23" style="fill:#d5d7e2">(self) -&gt; </text>
+        <rect x="241.8" y="414.22" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="241.8" y="432.45" textLength="37.2" class="termage-23" style="fill:#ffaf00">bool</text>
+        <rect x="279.0" y="414.22" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="279.0" y="432.45" textLength="9.3" class="termage-23" style="fill:#d5d7e2">:</text>
+        <rect x="288.3" y="414.22" fill="#21222c" width="464.81" height="20.49"/>
+        <text dy="-0.25em" x="288.3" y="432.45" textLength="455.7" class="termage-23" style="fill:#d5d7e2">                                                 </text>
+        <rect x="744.0" y="417.45" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="432.45" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="433.2" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="0" y="451.43" textLength="27.9" class="termage-23" style="fill:#3f4350">   </text>
+        <rect x="27.9" y="433.2" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="27.9" y="451.43" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="65.1" y="433.2" fill="#21222c" width="578.65" height="20.49"/>
+        <text dy="-0.25em" x="65.1" y="451.43" textLength="567.3" class="termage-23" style="fill:#878787">Returns True if event.action is one of the scrolling actions.</text>
+        <rect x="632.4" y="433.2" fill="#21222c" width="113.83" height="20.49"/>
+        <text dy="-0.25em" x="632.4" y="451.43" textLength="111.6" class="termage-23" style="fill:#d5d7e2">            </text>
+        <rect x="744.0" y="436.43" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="451.43" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="452.17" fill="#21222c" width="758.88" height="20.49"/>
+        <text dy="-0.25em" x="0" y="470.4" textLength="744.0" class="termage-23" style="fill:#3f4350">                                                                                </text>
+        <rect x="744.0" y="455.4" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="470.4" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="471.15" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="0" y="489.38" textLength="27.9" class="termage-23" style="fill:#3f4350">   </text>
+        <rect x="27.9" y="471.15" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="27.9" y="489.38" textLength="27.9" class="termage-23" style="fill:#ff5f5f">def</text>
+        <rect x="55.8" y="471.15" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="55.8" y="489.38" textLength="9.3" class="termage-23" style="fill:#d5d7e2"> </text>
+        <rect x="65.1" y="471.15" fill="#21222c" width="113.83" height="20.49"/>
+        <text dy="-0.25em" x="65.1" y="489.38" textLength="111.6" class="termage-23" style="fill:#87afaf">is_secondary</text>
+        <rect x="176.7" y="471.15" fill="#21222c" width="94.86" height="20.49"/>
+        <text dy="-0.25em" x="176.7" y="489.38" textLength="93.0" class="termage-23" style="fill:#d5d7e2">(self) -&gt; </text>
+        <rect x="269.7" y="471.15" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="269.7" y="489.38" textLength="37.2" class="termage-23" style="fill:#ffaf00">bool</text>
+        <rect x="306.9" y="471.15" fill="#21222c" width="9.49" height="20.49"/>
+        <text dy="-0.25em" x="306.9" y="489.38" textLength="9.3" class="termage-23" style="fill:#d5d7e2">:</text>
+        <rect x="316.2" y="471.15" fill="#21222c" width="436.36" height="20.49"/>
+        <text dy="-0.25em" x="316.2" y="489.38" textLength="427.8" class="termage-23" style="fill:#d5d7e2">                                              </text>
+        <rect x="744.0" y="474.38" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="489.38" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="490.12" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="0" y="508.35" textLength="27.9" class="termage-23" style="fill:#3f4350">   </text>
+        <rect x="27.9" y="490.12" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="27.9" y="508.35" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="65.1" y="490.12" fill="#21222c" width="692.48" height="20.49"/>
+        <text dy="-0.25em" x="65.1" y="508.35" textLength="678.9" class="termage-23" style="fill:#878787">Returns True if event.action is one of the secondary (secondary-button) a</text>
+        <rect x="744.0" y="493.35" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="508.35" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+        <rect x="0" y="509.1" fill="#21222c" width="28.46" height="20.49"/>
+        <text dy="-0.25em" x="0" y="527.33" textLength="27.9" class="termage-23" style="fill:#3f4350">   </text>
+        <rect x="27.9" y="509.1" fill="#21222c" width="37.94" height="20.49"/>
+        <text dy="-0.25em" x="27.9" y="527.33" textLength="37.2" class="termage-23" style="fill:#d5d7e2">    </text>
+        <rect x="65.1" y="509.1" fill="#21222c" width="66.4" height="20.49"/>
+        <text dy="-0.25em" x="65.1" y="527.33" textLength="65.1" class="termage-23" style="fill:#878787">ctions.</text>
+        <rect x="130.2" y="509.1" fill="#21222c" width="626.08" height="20.49"/>
+        <text dy="-0.25em" x="130.2" y="527.33" textLength="613.8" class="termage-23" style="fill:#d5d7e2">                                                                  </text>
+        <rect x="744.0" y="512.33" fill="#21222c" width="0.0" height="20.49"/>
+        <text dy="-0.25em" x="744.0" y="527.33" textLength="0.0" class="termage-23" style="fill:#d5d7e2"/>
+    </g>
+</svg></p>
+<p>Depending on your circumstances, you can test the event's <code>position</code> or <code>action</code> attributes:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pytermgui</span> <span class="kn">import</span> <span class="n">Widget</span><span class="p">,</span> <span class="n">MouseEvent</span><span class="p">,</span> <span class="n">MouseAction</span>
+
+<span class="k">class</span> <span class="nc">MyWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_mouse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">MouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="n">MouseAction</span><span class="o">.</span><span class="n">LEFT_CLICK</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_something</span><span class="p">()</span>
+</code></pre></div>
+<p>Since comparing against actions gets a <em>li'l</em> tedious over time, we have a system called <strong>semantic mouse handlers</strong> to help you. These are optional methods that are looked for when <code>Widget</code> is handling some mouse event, and only called when present.</p>
+<p>They all follow the syntax <code>on_{event_name}</code>. events can be one of:</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span>
+    <span class="s2">&quot;left_click&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;right_click&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;click&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;left_drag&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;right_drag&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;drag&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;scroll_up&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;scroll_down&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;scroll&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;shift_scroll_up&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;shift_scroll_down&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;shift_scroll&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hover&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>Handler methods are looked for in the order of highest specifity. For example, the following widget:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pytermgui</span> <span class="kn">import</span> <span class="n">MouseEvent</span><span class="p">,</span> <span class="n">Widget</span>
+
+
+<span class="k">class</span> <span class="nc">MyWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;No action&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">on_left_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">MouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Left click&quot;</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">on_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">MouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Generic click&quot;</span>
+
+        <span class="k">return</span> <span class="kc">True</span> 
+
+    <span class="k">def</span> <span class="nf">handle_mouse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">MouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># Make sure we call the super handler</span>
+        <span class="k">if</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">handle_mouse</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;No action&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+<p>...will display <code>Left click</code> only on left clicks, <code>Generic click</code> only on right clicks (as <code>on_right_click</code> isn't defined) and <code>No action</code> on any other mouse input.</p>
+<h2 id="faq">FAQ</h2>
+<h3 id="how-do-i-dynamically-update-a-widgets-content">How do I dynamically update a widget's content?</h3>
+<p>The pattern I've come to adopt for this purpose is based on a regularly updated inner state that gets displayed within <code>get_lines</code>. For example, let's say we have a <code>Weather</code> widget that regularly requests weather information and displays it. </p>
+<p>Here is how I would do it. Take <em>extra</em> notice of the highlighted lines:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Python</label><label for="__tabbed_1_2">Output</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+
+<span class="kn">from</span> <span class="nn">pytermgui</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">StyleManager</span><span class="p">,</span> <span class="n">real_length</span><span class="p">,</span> <span class="n">tim</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">WeatherData</span><span class="p">:</span>
+    <span class="n">state</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">wind</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">clouds</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="k">class</span> <span class="nc">Weather</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+    <span class="c1"># We want to retain the Container styles, so we merge in some new ones</span>
+    <span class="n">styles</span> <span class="o">=</span> <span class="n">StyleManager</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">Container</span><span class="o">.</span><span class="n">styles</span><span class="p">,</span>
+        <span class="n">sunny</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="n">cloudy</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span>
+        <span class="n">rainy</span><span class="o">=</span><span class="s2">&quot;darkblue&quot;</span><span class="p">,</span>
+        <span class="n">snowy</span><span class="o">=</span><span class="s2">&quot;snow&quot;</span><span class="p">,</span>
+        <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;245&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Same story as above; unpacking into sets allows us to merge 2 dicts!</span>
+    <span class="n">chars</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">Container</span><span class="o">.</span><span class="n">chars</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">{</span>
+            <span class="s2">&quot;sunny&quot;</span><span class="p">:</span> <span class="s2">&quot;☀&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cloudy&quot;</span><span class="p">:</span> <span class="s2">&quot;☁&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rainy&quot;</span><span class="p">:</span> <span class="s2">&quot;☂&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;snowy&quot;</span><span class="p">:</span> <span class="s2">&quot;☃&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+
+        <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_monitor_loop</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">_request_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WeatherData</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">_monitor_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<span class="hll">            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_data</span><span class="p">()</span>
+</span><span class="hll">            <span class="bp">self</span><span class="o">.</span><span class="n">update_content</span><span class="p">()</span>
+</span>            <span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update_content</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">state</span>
+
+        <span class="n">style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">styles</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+        <span class="n">char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_char</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">style</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>
+
+<span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">set_widgets</span><span class="p">(</span>
+</span><span class="hll">            <span class="p">[</span>
+</span><span class="hll">                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">icon</span><span class="si">}</span><span class="s2"> It is currently </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">icon</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span class="hll">                <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span class="hll">                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">detail</span><span class="p">(</span><span class="s1">&#39;Wind&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">wind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span class="hll">                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">detail</span><span class="p">(</span><span class="s1">&#39;Clouds&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clouds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span class="hll">            <span class="p">]</span>
+</span><span class="hll">        <span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<p><svg xmlns="http://www.w3.org/2000/svg" width="598.0" height="223.85" viewBox="0 0 598.0 223.85">
+<!-- Generated by PyTermGUI -->
+<style type="text/css">
+    text.termage-24 {
+        font-size: 15px;
+        font-family: Menlo, 'DejaVu Sans Mono', consolas, 'Courier New', monospace;
+        font-feature-settings: normal;
+        /* Inline SVGs are `antialiased` by default, while `src=`-d ones are `auto`.*/
+        -webkit-font-smoothing: auto;
+    }
+    .termage-24-title {
+        font-family: 'arial';
+        fill: #94999A;
+        font-size: 13px;
+        font-weight: bold;
+    }
+</style>
+<g>
+    <rect x="0" y="20" rx="9px" ry="9px" stroke-width="1px" stroke-linejoin="round" width="598.0" height="183.85" fill="#21222c"/>
+    <circle cx="15" cy="35" r="6" fill="#ff6159"/>
+    <circle cx="35" cy="35" r="6" fill="#ffbd2e"/>
+    <circle cx="55" cy="35" r="6" fill="#28c941"/>
+    <text x="299.0" y="38.975" text-anchor="middle" class="termage-24-title">docs/src/widgets/weather.py</text>
+</g>
+<g transform="translate(20, 55)">
+    <rect x="0.0" y="-3.23" fill="#21222c" width="9.49" height="20.49"/>
+    <text dy="-0.25em" x="0.0" y="15.0" textLength="9.3" class="termage-24" style="fill:#3f4350">┌</text>
+    <rect x="9.3" y="-3.23" fill="#21222c" width="550.19" height="20.49"/>
+    <text dy="-0.25em" x="9.3" y="15.0" textLength="539.4" class="termage-24" style="fill:#3f4350">──────────────────────────────────────────────────────────</text>
+    <rect x="548.7" y="-3.23" fill="#21222c" width="9.49" height="20.49"/>
+    <text dy="-0.25em" x="548.7" y="15.0" textLength="9.3" class="termage-24" style="fill:#3f4350">┐</text>
+    <rect x="558.0" y="0.0" fill="#21222c" width="0.0" height="20.49"/>
+    <text dy="-0.25em" x="558.0" y="15.0" textLength="0.0" class="termage-24" style="fill:#d5d7e2"/>
+    <rect x="0" y="15.75" fill="#21222c" width="18.97" height="20.49"/>
+    <text dy="-0.25em" x="0" y="33.98" textLength="18.6" class="termage-24" style="fill:#3f4350">│ </text>
+    <rect x="18.6" y="15.75" fill="#21222c" width="75.89" height="20.49"/>
+    <text dy="-0.25em" x="18.6" y="33.98" textLength="74.4" class="termage-24" style="fill:#d5d7e2">        </text>
+    <rect x="93.0" y="15.75" fill="#21222c" width="9.49" height="20.49"/>
+    <text dy="-0.25em" x="93.0" y="33.98" textLength="9.3" class="termage-24" style="fill:#ffff00">☀</text>
+    <rect x="102.3" y="15.75" fill="#21222c" width="369.95" height="20.49"/>
+    <text dy="-0.25em" x="102.3" y="33.98" textLength="362.7" class="termage-24" style="fill:#d5d7e2"> It is currently sunny in Los Angeles. </text>
+    <rect x="465.0" y="15.75" fill="#21222c" width="9.49" height="20.49"/>
+    <text dy="-0.25em" x="465.0" y="33.98" textLength="9.3" class="termage-24" style="fill:#ffff00">☀</text>
+    <rect x="474.3" y="15.75" fill="#21222c" width="66.4" height="20.49"/>
+    <text dy="-0.25em" x="474.3" y="33.98" textLength="65.1" class="termage-24" style="fill:#d5d7e2">       </text>
+    <rect x="539.4" y="15.75" fill="#21222c" width="18.97" height="20.49"/>
+    <text dy="-0.25em" x="539.4" y="33.98" textLength="18.6" class="termage-24" style="fill:#3f4350"> │</text>
+    <rect x="558.0" y="18.98" fill="#21222c" width="0.0" height="20.49"/>
+    <text dy="-0.25em" x="558.0" y="33.98" textLength="0.0" class="termage-24" style="fill:#d5d7e2"/>
+    <rect x="0" y="34.72" fill="#21222c" width="18.97" height="20.49"/>
+    <text dy="-0.25em" x="0" y="52.95" textLength="18.6" class="termage-24" style="fill:#3f4350">│ </text>
+    <rect x="18.6" y="34.72" fill="#21222c" width="265.61" height="20.49"/>
+    <text dy="-0.25em" x="18.6" y="52.95" textLength="260.4" class="termage-24" style="fill:#d5d7e2">                            </text>
+    <rect x="279.0" y="34.72" fill="#21222c" width="265.61" height="20.49"/>
+    <text dy="-0.25em" x="279.0" y="52.95" textLength="260.4" class="termage-24" style="fill:#d5d7e2">                            </text>
+    <rect x="539.4" y="34.72" fill="#21222c" width="18.97" height="20.49"/>
+    <text dy="-0.25em" x="539.4" y="52.95" textLength="18.6" class="termage-24" style="fill:#3f4350"> │</text>
+    <rect x="558.0" y="37.95" fill="#21222c" width="0.0" height="20.49"/>
+    <text dy="-0.25em" x="558.0" y="52.95" textLength="0.0" class="termage-24" style="fill:#d5d7e2"/>
+    <rect x="0" y="53.7" fill="#21222c" width="18.97" height="20.49"/>
+    <text dy="-0.25em" x="0" y="71.93" textLength="18.6" class="termage-24" style="fill:#3f4350">│ </text>
+    <rect x="18.6" y="53.7" fill="#21222c" width="199.21" height="20.49"/>
+    <text dy="-0.25em" x="18.6" y="71.93" textLength="195.3" class="termage-24" style="fill:#d5d7e2">                     </text>
+    <rect x="213.9" y="53.7" fill="#21222c" width="37.94" height="20.49"/>
+    <text dy="-0.25em" x="213.9" y="71.93" textLength="37.2" class="termage-24" style="fill:#8a8a8a">Wind</text>
+    <rect x="251.1" y="53.7" fill="#21222c" width="104.35" height="20.49"/>
+    <text dy="-0.25em" x="251.1" y="71.93" textLength="102.3" class="termage-24" style="fill:#d5d7e2">: 15kph N/W</text>
+    <rect x="353.4" y="53.7" fill="#21222c" width="189.72" height="20.49"/>
+    <text dy="-0.25em" x="353.4" y="71.93" textLength="186.0" class="termage-24" style="fill:#d5d7e2">                    </text>
+    <rect x="539.4" y="53.7" fill="#21222c" width="18.97" height="20.49"/>
+    <text dy="-0.25em" x="539.4" y="71.93" textLength="18.6" class="termage-24" style="fill:#3f4350"> │</text>
+    <rect x="558.0" y="56.93" fill="#21222c" width="0.0" height="20.49"/>
+    <text dy="-0.25em" x="558.0" y="71.93" textLength="0.0" class="termage-24" style="fill:#d5d7e2"/>
+    <rect x="0" y="72.67" fill="#21222c" width="18.97" height="20.49"/>
+    <text dy="-0.25em" x="0" y="90.9" textLength="18.6" class="termage-24" style="fill:#3f4350">│ </text>
+    <rect x="18.6" y="72.67" fill="#21222c" width="189.72" height="20.49"/>
+    <text dy="-0.25em" x="18.6" y="90.9" textLength="186.0" class="termage-24" style="fill:#d5d7e2">                    </text>
+    <rect x="204.6" y="72.67" fill="#21222c" width="56.92" height="20.49"/>
+    <text dy="-0.25em" x="204.6" y="90.9" textLength="55.8" class="termage-24" style="fill:#8a8a8a">Clouds</text>
+    <rect x="260.4" y="72.67" fill="#21222c" width="104.35" height="20.49"/>
+    <text dy="-0.25em" x="260.4" y="90.9" textLength="102.3" class="termage-24" style="fill:#d5d7e2">: scattered</text>
+    <rect x="362.7" y="72.67" fill="#21222c" width="180.23" height="20.49"/>
+    <text dy="-0.25em" x="362.7" y="90.9" textLength="176.7" class="termage-24" style="fill:#d5d7e2">                   </text>
+    <rect x="539.4" y="72.67" fill="#21222c" width="18.97" height="20.49"/>
+    <text dy="-0.25em" x="539.4" y="90.9" textLength="18.6" class="termage-24" style="fill:#3f4350"> │</text>
+    <rect x="558.0" y="75.9" fill="#21222c" width="0.0" height="20.49"/>
+    <text dy="-0.25em" x="558.0" y="90.9" textLength="0.0" class="termage-24" style="fill:#d5d7e2"/>
+    <rect x="0" y="91.65" fill="#21222c" width="9.49" height="20.49"/>
+    <text dy="-0.25em" x="0" y="109.88" textLength="9.3" class="termage-24" style="fill:#3f4350">└</text>
+    <rect x="9.3" y="91.65" fill="#21222c" width="550.19" height="20.49"/>
+    <text dy="-0.25em" x="9.3" y="109.88" textLength="539.4" class="termage-24" style="fill:#3f4350">──────────────────────────────────────────────────────────</text>
+    <rect x="548.7" y="91.65" fill="#21222c" width="9.49" height="20.49"/>
+    <text dy="-0.25em" x="548.7" y="109.88" textLength="9.3" class="termage-24" style="fill:#3f4350">┘</text>
+    <rect x="558.0" y="94.88" fill="#21222c" width="0.0" height="20.49"/>
+    <text dy="-0.25em" x="558.0" y="109.88" textLength="0.0" class="termage-24" style="fill:#d5d7e2"/>
+</g></p>
+</div>
+</div>
+</div>
+<p></svg></p>
+<p>As you can see, I made the widget inherit <code>Container</code>. This is <em>usually</em> what you want when dealing with a widget that:</p>
+<ul>
+<li>Contains inner content representable by sub-widgets (<code>Label</code> in our case)</li>
+<li>Has to periodically update said inner content</li>
+</ul>
+<p>We also use a thread to do all the monitoring &amp; updating, instead of doing it in <code>get_lines</code> or some other periodically called method. Since <code>get_lines</code> is called <em>very</em> regularly, and its time-to-return is critical for the rendering of an application, we need to make sure to avoid putting anything with noticable delays in there.</p>
+<details class="warning">
+<summary>Don't overuse threads</summary>
+<p>If you have multiple widgets that run on a thread-based monitor, you are likely better of creating a single master thread that updates every widget periodically. A simple monitor implementation like the following should work alright:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span><span class="p">,</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Listener</span><span class="p">:</span>
+    <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">period</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">time_till_next</span><span class="p">:</span> <span class="nb">float</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Monitor</span><span class="p">:</span>
+    <span class="n">update_frequency</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">listeners</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Listener</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Listener</span><span class="p">:</span>
+        <span class="n">listener</span> <span class="o">=</span> <span class="n">Listener</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">period</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listeners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">listener</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">listener</span>
+
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Monitor</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">_monitor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">previous</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">previous</span>
+
+                <span class="k">for</span> <span class="n">listener</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">listeners</span><span class="p">:</span>
+                    <span class="n">listener</span><span class="o">.</span><span class="n">time_till_next</span> <span class="o">-=</span> <span class="n">elapsed</span>
+
+                    <span class="k">if</span> <span class="n">listener</span><span class="o">.</span><span class="n">time_till_next</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">listener</span><span class="o">.</span><span class="n">callback</span><span class="p">()</span>
+                        <span class="n">listener</span><span class="o">.</span><span class="n">time_till_next</span> <span class="o">=</span> <span class="n">listener</span><span class="o">.</span><span class="n">period</span>
+
+                <span class="n">previous</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+                <span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_frequency</span><span class="p">)</span>
+
+        <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">_monitor</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+</code></pre></div>
+<p>You can then use this in your widgets:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">.monitor</span> <span class="kn">import</span> <span class="n">Monitor</span>
+<span class="kn">from</span> <span class="nn">pytermgui</span> <span class="kn">import</span> <span class="n">Container</span>
+
+<span class="n">monitor</span> <span class="o">=</span> <span class="n">Monitor</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">Weather</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="o">...</span>  <span class="c1"># Standard init code (see above)</span>
+
+        <span class="n">monitor</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_request_and_update</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span> 
+
+    <span class="k">def</span> <span class="nf">_request_and_update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_content</span><span class="p">()</span>
+</code></pre></div>
+</details>
+<p><strong>Let's talk about those highlighted lines, shall we?</strong></p>
+<p>In the first set of lines we send out a request to the (imaginary) external API, and update ourselves accordingly. This update is done in the second set of lines, where the <code>set_widgets</code> method is used to overwrite the current widget selection.</p>
+<p><strong>Why use this method instead of manually overwriting <code>_widgets</code>?</strong></p>
+<p>The reason this method was created in the first place was to simplify the process of:</p>
+<ul>
+<li>Emptying the container's widgets</li>
+<li>Resetting its height</li>
+<li>Going through a list, running <code>auto</code> on each item and adding it to the container</li>
+</ul>
+<p>It makes things a lot simpler, and it also accounts for any future oddities that mess with the process!</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../attrs/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Attributes to know about" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Attributes to know about
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../inspect/" class="md-footer__link md-footer__link--next" aria-label="Next: Inspection" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Inspection
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
+      
+    
+  </body>
+</html>

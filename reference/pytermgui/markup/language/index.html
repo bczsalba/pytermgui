@@ -1,0 +1,4453 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>language - PyTermGUI::docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.472b142f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.08040f6c.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Open Sans";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="lime">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pytermgui.markup.language" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="PyTermGUI::docs" class="md-header__button md-logo" aria-label="PyTermGUI::docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25V2.75zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25H1.75zM7.25 8a.75.75 0 0 1-.22.53l-2.25 2.25a.75.75 0 1 1-1.06-1.06L5.44 8 3.72 6.28a.75.75 0 1 1 1.06-1.06l2.25 2.25c.141.14.22.331.22.53zm1.5 1.5a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PyTermGUI::docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              language
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="lime"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+            </label>
+          
+        
+          
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bczsalba/pytermgui" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bczsalba/pytermgui
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        PyTermGUI
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../walkthroughs/" class="md-tabs__link">
+        Walkthroughs
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link md-tabs__link--active">
+        Reference
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../../future/" class="md-tabs__link">
+      Future
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="PyTermGUI::docs" class="md-nav__button md-logo" aria-label="PyTermGUI::docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25V2.75zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25H1.75zM7.25 8a.75.75 0 0 1-.22.53l-2.25 2.25a.75.75 0 1 1-1.06-1.06L5.44 8 3.72 6.28a.75.75 0 1 1 1.06-1.06l2.25 2.25c.141.14.22.331.22.53zm1.5 1.5a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3z"/></svg>
+
+    </a>
+    PyTermGUI::docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bczsalba/pytermgui" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bczsalba/pytermgui
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          PyTermGUI
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="PyTermGUI" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          PyTermGUI
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        Welcome
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_2" type="checkbox" id="__nav_1_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1_2">
+          TIM
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="TIM" data-md-level="2">
+        <label class="md-nav__title" for="__nav_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          TIM
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tim/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tim/tags/" class="md-nav__link">
+        Tags
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tim/usage/" class="md-nav__link">
+        Usage in PTG
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_3" type="checkbox" id="__nav_1_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1_3">
+          Widgets
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Widgets" data-md-level="2">
+        <label class="md-nav__title" for="__nav_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          Widgets
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../widgets/styling/" class="md-nav__link">
+        Palettes & styling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../widgets/builtins/" class="md-nav__link">
+        The batteries included
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../widgets/attrs/" class="md-nav__link">
+        Attributes to know about
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../widgets/custom/" class="md-nav__link">
+        Create your own
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../inspect/" class="md-nav__link">
+        Inspection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../exports/" class="md-nav__link">
+        SVG & HTML exports
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Walkthroughs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Walkthroughs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Walkthroughs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../walkthroughs/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../walkthroughs/inline/" class="md-nav__link">
+        Building an inline-widget context
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          pytermgui
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="pytermgui" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          pytermgui
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../animations/" class="md-nav__link">
+        animations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ansi_interface/" class="md-nav__link">
+        ansi_interface
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cmd/" class="md-nav__link">
+        cmd
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../colors/" class="md-nav__link">
+        colors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context_managers/" class="md-nav__link">
+        context_managers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../enums/" class="md-nav__link">
+        enums
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exceptions/" class="md-nav__link">
+        exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exporters/" class="md-nav__link">
+        exporters
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fancy_repr/" class="md-nav__link">
+        fancy_repr
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../file_loaders/" class="md-nav__link">
+        file_loaders
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../helpers/" class="md-nav__link">
+        helpers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../highlighters/" class="md-nav__link">
+        highlighters
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../input/" class="md-nav__link">
+        input
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../inspector/" class="md-nav__link">
+        inspector
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_16" type="checkbox" id="__nav_3_1_16" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1_16">
+          markup
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="markup" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_16">
+          <span class="md-nav__icon md-icon"></span>
+          markup
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aliases/" class="md-nav__link">
+        aliases
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          language
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        language
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pytermgui.markup.language" class="md-nav__link">
+    pytermgui.markup.language
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage" class="md-nav__link">
+    MarkupLanguage
+  </a>
+  
+    <nav class="md-nav" aria-label="MarkupLanguage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.alias" class="md-nav__link">
+    alias()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.alias_multiple" class="md-nav__link">
+    alias_multiple()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.aliases" class="md-nav__link">
+    aliases()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.clear_cache" class="md-nav__link">
+    clear_cache()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.define" class="md-nav__link">
+    define()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.get_markup" class="md-nav__link">
+    get_markup()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.group_styles" class="md-nav__link">
+    group_styles()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.macros" class="md-nav__link">
+    macros()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.parse" class="md-nav__link">
+    parse()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.print" class="md-nav__link">
+    print()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText" class="md-nav__link">
+    StyledText
+  </a>
+  
+    <nav class="md-nav" aria-label="StyledText">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.background" class="md-nav__link">
+    background()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.blink" class="md-nav__link">
+    blink()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.blink2" class="md-nav__link">
+    blink2()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.bold" class="md-nav__link">
+    bold()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.dim" class="md-nav__link">
+    dim()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.first_of" class="md-nav__link">
+    first_of()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.foreground" class="md-nav__link">
+    foreground()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.group_styles" class="md-nav__link">
+    group_styles()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.inverse" class="md-nav__link">
+    inverse()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.italic" class="md-nav__link">
+    italic()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.overline" class="md-nav__link">
+    overline()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.strikethrough" class="md-nav__link">
+    strikethrough()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.underline" class="md-nav__link">
+    underline()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.escape" class="md-nav__link">
+    escape()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macros/" class="md-nav__link">
+        macros
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parsing/" class="md-nav__link">
+        parsing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tokens/" class="md-nav__link">
+        tokens
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../palettes/" class="md-nav__link">
+        palettes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prettifiers/" class="md-nav__link">
+        prettifiers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pretty/" class="md-nav__link">
+        pretty
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../regex/" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../serialization/" class="md-nav__link">
+        serialization
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../term/" class="md-nav__link">
+        term
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_23" type="checkbox" id="__nav_3_1_23" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1_23">
+          widgets
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="widgets" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_23">
+          <span class="md-nav__icon md-icon"></span>
+          widgets
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/base/" class="md-nav__link">
+        base
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/boxes/" class="md-nav__link">
+        boxes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/button/" class="md-nav__link">
+        button
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/checkbox/" class="md-nav__link">
+        checkbox
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/collapsible/" class="md-nav__link">
+        collapsible
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/color_picker/" class="md-nav__link">
+        color_picker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/containers/" class="md-nav__link">
+        containers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/fancy_repr/" class="md-nav__link">
+        fancy_repr
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/inline/" class="md-nav__link">
+        inline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/input_field/" class="md-nav__link">
+        input_field
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/keyboard_button/" class="md-nav__link">
+        keyboard_button
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/pixel_matrix/" class="md-nav__link">
+        pixel_matrix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/slider/" class="md-nav__link">
+        slider
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/styles/" class="md-nav__link">
+        styles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/toggle/" class="md-nav__link">
+        toggle
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_24" type="checkbox" id="__nav_3_1_24" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1_24">
+          window_manager
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="window_manager" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_1_24">
+          <span class="md-nav__icon md-icon"></span>
+          window_manager
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../window_manager/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../window_manager/compositor/" class="md-nav__link">
+        compositor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../window_manager/layouts/" class="md-nav__link">
+        layouts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../window_manager/manager/" class="md-nav__link">
+        manager
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../window_manager/window/" class="md-nav__link">
+        window
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../future/" class="md-nav__link">
+        Future
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pytermgui.markup.language" class="md-nav__link">
+    pytermgui.markup.language
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage" class="md-nav__link">
+    MarkupLanguage
+  </a>
+  
+    <nav class="md-nav" aria-label="MarkupLanguage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.alias" class="md-nav__link">
+    alias()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.alias_multiple" class="md-nav__link">
+    alias_multiple()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.aliases" class="md-nav__link">
+    aliases()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.clear_cache" class="md-nav__link">
+    clear_cache()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.define" class="md-nav__link">
+    define()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.get_markup" class="md-nav__link">
+    get_markup()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.group_styles" class="md-nav__link">
+    group_styles()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.macros" class="md-nav__link">
+    macros()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.parse" class="md-nav__link">
+    parse()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.MarkupLanguage.print" class="md-nav__link">
+    print()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText" class="md-nav__link">
+    StyledText
+  </a>
+  
+    <nav class="md-nav" aria-label="StyledText">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.background" class="md-nav__link">
+    background()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.blink" class="md-nav__link">
+    blink()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.blink2" class="md-nav__link">
+    blink2()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.bold" class="md-nav__link">
+    bold()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.dim" class="md-nav__link">
+    dim()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.first_of" class="md-nav__link">
+    first_of()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.foreground" class="md-nav__link">
+    foreground()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.group_styles" class="md-nav__link">
+    group_styles()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.inverse" class="md-nav__link">
+    inverse()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.italic" class="md-nav__link">
+    italic()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.overline" class="md-nav__link">
+    overline()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.strikethrough" class="md-nav__link">
+    strikethrough()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.StyledText.underline" class="md-nav__link">
+    underline()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pytermgui.markup.language.escape" class="md-nav__link">
+    escape()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <a href="https://github.com/bczsalba/pytermgui/edit/master/docs/pytermgui/markup/language.py" title="Edit this page" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+  <h1>language</h1>
+
+<div class="doc doc-object doc-module">
+
+
+<a id="pytermgui.markup.language"></a>
+  <div class="doc doc-contents first">
+  
+      <p>Wrappers around the TIM parsing engine, implementing caching and context management.</p>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pytermgui.markup.language.MarkupLanguage" class="doc doc-heading">
+        <code>MarkupLanguage</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+
+  
+      <p>A relatively simple object that binds context to TIM parsing functions.</p>
+<p>Most of the job this class has is to pass along a <code>ContextDict</code> to various
+"lower level" functions, in order to maintain a sort of state. It also exposes
+ways to modify this state, namely the <code>alias</code> and <code>define</code> methods.</p>
+
+
+        <details class="quote">
+          <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MarkupLanguage</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A relatively simple object that binds context to TIM parsing functions.</span>
+
+<span class="sd">    Most of the job this class has is to pass along a `ContextDict` to various</span>
+<span class="sd">    &quot;lower level&quot; functions, in order to maintain a sort of state. It also exposes</span>
+<span class="sd">    ways to modify this state, namely the `alias` and `define` methods.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">default_aliases</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">default_macros</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">create_context_dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">&quot;aliases&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_macros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">&quot;macros&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">default_aliases</span><span class="p">:</span>
+            <span class="n">apply_default_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">default_macros</span><span class="p">:</span>
+            <span class="n">apply_default_macros</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">strict</span> <span class="o">=</span> <span class="n">strict</span> <span class="ow">or</span> <span class="n">STRICT_MARKUP</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns a copy of the aliases defined in context.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aliases</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">macros</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MacroType</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns a copy of the macros defined in context.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_macros</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">clear_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Clears the internal cache.</span>
+
+<span class="sd">        Use this after re-defining aliases.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">define</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">MacroType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Defines a markup macro.</span>
+
+<span class="sd">        Macros are essentially function bindings callable within markup. They can be</span>
+<span class="sd">        very useful to represent changing data and simplify TIM code.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name that will be used within TIM to call the macro. Must start with</span>
+<span class="sd">                a bang (`!`).</span>
+<span class="sd">            method: The function bound to the name given above. This function will take</span>
+<span class="sd">                any number of strings as arguments, and return a terminal-ready (i.e. parsed)</span>
+<span class="sd">                string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;TIM macro names must be prefixed by `!`.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_macros</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+
+    <span class="k">def</span> <span class="nf">alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">generate_unsetter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates an alias from one custom name to a set of styles.</span>
+
+<span class="sd">        These can be used to store and reference a set of tags using only one name.</span>
+
+<span class="sd">        Aliases may reference other aliases, but only do this consciously, as it can become</span>
+<span class="sd">        a hard to follow trail of sorrow very quickly!</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name this alias will be referenced by.</span>
+<span class="sd">            value: The markup value that the alias will represent.</span>
+<span class="sd">            generate_unsetter: Disable generating clearer aliases.</span>
+
+<span class="sd">                For example:</span>
+<span class="sd">                    ```</span>
+<span class="sd">                    my-tag = 141 bold italic</span>
+<span class="sd">                    ```</span>
+
+<span class="sd">                will generate:</span>
+<span class="sd">                    ```</span>
+<span class="sd">                    /my-tag = /fg /bold /italic</span>
+<span class="sd">                    ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_generate_unsetter</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">unsetter</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">no_alias</span> <span class="o">=</span> <span class="n">eval_alias</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">no_alias</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s2">&quot;(&quot;</span> <span class="ow">in</span> <span class="n">tag</span> <span class="ow">and</span> <span class="s2">&quot;)&quot;</span> <span class="ow">in</span> <span class="n">tag</span><span class="p">:</span>
+                    <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[:</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)]</span>
+
+                <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aliases</span> <span class="ow">or</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_macros</span><span class="p">:</span>
+                    <span class="n">unsetter</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; /</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">continue</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">str_to_color</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+                    <span class="n">unsetter</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; /</span><span class="si">{</span><span class="s1">&#39;bg&#39;</span> <span class="k">if</span> <span class="n">color</span><span class="o">.</span><span class="n">background</span> <span class="k">else</span> <span class="s1">&#39;fg&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="k">except</span> <span class="n">ColorSyntaxError</span><span class="p">:</span>
+                    <span class="n">unsetter</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; /</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="k">return</span> <span class="n">unsetter</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aliases</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">if</span> <span class="n">generate_unsetter</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_generate_unsetter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">alias_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">generate_unsetter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Runs `MarkupLanguage.alias` repeatedly for all arguments.</span>
+
+<span class="sd">        The same `generate_unsetter` value will be used for all calls.</span>
+
+<span class="sd">        You can use this in two forms:</span>
+
+<span class="sd">        - Traditional keyword arguments:</span>
+
+<span class="sd">            ```python</span>
+<span class="sd">            lang.alias_multiple(my-tag1=&quot;bold&quot;, my-tag2=&quot;italic&quot;)</span>
+<span class="sd">            ```</span>
+
+<span class="sd">        - Keyword argument unpacking:</span>
+
+<span class="sd">            ```python</span>
+<span class="sd">            my_aliases = {&quot;my-tag1&quot;: &quot;bold&quot;, &quot;my-tag2&quot;: &quot;italic&quot;}</span>
+<span class="sd">            lang.alias_multiple(**my_aliases)</span>
+<span class="sd">            ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">generate_unsetter</span><span class="o">=</span><span class="n">generate_unsetter</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">optimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">append_reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Parses some markup text.</span>
+
+<span class="sd">        This is a thin wrapper around [markup.parsing.parse](/reference/</span>
+<span class="sd">        pytermgui/markup/parsing#pytermgui.markup.parsing.parse). The main additions</span>
+<span class="sd">        of this wrapper are a caching system, as well as state management.</span>
+
+<span class="sd">        Ignoring caching, all calls to this function would be equivalent to:</span>
+
+<span class="sd">        ```python3</span>
+<span class="sd">        def parse(self, *args, **kwargs) -&gt; str:</span>
+<span class="sd">            kwargs[&quot;context&quot;] = self.context</span>
+
+<span class="sd">            return parse(*args, **kwargs)</span>
+<span class="sd">        ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">optimize</span><span class="p">,</span> <span class="n">append_reset</span><span class="p">)</span>
+
+        <span class="n">cache_hit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cache_hit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cached</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span> <span class="n">has_macro</span> <span class="o">=</span> <span class="n">cache_hit</span>
+
+            <span class="c1"># Re-parse using known tokens when macro is present</span>
+            <span class="c1">#</span>
+            <span class="c1"># This saves a tiny fraction of time (around 0.2ms) when parsing</span>
+            <span class="c1"># macros, for a loss of an even smaller time for the general,</span>
+            <span class="c1"># non-macro usecase.</span>
+            <span class="k">if</span> <span class="n">has_macro</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">parse_tokens</span><span class="p">(</span>
+                    <span class="n">tokens</span><span class="p">,</span>
+                    <span class="n">optimize</span><span class="o">=</span><span class="n">optimize</span><span class="p">,</span>
+                    <span class="n">append_reset</span><span class="o">=</span><span class="n">append_reset</span><span class="p">,</span>
+                    <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+                    <span class="n">ignore_unknown_tags</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">strict</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">output</span>
+
+            <span class="k">return</span> <span class="n">cached</span>
+
+        <span class="n">tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tokenize_markup</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="n">parse_tokens</span><span class="p">(</span>
+            <span class="n">tokens</span><span class="p">,</span>
+            <span class="n">optimize</span><span class="o">=</span><span class="n">optimize</span><span class="p">,</span>
+            <span class="n">append_reset</span><span class="o">=</span><span class="n">append_reset</span><span class="p">,</span>
+            <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+            <span class="n">ignore_unknown_tags</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">strict</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">has_macro</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">is_macro</span><span class="p">()</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span> <span class="n">has_macro</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="c1"># TODO: This should be deprecated.</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;DEPRECATED: Convert ANSI text into markup.</span>
+
+<span class="sd">        This function does not use context, and thus is out of place here.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">tokens_to_markup</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">group_styles</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">:</span> <span class="n">Tokenizer</span> <span class="o">=</span> <span class="n">tokenize_ansi</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">StyledText</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Generate StyledText-s from some text, using our context.</span>
+
+<span class="sd">        See `StyledText.group_styles` for arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">yield from</span> <span class="n">StyledText</span><span class="o">.</span><span class="n">group_styles</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Parse all arguments and pass them through to print, along with kwargs.&quot;&quot;&quot;</span>
+
+        <span class="n">parsed</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">parsed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="p">)))</span>
+
+        <span class="n">get_terminal</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="o">*</span><span class="n">parsed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.alias" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">alias</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">generate_unsetter</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Creates an alias from one custom name to a set of styles.</p>
+<p>These can be used to store and reference a set of tags using only one name.</p>
+<p>Aliases may reference other aliases, but only do this consciously, as it can become
+a hard to follow trail of sorrow very quickly!</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The name this alias will be referenced by.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>value</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The markup value that the alias will represent.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>generate_unsetter</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Disable generating clearer aliases.</p>
+<p>For example:
+    <div class="highlight"><pre><span></span><code>my-tag = 141 bold italic
+</code></pre></div></p>
+<p>will generate:
+    <div class="highlight"><pre><span></span><code>/my-tag = /fg /bold /italic
+</code></pre></div></p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">generate_unsetter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Creates an alias from one custom name to a set of styles.</span>
+
+<span class="sd">    These can be used to store and reference a set of tags using only one name.</span>
+
+<span class="sd">    Aliases may reference other aliases, but only do this consciously, as it can become</span>
+<span class="sd">    a hard to follow trail of sorrow very quickly!</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name: The name this alias will be referenced by.</span>
+<span class="sd">        value: The markup value that the alias will represent.</span>
+<span class="sd">        generate_unsetter: Disable generating clearer aliases.</span>
+
+<span class="sd">            For example:</span>
+<span class="sd">                ```</span>
+<span class="sd">                my-tag = 141 bold italic</span>
+<span class="sd">                ```</span>
+
+<span class="sd">            will generate:</span>
+<span class="sd">                ```</span>
+<span class="sd">                /my-tag = /fg /bold /italic</span>
+<span class="sd">                ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_generate_unsetter</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">unsetter</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">no_alias</span> <span class="o">=</span> <span class="n">eval_alias</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">no_alias</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;(&quot;</span> <span class="ow">in</span> <span class="n">tag</span> <span class="ow">and</span> <span class="s2">&quot;)&quot;</span> <span class="ow">in</span> <span class="n">tag</span><span class="p">:</span>
+                <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[:</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)]</span>
+
+            <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aliases</span> <span class="ow">or</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_macros</span><span class="p">:</span>
+                <span class="n">unsetter</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; /</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">continue</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">str_to_color</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+                <span class="n">unsetter</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; /</span><span class="si">{</span><span class="s1">&#39;bg&#39;</span> <span class="k">if</span> <span class="n">color</span><span class="o">.</span><span class="n">background</span> <span class="k">else</span> <span class="s1">&#39;fg&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="k">except</span> <span class="n">ColorSyntaxError</span><span class="p">:</span>
+                <span class="n">unsetter</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; /</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">unsetter</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_aliases</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">if</span> <span class="n">generate_unsetter</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_generate_unsetter</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.alias_multiple" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">alias_multiple</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">generate_unsetter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Runs <code>MarkupLanguage.alias</code> repeatedly for all arguments.</p>
+<p>The same <code>generate_unsetter</code> value will be used for all calls.</p>
+<p>You can use this in two forms:</p>
+<ul>
+<li>
+<p>Traditional keyword arguments:</p>
+<div class="highlight"><pre><span></span><code><span class="n">lang</span><span class="o">.</span><span class="n">alias_multiple</span><span class="p">(</span><span class="n">my</span><span class="o">-</span><span class="n">tag1</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">my</span><span class="o">-</span><span class="n">tag2</span><span class="o">=</span><span class="s2">&quot;italic&quot;</span><span class="p">)</span>
+</code></pre></div>
+</li>
+<li>
+<p>Keyword argument unpacking:</p>
+<div class="highlight"><pre><span></span><code><span class="n">my_aliases</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;my-tag1&quot;</span><span class="p">:</span> <span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="s2">&quot;my-tag2&quot;</span><span class="p">:</span> <span class="s2">&quot;italic&quot;</span><span class="p">}</span>
+<span class="n">lang</span><span class="o">.</span><span class="n">alias_multiple</span><span class="p">(</span><span class="o">**</span><span class="n">my_aliases</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">alias_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">generate_unsetter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Runs `MarkupLanguage.alias` repeatedly for all arguments.</span>
+
+<span class="sd">    The same `generate_unsetter` value will be used for all calls.</span>
+
+<span class="sd">    You can use this in two forms:</span>
+
+<span class="sd">    - Traditional keyword arguments:</span>
+
+<span class="sd">        ```python</span>
+<span class="sd">        lang.alias_multiple(my-tag1=&quot;bold&quot;, my-tag2=&quot;italic&quot;)</span>
+<span class="sd">        ```</span>
+
+<span class="sd">    - Keyword argument unpacking:</span>
+
+<span class="sd">        ```python</span>
+<span class="sd">        my_aliases = {&quot;my-tag1&quot;: &quot;bold&quot;, &quot;my-tag2&quot;: &quot;italic&quot;}</span>
+<span class="sd">        lang.alias_multiple(**my_aliases)</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">generate_unsetter</span><span class="o">=</span><span class="n">generate_unsetter</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">aliases</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns a copy of the aliases defined in context.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a copy of the aliases defined in context.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aliases</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.clear_cache" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">clear_cache</span><span class="p">()</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Clears the internal cache.</p>
+<p>Use this after re-defining aliases.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span>
+<span class="normal">98</span>
+<span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">clear_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Clears the internal cache.</span>
+
+<span class="sd">    Use this after re-defining aliases.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.define" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">define</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Defines a markup macro.</p>
+<p>Macros are essentially function bindings callable within markup. They can be
+very useful to represent changing data and simplify TIM code.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The name that will be used within TIM to call the macro. Must start with
+a bang (<code>!</code>).</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>method</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="pytermgui.markup.parsing.MacroType" href="../parsing/#pytermgui.markup.parsing.MacroType">MacroType</a></code>
+          </td>
+          <td><p>The function bound to the name given above. This function will take
+any number of strings as arguments, and return a terminal-ready (i.e. parsed)
+string.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">define</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">MacroType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Defines a markup macro.</span>
+
+<span class="sd">    Macros are essentially function bindings callable within markup. They can be</span>
+<span class="sd">    very useful to represent changing data and simplify TIM code.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name: The name that will be used within TIM to call the macro. Must start with</span>
+<span class="sd">            a bang (`!`).</span>
+<span class="sd">        method: The function bound to the name given above. This function will take</span>
+<span class="sd">            any number of strings as arguments, and return a terminal-ready (i.e. parsed)</span>
+<span class="sd">            string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;TIM macro names must be prefixed by `!`.&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_macros</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.get_markup" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_markup</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>DEPRECATED: Convert ANSI text into markup.</p>
+<p>This function does not use context, and thus is out of place here.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">get_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;DEPRECATED: Convert ANSI text into markup.</span>
+
+<span class="sd">    This function does not use context, and thus is out of place here.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">tokens_to_markup</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.group_styles" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">group_styles</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenize_ansi</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Generate StyledText-s from some text, using our context.</p>
+<p>See <code>StyledText.group_styles</code> for arguments.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">group_styles</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">:</span> <span class="n">Tokenizer</span> <span class="o">=</span> <span class="n">tokenize_ansi</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">StyledText</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Generate StyledText-s from some text, using our context.</span>
+
+<span class="sd">    See `StyledText.group_styles` for arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">yield from</span> <span class="n">StyledText</span><span class="o">.</span><span class="n">group_styles</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.macros" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">macros</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns a copy of the macros defined in context.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">macros</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MacroType</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a copy of the macros defined in context.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_macros</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.parse" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">parse</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">optimize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">append_reset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Parses some markup text.</p>
+<p>This is a thin wrapper around <a href="/reference/
+pytermgui/markup/parsing#pytermgui.markup.parsing.parse">markup.parsing.parse</a>. The main additions
+of this wrapper are a caching system, as well as state management.</p>
+<p>Ignoring caching, all calls to this function would be equivalent to:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span>
+
+    <span class="k">return</span> <span class="n">parse</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">optimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">append_reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parses some markup text.</span>
+
+<span class="sd">    This is a thin wrapper around [markup.parsing.parse](/reference/</span>
+<span class="sd">    pytermgui/markup/parsing#pytermgui.markup.parsing.parse). The main additions</span>
+<span class="sd">    of this wrapper are a caching system, as well as state management.</span>
+
+<span class="sd">    Ignoring caching, all calls to this function would be equivalent to:</span>
+
+<span class="sd">    ```python3</span>
+<span class="sd">    def parse(self, *args, **kwargs) -&gt; str:</span>
+<span class="sd">        kwargs[&quot;context&quot;] = self.context</span>
+
+<span class="sd">        return parse(*args, **kwargs)</span>
+<span class="sd">    ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">optimize</span><span class="p">,</span> <span class="n">append_reset</span><span class="p">)</span>
+
+    <span class="n">cache_hit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cache_hit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cached</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span> <span class="n">has_macro</span> <span class="o">=</span> <span class="n">cache_hit</span>
+
+        <span class="c1"># Re-parse using known tokens when macro is present</span>
+        <span class="c1">#</span>
+        <span class="c1"># This saves a tiny fraction of time (around 0.2ms) when parsing</span>
+        <span class="c1"># macros, for a loss of an even smaller time for the general,</span>
+        <span class="c1"># non-macro usecase.</span>
+        <span class="k">if</span> <span class="n">has_macro</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">parse_tokens</span><span class="p">(</span>
+                <span class="n">tokens</span><span class="p">,</span>
+                <span class="n">optimize</span><span class="o">=</span><span class="n">optimize</span><span class="p">,</span>
+                <span class="n">append_reset</span><span class="o">=</span><span class="n">append_reset</span><span class="p">,</span>
+                <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+                <span class="n">ignore_unknown_tags</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">strict</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">return</span> <span class="n">cached</span>
+
+    <span class="n">tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tokenize_markup</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="n">parse_tokens</span><span class="p">(</span>
+        <span class="n">tokens</span><span class="p">,</span>
+        <span class="n">optimize</span><span class="o">=</span><span class="n">optimize</span><span class="p">,</span>
+        <span class="n">append_reset</span><span class="o">=</span><span class="n">append_reset</span><span class="p">,</span>
+        <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+        <span class="n">ignore_unknown_tags</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">strict</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">has_macro</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">is_macro</span><span class="p">()</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span> <span class="n">has_macro</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.MarkupLanguage.print" class="doc doc-heading">
+<code class="highlight language-python"><span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Parse all arguments and pass them through to print, along with kwargs.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parse all arguments and pass them through to print, along with kwargs.&quot;&quot;&quot;</span>
+
+    <span class="n">parsed</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">parsed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="p">)))</span>
+
+    <span class="n">get_terminal</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="o">*</span><span class="n">parsed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pytermgui.markup.language.StyledText" class="doc doc-heading">
+        <code>StyledText</code>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+
+  
+      <p>An ANSI style-infused string.</p>
+<p>This is a sort of helper to handle ANSI texts in a more semantic manner. It
+keeps track of a sequence and a plain part.</p>
+<p>Calling <code>len()</code> will return the length of the printable, non-ANSI part, and
+indexing will return the characters at the given slice, but also include the
+sequences that are applied to them.</p>
+<p>To generate StyledText-s, it is recommended to use the <code>StyledText.group_styles</code>
+classmethod.</p>
+
+
+        <details class="quote">
+          <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">StyledText</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;An ANSI style-infused string.</span>
+
+<span class="sd">    This is a sort of helper to handle ANSI texts in a more semantic manner. It</span>
+<span class="sd">    keeps track of a sequence and a plain part.</span>
+
+<span class="sd">    Calling `len()` will return the length of the printable, non-ANSI part, and</span>
+<span class="sd">    indexing will return the characters at the given slice, but also include the</span>
+<span class="sd">    sequences that are applied to them.</span>
+
+<span class="sd">    To generate StyledText-s, it is recommended to use the `StyledText.group_styles`</span>
+<span class="sd">    classmethod.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;plain&quot;</span><span class="p">,</span> <span class="s2">&quot;sequences&quot;</span><span class="p">,</span> <span class="s2">&quot;tokens&quot;</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">,</span> <span class="s2">&quot;__dict__&quot;</span><span class="p">)</span>
+
+    <span class="n">sequences</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">plain</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">]</span>
+    <span class="n">link</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the foreground color of this object.&quot;&quot;&quot;</span>
+
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">tkn</span>
+            <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+            <span class="k">if</span> <span class="n">Token</span><span class="o">.</span><span class="n">is_color</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tkn</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">background</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">colors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">color</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">background</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the background color of this object.&quot;&quot;&quot;</span>
+
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">tkn</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="k">if</span> <span class="n">Token</span><span class="o">.</span><span class="n">is_color</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">background</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">colors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">color</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">bold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns this text is bold.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;bold&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns this text is dimmed.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;dim&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">italic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns this text is italicized.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;italic&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">underline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns this text is underlined.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;underline&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">blink</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns this text is blinking.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;blink&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">blink2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns this text is alternate-blinking.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;blink2&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">strikethrough</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns this text is striked out.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;strikethrough&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns this text has its colors inversed.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;inverse&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">overline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns this text is overlined.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;overline&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">group_styles</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tokenizer</span><span class="p">:</span> <span class="n">Tokenizer</span> <span class="o">=</span> <span class="n">tokenize_ansi</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ContextDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">StyledText</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Yields StyledTexts from an ANSI coded string.</span>
+
+<span class="sd">        A new StyledText will be created each time a non-plain token follows a</span>
+<span class="sd">        plain token, thus all texts will represent a single (ANSI)PLAIN group</span>
+<span class="sd">        of characters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="n">context</span> <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">create_context_dict</span><span class="p">()</span>
+
+        <span class="n">parsers</span> <span class="o">=</span> <span class="n">PARSERS</span>
+        <span class="n">link</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">Token</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">nonlocal</span> <span class="n">link</span>
+
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">is_macro</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">markup</span>
+
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">is_hyperlink</span><span class="p">():</span>
+                <span class="n">link</span> <span class="o">=</span> <span class="n">token</span>
+                <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="k">if</span> <span class="n">link</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Token</span><span class="o">.</span><span class="n">is_clear</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">targets</span><span class="p">(</span><span class="n">link</span><span class="p">):</span>
+                <span class="n">link</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">is_clear</span><span class="p">()</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CLEARERS</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">markup</span>
+
+            <span class="c1"># The full text (last arg) is not relevant here, as ANSI parsing doesn&#39;t</span>
+            <span class="c1"># use any context-defined tags, so no errors will occur.</span>
+            <span class="k">return</span> <span class="n">parsers</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">token</span><span class="p">)](</span><span class="n">token</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">token</span><span class="p">:</span> <span class="n">Token</span>
+
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">is_plain</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">StyledText</span><span class="p">(</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_parse</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">),</span>
+                    <span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">tokens</span> <span class="o">+</span> <span class="p">[</span><span class="n">token</span><span class="p">],</span>
+                    <span class="n">link</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">link</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">tkn</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">tkn</span><span class="o">.</span><span class="n">is_cursor</span><span class="p">()]</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">Token</span><span class="o">.</span><span class="n">is_clear</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+                <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">tkn</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">targets</span><span class="p">(</span><span class="n">tkn</span><span class="p">)]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">token</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">tkn</span><span class="o">.</span><span class="n">is_clear</span><span class="p">()</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">):</span>
+                <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+
+        <span class="c1"># if len(tokens) &gt; 0:</span>
+        <span class="c1">#     token = PlainToken(&quot;&quot;)</span>
+
+        <span class="c1">#     yield StyledText(</span>
+        <span class="c1">#         &quot;&quot;.join(_parse(tkn) for tkn in tokens),</span>
+        <span class="c1">#         token.value,</span>
+        <span class="c1">#         tokens + [token],</span>
+        <span class="c1">#         link.value if link is not None else None,</span>
+        <span class="c1">#     )</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">first_of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StyledText</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the first element of cls.group_styles(text).&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">group_styles</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">item</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plain</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plain</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sli</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plain</span><span class="p">[</span><span class="n">sli</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.background" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">background</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns the background color of this object.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">background</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns the background color of this object.&quot;&quot;&quot;</span>
+
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">tkn</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="k">if</span> <span class="n">Token</span><span class="o">.</span><span class="n">is_color</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">background</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">colors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">color</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.blink" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">blink</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns this text is blinking.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">blink</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns this text is blinking.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;blink&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.blink2" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">blink2</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns this text is alternate-blinking.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">blink2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns this text is alternate-blinking.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;blink2&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.bold" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">bold</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns this text is bold.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">bold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns this text is bold.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;bold&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.dim" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">dim</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns this text is dimmed.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns this text is dimmed.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;dim&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.first_of" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">first_of</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns the first element of cls.group_styles(text).</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">first_of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StyledText</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns the first element of cls.group_styles(text).&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">group_styles</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">item</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.foreground" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">foreground</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns the foreground color of this object.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns the foreground color of this object.&quot;&quot;&quot;</span>
+
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">tkn</span>
+        <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+        <span class="k">if</span> <span class="n">Token</span><span class="o">.</span><span class="n">is_color</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tkn</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">background</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">colors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">color</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.group_styles" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">group_styles</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenize_ansi</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Yields StyledTexts from an ANSI coded string.</p>
+<p>A new StyledText will be created each time a non-plain token follows a
+plain token, thus all texts will represent a single (ANSI)PLAIN group
+of characters.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">group_styles</span><span class="p">(</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">tokenizer</span><span class="p">:</span> <span class="n">Tokenizer</span> <span class="o">=</span> <span class="n">tokenize_ansi</span><span class="p">,</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">ContextDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">StyledText</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Yields StyledTexts from an ANSI coded string.</span>
+
+<span class="sd">    A new StyledText will be created each time a non-plain token follows a</span>
+<span class="sd">    plain token, thus all texts will represent a single (ANSI)PLAIN group</span>
+<span class="sd">    of characters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">context</span> <span class="o">=</span> <span class="n">context</span> <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">create_context_dict</span><span class="p">()</span>
+
+    <span class="n">parsers</span> <span class="o">=</span> <span class="n">PARSERS</span>
+    <span class="n">link</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">Token</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">nonlocal</span> <span class="n">link</span>
+
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">is_macro</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">markup</span>
+
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">is_hyperlink</span><span class="p">():</span>
+            <span class="n">link</span> <span class="o">=</span> <span class="n">token</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">link</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Token</span><span class="o">.</span><span class="n">is_clear</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">targets</span><span class="p">(</span><span class="n">link</span><span class="p">):</span>
+            <span class="n">link</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">is_clear</span><span class="p">()</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CLEARERS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">markup</span>
+
+        <span class="c1"># The full text (last arg) is not relevant here, as ANSI parsing doesn&#39;t</span>
+        <span class="c1"># use any context-defined tags, so no errors will occur.</span>
+        <span class="k">return</span> <span class="n">parsers</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">token</span><span class="p">)](</span><span class="n">token</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Token</span>
+
+    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">is_plain</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">StyledText</span><span class="p">(</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_parse</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">),</span>
+                <span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">tokens</span> <span class="o">+</span> <span class="p">[</span><span class="n">token</span><span class="p">],</span>
+                <span class="n">link</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">link</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">tkn</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">tkn</span><span class="o">.</span><span class="n">is_cursor</span><span class="p">()]</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">Token</span><span class="o">.</span><span class="n">is_clear</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+            <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">tkn</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">targets</span><span class="p">(</span><span class="n">tkn</span><span class="p">)]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">token</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">tkn</span><span class="o">.</span><span class="n">is_clear</span><span class="p">()</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">):</span>
+            <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.inverse" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">inverse</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns this text has its colors inversed.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns this text has its colors inversed.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;inverse&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.italic" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">italic</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns this text is italicized.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">italic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns this text is italicized.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;italic&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.overline" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">overline</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns this text is overlined.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">overline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns this text is overlined.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;overline&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.strikethrough" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">strikethrough</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns this text is striked out.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">strikethrough</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns this text is striked out.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;strikethrough&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pytermgui.markup.language.StyledText.underline" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">underline</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns this text is underlined.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cached_property</span>
+<span class="k">def</span> <span class="nf">underline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns this text is underlined.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">Token</span><span class="o">.</span><span class="n">is_style</span><span class="p">(</span><span class="n">tkn</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tkn</span><span class="o">.</span><span class="n">markup</span> <span class="o">==</span> <span class="s2">&quot;underline&quot;</span> <span class="k">for</span> <span class="n">tkn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="pytermgui.markup.language.escape" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">escape</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Escapes any markup found within the given text.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pytermgui/markup/language.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">escape</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Escapes any markup found within the given text.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_repl</span><span class="p">(</span><span class="n">matchobj</span><span class="p">:</span> <span class="n">Match</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">full</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">matchobj</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\\</span><span class="si">{</span><span class="n">full</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">RE_MARKUP</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_repl</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../aliases/" class="md-footer__link md-footer__link--prev" aria-label="Previous: aliases" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              aliases
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../macros/" class="md-footer__link md-footer__link--next" aria-label="Next: macros" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              macros
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
+      
+    
+  </body>
+</html>
