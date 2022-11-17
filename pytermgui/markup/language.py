@@ -9,7 +9,7 @@ from typing import Callable, Generator, Iterator, Match
 
 from ..colors import Color, ColorSyntaxError, str_to_color
 from ..regex import RE_MARKUP
-from ..terminal import get_terminal
+from ..term import get_terminal
 from .aliases import apply_default_aliases
 from .macros import apply_default_macros
 from .parsing import (

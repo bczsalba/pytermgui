@@ -2,8 +2,13 @@
 File providing the getch() function to easily read character inputs.
 
 Credits:
-- Original getch implementation: Danny Yoo (https://code.activestate.com/recipes/134892)
-- Modern additions & idea:       kcsaff (https://github.com/kcsaff/getkey)
+
+- Original getch implementation: [Danny Yoo](https://code.activestate.com/recipes/134892)
+- Modern additions & idea:       [kcsaff](https://github.com/kcsaff/getkey)
+
+Note that the original link seems to no longer be active, but an archive can be found
+on [GitHub](https://github.com/ActiveState/code/tree/master/recipes/Python/
+134892_getchlike_unbuffered_character_reading_stdboth).
 """
 
 # pylint doesn't see the C source

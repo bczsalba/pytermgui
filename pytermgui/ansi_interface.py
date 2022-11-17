@@ -21,7 +21,7 @@ from os import system
 from typing import Any, Optional, Pattern, Union
 
 from .input import getch
-from .terminal import get_terminal
+from .term import get_terminal
 
 __all__ = [
     "save_screen",

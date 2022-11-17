@@ -31,7 +31,7 @@ from .ansi_interface import (
 # This is technically meant to be here, but it has to be in `input.py` due
 # to some package structure issues.
 from .input import timeout  # pylint: disable=unused-import
-from .terminal import get_terminal
+from .term import get_terminal
 
 # TODO: Move this absolute beast to a types submodule
 MouseTranslator = Callable[[str], Union[List[Union[MouseEvent, None]], None]]

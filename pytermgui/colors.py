@@ -23,7 +23,7 @@ from .ansi_interface import reset as reset_style
 from .color_info import COLOR_TABLE, CSS_COLORS
 from .exceptions import ColorSyntaxError
 from .input import getch
-from .terminal import ColorSystem, terminal
+from .term import ColorSystem, terminal
 
 if TYPE_CHECKING:
     from .fancy_repr import FancyYield

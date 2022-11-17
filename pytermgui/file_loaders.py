@@ -129,7 +129,7 @@ from typing import IO, Any, Callable, Type
 
 from . import widgets as widgets_m
 from .markup import tim
-from .serializer import Serializer
+from .serialization import Serializer
 
 YAML_ERROR = None
 

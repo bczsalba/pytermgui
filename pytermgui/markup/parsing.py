@@ -62,7 +62,8 @@ class ContextDict(TypedDict):
     - macros
 
     For information about what they do and contain, see the
-    [MarkupLanguage docs](pytermgui.markup.language.MarkupLanguage).
+    [MarkupLanguage docs](/reference/pytermgui/markup/
+    language#pytermgui.markup.language.MarkupLanguage).
     """
 
     aliases: dict[str, str]

@@ -20,7 +20,7 @@ from ..helpers import break_line
 from ..input import keys
 from ..markup import get_markup
 from ..regex import real_length
-from ..terminal import Terminal, get_terminal
+from ..term import Terminal, get_terminal
 from . import styles as w_styles
 
 __all__ = ["Widget", "Label"]
@@ -681,6 +681,10 @@ class Label(Widget):
 
     By default, this widget uses `pytermgui.widgets.styles.MARKUP`. This
     allows it to house markup text that is parsed before display, such as:
+
+    ```termage-svg
+    print("hello world")
+    ```
 
     ```python3
     import pytermgui as ptg

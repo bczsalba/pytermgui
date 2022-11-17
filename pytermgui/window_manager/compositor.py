@@ -10,7 +10,7 @@ from typing import Iterator, List, Tuple
 
 from ..animations import animator
 from ..enums import WidgetChange
-from ..terminal import Terminal, get_terminal
+from ..term import Terminal, get_terminal
 from ..widgets import Widget
 from .window import Window
 
