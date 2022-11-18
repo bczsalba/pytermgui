@@ -12,6 +12,7 @@ from .collapsible import *
 from .color_picker import ColorPicker
 from .containers import *
 from .fancy_repr import FancyReprWidget
+from .frames import *
 from .inline import inline
 from .input_field import InputField
 from .keyboard_button import KeyboardButton
