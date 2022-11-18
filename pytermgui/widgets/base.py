@@ -304,6 +304,36 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         return get_terminal()
 
+    def _align(self, lines: list[str]) -> list[str]:
+        """Aligns the given lines based on this widget's `parent_align` attribute."""
+
+        width = self.width
+
+        def _align_left(line: str) -> str:
+            return line + (width - real_length(line)) * " "
+
+        def _align_center(line: str) -> str:
+            right, extra = divmod(width - real_length(line), 2)
+            left = right + extra
+
+            return left * " " + line + right * " "
+
+        def _align_right(line: str) -> str:
+            return (width - real_length(line)) * " " + line
+
+        aligner = {
+            HorizontalAlignment.LEFT: _align_left,
+            HorizontalAlignment.CENTER: _align_center,
+            HorizontalAlignment.RIGHT: _align_right,
+        }[self.parent_align]
+
+        aligned = []
+
+        for line in lines:
+            aligned.append(aligner(line))
+
+        return aligned
+
     def get_change(self) -> WidgetChange | None:
         """Determines whether widget lines changed since the last call to this function."""
 
