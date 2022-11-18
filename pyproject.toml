@@ -66,6 +66,8 @@ path = "pytermgui/__init__.py"
 include = [
     "/pytermgui",
     "/tests",
+    "README.md",
+    "CHANGELOG.md",
 ]
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
