@@ -23,6 +23,7 @@
 
 - Remove `is_bindable` widget attribute
 
+<!-- HATCH README END -->
 
 ## [7.2.0] - 2022-08-05
 
@@ -45,8 +46,6 @@
 
 - Make all the `ptg` program & all builting widgets use the global palette
 - Prefix all ANSI colors with `ansi-`
-
-<!-- HATCH README END -->
 
 
 ## [7.1.0] - 2022-07-27
