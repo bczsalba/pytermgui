@@ -214,7 +214,16 @@ class ASCII_X(Frame):  # pylint: disable=invalid-name
 
 
 class ASCII_O(Frame):  # pylint: disable=invalid-name
-    """A frame made up of only ASCII characters, with X-s in the corners."""
+    """A frame made up of only ASCII characters, with X-s in the corners.
+
+    Preview:
+
+    ```
+    o---o
+    | # |
+    o---o
+    ```
+    """
 
     content_char = "#"
 
@@ -226,7 +235,16 @@ class ASCII_O(Frame):  # pylint: disable=invalid-name
 
 
 class Light(Frame):
-    """A frame with a light outline."""
+    """A frame with a light outline.
+
+    Preview:
+
+    ```
+    ┌───┐
+    │ x │
+    └───┘
+    ```
+    """
 
     descriptor = [
         "┌───┐",
@@ -236,7 +254,16 @@ class Light(Frame):
 
 
 class Heavy(Frame):
-    """A frame with a heavy outline."""
+    """A frame with a heavy outline.
+
+    Preview:
+
+    ```
+    ┏━━━┓
+    ┃ x ┃
+    ┗━━━┛
+    ```
+    """
 
     descriptor = [
         "┏━━━┓",
@@ -246,7 +273,16 @@ class Heavy(Frame):
 
 
 class Double(Frame):
-    """A frame with a double outline."""
+    """A frame with a double outline.
+
+    Preview:
+
+    ```
+    ╔═══╗
+    ║ x ║
+    ╚═══╝
+    ```
+    """
 
     descriptor = [
         "╔═══╗",
@@ -256,7 +292,16 @@ class Double(Frame):
 
 
 class Rounded(Frame):
-    """A frame with a light outline and rounded corners."""
+    """A frame with a light outline and rounded corners.
+
+    Preview:
+
+    ```
+    ╭───╮
+    │ x │
+    ╰───╯
+    ```
+    """
 
     descriptor = [
         "╭───╮",
@@ -266,7 +311,16 @@ class Rounded(Frame):
 
 
 class Frameless(Frame):
-    """A frame that is not. No frame will be drawn around the object."""
+    """A frame that is not. No frame will be drawn around the object.
+
+    Preview:
+
+    ```
+
+    x
+
+    ```
+    """
 
     descriptor = [
         "",
@@ -276,7 +330,14 @@ class Frameless(Frame):
 
 
 class Padded(Frame):
-    """A frame that pads its content by a single space on all sides."""
+    """A frame that pads its content by a single space on all sides.
+
+    Preview:
+
+    ```
+    x
+    ```
+    """
 
     descriptor = [
         "   ",
