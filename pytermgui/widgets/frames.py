@@ -7,7 +7,18 @@ from functools import cached_property
 from ..regex import real_length
 from .base import Widget
 
-__all__ = ["Frame", "Single"]
+__all__ = [
+    "Frame",
+    "ASCII",
+    "ASCII_X",
+    "ASCII_O",
+    "Light",
+    "Heavy",
+    "Double",
+    "Rounded",
+    "Frameless",
+    "Padded",
+]
 
 
 class Frame:
@@ -170,11 +181,95 @@ class Frame:
         return framed + [bottom]
 
 
-class Single(Frame):
-    """A frame with a single, square border."""
+class ASCII(Frame):
+    """A frame made up of only ASCII characters."""
+
+    descriptor = [
+        "-----",
+        "| x |",
+        "-----",
+    ]
+
+
+class ASCII_X(Frame):  # pylint: disable=invalid-name
+    """A frame made up of only ASCII characters, with X-s in the corners."""
+
+    content_char = "#"
+
+    descriptor = [
+        "x---x",
+        "| # |",
+        "x---x",
+    ]
+
+
+class ASCII_O(Frame):  # pylint: disable=invalid-name
+    """A frame made up of only ASCII characters, with X-s in the corners."""
+
+    content_char = "#"
+
+    descriptor = [
+        "o---o",
+        "| # |",
+        "o---o",
+    ]
+
+
+class Light(Frame):
+    """A frame with a light outline."""
 
     descriptor = [
         "┌───┐",
         "│ x │",
         "└───┘",
+    ]
+
+
+class Heavy(Frame):
+    """A frame with a heavy outline."""
+
+    descriptor = [
+        "┏━━━┓",
+        "┃ x ┃",
+        "┗━━━┛",
+    ]
+
+
+class Double(Frame):
+    """A frame with a double outline."""
+
+    descriptor = [
+        "╔═══╗",
+        "║ x ║",
+        "╚═══╝",
+    ]
+
+
+class Rounded(Frame):
+    """A frame with a light outline and rounded corners."""
+
+    descriptor = [
+        "╭───╮",
+        "│ x │",
+        "╰───╯",
+    ]
+
+
+class Frameless(Frame):
+    """A frame that is not. No frame will be drawn around the object."""
+
+    descriptor = [
+        "",
+        "x",
+        "",
+    ]
+
+
+class Padded(Frame):
+    """A frame that pads its content by a single space on all sides."""
+
+    descriptor = [
+        "   ",
+        " x ",
+        "   ",
     ]
