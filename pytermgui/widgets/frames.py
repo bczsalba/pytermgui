@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from functools import cached_property
+from typing import Type
 
 from ..regex import real_length
 from .base import Widget
@@ -110,6 +111,15 @@ class Frame:
         bottom_border = self._find_mode_char(bottom)
 
         return left_border, top_border, right_border, bottom_border
+
+    @staticmethod
+    def from_name(name: str) -> Type[Frame]:
+        """Gets a builtin Frame type from its name."""
+
+        if frame := globals().get(name):
+            return frame
+
+        raise ValueError(f"No frame defined with name {name!r}.")
 
     @cached_property
     def left_size(self) -> int:
