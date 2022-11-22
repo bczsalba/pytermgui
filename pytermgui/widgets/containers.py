@@ -987,7 +987,7 @@ class Splitter(Container):
 
     parent_align = HorizontalAlignment.RIGHT
 
-    def _align(
+    def _align_line(
         self, alignment: HorizontalAlignment, target_width: int, line: str
     ) -> tuple[int, str]:
         """Align a line
@@ -1043,7 +1043,7 @@ class Splitter(Container):
             aligned: str | None = None
             for line in widget.get_lines():
                 # See `enums.py` for information about this ignore
-                padding, aligned = self._align(
+                padding, aligned = self._align_line(
                     cast(HorizontalAlignment, widget.parent_align), width, line
                 )
                 inner.append(aligned)
