@@ -183,12 +183,19 @@ class Frame:
             + right_bottom
         )
 
-        framed = [top]
+        framed = []
+
+        if top != "":
+            framed.append(top)
+
         for line in lines:
             # TODO: Implement horizontal scrolling
             framed.append(self.borders[0] + line + self.borders[2])
 
-        return framed + [bottom]
+        if bottom != "":
+            framed.append(bottom)
+
+        return framed
 
 
 class ASCII(Frame):
