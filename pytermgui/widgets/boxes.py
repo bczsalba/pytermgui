@@ -14,6 +14,9 @@ be referenced & defined in markup file definitions. For more info, check out
 `pytermgui.file_loaders`.
 """
 
+# This module is to be replaced with Frame, so the duplication won't be for long.
+# pylint: disable=duplicate-code
+
 from __future__ import annotations
 
 from typing import Tuple
