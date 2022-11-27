@@ -7,6 +7,7 @@ from typing import Type
 
 from ..regex import real_length
 from .base import Widget
+from .styles import StyleManager
 
 __all__ = [
     "Frame",
@@ -38,10 +39,16 @@ class Frame:
     # left_top, right_top, right_bottom, left_bottom
     corners: tuple[str, str, str, str]
 
+    styles = StyleManager(
+        border="surface",
+        corner="surface2+2",
+    )
+
     def __init__(self, parent: Widget) -> None:
         """Initializes Frame."""
 
         self._parent = parent
+        self.styles = self.styles.branch(self._parent)
 
         if self.descriptor is not None:
             self._init_from_descriptor()
@@ -164,22 +171,26 @@ class Frame:
 
         # TODO: Widget.size should substract frame size, once
         #       it is aware of the frame.
-        _, height = self._parent.size
+        # width, height = self._parent.size
+        width, height = self._parent.width, self._parent.height
 
         lines = lines[scroll.vertical : scroll.vertical + height]
 
-        left_top, right_top, right_bottom, left_bottom = self.corners
+        left_top, right_top, right_bottom, left_bottom = [
+            self.styles.corner(corner) for corner in self.corners
+        ]
+
+        borders = [self.styles.border(char) for char in self.borders]
 
         top = (
             left_top
-            + (self._parent.width - real_length(left_top + right_top)) * self.borders[1]
+            + (width - real_length(left_top + right_top)) * borders[1]
             + right_top
         )
 
         bottom = (
             left_bottom
-            + (self._parent.width - real_length(left_bottom + right_bottom))
-            * self.borders[3]
+            + (width - real_length(left_bottom + right_bottom)) * borders[3]
             + right_bottom
         )
 
@@ -190,7 +201,7 @@ class Frame:
 
         for line in lines:
             # TODO: Implement horizontal scrolling
-            framed.append(self.borders[0] + line + self.borders[2])
+            framed.append(borders[0] + line + borders[2])
 
         if bottom != "":
             framed.append(bottom)
@@ -199,7 +210,16 @@ class Frame:
 
 
 class ASCII(Frame):
-    """A frame made up of only ASCII characters."""
+    """A frame made up of only ASCII characters.
+
+    Preview:
+
+    ```
+    -----
+    | x |
+    -----
+    ```
+    """
 
     descriptor = [
         "-----",
@@ -209,7 +229,16 @@ class ASCII(Frame):
 
 
 class ASCII_X(Frame):  # pylint: disable=invalid-name
-    """A frame made up of only ASCII characters, with X-s in the corners."""
+    """A frame made up of only ASCII characters, with X-s in the corners.
+
+    Preview:
+
+    ```
+    x---x
+    | # |
+    x---x
+    ```
+    """
 
     content_char = "#"
 
@@ -227,12 +256,12 @@ class ASCII_O(Frame):  # pylint: disable=invalid-name
 
     ```
     o---o
-    | # |
+    | x |
     o---o
     ```
     """
 
-    content_char = "#"
+    content_char = "x"
 
     descriptor = [
         "o---o",
