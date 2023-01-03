@@ -201,6 +201,9 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
         csi = matchobj.groups()[0:2]
         link_osc = matchobj.groups()[2:4]
 
+        if cursor < start:
+            yield PlainToken(text[cursor:start])
+
         if link_osc != (None, None):
             cursor = end
             uri, label = link_osc
@@ -211,9 +214,6 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
             continue
 
         full, content = csi
-
-        if cursor < start:
-            yield PlainToken(text[cursor:start])
 
         cursor = end
 
@@ -507,19 +507,30 @@ def tokens_to_markup(tokens: list[Token]) -> str:
     tags: list[Token] = []
     markup = ""
 
+    is_link = False
+
     for token in tokens:
         if token.is_plain():
             if len(tags) > 0:
                 markup += f"[{' '.join(tag.markup for tag in tags)}]"
 
             markup += token.value
+
+            if is_link:
+                markup += "[/~]"
+                is_link = False
             tags = []
 
         else:
+            if Token.is_hyperlink(token):
+                is_link = True
             tags.append(token)
 
     if len(tags) > 0:
         markup += f"[{' '.join(tag.markup for tag in tags)}]"
+
+    if is_link:
+        markup += "[/~]"
 
     return markup
 

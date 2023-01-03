@@ -98,6 +98,13 @@ class TestParser:
         markup = tim.get_markup(ansi)
         assert base == markup
 
+    def test_mutiline_markup(self):
+        base = "[141 @61 bold]Hello[/]\nWhat a beautifull day to look a this [~https://example.com]website[/~] !\nOh and this [~https://example.com]website also[/~]\nHave a nice day !"
+        opti_base = "[141 @61 bold]Hello[/]\nWhat a beautifull day to look a this [~https://example.com]website[/~] !\nOh and this [~https://example.com]website also[/~]\nHave a nice day ![/]"
+        ansi = tim.parse(base)
+        markup = tim.get_markup(ansi)
+        assert opti_base == markup
+
     def test_parse(self):
         assert (
             tim.parse("[141 @61 bold !upper]Hello")
