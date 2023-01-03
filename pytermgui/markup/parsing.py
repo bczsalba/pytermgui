@@ -719,6 +719,9 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals, too-man
                     token.value, "has nothing to target", get_full()
                 )
 
+            if token.value == "/~":
+                continue
+
         if Token.is_color(token) and token.color.background:
             background = token.color
 
