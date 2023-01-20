@@ -239,7 +239,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
             return True
 
         if action == 'word_remove':
-            row, _ = self.cursor
+            row, col = self.cursor
             if len(self._lines) > row:
                 # Consistent with unix shell behaviour:
                 # * Always delete first char, then remove any non-punctuation
@@ -247,7 +247,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
                 # * Python repl: until change in letter+digit & punctionation
                 # * Unix shells: only removes letter+digit
                 word_chars = string.ascii_letters + string.digits
-                line = self._lines[row][:-1]
+                line = self._lines[row][:col-1]
                 strip_line = line.rstrip(word_chars)
                 self.delete_back(len(line) - len(strip_line) + 1)
             else:
