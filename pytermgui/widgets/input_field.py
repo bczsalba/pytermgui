@@ -57,6 +57,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         "select_right": {keys.SHIFT_RIGHT},
         "select_up": {keys.SHIFT_UP},
         "select_down": {keys.SHIFT_DOWN},
+        "word_remove": {keys.ALT_BACKSPACE, keys.CTRL_BACKSPACE},
     }
 
     parent_align = HorizontalAlignment.LEFT
@@ -236,6 +237,21 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
                 self.update_selection(-1)
 
             return True
+
+        if action == 'word_remove':
+            row, col = self.cursor
+            if len(self._lines) > row:
+                # Consistent with unix shell behaviour:
+                # * Always delete first char, then remove any non-punctuation
+                # Note that the exact behaviour isn't standardized:
+                # * Python repl: until change in letter+digit & punctionation
+                # * Unix shells: only removes letter+digit
+                word_chars = string.ascii_letters + string.digits
+                line = self._lines[row][:col-1]
+                strip_line = line.rstrip(word_chars)
+                self.delete_back(len(line) - len(strip_line) + 1)
+            else:
+                self.delete_back(1)
 
         return False
 
