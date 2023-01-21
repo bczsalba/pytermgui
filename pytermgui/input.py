@@ -369,6 +369,8 @@ except ImportError as import_error:
         "ALT_SHIFT_DOWN": "\x1b[1;4B",
         "ALT_SHIFT_RIGHT": "\x1b[1;4C",
         "ALT_SHIFT_LEFT": "\x1b[1;4D",
+        "ALT_BACKSPACE": "\x08",
+        "CTRL_BACKSPACE": "\x1b\x7f",
         "CTRL_UP": "\x1b[1;5A",
         "CTRL_DOWN": "\x1b[1;5B",
         "CTRL_RIGHT": "\x1b[1;5C",
