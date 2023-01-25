@@ -232,6 +232,11 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
             yield CursorToken(content, int(ypos) or None, int(xpos) or None)
             continue
 
+        # Special case for hyperlink clearer
+        if content in REVERSE_CLEARERS:
+            yield ClearToken(REVERSE_CLEARERS[content])
+            continue
+
         parts = content.split(";")
 
         state = None
@@ -507,8 +512,6 @@ def tokens_to_markup(tokens: list[Token]) -> str:
     tags: list[Token] = []
     markup = ""
 
-    is_link = False
-
     for token in tokens:
         if token.is_plain():
             if len(tags) > 0:
@@ -516,21 +519,13 @@ def tokens_to_markup(tokens: list[Token]) -> str:
 
             markup += token.value
 
-            if is_link:
-                markup += "[/~]"
-                is_link = False
             tags = []
 
         else:
-            if Token.is_hyperlink(token):
-                is_link = True
             tags.append(token)
 
     if len(tags) > 0:
         markup += f"[{' '.join(tag.markup for tag in tags)}]"
-
-    if is_link:
-        markup += "[/~]"
 
     return markup
 
@@ -729,9 +724,6 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals, too-man
                 raise MarkupSyntaxError(
                     token.value, "has nothing to target", get_full()
                 )
-
-            if token.value == "/~":
-                continue
 
         if Token.is_color(token) and token.color.background:
             background = token.color
