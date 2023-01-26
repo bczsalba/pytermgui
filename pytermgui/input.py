@@ -376,6 +376,8 @@ except ImportError as import_error:
         "CTRL_RIGHT": "\x1b[1;5C",
         "CTRL_LEFT": "\x1b[1;5D",
         "BACKSPACE": "\x7f",
+        "END": "\x1b[H",
+        "HOME": "\x1b[F",
         "INSERT": "\x1b[2~",
         "DELETE": "\x1b[3~",
         "BACKTAB": "\x1b[Z",
