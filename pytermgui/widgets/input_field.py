@@ -51,8 +51,12 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
     keys = {
         "move_left": {keys.LEFT},
         "move_right": {keys.RIGHT},
+        "move_word_left": {keys.ALT_LEFT, keys.CTRL_LEFT},
+        "move_word_right": {keys.ALT_RIGHT, keys.CTRL_RIGHT},
         "move_up": {keys.UP},
         "move_down": {keys.DOWN},
+        "move_end": {keys.END},
+        "move_home": {keys.HOME},
         "select_left": {keys.SHIFT_LEFT},
         "select_right": {keys.SHIFT_RIGHT},
         "select_up": {keys.SHIFT_UP},
@@ -201,6 +205,25 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
         self._styled_cache = None
 
+    def get_word_pos(self, direction: -1 | 1):
+        row, col = self.cursor
+        if len(self._lines) > row:
+            # Consistent with unix shell behaviour:
+            # * Always delete first char, then remove any non-punctuation
+            # Note that the exact behaviour isn't standardized:
+            # * Python repl: until change in letter+digit & punctionation
+            # * Unix shells: only removes letter+digit
+            word_chars = string.ascii_letters + string.digits
+            if direction == -1:
+                line = self._lines[row][:col-1]
+                strip_line = line.rstrip(word_chars)
+            else:
+                line = self._lines[row][col:]
+                strip_line = line.lstrip(word_chars)
+            return -direction * (len(strip_line) - len(line)) + direction
+        else:
+            return direction
+
     def handle_action(self, action: str) -> bool:
         """Handles some action.
 
@@ -216,6 +239,20 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         }
 
         if action.startswith("move_"):
+            if action.endswith(('word_left', 'word_right')):
+                col = self.get_word_pos(-1 if action == 'move_word_left' else 1)
+                self.move_cursor((0, col))
+                return True
+
+            if action.endswith(('end', 'home')):
+                crow, ccol = self.cursor
+                if action == 'move_end':
+                    ccol = len(self._lines[crow])
+                else:
+                    ccol = 0
+                self.move_cursor((crow, ccol), absolute=True)
+                return True
+
             row, col = cursors[action]
 
             if self.cursor.row + row > len(self._lines):
@@ -240,18 +277,8 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
         if action == 'word_remove':
             row, col = self.cursor
-            if len(self._lines) > row:
-                # Consistent with unix shell behaviour:
-                # * Always delete first char, then remove any non-punctuation
-                # Note that the exact behaviour isn't standardized:
-                # * Python repl: until change in letter+digit & punctionation
-                # * Unix shells: only removes letter+digit
-                word_chars = string.ascii_letters + string.digits
-                line = self._lines[row][:col-1]
-                strip_line = line.rstrip(word_chars)
-                self.delete_back(len(line) - len(strip_line) + 1)
-            else:
-                self.delete_back(1)
+            self.delete_back(-self.get_word_pos(-1))
+            return True
 
         return False
 
