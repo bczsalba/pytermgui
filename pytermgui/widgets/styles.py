@@ -212,7 +212,7 @@ class StyleManager(UserDict):  # pylint: disable=too-many-ancestors
         if RE_MARKUP.match(shorthand) is not None:
             return MarkupFormatter(shorthand)
 
-        tokens = _sub_aliases(tokenize_markup(f"[{shorthand}]"), tim.context)
+        tokens = _sub_aliases(list(tokenize_markup(f"[{shorthand}]")), tim.context)
 
         colors = [tkn for tkn in tokens if Token.is_color(tkn)]
 

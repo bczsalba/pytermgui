@@ -58,7 +58,10 @@ def inline(
     if exit_on is None:
         exit_on = [keys.CTRL_C, keys.ENTER]
 
-    widget.pos = report_cursor()
+    cursor = report_cursor()
+
+    if cursor is not None:
+        widget.pos = cursor
 
     def _print_widget() -> None:
         save_cursor()

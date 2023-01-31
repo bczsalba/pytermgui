@@ -108,7 +108,7 @@ def alt_buffer(echo: bool = False, cursor: bool = True) -> Generator[None, None,
 @contextmanager
 def mouse_handler(
     events: list[str], method: str = "decimal_xterm"
-) -> Generator[MouseTranslator | None, None, None]:
+) -> Generator[MouseTranslator, None, None]:
     """Return a mouse handler function
 
     See `help(report_mouse)` for help about all of the methods.
