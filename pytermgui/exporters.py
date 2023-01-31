@@ -125,6 +125,8 @@ def _generate_stylesheet(document_styles: list[list[str]], prefix: str | None) -
     """Generates a '\\n' joined CSS stylesheet from the given styles."""
 
     stylesheet = ""
+    prefix = prefix or ""
+
     for i, styles in enumerate(document_styles):
         stylesheet += (
             "\n        ." + _get_cls(prefix, i) + " {" + "; ".join(styles) + "}"
@@ -327,7 +329,7 @@ def to_html(  # pylint: disable=too-many-arguments, too-many-locals
                 line += span.format(f" styles='{stylesheet}'")
 
             else:
-                line += span.format(" class='" + _get_cls(prefix, index) + "'")
+                line += span.format(" class='" + _get_cls(prefix or "", index) + "'")
 
         # Close any previously not closed divs
         line += "</div>" * (line.count("<div") - line.count("</div"))

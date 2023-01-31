@@ -64,7 +64,7 @@ class MarkupLanguage:
         default_aliases: bool = True,
         default_macros: bool = True,
     ) -> None:
-        self._cache: dict[tuple[str, bool, bool], tuple[list[Token], str, bool]] = {}
+        self._cache: dict[tuple[str, bool, bool], tuple[str, list[Token], bool]] = {}
 
         self.context = create_context_dict()
         self._aliases = self.context["aliases"]

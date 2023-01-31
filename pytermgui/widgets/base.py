@@ -321,6 +321,11 @@ class Widget:  # pylint: disable=too-many-public-methods
         def _align_right(line: str) -> str:
             return (width - real_length(line)) * " " + line
 
+        if self.parent_align is None:
+            raise TypeError("Horizontal alignment cannot be None.")
+
+        assert isinstance(self.parent_align, HorizontalAlignment)
+
         aligner = {
             HorizontalAlignment.LEFT: _align_left,
             HorizontalAlignment.CENTER: _align_center,
