@@ -5,7 +5,7 @@ from __future__ import annotations
 import string
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Any, Iterator
+from typing import Any, Iterator, Literal
 
 from ..ansi_interface import MouseAction, MouseEvent
 from ..enums import HorizontalAlignment
@@ -205,24 +205,36 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
         self._styled_cache = None
 
-    def get_word_pos(self, direction: -1 | 1):
+    def get_word_pos(self, direction: Literal[-1, 1]) -> int:
+        """Gets the column offset to the next word in the given direction.
+
+        Args:
+            direction: Which direction we need to look for.
+
+        Returns:
+            The column offset.
+        """
+
         row, col = self.cursor
-        if len(self._lines) > row:
-            # Consistent with unix shell behaviour:
-            # * Always delete first char, then remove any non-punctuation
-            # Note that the exact behaviour isn't standardized:
-            # * Python repl: until change in letter+digit & punctionation
-            # * Unix shells: only removes letter+digit
-            word_chars = string.ascii_letters + string.digits
-            if direction == -1:
-                line = self._lines[row][:col-1]
-                strip_line = line.rstrip(word_chars)
-            else:
-                line = self._lines[row][col:]
-                strip_line = line.lstrip(word_chars)
-            return -direction * (len(strip_line) - len(line)) + direction
-        else:
+        if len(self._lines) <= row:
             return direction
+
+        # Consistent with unix shell behaviour:
+        # * Always delete first char, then remove any non-punctuation
+        # Note that the exact behaviour isn't standardized:
+        # * Python repl: until change in letter+digit & punctionation
+        # * Unix shells: only removes letter+digit
+        word_chars = string.ascii_letters + string.digits
+
+        if direction == -1:
+            line = self._lines[row][: col - 1]
+            strip_line = line.rstrip(word_chars)
+
+        else:
+            line = self._lines[row][col:]
+            strip_line = line.lstrip(word_chars)
+
+        return -direction * (len(strip_line) - len(line)) + direction
 
     def handle_action(self, action: str) -> bool:
         """Handles some action.
@@ -239,14 +251,14 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         }
 
         if action.startswith("move_"):
-            if action.endswith(('word_left', 'word_right')):
-                col = self.get_word_pos(-1 if action == 'move_word_left' else 1)
+            if action.endswith(("word_left", "word_right")):
+                col = self.get_word_pos(-1 if action == "move_word_left" else 1)
                 self.move_cursor((0, col))
                 return True
 
-            if action.endswith(('end', 'home')):
+            if action.endswith(("end", "home")):
                 crow, ccol = self.cursor
-                if action == 'move_end':
+                if action == "move_end":
                     ccol = len(self._lines[crow])
                 else:
                     ccol = 0
@@ -275,7 +287,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
             return True
 
-        if action == 'word_remove':
+        if action == "word_remove":
             row, col = self.cursor
             self.delete_back(-self.get_word_pos(-1))
             return True
