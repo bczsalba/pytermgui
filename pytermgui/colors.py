@@ -847,6 +847,7 @@ def str_to_color(
     """Creates a `Color` from the given text.
 
     Accepted formats:
+
     - 0-255: `IndexedColor`.
     - 'rrr;ggg;bbb': `RGBColor`.
     - '(#)rrggbb': `HEXColor`. Leading hash is optional.
