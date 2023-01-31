@@ -188,6 +188,11 @@ class Layout:
 
         return get_terminal()
 
+    def __len__(self) -> int:
+        """Gets the slot count of this layout."""
+
+        return len(self.slots)
+
     def _to_rows(self) -> list[list[Slot]]:
         """Breaks `self.slots` into a list of list of slots.
 
