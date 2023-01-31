@@ -265,7 +265,7 @@ class ASCII_O(Frame):  # pylint: disable=invalid-name
 
     descriptor = [
         "o---o",
-        "| # |",
+        "| x |",
         "o---o",
     ]
 
