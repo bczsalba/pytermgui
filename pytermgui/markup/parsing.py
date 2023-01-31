@@ -28,8 +28,16 @@ from .tokens import (
 
 filterwarnings("always")
 
+STATE_COPY = "#stash"
+STATE_CUT = "#stash/"
+
+STATE_RESTORE = "#pop"
+STATE_REPLACE = "#/pop"
 
 LINK_TEMPLATE = "\x1b]8;;{uri}\x1b\\{label}\x1b]8;;\x1b\\"
+
+STATE_PSEUDOS = [STATE_CUT, STATE_COPY, STATE_REPLACE, STATE_RESTORE]
+PSEUDO_TOKENS = ["#auto", *STATE_PSEUDOS]
 
 __all__ = [
     "ContextDict",
@@ -116,8 +124,8 @@ def consume_tag(tag: str) -> Token:  # pylint: disable=too-many-return-statement
 
         return CursorToken(tag[1:-1], *map(int, values))
 
-    if tag == "#auto":
-        return PseudoToken("#auto")
+    if tag in PSEUDO_TOKENS:
+        return PseudoToken(tag)
 
     token: Token
     try:
@@ -395,6 +403,43 @@ def parse_cursor(token: CursorToken, _: ContextDict, __: Callable[[], str]) -> s
     ypos, xpos = map(lambda i: "" if i is None else i, token)
 
     return f"\x1b[{ypos};{xpos}H"
+
+
+def parse_state_pseudo(
+    token: PseudoToken,
+    tokens: list[Token],
+    index: int,
+    save_state: list[Token],
+    context: ContextDict,
+) -> str:
+    """Parses a state pseudo tokens"""
+
+    tag = token.value
+
+    parsed = ""
+
+    if tag.startswith(STATE_CUT):
+        save_state.clear()
+        save_state.extend(filter(lambda tkn: not tkn.is_plain(), tokens[:index]))
+
+        if not tag == STATE_COPY:
+            parsed += "\x1b[0m"
+
+    # Restore
+    else:
+        local_state = save_state.copy()
+
+        if tag == STATE_REPLACE:
+            local_state.insert(0, ClearToken("/"))
+
+        parsed = parse_tokens(
+            local_state,
+            context=context,
+            optimize=False,
+            append_reset=False,
+        )
+
+    return parsed
 
 
 def optimize_tokens(tokens: list[Token]) -> Iterator[Token]:
@@ -675,7 +720,9 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals, too-man
     macros: list[MacroToken] = []
     unknown_aliases: list[Token] = []
 
-    for token in token_list:
+    save_state: list[Token] = []
+
+    for i, token in enumerate(token_list):
         if token.is_plain():
             value = _apply_macros(
                 token.value, (parse_macro(macro, context, get_full) for macro in macros)
@@ -723,6 +770,10 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals, too-man
             background = token.color
 
         if Token.is_pseudo(token):
+            if token.value in STATE_PSEUDOS:
+                segment += parse_state_pseudo(token, tokens, i, save_state, context)
+                continue
+
             if token.value == "#auto":
                 token = ColorToken("#auto", background.contrast)
 
