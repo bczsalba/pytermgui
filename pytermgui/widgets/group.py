@@ -33,6 +33,7 @@ class Group(Widget):
         self,
         *children: Any,
         frame: str | Type[Frame] = "Frameless",
+        layout: Layout | None = None,
         **attrs: Any,
     ) -> None:
         super().__init__(**attrs)
@@ -41,9 +42,14 @@ class Group(Widget):
         self.scroll = ScrollData(0, 0)
 
         self.frame = frame
-        self._layout = Layout(self)
         self._layout_is_dirty = False
         self._mouse_target: Widget | None = None
+
+        if layout is None:
+            layout = Layout()
+
+        layout.parent = self
+        self._layout = layout
 
         for child in children:
             self.add(child)
@@ -75,7 +81,9 @@ class Group(Widget):
             HorizontalAlignment.LEFT: _align_left,
             HorizontalAlignment.CENTER: _align_center,
             HorizontalAlignment.RIGHT: _align_right,
-        }[self.parent_align]
+        }[
+            0
+        ]  # self.parent_align]
 
         aligned = []
 
@@ -110,6 +118,10 @@ class Group(Widget):
             self.height - (self.frame.top_size + self.frame.bottom_size),
         )
 
+    @property
+    def framed_position(self) -> tuple[int, int]:
+        return self.pos[0] + self.frame.left_size, self.pos[1] + self.frame.top_size
+
     def on_resize(self) -> None:
         self._layout_is_dirty = True
 
@@ -137,6 +149,9 @@ class Group(Widget):
         The base Group doesn't make use of its layout. Use other classes, such as
         [Tower] or [Splitter] instead.
         """
+
+        index = len([slot for slot in self._layout.slots if slot.content is not None])
+        self._layout.assign(widget, index=index)
 
     def handle_mouse(self, event: MouseEvent) -> bool:
         """Handles mouse events."""
@@ -168,6 +183,6 @@ class Group(Widget):
     def get_lines(self) -> list[str]:
         """Gets widgets' content aligned based on the layout."""
 
-        self._layout.apply()
+        self._layout.apply(origin=self.framed_position)
 
         return self._frame(self._align(self._layout.build_lines()))

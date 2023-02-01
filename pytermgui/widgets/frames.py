@@ -138,7 +138,7 @@ class Frame:
     def top_size(self) -> int:
         """Returns the height of the top border."""
 
-        return 1
+        return 0 if self.borders[1] == "" else 1
 
     @cached_property
     def right_size(self) -> int:
@@ -150,7 +150,7 @@ class Frame:
     def bottom_size(self) -> int:
         """Returns the height of the bottom border."""
 
-        return 1
+        return 0 if self.borders[3] == "" else 1
 
     def __call__(self, lines: list[str]) -> list[str]:
         """Frames the given lines, handles scrolling when necessary.
@@ -196,14 +196,14 @@ class Frame:
 
         framed = []
 
-        if top != "":
+        if real_length(top) > 0:
             framed.append(top)
 
         for line in lines:
             # TODO: Implement horizontal scrolling
             framed.append(borders[0] + line + borders[2])
 
-        if bottom != "":
+        if real_length(top) > 0:
             framed.append(bottom)
 
         return framed
@@ -371,7 +371,9 @@ class Padded(Frame):
     Preview:
 
     ```
+
     x
+
     ```
     """
 

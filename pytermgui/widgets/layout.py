@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Union
 
 from ..regex import real_length
 from ..term import Terminal, get_terminal
 from ..widgets import Widget
+
+DimensionSource = Union["Dimension", int, float, None]
 
 
 class Dimension:
@@ -197,6 +199,10 @@ class Layout:
     def parent(self) -> Widget | Terminal:
         return self._parent or get_terminal()
 
+    @parent.setter
+    def parent(self, new: Widget | Terminal | None) -> None:
+        self._parent = new
+
     @property
     def parent_width(self) -> int:
         return self.parent.frame_content_size[0]
@@ -260,14 +266,15 @@ class Layout:
 
             return divmod(available, len(undefined) or 1)
 
+        def _calculate_heights(rows: list[list[Slot]]) -> tuple[int, int]:
+            heights = [_get_height(row) for row in rows]
+
+            occupied = sum(heights)
+            return heights, divmod(self.parent_height - occupied, heights.count(0) or 1)
+
         rows = self._to_rows()
-        heights = [_get_height(row) for row in rows]
 
-        occupied = sum(heights)
-        auto_height, extra_height = divmod(
-            self.parent_height - occupied, heights.count(0) or 1
-        )
-
+        heights, (auto_height, extra_height) = _calculate_heights(rows)
         extra_height_per_row = extra_height // (len(rows) or 1)
 
         for row, height in zip(rows, heights):
@@ -295,8 +302,8 @@ class Layout:
         name: str = "Slot",
         *,
         slot: Slot | None = None,
-        width: Dimension | int | float | None = None,
-        height: Dimension | int | float | None = None,
+        width: DimensionSource = None,
+        height: DimensionSource = None,
         index: int = -1,
     ) -> Slot:
         """Adds a new slot to the layout.
@@ -361,7 +368,7 @@ class Layout:
 
         self.add_slot(slot=ROW_BREAK, index=index)
 
-    def assign(self, widget: Widget, *, index: int = -1, apply: bool = True) -> None:
+    def assign(self, widget: Widget, *, index: int = -1) -> None:
         """Assigns a widget to the slot at the specified index.
 
         Args:
@@ -378,10 +385,7 @@ class Layout:
 
         slot.content = widget
 
-        if apply:
-            self.apply()
-
-    def apply(self) -> None:
+    def apply(self, origin: tuple[int, int]) -> None:
         """Applies the layout to each slot."""
 
         # position = list(
@@ -390,10 +394,6 @@ class Layout:
 
         position = [0, 0]
         parent = self.parent
-        origin = (
-            parent.pos[0] + parent.frame.left_size,
-            parent.pos[1] + parent.frame.top_size,
-        )
 
         for row in self.build_rows():
             position[0] = 0
@@ -412,6 +412,9 @@ class Layout:
             row_lines = []
 
             for slot in row:
+                if slot.content is None:
+                    continue
+
                 widget_lines = slot.content.get_lines()
 
                 difference = len(widget_lines) - len(row_lines)
