@@ -210,6 +210,7 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
 
             yield HLinkToken(uri)
             yield PlainToken(label)
+            yield ClearToken("/~")
 
             continue
 
@@ -230,11 +231,6 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
                 )
 
             yield CursorToken(content, int(ypos) or None, int(xpos) or None)
-            continue
-
-        # Special case for hyperlink clearer
-        if content in REVERSE_CLEARERS:
-            yield ClearToken(REVERSE_CLEARERS[content])
             continue
 
         parts = content.split(";")
@@ -384,6 +380,9 @@ def parse_alias(
 
 def parse_clear(token: ClearToken, _: ContextDict, get_full: Callable[[], str]) -> str:
     """Parses a clearer token."""
+
+    if token.value == "/~":
+        return "\x1b]8;;\x1b\\"
 
     index = CLEARERS.get(token.value)
     if index is None:
@@ -709,6 +708,9 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals, too-man
         if Token.is_clear(token):
             if token.value in ("/", "/~"):
                 link = None
+
+                if token.value == "/~":
+                    continue
 
             found = False
             for macro in macros.copy():

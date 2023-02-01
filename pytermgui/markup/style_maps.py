@@ -17,7 +17,6 @@ REVERSE_STYLES = {value: key for key, value in STYLES.items()}
 
 CLEARERS = {
     "/": "0",
-    "/~": "8;;\x1b\\",
     "/bold": "22",
     "/dim": "22",
     "/italic": "23",
