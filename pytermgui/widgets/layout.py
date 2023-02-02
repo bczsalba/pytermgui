@@ -197,18 +197,29 @@ class Layout:
 
     @property
     def parent(self) -> Widget | Terminal:
+        """Gets and sets the parent of the layout.
+
+        The parent is used to gather information on widths & heights.
+        """
+
         return self._parent or get_terminal()
 
     @parent.setter
     def parent(self, new: Widget | Terminal | None) -> None:
+        """Sets the parent of the layout."""
+
         self._parent = new
 
     @property
     def parent_width(self) -> int:
+        """Gets the parent's usable width."""
+
         return self.parent.frame_content_size[0]
 
     @property
     def parent_height(self) -> int:
+        """Gets the parent's usable height."""
+
         return self.parent.frame_content_size[1]
 
     def _to_rows(self) -> list[list[Slot]]:
@@ -278,13 +289,16 @@ class Layout:
         extra_height_per_row = extra_height // (len(rows) or 1)
 
         for row, height in zip(rows, heights):
+            if len(row) == 0:
+                continue
+
             height = height or auto_height
 
             auto_width, extra_width = _calculate_widths(row)
 
             extra_width_per_slot = extra_width // len(row)
 
-            for i, slot in enumerate(row):
+            for slot in row:
                 width = auto_width if isinstance(slot.width, Auto) else slot.width.value
 
                 if isinstance(slot.height, Auto):
@@ -388,14 +402,12 @@ class Layout:
     def apply(self, origin: tuple[int, int]) -> None:
         """Applies the layout to each slot."""
 
-        # position = list(
-        #     self.parent.pos  # if hasattr(self.parent, "pos") else self.parent.origin
-        # )
-
         position = [0, 0]
-        parent = self.parent
 
         for row in self.build_rows():
+            if len(row) == 0:
+                continue
+
             position[0] = 0
 
             for slot in row:
@@ -406,6 +418,8 @@ class Layout:
             position[1] += max(slot.height.value for slot in row)
 
     def build_lines(self) -> list[str]:
+        """Builds widget-displayable lines of this layout & its widgets."""
+
         lines = []
 
         for row in self.build_rows():
@@ -421,7 +435,7 @@ class Layout:
                 if difference > 0:
                     row_lines.extend([""] * difference)
 
-                x_pos, y_pos = slot.inner_pos
+                x_pos = slot.inner_pos[0]
 
                 for i, (base, new) in enumerate(zip(row_lines, widget_lines)):
                     line_len_diff = x_pos - real_length(base)

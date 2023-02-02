@@ -1,4 +1,4 @@
-"""Classes to wrap anything that needs a border."""
+"""Classes to wrap widget containing groups."""
 
 from __future__ import annotations
 
