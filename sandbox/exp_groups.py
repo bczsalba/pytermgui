@@ -39,10 +39,13 @@ class Placeholder(ptg.Widget):
         return type(self).__truediv__(other, self)
 
     def handle_mouse(self, event: ptg.MouseEvent) -> bool:
+        """Changes the widget's color to display mouse events."""
+
         if super().handle_mouse(event):
             return True
 
         action = event.action.value
+
         if action in self.colors:
             self.color = self.colors[action]
             return True
@@ -55,19 +58,19 @@ class Placeholder(ptg.Widget):
         if self.height == 0:
             return []
 
-        lines = [f"[@{self.color} #auto]" + " " * width for _ in range(self.height)]
+        color_markup = f"[@{self.color} #auto]"
 
-        lines[0] = f"[@{self.color} #auto]" + f"{(self.width, self.height)}".center(
-            width
-        )
+        lines = [color_markup + f"{(self.width, self.height)}".center(width)]
+        padder = color_markup + " " * width
 
-        label = ptg.Label(
+        for _ in range(self.height - 1):
+            lines.append(padder)
+
+        return ptg.Label(
             "\n".join(lines),
             width=self.width,
             height=self.height,
-        )
-
-        return label.get_lines()
+        ).get_lines()
 
 
 if __name__ == "__main__":
