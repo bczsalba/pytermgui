@@ -6,10 +6,18 @@ from itertools import zip_longest
 
 import pytest
 
-from pytermgui import StyledText, pretty, tim, tokenize_ansi, tokens_to_markup
+from pytermgui import (
+    StyledText,
+    pretty,
+    tim,
+    tokenize_ansi,
+    tokens_to_markup,
+    tokenize_markup,
+)
 from pytermgui.colors import Color, str_to_color
 from pytermgui.markup import StyledText, Token
 from pytermgui.markup import tokens as tkns
+from pytermgui.markup.parsing import parse_tokens
 from pytermgui.markup.style_maps import CLEARERS, STYLES
 
 
@@ -97,6 +105,20 @@ class TestParser:
         ansi = tim.parse("[141 @61 bold]Hello")
         markup = tim.get_markup(ansi)
         assert base == markup
+
+    def test_mutiline_markup(self):
+        base = "[141 @61 bold]Hello[/]\nWhat a beautifull day to look a this [~https://example.com]website[/~] !\nOh and this [~https://example.com]website also[/~]\nHave a nice day !"
+        opti_base = "[141 @61 bold]Hello[/]\nWhat a beautifull day to look a this [~https://example.com]website[/~] !\nOh and this [~https://example.com]website also[/~]\nHave a nice day ![/]"
+
+        tokens = tokenize_markup(base)
+        ansi = parse_tokens(list(tokens))
+        tokens2 = tokenize_ansi(ansi)
+        markup = tokens_to_markup(list(tokens2))
+        assert opti_base == markup
+
+        ansi = tim.parse(base)
+        markup = tim.get_markup(ansi)
+        assert opti_base == markup
 
     def test_parse(self):
         assert (

@@ -209,19 +209,20 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
         csi = matchobj.groups()[0:2]
         link_osc = matchobj.groups()[2:4]
 
+        if cursor < start:
+            yield PlainToken(text[cursor:start])
+
         if link_osc != (None, None):
             cursor = end
             uri, label = link_osc
 
             yield HLinkToken(uri)
             yield PlainToken(label)
+            yield ClearToken("/~")
 
             continue
 
         full, content = csi
-
-        if cursor < start:
-            yield PlainToken(text[cursor:start])
 
         cursor = end
 
@@ -387,6 +388,9 @@ def parse_alias(
 
 def parse_clear(token: ClearToken, _: ContextDict, get_full: Callable[[], str]) -> str:
     """Parses a clearer token."""
+
+    if token.value == "/~":
+        return "\x1b]8;;\x1b\\"
 
     index = CLEARERS.get(token.value)
     if index is None:
@@ -558,6 +562,7 @@ def tokens_to_markup(tokens: list[Token]) -> str:
                 markup += f"[{' '.join(tag.markup for tag in tags)}]"
 
             markup += token.value
+
             tags = []
 
         else:
@@ -750,6 +755,9 @@ def parse_tokens(  # pylint: disable=too-many-branches, too-many-locals, too-man
         if Token.is_clear(token):
             if token.value in ("/", "/~"):
                 link = None
+
+                if token.value == "/~":
+                    continue
 
             found = False
             for macro in macros.copy():
