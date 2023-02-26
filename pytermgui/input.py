@@ -154,7 +154,7 @@ class _GetchWindows:
         """
 
         if isinstance(string, bytes):
-            return string.decode("utf-8")
+            return string.decode("utf-8", "ignore")
 
         return string
 
