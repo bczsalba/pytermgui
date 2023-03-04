@@ -219,7 +219,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
         if assign:
             if isinstance(assign, str):
-                getattr(self.layout, assign).content = window
+                [s for s in self.layout.slots if s.name==assign][0].content = window
 
             elif len(self._windows) <= len(self.layout.slots):
                 self.layout.assign(window, index=len(self._windows) - 1)
