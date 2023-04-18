@@ -580,6 +580,17 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         raise NotImplementedError(f"get_lines() is not defined for type {type(self)}.")
 
+    def move(self, diff_x: int, diff_y: int) -> None:
+        """Moves the widget by the given x and y changes."""
+
+        self.pos = (self.pos[0] + diff_x, self.pos[1] + diff_y)
+
+        adjusted = []
+        for pos, line in self.positioned_line_buffer:
+            adjusted.append(((pos[0] + diff_x, pos[1] + diff_y), line))
+
+        self.positioned_line_buffer = adjusted
+
     def bind(
         self, key: str, action: BoundCallback, description: Optional[str] = None
     ) -> None:
