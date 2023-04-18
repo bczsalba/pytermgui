@@ -78,6 +78,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         self.mouse_translator: MouseTranslator | None = None
 
         self._mouse_target: Window | None = None
+        self._focus_index = 0
         self._drag_offsets: tuple[int, int] = (0, 0)
         self._drag_target: tuple[Window, Edge] | None = None
 
@@ -293,38 +294,31 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         self.focused = window
 
         if window is not None:
-            self._windows.remove(window)
-            self._windows.insert(0, window)
+            self._focus_index = self._windows.index(window)
 
             window.focus()
 
-    def focus_next(self) -> Window | None:
-        """Focuses the next window in focus order, looping to first at the end."""
+    def focus_next(self, step: int = 1) -> Window | None:
+        """Focuses the next window in focus order, looping to first at the end.
 
-        if self.focused is None:
-            self.focus(self._windows[0])
-            return self.focused
+        Args:
+            step: The direction to step through windows. +1 for next, -1 for previous.
+        """
 
-        index = self._windows.index(self.focused)
-        if index == len(self._windows) - 1:
-            index = 0
+        self._focus_index += step
 
-        window = self._windows[index]
-        traversed = 0
-        while window.is_persistent or window is self.focused:
-            if index >= len(self._windows):
-                index = 0
+        if self._focus_index >= len(self._windows):
+            self._focus_index = 0
 
-            window = self._windows[index]
+        if self.focused is not None:
+            self.focused.blur()
 
-            index += 1
-            traversed += 1
-            if traversed >= len(self._windows):
-                return self.focused
+        window = self._windows[-self._focus_index]
 
-        self.focus(self._windows[index])
+        window.focus()
+        self.focused = window
 
-        return self.focused
+        return window
 
     def handle_key(self, key: str) -> bool:
         """Processes a keypress.
