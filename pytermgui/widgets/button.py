@@ -21,7 +21,7 @@ class Button(Widget):
         _current=None,
     )
 
-    chars: dict[str, w_styles.CharType] = {"delimiter": ["[ ", " ]"]}
+    chars: dict[str, w_styles.CharType] = {"delimiter": ["  ", "  "]}
 
     def __init__(
         self,
