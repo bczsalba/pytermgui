@@ -13,7 +13,7 @@ class Checkbox(Button):
 
     chars = {
         **Button.chars,
-        **{"delimiter": ["[", "]"], "checked": "X", "unchecked": " "},
+        **{"delimiter": [" ", " "], "checked": "▣", "unchecked": "□"},
     }
 
     def __init__(
