@@ -257,13 +257,18 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
                 defaults to True.
         """
 
+        corners = self._get_char("corner")
+        assert isinstance(corners, list)
+
+        # Delete (both cases) of current title from the corner
+        corners[position] = (
+            corners[position].replace(f" {self.title} ", "").replace(self.title, "")
+        )
+
         self.title = title
 
         if pad:
             title = " " + title + " "
-
-        corners = self._get_char("corner")
-        assert isinstance(corners, list)
 
         if position % 2 == 0:
             corners[position] += title
