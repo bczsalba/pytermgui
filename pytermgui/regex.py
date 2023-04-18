@@ -2,6 +2,7 @@
 
 import re
 from functools import lru_cache
+from typing import Match
 
 RE_LINK = re.compile(r"(?:\x1b\]8;;([^\\]*)\x1b\\([^\\]*?)\x1b\]8;;\x1b\\)")
 RE_ANSI_NEW = re.compile(rf"(\x1b\[(.*?)[mH])|{RE_LINK.pattern}|(\x1b_G(.*?)\x1b\\)")
@@ -18,6 +19,7 @@ RE_RGB = re.compile(r"(\d{1,3};\d{1,3};\d{1,3})")
 __all__ = [
     "strip_ansi",
     "strip_markup",
+    "escape_markup",
     "real_length",
 ]
 
@@ -68,6 +70,20 @@ def real_length(text: str) -> int:
     """
 
     return len(strip_ansi(text))
+
+
+def escape_markup(text: str) -> str:
+    """Escapes any potential markup to avoid double-parsing.
+
+    Use this when treating already parsed markup.
+    """
+
+    def _escape(mtch: Match) -> str:
+        full, *_ = mtch.groups()
+
+        return full.replace("[", r"\[")
+
+    return RE_MARKUP.sub(_escape, text)
 
 
 @lru_cache(maxsize=1024)
