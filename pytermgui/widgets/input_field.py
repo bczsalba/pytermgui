@@ -359,6 +359,12 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
             return True
 
+        if len(key) > 1 and not key.startswith("\x1b["):
+            for char in key:
+                self.handle_key(char)
+
+            return True
+
         return False
 
     def handle_mouse(self, event: MouseEvent) -> bool:
