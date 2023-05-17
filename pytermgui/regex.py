@@ -2,6 +2,7 @@
 
 import re
 from functools import lru_cache
+from wcwidth import wcswidth
 
 RE_LINK = re.compile(r"(?:\x1b\]8;;([^\\]*)\x1b\\([^\\]*?)\x1b\]8;;\x1b\\)")
 RE_ANSI_NEW = re.compile(rf"(\x1b\[(.*?)[mH])|{RE_LINK.pattern}|(\x1b_G(.*?)\x1b\\)")
@@ -14,6 +15,8 @@ RE_PIXEL_SIZE = re.compile(r"\x1b\[4;([\d]+);([\d]+)t")
 RE_256 = re.compile(r"^([\d]{1,3})$")
 RE_HEX = re.compile(r"#?([0-9a-fA-F]{6})")
 RE_RGB = re.compile(r"(\d{1,3};\d{1,3};\d{1,3})")
+
+RE_CHINESE = re.compile(r"[\u4e00-\u9fff]")
 
 __all__ = [
     "strip_ansi",
@@ -67,6 +70,8 @@ def real_length(text: str) -> int:
         The display-length of text.
     """
 
+    if bool(RE_CHINESE.search(text)):
+        return sum(wcswidth(c) for c in strip_ansi(text))    
     return len(strip_ansi(text))
 
 
