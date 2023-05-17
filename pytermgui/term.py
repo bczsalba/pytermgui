@@ -537,12 +537,14 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         if pos is not None:
             xpos, ypos = pos
+            xpos += self.origin[0]
+            ypos += self.origin[1]
 
             if slice_too_long:
                 if not self.height + self.origin[1] + 1 > ypos >= 0:
                     return
 
-                maximum = self.width - xpos + self.origin[0]
+                maximum = self.width - xpos
 
                 if xpos < self.origin[0]:
                     xpos = self.origin[0]

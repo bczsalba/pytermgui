@@ -181,7 +181,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         self._styled_cache = None
 
         if self._lines[row] == "":
-            self.move_cursor((-1, len(self._lines[row - 1])))
+            self.move_cursor((0, -2))
 
             return self._lines.pop(row)
 
@@ -327,6 +327,9 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
                 if not self.multiline:
                     return False
 
+                if len(self._lines) <= self.cursor.row:
+                    self._lines.append("")
+
                 line = self._lines[self.cursor.row]
                 left, right = line[: self.cursor.col], line[self.cursor.col :]
 
@@ -351,12 +354,14 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
             else:
                 self.delete_back(-self._selection_length)
 
-            # self.handle_action("move_left")
-
-            # if self._selection_length == 1:
-
             self._selection_length = 1
             self._styled_cache = None
+
+            return True
+
+        if len(key) > 1 and not key.startswith("\x1b["):
+            for char in key:
+                self.handle_key(char)
 
             return True
 

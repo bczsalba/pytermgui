@@ -505,6 +505,14 @@ class Container(ScrollableWidget):
 
         self._add_widget(other, run_get_lines=False)
 
+    def move(self, diff_x: int, diff_y: int) -> None:
+        """Moves the widget and its children by the given x and y changes."""
+
+        super().move(diff_x, diff_y)
+
+        for child in self._widgets:
+            child.move(diff_x, diff_y)
+
     def get_lines(self) -> list[str]:
         """Gets all lines by spacing out inner widgets.
 
@@ -583,15 +591,9 @@ class Container(ScrollableWidget):
         )
 
         for widget in self._widgets:
-            widget.pos = (widget.pos[0], widget.pos[1] + vertical_offset)
-
-            if widget.is_selectable:
-                # This buffer will be out of position, so we must clear it.
-                widget.positioned_line_buffer = []
-                widget.get_lines()
+            widget.move(0, vertical_offset)
 
             self.positioned_line_buffer.extend(widget.positioned_line_buffer)
-
             widget.positioned_line_buffer = []
 
         if has_top_bottom[0]:
@@ -1015,7 +1017,7 @@ class Splitter(Container):
 
         return self.height, self.width
 
-    def get_lines(self) -> list[str]:
+    def get_lines(self) -> list[str]:  # pylint: disable=too-many-locals
         """Join all widgets horizontally."""
 
         # An error will be raised if `separator` is not the correct type (str).
@@ -1026,6 +1028,7 @@ class Splitter(Container):
             self.width - (len(self._widgets) - 1) * separator_length, len(self._widgets)
         )
 
+        self.positioned_line_buffer = []
         vertical_lines = []
         total_offset = 0
 
@@ -1048,10 +1051,22 @@ class Splitter(Container):
                 )
                 inner.append(aligned)
 
-            widget.pos = (
+            new_pos = (
                 self.pos[0] + padding + total_offset,
                 self.pos[1] + (1 if type(widget).__name__ == "Container" else 0),
             )
+
+            diff_x = new_pos[0] - widget.pos[0]
+            diff_y = new_pos[1] - widget.pos[1]
+
+            widget.pos = new_pos
+
+            for pos, line in widget.positioned_line_buffer:
+                self.positioned_line_buffer.append(
+                    ((pos[0] + diff_x, pos[1] + diff_y), line)
+                )
+
+            widget.positioned_line_buffer = []
 
             if aligned is not None:
                 total_offset += real_length(inner[-1]) + separator_length
