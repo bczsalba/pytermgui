@@ -40,9 +40,9 @@ container = Container(
     Splitter(
         Label("My second label"),
         Checkbox(),
-    )
+    ),
     Label(""),
-    Splitter(Label("Left side"), Label("Middle"), Label("Right side"))
+    Splitter(Label("Left side"), Label("Middle"), Label("Right side")),
     Label(""),
     Button("Submit button"),
 )
