@@ -1,7 +1,7 @@
 [build-system]
 # requires = ["setuptools", "setuptools-scm"]
 # build-backend = "setuptools.build_meta"
-requires = ["hatchling", "hatch-fancy-pypi-readme"]
+requires = ["hatchling", "hatch-fancy-pypi-readme", "wcwidth"]
 build-backend = "hatchling.build"
 
 [project]
