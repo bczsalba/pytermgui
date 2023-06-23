@@ -6,7 +6,7 @@ console input events and inputs them as ascii codes; this includes mouse input.
 Credits:
     - Implementation: [Tired-Fox (Zachary)](https://github.com/Tired-Fox/)
 """
-from platform import platform
+
 from typing import Any, cast
 from enum import Enum
 from contextlib import contextmanager
@@ -141,6 +141,7 @@ if sys.platform == "win32":
 
         if not set_console_mode(stdout, _old_output_.value):
             raise WinError(descr="Failed to set windows console output mode")
+
 
 else:
 
