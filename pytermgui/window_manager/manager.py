@@ -17,6 +17,7 @@ from ..regex import real_length
 from ..term import terminal
 from ..widgets import Container, Widget
 from ..widgets.base import BoundCallback
+from ..win32console import enable_virtual_processing
 from .compositor import Compositor
 from .layouts import Layout
 from .window import Window
@@ -129,17 +130,18 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
     def _run_input_loop(self) -> None:
         """The main input loop of the WindowManager."""
 
-        while self._is_running:
-            key = getch(interrupts=False)
+        with enable_virtual_processing():
+            while self._is_running:
+                key = getch(interrupts=False)
 
-            if key == chr(3):
-                self.stop()
-                break
+                if key == chr(3):
+                    self.stop()
+                    break
 
-            if self.handle_key(key):
-                continue
+                if self.handle_key(key):
+                    continue
 
-            self.process_mouse(key)
+                self.process_mouse(key)
 
     def get_lines(self) -> list[str]:
         """Gets the empty list."""
