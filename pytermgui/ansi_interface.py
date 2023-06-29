@@ -493,8 +493,7 @@ def report_mouse(
         - **highlight**: Report highlighting.
         - **press_hold**: Report with a left or right click, as well as both
             left & right drag and release.
-        - **hover**: Report even when no active action is done, only the mouse
-          is moved.
+        - **all**: Report every event, even hover.
 
     Methods:
         - **None**: Non-decimal xterm method. Limited in coordinates.
@@ -505,31 +504,33 @@ def report_mouse(
     More information <a href='https://stackoverflow.com/a/5970472'>here</a>.
     """
 
+    terminal = get_terminal()
+
     if event == "press":
-        get_terminal().write("\x1b[?1000")
+        terminal.write("\x1b[?1000")
 
     elif event == "highlight":
-        get_terminal().write("\x1b[?1001")
+        terminal.write("\x1b[?1001")
 
     elif event == "press_hold":
-        get_terminal().write("\x1b[?1002")
+        terminal.write("\x1b[?1002")
 
-    elif event == "hover":
-        get_terminal().write("\x1b[?1003")
+    elif event == "all":
+        terminal.write("\x1b[?1003")
 
     else:
-        raise NotImplementedError(f"Mouse report event {event} is not supported!")
+        raise NotImplementedError(f"Mouse report event {event!r} is not supported!")
 
-    get_terminal().write("l" if stop else "h")
+    terminal.write("l" if stop else "h")
 
     if method == "decimal_utf8":
-        get_terminal().write("\x1b[?1005")
+        terminal.write("\x1b[?1005")
 
     elif method == "decimal_xterm":
-        get_terminal().write("\x1b[?1006")
+        terminal.write("\x1b[?1006")
 
     elif method == "decimal_urxvt":
-        get_terminal().write("\x1b[?1015")
+        terminal.write("\x1b[?1015")
 
     elif method is None:
         return
@@ -537,7 +538,7 @@ def report_mouse(
     else:
         raise NotImplementedError(f"Mouse report method {method} is not supported!")
 
-    get_terminal().write("l" if stop else "h", flush=True)
+    terminal.write("l" if stop else "h", flush=True)
 
 
 def translate_mouse(code: str, method: str) -> list[MouseEvent | None] | None:

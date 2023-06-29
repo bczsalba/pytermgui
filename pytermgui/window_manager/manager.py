@@ -188,7 +188,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         self._is_running = True
 
         if mouse_events is None:
-            mouse_events = ["press_hold", "hover"]
+            mouse_events = ["all"]
 
         with alt_buffer(cursor=False, echo=False):
             with mouse_handler(mouse_events, "decimal_xterm") as translate:
