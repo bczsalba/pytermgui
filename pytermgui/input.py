@@ -181,10 +181,8 @@ class _GetchWindows:
 
         # We need to type: ignore these on non-windows machines,
         # as the library does not exist.
-
-        # Return empty string if there is no input to get
         if not msvcrt.kbhit():  # type: ignore
-            return ""
+            raise TimeoutException("No input available.")
 
         char = msvcrt.getch()  # type: ignore
         if char == b"\xe0":
@@ -413,13 +411,19 @@ except ImportError as import_error:
     keys = Keys(_platform_keys, "posix")
 
 
-def getch(printable: bool = False, interrupts: bool = True) -> str:
+def getch(
+    printable: bool = False,
+    interrupts: bool = True,
+    windows_raise_timeout: bool = False,
+) -> str:
     """Wrapper to call the platform-appropriate character getter.
 
     Args:
         printable: When set, printable versions of the input are returned.
-        interrupts: If not set, `KeyboardInterrupt` is silenced and `chr(3)`
-            (`CTRL_C`) is returned.
+        interrupts: If not set, `KeyboardInterrupt` is silenced and `chr(3)` (`CTRL_C`)
+            is returned.
+        windows_raise_timeout: If set, `TimeoutException` (raised by Windows' getch when
+            no input is available) is isn't silenced.
     """
 
     fed_text = feeder_stream.getvalue()
@@ -444,6 +448,9 @@ def getch(printable: bool = False, interrupts: bool = True) -> str:
 
         key = chr(3)
 
+    except TimeoutException:
+        key = ""
+
     if printable:
         key = key.encode("unicode_escape").decode("utf-8")
 
@@ -465,7 +472,11 @@ def getch_timeout(
     """
 
     if isinstance(_getch, _GetchWindows):
-        return getch()
+        try:
+            return getch(windows_raise_timeout=True)
+
+        except TimeoutException:
+            return default
 
     with timeout(duration):
         return getch(printable=printable, interrupts=interrupts)
