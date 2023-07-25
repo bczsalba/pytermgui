@@ -7,7 +7,6 @@ from typing import Any, Callable, Optional
 
 from ..ansi_interface import MouseAction, MouseEvent
 from ..input import keys
-from ..regex import real_length
 from . import styles as w_styles
 from .base import Widget
 
