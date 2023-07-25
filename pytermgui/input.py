@@ -423,7 +423,7 @@ def getch(
         interrupts: If not set, `KeyboardInterrupt` is silenced and `chr(3)` (`CTRL_C`)
             is returned.
         windows_raise_timeout: If set, `TimeoutException` (raised by Windows' getch when
-            no input is available) is isn't silenced.
+            no input is available) isn't silenced.
     """
 
     fed_text = feeder_stream.getvalue()
@@ -449,6 +449,9 @@ def getch(
         key = chr(3)
 
     except TimeoutException:
+        if windows_raise_timeout:
+            raise
+
         key = ""
 
     if printable:
