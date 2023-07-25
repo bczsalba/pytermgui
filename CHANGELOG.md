@@ -1,3 +1,33 @@
+## [7.5.0] - 2023-07-24
+
+### Additions
+
+- Add support for Windows' mouse events
+- Add support for feeding input into `getch`
+
+### Refactor
+
+- Allow immediately halting `WindowManager` programatically by not blocking on `getch` calls
+
+### Bugfixes
+
+- Fix mouse event handlers not getting cleaned up properly
+
+<!-- HATCH README END -->
+
+## [7.4.0] - 2023-05-24
+
+### Additions
+
+- Add meta tokens for saving & restoring styles
+- Add support for alt/ctrl+backspace to remove whole words
+- Add support for word move actions (Ctrl/Alt+<L>/<R>) & Home/End move
+
+### Bugfixes
+
+- Fix multiline Label widget to incorrectly display message with hyperlink
+- Fix input errors when alert is open (@qoft, #115)
+
 ## [7.3.0] - 2022-11-17
 
 ### Additions
@@ -22,8 +52,6 @@
 ### Removals
 
 - Remove `is_bindable` widget attribute
-
-<!-- HATCH README END -->
 
 ## [7.2.0] - 2022-08-05
 
@@ -345,6 +373,8 @@
 
 <!-- HATCH URI DEFINITIONS START -->
 
+[7.5.0]: https://github.com/bczsalba/pytermgui/compare/v7.4.0...v7.5.0
+[7.4.0]: https://github.com/bczsalba/pytermgui/compare/v7.3.0...v7.4.0
 [7.3.0]: https://github.com/bczsalba/pytermgui/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/bczsalba/pytermgui/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/bczsalba/pytermgui/compare/v7.0.0...v7.1.0
