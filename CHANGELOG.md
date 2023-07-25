@@ -1,3 +1,15 @@
+## [7.6.0] - 2023-07-25
+
+### Bugfixes
+
+- (temporarily) Fix hyperlinks breaking SVG exports
+
+### Removals
+
+- Remove (undocumented) shortening behaviour from `Button`
+
+<!-- HATCH README END -->
+
 ## [7.5.0] - 2023-07-24
 
 ### Additions
@@ -12,8 +24,6 @@
 ### Bugfixes
 
 - Fix mouse event handlers not getting cleaned up properly
-
-<!-- HATCH README END -->
 
 ## [7.4.0] - 2023-05-24
 
@@ -373,6 +383,7 @@
 
 <!-- HATCH URI DEFINITIONS START -->
 
+[7.6.0]: https://github.com/bczsalba/pytermgui/compare/v7.5.0...v7.6.0
 [7.5.0]: https://github.com/bczsalba/pytermgui/compare/v7.4.0...v7.5.0
 [7.4.0]: https://github.com/bczsalba/pytermgui/compare/v7.3.0...v7.4.0
 [7.3.0]: https://github.com/bczsalba/pytermgui/compare/v7.2.0...v7.3.0
