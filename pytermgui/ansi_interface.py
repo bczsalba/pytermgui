@@ -153,7 +153,7 @@ def restore_cursor() -> None:
     get_terminal().write("\x1b[u")
 
 
-def report_cursor() -> Optional[tuple[int, int]]:
+def report_cursor() -> "Optional[tuple[int, int]]":
     """Gets position of cursor.
 
     Returns:
