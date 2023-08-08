@@ -19,6 +19,7 @@ from __future__ import annotations
 import os
 import signal
 import sys
+from io import StringIO
 from codecs import getincrementaldecoder
 from contextlib import contextmanager
 from select import select
@@ -36,7 +37,9 @@ from typing import (
 
 from .exceptions import TimeoutException
 
-__all__ = ["Keys", "getch", "getch_timeout", "keys"]
+__all__ = ["Keys", "getch", "getch_timeout", "keys", "feed"]
+
+feeder_stream = StringIO()
 
 
 @contextmanager
@@ -77,6 +80,17 @@ def _is_ready(file: IO[AnyStr]) -> bool:
 
     result = select([file], [], [], 0.0)
     return len(result[0]) > 0
+
+
+def feed(text: str) -> None:
+    """Manually feeds some text to be read by `getch`.
+
+    This can be used to emulate input, as well as to "interrupt" a blocking `getch`
+    call (though `getch_timeout` works better for that scenario).
+    """
+
+    feeder_stream.write(text)
+    feeder_stream.seek(0)
 
 
 class _GetchUnix:
@@ -167,10 +181,8 @@ class _GetchWindows:
 
         # We need to type: ignore these on non-windows machines,
         # as the library does not exist.
-
-        # Return empty string if there is no input to get
         if not msvcrt.kbhit():  # type: ignore
-            return ""
+            raise TimeoutException("No input available.")
 
         char = msvcrt.getch()  # type: ignore
         if char == b"\xe0":
@@ -399,14 +411,27 @@ except ImportError as import_error:
     keys = Keys(_platform_keys, "posix")
 
 
-def getch(printable: bool = False, interrupts: bool = True) -> Any:
+def getch(
+    printable: bool = False,
+    interrupts: bool = True,
+    windows_raise_timeout: bool = False,
+) -> str:
     """Wrapper to call the platform-appropriate character getter.
 
     Args:
         printable: When set, printable versions of the input are returned.
-        interrupts: If not set, `KeyboardInterrupt` is silenced and `chr(3)`
-            (`CTRL_C`) is returned.
+        interrupts: If not set, `KeyboardInterrupt` is silenced and `chr(3)` (`CTRL_C`)
+            is returned.
+        windows_raise_timeout: If set, `TimeoutException` (raised by Windows' getch when
+            no input is available) isn't silenced.
     """
+
+    fed_text = feeder_stream.getvalue()
+
+    if fed_text != "":
+        feeder_stream.seek(0)
+        feeder_stream.truncate(0)
+        return fed_text
 
     try:
         key = _getch()
@@ -423,6 +448,12 @@ def getch(printable: bool = False, interrupts: bool = True) -> Any:
 
         key = chr(3)
 
+    except TimeoutException:
+        if windows_raise_timeout:
+            raise
+
+        key = ""
+
     if printable:
         key = key.encode("unicode_escape").decode("utf-8")
 
@@ -434,7 +465,9 @@ def getch_timeout(
 ) -> Any:
     """Calls `getch`, returns `default` if timeout passes before getting input.
 
-    No timeout is applied on Windows systems, as there is no support for `SIGALRM`.
+    No timeout is applied on Windows systems, as there is no support for
+    `SIGALRM`. Instead, it will return immediately if no input is provided, since the
+    Windows APIs expose a way to detect that case.
 
     Args:
         duration: How long the call should wait for input.
@@ -442,7 +475,11 @@ def getch_timeout(
     """
 
     if isinstance(_getch, _GetchWindows):
-        return getch()
+        try:
+            return getch(windows_raise_timeout=True)
+
+        except TimeoutException:
+            return default
 
     with timeout(duration):
         return getch(printable=printable, interrupts=interrupts)

@@ -137,7 +137,6 @@ def mouse_handler(
 
     """
 
-    event = None
     try:
         for event in events:
             report_mouse(event, method=method)
@@ -145,5 +144,5 @@ def mouse_handler(
         yield lambda code: translate_mouse(code, method=method)
 
     finally:
-        if event is not None:
+        for event in events:
             report_mouse(event, method=method, stop=True)

@@ -23,7 +23,7 @@ from .fancy_repr import *
 from .file_loaders import *
 from .helpers import *
 from .highlighters import *
-from .input import getch, keys
+from .input import *
 from .inspector import *
 from .markup import *
 from .palettes import *
@@ -40,7 +40,7 @@ if "-m" in sys.argv:  # pragma: no cover
 
     warnings.filterwarnings("ignore")
 
-__version__ = "7.4.0"
+__version__ = "7.6.0"
 
 
 def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:

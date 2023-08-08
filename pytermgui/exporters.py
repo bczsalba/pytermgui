@@ -503,6 +503,9 @@ def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-sta
         obj = str(obj)
 
     for plain in tim.group_styles(obj):
+        if "\x1b" in plain.plain:
+            continue
+
         should_newline = False
 
         pos, back, styles = _handle_tokens_svg(plain, default_fore, default_back)

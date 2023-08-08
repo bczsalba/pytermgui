@@ -7,7 +7,6 @@ from typing import Any, Callable, Optional
 
 from ..ansi_interface import MouseAction, MouseEvent
 from ..input import keys
-from ..regex import real_length
 from . import styles as w_styles
 from .base import Widget
 
@@ -94,21 +93,12 @@ class Button(Widget):
 
         left, right = delimiters
         left = left.replace("[", r"\[")
-        delim_len = real_length(left + right)
-
-        label = self.label
-        if len(self.label) > self.width:
-            sli = max(self.width - delim_len - 3 - self.padding, 0)
-            label = self.label[:sli] + "..."
-
-        elif self.centered:
-            label = self.label.center(self.width)
 
         if self.selected_index is None:
             style = self.styles["_current"]
         else:
             style = self.styles.highlight
 
-        line = style(left + label + right + self.padding * " ")
+        line = style(left + self.label + right + self.padding * " ")
 
         return [line]

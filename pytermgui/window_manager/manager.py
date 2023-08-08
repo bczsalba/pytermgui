@@ -12,11 +12,12 @@ from ..ansi_interface import MouseAction, MouseEvent
 from ..colors import str_to_color
 from ..context_managers import MouseTranslator, alt_buffer, mouse_handler
 from ..enums import Overflow
-from ..input import getch
+from ..input import getch, getch_timeout
 from ..regex import real_length
 from ..term import terminal
 from ..widgets import Container, Widget
 from ..widgets.base import BoundCallback
+from ..win32console import enable_virtual_processing
 from .compositor import Compositor
 from .layouts import Layout
 from .window import Window
@@ -129,17 +130,23 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
     def _run_input_loop(self) -> None:
         """The main input loop of the WindowManager."""
 
-        while self._is_running:
-            key = getch(interrupts=False)
+        with enable_virtual_processing():
+            while self._is_running:
+                # This stops us from blocking during input:
+                #   On POSIX it only reads from 0.01s before returning the empty string
+                #   On Windows it doesn't do a timeout, but since the Windows' getch
+                #     setup immediately returns when no input is available something
+                #     similar ends up happening as well.
+                key = getch_timeout(1 / 100, interrupts=False)
 
-            if key == chr(3):
-                self.stop()
-                break
+                if key == chr(3):
+                    self.stop()
+                    break
 
-            if self.handle_key(key):
-                continue
+                if self.handle_key(key):
+                    continue
 
-            self.process_mouse(key)
+                self.process_mouse(key)
 
     def get_lines(self) -> list[str]:
         """Gets the empty list."""
@@ -186,7 +193,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         self._is_running = True
 
         if mouse_events is None:
-            mouse_events = ["press_hold", "hover"]
+            mouse_events = ["all"]
 
         with alt_buffer(cursor=False, echo=False):
             with mouse_handler(mouse_events, "decimal_xterm") as translate:
