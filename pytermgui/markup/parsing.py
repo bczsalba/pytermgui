@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import json
-from typing import Callable, Iterator, Protocol, TypedDict
+from typing import Callable, Iterator, Protocol, TypedDict, List
 from warnings import filterwarnings, warn
 
 from ..colors import Color
 from ..exceptions import ColorSyntaxError, MarkupSyntaxError
-from ..regex import RE_ANSI_NEW as RE_ANSI
-from ..regex import RE_MACRO, RE_MARKUP, RE_POSITION
+from ..regex import RE_MACRO, RE_MARKUP
 from .style_maps import CLEARERS, REVERSE_CLEARERS, REVERSE_STYLES, STYLES
 from .tokens import (
     AliasToken,
@@ -189,6 +188,87 @@ def tokenize_markup(text: str) -> Iterator[Token]:
         yield PlainToken(text[cursor:length])
 
 
+def _tokenize_ansi_color(
+    params: List[str],
+) -> Iterator[Token]:
+    """Convert ANSI color code into a stream of tokens
+
+    Args:
+        params: List of parameters given to an SGR
+
+    Yields:
+        The generated tokens
+    """
+    state = None
+    color_code = ""
+    for part in params:
+        if state is None:
+            if part in REVERSE_STYLES:
+                yield StyleToken(REVERSE_STYLES[part])
+                continue
+
+            if part in REVERSE_CLEARERS:
+                yield ClearToken(REVERSE_CLEARERS[part])
+                continue
+
+            if part in ("38", "48"):
+                state = "COLOR"
+                color_code += part + ";"
+                continue
+
+            # standard colors
+            try:
+                yield ColorToken(part, Color.parse(part, localize=False))
+                continue
+
+            except ColorSyntaxError as exc:
+                raise ValueError(f"Could not parse color tag {part!r}.") from exc
+
+        if state != "COLOR":
+            continue
+
+        color_code += part + ";"
+
+        # Ignore incomplete RGB colors
+        if (
+            color_code.startswith(("38;2;", "48;2;"))
+            and len(color_code.split(";")) != 6
+        ):
+            continue
+
+        try:
+            code = color_code
+
+            if code.startswith(("38;2;", "48;2;", "38;5;", "48;5;")):
+                stripped = code[5:-1]
+
+                if code.startswith("4"):
+                    stripped = "@" + stripped
+
+                code = stripped
+
+            yield ColorToken(code, Color.parse(code, localize=False))
+
+        except ColorSyntaxError:
+            continue
+
+        state = None
+        color_code = ""
+
+
+ESC="\x1b"
+
+CSI="["
+SGR="m"
+CURSOR="H"
+
+OSC="]"
+HYPERLINK="8"
+
+ST="\\"
+
+SEP=";"
+
 def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     text: str,
 ) -> Iterator[Token]:
@@ -201,108 +281,98 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
         The generated tokens, in the order they occur within the text.
     """
 
-    cursor = 0
+    ## State machine status
 
-    for matchobj in RE_ANSI.finditer(text):
-        start, end = matchobj.span()
 
-        csi = matchobj.groups()[0:2]
-        link_osc = matchobj.groups()[2:4]
+    cstate=None
+    params=[]
 
-        if cursor < start:
-            yield PlainToken(text[cursor:start])
+    accumulator = ""
 
-        if link_osc != (None, None):
-            cursor = end
-            uri, label = link_osc
 
-            yield HLinkToken(uri)
-            yield PlainToken(label)
-            yield ClearToken("/~")
+    escaping = False
 
+    for char in text:
+        if char == ESC:
+            if cstate is None and len(accumulator) > 0:
+                yield PlainToken(accumulator)
+                accumulator = ""
+            escaping = True
             continue
 
-        full, content = csi
 
-        cursor = end
+        if escaping:
+            if char == CSI:
+                cstate = CSI
+                escaping = False
+                continue
 
-        code = ""
+            if char == OSC:
+                cstate = OSC
+                escaping = False
+                continue
 
-        # Position
-        posmatch = RE_POSITION.match(full)
+            if char == ST:
+                if cstate == HYPERLINK:
+                    params.append(accumulator)
 
-        if posmatch is not None:
-            ypos, xpos = posmatch.groups()
-            if not ypos and not xpos:
-                raise ValueError(
-                    f"Cannot parse cursor when no position is supplied. Match: {posmatch!r}"
-                )
+                    if sum(len(param) for param in params)> 0:
+                        yield HLinkToken(params[2])
+                    else:
+                        yield ClearToken("/~")
 
-            yield CursorToken(content, int(ypos) or None, int(xpos) or None)
+                    params = []
+                    accumulator = ""
+
+                    cstate = None
+                    escaping = False
+                    continue
+
+            else:
+                raise ValueError(f"Unknown escape character, got {repr(char)}")
+
+
+        if cstate == OSC:
+            if char == HYPERLINK:
+                cstate = HYPERLINK
+                continue
+
+        if char == SEP and cstate in (
+            HYPERLINK, CSI
+        ):
+            params.append(accumulator)
+            accumulator = ""
             continue
 
-        parts = content.split(";")
+        if cstate == CSI:
+            if char == SGR:
+                params.append(accumulator)
+                accumulator = ""
 
-        state = None
-        color_code = ""
-        for part in parts:
-            if state is None:
-                if part in REVERSE_STYLES:
-                    yield StyleToken(REVERSE_STYLES[part])
-                    continue
+                for token in _tokenize_ansi_color(params):
+                    yield token
 
-                if part in REVERSE_CLEARERS:
-                    yield ClearToken(REVERSE_CLEARERS[part])
-                    continue
+                params = []
+                cstate = None
+                continue
+            if char == CURSOR:
+                params.append(accumulator)
+                accumulator = ""
 
-                if part in ("38", "48"):
-                    state = "COLOR"
-                    color_code += part + ";"
-                    continue
+                if len(params) != 2:
+                    raise ValueError("Invalid number of params for cursor token."
+                                     f"Expected 2, got {repr(params)}")
 
-                # standard colors
-                try:
-                    yield ColorToken(part, Color.parse(part, localize=False))
-                    continue
-
-                except ColorSyntaxError as exc:
-                    raise ValueError(f"Could not parse color tag {part!r}.") from exc
-
-            if state != "COLOR":
+                content = "".join((pos + ";" for pos in params))[:-1]
+                yield CursorToken(content, int(params[0]) or None, int(params[1]) or None)
+                params = []
+                cstate = None
                 continue
 
-            color_code += part + ";"
+        accumulator += char
 
-            # Ignore incomplete RGB colors
-            if (
-                color_code.startswith(("38;2;", "48;2;"))
-                and len(color_code.split(";")) != 6
-            ):
-                continue
-
-            try:
-                code = color_code
-
-                if code.startswith(("38;2;", "48;2;", "38;5;", "48;5;")):
-                    stripped = code[5:-1]
-
-                    if code.startswith("4"):
-                        stripped = "@" + stripped
-
-                    code = stripped
-
-                yield ColorToken(code, Color.parse(code, localize=False))
-
-            except ColorSyntaxError:
-                continue
-
-            state = None
-            color_code = ""
-
-    remaining = text[cursor:]
-    if len(remaining) > 0:
-        yield PlainToken(remaining)
-
+    if len(accumulator) > 0:
+        yield PlainToken(accumulator)
 
 def eval_alias(text: str, context: ContextDict) -> str:
     """Evaluates a space-delimited string of alias tags into their underlying value.
