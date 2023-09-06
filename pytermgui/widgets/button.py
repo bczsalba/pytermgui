@@ -79,7 +79,7 @@ class Button(Widget):
     def handle_key(self, key: str) -> bool:
         """Handles a keypress"""
 
-        if key == keys.RETURN and self.onclick is not None:
+        if key in (keys.RETURN, keys.CARRIAGE_RETURN) and self.onclick is not None:
             self.onclick(self)
             return True
 

@@ -238,6 +238,7 @@ class Keys:
             "TAB": "\t",
             "ENTER": "\n",
             "RETURN": "\n",
+            "CARRIAGE_RETURN": "\r",
             "CTRL_SPACE": "\x00",
             "CTRL_A": "\x01",
             "CTRL_B": "\x02",
