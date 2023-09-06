@@ -441,7 +441,7 @@ def _make_tag(tagname: str, content: str = "", **attrs) -> str:
 
 # This is a bit of a beast of a function, but it does the job and IMO reducing it
 # into parts would just make our lives more complicated.
-def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-statements
+def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-statements, R0912
     obj: Widget | StyledText | str,
     prefix: str | None = None,
     chrome: bool = True,
