@@ -23,18 +23,8 @@ pip3 install pytermgui
    </a>
  </p>
  <p align=center>
-   <a href="https://twitter.com/bczsalba">
-   <img alt="Twitter" 
-        src="https://img.shields.io/twitter/url/https/twitter.com/bczsalba.svg?style=social&label=Follow%20%40bczsalba">
-   </a>
-   <a href="https://reddit.com/r/pytermgui">
-      <img src="https://img.shields.io/reddit/subreddit-subscribers/pytermgui?style=flat&color=bright-green">
-   </a>
    <a href="https://discord.gg/g4bqMvpG4U">
       <img src="https://img.shields.io/discord/999374285686706367?label=join%20our%20discord">
-   </a>
-   <a href="https://ko-fi.com/bczsalba" title="Donate to this project using Ko-Fi">
-      <img src="https://img.shields.io/badge/ko--fi%20-donate-%232aabe0" alt="Buy Me A Coffee donate button" />
    </a>
 </p>
 
