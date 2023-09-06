@@ -1,3 +1,14 @@
+## [7.7.0] - 2023-09-06
+
+### Additions
+
+- Add support for using carriage returns for button submissions
+
+### Bugfixes:
+
+- Fix sluggish and unreliable text input caused by `getch_timeout`.
+
+
 ## [7.6.0] - 2023-07-25
 
 ### Bugfixes
@@ -383,6 +394,7 @@
 
 <!-- HATCH URI DEFINITIONS START -->
 
+[7.7.0]: https://github.com/bczsalba/pytermgui/compare/v7.6.0...v7.7.0
 [7.6.0]: https://github.com/bczsalba/pytermgui/compare/v7.5.0...v7.6.0
 [7.5.0]: https://github.com/bczsalba/pytermgui/compare/v7.4.0...v7.5.0
 [7.4.0]: https://github.com/bczsalba/pytermgui/compare/v7.3.0...v7.4.0
