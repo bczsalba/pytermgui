@@ -28,6 +28,13 @@ pip3 install pytermgui
    </a>
 </p>
 
+## Notice
+
+A much better, more complete version of PTG's core ideas now exists over at [Shade 40](https://github.com/shade40). While PTG is not yet fully obsolete,
+those libraries will be the primary focus of development going forward.
+
+<hr>
+
 ## Why?
 
 Mostly because terminals are cool, but creating terminal apps has historically been difficult. PyTermGUI aims to provide a simple, readable and modular way to make the app of your dreams!
