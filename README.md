@@ -15,7 +15,7 @@ pip3 install pytermgui
     <a href="https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py">
       <img alt="Code quality" src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/quality.svg">
    </a>
-   <a href="http://ptg.bczsalba.com/pytermgui.html">
+   <a href="http://ptg.bczsalba.com/">
       <img src="https://img.shields.io/badge/documentation-up%20to%20date-brightgreen">
    </a>
    <a href="https://github.com/bczsalba/pytermgui/actions/workflows/pytest.yml">
