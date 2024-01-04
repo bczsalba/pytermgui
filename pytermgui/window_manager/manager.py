@@ -12,7 +12,7 @@ from ..ansi_interface import MouseAction, MouseEvent
 from ..colors import str_to_color
 from ..context_managers import MouseTranslator, alt_buffer, mouse_handler
 from ..enums import Overflow
-from ..input import getch, getch_timeout
+from ..input import getch, feed
 from ..regex import real_length
 from ..term import terminal
 from ..widgets import Container, Widget
@@ -132,12 +132,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
         with enable_virtual_processing():
             while self._is_running:
-                # This stops us from blocking during input:
-                #   On POSIX it only reads from 0.01s before returning the empty string
-                #   On Windows it doesn't do a timeout, but since the Windows' getch
-                #     setup immediately returns when no input is available something
-                #     similar ends up happening as well.
-                key = getch_timeout(1 / 100, interrupts=False)
+                key = getch(interrupts=False)
 
                 if key == chr(3):
                     self.stop()
@@ -207,6 +202,8 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
 
         self.compositor.stop()
         self._is_running = False
+
+        feed(chr(3))
 
     def add(
         self, window: Window, assign: str | bool = True, animate: bool = True
