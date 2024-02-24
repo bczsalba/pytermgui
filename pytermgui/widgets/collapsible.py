@@ -7,6 +7,7 @@ from typing import Any
 from ..enums import Overflow
 from ..input import keys
 from .containers import Container
+from .base import Widget
 from .toggle import Toggle
 
 __all__ = ["Collapsible"]
