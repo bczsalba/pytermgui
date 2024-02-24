@@ -4,6 +4,8 @@ import re
 from functools import lru_cache
 from typing import Match
 
+from wcwidth import wcswidth
+
 RE_LINK = re.compile(r"(?:\x1b\]8;;([^\\]*)\x1b\\([^\\]*?)\x1b\]8;;\x1b\\)")
 RE_ANSI_NEW = re.compile(rf"(\x1b\[(.*?)[mH])|{RE_LINK.pattern}|(\x1b_G(.*?)\x1b\\)")
 RE_ANSI = re.compile(r"(?:\x1b\[(.*?)[mH])|(?:\x1b\](.*?)\x1b\\)|(?:\x1b_G(.*?)\x1b\\)")
@@ -69,7 +71,7 @@ def real_length(text: str) -> int:
         The display-length of text.
     """
 
-    return len(strip_ansi(text))
+    return wcswidth(strip_ansi(text))
 
 
 def escape_markup(text: str) -> str:

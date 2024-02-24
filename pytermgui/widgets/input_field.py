@@ -7,6 +7,8 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any, Iterator, Literal
 
+from wcwidth import wcwidth
+
 from ..ansi_interface import MouseAction, MouseEvent
 from ..enums import HorizontalAlignment
 from ..helpers import break_line
@@ -82,6 +84,9 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
         if "width" not in attrs:
             self.width = len(value)
+
+        if any(wcwidth(char) > 1 for char in value):
+            raise ValueError("InputField doesn't support wide unicode characters.")
 
         self.prompt = prompt
         self.height = 1
@@ -431,6 +436,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         row, col = self.cursor
 
         line = self._lines[row]
+        width = len(line)
 
         # Going left, possibly upwards
         if col < 0:
@@ -440,17 +446,17 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
             else:
                 self.cursor.row -= 1
                 line = self._lines[self.cursor.row]
-                self.cursor.col = len(line)
+                self.cursor.col = width
 
         # Going right, possibly downwards
-        elif col > len(line) and line != "":
+        elif col > width and line != "":
             if len(self._lines) > row + 1:
                 self.cursor.row += 1
                 self.cursor.col = 0
 
             line = self._lines[self.cursor.row]
 
-        self.cursor.col = max(0, min(self.cursor.col, len(line)))
+        self.cursor.col = max(0, min(self.cursor.col, width))
 
     def get_lines(self) -> list[str]:
         """Builds the input field's lines."""
