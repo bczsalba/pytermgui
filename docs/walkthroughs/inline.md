@@ -404,7 +404,7 @@ The only new thing we will need to import is the [mouse_handler](/reference/pyte
 To use it, we will wrap our `while True` loop into the context, and try to handle keys as mouse events when our widget didn't handle them successfully. Each widget denotes "successful" event handling by returning `True` from the given method, so the check will be simple:
 
 ```diff linenums="37"
-+ with mouse_handler(["press_hold", "hover"], "decimal_xterm") as translate:
++ with mouse_handler(["all"], "decimal_xterm") as translate:
       while True:
           key = getch(interrupts=False)
 
@@ -474,7 +474,7 @@ def inline(widget):
 
     _print_widget()
 
-    with mouse_handler(["press_hold", "hover"], "decimal_xterm") as translate:
+    with mouse_handler(["all"], "decimal_xterm") as translate:
         while True:
             key = getch(interrupts=False)
 

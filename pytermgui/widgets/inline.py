@@ -87,7 +87,7 @@ def inline(
 
     _print_widget()
 
-    with mouse_handler(["press_hold", "hover"], "decimal_xterm") as translate:
+    with mouse_handler(["all"], "decimal_xterm") as translate:
         while True:
             key = getch(interrupts=False)
 
