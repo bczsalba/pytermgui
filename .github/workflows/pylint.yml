@@ -1,6 +1,7 @@
 name: Run linting
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "pytermgui/**"
