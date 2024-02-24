@@ -134,8 +134,7 @@ def consume_tag(tag: str) -> Token:  # pylint: disable=too-many-return-statement
     except ColorSyntaxError:
         token = AliasToken(tag)
 
-    finally:
-        return token  # pylint: disable=lost-exception
+    return token
 
 
 def tokenize_markup(text: str) -> Iterator[Token]:

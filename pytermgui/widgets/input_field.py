@@ -68,7 +68,7 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
     parent_align = HorizontalAlignment.LEFT
 
-    def __init__(
+    def __init__( # pylint: disable=too-many-arguments
         self,
         value: str = "",
         *,

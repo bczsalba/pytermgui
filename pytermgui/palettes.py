@@ -127,7 +127,7 @@ class Palette:
 
     data: dict[str, str]
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(  # pylint: disable=too-many-locals,too-many-arguments
         self,
         *,
         primary: str,
@@ -167,7 +167,7 @@ class Palette:
             strategy=strategy,
         )
 
-    def _generate_map(  # pylint: disable=too-many-locals
+    def _generate_map(  # pylint: disable=too-many-locals,too-many-arguments
         self,
         *,
         primary: str,

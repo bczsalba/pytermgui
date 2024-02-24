@@ -273,7 +273,7 @@ class Layout:
 
         return rows
 
-    def add_slot(
+    def add_slot(  # pylint: disable=too-many-arguments
         self,
         name: str = "Slot",
         *,
