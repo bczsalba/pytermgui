@@ -71,7 +71,7 @@ def real_length(text: str) -> int:
         The display-length of text.
     """
 
-    return wcswidth(strip_ansi(text))
+    return max(wcswidth(strip_ansi(text)), 0)
 
 
 def escape_markup(text: str) -> str:
