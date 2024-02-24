@@ -53,6 +53,13 @@ class Collapsible(Container):
 
         self._is_expanded = False
 
+    @property
+    def selectables(self) -> list[tuple[Widget, int]]:
+        if self._is_expanded:
+            return super().selectables
+
+        return [(self.trigger, 0)]
+
     def toggle(self) -> Collapsible:
         """Toggles expanded state.
 
