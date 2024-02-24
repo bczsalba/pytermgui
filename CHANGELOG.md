@@ -1,3 +1,15 @@
+## [7.7.1] - 2024-02-24
+
+### Additions
+
+- Add support for wide characters
+
+### Bugfixes
+
+- Fix `inline` widget referring to `hover` mouse mode
+
+<!-- HATCH README END -->
+
 ## [7.7.0] - 2023-09-06
 
 ### Additions
@@ -8,7 +20,6 @@
 
 - Fix sluggish and unreliable text input caused by `getch_timeout`.
 
-
 ## [7.6.0] - 2023-07-25
 
 ### Bugfixes
@@ -18,8 +29,6 @@
 ### Removals
 
 - Remove (undocumented) shortening behaviour from `Button`
-
-<!-- HATCH README END -->
 
 ## [7.5.0] - 2023-07-24
 
@@ -394,6 +403,7 @@
 
 <!-- HATCH URI DEFINITIONS START -->
 
+[7.7.1]: https://github.com/bczsalba/pytermgui/compare/v7.7.0...v7.7.1
 [7.7.0]: https://github.com/bczsalba/pytermgui/compare/v7.6.0...v7.7.0
 [7.6.0]: https://github.com/bczsalba/pytermgui/compare/v7.5.0...v7.6.0
 [7.5.0]: https://github.com/bczsalba/pytermgui/compare/v7.4.0...v7.5.0
