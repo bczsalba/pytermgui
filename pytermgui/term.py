@@ -576,6 +576,19 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         self._stream.write("\x1b[2J")
 
+    def home(self) -> None:
+        """Truncates terminal's stream and moves cursor to home (0, 0)."""
+
+        try:
+            self._stream.truncate(0)
+
+        except OSError as error:
+            if error.errno != errno.EINVAL and os.name != "nt":
+                raise
+
+        self._stream.write("\x1b[H")
+
+
     def print(
         self,
         *items,

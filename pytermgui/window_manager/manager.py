@@ -171,7 +171,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
             window.pos = (newx, newy)
 
         self.layout.apply()
-        self.compositor.redraw()
+        self.compositor.redraw(full=True)
 
     def run(self, mouse_events: list[str] | None = None) -> None:
         """Starts the WindowManager.

@@ -230,7 +230,7 @@ class Compositor:
 
         self._should_redraw = True
 
-    def draw(self, force: bool = False) -> None:
+    def draw(self, force: bool = False, full: bool = False) -> None:
         """Writes composited screen to the terminal.
 
         At the moment this uses full-screen rewrites. There is a compositing
@@ -239,6 +239,8 @@ class Compositor:
         Args:
             force: When set, new composited lines will not be checked against the
                 previous ones, and everything will be redrawn.
+            full: When set, the terminal stream will be cleared instead of just the cursor
+                being moved to home.
         """
 
         # if self._should_redraw or force:
@@ -255,7 +257,11 @@ class Compositor:
         if not force and self._previous == lines:
             return
 
-        self.terminal.clear_stream()
+        if full:
+            self.terminal.clear_stream()
+        else:
+            self.terminal.home()
+
         with self.terminal.frame() as frame:
             frame_write = frame.write
 
@@ -264,10 +270,10 @@ class Compositor:
 
         self._previous = lines
 
-    def redraw(self) -> None:
+    def redraw(self, full: bool = False) -> None:
         """Force-redraws the buffer."""
 
-        self.draw(force=True)
+        self.draw(force=True, full=full)
 
     def capture(self, title: str, filename: str | None = None) -> None:
         """Captures the most-recently drawn buffer as `filename`.
