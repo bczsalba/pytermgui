@@ -126,6 +126,12 @@ class TestParser:
             == "\x1b[38;5;141m\x1b[48;5;61m\x1b[1mHELLO\x1b[0m"
         ), repr(tim.parse("[141 @61 bold !upper]Hello"))
 
+    def test_mutiple_hypertext_closing_sequence(self):
+        for plain in tim.group_styles(
+            "\x1b]8;;path.py\x1b\\inner\x1b]8;;\x1b\\\x1b]8;;\x1b\\outer"
+        ):
+            assert "\x1b]8;;\x1b\\" not in plain.plain, repr(plain)
+
 
 class TestFunctionality:
     def test_alias(self):
