@@ -4,10 +4,6 @@
 
 > Python TUI framework with mouse support, modular widget system, customizable and rapid terminal markup language and more!
 
-```bash
-pip3 install pytermgui
-```
-
 <p align=center>
    <a href="https://pypi.org/project/pytermgui">
       <img alt="PyPi project" src="https://img.shields.io/pypi/v/pytermgui?color=brightgreen">
@@ -27,6 +23,19 @@ pip3 install pytermgui
       <img src="https://img.shields.io/discord/999374285686706367?label=join%20our%20discord">
    </a>
 </p>
+
+## Installation
+
+### PIP
+
+```bash
+pip3 install pytermgui
+```
+
+### AUR (Arch Linux)
+```bash
+yay -S python-pytermgui-git
+```
 
 ## Notice
 
