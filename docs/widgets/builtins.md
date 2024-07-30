@@ -103,7 +103,7 @@ Similar to Container, but displays widgets stacked horizontally instead. Each wi
 **Auto syntax**:
 
 - `(widget1, widget2, ...)`
-- `{widget_aligned_left: widget_aligned_right)`
+- `{widget_aligned_left: widget_aligned_right}`
 
 **Chars**:
 
@@ -155,11 +155,11 @@ Same as `Container`, but expanded with:
 
     Default: `surface`.
 
-- `border_focused`: Analogous to `border`, but only applied when the window is **NOT** focused.
+- `border_blurred`: Analogous to `border`, but only applied when the window is **NOT** focused.
 
     Default: `surface-2`.
 
-- `corner_focused`: Analogous to `corner`, but only applied when the window is **NOT** focused.
+- `corner_blurred`: Analogous to `corner`, but only applied when the window is **NOT** focused.
 
     Default: `surface-2`.
 
