@@ -40,7 +40,7 @@ if "-m" in sys.argv:  # pragma: no cover
 
     warnings.filterwarnings("ignore")
 
-__version__ = "7.7.1"
+__version__ = "7.7.2"
 
 
 def auto(data: Any, **widget_args: Any) -> Optional[Widget | list[Splitter]]:
