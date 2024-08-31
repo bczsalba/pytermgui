@@ -730,20 +730,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cell/" class="md-nav__link">
-        cell
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../cmd/" class="md-nav__link">
         cmd
       </a>
@@ -917,17 +903,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_17" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_16" >
       
       
       
-        <label class="md-nav__link" for="__nav_3_1_17" id="__nav_3_1_17_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_3_1_16" id="__nav_3_1_16_label" tabindex="0">
           markup
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_17_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_3_1_17">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_16_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_1_16">
           <span class="md-nav__icon md-icon"></span>
           markup
         </label>
@@ -1119,17 +1105,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_24" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_23" >
       
       
       
-        <label class="md-nav__link" for="__nav_3_1_24" id="__nav_3_1_24_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_3_1_23" id="__nav_3_1_23_label" tabindex="0">
           widgets
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_24_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_3_1_24">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_23_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_1_23">
           <span class="md-nav__icon md-icon"></span>
           widgets
         </label>
@@ -1407,17 +1393,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_26" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_25" checked>
       
       
       
-        <label class="md-nav__link" for="__nav_3_1_26" id="__nav_3_1_26_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_3_1_25" id="__nav_3_1_25_label" tabindex="0">
           window_manager
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_26_label" aria-expanded="true">
-        <label class="md-nav__title" for="__nav_3_1_26">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_25_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3_1_25">
           <span class="md-nav__icon md-icon"></span>
           window_manager
         </label>
@@ -2483,7 +2469,8 @@ of the terminal's width, or <code>ROW_BREAK</code> is encountered.</p>
 <span class="normal">388</span>
 <span class="normal">389</span>
 <span class="normal">390</span>
-<span class="normal">391</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Layout</span><span class="p">:</span>
+<span class="normal">391</span>
+<span class="normal">392</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Layout</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines a layout of Widgets, used by WindowManager.</span>
 
 <span class="sd">    Internally, it keeps track of a list of `Slot`. This list is then turned into a list</span>
@@ -2588,7 +2575,7 @@ of the terminal's width, or <code>ROW_BREAK</code> is encountered.</p>
 
         <span class="k">return</span> <span class="n">rows</span>
 
-    <span class="k">def</span> <span class="nf">add_slot</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">add_slot</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Slot&quot;</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -2600,7 +2587,8 @@ of the terminal's width, or <code>ROW_BREAK</code> is encountered.</p>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a new slot to the layout.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name: The name of the slot. Used for display purposes.</span>
+<span class="sd">            name: The **snakeified** name of the slot. A non-snake case name</span>
+<span class="sd">                will cause issues when trying to retrieve the slot (see GH#147).</span>
 <span class="sd">            slot: An already instantiated `Slot` instance. If this is given,</span>
 <span class="sd">                the additional width &amp; height arguments will be ignored.</span>
 <span class="sd">            width: The width for the new slot. See below for special types.</span>
@@ -2757,8 +2745,7 @@ of the terminal's width, or <code>ROW_BREAK</code> is encountered.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/window_manager/layouts.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">381</span>
-<span class="normal">382</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">382</span>
 <span class="normal">383</span>
 <span class="normal">384</span>
 <span class="normal">385</span>
@@ -2767,7 +2754,8 @@ of the terminal's width, or <code>ROW_BREAK</code> is encountered.</p>
 <span class="normal">388</span>
 <span class="normal">389</span>
 <span class="normal">390</span>
-<span class="normal">391</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Slot</span><span class="p">:</span>
+<span class="normal">391</span>
+<span class="normal">392</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Slot</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets a slot by its (slugified) name.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_snakeify</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -2834,15 +2822,15 @@ row is deemed completed, and the next slot will go into a new row list.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/window_manager/layouts.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">337</span>
-<span class="normal">338</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">338</span>
 <span class="normal">339</span>
 <span class="normal">340</span>
 <span class="normal">341</span>
 <span class="normal">342</span>
 <span class="normal">343</span>
 <span class="normal">344</span>
-<span class="normal">345</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_break</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">345</span>
+<span class="normal">346</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_break</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds `ROW_BREAK` to the given index.</span>
 
 <span class="sd">    This special slot is ignored for all intents and purposes, other than when</span>
@@ -2892,7 +2880,8 @@ row is deemed completed, and the next slot will go into a new row list.</p>
           </td>
           <td>
             <div class="doc-md-description">
-              <p>The name of the slot. Used for display purposes.</p>
+              <p>The <strong>snakeified</strong> name of the slot. A non-snake case name
+will cause issues when trying to retrieve the slot (see GH#147).</p>
             </div>
           </td>
           <td>
@@ -3052,7 +3041,8 @@ types can be given:
 <span class="normal">332</span>
 <span class="normal">333</span>
 <span class="normal">334</span>
-<span class="normal">335</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_slot</span><span class="p">(</span>
+<span class="normal">335</span>
+<span class="normal">336</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_slot</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Slot&quot;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -3064,7 +3054,8 @@ types can be given:
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds a new slot to the layout.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        name: The name of the slot. Used for display purposes.</span>
+<span class="sd">        name: The **snakeified** name of the slot. A non-snake case name</span>
+<span class="sd">            will cause issues when trying to retrieve the slot (see GH#147).</span>
 <span class="sd">        slot: An already instantiated `Slot` instance. If this is given,</span>
 <span class="sd">            the additional width &amp; height arguments will be ignored.</span>
 <span class="sd">        width: The width for the new slot. See below for special types.</span>
@@ -3135,8 +3126,7 @@ types can be given:
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/window_manager/layouts.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">367</span>
-<span class="normal">368</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">368</span>
 <span class="normal">369</span>
 <span class="normal">370</span>
 <span class="normal">371</span>
@@ -3147,7 +3137,8 @@ types can be given:
 <span class="normal">376</span>
 <span class="normal">377</span>
 <span class="normal">378</span>
-<span class="normal">379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">379</span>
+<span class="normal">380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the layout to each slot.&quot;&quot;&quot;</span>
 
     <span class="n">position</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
@@ -3241,8 +3232,7 @@ types can be given:
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/window_manager/layouts.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">347</span>
-<span class="normal">348</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">348</span>
 <span class="normal">349</span>
 <span class="normal">350</span>
 <span class="normal">351</span>
@@ -3259,7 +3249,8 @@ types can be given:
 <span class="normal">362</span>
 <span class="normal">363</span>
 <span class="normal">364</span>
-<span class="normal">365</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">apply</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">365</span>
+<span class="normal">366</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">:</span> <span class="n">Widget</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">apply</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Assigns a widget to the slot at the specified index.</span>
 
 <span class="sd">    Args:</span>

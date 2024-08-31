@@ -800,20 +800,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/pytermgui/cell/" class="md-nav__link">
-        cell
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../reference/pytermgui/cmd/" class="md-nav__link">
         cmd
       </a>
@@ -987,17 +973,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_17" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_16" >
       
       
       
-        <label class="md-nav__link" for="__nav_3_1_17" id="__nav_3_1_17_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_3_1_16" id="__nav_3_1_16_label" tabindex="0">
           markup
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_17_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_3_1_17">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_16_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_1_16">
           <span class="md-nav__icon md-icon"></span>
           markup
         </label>
@@ -1189,17 +1175,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_24" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_23" >
       
       
       
-        <label class="md-nav__link" for="__nav_3_1_24" id="__nav_3_1_24_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_3_1_23" id="__nav_3_1_23_label" tabindex="0">
           widgets
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_24_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_3_1_24">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_23_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_1_23">
           <span class="md-nav__icon md-icon"></span>
           widgets
         </label>
@@ -1475,17 +1461,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_26" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_25" >
       
       
       
-        <label class="md-nav__link" for="__nav_3_1_26" id="__nav_3_1_26_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_3_1_25" id="__nav_3_1_25_label" tabindex="0">
           window_manager
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_26_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_3_1_26">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_25_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_1_25">
           <span class="md-nav__icon md-icon"></span>
           window_manager
         </label>
@@ -2298,7 +2284,7 @@
 <span class="normal">52</span>
 <span class="normal">53</span>
 <span class="normal">54</span>
-<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gi">+ with mouse_handler([&quot;press_hold&quot;, &quot;hover&quot;], &quot;decimal_xterm&quot;) as translate:</span>
+<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gi">+ with mouse_handler([&quot;all&quot;], &quot;decimal_xterm&quot;) as translate:</span>
 <span class="w"> </span>     while True:
 <span class="w"> </span>         key = getch(interrupts=False)
 
@@ -2422,7 +2408,7 @@ return widget
 
     <span class="n">_print_widget</span><span class="p">()</span>
 
-    <span class="k">with</span> <span class="n">mouse_handler</span><span class="p">([</span><span class="s2">&quot;press_hold&quot;</span><span class="p">,</span> <span class="s2">&quot;hover&quot;</span><span class="p">],</span> <span class="s2">&quot;decimal_xterm&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">translate</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">mouse_handler</span><span class="p">([</span><span class="s2">&quot;all&quot;</span><span class="p">],</span> <span class="s2">&quot;decimal_xterm&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">translate</span><span class="p">:</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">getch</span><span class="p">(</span><span class="n">interrupts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 

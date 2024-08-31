@@ -730,20 +730,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cell/" class="md-nav__link">
-        cell
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../cmd/" class="md-nav__link">
         cmd
       </a>
@@ -919,17 +905,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_17" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_16" checked>
       
       
       
-        <label class="md-nav__link" for="__nav_3_1_17" id="__nav_3_1_17_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_3_1_16" id="__nav_3_1_16_label" tabindex="0">
           markup
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_17_label" aria-expanded="true">
-        <label class="md-nav__title" for="__nav_3_1_17">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_16_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3_1_16">
           <span class="md-nav__icon md-icon"></span>
           markup
         </label>
@@ -1318,17 +1304,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_24" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_23" >
       
       
       
-        <label class="md-nav__link" for="__nav_3_1_24" id="__nav_3_1_24_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_3_1_23" id="__nav_3_1_23_label" tabindex="0">
           widgets
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_24_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_3_1_24">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_23_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_1_23">
           <span class="md-nav__icon md-icon"></span>
           widgets
         </label>
@@ -1604,17 +1590,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_26" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_25" >
       
       
       
-        <label class="md-nav__link" for="__nav_3_1_26" id="__nav_3_1_26_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_3_1_25" id="__nav_3_1_25_label" tabindex="0">
           window_manager
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_26_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_3_1_26">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_25_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_1_25">
           <span class="md-nav__icon md-icon"></span>
           window_manager
         </label>
@@ -2183,8 +2169,7 @@ language#pytermgui.markup.language.MarkupLanguage">MarkupLanguage docs</a>.</p>
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">consume_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-return-statements</span>
+<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">consume_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-return-statements</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Consumes a tag text, returns the associated Token.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">STYLES</span><span class="p">:</span>
@@ -2228,8 +2213,7 @@ language#pytermgui.markup.language.MarkupLanguage">MarkupLanguage docs</a>.</p>
     <span class="k">except</span> <span class="n">ColorSyntaxError</span><span class="p">:</span>
         <span class="n">token</span> <span class="o">=</span> <span class="n">AliasToken</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
 
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">token</span>  <span class="c1"># pylint: disable=lost-exception</span>
+    <span class="k">return</span> <span class="n">token</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -2369,7 +2353,8 @@ language#pytermgui.markup.language.MarkupLanguage">MarkupLanguage docs</a>.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">307</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">306</span>
+<span class="normal">307</span>
 <span class="normal">308</span>
 <span class="normal">309</span>
 <span class="normal">310</span>
@@ -2388,8 +2373,7 @@ language#pytermgui.markup.language.MarkupLanguage">MarkupLanguage docs</a>.</p>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
-<span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">eval_alias</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">326</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">eval_alias</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluates a space-delimited string of alias tags into their underlying value.</span>
 
 <span class="sd">    Args:</span>
@@ -2433,10 +2417,10 @@ language#pytermgui.markup.language.MarkupLanguage">MarkupLanguage docs</a>.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">577</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">576</span>
+<span class="normal">577</span>
 <span class="normal">578</span>
-<span class="normal">579</span>
-<span class="normal">580</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">579</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the markup representing an ANSI-coded string.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">tokens_to_markup</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tokenize_ansi</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
@@ -2463,10 +2447,10 @@ language#pytermgui.markup.language.MarkupLanguage">MarkupLanguage docs</a>.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">583</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">582</span>
+<span class="normal">583</span>
 <span class="normal">584</span>
-<span class="normal">585</span>
-<span class="normal">586</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">optimize_markup</span><span class="p">(</span><span class="n">markup</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">585</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">optimize_markup</span><span class="p">(</span><span class="n">markup</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimizes markup by tokenizing it, optimizing the tokens and converting it back to markup.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">tokens_to_markup</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">optimize_tokens</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tokenize_markup</span><span class="p">(</span><span class="n">markup</span><span class="p">)))))</span>
@@ -2549,7 +2533,8 @@ keeping their order.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">449</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">448</span>
+<span class="normal">449</span>
 <span class="normal">450</span>
 <span class="normal">451</span>
 <span class="normal">452</span>
@@ -2641,8 +2626,7 @@ keeping their order.</p>
 <span class="normal">538</span>
 <span class="normal">539</span>
 <span class="normal">540</span>
-<span class="normal">541</span>
-<span class="normal">542</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">optimize_tokens</span><span class="p">(</span><span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
+<span class="normal">541</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">optimize_tokens</span><span class="p">(</span><span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimizes a stream of tokens, only yielding functionally relevant ones.</span>
 
 <span class="sd">    Args:</span>
@@ -2873,7 +2857,8 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">805</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">804</span>
+<span class="normal">805</span>
 <span class="normal">806</span>
 <span class="normal">807</span>
 <span class="normal">808</span>
@@ -2910,8 +2895,7 @@ will be silenced.</p>
 <span class="normal">839</span>
 <span class="normal">840</span>
 <span class="normal">841</span>
-<span class="normal">842</span>
-<span class="normal">843</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span>
+<span class="normal">842</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">optimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">context</span><span class="p">:</span> <span class="n">ContextDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2973,7 +2957,8 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">372</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">371</span>
+<span class="normal">372</span>
 <span class="normal">373</span>
 <span class="normal">374</span>
 <span class="normal">375</span>
@@ -2986,8 +2971,7 @@ will be silenced.</p>
 <span class="normal">382</span>
 <span class="normal">383</span>
 <span class="normal">384</span>
-<span class="normal">385</span>
-<span class="normal">386</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_alias</span><span class="p">(</span>
+<span class="normal">385</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_alias</span><span class="p">(</span>
     <span class="n">token</span><span class="p">:</span> <span class="n">AliasToken</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">get_full</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses an alias token.&quot;&quot;&quot;</span>
@@ -3025,7 +3009,8 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">389</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">388</span>
+<span class="normal">389</span>
 <span class="normal">390</span>
 <span class="normal">391</span>
 <span class="normal">392</span>
@@ -3036,8 +3021,7 @@ will be silenced.</p>
 <span class="normal">397</span>
 <span class="normal">398</span>
 <span class="normal">399</span>
-<span class="normal">400</span>
-<span class="normal">401</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_clear</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">ClearToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">get_full</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">400</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_clear</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">ClearToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">get_full</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a clearer token.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;/~&quot;</span><span class="p">:</span>
@@ -3073,10 +3057,10 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">336</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">335</span>
+<span class="normal">336</span>
 <span class="normal">337</span>
-<span class="normal">338</span>
-<span class="normal">339</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_color</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">ColorToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">338</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_color</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">ColorToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a color token.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">get_localized</span><span class="p">()</span><span class="o">.</span><span class="n">sequence</span>
@@ -3103,12 +3087,12 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">404</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">403</span>
+<span class="normal">404</span>
 <span class="normal">405</span>
 <span class="normal">406</span>
 <span class="normal">407</span>
-<span class="normal">408</span>
-<span class="normal">409</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_cursor</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">CursorToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">408</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_cursor</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">CursorToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a cursor token.&quot;&quot;&quot;</span>
 
     <span class="n">ypos</span><span class="p">,</span> <span class="n">xpos</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
@@ -3171,7 +3155,8 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">350</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">349</span>
+<span class="normal">350</span>
 <span class="normal">351</span>
 <span class="normal">352</span>
 <span class="normal">353</span>
@@ -3189,8 +3174,7 @@ will be silenced.</p>
 <span class="normal">365</span>
 <span class="normal">366</span>
 <span class="normal">367</span>
-<span class="normal">368</span>
-<span class="normal">369</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_macro</span><span class="p">(</span>
+<span class="normal">368</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_macro</span><span class="p">(</span>
     <span class="n">token</span><span class="p">:</span> <span class="n">MacroToken</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">get_full</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MacroType</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a macro token.</span>
@@ -3233,10 +3217,10 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">330</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">329</span>
+<span class="normal">330</span>
 <span class="normal">331</span>
-<span class="normal">332</span>
-<span class="normal">333</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_plain</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">PlainToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">332</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_plain</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">PlainToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a plain token.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">value</span>
@@ -3263,7 +3247,8 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">412</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">411</span>
+<span class="normal">412</span>
 <span class="normal">413</span>
 <span class="normal">414</span>
 <span class="normal">415</span>
@@ -3296,8 +3281,7 @@ will be silenced.</p>
 <span class="normal">442</span>
 <span class="normal">443</span>
 <span class="normal">444</span>
-<span class="normal">445</span>
-<span class="normal">446</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_state_pseudo</span><span class="p">(</span>
+<span class="normal">445</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_state_pseudo</span><span class="p">(</span>
     <span class="n">token</span><span class="p">:</span> <span class="n">PseudoToken</span><span class="p">,</span>
     <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">],</span>
     <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -3355,12 +3339,12 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">342</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">341</span>
+<span class="normal">342</span>
 <span class="normal">343</span>
 <span class="normal">344</span>
 <span class="normal">345</span>
-<span class="normal">346</span>
-<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_style</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">StyleToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">346</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_style</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">StyleToken</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">ContextDict</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a style token.&quot;&quot;&quot;</span>
 
     <span class="n">index</span> <span class="o">=</span> <span class="n">STYLES</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
@@ -3504,7 +3488,8 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">675</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">674</span>
+<span class="normal">675</span>
 <span class="normal">676</span>
 <span class="normal">677</span>
 <span class="normal">678</span>
@@ -3630,8 +3615,7 @@ will be silenced.</p>
 <span class="normal">798</span>
 <span class="normal">799</span>
 <span class="normal">800</span>
-<span class="normal">801</span>
-<span class="normal">802</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_tokens</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches, too-many-locals, too-many-statements</span>
+<span class="normal">801</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_tokens</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches, too-many-locals, too-many-statements</span>
     <span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">optimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -3836,7 +3820,8 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">192</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">191</span>
+<span class="normal">192</span>
 <span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
@@ -3947,8 +3932,7 @@ will be silenced.</p>
 <span class="normal">300</span>
 <span class="normal">301</span>
 <span class="normal">302</span>
-<span class="normal">303</span>
-<span class="normal">304</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">tokenize_ansi</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals, too-many-branches, too-many-statements</span>
+<span class="normal">303</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">tokenize_ansi</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals, too-many-branches, too-many-statements</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts some ANSI-coded text into a stream of tokens.</span>
@@ -4138,7 +4122,8 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">140</span>
+<span class="normal">141</span>
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
@@ -4185,8 +4170,7 @@ will be silenced.</p>
 <span class="normal">185</span>
 <span class="normal">186</span>
 <span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">tokenize_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
+<span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">tokenize_markup</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Token</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts some markup text into a stream of tokens.</span>
 
 <span class="sd">    Args:</span>
@@ -4313,7 +4297,8 @@ will be silenced.</p>
 
           <details class="quote">
             <summary>Source code in <code>pytermgui/markup/parsing.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">545</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">544</span>
+<span class="normal">545</span>
 <span class="normal">546</span>
 <span class="normal">547</span>
 <span class="normal">548</span>
@@ -4341,8 +4326,7 @@ will be silenced.</p>
 <span class="normal">570</span>
 <span class="normal">571</span>
 <span class="normal">572</span>
-<span class="normal">573</span>
-<span class="normal">574</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">tokens_to_markup</span><span class="p">(</span><span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">573</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">tokens_to_markup</span><span class="p">(</span><span class="n">tokens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Token</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a token stream into the markup of its tokens.</span>
 
 <span class="sd">    Args:</span>
