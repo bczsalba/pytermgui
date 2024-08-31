@@ -285,7 +285,8 @@ class Layout:
         """Adds a new slot to the layout.
 
         Args:
-            name: The name of the slot. Used for display purposes.
+            name: The **snakeified** name of the slot. A non-snake case name
+                will cause issues when trying to retrieve the slot (see GH#147).
             slot: An already instantiated `Slot` instance. If this is given,
                 the additional width & height arguments will be ignored.
             width: The width for the new slot. See below for special types.
