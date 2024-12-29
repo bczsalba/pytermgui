@@ -1,11 +1,17 @@
+## [7.7.3] - 2024-12-29
+
+### Bugfixes
+
+- Fix getch mapping for Windows keys
+
+<!-- HATCH README END -->
+
 ## [7.7.2] - 2024-08-31
 
 ### Additions
 
 - Stop allowing selection of closed Collapsible's items
 - Clarify some documentation
-
-<!-- HATCH README END -->
 
 ## [7.7.1] - 2024-02-24
 
@@ -410,6 +416,7 @@
 
 <!-- HATCH URI DEFINITIONS START -->
 
+[7.7.3]: https://github.com/bczsalba/pytermgui/compare/v7.7.2...v7.7.3
 [7.7.2]: https://github.com/bczsalba/pytermgui/compare/v7.7.1...v7.7.2
 [7.7.1]: https://github.com/bczsalba/pytermgui/compare/v7.7.0...v7.7.1
 [7.7.0]: https://github.com/bczsalba/pytermgui/compare/v7.6.0...v7.7.0
