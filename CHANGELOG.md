@@ -1,10 +1,16 @@
+## [7.7.4] - 2025-03-31
+
+### Bugfixes
+
+- Fix rapid input to \_GetchLinux
+
+<!-- HATCH README END -->
+
 ## [7.7.3] - 2024-12-29
 
 ### Bugfixes
 
 - Fix getch mapping for Windows keys
-
-<!-- HATCH README END -->
 
 ## [7.7.2] - 2024-08-31
 
@@ -416,6 +422,7 @@
 
 <!-- HATCH URI DEFINITIONS START -->
 
+[7.7.4]: https://github.com/bczsalba/pytermgui/compare/v7.7.3...v7.7.4
 [7.7.3]: https://github.com/bczsalba/pytermgui/compare/v7.7.2...v7.7.3
 [7.7.2]: https://github.com/bczsalba/pytermgui/compare/v7.7.1...v7.7.2
 [7.7.1]: https://github.com/bczsalba/pytermgui/compare/v7.7.0...v7.7.1
