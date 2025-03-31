@@ -134,7 +134,7 @@ class _GetchUnix:
 
         descriptor = sys.stdin.fileno()
         old_settings = termios.tcgetattr(descriptor)
-        tty.setcbreak(descriptor)
+        tty.setcbreak(descriptor, termios.TCSANOW)
 
         try:
             yield self._read(1)
