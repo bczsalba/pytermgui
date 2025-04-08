@@ -674,6 +674,21 @@ class Container(ScrollableWidget):
             else:
                 widget.depth = value
 
+    def scroll_to_widget(self, widget: Widget) -> None:
+        """Scroll this container so that the given widget is visible."""
+        widget_top = widget.pos[1]
+        widget_bottom = widget_top + widget.size()[1]
+
+        view_top = self._scroll_offset
+        view_bottom = view_top + self.size()[1]
+
+        if widget_top < view_top:
+            self.scroll(widget_top - view_top)
+
+        elif widget_bottom > view_bottom:
+            self.scroll(widget_bottom - view_bottom)
+
+
     def select(self, index: int | None = None) -> None:
         """Selects inner subwidget.
 
@@ -694,7 +709,12 @@ class Container(ScrollableWidget):
             widget, inner_index = self.selectables[index]
             widget.select(inner_index)
 
+            # If the widget is inside a Container, scroll it into view
+            if isinstance(widget.parent, Container):
+                widget.parent.scroll_to_widget(widget)
+
         self.selected_index = index
+
 
     def center(
         self, where: CenteringPolicy | None = None, store: bool = True

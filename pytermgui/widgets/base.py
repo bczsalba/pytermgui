@@ -147,6 +147,11 @@ class Widget:  # pylint: disable=too-many-public-methods
         for attr, value in attrs.items():
             setattr(self, attr, value)
 
+    def size(self) -> tuple[int, int]:
+        """Returns the size of this widget."""
+        return self.width, self.height
+
+
     def __repr__(self) -> str:
         """Return repr string of this widget.
 
@@ -820,6 +825,7 @@ class ScrollableWidget(Widget):
 
         self._max_scroll = 0
         self._scroll_offset = 0
+
 
     def scroll(self, offset: int) -> bool:
         """Scrolls to given offset, returns the new scroll_offset.
