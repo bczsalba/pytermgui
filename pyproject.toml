@@ -4,6 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "PyTermGUI"
+version = "0.1.0"
 authors = [ { name = "Balázs Cene", email= "bczsalba@gmail.com" } ]
 description = """\
     Python TUI framework with mouse support, modular widget system, \

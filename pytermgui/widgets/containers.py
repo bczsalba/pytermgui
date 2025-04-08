@@ -694,6 +694,22 @@ class Container(ScrollableWidget):
             widget, inner_index = self.selectables[index]
             widget.select(inner_index)
 
+            # Calculate the top and bottom positions of the selected widget
+            widget_top = widget.pos[1]
+            widget_bottom = widget_top + widget.height
+
+            # Calculate the visible area of the container
+            view_top = self.pos[1] + self._scroll_offset
+            view_bottom = view_top + self.height
+
+            # Scroll up if the selected widget is above the visible area
+            if widget_top < view_top:
+                self.scroll(widget_top - view_top)
+
+            # Scroll down if the selected widget is below the visible area
+            elif widget_bottom > view_bottom:
+                self.scroll(widget_bottom - view_bottom)
+
         self.selected_index = index
 
     def center(
@@ -854,81 +870,36 @@ class Container(ScrollableWidget):
 
         return False
 
-    def handle_key(  # pylint: disable=too-many-return-statements, too-many-branches
-        self, key: str
-    ) -> bool:
-        """Handles a keypress, returns its success.
-
-        Args:
-            key: A key str.
-
-        Returns:
-            A boolean showing whether the key was handled.
-        """
+    def handle_key(self, key: str) -> bool:
+        """Handles a keypress, returns its success."""
 
         def _is_nav(key: str) -> bool:
             """Determine if a key is in the navigation sets"""
-
             return key in self.keys["next"] | self.keys["previous"]
 
+        # Handle key within the selected widget
         if self.selected is not None and self.selected.handle_key(key):
             return True
 
-        scroll_actions = {
-            **{key: 1 for key in self.keys["scroll_down"]},
-            **{key: -1 for key in self.keys["scroll_up"]},
-        }
-
-        if key in self.keys["scroll_down"] | self.keys["scroll_up"]:
-            for widget in self._widgets:
-                if isinstance(widget, Container) and self.selected in widget:
-                    widget.handle_key(key)
-
-            self.scroll(scroll_actions[key])
-            return True
-
-        # Only use navigation when there is more than one selectable
-        if self.selectables_length >= 1 and _is_nav(key):
+        # Navigation between selectables
+        if _is_nav(key):
             if self.selected_index is None:
                 self.select(0)
                 return True
 
-            handled = False
-
             assert isinstance(self.selected_index, int)
 
+            # Move to the previous selectable
             if key in self.keys["previous"]:
-                # No more selectables left, user wants to exit Container
-                # upwards.
-                if self.selected_index == 0:
-                    return False
+                if self.selected_index > 0:
+                    self.select(self.selected_index - 1)
+                    return True
 
-                self.select(self.selected_index - 1)
-                handled = True
-
+            # Move to the next selectable
             elif key in self.keys["next"]:
-                # Stop selection at last element, return as unhandled
-                new = self.selected_index + 1
-                if new == len(self.selectables):
-                    return False
-
-                self.select(new)
-                handled = True
-
-            if handled:
-                return True
-
-        if key == keys.ENTER:
-            if self.selected_index is None and self.selectables_length > 0:
-                self.select(0)
-
-            if self.selected is not None:
-                self.selected.handle_key(key)
-                return True
-
-        for widget in self._widgets:
-            if widget.execute_binding(key):
-                return True
+                if self.selected_index < len(self.selectables) - 1:
+                    self.select(self.selected_index + 1)
+                    return True
 
         return False
 
