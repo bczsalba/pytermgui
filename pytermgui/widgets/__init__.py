@@ -20,7 +20,7 @@ from .pixel_matrix import *
 from .slider import Slider
 from .styles import *
 from .toggle import Toggle
-from .overflow_preventer import overflow_preventer
+
 
 WidgetType = Union[Widget, Type[Widget]]
 
