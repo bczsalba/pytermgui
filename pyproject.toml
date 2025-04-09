@@ -45,7 +45,7 @@ classifiers = [
     "Topic :: Text Processing :: Markup",
 ]
 
-dynamic = ["readme", "version"]
+dynamic = ["readme"]
 
 [project.urls]
 homepage = "https://github.com/bczsalba/PyTermGUI"
