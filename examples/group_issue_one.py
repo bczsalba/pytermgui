@@ -9,7 +9,7 @@ def button_press(manager: ptg.WindowManager) -> None:
 
 
 
-container = ptg.Container(overflow=ptg.Overflow.SCROLL)
+container = ptg.Container()
 for i in range(20):
     container.lazy_add(ptg.Button("BUTTON"))
 window=ptg.Window(container)

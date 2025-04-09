@@ -62,7 +62,8 @@ class Container(ScrollableWidget):
 
         # TODO: This is just a band-aid.
         if not any("width" in attr for attr in attrs):
-            self.width = 40
+            self.width = 20
+
 
         self._widgets: list[Widget] = []
         self.dirty_widgets: list[Widget] = []
@@ -73,6 +74,7 @@ class Container(ScrollableWidget):
 
         for widget in widgets:
             self._add_widget(widget)
+            self.height =  self.height + widget.size
 
         if "box" not in attrs:
             attrs["box"] = "SINGLE"
@@ -371,6 +373,7 @@ class Container(ScrollableWidget):
         char = " "
 
         fill = self.styles.fill
+
 
         def _align_left(text: str) -> str:
             """Align line to the left"""
@@ -687,6 +690,7 @@ class Container(ScrollableWidget):
 
         elif widget_bottom > view_bottom:
             self.scroll(widget_bottom - view_bottom)
+
 
 
     def select(self, index: int | None = None) -> None:

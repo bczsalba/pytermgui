@@ -4,6 +4,7 @@ allows for mouse-based moving and resizing."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+from ..widgets import overflow_preventer
 
 from ..ansi_interface import MouseAction, MouseEvent
 from ..enums import CenteringPolicy, Overflow, SizePolicy
@@ -22,6 +23,8 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
     """
 
     overflow = Overflow.HIDE
+    container = Container()
+    container_height = container.height
 
     title = ""
     """Title shown in left-top corner."""
@@ -68,6 +71,8 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
             *widgets: Widgets to add to this window after initilization.
             **attrs: Attributes that are passed to the constructor.
         """
+        container = Container()
+        container_height = container.height
 
         self._min_width: int | None = None
         self._auto_min_width: int | None = None
@@ -92,6 +97,9 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
         if self.is_persistent:
             self.is_noblur = True
+
+        if(container_height>self.height):
+            raise ValueError("container is too large please reduce size of container")
 
     @property
     def min_width(self) -> int | None:
@@ -175,7 +183,8 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
             other: The widget-like to add.
             run_get_lines: Whether self.get_lines should be ran after adding.
         """
-
+        if (container_height > self.height):
+            raise ValueError("container size is too big and has overflown Window please reconfigure Container size")
         added = super()._add_widget(other, run_get_lines)
 
         if len(self._widgets) > 0:
@@ -295,3 +304,4 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         assert self.manager is not None
 
         self.manager.remove(self, animate=animate)
+
