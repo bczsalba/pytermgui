@@ -11,6 +11,7 @@ from ..enums import CenteringPolicy, Overflow, SizePolicy
 from ..widgets import Container, Widget
 from ..widgets import styles as w_styles
 
+
 if TYPE_CHECKING:
     from .manager import WindowManager
 
@@ -23,9 +24,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
     """
 
     overflow = Overflow.HIDE
-    container = Container()
-    container_height = container.height
-
+    window_height = 0
     title = ""
     """Title shown in left-top corner."""
 
@@ -53,6 +52,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
     """
 
     chars = Container.chars.copy()
+    container_height = Container().get_height()
 
     styles = w_styles.StyleManager(
         border="surface",
@@ -97,9 +97,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         if self.is_persistent:
             self.is_noblur = True
 
-        container_height = Container().height()
-        if(container_height>self.height):
-            raise ValueError("container is too large please reduce size of container")
+        window_height = self.height
 
     @property
     def min_width(self) -> int | None:

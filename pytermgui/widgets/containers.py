@@ -9,6 +9,8 @@ from __future__ import annotations
 from itertools import zip_longest
 from typing import Any, Callable, Iterator, cast
 
+from docs.src.widgets.attrs.box import container
+from .overflow_preventer import container_height
 from ..ansi_interface import MouseAction, MouseEvent, clear, reset
 from ..context_managers import cursor_at
 from ..enums import (
@@ -27,9 +29,11 @@ from . import styles as w_styles
 from .base import ScrollableWidget, Widget
 
 
+
+
 class Container(ScrollableWidget):
     """A widget that displays other widgets, stacked vertically."""
-
+    container_height = 0
     styles = w_styles.StyleManager(
         border="surface",
         corner="surface",
@@ -76,6 +80,7 @@ class Container(ScrollableWidget):
             self._add_widget(widget)
             self.height =  self.height + widget.size
 
+        container_height = self.height
         if "box" not in attrs:
             attrs["box"] = "SINGLE"
 
@@ -225,6 +230,10 @@ class Container(ScrollableWidget):
                 self.dirty_widgets.append(widget)
 
         return change
+
+
+
+
 
     def __iadd__(self, other: object) -> Container:
         """Adds a new widget, then returns self.
@@ -999,7 +1008,6 @@ class Container(ScrollableWidget):
             + ")"
         )
 
-
 class Splitter(Container):
     """A widget that displays other widgets, stacked horizontally."""
 
@@ -1104,4 +1112,4 @@ class Splitter(Container):
         self.height = max(widget.height for widget in self)
         return lines
 
-    def get_height(self) -> int: return self.height
+

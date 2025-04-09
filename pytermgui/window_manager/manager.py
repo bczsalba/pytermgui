@@ -17,6 +17,7 @@ from ..regex import real_length
 from ..term import terminal
 from ..widgets import Container, Widget
 from ..widgets.base import BoundCallback
+from ..widgets.overflow_preventer import overflow_preventer
 from ..win32console import enable_virtual_processing
 from .compositor import Compositor
 from .layouts import Layout
@@ -64,7 +65,6 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         """Initialize the manager."""
 
         super().__init__()
-
         self._is_running = False
         self._windows: list[Window] = []
         self._bindings: dict[str | Type[MouseEvent], tuple[BoundCallback, str]] = {}
@@ -218,7 +218,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
                 False no assignment will be done.
             animate: If set, an animation will be played on the window once it's added.
         """
-
+        overflow_preventer()
         self._windows.insert(0, window)
         window.manager = self
 
@@ -652,3 +652,6 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         animator.schedule(leadup)
 
         return toast
+
+
+

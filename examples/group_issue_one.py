@@ -2,6 +2,7 @@
 from pytermgui import Widget, Container, Button
 
 import pytermgui as ptg
+from pytermgui.widgets.overflow_preventer import overflow_preventer
 
 
 def button_press(manager: ptg.WindowManager) -> None:
@@ -10,15 +11,16 @@ def button_press(manager: ptg.WindowManager) -> None:
 
 
 container = ptg.Container()
-for i in range(20):
+for i in range(70):
     container.lazy_add(ptg.Button("BUTTON"))
 window=ptg.Window(container)
 
 with ptg.WindowManager() as manager:
     manager.layout.add_slot("Body")
     manager.add(window)
-    if(container.height > window.height):
-        raise ValueError("container size is too big and has overflown Window please reconfigure Container size")
+    overflow_preventer()
+    #if(container.height > window.height):
+        #raise ValueError("container size is too big and has overflown Window please reconfigure Container size")
 
 
 

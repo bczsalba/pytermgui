@@ -1,8 +1,8 @@
 
-import pytermgui as ptg
+from pytermgui import *
 
-
-def overflow_preventer(window_height, container_height):
-
-        if(container_height > window_height):
+def overflow_preventer():
+        w = Window.window_height
+        c = Container.container_height
+        if(c > w):
             raise ValueError("container size is too big and has overflown Window please reconfigure Container size")
