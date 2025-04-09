@@ -1103,3 +1103,5 @@ class Splitter(Container):
 
         self.height = max(widget.height for widget in self)
         return lines
+
+    def get_height(self) -> int: return self.height
