@@ -33,6 +33,7 @@ from .serialization import *
 from .term import *
 from .widgets import *
 from .window_manager import *
+from .overflow_preventer import *
 
 # Silence warning if running as standalone module
 if "-m" in sys.argv:  # pragma: no cover

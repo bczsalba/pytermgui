@@ -1,8 +1,5 @@
-
-from pytermgui import Widget, Container, Button
-
 import pytermgui as ptg
-from utils.overflow_preventer import overflow_preventer
+from pytermgui.overflow_preventer import overflow_preventer
 
 
 def button_press(manager: ptg.WindowManager) -> None:
