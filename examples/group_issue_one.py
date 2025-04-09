@@ -14,11 +14,10 @@ container = ptg.Container()
 for i in range(70):
     container.lazy_add(ptg.Button("BUTTON"))
 window=ptg.Window(container)
-
 with ptg.WindowManager() as manager:
     manager.layout.add_slot("Body")
     manager.add(window)
-    overflow_preventer()
+    overflow_preventer(container.height, window.height)
     #if(container.height > window.height):
         #raise ValueError("container size is too big and has overflown Window please reconfigure Container size")
 
