@@ -8,9 +8,7 @@ from __future__ import annotations
 
 from itertools import zip_longest
 from typing import Any, Callable, Iterator, cast
-
-from docs.src.widgets.attrs.box import container
-from .overflow_preventer import container_height
+from ..overflow_preventer import *
 from ..ansi_interface import MouseAction, MouseEvent, clear, reset
 from ..context_managers import cursor_at
 from ..enums import (
@@ -27,7 +25,7 @@ from ..regex import real_length, strip_markup
 from . import boxes
 from . import styles as w_styles
 from .base import ScrollableWidget, Widget
-
+import shutil
 
 
 
@@ -60,33 +58,53 @@ class Container(ScrollableWidget):
 
     # TODO: Add `WidgetConvertible`? type instead of Any
     def __init__(self, *widgets: Any, **attrs: Any) -> None:
-        """Initialize Container data"""
-
         super().__init__(**attrs)
 
-        # TODO: This is just a band-aid.
         if not any("width" in attr for attr in attrs):
             self.width = 20
-
 
         self._widgets: list[Widget] = []
         self.dirty_widgets: list[Widget] = []
         self.centered_axis: CenteringPolicy | None = None
-
         self._prev_screen: tuple[int, int] = (0, 0)
         self._has_printed = False
 
+        total_height = 0
+
         for widget in widgets:
             self._add_widget(widget)
-            self.height =  self.height + widget.size
 
-        container_height = self.height
+            # Most widgets should have `.size`, which is (width, height)
+            if hasattr(widget, "size"):
+                size = widget.size
+
+                if isinstance(size, tuple):
+                    height = size[1]
+                elif isinstance(size, int):
+                    height = size
+                else:
+                    height = 1  # Fallback if it's something else
+
+                total_height += height
+
+        # Store it as an instance variable (optional)
+        self.container_height = total_height
+
+        # Compare to terminal height
+        terminal_height = shutil.get_terminal_size().lines
+
+        if total_height > terminal_height:
+            raise ValueError(
+                f"Container height ({total_height}) exceeds terminal height ({terminal_height})"
+            )
+
+
+        # Box logic
         if "box" not in attrs:
             attrs["box"] = "SINGLE"
 
         try:
             self.box = attrs["box"]
-        # Splitter doesn't use boxes ATM.
         except KeyError:
             pass
 

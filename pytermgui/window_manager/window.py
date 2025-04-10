@@ -4,8 +4,6 @@ allows for mouse-based moving and resizing."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
-from ..widgets import overflow_preventer
-
 from ..ansi_interface import MouseAction, MouseEvent
 from ..enums import CenteringPolicy, Overflow, SizePolicy
 from ..widgets import Container, Widget
@@ -24,7 +22,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
     """
 
     overflow = Overflow.HIDE
-    window_height = 0
+
     title = ""
     """Title shown in left-top corner."""
 
@@ -52,7 +50,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
     """
 
     chars = Container.chars.copy()
-    container_height = Container().get_height()
+
 
     styles = w_styles.StyleManager(
         border="surface",
@@ -97,7 +95,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
         if self.is_persistent:
             self.is_noblur = True
 
-        window_height = self.height
+
 
     @property
     def min_width(self) -> int | None:
