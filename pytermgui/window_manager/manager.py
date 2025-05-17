@@ -309,10 +309,7 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
             step: The direction to step through windows. +1 for next, -1 for previous.
         """
 
-        self._focus_index += step
-
-        if self._focus_index >= len(self._windows):
-            self._focus_index = 0
+        self._focus_index = (self._focus_index + step) % len(self._windows)
 
         if self.focused is not None:
             self.focused.blur()
