@@ -255,7 +255,6 @@ class Compositor:
         if not force and self._previous == lines:
             return
 
-        self.terminal.clear_stream()
         with self.terminal.frame() as frame:
             frame_write = frame.write
 
