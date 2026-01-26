@@ -116,7 +116,7 @@ def clear(what: str = "screen") -> None:
     commands = {
         "eos": "\x1b[0J",
         "bos": "\x1b[1J",
-        "screen": "\x1b[2J",
+        "screen": "\x1b[H\x1b[2J",
         "eol": "\x1b[0K",
         "bol": "\x1b[1K",
         "line": "\x1b[2K",

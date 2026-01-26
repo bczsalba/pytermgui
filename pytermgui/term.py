@@ -376,6 +376,9 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         self.size = self._get_size()
         self._call_listener(self.RESIZE, self.size)
 
+        # Wipe the screen in case anything got messed up
+        self.write("\x1b[H\x1b[2J")
+        
         return True
 
     @property
@@ -472,15 +475,14 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         buffer = StringIO()
 
         try:
-            with self.no_record():
-                self.write("\x1b[?2026h")
+            # Write directly to stream to avoid write()'s auto-clear behavior
+            self._stream.write("\x1b[?2026h")
             yield buffer
 
         finally:
-            self.write(buffer.getvalue())
-            with self.no_record():
-                self.write("\x1b[?2026l")
-            self.flush()
+            self._stream.write(buffer.getvalue())
+            self._stream.write("\x1b[?2026l")
+            self._stream.flush()
 
     @staticmethod
     def isatty() -> bool:
@@ -550,6 +552,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
             return sliced
 
+        # Truncate pending buffer on clear (may help on Windows)
         if "\x1b[2J" in data:
             self.clear_stream()
 
@@ -583,7 +586,11 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             self._stream.flush()
 
     def clear_stream(self) -> None:
-        """Clears (truncates) the terminal's stream."""
+        """Clears the terminal screen.
+
+        Attempts to truncate any buffered stream data (may work on Windows),
+        then moves cursor to home position and clears the entire screen.
+        """
 
         try:
             self._stream.truncate(0)
@@ -592,7 +599,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             if error.errno != errno.EINVAL and os.name != "nt":
                 raise
 
-        self._stream.write("\x1b[2J")
+        self._stream.write("\x1b[H\x1b[2J")
 
     def print(
         self,
