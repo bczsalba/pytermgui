@@ -8,6 +8,7 @@ import errno
 import os
 import signal
 import sys
+import threading
 import time
 from contextlib import contextmanager
 from datetime import datetime
@@ -263,6 +264,9 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         self._listeners: dict[int, list[Callable[..., Any]]] = {}
 
+        # Async-signal-safe resize mechanism
+        self._resize_pending = threading.Event()
+
         if hasattr(signal, "SIGWINCH"):
             signal.signal(signal.SIGWINCH, self._update_size)
         else:
@@ -278,16 +282,16 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             ["" for _ in range(self.width)] for y in range(self.height)
         ]
 
-    def _window_terminal_resize(self):
+    def _window_terminal_resize(self) -> None:
         from time import sleep  # pylint: disable=import-outside-toplevel
 
         _previous = get_terminal_size()
         while True:
             _next = get_terminal_size()
             if _previous != _next:
-                self._update_size()
+                self._resize_pending.set()
                 _previous = _next
-            sleep(0.001)
+            sleep(0.01)
 
     def __fancy_repr__(self) -> Generator[FancyYield, None, None]:
         """Returns a cool looking repr."""
@@ -348,17 +352,34 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
         return (size[0], size[1])
 
     def _update_size(self, *_: Any) -> None:
-        """Resize terminal when SIGWINCH occurs, and call listeners."""
+        """Signal handler for SIGWINCH - ONLY sets flag (async-signal-safe)."""
 
-        if hasattr(self, "resolution"):
-            del self.resolution
+        self._resize_pending.set()
+
+    def process_pending_resize(self) -> bool:
+        """Process pending resize event if one is queued.
+
+        Call this periodically from the main event loop.
+
+        :returns: True if a resize was processed.
+        """
+        if not self._resize_pending.is_set():
+            return False
+
+        self._resize_pending.clear()
+
+        # Check __dict__ directly to avoid triggering the cached_property getter,
+        # which uses signals and can only run in the main thread
+        if "resolution" in self.__dict__:
+            del self.__dict__["resolution"]
 
         self.size = self._get_size()
-
         self._call_listener(self.RESIZE, self.size)
 
         # Wipe the screen in case anything got messed up
         self.write("\x1b[H\x1b[2J")
+        
+        return True
 
     @property
     def width(self) -> int:
@@ -459,7 +480,6 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             yield buffer
 
         finally:
-            # Write buffer directly to stream - bypasses write()'s \x1b[2J detection
             self._stream.write(buffer.getvalue())
             self._stream.write("\x1b[?2026l")
             self._stream.flush()
