@@ -6,7 +6,6 @@
 
 from __future__ import annotations
 
-from itertools import zip_longest
 from typing import Any, Callable, Iterator, cast
 
 from ..ansi_interface import MouseAction, MouseEvent, clear, reset
@@ -1030,6 +1029,7 @@ class Splitter(Container):
 
         self.positioned_line_buffer = []
         vertical_lines = []
+        column_widths = []
         total_offset = 0
 
         for widget in self._widgets:
@@ -1042,6 +1042,8 @@ class Splitter(Container):
                 widget.width = target_width + error
                 width = widget.width
                 error = 0
+
+            column_widths.append(width)
 
             aligned: str | None = None
             for line in widget.get_lines():
@@ -1073,8 +1075,16 @@ class Splitter(Container):
 
             vertical_lines.append(inner)
 
+        # Pad columns to max height using each column's actual width.
+        # (target_width is mutated above, so we can't use it as a fillvalue)
+        max_height = max(len(col) for col in vertical_lines) if vertical_lines else 0
+        for i, col in enumerate(vertical_lines):
+            fill = " " * column_widths[i]
+            while len(col) < max_height:
+                col.append(fill)
+
         lines = []
-        for horizontal in zip_longest(*vertical_lines, fillvalue=" " * target_width):
+        for horizontal in zip(*vertical_lines):
             lines.append((reset() + separator).join(horizontal))
 
         self.height = max(widget.height for widget in self)

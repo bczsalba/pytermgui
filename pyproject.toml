@@ -13,7 +13,7 @@ description = """\
 license = {text = "MIT"}
 
 requires-python = ">=3.8"
-dependencies = ["wcwidth", "typing_extensions"]
+dependencies = ["wcwidth>=0.5", "typing_extensions"]
 
 keywords = [
     "terminal",

@@ -2,25 +2,28 @@ from pytermgui import break_line, real_length, tim
 
 
 def test_break_plain():
+    # wcwidth.wrap breaks at word boundaries and trims trailing spaces
     text = "123 12345 1234"
     broken = break_line(text, 3)
-    assert list(broken) == ["123", " 12", "345", " 12", "34"]
+    assert list(broken) == ["123", "123", "45", "123", "4"]
 
 
 def test_break_fancy():
+    # wcwidth.wrap breaks at word boundaries; ANSI codes propagate across lines
     text = tim.parse(
         "[141 bold]Hello there[/ italic ansi-blue] whats up[ansi-cyan bold]?"
     )
     broken = break_line(text, 3)
 
+    # wcwidth uses combined SGR params (e.g., \x1b[1;38;5;141m)
     assert list(broken) == [
         "\x1b[38;5;141m\x1b[1mHel\x1b[0m",
-        "\x1b[38;5;141m\x1b[1mlo \x1b[0m",
-        "\x1b[38;5;141m\x1b[1mthe\x1b[0m",
-        "\x1b[38;5;141m\x1b[1mre\x1b[0m\x1b[3m\x1b[38;5;4m \x1b[0m",
-        "\x1b[0m\x1b[3m\x1b[38;5;4mwha\x1b[0m",
-        "\x1b[0m\x1b[3m\x1b[38;5;4mts \x1b[0m",
-        "\x1b[0m\x1b[3m\x1b[38;5;4mup\x1b[38;5;6m\x1b[1m?\x1b[0m",
+        "\x1b[1;38;5;141mlo\x1b[0m",
+        "\x1b[1;38;5;141mthe\x1b[0m",
+        "\x1b[1;38;5;141mre\x1b[0m\x1b[3m\x1b[38;5;4m\x1b[0m",
+        "\x1b[3;38;5;4mwha\x1b[0m",
+        "\x1b[3;38;5;4mts\x1b[0m",
+        "\x1b[3;38;5;4mup\x1b[38;5;6m\x1b[1m?\x1b[0m",
     ]
 
 
