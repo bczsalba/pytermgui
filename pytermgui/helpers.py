@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Iterator
 
-from .markup import tokenize_ansi
-from .markup.parsing import LINK_TEMPLATE, PARSERS
+from wcwidth import wrap as wcwidth_wrap
+
 from .regex import real_length
 
 __all__ = [
@@ -13,17 +13,14 @@ __all__ = [
 ]
 
 
-def break_line(  # pylint: disable=too-many-branches
+def break_line(
     line: str, limit: int, non_first_limit: int | None = None, fill: str | None = None
 ) -> Iterator[str]:
     """Breaks a line into a `list[str]` with maximum `limit` length per line.
 
-    It keeps ongoing ANSI sequences between lines, and inserts a reset sequence
-    at the end of each style-containing line.
-
-    At the moment it splits strings exactly on the limit, and not on word
-    boundaries. That functionality would be preferred, so it will end up being
-    implemented at some point.
+    Uses wcwidth.wrap() for proper word-boundary breaking, grapheme cluster
+    handling, and wide character support. ANSI sequences are preserved and
+    propagated across line breaks.
 
     Args:
         line: The line to split. May or may not contain ANSI sequences.
@@ -31,83 +28,33 @@ def break_line(  # pylint: disable=too-many-branches
             non-printing sequences.
         non_first_limit: The limit after the first line. If not given, defaults
             to `limit`.
+        fill: Optional character to pad lines to the limit width.
     """
 
     if line in ["", "\x1b[0m"]:
         yield ""
         return
 
-    def _pad_and_link(line: str, link: str | None) -> str:
-        count = limit - real_length(line)
-
-        if link is not None:
-            line = LINK_TEMPLATE.format(uri=link, label=line)
-
+    def _pad_line(text: str, width: int) -> str:
         if fill is None:
-            return line
+            return text
 
-        line += count * fill
-
-        return line
-
-    used = 0
-    current = ""
-    sequences = ""
+        count = width - real_length(text)
+        if count > 0:
+            return text + count * fill
+        return text
 
     if non_first_limit is None:
         non_first_limit = limit
 
-    parsers = PARSERS
-    link = None
-
-    for token in tokenize_ansi(line):
-        if token.is_plain():
-            for char in token.value:
-                if char == "\n" or used >= limit:
-                    if sequences != "":
-                        current += "\x1b[0m"
-
-                    yield _pad_and_link(current, link)
-                    link = None
-
-                    current = sequences
-                    used = 0
-
-                    limit = non_first_limit
-
-                if char != "\n":
-                    current += char
-                    used += 1
-
-            # If the link wasn't yielded along with its token, remove and add it
-            # to current manually.
-            if link is not None:
-                current = current[: -len(token.value)]
-                current += LINK_TEMPLATE.format(uri=link, label=token.value)
-                link = None
-
+    for segment in line.split("\n"):
+        if not segment:
+            yield _pad_line("", limit)
+            limit = non_first_limit
             continue
 
-        if token.value == "/":
-            sequences = "\x1b[0m"
+        wrapped = wcwidth_wrap(segment, limit)
 
-            if len(current) > 0:
-                current += sequences
-
-            continue
-
-        if token.is_hyperlink():
-            link = token.value
-            continue
-
-        sequence = parsers[type(token)](token, {}, lambda: line)  # type: ignore
-        sequences += sequence
-        current += sequence
-
-    if current == "":
-        return
-
-    if sequences != "" and not current.endswith("\x1b[0m"):
-        current += "\x1b[0m"
-
-    yield _pad_and_link(current, link)
+        for wrapped_line in wrapped:
+            yield _pad_line(wrapped_line, limit)
+            limit = non_first_limit
