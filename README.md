@@ -5,7 +5,11 @@
 > Python TUI framework with mouse support, modular widget system, customizable and rapid terminal markup language and more!
 
 ```bash
+# PIP
 pip3 install pytermgui
+
+# Arch Linux (AUR)
+yay -S python-pytermgui-git
 ```
 
 <p align=center>
