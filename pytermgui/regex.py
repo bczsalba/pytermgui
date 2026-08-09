@@ -7,7 +7,9 @@ from typing import Match
 from wcwidth import wcswidth
 
 RE_LINK = re.compile(r"(?:\x1b\]8;;([^\\]*)\x1b\\([^\\]*?)\x1b\]8;;\x1b\\)")
-RE_ANSI_NEW = re.compile(rf"(\x1b\[(.*?)[mH])|{RE_LINK.pattern}|(\x1b\]8;;\x1b\\)|(\x1b_G(.*?)\x1b\\)")
+RE_ANSI_NEW = re.compile(
+    rf"(\x1b\[(.*?)[mH])|{RE_LINK.pattern}|(\x1b\]8;;\x1b\\)|(\x1b_G(.*?)\x1b\\)"
+)
 RE_ANSI = re.compile(r"(?:\x1b\[(.*?)[mH])|(?:\x1b\](.*?)\x1b\\)|(?:\x1b_G(.*?)\x1b\\)")
 RE_MACRO = re.compile(r"(![a-z0-9_\-]+)(?:\(([\w\/\.?\-=:]+)\))?")
 RE_MARKUP = re.compile(r"((\\*)\[([^\[\]]*)\])")

@@ -241,23 +241,18 @@ class Palette:
             for shadenumber in range(-SHADE_COUNT, SHADE_COUNT + 1):
                 if shadenumber > 0:
                     shadeindex = f"+{shadenumber}"
-                    blend_color = white
-                    blend_multiplier = 1
+                    blended = color.blend(
+                        white, SHADE_INCREMENT * shadenumber
+                    )
 
                 elif shadenumber == 0:
                     shadeindex = ""
-
-                else:
-                    shadeindex = str(shadenumber)
-                    blend_color = black
-                    blend_multiplier = -1
-
-                if shadenumber == 0:
                     blended = color
 
                 else:
+                    shadeindex = str(shadenumber)
                     blended = color.blend(
-                        blend_color, blend_multiplier * SHADE_INCREMENT * shadenumber
+                        black, -SHADE_INCREMENT * shadenumber
                     )
 
                 data[f"{name}{shadeindex}"] = blended

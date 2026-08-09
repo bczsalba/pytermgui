@@ -9,7 +9,7 @@ from .parsing import parse
 
 DEFAULT_MACROS = {}
 
-MarkupLanguage = Any
+MarkupLanguage = Any  # pylint: disable=invalid-name
 
 
 MacroTemplate = TypeVar("MacroTemplate")

@@ -127,7 +127,7 @@ class Recorder:
         with open(filename, "w", encoding="utf-8") as file:
             file.write(self.export_html(prefix=prefix, inline_styles=inline_styles))
 
-    def save_svg(  # pylint: disable=too-many-arguments
+    def save_svg(  # pylint: disable=too-many-arguments, R0917
         self,
         filename: str | None = None,
         prefix: str | None = None,
@@ -378,7 +378,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
         # Wipe the screen in case anything got messed up
         self.write("\x1b[H\x1b[2J")
-        
+
         return True
 
     @property
@@ -567,8 +567,7 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
 
                 maximum = self.width - xpos
 
-                if xpos < self.origin[0]:
-                    xpos = self.origin[0]
+                xpos = max(xpos, self.origin[0])
 
                 sliced = _slice(data, maximum) if len(data) > maximum else data
 

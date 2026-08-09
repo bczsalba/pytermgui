@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Any, Callable
 if TYPE_CHECKING:
     from .widgets import Widget
 else:
-    Widget = Any
+    Widget = Any  # pylint: disable=invalid-name
 
 __all__ = ["Animator", "FloatAnimation", "AttrAnimation", "animator", "is_animated"]
 

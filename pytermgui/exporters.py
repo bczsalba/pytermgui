@@ -273,7 +273,7 @@ def token_to_css(token: Token, invert: bool = False) -> str:
 
 # We take this many arguments for future proofing and customization, not much we can
 # do about it.
-def to_html(  # pylint: disable=too-many-arguments, too-many-locals
+def to_html(  # pylint: disable=too-many-arguments, too-many-locals, R0917
     obj: Widget | StyledText | str,
     prefix: str | None = None,
     inline_styles: bool = False,
@@ -441,7 +441,7 @@ def _make_tag(tagname: str, content: str = "", **attrs) -> str:
 
 # This is a bit of a beast of a function, but it does the job and IMO reducing it
 # into parts would just make our lives more complicated.
-def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-statements, R0912
+def to_svg(  # pylint: disable=too-many-locals, too-many-arguments, too-many-statements, R0912, R0917
     obj: Widget | StyledText | str,
     prefix: str | None = None,
     chrome: bool = True,

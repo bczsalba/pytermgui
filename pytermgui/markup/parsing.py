@@ -486,7 +486,7 @@ def optimize_tokens(tokens: list[Token]) -> Iterator[Token]:
             applied.append(tkn)
             yield tkn
 
-    def _remove_redundant_color(token: Token) -> None:
+    def _remove_redundant_color(token: Token, new: Color) -> None:
         """Removes non-functional colors.
 
         These happen in the following ways:
@@ -518,7 +518,7 @@ def optimize_tokens(tokens: list[Token]) -> Iterator[Token]:
         if Token.is_color(token):
             new = token.color
 
-            _remove_redundant_color(token)
+            _remove_redundant_color(token, new)
 
             if not any(token.markup == applied.markup for applied in current_tag_group):
                 current_tag_group.append(token)

@@ -131,14 +131,14 @@ from . import widgets as widgets_m
 from .markup import tim
 from .serialization import Serializer
 
-YAML_ERROR = None
+_yaml_error = None
 
 try:
     import yaml
 except ImportError as import_error:
     # yaml is explicitly checked to be None later
     yaml = None  # type: ignore
-    YAML_ERROR = import_error
+    _yaml_error = import_error
 
 
 __all__ = ["WidgetNamespace", "FileLoader", "YamlLoader", "JsonLoader"]
@@ -412,10 +412,10 @@ class YamlLoader(FileLoader):
     def __init__(self, serializer: Serializer | None = None) -> None:
         """Initialize object, check for installation of PyYAML."""
 
-        if YAML_ERROR is not None:
+        if _yaml_error is not None:
             raise RuntimeError(
                 "YAML implementation module not found. Please install `PyYAML` to use `YamlLoader`."
-            ) from YAML_ERROR
+            ) from _yaml_error
 
         super().__init__()
 

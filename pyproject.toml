@@ -96,6 +96,9 @@ start-after = "\n<!-- HATCH URI DEFINITIONS START -->"
 [tool.mypy]
 show_error_codes = true
 
+[tool.pylint.main]
+py-version = "3.8"
+
 [tool.pylint.messages_control]
 disable = [
     "fixme",

@@ -267,8 +267,7 @@ class Container(ScrollableWidget):
             The next widget.
         """
 
-        for widget in self._widgets:
-            yield widget
+        yield from self._widgets
 
     def __len__(self) -> int:
         """Gets the length of the widgets list.
@@ -711,13 +710,13 @@ class Container(ScrollableWidget):
 
         while isinstance(parent, Container):
             if parent.overflow is Overflow.SCROLL:
-                borders = parent._get_char("border")
+                borders = parent._get_char("border")  # pylint: disable=protected-access
                 assert isinstance(borders, list)
 
                 viewport_top = (
                     parent.pos[1]
                     + (1 if real_length(borders[1]) else 0)
-                    + parent._scroll_offset
+                    + parent._scroll_offset  # pylint: disable=protected-access
                 )
                 viewport_bottom = viewport_top + parent.content_dimensions[1]
 

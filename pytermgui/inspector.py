@@ -175,7 +175,7 @@ def inspect(target: object, **inspector_args: Any) -> Inspector:
 class Inspector(Container):
     """A widget to inspect any Python object."""
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments, R0917
         self,
         target: object = None,
         show_private: bool = False,
