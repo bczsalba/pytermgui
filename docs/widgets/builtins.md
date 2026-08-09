@@ -254,6 +254,113 @@ A button that toggles its label between the two given values.
 
 ---
 
+## Selecting one or more options
+
+`Checkbox` widgets can be grouped when an application needs to select from a
+configured list of strings. The widget's `checked` argument sets its default
+state, and its checked and unchecked characters provide the visual indication.
+
+### Selecting exactly one option
+
+For radio-button behavior, define a container that unchecks the other widgets
+when an option is selected. Its `value` property reads the selected string
+directly from the checkbox states, so no separate application state is needed.
+
+```python
+import pytermgui as ptg
+
+
+class SingleSelect(ptg.Container):
+    def __init__(self, options, default, **attrs):
+        if default not in options:
+            raise ValueError("default must be one of the options")
+
+        self.options = list(options)
+        self._checkboxes = []
+        rows = []
+
+        for index, option in enumerate(self.options):
+            checkbox = ptg.Checkbox(
+                lambda checked, index=index: self._select(index, checked),
+                checked=option == default,
+            )
+            self._checkboxes.append(checkbox)
+            rows.append(ptg.Splitter(ptg.Label(option), checkbox))
+
+        super().__init__(*rows, **attrs)
+
+    def _select(self, index, checked):
+        if not checked:
+            # Keep the current option selected until another is chosen.
+            self._checkboxes[index].toggle(run_callback=False)
+            return
+
+        for other_index, checkbox in enumerate(self._checkboxes):
+            if other_index != index and checkbox.checked:
+                checkbox.toggle(run_callback=False)
+
+    @property
+    def value(self):
+        """Return the selected option as a string."""
+        selected = next(
+            index for index, checkbox in enumerate(self._checkboxes)
+            if checkbox.checked
+        )
+        return self.options[selected]
+
+
+size = SingleSelect(["small", "medium", "large"], default="medium")
+```
+
+Add `size` to a window or another container. Reading `size.value` returns
+`"small"`, `"medium"`, or `"large"`; before any interaction it returns the
+configured default, `"medium"`.
+
+### Selecting multiple options
+
+For multiple selection, each checkbox can toggle independently. The `value`
+property returns the strings whose checkboxes are currently checked, in their
+configured order.
+
+```python
+import pytermgui as ptg
+
+
+class MultiSelect(ptg.Container):
+    def __init__(self, options, defaults=(), **attrs):
+        self.options = list(options)
+        self._checkboxes = []
+        rows = []
+
+        for option in self.options:
+            checkbox = ptg.Checkbox(checked=option in defaults)
+            self._checkboxes.append(checkbox)
+            rows.append(ptg.Splitter(ptg.Label(option), checkbox))
+
+        super().__init__(*rows, **attrs)
+
+    @property
+    def value(self):
+        """Return the selected options as a list of strings."""
+        return [
+            option
+            for option, checkbox in zip(self.options, self._checkboxes)
+            if checkbox.checked
+        ]
+
+
+colors = MultiSelect(
+    ["red", "green", "blue"],
+    defaults=["red", "blue"],
+)
+```
+
+Add `colors` to a window or another container. Each click changes the visual
+state; clicking a checked option again deselects it. Before any interaction,
+`colors.value` returns `["red", "blue"]`.
+
+---
+
 ## [Slider](/reference/pytermgui/widgets/slider#pytermgui.widgets.slider.Slider)
 
 A widget to display and/or control a floating point value.
@@ -335,6 +442,3 @@ Similar to `PixelMatrix`, but instead of using two unicode block characters per 
 **Chars**: See `PixelMatrix`
 
 **Styles**: See `PixelMatrix`
-
-
-
