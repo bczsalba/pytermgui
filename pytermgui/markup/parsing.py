@@ -211,6 +211,11 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
         if cursor < start:
             yield PlainToken(text[cursor:start])
 
+        if matchobj.groups()[4] is not None:
+            cursor = end
+            yield ClearToken("/~")
+            continue
+
         if link_osc != (None, None):
             cursor = end
             uri, label = link_osc
