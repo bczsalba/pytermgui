@@ -64,6 +64,16 @@ Additionally, there are a couple of neat tools to make your general Python devel
 - A pretty printer for both the REPL and IPython
 - A way to create SVG and HTML screenshots of your terminal
 
+### Terminal compatibility
+
+PyTermGUI relies on ANSI virtual-terminal sequences for rendering, cursor reports,
+keyboard input, and mouse input. On Windows, support depends on the terminal emulator's
+ANSI compatibility. [Windows Terminal](https://github.com/microsoft/terminal) supports
+the expected cursor and mouse protocols, while the legacy Windows Console Host
+(`conhost.exe`) may provide reduced functionality. This does not depend on whether
+PowerShell or Command Prompt is running inside the emulator. Mouse support also depends
+on the emulator forwarding the requested events.
+
 <!-- HATCH README END -->
 
 ## Examples

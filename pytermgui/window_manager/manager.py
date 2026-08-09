@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from enum import Enum
 from enum import auto as _auto
+from time import sleep
 from typing import Any, Iterator, Type
 
 from ..animations import Animation, AttrAnimation, FloatAnimation, animator
@@ -133,6 +134,12 @@ class WindowManager(Widget):  # pylint: disable=too-many-instance-attributes
         with enable_virtual_processing():
             while self._is_running:
                 key = getch(interrupts=False)
+
+                # Windows getch is non-blocking so the manager can be stopped from
+                # another thread. Avoid spinning while no console input is pending.
+                if key == "":
+                    sleep(0.01)
+                    continue
 
                 if key == chr(3):
                     self.stop()

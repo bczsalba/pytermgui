@@ -153,7 +153,7 @@ def main(argv: list[str] | None = None) -> None:
         manager.add(header)
 
         footer = ptg.Window(
-            ptg.Button("Quit", lambda *_: _confirm_quit(manager)),
+            ptg.Button("Quit (Tab to focus)", lambda *_: _confirm_quit(manager)),
             box="EMPTY",
         )
         footer.styles.fill = "app.footer"
@@ -167,42 +167,55 @@ def main(argv: list[str] | None = None) -> None:
             assign="body_right",
         )
 
-        manager.add(
-            ptg.Window(
-                "[app.title]Example widgets",
+        body = ptg.Window(
+            "[app.title]Example widgets",
+            "",
+            ptg.Collapsible(
+                "Some sliders",
                 "",
-                ptg.Collapsible(
-                    "Some sliders",
-                    "",
-                    ptg.Container(
-                        ptg.Slider(),
-                        ptg.Slider(),
-                        ptg.Slider(),
-                        static_width=40,
-                    ),
+                ptg.Container(
+                    ptg.Slider(),
+                    ptg.Slider(),
+                    ptg.Slider(),
+                    static_width=40,
                 ),
-                "",
-                ptg.Collapsible(
-                    "XTERM color picker",
-                    "",
-                    ptg.ColorPicker(),
-                ),
-                "",
-                ptg.Collapsible(
-                    "Some containers within a splitter",
-                    "",
-                    ptg.Container(
-                        ptg.Splitter(
-                            ptg.Container("One"),
-                            ptg.Container("Two"),
-                            ptg.Container("Three"),
-                        ),
-                        static_width=60,
-                    ),
-                ),
-                vertical_align=ptg.VerticalAlignment.TOP,
-                overflow=ptg.Overflow.SCROLL,
             ),
+            "",
+            ptg.Collapsible(
+                "XTERM color picker",
+                "",
+                ptg.ColorPicker(),
+            ),
+            "",
+            ptg.Collapsible(
+                "Some containers within a splitter",
+                "",
+                ptg.Container(
+                    ptg.Splitter(
+                        ptg.Container("One"),
+                        ptg.Container("Two"),
+                        ptg.Container("Three"),
+                    ),
+                    static_width=60,
+                ),
+            ),
+            vertical_align=ptg.VerticalAlignment.TOP,
+            overflow=ptg.Overflow.SCROLL,
+        )
+
+        body.bind(
+            ptg.keys.TAB,
+            lambda *_: (manager.focus(footer), footer.select(0)),
+            "Focus the footer",
+        )
+        footer.bind(
+            ptg.keys.TAB,
+            lambda *_: (manager.focus(body), body.select(0)),
+            "Focus the body",
+        )
+
+        manager.add(
+            body,
             assign="body",
         )
 
