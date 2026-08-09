@@ -71,6 +71,7 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
 
         self._min_width: int | None = None
         self._auto_min_width: int | None = None
+        self._auto_height = "height" not in attrs
 
         self.styles.border_focused = type(self).styles.border
         self.styles.corner_focused = type(self).styles.corner
@@ -182,7 +183,8 @@ class Window(Container):  # pylint: disable=too-many-instance-attributes
             self._auto_min_width = max(widget.width for widget in self._widgets)
             self._auto_min_width += self.sidelength
 
-        self.height += added.height
+        if self.overflow != Overflow.SCROLL or self._auto_height:
+            self.height += added.height
 
         return added
 
