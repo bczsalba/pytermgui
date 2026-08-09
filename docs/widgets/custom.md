@@ -250,3 +250,80 @@ The reason this method was created in the first place was to simplify the proces
 - Going through a list, running `auto` on each item and adding it to the container
 
 It makes things a lot simpler, and it also accounts for any future oddities that mess with the process!
+
+### How do I periodically refresh live data?
+
+The window manager's compositor calls `get_lines` regularly and redraws changed output,
+so you do not need to invalidate the window or call a refresh method. Keep slow work,
+such as an API or database request, on a worker thread and let the widget apply the
+result during rendering:
+
+```python
+from __future__ import annotations
+
+from threading import Event, Lock, Thread
+from time import strftime
+
+import pytermgui as ptg
+
+
+class LiveTable(ptg.Container):
+    """A table whose next set of rows can be prepared by another thread."""
+
+    def __init__(self, **attrs) -> None:
+        self._pending_lock = Lock()
+        self._pending: list[str] | None = None
+        super().__init__(box="SINGLE", **attrs)
+
+    def update_rows(self, rows: list[tuple[str, str, str]]) -> None:
+        widgets = ["[bold]Job | State   | Updated[/]"]
+        widgets.extend(
+            f"{job:<3} | {state:<7} | {updated}" for job, state, updated in rows
+        )
+
+        # Only exchange prepared data here. set_widgets is called from get_lines,
+        # rather than while the compositor may be iterating over the old widgets.
+        with self._pending_lock:
+            self._pending = widgets
+
+    def get_lines(self) -> list[str]:
+        with self._pending_lock:
+            pending = self._pending
+            self._pending = None
+
+        if pending is not None:
+            self.set_widgets(pending)
+
+        return super().get_lines()
+
+
+def request_jobs() -> list[tuple[str, str, str]]:
+    """Replace this body with your API or database request."""
+
+    now = strftime("%H:%M:%S")
+    return [("A", "running", now), ("B", "queued", now)]
+
+
+def monitor(table: LiveTable, stop: Event, period: float) -> None:
+    while not stop.is_set():
+        table.update_rows(request_jobs())
+        stop.wait(period)
+
+
+manager = ptg.WindowManager()
+table = LiveTable(static_width=36)
+manager.add(ptg.Window(table, box="EMPTY"))
+
+stop = Event()
+Thread(target=monitor, args=(table, stop, 2.0), daemon=True).start()
+
+try:
+    manager.run()
+finally:
+    stop.set()
+```
+
+`Event.wait` provides both the interval and a way to stop the worker when the manager
+exits. The worker only publishes completed rows under a lock; it does not mutate the
+container's private `_widgets` list. `set_widgets` performs the conversion to child
+widgets and sets their parent and dimensions correctly.
