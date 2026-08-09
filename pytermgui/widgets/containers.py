@@ -59,6 +59,10 @@ class Container(ScrollableWidget):
 
         super().__init__(**attrs)
 
+        autosize = self.overflow is Overflow.SCROLL and "height" not in attrs
+        if autosize:
+            self.overflow = Overflow.RESIZE
+
         # TODO: This is just a band-aid.
         if not any("width" in attr for attr in attrs):
             self.width = 40
@@ -72,6 +76,9 @@ class Container(ScrollableWidget):
 
         for widget in widgets:
             self._add_widget(widget)
+
+        if autosize:
+            self.overflow = Overflow.SCROLL
 
         if "box" not in attrs:
             attrs["box"] = "SINGLE"
