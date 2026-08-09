@@ -702,6 +702,33 @@ class Container(ScrollableWidget):
 
         self.selected_index = index
 
+        selected = self.selected
+        if selected is None:
+            return
+
+        widget = selected
+        parent = widget.parent
+
+        while isinstance(parent, Container):
+            if parent.overflow is Overflow.SCROLL:
+                borders = parent._get_char("border")
+                assert isinstance(borders, list)
+
+                viewport_top = (
+                    parent.pos[1]
+                    + (1 if real_length(borders[1]) else 0)
+                    + parent._scroll_offset
+                )
+                viewport_bottom = viewport_top + parent.content_dimensions[1]
+
+                if widget.pos[1] < viewport_top:
+                    parent.scroll(widget.pos[1] - viewport_top)
+                elif widget.pos[1] + widget.height > viewport_bottom:
+                    parent.scroll(widget.pos[1] + widget.height - viewport_bottom)
+
+            widget = parent
+            parent = parent.parent
+
     def center(
         self, where: CenteringPolicy | None = None, store: bool = True
     ) -> Container:
