@@ -130,6 +130,11 @@ Lucky for you, the reader, TIM exposes convenient syntax for all of these!
 
     `[{name}]`, where `name` is a CSS color name [known to TIM](https://github.com/bczsalba/pytermgui/blob/22327a3fb2841d9f219cc1f4784fd58029347c5d/pytermgui/color_info.py#L266):
 
+Names such as `red` and `blue` refer to CSS colors, which PyTermGUI may approximate
+when the terminal does not support their exact values. To select a color from the
+terminal's standard 16-color palette directly, use an ANSI name such as `ansi-red`
+or `ansi-bright-red`.
+
 ```termage-svg title=CSS\ Colors width=60 height=49 include=docs/src/tim/tags_css_colors.py
 ```
 

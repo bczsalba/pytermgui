@@ -68,9 +68,9 @@ XTERM_NAMED_COLORS = {
     10: "ansi-bright-green",
     11: "ansi-bright-yellow",
     12: "ansi-bright-blue",
-    14: "ansi-bright-magenta",
-    15: "ansi-bright-cyan",
-    16: "ansi-bright-white",
+    13: "ansi-bright-magenta",
+    14: "ansi-bright-cyan",
+    15: "ansi-bright-white",
 }
 
 NAMED_COLORS = {
