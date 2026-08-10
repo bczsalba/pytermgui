@@ -11,22 +11,19 @@ pip3 install pytermgui
       <img alt="PyPi project" src="https://img.shields.io/pypi/v/pytermgui?color=brightgreen">
    </a>
    <a href="https://ptg.bczsalba.com/">
-      <img src="https://img.shields.io/badge/documentation-up%20to%20date-brightgreen">
+      <img src="https://img.shields.io/badge/documentation-gray">
    </a>
    <a href="https://github.com/bczsalba/pytermgui/actions/workflows/pytest.yml">
       <img src="https://github.com/bczsalba/pytermgui/actions/workflows/pytest.yml/badge.svg">
    </a>
  </p>
- <p align=center>
-   <a href="https://discord.gg/g4bqMvpG4U">
-      <img src="https://img.shields.io/discord/999374285686706367?label=join%20our%20discord">
-   </a>
 </p>
 
-## Notice
+<hr>
 
-A much better, more complete version of PTG's core ideas now exists over at [Shade 40](https://github.com/shade40). While PTG is not yet fully obsolete,
-those libraries will be the primary focus of development going forward.
+## Archival notice
+
+PyTermGUI is no longer in development. The latest release will remain available, alongside its documentation. The MIT license allows for free modification of the library, as long as you include credit to its original author. Thank you for everything.
 
 <hr>
 
