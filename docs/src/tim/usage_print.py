@@ -1,5 +1,7 @@
 from pytermgui import tim
 
+tim.define("!reverse", lambda text: text[::-1])
+
 tim.print(
-    "[slategrey italic]So much formatting, [!shuffle !upper]where[/!] does it all fit?"
+    "[slategrey italic]So much formatting, [!reverse !upper]where[/!] does it all fit?"
 )

@@ -16,13 +16,13 @@ PyTermGUI offers a markup language complimentary to the other features of the li
 
 - **Speed**
 
-    Since this language is meant to be used in performance-critical applications, it must be pretty fast. As of 16th of July 2022, TIM is magnitudes faster than [Rich](https://github.com/textualize/rich)'s own markup language, the only "competition" I know about.
+    Since this language is meant to be used in performance-critical applications, its parser is designed to be fast.
 
     This is achieved mostly by smart caching routines, as well as a tightly written parsing algorithm.
 
 - **Extensibility**
 
-    I like tinkering. I hate using things that are made with the philosophy of "this is what I made, and it's all that you will get.". TIM implements customizability in its [alias](usage/#alias) and [macro](usage/#macros) systems.
+    I like tinkering. I hate using things that are made with the philosophy of "this is what I made, and it's all that you will get.". TIM implements customizability in its [alias](usage/#alias) and [macro](usage/#define) systems.
 
 - **Convenience & granularity**
 

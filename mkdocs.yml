@@ -1,5 +1,8 @@
 site_name: PyTermGUI::docs
 
+hooks:
+  - docs/hooks.py
+
 theme:
   name: material
   font:
@@ -86,17 +89,7 @@ nav:
 
     - Inspection: inspect.md
     - 'SVG & HTML exports': exports.md
-
-  - Walkthroughs:
-    - walkthroughs/index.md
-
-    # - Building a TUI application:
-    #   - Planning: walkthroughs/tui/planning.md
-    #   - Functional prototype: walkthroughs/tui/prototype.md
-    #   - Styled product: walkthroughs/tui/product.md
-
-    - Building an inline-widget context: walkthroughs/inline.md
+    - Inline widgets: inline.md
 
   - Reference: reference/
-  - Future: future.md
-
+  - Project status: future.md

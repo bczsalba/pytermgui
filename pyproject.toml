@@ -53,6 +53,13 @@ documentation = "https://ptg.bczsalba.com"
 
 [project.optional-dependencies]
 yaml = ["PyYAML"]
+docs = [
+    "mkdocs-material",
+    "mkdocs-gen-files",
+    "mkdocs-literate-nav",
+    "mkdocstrings[python]",
+    "termage",
+]
 
 [project.scripts]
 ptg = "pytermgui.cmd:main"
@@ -63,9 +70,8 @@ path = "pytermgui/__init__.py"
 [tool.hatch.build]
 include = [
     "/pytermgui",
-    "/tests",
-    "README.md",
-    "CHANGELOG.md",
+    "/README.md",
+    "/CHANGELOG.md",
 ]
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]

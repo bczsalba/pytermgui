@@ -86,9 +86,6 @@ def print_colorboxes(args: Namespace) -> None:
 
 def main() -> None:
     """Main method."""
-
-    open("colorgrids.html", "w").close()
-
     parser = ArgumentParser()
     parser.add_argument(
         "--no-timings", help="Don't show timing information.", action="store_true"

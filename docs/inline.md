@@ -1,4 +1,4 @@
-Our objective today will be to implement a function that lets us use PyTermGUI widgets in an inline-context, e.g. from the terminal prompt while retaining the shell's state.
+Our objective today will be to implement a function that lets us use PyTermGUI widgets in an inline context, e.g. from the terminal prompt while retaining the shell's state.
 
 This type of usage is common for simple prompts that are part of a greater, CLI-based application; they give you the cool-factor of the TUI, and in our case its mouse & keyboard input options, while staying in a CLI environment.
 
@@ -396,7 +396,7 @@ And with that, our printing routine is exactly how we want it to be! Now onto th
 
 Traditionally, mouse support is the "big bad" enemy of writing terminal programs. However, PyTermGUI makes it a _lot_ easier than you would've thought!
 
-The only new thing we will need to import is the [mouse_handler](/reference/pytermgui/ansi_interface#pytermgui.ansi_interface.mouse_handler) context manager. This function does 2 things:
+The only new thing we will need to import is the [mouse_handler](/reference/pytermgui/context_managers/#pytermgui.context_managers.mouse_handler) context manager. This function does 2 things:
 
 - Tells the terminal to send mouse events
 - Returns a function that can translate mouse codes into [MouseEvent](/reference/pytermgui/ansi_interface#pytermgui.ansi_interface.MouseEvent) instances

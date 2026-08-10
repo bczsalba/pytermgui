@@ -1,8 +1,8 @@
-We provide a growing selection of widgets you can drop straight into your projects. Looking at the `widgets` submodule's contents can help illuminate you on the exact selection, but this page describes the most commonly used ones.
+PyTermGUI provides a selection of widgets you can drop straight into your projects. Looking at the `widgets` submodule's contents can help illuminate you on the exact selection, but this page describes the most commonly used ones.
 
 ## A note about `auto`
 
-Some widgets below will have an `Auto syntax` field shown. The format shown can be used by the [auto](/reference/pytermgui/widgets/__init__#pytermgui.widgets.__init__.auto) function to generate widgets from Python datatypes. This function is conveniently called within `Container` and all its subclasses (`Splitter`, `Window`, `Collapsible` & more) to let you easily create widgets with minimal imports.
+Some widgets below will have an `Auto syntax` field shown. The format shown can be used by the [auto](/reference/pytermgui/#pytermgui.auto) function to generate widgets from Python datatypes. This function is conveniently called within `Container` and all its subclasses (`Splitter`, `Window`, `Collapsible` & more) to let you easily create widgets with minimal imports.
 
 For example:
 

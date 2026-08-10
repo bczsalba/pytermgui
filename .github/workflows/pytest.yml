@@ -36,5 +36,4 @@ jobs:
           pip install pyyaml
 
       - name: Run tests with coverage
-        run: |
-          make test
+        run: pytest --cov=pytermgui

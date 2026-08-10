@@ -12,5 +12,4 @@ for name in [name for name in dir(boxes) if name.isupper()]:
 
 &container.static_width = 70
 &termage.fit(container)
-for line in container.get_lines():
-    print(line)
+print("\n".join(container.get_lines()))

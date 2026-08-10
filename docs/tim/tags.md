@@ -155,7 +155,7 @@ For example:
 - To clear all attributes, including modes, colors, macros, use `/` with no identifier.
 - To clear a simple terminal mode, use `/{mode}`, like `/italic`.
 - To clear a color, use `/fg` for foreground colors, and `/bg` for background ones.
-- To clear a [macro](markup_language#macros), use either `/!{name}`, or `/!` to clear all active macros.
+- To clear a [macro](/tim/usage/#define), use either `/!{name}`, or `/!` to clear all active macros.
 - To clear a hyperlink, use `/~`.
 
 !!! warning "Clearing specific links"
@@ -223,7 +223,7 @@ You can position text in the terminal using the syntax:
 [({x};{y})]
 ```
 
-Where `x` and `y` are terminal coordinates, starting from [terminal.origin](/reference/pytermgui/terminal#pytermgui.terminal.origin).
+Where `x` and `y` are terminal coordinates, starting from [Terminal.origin](/reference/pytermgui/term/#pytermgui.term.Terminal.origin).
 
 ```termage include=docs/src/tim/tags_position.py chrome=false height=5 tabs=TIM,Output
 ```

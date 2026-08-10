@@ -480,7 +480,14 @@ class Terminal:  # pylint: disable=too-many-instance-attributes
             yield buffer
 
         finally:
-            self._stream.write(buffer.getvalue())
+            content = buffer.getvalue()
+            self._stream.write(content)
+
+            # Frame contents bypass write() so they are sent atomically to the output
+            # stream. Forward the visual content to an active recorder explicitly.
+            if self._recorder is not None:
+                self._recorder.write(content)
+
             self._stream.write("\x1b[?2026l")
             self._stream.flush()
 

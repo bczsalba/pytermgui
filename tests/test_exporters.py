@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from io import StringIO
+
 from testfixtures import compare
 
 import pytermgui
@@ -1015,6 +1017,16 @@ def _diff(output: str, expected: str) -> tuple[str, str]:
             buff += o
 
     return buff, red(str(count))
+
+
+def test_frame_recording():
+    terminal = Terminal(stream=StringIO())
+
+    with terminal.record() as recording:
+        with terminal.frame() as frame:
+            frame.write("frame contents")
+
+    assert recording.export_text() == "frame contents"
 
 
 def test_export_html():

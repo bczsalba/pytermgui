@@ -1,9 +1,5 @@
 All widgets share a set of attributes that can be used to make things look the way you want. Here is a quick overview on them.
 
-!!! note
-
-    This API will likely be reformed in the future to be properly controllable through YAML config files. The underlying attributes will remain the same, but the way to access/modify them will be improved.
-
 ## Applicable to all
 
 ### Parent align

@@ -1,5 +1,3 @@
-<!--![title](https://github.com/bczsalba/pytermgui/raw/master/assets/title.png)-->
-
 ![title](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/screenshot.png)
 
 > Python TUI framework with mouse support, modular widget system, customizable and rapid terminal markup language and more!
@@ -12,10 +10,7 @@ pip3 install pytermgui
    <a href="https://pypi.org/project/pytermgui">
       <img alt="PyPi project" src="https://img.shields.io/pypi/v/pytermgui?color=brightgreen">
    </a>
-    <a href="https://github.com/bczsalba/pytermgui/blob/master/utils/create_badge.py">
-      <img alt="Code quality" src="https://raw.githubusercontent.com/bczsalba/pytermgui/master/assets/badges/quality.svg">
-   </a>
-   <a href="http://ptg.bczsalba.com/">
+   <a href="https://ptg.bczsalba.com/">
       <img src="https://img.shields.io/badge/documentation-up%20to%20date-brightgreen">
    </a>
    <a href="https://github.com/bczsalba/pytermgui/actions/workflows/pytest.yml">
@@ -191,9 +186,9 @@ We use algorithms based on human vision to convert and downgrade colors when the
 
 ## Questions? See the docs!
 
-Pretty much every single name in the library, private or public, has an insightful dockstring attached to it, and we are accumulating a growing amount of walkthrough-based documentations articles. See 'em all on the [doc website](https://ptg.bczsalba.com)!
+Pretty much every name in the library, private or public, has an insightful docstring attached to it, alongside walkthrough-based documentation articles. See them all on the [documentation website](https://ptg.bczsalba.com)!
 
 
-## Contributions, issues et al.
+## Project status
 
-If you have any problems using the library, feel free to open up a discussion or raise an issue ticket. If you would prefer to hack on the library yourself, see the [contribution guidelines](https://github.com/bczsalba/pytermgui/blob/master/CONTRIBUTING.md). Pull requests are encouraged, but make sure you aren't trying to fix an issue that others are already working on, for your own sake. :slightly_smiling_face:
+PyTermGUI has reached its final release and is no longer under active development. The repository and its documentation are retained as an archive for existing users.

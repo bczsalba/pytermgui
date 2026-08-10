@@ -2,9 +2,9 @@
 
 Welcome to the **PyTermGUI** documentation!
 
-For a general overview of the framework, follow the navigation at the bottom. For a set of working examples, check out the [walkthroughs](/walkthroughs) section. For a complete look at the API, see our [reference](/reference)!
+For a general overview of the framework, follow the navigation at the bottom. For a step-by-step example, see the [inline-widget guide](/inline/). For a complete look at the API, see our [reference](/reference/pytermgui/)!
 
-![index image](/assets/screenshot.png)
+![PyTermGUI demonstration](https://github.com/bczsalba/pytermgui/raw/master/assets/readme/screenshot.png)
 
 ## So what is a Terminal User Interface (or TUI) anyways?
 
@@ -39,7 +39,7 @@ Our goals are the following:
 - No pointless abstractions
 - Minimal dependencies
 
-Because of the way the framework is built, you can implement the input-key-mouse-draw loop used internally by [WindowManager](/reference/pytermgui/window_manager.manager#pytermgui.window_manager.WindowManager) in {insert linecount} lines!
+Because of the way the framework is built, you can also implement the input-key-mouse-draw loop used internally by [WindowManager](/reference/pytermgui/window_manager/manager/#pytermgui.window_manager.manager.WindowManager) using the same low-level APIs.
 
 Widget layouts are explicit from the syntax of their creation. Widgets are rendered line-by-line, using the plain strings they return. There is built-in support for [keyboard](/widgets/custom#keyboard-input) & [mouse](/widgets/custom#mouse-input) inputs on all widgets, as well as the underlying low-level API that is used to make it all work.
 

@@ -75,6 +75,5 @@ class Weather(Container):
 
 
 &widget = Weather("Los Angeles", 1, static_width=60)
-&for line in widget.get_lines():
-&    print(line)
+&print("\n".join(widget.get_lines()))
 &termage.fit(widget)

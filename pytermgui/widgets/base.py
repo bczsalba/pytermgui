@@ -257,9 +257,6 @@ class Widget:  # pylint: disable=too-many-public-methods
     def static_width(self) -> int:
         """Allows for a shorter way of setting a width, and SizePolicy.STATIC.
 
-        Args:
-            value: The new width integer.
-
         Returns:
             None, as this is setter only.
         """
@@ -281,9 +278,6 @@ class Widget:  # pylint: disable=too-many-public-methods
 
         If a Container holds a width of 30, and it has a subwidget with a relative
         width of 0.5, it will be resized to 15.
-
-        Args:
-            value: The multiplier to apply to the parent's width.
 
         Returns:
             The current relative_width.
@@ -742,12 +736,6 @@ class Label(Widget):
         root.print()
         ptg.getch()
     ```
-
-    <p style="text-align: center">
-     <img
-      src="https://github.com/bczsalba/pytermgui/blob/master/assets/docs/widgets/label.png?raw=true"
-      width=100%>
-    </p>
     """
 
     serialized = Widget.serialized + ["*value", "align", "padding"]
