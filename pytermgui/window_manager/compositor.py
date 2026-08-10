@@ -259,6 +259,7 @@ class Compositor:
 
         with self.terminal.frame() as frame:
             frame_write = frame.write
+            frame_write("\x1b[H\x1b[2J")
 
             for pos, line in lines:
                 frame_write(f"\x1b[{pos[1]};{pos[0]}H{line}")
