@@ -1,10 +1,32 @@
+## [7.8.0] - 2026-08-10
+
+### Additions
+
+- Add grapheme-aware wrapping with correct widths for CJK and emoji sequences
+- Preserve ANSI styles and hyperlinks when wrapping text
+- Document terminal compatibility and the project's archived status
+
+### Bugfixes
+
+- Fix terminal clearing, synchronized frame recording, and resize handling
+- Fix multiline input cursor placement and nested container scrolling
+- Fix uneven splitter columns and automatically sized scrollable windows
+- Fix ANSI bright magenta, cyan, and white color mappings
+- Fix cursor-home and erase sequences in ANSI exports
+- Avoid busy-waiting for input on Windows
+
+### Maintenance
+
+- Modernize linting and packaging configuration
+- Remove obsolete project assets and tooling
+
+<!-- HATCH README END -->
+
 ## [7.7.4] - 2025-03-31
 
 ### Bugfixes
 
 - Fix rapid input to \_GetchLinux
-
-<!-- HATCH README END -->
 
 ## [7.7.3] - 2024-12-29
 
@@ -422,6 +444,7 @@
 
 <!-- HATCH URI DEFINITIONS START -->
 
+[7.8.0]: https://github.com/bczsalba/pytermgui/compare/v7.7.4...v7.8.0
 [7.7.4]: https://github.com/bczsalba/pytermgui/compare/v7.7.3...v7.7.4
 [7.7.3]: https://github.com/bczsalba/pytermgui/compare/v7.7.2...v7.7.3
 [7.7.2]: https://github.com/bczsalba/pytermgui/compare/v7.7.1...v7.7.2

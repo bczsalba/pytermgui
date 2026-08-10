@@ -230,6 +230,9 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
 
         cursor = end
 
+        if full.endswith(("J", "K")):
+            continue
+
         code = ""
 
         # Position
@@ -238,9 +241,7 @@ def tokenize_ansi(  # pylint: disable=too-many-locals, too-many-branches, too-ma
         if posmatch is not None:
             ypos, xpos = posmatch.groups()
             if not ypos and not xpos:
-                raise ValueError(
-                    f"Cannot parse cursor when no position is supplied. Match: {posmatch!r}"
-                )
+                ypos = xpos = "1"
 
             yield CursorToken(content, int(ypos) or None, int(xpos) or None)
             continue

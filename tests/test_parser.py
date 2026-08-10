@@ -84,6 +84,15 @@ def random_hlink() -> tkns.HLinkToken:
 
 
 class TestParser:
+    def test_cursor_home(self):
+        assert list(tokenize_ansi("\x1b[H")) == [tkns.CursorToken("", 1, 1)]
+
+    def test_screen_clear(self):
+        assert list(tokenize_ansi("\x1b[H\x1b[2Jcontent")) == [
+            tkns.CursorToken("", 1, 1),
+            tkns.PlainToken("content"),
+        ]
+
     def test_length(self):
         output = StyledText.first_of(tim.parse("[141 @61 bold]One"))
         print(output)
