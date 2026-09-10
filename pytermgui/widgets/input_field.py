@@ -178,6 +178,15 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
 
         line = self._lines[row]
 
+        if col == 0 and row > 0 and count == 1:
+            previous = self._lines[row - 1]
+            self._lines[row - 1] = previous + line
+            self._lines.pop(row)
+            self.move_cursor((row - 1, len(previous)), absolute=True)
+            self._styled_cache = None
+
+            return "\n"
+
         start, end = sorted([col, col - count])
         start = max(0, start)
         self._lines[row] = line[:start] + line[end:]
@@ -435,7 +444,6 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
         row, col = self.cursor
 
         line = self._lines[row]
-        width = len(line)
 
         # Going left, possibly upwards
         if col < 0:
@@ -445,17 +453,17 @@ class InputField(Widget):  # pylint: disable=too-many-instance-attributes
             else:
                 self.cursor.row -= 1
                 line = self._lines[self.cursor.row]
-                self.cursor.col = width
+                self.cursor.col = len(line)
 
         # Going right, possibly downwards
-        elif col > width and line != "":
+        elif col > len(line) and line != "":
             if len(self._lines) > row + 1:
                 self.cursor.row += 1
                 self.cursor.col = 0
 
             line = self._lines[self.cursor.row]
 
-        self.cursor.col = max(0, min(self.cursor.col, width))
+        self.cursor.col = max(0, min(self.cursor.col, len(line)))
 
     def get_lines(self) -> list[str]:
         """Builds the input field's lines."""

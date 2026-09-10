@@ -1,3 +1,9 @@
+## [7.8.1] - 2026-09-10
+
+### Bugfixes
+
+- Fix multiline input navigation and joining lines with Backspace
+
 ## [7.8.0] - 2026-08-10
 
 ### Additions
